@@ -98,10 +98,13 @@ Supported rule types in the current code:
 - `ip_blacklist`
 - `port_blacklist`
 
+Current rule semantics:
+
+- `payload_match` enforces `protocols`, `ports`, `direction`, `depth`, and `offset` per rule. Mixed case-sensitive and case-insensitive payload rules are verified per rule after AC candidate matching.
+
 Known implementation gaps to close before v0.1.0:
 
-- `protocols`, `ports`, `direction`, `depth`, and `offset` are part of the schema but are not fully enforced for `payload_match` yet.
-- Mixed case-sensitive and case-insensitive payload rules currently share one matcher; this needs per-rule-correct behavior.
+- `ip_blacklist` and `port_blacklist` still need fuller direction/protocol semantics and validation.
 
 ---
 
@@ -171,7 +174,7 @@ v0.1.0 target:
 
 ## 9. Testing Target
 
-Current build has Go tests for rule matching/Aho-Corasick, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes.
+Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes.
 
 Next layers:
 

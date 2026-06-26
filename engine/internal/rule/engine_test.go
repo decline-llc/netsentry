@@ -144,3 +144,115 @@ func TestConcurrentReload(t *testing.T) {
 	}
 	<-done
 }
+
+func makePayloadRuleWithConfig(id string, cfg model.PayloadMatchConfig) *model.Rule {
+	raw, _ := json.Marshal(cfg)
+	return &model.Rule{
+		ID:       id,
+		Name:     id,
+		Type:     model.RuleTypePayloadMatch,
+		Severity: model.SeverityHigh,
+		Priority: 100,
+		Enabled:  true,
+		Config:   raw,
+	}
+}
+
+func TestPayloadRuleProtocolAndDestPort(t *testing.T) {
+	e := NewEngine()
+	r := makePayloadRuleWithConfig("proto-port", model.PayloadMatchConfig{
+		Keywords:        []string{"union select"},
+		CaseInsensitive: true,
+		Protocols:       []string{"tcp"},
+		Ports:           []int{80},
+		Direction:       "dest",
+	})
+	if err := e.Reload([]*model.Rule{r}); err != nil {
+		t.Fatal(err)
+	}
+	matching := &model.PacketInfo{DstPort: 80, Protocol: 6, PayloadPreview: b64("UNION SELECT")}
+	if alerts := e.Match(matching); len(alerts) != 1 {
+		t.Fatalf("expected tcp dst port match, got %d", len(alerts))
+	}
+	nonMatchingProtocol := &model.PacketInfo{DstPort: 80, Protocol: 17, PayloadPreview: b64("UNION SELECT")}
+	if alerts := e.Match(nonMatchingProtocol); len(alerts) != 0 {
+		t.Fatalf("expected udp packet to be rejected, got %d", len(alerts))
+	}
+	nonMatchingPort := &model.PacketInfo{DstPort: 443, Protocol: 6, PayloadPreview: b64("UNION SELECT")}
+	if alerts := e.Match(nonMatchingPort); len(alerts) != 0 {
+		t.Fatalf("expected dst port mismatch, got %d", len(alerts))
+	}
+}
+
+func TestPayloadRuleSourceAndAnyDirectionPorts(t *testing.T) {
+	e := NewEngine()
+	sourceRule := makePayloadRuleWithConfig("source-port", model.PayloadMatchConfig{
+		Keywords:  []string{"token"},
+		Ports:     []int{12345},
+		Direction: "source",
+	})
+	anyRule := makePayloadRuleWithConfig("any-port", model.PayloadMatchConfig{
+		Keywords:  []string{"token"},
+		Ports:     []int{8080},
+		Direction: "any",
+	})
+	if err := e.Reload([]*model.Rule{sourceRule, anyRule}); err != nil {
+		t.Fatal(err)
+	}
+	pkt := &model.PacketInfo{SrcPort: 12345, DstPort: 8080, Protocol: 6, PayloadPreview: b64("token")}
+	alerts := e.Match(pkt)
+	if len(alerts) != 2 {
+		t.Fatalf("expected both source and any direction rules, got %d", len(alerts))
+	}
+}
+
+func TestPayloadRuleOffsetAndDepth(t *testing.T) {
+	e := NewEngine()
+	r := makePayloadRuleWithConfig("window", model.PayloadMatchConfig{
+		Keywords: []string{"needle"},
+		Offset:   4,
+		Depth:    8,
+	})
+	if err := e.Reload([]*model.Rule{r}); err != nil {
+		t.Fatal(err)
+	}
+	inside := &model.PacketInfo{Protocol: 6, PayloadPreview: b64("xxxxneedle after")}
+	if alerts := e.Match(inside); len(alerts) != 1 {
+		t.Fatalf("expected keyword inside offset/depth window, got %d", len(alerts))
+	}
+	outside := &model.PacketInfo{Protocol: 6, PayloadPreview: b64("xxxx12345678needle")}
+	if alerts := e.Match(outside); len(alerts) != 0 {
+		t.Fatalf("expected keyword outside depth to be rejected, got %d", len(alerts))
+	}
+}
+
+func TestPayloadRuleMixedCaseSensitivity(t *testing.T) {
+	e := NewEngine()
+	caseSensitive := makePayloadRuleWithConfig("case-sensitive", model.PayloadMatchConfig{
+		Keywords:        []string{"SELECT"},
+		CaseInsensitive: false,
+	})
+	caseInsensitive := makePayloadRuleWithConfig("case-insensitive", model.PayloadMatchConfig{
+		Keywords:        []string{"union"},
+		CaseInsensitive: true,
+	})
+	if err := e.Reload([]*model.Rule{caseSensitive, caseInsensitive}); err != nil {
+		t.Fatal(err)
+	}
+	pkt := &model.PacketInfo{Protocol: 6, PayloadPreview: b64("select union")}
+	alerts := e.Match(pkt)
+	if len(alerts) != 1 || alerts[0].RuleID != "case-insensitive" {
+		t.Fatalf("expected only case-insensitive rule, got %+v", alerts)
+	}
+}
+
+func TestPayloadRuleRejectsInvalidConfig(t *testing.T) {
+	e := NewEngine()
+	r := makePayloadRuleWithConfig("bad", model.PayloadMatchConfig{
+		Keywords:  []string{"x"},
+		Protocols: []string{"gre"},
+	})
+	if err := e.Reload([]*model.Rule{r}); err == nil {
+		t.Fatal("expected invalid protocol error")
+	}
+}

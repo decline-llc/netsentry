@@ -17,11 +17,22 @@ import (
 type ruleState struct {
 	acMatcher       *ac.Matcher
 	acRuleIdx       []int // parallel to ac patterns: which rule owns each keyword
+	payloadRules    map[string]compiledPayloadRule
 	ipNets          []*net.IPNet
 	ipRules         map[string]*model.Rule
 	portRules       map[uint16][]*model.Rule
 	allByPriority   []*model.Rule
 	caseInsensitive bool
+}
+
+type compiledPayloadRule struct {
+	keywords        []string
+	caseInsensitive bool
+	protocols       map[uint8]struct{}
+	ports           map[uint16]struct{}
+	direction       string
+	depth           int
+	offset          int
 }
 
 // Engine is the lock-free rule matching engine.
@@ -33,8 +44,9 @@ type Engine struct {
 func NewEngine() *Engine {
 	e := &Engine{}
 	e.state.Store(&ruleState{
-		ipRules:   make(map[string]*model.Rule),
-		portRules: make(map[uint16][]*model.Rule),
+		payloadRules: make(map[string]compiledPayloadRule),
+		ipRules:      make(map[string]*model.Rule),
+		portRules:    make(map[uint16][]*model.Rule),
 	})
 	return e
 }
@@ -91,9 +103,13 @@ func (e *Engine) Match(pkt *model.PacketInfo) []*model.Alert {
 		case model.RuleTypePortBlacklist:
 			alert = matchPortBlacklist(rule, pkt, s)
 		case model.RuleTypePayloadMatch:
-			if kw, ok := acHitRules[rule.ID]; ok {
-				preview := previewPayload(payload, 200)
-				alert = buildAlert(rule, pkt, preview, kw)
+			if _, ok := acHitRules[rule.ID]; ok {
+				if cfg, exists := s.payloadRules[rule.ID]; exists {
+					if kw, matched := matchPayloadRule(cfg, pkt, payload); matched {
+						preview := previewPayload(payload, 200)
+						alert = buildAlert(rule, pkt, preview, kw)
+					}
+				}
 			}
 		}
 		if alert != nil {
@@ -110,8 +126,9 @@ func (e *Engine) Match(pkt *model.PacketInfo) []*model.Alert {
 
 func buildState(rules []*model.Rule) (*ruleState, error) {
 	s := &ruleState{
-		ipRules:   make(map[string]*model.Rule),
-		portRules: make(map[uint16][]*model.Rule),
+		payloadRules: make(map[string]compiledPayloadRule),
+		ipRules:      make(map[string]*model.Rule),
+		portRules:    make(map[uint16][]*model.Rule),
 	}
 
 	sorted := make([]*model.Rule, len(rules))
@@ -141,6 +158,11 @@ func buildState(rules []*model.Rule) (*ruleState, error) {
 			if err := json.Unmarshal(r.Config, &cfg); err != nil {
 				return nil, fmt.Errorf("rule %s: %w", r.ID, err)
 			}
+			compiled, err := compilePayloadRule(cfg)
+			if err != nil {
+				return nil, fmt.Errorf("rule %s: %w", r.ID, err)
+			}
+			s.payloadRules[r.ID] = compiled
 			if cfg.CaseInsensitive {
 				caseIns = true
 			}
@@ -187,6 +209,106 @@ func buildState(rules []*model.Rule) (*ruleState, error) {
 	}
 	s.caseInsensitive = caseIns
 	return s, nil
+}
+
+func compilePayloadRule(cfg model.PayloadMatchConfig) (compiledPayloadRule, error) {
+	compiled := compiledPayloadRule{
+		keywords:        append([]string(nil), cfg.Keywords...),
+		caseInsensitive: cfg.CaseInsensitive,
+		protocols:       make(map[uint8]struct{}),
+		ports:           make(map[uint16]struct{}),
+		direction:       strings.ToLower(cfg.Direction),
+		depth:           cfg.Depth,
+		offset:          cfg.Offset,
+	}
+	if compiled.direction == "" {
+		compiled.direction = "dest"
+	}
+	if compiled.direction != "dest" && compiled.direction != "source" && compiled.direction != "any" {
+		return compiledPayloadRule{}, fmt.Errorf("unsupported payload direction %q", cfg.Direction)
+	}
+	if compiled.depth < 0 || compiled.offset < 0 {
+		return compiledPayloadRule{}, fmt.Errorf("payload depth and offset must be non-negative")
+	}
+	for _, proto := range cfg.Protocols {
+		p, ok := parseProtocol(proto)
+		if !ok {
+			return compiledPayloadRule{}, fmt.Errorf("unsupported protocol %q", proto)
+		}
+		if p == 0 {
+			continue
+		}
+		compiled.protocols[p] = struct{}{}
+	}
+	for _, port := range cfg.Ports {
+		if port < 0 || port > 65535 {
+			return compiledPayloadRule{}, fmt.Errorf("port %d out of range", port)
+		}
+		compiled.ports[uint16(port)] = struct{}{}
+	}
+	return compiled, nil
+}
+
+func parseProtocol(proto string) (uint8, bool) {
+	switch strings.ToLower(strings.TrimSpace(proto)) {
+	case "", "any":
+		return 0, true
+	case "tcp":
+		return 6, true
+	case "udp":
+		return 17, true
+	case "icmp":
+		return 1, true
+	default:
+		return 0, false
+	}
+}
+
+func matchPayloadRule(cfg compiledPayloadRule, pkt *model.PacketInfo, payload []byte) (string, bool) {
+	if len(cfg.protocols) > 0 {
+		if _, ok := cfg.protocols[pkt.Protocol]; !ok {
+			return "", false
+		}
+	}
+	if len(cfg.ports) > 0 && !payloadPortMatches(cfg, pkt) {
+		return "", false
+	}
+
+	if cfg.offset > len(payload) {
+		return "", false
+	}
+	window := payload[cfg.offset:]
+	if cfg.depth > 0 && cfg.depth < len(window) {
+		window = window[:cfg.depth]
+	}
+
+	haystack := string(window)
+	if cfg.caseInsensitive {
+		haystack = strings.ToLower(haystack)
+	}
+	for _, kw := range cfg.keywords {
+		needle := kw
+		if cfg.caseInsensitive {
+			needle = strings.ToLower(needle)
+		}
+		if strings.Contains(haystack, needle) {
+			return kw, true
+		}
+	}
+	return "", false
+}
+
+func payloadPortMatches(cfg compiledPayloadRule, pkt *model.PacketInfo) bool {
+	_, srcOK := cfg.ports[pkt.SrcPort]
+	_, dstOK := cfg.ports[pkt.DstPort]
+	switch cfg.direction {
+	case "source":
+		return srcOK
+	case "any":
+		return srcOK || dstOK
+	default:
+		return dstOK
+	}
 }
 
 // ---- per-type matchers ------------------------------------------------------

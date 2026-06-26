@@ -198,7 +198,7 @@ Public summary:
 | W3 | serializer hardening, heartbeat fields, reconnect behavior |
 | W4 | move UDS listener into `internal/receiver` |
 | W5 | explicit worker pipeline |
-| W6 | rule semantics and Prometheus metrics |
+| W6 | payload rule semantics, remaining rule semantics, and Prometheus metrics |
 | W7 | SQLite storage and alert aggregation |
 | W8 | stable REST API contract |
 | W9 | auth, audit, verbose health, pprof |
