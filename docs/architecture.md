@@ -24,7 +24,8 @@ Hard boundaries for v0.1.0:
 pcap file
   -> C capture (libpcap, frame parsing, Base64 payload preview)
   -> UDS JSON lines (hello, heartbeat, packet frames)
-  -> Go engine minimal UDS listener
+  -> Go receiver packet channel
+  -> single pipeline worker
   -> atomic.Pointer rule engine
   -> in-memory alert store
   -> GET /api/alerts
@@ -35,7 +36,9 @@ Current implementation notes:
 - `capture/src/main.c` opens offline pcaps and sends parsed frames to `/tmp/netsentry.sock`.
 - `capture/src/eth_parser.c` handles Ethernet, VLAN/Q-in-Q, IPv4, TCP, and UDP with bounds checks.
 - `capture/src/uds_sender.c` formats JSON frames with explicit string escaping, Base64 payload preview encoding, full-line UDS writes, write-error counters, and bounded initial reconnect support.
-- `engine/internal/receiver` owns the UDS listener, hello/heartbeat state, and context-aware packet channel. `engine/cmd/netsentry/main.go` still hosts the in-memory alert store, packet consumer, and minimal HTTP API until the W5/W8 splits.
+- `engine/internal/receiver` owns the UDS listener, hello/heartbeat state, and context-aware packet channel.
+- `engine/internal/pipeline` owns the single worker that consumes packets, calls the rule engine, timestamps alerts, and writes them through an `AlertWriter`.
+- `engine/cmd/netsentry/main.go` still hosts the in-memory alert store and minimal HTTP API until the W7/W8 splits.
 - `engine/internal/rule` already uses immutable rule snapshots via `atomic.Pointer[ruleState]`.
 
 ---
@@ -118,7 +121,7 @@ C capture
 Planned modules:
 
 - `internal/receiver`: UDS listener, hello validation, heartbeat state. Implemented in the current build; broader Go engine lifecycle integration remains future work.
-- `internal/pipeline`: worker lifecycle and alert flow.
+- `internal/pipeline`: worker lifecycle and alert flow. Implemented as a single worker in the current build.
 - `internal/alert`: aggregation, SQLite store, optional WAL replay.
 - `internal/api`: router, pagination, errors, health, metrics, auth.
 - `internal/stats`: counters and Prometheus collectors.
@@ -168,7 +171,7 @@ v0.1.0 target:
 
 ## 9. Testing Target
 
-Current build has Go tests for rule matching/Aho-Corasick and `internal/receiver`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes.
+Current build has Go tests for rule matching/Aho-Corasick, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes.
 
 Next layers:
 

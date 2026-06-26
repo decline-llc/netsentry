@@ -116,7 +116,7 @@ capture/
 engine/
   cmd/netsentry/main.go
   internal/config/
-  internal/pipeline/interfaces.go
+  internal/pipeline/
   internal/receiver/
   internal/rule/
   internal/signal/

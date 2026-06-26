@@ -13,6 +13,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/decline-llc/netsentry/internal/config"
+	"github.com/decline-llc/netsentry/internal/pipeline"
 	"github.com/decline-llc/netsentry/internal/receiver"
 	"github.com/decline-llc/netsentry/internal/rule"
 	nssignal "github.com/decline-llc/netsentry/internal/signal"
@@ -24,10 +25,16 @@ type alertStore struct {
 	alerts []*model.Alert
 }
 
-func (s *alertStore) Add(alerts ...*model.Alert) {
+func (s *alertStore) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	for _, alert := range alerts {
+		if alert == nil {
+			continue
+		}
 		now := time.Now().UTC()
 		if alert.Timestamp.IsZero() {
 			alert.Timestamp = now
@@ -40,6 +47,7 @@ func (s *alertStore) Add(alerts ...*model.Alert) {
 		alert.EventID = alert.ID
 		s.alerts = append(s.alerts, alert)
 	}
+	return nil
 }
 
 func (s *alertStore) List() []*model.Alert {
@@ -104,7 +112,8 @@ func main() {
 	if err := recv.Start(ctx); err != nil {
 		logger.Fatal("start uds receiver", zap.Error(err))
 	}
-	startPacketConsumer(ctx, recv.Packets(), ruleEngine, store, logger)
+	worker := pipeline.NewWorker(ruleEngine, store, logger)
+	go worker.Run(ctx, recv.Packets())
 	startHTTPServer(ctx, cfg.Engine.APIPort, store, logger)
 
 	logger.Info("engine ready — waiting for shutdown signal (SIGINT/SIGTERM)",
@@ -112,35 +121,6 @@ func main() {
 		zap.Int("api_port", cfg.Engine.APIPort))
 	<-ctx.Done()
 	logger.Info("shutdown signal received, exiting")
-}
-
-func startPacketConsumer(ctx context.Context, packets <-chan *model.PacketInfo, engine *rule.Engine, store *alertStore, logger *zap.Logger) {
-	go func() {
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case pkt, ok := <-packets:
-				if !ok {
-					return
-				}
-				if pkt == nil {
-					continue
-				}
-				alerts := engine.Match(pkt)
-				for _, alert := range alerts {
-					alert.Timestamp = pkt.Timestamp().UTC()
-				}
-				store.Add(alerts...)
-				if len(alerts) > 0 {
-					logger.Info("packet matched rules",
-						zap.String("src_ip", pkt.SrcIP),
-						zap.String("dst_ip", pkt.DstIP),
-						zap.Int("alerts", len(alerts)))
-				}
-			}
-		}
-	}()
 }
 
 func startHTTPServer(ctx context.Context, port int, store *alertStore, logger *zap.Logger) {
