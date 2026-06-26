@@ -30,3 +30,59 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+# --- C Specific ---
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# --- Project Specific ---
+# Ignore generated binaries
+bin/
+netsentry-engine
+netsentry-capture
+
+# Ignore runtime data
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/*.jsonl
+*.sock
+
+# Ignore IDE configs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
