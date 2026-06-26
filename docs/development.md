@@ -28,7 +28,7 @@ make build-c       # compile C capture
 make build-go      # compile Go engine
 make build         # build both binaries
 make test          # C parser/UDS tests + Go race tests
-make bench         # C parser microbenchmarks + Go benchmarks
+make bench         # C parser/UDS microbenchmarks + Go benchmarks
 make lint          # go vet + optional staticcheck
 make quickstart    # build, generate pcap, run engine/capture, print alerts
 make asan-test     # C parser tests under AddressSanitizer
@@ -177,7 +177,7 @@ make bench
 Planned tests:
 
 - More C parser unit tests for malformed input.
-- UDS sender tests for write failure and reconnect paths.
+- Broader UDS sender tests for edge-case write failures.
 - Fuzz targets and full capture ASan build.
 - UDS receiver integration tests.
 - SQLite aggregation tests once storage is implemented.

@@ -1,6 +1,11 @@
+#include <errno.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include "packet_types.h"
@@ -12,6 +17,48 @@
         exit(1); \
     } \
 } while (0)
+
+
+static pid_t start_one_line_listener(const char *path) {
+    int fd = socket(AF_UNIX, SOCK_STREAM, 0);
+    CHECK(fd >= 0);
+
+    struct sockaddr_un addr;
+    memset(&addr, 0, sizeof(addr));
+    addr.sun_family = AF_UNIX;
+    CHECK(strlen(path) < sizeof(addr.sun_path));
+    snprintf(addr.sun_path, sizeof(addr.sun_path), "%s", path);
+    unlink(path);
+    CHECK(bind(fd, (struct sockaddr *)&addr, sizeof(addr)) == 0);
+    CHECK(listen(fd, 1) == 0);
+
+    pid_t pid = fork();
+    CHECK(pid >= 0);
+    if (pid == 0) {
+        int conn = accept(fd, NULL, NULL);
+        close(fd);
+        if (conn < 0) {
+            _exit(2);
+        }
+        char ch;
+        while (read(conn, &ch, 1) == 1) {
+            if (ch == '\n') {
+                break;
+            }
+        }
+        close(conn);
+        _exit(0);
+    }
+
+    close(fd);
+    return pid;
+}
+
+static void wait_listener(pid_t pid) {
+    int status = 0;
+    CHECK(waitpid(pid, &status, 0) == pid);
+    CHECK(WIFEXITED(status) && WEXITSTATUS(status) == 0);
+}
 
 static void test_hello_escapes_json_strings(void) {
     char buf[512];
@@ -83,6 +130,34 @@ static void test_limited_connect_fails_fast(void) {
     CHECK(uds_connect_with_retries(path, 1) == UDS_ERR_CONN);
 }
 
+
+static void test_reconnect_reuses_last_path(void) {
+    char path[108];
+    snprintf(path, sizeof(path), "/tmp/netsentry_reconnect_test_%ld.sock", (long)getpid());
+
+    pid_t first = start_one_line_listener(path);
+    CHECK(uds_connect_with_retries(path, 5) == UDS_OK);
+    CHECK(uds_send_line("{\"first\":true}") == UDS_OK);
+    wait_listener(first);
+
+    UDSResult failed = UDS_OK;
+    for (int i = 0; i < 16; i++) {
+        failed = uds_send_line("{\"after_close\":true}");
+        if (failed != UDS_OK) {
+            break;
+        }
+    }
+    CHECK(failed != UDS_OK);
+    CHECK(uds_write_errors() > 0);
+
+    pid_t second = start_one_line_listener(path);
+    CHECK(uds_reconnect() == UDS_OK);
+    CHECK(uds_send_line("{\"second\":true}") == UDS_OK);
+    uds_close();
+    wait_listener(second);
+    unlink(path);
+}
+
 static void test_format_rejects_truncation(void) {
     char tiny[16];
     HeartbeatInfo hb = {.seq = 1};
@@ -90,11 +165,13 @@ static void test_format_rejects_truncation(void) {
 }
 
 int main(void) {
+    signal(SIGPIPE, SIG_IGN);
     test_hello_escapes_json_strings();
     test_heartbeat_contains_metrics();
     test_packet_base64_and_escapes_flags();
     test_format_rejects_truncation();
     test_limited_connect_fails_fast();
+    test_reconnect_reuses_last_path();
     printf("test_uds_sender: ok\n");
     return 0;
 }

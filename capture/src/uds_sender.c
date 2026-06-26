@@ -56,7 +56,12 @@ static int try_connect(const char *path) {
     struct sockaddr_un addr;
     memset(&addr, 0, sizeof(addr));
     addr.sun_family = AF_UNIX;
-    strncpy(addr.sun_path, path, sizeof(addr.sun_path) - 1);
+    if (strlen(path) >= sizeof(addr.sun_path)) {
+        close(fd);
+        errno = ENAMETOOLONG;
+        return -1;
+    }
+    snprintf(addr.sun_path, sizeof(addr.sun_path), "%s", path);
 
     if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
         close(fd);
@@ -205,7 +210,10 @@ UDSResult uds_connect(const char *path) {
 
 UDSResult uds_reconnect(void) {
     if (g_path[0] == '\0') return UDS_ERR_CONN;
-    return uds_connect(g_path);
+
+    char path[sizeof(g_path)];
+    snprintf(path, sizeof(path), "%s", g_path);
+    return uds_connect(path);
 }
 
 UDSResult uds_send_line(const char *json_line) {

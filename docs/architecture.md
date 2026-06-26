@@ -168,13 +168,12 @@ v0.1.0 target:
 
 ## 9. Testing Target
 
-Current build has Go tests for rule matching/Aho-Corasick, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting and bounded connection failure, plus C parser microbenchmarks for plain TCP, VLAN TCP, and Q-in-Q TCP frames.
+Current build has Go tests for rule matching/Aho-Corasick, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes.
 
 Next layers:
 
 - Broader C parser tests for additional malformed frames.
-- JSON serialization and UDS send microbenchmarks.
-- UDS reconnect integration tests against a real listener lifecycle.
+- Broader reconnect integration tests against the Go engine lifecycle.
 - Full ASan capture binary target.
 - UDS receiver tests for hello, heartbeat, bad JSON, context cancellation.
 - End-to-end quickstart regression.

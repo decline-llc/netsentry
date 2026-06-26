@@ -29,11 +29,17 @@ TEST_UDS_SRCS   := tests/test_uds_sender.c \
 
 TEST_TARGETS := $(TEST_PARSER_TARGET) $(TEST_UDS_TARGET)
 
-BENCH_TARGET := ../bin/bench-parser
-BENCH_SRCS   := tests/bench_parser.c \
-                src/eth_parser.c \
-                src/parser_registry.c \
-                src/passthrough_parser.c
+BENCH_PARSER_TARGET := ../bin/bench-parser
+BENCH_PARSER_SRCS   := tests/bench_parser.c \
+                       src/eth_parser.c \
+                       src/parser_registry.c \
+                       src/passthrough_parser.c
+
+BENCH_UDS_TARGET := ../bin/bench-uds-sender
+BENCH_UDS_SRCS   := tests/bench_uds_sender.c \
+                    src/uds_sender.c
+
+BENCH_TARGETS := $(BENCH_PARSER_TARGET) $(BENCH_UDS_TARGET)
 BENCH_ITERATIONS ?= 100000
 
 .PHONY: all test asan-test bench clean
@@ -55,7 +61,11 @@ $(TEST_UDS_TARGET): $(TEST_UDS_SRCS)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $^
 
-$(BENCH_TARGET): $(BENCH_SRCS)
+$(BENCH_PARSER_TARGET): $(BENCH_PARSER_SRCS)
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -o $@ $^
+
+$(BENCH_UDS_TARGET): $(BENCH_UDS_SRCS)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $^
 
@@ -68,8 +78,9 @@ asan-test: clean $(TEST_TARGETS)
 	$(TEST_PARSER_TARGET)
 	$(TEST_UDS_TARGET)
 
-bench: $(BENCH_TARGET)
-	$(BENCH_TARGET) $(BENCH_ITERATIONS)
+bench: $(BENCH_TARGETS)
+	$(BENCH_PARSER_TARGET) $(BENCH_ITERATIONS)
+	$(BENCH_UDS_TARGET) $(BENCH_ITERATIONS)
 
 clean:
-	rm -f $(OBJS) $(TARGET) $(TEST_TARGETS) $(BENCH_TARGET)
+	rm -f $(OBJS) $(TARGET) $(TEST_TARGETS) $(BENCH_TARGETS)
