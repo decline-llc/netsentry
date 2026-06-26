@@ -45,7 +45,7 @@ clean:
 
 ## quickstart — generate a sample pcap and run a full analysis
 quickstart: build
-	@echo "==> Generating sample pcap with Scapy…"
+	@echo "==> Generating sample pcap…"
 	@command -v python3 >/dev/null 2>&1 || { echo "python3 not found"; exit 1; }
 	@python3 scripts/gen_test_pcap.py
 	@echo "==> Starting engine in background…"

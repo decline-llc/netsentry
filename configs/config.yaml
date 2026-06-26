@@ -1,44 +1,34 @@
-# NetSentry engine configuration — v0.1.0
-# All values support ${ENV_VAR} and ${ENV_VAR:default} substitution.
-
-server:
-  host: "0.0.0.0"
-  port: 8080
-  read_timeout_sec: 10
-  write_timeout_sec: 10
-
-api_auth:
-  enabled: false
-  # Set token via env var; never hard-code in this file.
-  # token: "${NS_API_TOKEN}"
+# NetSentry configuration — v0.1.0 development
+# Values support ${ENV_VAR} and ${ENV_VAR:default} substitution.
 
 capture:
-  uds_path: "/tmp/netsentry.sock"
-  channel_capacity: 10000
-  worker_count: 1          # v0.1.0: single worker, no race on state
-  max_payload_len: 4096
+  mode: "offline"
+  offline_file: "/tmp/netsentry_test.pcap"
+  payload_preview_len: 4096
+  uds_socket_path: "/tmp/netsentry.sock"
+  uds_socket_mode: "0600"
+  heartbeat_interval: 5
 
-rules:
-  file: "configs/rules.json"
-
-storage:
-  data_dir: "data"
-  ttl_days: 7              # alert DBs older than this are deleted automatically
-  wal_file: "data/alert_wal.jsonl"
+engine:
+  uds_socket_path: "/tmp/netsentry.sock"
+  channel_buffer_size: 10000
+  worker_count: 1
+  db_dir: "data"
+  db_path: "data/netsentry.db"
+  db_journal_mode: "WAL"
+  db_busy_timeout: 5000
+  rules_seed_file: "configs/rules.json"
+  api_port: 8080
+  cors_allowed_origins: ["http://localhost:3000"]
+  alert_aggregation_window: 60
+  alert_aggregation_max_count: 100
+  alert_retention_days: 7
+  api_auth_enabled: false
+  api_auth_token: "${NETSENTRY_API_TOKEN:}"
+  redact_sensitive_fields: true
+  health_freshness_limit_seconds: 30
 
 logging:
-  level: "info"            # debug | info | warn | error
-  format: "json"           # json | console
-  output: "stdout"         # stdout | /path/to/file.log
-
-metrics:
-  enabled: true
-  path: "/api/metrics"
-
-alerting:
-  aggregation_window_sec: 60
-  aggregation_flush_interval_sec: 10
-  batch_size: 100
-  batch_flush_sec: 5
-  critical_flush_sec: 1
-  critical_batch_size: 10
+  level: "info"
+  format: "json"
+  engine_log: "logs/engine.log"

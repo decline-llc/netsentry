@@ -1,19 +1,32 @@
 {
-  "_comment": "NetSentry v0.1.0 example rules. Copy to configs/rules.json to use as seed data.",
+  "_comment": "NetSentry v0.1.0 example rules. Copy to configs/rules.json or edit in place for local development.",
   "rules": [
     {
       "id": "rule-001",
-      "name": "SQL Injection Detection",
+      "name": "SQL Injection - Union Select",
       "type": "payload_match",
-      "severity": "high",
-      "priority": 150,
       "enabled": true,
+      "severity": "high",
+      "priority": 800,
       "early_exit": false,
       "config": {
-        "keywords": ["UNION SELECT", "SELECT FROM", "DROP TABLE", "OR 1=1", "' OR '1'='1", "1' OR '1'='1"],
+        "keywords": [
+          "union select",
+          "union all select",
+          "' or '1'='1",
+          "'; drop table",
+          "--"
+        ],
         "case_insensitive": true,
-        "protocols": ["TCP"],
-        "ports": [80, 8080, 443, 8443],
+        "protocols": [
+          "TCP"
+        ],
+        "ports": [
+          80,
+          8080,
+          443,
+          8443
+        ],
         "direction": "dest",
         "depth": 4096,
         "offset": 0
@@ -25,49 +38,36 @@
           "technique_name": "Exploit Public-Facing Application"
         }
       ],
-      "description": "Detect SQL injection patterns in HTTP traffic payloads"
+      "description": "Detect common SQL injection strings in cleartext payloads."
     },
     {
       "id": "rule-002",
-      "name": "XSS Attack Detection",
+      "name": "XSS - Script Injection",
       "type": "payload_match",
-      "severity": "medium",
-      "priority": 120,
       "enabled": true,
+      "severity": "medium",
+      "priority": 600,
       "early_exit": false,
       "config": {
-        "keywords": ["<script>", "</script>", "javascript:", "onerror=", "onload=", "alert(", "document.cookie"],
+        "keywords": [
+          "<script>",
+          "javascript:",
+          "onerror=",
+          "onload=",
+          "alert("
+        ],
         "case_insensitive": true,
-        "protocols": ["TCP"],
-        "ports": [80, 8080, 443, 8443],
+        "protocols": [
+          "TCP"
+        ],
+        "ports": [
+          80,
+          8080,
+          443,
+          8443
+        ],
         "direction": "dest",
         "depth": 4096,
-        "offset": 0
-      },
-      "mitre_techniques": [
-        {
-          "tactic": "Initial Access",
-          "technique_id": "T1189",
-          "technique_name": "Drive-by Compromise"
-        }
-      ],
-      "description": "Detect Cross-Site Scripting (XSS) patterns in HTTP traffic"
-    },
-    {
-      "id": "rule-003",
-      "name": "Path Traversal Detection",
-      "type": "payload_match",
-      "severity": "high",
-      "priority": 140,
-      "enabled": true,
-      "early_exit": false,
-      "config": {
-        "keywords": ["../../../", "..\\..\\..\\", "%2e%2e%2f", "%2e%2e/", "..%2f"],
-        "case_insensitive": true,
-        "protocols": ["TCP"],
-        "ports": [80, 8080, 443, 8443],
-        "direction": "dest",
-        "depth": 2048,
         "offset": 0
       },
       "mitre_techniques": [
@@ -77,21 +77,76 @@
           "technique_name": "Exploit Public-Facing Application"
         }
       ],
-      "description": "Detect directory traversal attempts in HTTP requests"
+      "description": "Detect common reflected/script injection strings."
+    },
+    {
+      "id": "rule-003",
+      "name": "Path Traversal",
+      "type": "payload_match",
+      "enabled": true,
+      "severity": "high",
+      "priority": 700,
+      "early_exit": false,
+      "config": {
+        "keywords": [
+          "../../../",
+          "..\\..\\..\\",
+          "%2e%2e%2f",
+          "%2e%2e/"
+        ],
+        "case_insensitive": true,
+        "protocols": [
+          "TCP"
+        ],
+        "ports": [
+          80,
+          8080,
+          443,
+          8443
+        ],
+        "direction": "dest",
+        "depth": 4096,
+        "offset": 0
+      },
+      "mitre_techniques": [
+        {
+          "tactic": "Discovery",
+          "technique_id": "T1083",
+          "technique_name": "File and Directory Discovery"
+        }
+      ],
+      "description": "Detect path traversal indicators."
     },
     {
       "id": "rule-004",
       "name": "Shell Command Injection",
       "type": "payload_match",
-      "severity": "critical",
-      "priority": 200,
       "enabled": true,
+      "severity": "critical",
+      "priority": 900,
       "early_exit": false,
       "config": {
-        "keywords": ["; cat /etc/passwd", "| whoami", "`id`", "$(id)", "; /bin/sh", "bash -i", "/dev/tcp/"],
+        "keywords": [
+          ";id;",
+          ";whoami;",
+          "|id|",
+          "|whoami|",
+          "$(id)",
+          "`id`",
+          "bash -i",
+          "sh -i"
+        ],
         "case_insensitive": true,
-        "protocols": ["TCP"],
-        "ports": [80, 8080, 443, 8443],
+        "protocols": [
+          "TCP"
+        ],
+        "ports": [
+          80,
+          8080,
+          443,
+          8443,
+          4444
+        ],
         "direction": "dest",
         "depth": 4096,
         "offset": 0
@@ -103,42 +158,34 @@
           "technique_name": "Command and Scripting Interpreter"
         }
       ],
-      "description": "Detect OS command injection attempts in HTTP requests"
+      "description": "Detect common command execution markers."
     },
     {
       "id": "rule-005",
-      "name": "Known C2 IP Blacklist",
-      "type": "ip_blacklist",
+      "name": "Log4Shell (CVE-2021-44228)",
+      "type": "payload_match",
+      "enabled": true,
       "severity": "critical",
       "priority": 1000,
-      "enabled": true,
-      "early_exit": true,
-      "config": {
-        "ips": ["192.0.2.1", "198.51.100.0/24", "203.0.113.42"],
-        "direction": "any"
-      },
-      "mitre_techniques": [
-        {
-          "tactic": "Command and Control",
-          "technique_id": "T1571",
-          "technique_name": "Non-Standard Port"
-        }
-      ],
-      "description": "Block connections to/from known malicious C2 infrastructure. Set early_exit: true to skip AC automaton scan for these IPs."
-    },
-    {
-      "id": "rule-006",
-      "name": "Log4Shell Exploit Attempt",
-      "type": "payload_match",
-      "severity": "critical",
-      "priority": 300,
-      "enabled": true,
       "early_exit": false,
       "config": {
-        "keywords": ["${jndi:ldap://", "${jndi:rmi://", "${jndi:dns://", "${${::-j}${::-n}${::-d}${::-i}:"],
-        "case_insensitive": true,
-        "protocols": ["TCP"],
-        "ports": [80, 8080, 443, 8443, 9200],
+        "keywords": [
+          "${jndi:ldap://",
+          "${jndi:rmi://",
+          "${jndi:dns://",
+          "${${lower:j}ndi:"
+        ],
+        "case_insensitive": false,
+        "protocols": [
+          "TCP"
+        ],
+        "ports": [
+          80,
+          8080,
+          443,
+          8443,
+          9200
+        ],
         "direction": "dest",
         "depth": 4096,
         "offset": 0
@@ -150,142 +197,100 @@
           "technique_name": "Exploit Public-Facing Application"
         }
       ],
-      "description": "Detect Log4j / Log4Shell JNDI injection attempts (CVE-2021-44228)"
+      "description": "Detect Log4Shell JNDI lookup patterns."
     },
     {
-      "id": "rule-007",
-      "name": "Suspicious User-Agent Strings",
-      "type": "payload_match",
-      "severity": "medium",
-      "priority": 100,
+      "id": "rule-006",
+      "name": "Known C2 IP Blacklist",
+      "type": "ip_blacklist",
       "enabled": true,
-      "early_exit": false,
+      "severity": "critical",
+      "priority": 1000,
+      "early_exit": true,
       "config": {
-        "keywords": ["sqlmap", "nikto", "nmap scripting engine", "masscan", "zgrab", "nuclei", "dirbuster"],
-        "case_insensitive": true,
-        "protocols": ["TCP"],
-        "ports": [80, 8080, 443, 8443],
-        "direction": "dest",
-        "depth": 1024,
-        "offset": 0
-      },
-      "mitre_techniques": [
-        {
-          "tactic": "Discovery",
-          "technique_id": "T1595",
-          "technique_name": "Active Scanning"
-        }
-      ],
-      "description": "Detect known scanner and exploitation tool User-Agent strings"
-    },
-    {
-      "id": "rule-008",
-      "name": "Suspicious Non-Standard High Port Access",
-      "type": "port_blacklist",
-      "severity": "low",
-      "priority": 50,
-      "enabled": true,
-      "early_exit": false,
-      "config": {
-        "ports": [4444, 5555, 6666, 7777, 8888, 9999, 31337, 1337],
-        "protocols": ["TCP"]
+        "ips": [
+          "198.51.100.0/24",
+          "203.0.113.0/24",
+          "192.0.2.0/24"
+        ],
+        "direction": "any"
       },
       "mitre_techniques": [
         {
           "tactic": "Command and Control",
-          "technique_id": "T1571",
-          "technique_name": "Non-Standard Port"
+          "technique_id": "T1071",
+          "technique_name": "Application Layer Protocol"
         }
       ],
-      "description": "Flag connections to commonly used reverse-shell and C2 ports"
+      "description": "Detect known malicious infrastructure ranges from documentation examples."
     },
     {
-      "id": "rule-009",
-      "name": "FTP Credential Brute Force Pattern",
+      "id": "rule-007",
+      "name": "Scanner User-Agent Strings",
       "type": "payload_match",
-      "severity": "medium",
-      "priority": 110,
       "enabled": true,
+      "severity": "low",
+      "priority": 200,
       "early_exit": false,
       "config": {
-        "keywords": ["530 Login incorrect", "530 Login failed", "530 User cannot log in"],
+        "keywords": [
+          "nmap scripting engine",
+          "masscan",
+          "zgrab",
+          "sqlmap",
+          "nikto",
+          "dirbuster"
+        ],
         "case_insensitive": true,
-        "protocols": ["TCP"],
-        "ports": [21],
-        "direction": "src",
-        "depth": 256,
+        "protocols": [
+          "TCP"
+        ],
+        "ports": [
+          80,
+          8080,
+          443,
+          8443
+        ],
+        "direction": "dest",
+        "depth": 2048,
         "offset": 0
       },
       "mitre_techniques": [
         {
-          "tactic": "Credential Access",
-          "technique_id": "T1110",
-          "technique_name": "Brute Force"
+          "tactic": "Reconnaissance",
+          "technique_id": "T1595",
+          "technique_name": "Active Scanning"
         }
       ],
-      "description": "Detect FTP authentication failure responses indicating brute-force attempts"
+      "description": "Detect common scanner user-agent markers."
     },
     {
-      "id": "rule-010",
-      "name": "Telnet Access Attempt",
-      "type": "port_blacklist",
-      "severity": "medium",
-      "priority": 80,
-      "enabled": true,
-      "early_exit": false,
-      "config": {
-        "ports": [23],
-        "protocols": ["TCP"]
-      },
-      "mitre_techniques": [
-        {
-          "tactic": "Lateral Movement",
-          "technique_id": "T1021",
-          "technique_name": "Remote Services"
-        }
-      ],
-      "description": "Flag any Telnet connection attempts (plaintext remote access is a security risk)"
-    },
-    {
-      "id": "rule-011",
-      "name": "DNS Amplification Response",
-      "type": "payload_match",
-      "severity": "medium",
-      "priority": 90,
-      "enabled": false,
-      "early_exit": false,
-      "config": {
-        "keywords": ["EDNS0", "DNSSEC"],
-        "case_insensitive": false,
-        "protocols": ["UDP"],
-        "ports": [53],
-        "direction": "src",
-        "depth": 512,
-        "offset": 0
-      },
-      "mitre_techniques": [
-        {
-          "tactic": "Impact",
-          "technique_id": "T1498",
-          "technique_name": "Network Denial of Service"
-        }
-      ],
-      "description": "Detect large DNS responses that may indicate DNS amplification DDoS. Disabled by default — tune threshold for your environment."
-    },
-    {
-      "id": "rule-012",
+      "id": "rule-008",
       "name": "Reverse Shell Indicators",
       "type": "payload_match",
-      "severity": "critical",
-      "priority": 250,
       "enabled": true,
+      "severity": "critical",
+      "priority": 950,
       "early_exit": false,
       "config": {
-        "keywords": ["bash -i >& /dev/tcp/", "nc -e /bin/bash", "python -c 'import socket", "perl -e 'use Socket"],
+        "keywords": [
+          "bash -i >& /dev/tcp/",
+          "0>&1",
+          "exec /bin/sh",
+          "python -c 'import socket",
+          "nc -e /bin/sh"
+        ],
         "case_insensitive": false,
-        "protocols": ["TCP"],
-        "ports": [],
-        "direction": "any",
+        "protocols": [
+          "TCP"
+        ],
+        "ports": [
+          80,
+          8080,
+          443,
+          4444
+        ],
+        "direction": "dest",
         "depth": 4096,
         "offset": 0
       },
@@ -296,7 +301,7 @@
           "technique_name": "Unix Shell"
         }
       ],
-      "description": "Detect reverse shell one-liners in payload. Empty ports array = match all ports."
+      "description": "Detect common reverse shell payload fragments."
     }
   ]
 }
