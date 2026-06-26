@@ -23,7 +23,14 @@ TEST_SRCS   := tests/test_parser.c \
                src/parser_registry.c \
                src/passthrough_parser.c
 
-.PHONY: all test asan-test clean
+BENCH_TARGET := ../bin/bench-parser
+BENCH_SRCS   := tests/bench_parser.c \
+                src/eth_parser.c \
+                src/parser_registry.c \
+                src/passthrough_parser.c
+BENCH_ITERATIONS ?= 100000
+
+.PHONY: all test asan-test bench clean
 
 all: $(TARGET)
 
@@ -38,6 +45,10 @@ $(TEST_TARGET): $(TEST_SRCS)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $^
 
+$(BENCH_TARGET): $(BENCH_SRCS)
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -o $@ $^
+
 test: $(TEST_TARGET)
 	$(TEST_TARGET)
 
@@ -45,5 +56,8 @@ asan-test: CFLAGS += -fsanitize=address -fno-omit-frame-pointer -g
 asan-test: clean $(TEST_TARGET)
 	$(TEST_TARGET)
 
+bench: $(BENCH_TARGET)
+	$(BENCH_TARGET) $(BENCH_ITERATIONS)
+
 clean:
-	rm -f $(OBJS) $(TARGET) $(TEST_TARGET)
+	rm -f $(OBJS) $(TARGET) $(TEST_TARGET) $(BENCH_TARGET)

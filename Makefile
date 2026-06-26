@@ -5,6 +5,7 @@ GO         := go
 GOPROXY    ?= https://goproxy.cn,direct
 GO_MODULE  := ./engine
 BIN_DIR    := bin
+BENCH_ITERATIONS ?= 100000
 
 .PHONY: all build-c build-go build test asan-test bench lint clean quickstart help
 
@@ -32,8 +33,9 @@ test:
 asan-test:
 	$(MAKE) -C capture asan-test
 
-## bench     — run Go benchmarks (10 s each)
+## bench     — run C parser microbenchmarks and Go benchmarks
 bench:
+	$(MAKE) -C capture bench BENCH_ITERATIONS=$(BENCH_ITERATIONS)
 	cd $(GO_MODULE) && GOPROXY=$(GOPROXY) $(GO) test -bench=. -benchtime=10s -benchmem ./...
 
 ## lint      — run go vet and staticcheck (if installed)

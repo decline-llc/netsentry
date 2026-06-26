@@ -27,8 +27,8 @@ These targets exist today:
 make build-c       # compile C capture
 make build-go      # compile Go engine
 make build         # build both binaries
-make test          # go test -race -count=1 ./...
-make bench         # Go benchmarks
+make test          # C parser tests + Go race tests
+make bench         # C parser microbenchmarks + Go benchmarks
 make lint          # go vet + optional staticcheck
 make quickstart    # build, generate pcap, run engine/capture, print alerts
 make asan-test     # C parser tests under AddressSanitizer
@@ -162,19 +162,20 @@ Current verification before committing:
 
 ```bash
 make test
+make asan-test
 make quickstart
 ```
 
-For C changes, also run:
+For parser performance changes, also run:
 
 ```bash
-make build-c
+make bench
 ```
 
 Planned tests:
 
-- C parser unit tests for malformed input.
-- ASan and fuzz targets.
+- More C parser unit tests for malformed input.
+- Fuzz targets and full capture ASan build.
 - UDS receiver integration tests.
 - SQLite aggregation tests once storage is implemented.
 - Full graceful shutdown tests.
