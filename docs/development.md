@@ -27,7 +27,7 @@ These targets exist today:
 make build-c       # compile C capture
 make build-go      # compile Go engine
 make build         # build both binaries
-make test          # C parser tests + Go race tests
+make test          # C parser/UDS tests + Go race tests
 make bench         # C parser microbenchmarks + Go benchmarks
 make lint          # go vet + optional staticcheck
 make quickstart    # build, generate pcap, run engine/capture, print alerts
@@ -59,6 +59,8 @@ Expected current behavior:
 - Prints the JSON response from `/api/alerts`.
 
 Current seed rules should produce 5 alerts.
+
+The capture binary accepts `-c <connect_retries>` to bound initial UDS connection attempts. Offline mode defaults to 5 attempts so a missing engine fails clearly instead of retrying forever; live mode keeps retrying unless `-c` is set.
 
 ---
 
@@ -175,6 +177,7 @@ make bench
 Planned tests:
 
 - More C parser unit tests for malformed input.
+- UDS sender tests for write failure and reconnect paths.
 - Fuzz targets and full capture ASan build.
 - UDS receiver integration tests.
 - SQLite aggregation tests once storage is implemented.

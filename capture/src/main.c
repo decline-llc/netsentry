@@ -2,7 +2,7 @@
  * main.c — NetSentry packet capture entry point (v0.1.0).
  *
  * Usage: netsentry-capture [-r <pcap_file>] [-i <iface>]
- *                          [-s <uds_socket>] [-p <payload_len>]
+ *                          [-s <uds_socket>] [-c <connect_retries>]
  *
  * Reads packets from a pcap file (offline mode) or live interface,
  * serialises each as a JSON line, and forwards to the Go engine over
@@ -70,9 +70,11 @@ static void packet_handler(uint8_t *user, const struct pcap_pkthdr *hdr,
     } else {
         g_dropped++;
         if (r == UDS_ERR_PIPE) {
-            /* Go engine disconnected — attempt reconnect */
-            fprintf(stderr, "[capture] UDS pipe broken, reconnecting…\n");
-            uds_connect(NS_DEFAULT_UDS);
+            /* Go engine disconnected — attempt reconnect to the configured path. */
+            fprintf(stderr, "[capture] UDS pipe broken, reconnecting\n");
+            if (uds_reconnect() != UDS_OK) {
+                g_dropped++;
+            }
         }
     }
 }
@@ -82,15 +84,17 @@ int main(int argc, char *argv[]) {
     const char *pcap_file  = NULL;
     const char *iface      = NULL;
     const char *uds_path   = NS_DEFAULT_UDS;
+    int connect_retries    = -1;
 
     int opt;
-    while ((opt = getopt(argc, argv, "r:i:s:")) != -1) {
+    while ((opt = getopt(argc, argv, "r:i:s:c:")) != -1) {
         switch (opt) {
         case 'r': pcap_file = optarg; break;
         case 'i': iface     = optarg; break;
         case 's': uds_path  = optarg; break;
+        case 'c': connect_retries = atoi(optarg); break;
         default:
-            fprintf(stderr, "Usage: %s [-r pcap] [-i iface] [-s uds_path]\n",
+            fprintf(stderr, "Usage: %s [-r pcap] [-i iface] [-s uds_path] [-c connect_retries]\n",
                     argv[0]);
             return 1;
         }
@@ -99,6 +103,10 @@ int main(int argc, char *argv[]) {
     if (!pcap_file && !iface) {
         fprintf(stderr, "[capture] must specify -r <pcap> or -i <iface>\n");
         return 1;
+    }
+
+    if (connect_retries < 0) {
+        connect_retries = pcap_file ? 5 : 0;
     }
 
     signal(SIGINT,  sig_handler);
@@ -112,11 +120,17 @@ int main(int argc, char *argv[]) {
     gen_session_id(g_session_id);
     fprintf(stderr, "[capture] session_id=%s, connecting to %s\n",
             g_session_id, uds_path);
-    uds_connect(uds_path);
+    if (uds_connect_with_retries(uds_path, (unsigned int)connect_retries) != UDS_OK) {
+        fprintf(stderr, "[capture] unable to connect to %s\n", uds_path);
+        return 1;
+    }
 
     char hostname[64] = {0};
     gethostname(hostname, sizeof(hostname) - 1);
-    uds_send_hello(g_session_id, NS_VERSION, getpid(), hostname);
+    if (uds_send_hello(g_session_id, NS_VERSION, getpid(), hostname) != UDS_OK) {
+        fprintf(stderr, "[capture] failed to send hello frame\n");
+        return 1;
+    }
 
     /* Open pcap source */
     char errbuf[PCAP_ERRBUF_SIZE];
@@ -162,8 +176,8 @@ int main(int argc, char *argv[]) {
                 .dropped              = g_dropped,
                 .parse_errors         = g_parse_errors,
                 .buf_util_pct         = 0,
-                .avg_json_serialize_us = 0.0,
-                .uds_write_errors     = 0,
+                .avg_json_serialize_us = uds_avg_json_serialize_us(),
+                .uds_write_errors     = uds_write_errors(),
             };
             uds_send_heartbeat(&hb, g_session_id);
             last_hb = now;
@@ -172,10 +186,13 @@ int main(int argc, char *argv[]) {
 
     /* Final heartbeat before exit */
     HeartbeatInfo final_hb = {
-        .seq          = ++g_hb_seq,
-        .sent         = g_sent,
-        .dropped      = g_dropped,
-        .parse_errors = g_parse_errors,
+        .seq                   = ++g_hb_seq,
+        .sent                  = g_sent,
+        .dropped               = g_dropped,
+        .parse_errors          = g_parse_errors,
+        .buf_util_pct          = 0,
+        .avg_json_serialize_us = uds_avg_json_serialize_us(),
+        .uds_write_errors      = uds_write_errors(),
     };
     uds_send_heartbeat(&final_hb, g_session_id);
 

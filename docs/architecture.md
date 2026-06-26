@@ -34,7 +34,7 @@ Current implementation notes:
 
 - `capture/src/main.c` opens offline pcaps and sends parsed frames to `/tmp/netsentry.sock`.
 - `capture/src/eth_parser.c` handles Ethernet, VLAN/Q-in-Q, IPv4, TCP, and UDP with bounds checks.
-- `capture/src/uds_sender.c` currently builds JSON via `snprintf`; serializer hardening is W3 work.
+- `capture/src/uds_sender.c` formats JSON frames with explicit string escaping, Base64 payload preview encoding, full-line UDS writes, write-error counters, and bounded initial reconnect support.
 - `engine/cmd/netsentry/main.go` currently hosts the UDS listener, in-memory alert store, and minimal HTTP API. This is intentionally temporary and will be split into `internal/receiver`, `internal/pipeline`, `internal/alert`, and `internal/api`.
 - `engine/internal/rule` already uses immutable rule snapshots via `atomic.Pointer[ruleState]`.
 
@@ -42,7 +42,7 @@ Current implementation notes:
 
 ## 3. IPC Contract
 
-C sends one JSON object per line.
+C sends one JSON object per line. String fields are escaped before serialization; `payload_preview` is Base64.
 
 Control frames:
 
@@ -131,7 +131,7 @@ Target behavior:
 
 - Packet channel sends should block rather than silently drop.
 - Blocking sends must also listen to `ctx.Done()` so shutdown cannot leak goroutines.
-- C reconnect uses exponential backoff and counts dropped frames while disconnected.
+- C reconnect uses exponential backoff, can bound initial offline connection attempts, and counts write errors/dropped frames while disconnected.
 - Full graceful shutdown drains packet and alert buffers with explicit timeouts.
 
 The current development build has basic signal handling and HTTP shutdown, but not the full v0.1.0 drain sequence.
@@ -168,12 +168,13 @@ v0.1.0 target:
 
 ## 9. Testing Target
 
-Current build has Go tests for rule matching/Aho-Corasick, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, and malformed TCP data offsets, plus C parser microbenchmarks for plain TCP, VLAN TCP, and Q-in-Q TCP frames.
+Current build has Go tests for rule matching/Aho-Corasick, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting and bounded connection failure, plus C parser microbenchmarks for plain TCP, VLAN TCP, and Q-in-Q TCP frames.
 
 Next layers:
 
 - Broader C parser tests for additional malformed frames.
 - JSON serialization and UDS send microbenchmarks.
+- UDS reconnect integration tests against a real listener lifecycle.
 - Full ASan capture binary target.
 - UDS receiver tests for hello, heartbeat, bad JSON, context cancellation.
 - End-to-end quickstart regression.

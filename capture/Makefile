@@ -17,11 +17,17 @@ SRCS := src/main.c \
 OBJS    := $(SRCS:.c=.o)
 TARGET  := ../bin/netsentry-capture
 
-TEST_TARGET := ../bin/test-parser
-TEST_SRCS   := tests/test_parser.c \
-               src/eth_parser.c \
-               src/parser_registry.c \
-               src/passthrough_parser.c
+TEST_PARSER_TARGET := ../bin/test-parser
+TEST_PARSER_SRCS   := tests/test_parser.c \
+                      src/eth_parser.c \
+                      src/parser_registry.c \
+                      src/passthrough_parser.c
+
+TEST_UDS_TARGET := ../bin/test-uds-sender
+TEST_UDS_SRCS   := tests/test_uds_sender.c \
+                   src/uds_sender.c
+
+TEST_TARGETS := $(TEST_PARSER_TARGET) $(TEST_UDS_TARGET)
 
 BENCH_TARGET := ../bin/bench-parser
 BENCH_SRCS   := tests/bench_parser.c \
@@ -41,7 +47,11 @@ $(TARGET): $(OBJS)
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(TEST_TARGET): $(TEST_SRCS)
+$(TEST_PARSER_TARGET): $(TEST_PARSER_SRCS)
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -o $@ $^
+
+$(TEST_UDS_TARGET): $(TEST_UDS_SRCS)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $^
 
@@ -49,15 +59,17 @@ $(BENCH_TARGET): $(BENCH_SRCS)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $^
 
-test: $(TEST_TARGET)
-	$(TEST_TARGET)
+test: $(TEST_TARGETS)
+	$(TEST_PARSER_TARGET)
+	$(TEST_UDS_TARGET)
 
 asan-test: CFLAGS += -fsanitize=address -fno-omit-frame-pointer -g
-asan-test: clean $(TEST_TARGET)
-	$(TEST_TARGET)
+asan-test: clean $(TEST_TARGETS)
+	$(TEST_PARSER_TARGET)
+	$(TEST_UDS_TARGET)
 
 bench: $(BENCH_TARGET)
 	$(BENCH_TARGET) $(BENCH_ITERATIONS)
 
 clean:
-	rm -f $(OBJS) $(TARGET) $(TEST_TARGET) $(BENCH_TARGET)
+	rm -f $(OBJS) $(TARGET) $(TEST_TARGETS) $(BENCH_TARGET)
