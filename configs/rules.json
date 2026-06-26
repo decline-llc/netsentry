@@ -1,0 +1,139 @@
+[
+  {
+    "id": "rule-001",
+    "name": "SQL Injection - Union Select",
+    "type": "payload_match",
+    "enabled": true,
+    "severity": "high",
+    "priority": 800,
+    "early_exit": false,
+    "mitre_tactic": "Initial Access",
+    "mitre_technique_id": "T1190",
+    "mitre_technique_name": "Exploit Public-Facing Application",
+    "payload_match": {
+      "keywords": ["union select", "union all select", "' or '1'='1", "'; drop table", "--"],
+      "case_insensitive": true
+    }
+  },
+  {
+    "id": "rule-002",
+    "name": "XSS - Script Injection",
+    "type": "payload_match",
+    "enabled": true,
+    "severity": "medium",
+    "priority": 600,
+    "early_exit": false,
+    "mitre_tactic": "Initial Access",
+    "mitre_technique_id": "T1190",
+    "mitre_technique_name": "Exploit Public-Facing Application",
+    "payload_match": {
+      "keywords": ["<script>", "javascript:", "onerror=", "onload=", "alert("],
+      "case_insensitive": true
+    }
+  },
+  {
+    "id": "rule-003",
+    "name": "Path Traversal",
+    "type": "payload_match",
+    "enabled": true,
+    "severity": "high",
+    "priority": 700,
+    "early_exit": false,
+    "mitre_tactic": "Discovery",
+    "mitre_technique_id": "T1083",
+    "mitre_technique_name": "File and Directory Discovery",
+    "payload_match": {
+      "keywords": ["../../../", "..\\..\\..\\", "%2e%2e%2f", "%2e%2e/"],
+      "case_insensitive": true
+    }
+  },
+  {
+    "id": "rule-004",
+    "name": "Shell Command Injection",
+    "type": "payload_match",
+    "enabled": true,
+    "severity": "critical",
+    "priority": 900,
+    "early_exit": false,
+    "mitre_tactic": "Execution",
+    "mitre_technique_id": "T1059",
+    "mitre_technique_name": "Command and Scripting Interpreter",
+    "payload_match": {
+      "keywords": [";id;", ";whoami;", "|id|", "|whoami|", "$(id)", "`id`", "bash -i", "sh -i"],
+      "case_insensitive": true
+    }
+  },
+  {
+    "id": "rule-005",
+    "name": "Log4Shell (CVE-2021-44228)",
+    "type": "payload_match",
+    "enabled": true,
+    "severity": "critical",
+    "priority": 1000,
+    "early_exit": false,
+    "mitre_tactic": "Initial Access",
+    "mitre_technique_id": "T1190",
+    "mitre_technique_name": "Exploit Public-Facing Application",
+    "payload_match": {
+      "keywords": ["${jndi:ldap://", "${jndi:rmi://", "${jndi:dns://", "${${lower:j}ndi:"],
+      "case_insensitive": false
+    }
+  },
+  {
+    "id": "rule-006",
+    "name": "Known C2 IP Blacklist",
+    "type": "ip_blacklist",
+    "enabled": true,
+    "severity": "critical",
+    "priority": 1000,
+    "early_exit": true,
+    "mitre_tactic": "Command and Control",
+    "mitre_technique_id": "T1071",
+    "mitre_technique_name": "Application Layer Protocol",
+    "ip_blacklist": {
+      "ips": [
+        "198.51.100.0/24",
+        "203.0.113.0/24",
+        "192.0.2.0/24"
+      ]
+    }
+  },
+  {
+    "id": "rule-007",
+    "name": "Scanner User-Agent Strings",
+    "type": "payload_match",
+    "enabled": true,
+    "severity": "low",
+    "priority": 200,
+    "early_exit": false,
+    "mitre_tactic": "Reconnaissance",
+    "mitre_technique_id": "T1595",
+    "mitre_technique_name": "Active Scanning",
+    "payload_match": {
+      "keywords": ["nmap scripting engine", "masscan", "zgrab", "sqlmap", "nikto", "dirbuster"],
+      "case_insensitive": true
+    }
+  },
+  {
+    "id": "rule-008",
+    "name": "Reverse Shell Indicators",
+    "type": "payload_match",
+    "enabled": true,
+    "severity": "critical",
+    "priority": 950,
+    "early_exit": false,
+    "mitre_tactic": "Execution",
+    "mitre_technique_id": "T1059.004",
+    "mitre_technique_name": "Unix Shell",
+    "payload_match": {
+      "keywords": [
+        "bash -i >& /dev/tcp/",
+        "0>&1",
+        "exec /bin/sh",
+        "python -c 'import socket",
+        "nc -e /bin/sh"
+      ],
+      "case_insensitive": false
+    }
+  }
+]
