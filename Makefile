@@ -6,7 +6,7 @@ GOPROXY    ?= https://goproxy.cn,direct
 GO_MODULE  := ./engine
 BIN_DIR    := bin
 
-.PHONY: all build-c build-go build test bench lint clean quickstart help
+.PHONY: all build-c build-go build test asan-test bench lint clean quickstart help
 
 all: build
 
@@ -23,9 +23,14 @@ build-go:
 ## build     — compile both C and Go binaries
 build: build-c build-go
 
-## test      — run Go unit tests with race detector
+## test      — run C parser tests and Go unit tests with race detector
 test:
+	$(MAKE) -C capture test
 	cd $(GO_MODULE) && GOPROXY=$(GOPROXY) $(GO) test -race -count=1 ./...
+
+## asan-test — run C parser tests with AddressSanitizer
+asan-test:
+	$(MAKE) -C capture asan-test
 
 ## bench     — run Go benchmarks (10 s each)
 bench:

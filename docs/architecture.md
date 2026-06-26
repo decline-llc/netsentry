@@ -168,12 +168,12 @@ v0.1.0 target:
 
 ## 9. Testing Target
 
-Current build has Go tests for rule matching and Aho-Corasick.
+Current build has Go tests for rule matching/Aho-Corasick and C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, and malformed TCP data offsets.
 
 Next layers:
 
-- C parser tests for malformed frames, VLAN, Q-in-Q, fragments, short packets.
-- ASan build target for C.
+- Broader C parser tests for additional malformed frames.
+- Full ASan capture binary target.
 - UDS receiver tests for hello, heartbeat, bad JSON, context cancellation.
 - End-to-end quickstart regression.
 - Race tests for rule reload and matching.

@@ -31,13 +31,13 @@ make test          # go test -race -count=1 ./...
 make bench         # Go benchmarks
 make lint          # go vet + optional staticcheck
 make quickstart    # build, generate pcap, run engine/capture, print alerts
+make asan-test     # C parser tests under AddressSanitizer
 make clean
 ```
 
 Planned but not implemented yet:
 
-- `make build-asan`
-- C unit test targets
+- full `make build-asan` capture binary target
 - C fuzz targets
 - `make sanitize-pcap`
 - Docker/release targets
