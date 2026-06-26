@@ -117,6 +117,7 @@ engine/
   cmd/netsentry/main.go
   internal/config/
   internal/pipeline/interfaces.go
+  internal/receiver/
   internal/rule/
   internal/signal/
   pkg/model/
@@ -179,7 +180,7 @@ Planned tests:
 - More C parser unit tests for malformed input.
 - Broader UDS sender tests for edge-case write failures.
 - Fuzz targets and full capture ASan build.
-- UDS receiver integration tests.
+- Broader UDS receiver integration tests for multi-session lifecycle.
 - SQLite aggregation tests once storage is implemented.
 - Full graceful shutdown tests.
 

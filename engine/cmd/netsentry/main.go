@@ -1,12 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
-	"net"
 	"net/http"
 	"os"
 	"sync"
@@ -15,6 +13,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/decline-llc/netsentry/internal/config"
+	"github.com/decline-llc/netsentry/internal/receiver"
 	"github.com/decline-llc/netsentry/internal/rule"
 	nssignal "github.com/decline-llc/netsentry/internal/signal"
 	"github.com/decline-llc/netsentry/pkg/model"
@@ -97,7 +96,15 @@ func main() {
 	defer cancel()
 
 	store := &alertStore{}
-	startUDSReceiver(ctx, cfg.Engine.UDSSocketPath, ruleEngine, store, logger)
+	recv := receiver.New(receiver.Config{
+		Path:       cfg.Engine.UDSSocketPath,
+		SocketMode: receiver.ParseSocketMode(cfg.Capture.UDSSocketMode),
+		BufferSize: cfg.Engine.ChannelBufferSize,
+	}, logger)
+	if err := recv.Start(ctx); err != nil {
+		logger.Fatal("start uds receiver", zap.Error(err))
+	}
+	startPacketConsumer(ctx, recv.Packets(), ruleEngine, store, logger)
 	startHTTPServer(ctx, cfg.Engine.APIPort, store, logger)
 
 	logger.Info("engine ready — waiting for shutdown signal (SIGINT/SIGTERM)",
@@ -107,74 +114,33 @@ func main() {
 	logger.Info("shutdown signal received, exiting")
 }
 
-func startUDSReceiver(ctx context.Context, path string, engine *rule.Engine, store *alertStore, logger *zap.Logger) {
-	if path == "" {
-		path = "/tmp/netsentry.sock"
-	}
-	_ = os.Remove(path)
-	ln, err := net.Listen("unix", path)
-	if err != nil {
-		logger.Fatal("start uds listener", zap.String("path", path), zap.Error(err))
-	}
-	if err := os.Chmod(path, 0o600); err != nil {
-		logger.Warn("chmod uds socket", zap.Error(err))
-	}
-
+func startPacketConsumer(ctx context.Context, packets <-chan *model.PacketInfo, engine *rule.Engine, store *alertStore, logger *zap.Logger) {
 	go func() {
-		<-ctx.Done()
-		_ = ln.Close()
-		_ = os.Remove(path)
-	}()
-
-	go func() {
-		logger.Info("uds listener started", zap.String("path", path))
 		for {
-			conn, err := ln.Accept()
-			if err != nil {
-				if ctx.Err() != nil {
+			select {
+			case <-ctx.Done():
+				return
+			case pkt, ok := <-packets:
+				if !ok {
 					return
 				}
-				logger.Warn("accept uds connection", zap.Error(err))
-				continue
+				if pkt == nil {
+					continue
+				}
+				alerts := engine.Match(pkt)
+				for _, alert := range alerts {
+					alert.Timestamp = pkt.Timestamp().UTC()
+				}
+				store.Add(alerts...)
+				if len(alerts) > 0 {
+					logger.Info("packet matched rules",
+						zap.String("src_ip", pkt.SrcIP),
+						zap.String("dst_ip", pkt.DstIP),
+						zap.Int("alerts", len(alerts)))
+				}
 			}
-			go handleUDSConn(conn, engine, store, logger)
 		}
 	}()
-}
-
-func handleUDSConn(conn net.Conn, engine *rule.Engine, store *alertStore, logger *zap.Logger) {
-	defer conn.Close()
-	scanner := bufio.NewScanner(conn)
-	scanner.Buffer(make([]byte, 0, 64*1024), 1024*1024)
-	for scanner.Scan() {
-		line := scanner.Bytes()
-		var meta struct {
-			Type string `json:"type"`
-		}
-		if err := json.Unmarshal(line, &meta); err == nil && meta.Type != "" {
-			continue
-		}
-
-		var pkt model.PacketInfo
-		if err := json.Unmarshal(line, &pkt); err != nil {
-			logger.Warn("decode packet frame", zap.Error(err))
-			continue
-		}
-		alerts := engine.Match(&pkt)
-		for _, alert := range alerts {
-			alert.Timestamp = pkt.Timestamp().UTC()
-		}
-		store.Add(alerts...)
-		if len(alerts) > 0 {
-			logger.Info("packet matched rules",
-				zap.String("src_ip", pkt.SrcIP),
-				zap.String("dst_ip", pkt.DstIP),
-				zap.Int("alerts", len(alerts)))
-		}
-	}
-	if err := scanner.Err(); err != nil {
-		logger.Warn("read uds connection", zap.Error(err))
-	}
 }
 
 func startHTTPServer(ctx context.Context, port int, store *alertStore, logger *zap.Logger) {
