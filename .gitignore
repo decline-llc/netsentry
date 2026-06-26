@@ -86,3 +86,7 @@ data/*.jsonl
 *.swp
 *.swo
 *~
+
+# Local dev memory (not for repo)
+DEVLOG.md
+.qoder/
