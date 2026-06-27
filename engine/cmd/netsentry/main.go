@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"net/http"
@@ -12,6 +11,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/decline-llc/netsentry/internal/alert"
+	"github.com/decline-llc/netsentry/internal/api"
 	"github.com/decline-llc/netsentry/internal/config"
 	"github.com/decline-llc/netsentry/internal/pipeline"
 	"github.com/decline-llc/netsentry/internal/receiver"
@@ -104,48 +104,9 @@ func startHTTPServer(ctx context.Context, port int, store *alert.Store, recv *re
 	if port == 0 {
 		port = 8080
 	}
-	mux := http.NewServeMux()
-	mux.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
-		count, err := store.Count(r.Context())
-		if err != nil {
-			writeJSON(w, http.StatusInternalServerError, map[string]any{"error": err.Error()})
-			return
-		}
-		writeJSON(w, http.StatusOK, map[string]any{
-			"status": "ok",
-			"alerts": count,
-		})
-	})
-	mux.HandleFunc("/api/metrics", func(w http.ResponseWriter, r *http.Request) {
-		count, err := store.Count(r.Context())
-		if err != nil {
-			writeJSON(w, http.StatusInternalServerError, map[string]any{"error": err.Error()})
-			return
-		}
-		body := stats.RenderPrometheus(metrics.Snapshot(), map[string]float64{
-			"netsentry_alerts_current":     float64(count),
-			"netsentry_packet_queue_depth": float64(recv.QueueDepth()),
-			"netsentry_rules_loaded":       float64(ruleEngine.RuleCount()),
-		})
-		w.Header().Set("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte(body))
-	})
-	mux.HandleFunc("/api/alerts", func(w http.ResponseWriter, r *http.Request) {
-		alerts, err := store.List(r.Context())
-		if err != nil {
-			writeJSON(w, http.StatusInternalServerError, map[string]any{"error": err.Error()})
-			return
-		}
-		writeJSON(w, http.StatusOK, map[string]any{
-			"alerts": alerts,
-			"total":  len(alerts),
-		})
-	})
-
 	srv := &http.Server{
 		Addr:              fmt.Sprintf(":%d", port),
-		Handler:           mux,
+		Handler:           api.NewServer(store, recv, ruleEngine, metrics).Handler(),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 	go func() {
@@ -160,10 +121,4 @@ func startHTTPServer(ctx context.Context, port int, store *alert.Store, recv *re
 			logger.Fatal("http api failed", zap.Error(err))
 		}
 	}()
-}
-
-func writeJSON(w http.ResponseWriter, status int, v any) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(v)
 }

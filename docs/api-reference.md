@@ -55,9 +55,9 @@ Returns Prometheus text format with basic process counters and gauges.
 
 Current limitations:
 
-- No pagination, filtering, or stable envelope yet.
+- Alert pagination and the stable list envelope exist; filtering is still pending.
 - Alert storage is SQLite-backed with startup TTL pruning and old daily shard file cleanup; optional daily shard pathing exists, but runtime cross-day rotation and cross-day querying are not implemented yet.
-- Errors still use ad hoc JSON rather than the planned unified error envelope.
+- Validation and internal API errors use the unified error envelope.
 - No authentication yet.
 - No payload redaction yet.
 
@@ -65,7 +65,7 @@ Current limitations:
 
 ## Planned v0.1.0 API Contract
 
-The target stable list response will use:
+List responses use:
 
 ```json
 {
@@ -78,7 +78,7 @@ The target stable list response will use:
 }
 ```
 
-The target error response will use:
+Error responses use:
 
 ```json
 {
@@ -97,7 +97,7 @@ Planned endpoints:
 | --- | --- | --- |
 | `GET /api/health` | partial | Minimal response exists; verbose component snapshot pending. |
 | `GET /api/health?verbose=true` | planned | Capture heartbeat, channel depth, storage and throughput details. |
-| `GET /api/alerts` | partial | SQLite-backed aggregated list exists; pagination/filtering pending. |
+| `GET /api/alerts` | partial | SQLite-backed paginated list exists; filtering pending. |
 | `GET /api/metrics` | partial | Basic Prometheus text format exists; fuller coverage pending. |
 | `GET/POST /api/rules` | planned | Rule listing and hot reload. |
 | `GET/PUT/PATCH/DELETE /api/rules/:id` | planned | Rule CRUD. |

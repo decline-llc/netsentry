@@ -38,7 +38,7 @@ Current implementation notes:
 - `capture/src/uds_sender.c` formats JSON frames with explicit string escaping, Base64 payload preview encoding, full-line UDS writes, write-error counters, and bounded initial reconnect support.
 - `engine/internal/receiver` owns the UDS listener, hello/heartbeat state, and context-aware packet channel.
 - `engine/internal/pipeline` owns the single worker that consumes packets, calls the rule engine, timestamps alerts, and writes them through an `AlertWriter`.
-- `engine/internal/alert` owns the SQLite alert store; `engine/cmd/netsentry/main.go` still hosts the minimal HTTP API until the W8 split.
+- `engine/internal/alert` owns the SQLite alert store; `engine/internal/api` owns the minimal HTTP router, pagination, and error envelopes.
 - `engine/internal/rule` already uses immutable rule snapshots via `atomic.Pointer[ruleState]`.
 
 ---
