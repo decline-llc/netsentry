@@ -22,6 +22,7 @@ type Options struct {
 	JournalMode       string
 	BusyTimeoutMS     int
 	AggregationWindow time.Duration
+	RetentionDays     int
 	Now               func() time.Time
 }
 
@@ -30,6 +31,8 @@ type Store struct {
 	db                *sql.DB
 	path              string
 	aggregationWindow time.Duration
+	retentionDays     int
+	now               func() time.Time
 }
 
 // Open creates the SQLite database and initializes its schema.
@@ -55,8 +58,18 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 	}
 	db.SetMaxOpenConns(1)
 
-	store := &Store{db: db, path: dbPath, aggregationWindow: opts.AggregationWindow}
+	store := &Store{
+		db:                db,
+		path:              dbPath,
+		aggregationWindow: opts.AggregationWindow,
+		retentionDays:     opts.RetentionDays,
+		now:               clock(opts.Now),
+	}
 	if err := store.init(ctx, opts); err != nil {
+		_ = db.Close()
+		return nil, err
+	}
+	if _, err := store.PruneExpired(ctx); err != nil {
 		_ = db.Close()
 		return nil, err
 	}
@@ -83,6 +96,13 @@ func defaultDBDir(dir string) string {
 		return "data"
 	}
 	return dir
+}
+
+func clock(now func() time.Time) func() time.Time {
+	if now != nil {
+		return func() time.Time { return now().UTC() }
+	}
+	return func() time.Time { return time.Now().UTC() }
 }
 
 // Path returns the concrete SQLite database path in use.
@@ -262,6 +282,24 @@ func (s *Store) Count(ctx context.Context) (int, error) {
 		return 0, fmt.Errorf("count alerts: %w", err)
 	}
 	return count, nil
+}
+
+// PruneExpired deletes alerts older than the configured retention window from
+// the currently opened SQLite database. RetentionDays <= 0 disables pruning.
+func (s *Store) PruneExpired(ctx context.Context) (int64, error) {
+	if s.retentionDays <= 0 {
+		return 0, nil
+	}
+	cutoff := s.now().AddDate(0, 0, -s.retentionDays)
+	result, err := s.db.ExecContext(ctx, "DELETE FROM alerts WHERE last_seen < ?", formatTime(cutoff))
+	if err != nil {
+		return 0, fmt.Errorf("prune expired alerts: %w", err)
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf("count pruned alerts: %w", err)
+	}
+	return rows, nil
 }
 
 func scanAlert(rows *sql.Rows) (*model.Alert, error) {

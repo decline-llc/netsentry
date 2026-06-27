@@ -56,7 +56,7 @@ Returns Prometheus text format with basic process counters and gauges.
 Current limitations:
 
 - No pagination, filtering, or stable envelope yet.
-- Alert storage is SQLite-backed; optional daily shard pathing exists, but runtime cross-day rotation, cross-day querying, and TTL cleanup are not implemented yet.
+- Alert storage is SQLite-backed with startup TTL pruning in the opened database; optional daily shard pathing exists, but runtime cross-day rotation, cross-day querying, and old shard file cleanup are not implemented yet.
 - Errors still use ad hoc JSON rather than the planned unified error envelope.
 - No authentication yet.
 - No payload redaction yet.

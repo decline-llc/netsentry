@@ -94,6 +94,47 @@ func TestStoreResolvesDailyShardPath(t *testing.T) {
 	}
 }
 
+func TestStorePrunesExpiredAlerts(t *testing.T) {
+	ctx := context.Background()
+	now := time.Date(2026, 6, 27, 12, 0, 0, 0, time.UTC)
+	store, err := Open(ctx, Options{
+		Path:              filepath.Join(t.TempDir(), "alerts.db"),
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		RetentionDays:     7,
+		Now: func() time.Time {
+			return now
+		},
+	})
+	if err != nil {
+		t.Fatalf("open store: %v", err)
+	}
+	defer store.Close()
+
+	if err := store.WriteBatch(ctx, []*model.Alert{
+		makeAlert(now.AddDate(0, 0, -8), "expired"),
+		makeAlert(now.AddDate(0, 0, -6), "fresh"),
+	}); err != nil {
+		t.Fatalf("write alerts: %v", err)
+	}
+
+	pruned, err := store.PruneExpired(ctx)
+	if err != nil {
+		t.Fatalf("prune expired alerts: %v", err)
+	}
+	if pruned != 1 {
+		t.Fatalf("pruned = %d, want 1", pruned)
+	}
+	listed, err := store.List(ctx)
+	if err != nil {
+		t.Fatalf("list alerts: %v", err)
+	}
+	if len(listed) != 1 || listed[0].MatchedKeyword != "fresh" {
+		t.Fatalf("expected only fresh alert, got %+v", listed)
+	}
+}
+
 func openTestStore(t *testing.T, window time.Duration) *Store {
 	t.Helper()
 	store, err := Open(context.Background(), Options{
