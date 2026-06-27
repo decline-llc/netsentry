@@ -87,6 +87,52 @@ func TestAlertsInvalidPaginationUsesErrorEnvelope(t *testing.T) {
 	}
 }
 
+func TestAlertsFilters(t *testing.T) {
+	server := NewServer(&fakeStore{alerts: []*model.Alert{
+		{RuleID: "rule-1", Severity: model.SeverityHigh, SrcIP: "10.0.0.1", DstIP: "10.0.0.2", DstPort: 80, Protocol: "TCP"},
+		{RuleID: "rule-2", Severity: model.SeverityLow, SrcIP: "10.0.0.3", DstIP: "10.0.0.4", DstPort: 53, Protocol: "UDP"},
+	}}, fakeQueue{}, fakeRules{}, stats.New())
+
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/alerts?severity=high&src_ip=10.0.0.1&protocol=tcp&dst_port=80", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	var got struct {
+		Data       []model.Alert `json:"data"`
+		Pagination pagination    `json:"pagination"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &got); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if len(got.Data) != 1 || got.Data[0].RuleID != "rule-1" {
+		t.Fatalf("unexpected filtered alerts: %+v", got.Data)
+	}
+	if got.Pagination.Total != 1 {
+		t.Fatalf("total = %d, want 1", got.Pagination.Total)
+	}
+}
+
+func TestAlertsInvalidFilterUsesErrorEnvelope(t *testing.T) {
+	server := NewServer(&fakeStore{}, fakeQueue{}, fakeRules{}, stats.New())
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/alerts?dst_port=70000", nil)
+	req.Header.Set("X-Request-ID", "req-filter")
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	body := rec.Body.String()
+	for _, want := range []string{`"code":"VALIDATION_ERROR"`, `"request_id":"req-filter"`, "dst_port must be an integer from 0 to 65535"} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("response missing %q: %s", want, body)
+		}
+	}
+}
+
 func TestStoreErrorUsesErrorEnvelope(t *testing.T) {
 	server := NewServer(&fakeStore{err: errors.New("disk offline")}, fakeQueue{}, fakeRules{}, stats.New())
 	rec := httptest.NewRecorder()

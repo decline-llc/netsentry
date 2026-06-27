@@ -79,15 +79,21 @@ func (s *Server) handleAlerts(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid pagination parameters", err.Error())
 		return
 	}
+	filters, err := parseAlertFilters(r)
+	if err != nil {
+		writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid alert filters", err.Error())
+		return
+	}
 	alerts, err := s.store.List(r.Context())
 	if err != nil {
 		writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not list alerts")
 		return
 	}
-	p.Total = len(alerts)
-	start, end := pageBounds(len(alerts), p)
+	filtered := applyAlertFilters(alerts, filters)
+	p.Total = len(filtered)
+	start, end := pageBounds(len(filtered), p)
 	writeJSON(w, http.StatusOK, alertListResponse{
-		Data:       alerts[start:end],
+		Data:       filtered[start:end],
 		Pagination: p,
 	})
 }

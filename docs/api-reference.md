@@ -23,9 +23,22 @@ Returns a minimal liveness response. Query parameters are currently ignored.
 
 Returns SQLite-backed aggregated alerts ordered by most recent activity.
 
+Query parameters:
+
+| Name | Description |
+| --- | --- |
+| `page` | Positive page number. Defaults to `1`. |
+| `per_page` | Page size from `1` to `100`. Defaults to `20`. |
+| `rule_id` | Exact rule ID match. |
+| `severity` | One of `low`, `medium`, `high`, `critical`. |
+| `src_ip` | Exact source IP match. |
+| `dst_ip` | Exact destination IP match. |
+| `protocol` | Exact protocol match; compared case-insensitively. |
+| `dst_port` | Destination port from `0` to `65535`. |
+
 ```json
 {
-  "alerts": [
+  "data": [
     {
       "id": "rule-001-1",
       "event_id": "rule-001-1",
@@ -45,7 +58,11 @@ Returns SQLite-backed aggregated alerts ordered by most recent activity.
       "matched_keyword": "--"
     }
   ],
-  "total": 1
+  "pagination": {
+    "page": 1,
+    "per_page": 20,
+    "total": 1
+  }
 }
 ```
 
@@ -55,7 +72,7 @@ Returns Prometheus text format with basic process counters and gauges.
 
 Current limitations:
 
-- Alert pagination and the stable list envelope exist; filtering is still pending.
+- Alert pagination, the stable list envelope, and basic exact-match filters exist; advanced query features are still pending.
 - Alert storage is SQLite-backed with startup TTL pruning and old daily shard file cleanup; optional daily shard pathing exists, but runtime cross-day rotation and cross-day querying are not implemented yet.
 - Validation and internal API errors use the unified error envelope.
 - No authentication yet.
@@ -97,7 +114,7 @@ Planned endpoints:
 | --- | --- | --- |
 | `GET /api/health` | partial | Minimal response exists; verbose component snapshot pending. |
 | `GET /api/health?verbose=true` | planned | Capture heartbeat, channel depth, storage and throughput details. |
-| `GET /api/alerts` | partial | SQLite-backed paginated list exists; filtering pending. |
+| `GET /api/alerts` | partial | SQLite-backed paginated list with basic exact-match filters exists; advanced query features pending. |
 | `GET /api/metrics` | partial | Basic Prometheus text format exists; fuller coverage pending. |
 | `GET/POST /api/rules` | planned | Rule listing and hot reload. |
 | `GET/PUT/PATCH/DELETE /api/rules/:id` | planned | Rule CRUD. |
