@@ -155,11 +155,11 @@ Current build:
 - Fixed aggregation window from `engine.alert_aggregation_window`.
 - Optional daily shard pathing with `engine.db_shard_daily`, which opens `engine.db_dir/netsentry-YYYY-MM-DD.db` at process start.
 - Row-level TTL pruning in the opened database using `engine.alert_retention_days`.
+- Startup cleanup of old `netsentry-YYYY-MM-DD.db` daily shard files and their WAL/SHM sidecars when retention is enabled.
 
 Remaining v0.1.0 storage work:
 
 - Runtime cross-day DB rotation and cross-day querying.
-- Old daily shard file cleanup.
 - WAL replay, if the write-ahead JSONL path is kept.
 - No unbounded memory buffering on disk-full conditions.
 

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 
@@ -70,6 +71,10 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 		return nil, err
 	}
 	if _, err := store.PruneExpired(ctx); err != nil {
+		_ = db.Close()
+		return nil, err
+	}
+	if _, err := store.PruneExpiredShardFiles(ctx, defaultDBDir(opts.Dir)); err != nil {
 		_ = db.Close()
 		return nil, err
 	}
@@ -290,7 +295,7 @@ func (s *Store) PruneExpired(ctx context.Context) (int64, error) {
 	if s.retentionDays <= 0 {
 		return 0, nil
 	}
-	cutoff := s.now().AddDate(0, 0, -s.retentionDays)
+	cutoff := s.retentionCutoff()
 	result, err := s.db.ExecContext(ctx, "DELETE FROM alerts WHERE last_seen < ?", formatTime(cutoff))
 	if err != nil {
 		return 0, fmt.Errorf("prune expired alerts: %w", err)
@@ -300,6 +305,66 @@ func (s *Store) PruneExpired(ctx context.Context) (int64, error) {
 		return 0, fmt.Errorf("count pruned alerts: %w", err)
 	}
 	return rows, nil
+}
+
+var dailyShardNameRe = regexp.MustCompile(`^netsentry-(\d{4}-\d{2}-\d{2})\.db$`)
+
+// PruneExpiredShardFiles deletes old daily shard database files and their WAL/SHM
+// sidecars. It only touches files named netsentry-YYYY-MM-DD.db.
+func (s *Store) PruneExpiredShardFiles(ctx context.Context, dir string) (int, error) {
+	if err := ctx.Err(); err != nil {
+		return 0, err
+	}
+	if s.retentionDays <= 0 {
+		return 0, nil
+	}
+	cutoffDate := s.retentionCutoff().Format("2006-01-02")
+	entries, err := os.ReadDir(defaultDBDir(dir))
+	if err != nil {
+		if os.IsNotExist(err) {
+			return 0, nil
+		}
+		return 0, fmt.Errorf("read alert shard dir: %w", err)
+	}
+
+	deleted := 0
+	for _, entry := range entries {
+		if err := ctx.Err(); err != nil {
+			return deleted, err
+		}
+		if entry.IsDir() {
+			continue
+		}
+		match := dailyShardNameRe.FindStringSubmatch(entry.Name())
+		if match == nil || match[1] >= cutoffDate {
+			continue
+		}
+		base := filepath.Join(defaultDBDir(dir), entry.Name())
+		removed, err := removeShardSet(base)
+		if err != nil {
+			return deleted, err
+		}
+		deleted += removed
+	}
+	return deleted, nil
+}
+
+func (s *Store) retentionCutoff() time.Time {
+	return s.now().AddDate(0, 0, -s.retentionDays)
+}
+
+func removeShardSet(base string) (int, error) {
+	deleted := 0
+	for _, path := range []string{base, base + "-wal", base + "-shm"} {
+		if err := os.Remove(path); err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
+			return deleted, fmt.Errorf("remove alert shard %s: %w", path, err)
+		}
+		deleted++
+	}
+	return deleted, nil
 }
 
 func scanAlert(rows *sql.Rows) (*model.Alert, error) {

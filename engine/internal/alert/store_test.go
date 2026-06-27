@@ -2,6 +2,7 @@ package alert
 
 import (
 	"context"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -133,6 +134,68 @@ func TestStorePrunesExpiredAlerts(t *testing.T) {
 	if len(listed) != 1 || listed[0].MatchedKeyword != "fresh" {
 		t.Fatalf("expected only fresh alert, got %+v", listed)
 	}
+}
+
+func TestStorePrunesExpiredShardFiles(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	now := time.Date(2026, 6, 27, 12, 0, 0, 0, time.UTC)
+	store, err := Open(ctx, Options{
+		Dir:               dir,
+		DailyShard:        true,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		RetentionDays:     7,
+		Now: func() time.Time {
+			return now
+		},
+	})
+	if err != nil {
+		t.Fatalf("open daily shard store: %v", err)
+	}
+	defer store.Close()
+
+	oldBase := filepath.Join(dir, "netsentry-2026-06-19.db")
+	for _, path := range []string{oldBase, oldBase + "-wal", oldBase + "-shm"} {
+		if err := touchFile(path); err != nil {
+			t.Fatalf("touch old shard file %s: %v", path, err)
+		}
+	}
+	fresh := filepath.Join(dir, "netsentry-2026-06-21.db")
+	unrelated := filepath.Join(dir, "notes-2026-06-19.db")
+	for _, path := range []string{fresh, unrelated} {
+		if err := touchFile(path); err != nil {
+			t.Fatalf("touch retained file %s: %v", path, err)
+		}
+	}
+
+	deleted, err := store.PruneExpiredShardFiles(ctx, dir)
+	if err != nil {
+		t.Fatalf("prune expired shard files: %v", err)
+	}
+	if deleted != 3 {
+		t.Fatalf("deleted = %d, want 3", deleted)
+	}
+	for _, path := range []string{oldBase, oldBase + "-wal", oldBase + "-shm"} {
+		if fileExists(path) {
+			t.Fatalf("expected %s to be removed", path)
+		}
+	}
+	for _, path := range []string{store.Path(), fresh, unrelated} {
+		if !fileExists(path) {
+			t.Fatalf("expected %s to remain", path)
+		}
+	}
+}
+
+func touchFile(path string) error {
+	return os.WriteFile(path, []byte("x"), 0o600)
+}
+
+func fileExists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
 }
 
 func openTestStore(t *testing.T, window time.Duration) *Store {
