@@ -27,7 +27,7 @@ pcap file
   -> Go receiver packet channel
   -> single pipeline worker
   -> atomic.Pointer rule engine
-  -> in-memory alert store
+  -> SQLite alert store with UPSERT aggregation
   -> GET /api/alerts
 ```
 
@@ -38,7 +38,7 @@ Current implementation notes:
 - `capture/src/uds_sender.c` formats JSON frames with explicit string escaping, Base64 payload preview encoding, full-line UDS writes, write-error counters, and bounded initial reconnect support.
 - `engine/internal/receiver` owns the UDS listener, hello/heartbeat state, and context-aware packet channel.
 - `engine/internal/pipeline` owns the single worker that consumes packets, calls the rule engine, timestamps alerts, and writes them through an `AlertWriter`.
-- `engine/cmd/netsentry/main.go` still hosts the in-memory alert store and minimal HTTP API until the W7/W8 splits.
+- `engine/internal/alert` owns the SQLite alert store; `engine/cmd/netsentry/main.go` still hosts the minimal HTTP API until the W8 split.
 - `engine/internal/rule` already uses immutable rule snapshots via `atomic.Pointer[ruleState]`.
 
 ---
@@ -101,10 +101,12 @@ Supported rule types in the current code:
 Current rule semantics:
 
 - `payload_match` enforces `protocols`, `ports`, `direction`, `depth`, and `offset` per rule. Mixed case-sensitive and case-insensitive payload rules are verified per rule after AC candidate matching.
+- `ip_blacklist` enforces `ips`, `direction`, and optional `protocols` per rule. Exact IPs and CIDRs stay scoped to the owning rule.
+- `port_blacklist` enforces `ports`, `direction`, and optional `protocols` per rule.
 
 Known implementation gaps to close before v0.1.0:
 
-- `ip_blacklist` and `port_blacklist` still need fuller direction/protocol semantics and validation.
+- Rule management is still file-seeded only; REST CRUD and hot reload remain planned.
 
 ---
 
@@ -144,15 +146,19 @@ The current development build has basic signal handling and HTTP shutdown, but n
 
 ---
 
-## 7. Storage Target
+## 7. Storage
 
-Current build: in-memory alerts only.
-
-v0.1.0 target:
+Current build:
 
 - SQLite using `modernc.org/sqlite`.
 - UPSERT aggregation by `(rule_id, src_ip, dst_ip, dst_port, window_start)`.
-- Daily alert DB files when implemented.
+- Fixed aggregation window from `engine.alert_aggregation_window`.
+
+Remaining v0.1.0 storage work:
+
+- Daily alert DB files.
+- TTL cleanup.
+- WAL replay, if the write-ahead JSONL path is kept.
 - No unbounded memory buffering on disk-full conditions.
 
 All SQL values must use placeholders. Do not format user-controlled values into SQL strings.

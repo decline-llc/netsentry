@@ -6,6 +6,7 @@ import (
 
 	"go.uber.org/zap"
 
+	"github.com/decline-llc/netsentry/internal/stats"
 	"github.com/decline-llc/netsentry/pkg/model"
 )
 
@@ -15,18 +16,24 @@ type Worker struct {
 	writer  AlertWriter
 	logger  *zap.Logger
 	now     func() time.Time
+	stats   *stats.Stats
 }
 
 // NewWorker constructs a single packet processing worker.
-func NewWorker(matcher Matcher, writer AlertWriter, logger *zap.Logger) *Worker {
+func NewWorker(matcher Matcher, writer AlertWriter, logger *zap.Logger, statsOpt ...*stats.Stats) *Worker {
 	if logger == nil {
 		logger = zap.NewNop()
+	}
+	var metrics *stats.Stats
+	if len(statsOpt) > 0 {
+		metrics = statsOpt[0]
 	}
 	return &Worker{
 		matcher: matcher,
 		writer:  writer,
 		logger:  logger,
 		now:     func() time.Time { return time.Now().UTC() },
+		stats:   metrics,
 	}
 }
 
@@ -34,6 +41,7 @@ func NewWorker(matcher Matcher, writer AlertWriter, logger *zap.Logger) *Worker 
 func (w *Worker) Run(ctx context.Context, packets <-chan *model.PacketInfo) {
 	defer func() {
 		if r := recover(); r != nil {
+			w.stats.IncWorkerPanic()
 			w.logger.Error("pipeline worker panic", zap.Any("panic", r))
 		}
 	}()
@@ -55,7 +63,10 @@ func (w *Worker) Run(ctx context.Context, packets <-chan *model.PacketInfo) {
 }
 
 func (w *Worker) processPacket(ctx context.Context, pkt *model.PacketInfo) {
+	w.stats.IncPacketProcessed()
+	start := time.Now()
 	alerts := w.matcher.Match(pkt)
+	w.stats.ObserveMatchDuration(time.Since(start))
 	if len(alerts) == 0 {
 		return
 	}
@@ -71,9 +82,11 @@ func (w *Worker) processPacket(ctx context.Context, pkt *model.PacketInfo) {
 	}
 
 	if err := w.writer.WriteBatch(ctx, alerts); err != nil {
+		w.stats.IncAlertWriteError()
 		w.logger.Warn("write pipeline alerts", zap.Error(err))
 		return
 	}
+	w.stats.ObserveAlerts(alerts)
 	w.logger.Info("packet matched rules",
 		zap.String("src_ip", pkt.SrcIP),
 		zap.String("dst_ip", pkt.DstIP),

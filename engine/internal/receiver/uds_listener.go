@@ -13,6 +13,7 @@ import (
 
 	"go.uber.org/zap"
 
+	"github.com/decline-llc/netsentry/internal/stats"
 	"github.com/decline-llc/netsentry/pkg/model"
 )
 
@@ -23,6 +24,7 @@ type Config struct {
 	Path       string
 	SocketMode os.FileMode
 	BufferSize int
+	Stats      *stats.Stats
 }
 
 // Receiver owns a UDS listener and a context-aware packet channel.
@@ -32,6 +34,7 @@ type Receiver struct {
 	packets chan *model.PacketInfo
 	state   *heartbeatState
 	ln      net.Listener
+	stats   *stats.Stats
 }
 
 // New constructs a receiver. Start must be called before packets arrive.
@@ -53,11 +56,15 @@ func New(cfg Config, logger *zap.Logger) *Receiver {
 		logger:  logger,
 		packets: make(chan *model.PacketInfo, cfg.BufferSize),
 		state:   newHeartbeatState(),
+		stats:   cfg.Stats,
 	}
 }
 
 // Packets returns the decoded data frames.
 func (r *Receiver) Packets() <-chan *model.PacketInfo { return r.packets }
+
+// QueueDepth returns the current number of packets waiting for pipeline work.
+func (r *Receiver) QueueDepth() int { return len(r.packets) }
 
 // State returns the latest capture control-frame state.
 func (r *Receiver) State() State { return r.state.Snapshot() }
@@ -114,10 +121,12 @@ func (r *Receiver) handleConn(ctx context.Context, conn net.Conn) {
 }
 
 func (r *Receiver) handleLine(ctx context.Context, line []byte) error {
+	r.stats.IncFrame()
 	var meta struct {
 		Type string `json:"type"`
 	}
 	if err := json.Unmarshal(line, &meta); err != nil {
+		r.stats.IncDecodeError()
 		return fmt.Errorf("decode frame metadata: %w", err)
 	}
 
@@ -125,35 +134,44 @@ func (r *Receiver) handleLine(ctx context.Context, line []byte) error {
 	case "hello":
 		var h HelloFrame
 		if err := json.Unmarshal(line, &h); err != nil {
+			r.stats.IncDecodeError()
 			return fmt.Errorf("decode hello frame: %w", err)
 		}
 		if h.SessionID == "" || h.Version == "" {
+			r.stats.IncDecodeError()
 			return fmt.Errorf("invalid hello frame")
 		}
 		r.state.SetHello(h)
+		r.stats.IncControlFrame()
 		return nil
 	case "heartbeat":
 		var h HeartbeatFrame
 		if err := json.Unmarshal(line, &h); err != nil {
+			r.stats.IncDecodeError()
 			return fmt.Errorf("decode heartbeat frame: %w", err)
 		}
 		if h.SessionID == "" {
+			r.stats.IncDecodeError()
 			return fmt.Errorf("invalid heartbeat frame")
 		}
 		r.state.SetHeartbeat(h)
+		r.stats.IncControlFrame()
 		return nil
 	case "":
 		var pkt model.PacketInfo
 		if err := json.Unmarshal(line, &pkt); err != nil {
+			r.stats.IncDecodeError()
 			return fmt.Errorf("decode packet frame: %w", err)
 		}
 		select {
 		case r.packets <- &pkt:
+			r.stats.IncPacketReceived()
 			return nil
 		case <-ctx.Done():
 			return ctx.Err()
 		}
 	default:
+		r.stats.IncDecodeError()
 		return fmt.Errorf("unknown control frame type %q", meta.Type)
 	}
 }

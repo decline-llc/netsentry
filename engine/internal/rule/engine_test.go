@@ -256,3 +256,119 @@ func TestPayloadRuleRejectsInvalidConfig(t *testing.T) {
 		t.Fatal("expected invalid protocol error")
 	}
 }
+
+func makeIPRuleWithConfig(id string, cfg model.IPBlacklistConfig) *model.Rule {
+	raw, _ := json.Marshal(cfg)
+	return &model.Rule{
+		ID:       id,
+		Name:     id,
+		Type:     model.RuleTypeIPBlacklist,
+		Severity: model.SeverityHigh,
+		Priority: 100,
+		Enabled:  true,
+		Config:   raw,
+	}
+}
+
+func makePortRuleWithConfig(id string, cfg model.PortBlacklistConfig) *model.Rule {
+	raw, _ := json.Marshal(cfg)
+	return &model.Rule{
+		ID:       id,
+		Name:     id,
+		Type:     model.RuleTypePortBlacklist,
+		Severity: model.SeverityHigh,
+		Priority: 100,
+		Enabled:  true,
+		Config:   raw,
+	}
+}
+
+func TestIPBlacklistDirectionAndProtocol(t *testing.T) {
+	e := NewEngine()
+	sourceRule := makeIPRuleWithConfig("ip-source", model.IPBlacklistConfig{
+		IPs:       []string{"10.0.0.1"},
+		Direction: "source",
+		Protocols: []string{"tcp"},
+	})
+	destRule := makeIPRuleWithConfig("ip-dest", model.IPBlacklistConfig{
+		IPs:       []string{"10.0.0.2"},
+		Direction: "dest",
+	})
+	if err := e.Reload([]*model.Rule{sourceRule, destRule}); err != nil {
+		t.Fatal(err)
+	}
+	pkt := &model.PacketInfo{SrcIP: "10.0.0.1", DstIP: "10.0.0.2", Protocol: 6}
+	alerts := e.Match(pkt)
+	if len(alerts) != 2 {
+		t.Fatalf("expected source and dest IP matches, got %d", len(alerts))
+	}
+	udpPkt := &model.PacketInfo{SrcIP: "10.0.0.1", DstIP: "10.0.0.3", Protocol: 17}
+	if alerts := e.Match(udpPkt); len(alerts) != 0 {
+		t.Fatalf("expected TCP-only source rule to reject UDP, got %d", len(alerts))
+	}
+}
+
+func TestIPBlacklistCIDRStaysScopedToOwningRule(t *testing.T) {
+	e := NewEngine()
+	cidrRule := makeIPRuleWithConfig("cidr", model.IPBlacklistConfig{IPs: []string{"198.51.100.0/24"}, Direction: "any"})
+	exactRule := makeIPRuleWithConfig("exact", model.IPBlacklistConfig{IPs: []string{"203.0.113.10"}, Direction: "any"})
+	if err := e.Reload([]*model.Rule{cidrRule, exactRule}); err != nil {
+		t.Fatal(err)
+	}
+	pkt := &model.PacketInfo{SrcIP: "198.51.100.25", DstIP: "192.168.1.1", Protocol: 6}
+	alerts := e.Match(pkt)
+	if len(alerts) != 1 || alerts[0].RuleID != "cidr" {
+		t.Fatalf("expected only CIDR rule to match, got %+v", alerts)
+	}
+}
+
+func TestPortBlacklistDirectionAndProtocol(t *testing.T) {
+	e := NewEngine()
+	sourceRule := makePortRuleWithConfig("port-source", model.PortBlacklistConfig{
+		Ports:     []int{4444},
+		Protocols: []string{"tcp"},
+		Direction: "source",
+	})
+	anyRule := makePortRuleWithConfig("port-any", model.PortBlacklistConfig{
+		Ports:     []int{53},
+		Protocols: []string{"udp"},
+		Direction: "any",
+	})
+	if err := e.Reload([]*model.Rule{sourceRule, anyRule}); err != nil {
+		t.Fatal(err)
+	}
+	tcpPkt := &model.PacketInfo{SrcPort: 4444, DstPort: 80, Protocol: 6}
+	alerts := e.Match(tcpPkt)
+	if len(alerts) != 1 || alerts[0].RuleID != "port-source" {
+		t.Fatalf("expected source TCP port rule, got %+v", alerts)
+	}
+	udpPkt := &model.PacketInfo{SrcPort: 5353, DstPort: 53, Protocol: 17}
+	alerts = e.Match(udpPkt)
+	if len(alerts) != 1 || alerts[0].RuleID != "port-any" {
+		t.Fatalf("expected any UDP port rule, got %+v", alerts)
+	}
+	wrongProto := &model.PacketInfo{SrcPort: 5353, DstPort: 53, Protocol: 6}
+	if alerts := e.Match(wrongProto); len(alerts) != 0 {
+		t.Fatalf("expected UDP-only port rule to reject TCP, got %d", len(alerts))
+	}
+}
+
+func TestIPAndPortRulesRejectInvalidConfig(t *testing.T) {
+	e := NewEngine()
+	badIP := makeIPRuleWithConfig("bad-ip", model.IPBlacklistConfig{IPs: []string{"not-an-ip"}})
+	if err := e.Reload([]*model.Rule{badIP}); err == nil {
+		t.Fatal("expected invalid IP error")
+	}
+	badIPDirection := makeIPRuleWithConfig("bad-ip-direction", model.IPBlacklistConfig{IPs: []string{"10.0.0.1"}, Direction: "sideways"})
+	if err := e.Reload([]*model.Rule{badIPDirection}); err == nil {
+		t.Fatal("expected invalid IP direction error")
+	}
+	badPort := makePortRuleWithConfig("bad-port", model.PortBlacklistConfig{Ports: []int{70000}})
+	if err := e.Reload([]*model.Rule{badPort}); err == nil {
+		t.Fatal("expected invalid port error")
+	}
+	badProto := makePortRuleWithConfig("bad-proto", model.PortBlacklistConfig{Ports: []int{53}, Protocols: []string{"sctp"}})
+	if err := e.Reload([]*model.Rule{badProto}); err == nil {
+		t.Fatal("expected invalid protocol error")
+	}
+}

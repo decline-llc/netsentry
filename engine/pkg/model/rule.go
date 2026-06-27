@@ -21,16 +21,16 @@ type MITRETechnique struct {
 
 // Rule is the in-memory representation of a detection rule.
 type Rule struct {
-	ID          string          `json:"id"`
-	Name        string          `json:"name"`
-	Type        RuleType        `json:"type"`
-	Severity    Severity        `json:"severity"`
-	Priority    int             `json:"priority"`
-	Enabled     bool            `json:"enabled"`
-	EarlyExit   bool            `json:"early_exit"`
-	Config      json.RawMessage `json:"config"`
+	ID          string           `json:"id"`
+	Name        string           `json:"name"`
+	Type        RuleType         `json:"type"`
+	Severity    Severity         `json:"severity"`
+	Priority    int              `json:"priority"`
+	Enabled     bool             `json:"enabled"`
+	EarlyExit   bool             `json:"early_exit"`
+	Config      json.RawMessage  `json:"config"`
 	MITRETechs  []MITRETechnique `json:"mitre_techniques"`
-	Description string          `json:"description"`
+	Description string           `json:"description"`
 }
 
 // PayloadMatchConfig holds config for payload_match rules.
@@ -48,10 +48,12 @@ type PayloadMatchConfig struct {
 type IPBlacklistConfig struct {
 	IPs       []string `json:"ips"`
 	Direction string   `json:"direction"`
+	Protocols []string `json:"protocols"`
 }
 
 // PortBlacklistConfig holds config for port_blacklist rules.
 type PortBlacklistConfig struct {
 	Ports     []int    `json:"ports"`
 	Protocols []string `json:"protocols"`
+	Direction string   `json:"direction"`
 }

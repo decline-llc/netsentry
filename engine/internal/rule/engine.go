@@ -18,9 +18,8 @@ type ruleState struct {
 	acMatcher       *ac.Matcher
 	acRuleIdx       []int // parallel to ac patterns: which rule owns each keyword
 	payloadRules    map[string]compiledPayloadRule
-	ipNets          []*net.IPNet
-	ipRules         map[string]*model.Rule
-	portRules       map[uint16][]*model.Rule
+	ipRules         map[string]compiledIPRule
+	portRules       map[string]compiledPortRule
 	allByPriority   []*model.Rule
 	caseInsensitive bool
 }
@@ -35,6 +34,19 @@ type compiledPayloadRule struct {
 	offset          int
 }
 
+type compiledIPRule struct {
+	ips       map[string]struct{}
+	nets      []*net.IPNet
+	protocols map[uint8]struct{}
+	direction string
+}
+
+type compiledPortRule struct {
+	ports     map[uint16]struct{}
+	protocols map[uint8]struct{}
+	direction string
+}
+
 // Engine is the lock-free rule matching engine.
 type Engine struct {
 	state atomic.Pointer[ruleState]
@@ -45,8 +57,8 @@ func NewEngine() *Engine {
 	e := &Engine{}
 	e.state.Store(&ruleState{
 		payloadRules: make(map[string]compiledPayloadRule),
-		ipRules:      make(map[string]*model.Rule),
-		portRules:    make(map[uint16][]*model.Rule),
+		ipRules:      make(map[string]compiledIPRule),
+		portRules:    make(map[string]compiledPortRule),
 	})
 	return e
 }
@@ -127,8 +139,8 @@ func (e *Engine) Match(pkt *model.PacketInfo) []*model.Alert {
 func buildState(rules []*model.Rule) (*ruleState, error) {
 	s := &ruleState{
 		payloadRules: make(map[string]compiledPayloadRule),
-		ipRules:      make(map[string]*model.Rule),
-		portRules:    make(map[uint16][]*model.Rule),
+		ipRules:      make(map[string]compiledIPRule),
+		portRules:    make(map[string]compiledPortRule),
 	}
 
 	sorted := make([]*model.Rule, len(rules))
@@ -180,26 +192,22 @@ func buildState(rules []*model.Rule) (*ruleState, error) {
 			if err := json.Unmarshal(r.Config, &cfg); err != nil {
 				return nil, fmt.Errorf("rule %s: %w", r.ID, err)
 			}
-			for _, ipStr := range cfg.IPs {
-				if strings.Contains(ipStr, "/") {
-					_, ipNet, err := net.ParseCIDR(ipStr)
-					if err == nil {
-						s.ipNets = append(s.ipNets, ipNet)
-					}
-				} else {
-					s.ipRules[ipStr] = r
-				}
+			compiled, err := compileIPRule(cfg)
+			if err != nil {
+				return nil, fmt.Errorf("rule %s: %w", r.ID, err)
 			}
+			s.ipRules[r.ID] = compiled
 
 		case model.RuleTypePortBlacklist:
 			var cfg model.PortBlacklistConfig
 			if err := json.Unmarshal(r.Config, &cfg); err != nil {
 				return nil, fmt.Errorf("rule %s: %w", r.ID, err)
 			}
-			for _, port := range cfg.Ports {
-				p := uint16(port)
-				s.portRules[p] = append(s.portRules[p], r)
+			compiled, err := compilePortRule(cfg)
+			if err != nil {
+				return nil, fmt.Errorf("rule %s: %w", r.ID, err)
 			}
+			s.portRules[r.ID] = compiled
 		}
 	}
 
@@ -247,6 +255,87 @@ func compilePayloadRule(cfg model.PayloadMatchConfig) (compiledPayloadRule, erro
 		compiled.ports[uint16(port)] = struct{}{}
 	}
 	return compiled, nil
+}
+
+func compileIPRule(cfg model.IPBlacklistConfig) (compiledIPRule, error) {
+	compiled := compiledIPRule{
+		ips:       make(map[string]struct{}),
+		protocols: make(map[uint8]struct{}),
+		direction: strings.ToLower(cfg.Direction),
+	}
+	if compiled.direction == "" {
+		compiled.direction = "any"
+	}
+	if err := validateDirection("ip", compiled.direction); err != nil {
+		return compiledIPRule{}, err
+	}
+	if err := addProtocols(compiled.protocols, cfg.Protocols); err != nil {
+		return compiledIPRule{}, err
+	}
+	for _, ipStr := range cfg.IPs {
+		ipStr = strings.TrimSpace(ipStr)
+		if ipStr == "" {
+			continue
+		}
+		if strings.Contains(ipStr, "/") {
+			_, ipNet, err := net.ParseCIDR(ipStr)
+			if err != nil {
+				return compiledIPRule{}, fmt.Errorf("invalid CIDR %q", ipStr)
+			}
+			compiled.nets = append(compiled.nets, ipNet)
+			continue
+		}
+		if net.ParseIP(ipStr) == nil {
+			return compiledIPRule{}, fmt.Errorf("invalid IP %q", ipStr)
+		}
+		compiled.ips[ipStr] = struct{}{}
+	}
+	return compiled, nil
+}
+
+func compilePortRule(cfg model.PortBlacklistConfig) (compiledPortRule, error) {
+	compiled := compiledPortRule{
+		ports:     make(map[uint16]struct{}),
+		protocols: make(map[uint8]struct{}),
+		direction: strings.ToLower(cfg.Direction),
+	}
+	if compiled.direction == "" {
+		compiled.direction = "dest"
+	}
+	if err := validateDirection("port", compiled.direction); err != nil {
+		return compiledPortRule{}, err
+	}
+	if err := addProtocols(compiled.protocols, cfg.Protocols); err != nil {
+		return compiledPortRule{}, err
+	}
+	for _, port := range cfg.Ports {
+		if port < 0 || port > 65535 {
+			return compiledPortRule{}, fmt.Errorf("port %d out of range", port)
+		}
+		compiled.ports[uint16(port)] = struct{}{}
+	}
+	return compiled, nil
+}
+
+func validateDirection(kind, direction string) error {
+	if direction == "dest" || direction == "source" || direction == "any" {
+		return nil
+	}
+	return fmt.Errorf("unsupported %s direction %q", kind, direction)
+}
+
+func addProtocols(dst map[uint8]struct{}, protocols []string) error {
+	for _, proto := range protocols {
+		p, ok := parseProtocol(proto)
+		if !ok {
+			return fmt.Errorf("unsupported protocol %q", proto)
+		}
+		if p == 0 {
+			continue
+		}
+		dst[p] = struct{}{}
+	}
+	return nil
 }
 
 func parseProtocol(proto string) (uint8, bool) {
@@ -314,32 +403,79 @@ func payloadPortMatches(cfg compiledPayloadRule, pkt *model.PacketInfo) bool {
 // ---- per-type matchers ------------------------------------------------------
 
 func matchIPBlacklist(rule *model.Rule, pkt *model.PacketInfo, s *ruleState) *model.Alert {
-	src := net.ParseIP(pkt.SrcIP)
-	dst := net.ParseIP(pkt.DstIP)
-
-	if _, ok := s.ipRules[pkt.SrcIP]; ok {
-		return buildAlert(rule, pkt, "", "ip_blacklist: "+pkt.SrcIP)
+	cfg, ok := s.ipRules[rule.ID]
+	if !ok || !protocolMatches(cfg.protocols, pkt.Protocol) {
+		return nil
 	}
-	if _, ok := s.ipRules[pkt.DstIP]; ok {
-		return buildAlert(rule, pkt, "", "ip_blacklist: "+pkt.DstIP)
-	}
-	for _, ipNet := range s.ipNets {
-		if (src != nil && ipNet.Contains(src)) || (dst != nil && ipNet.Contains(dst)) {
-			return buildAlert(rule, pkt, "", "ip_blacklist: "+ipNet.String())
-		}
+	if matched, ok := ipRuleMatches(cfg, pkt); ok {
+		return buildAlert(rule, pkt, "", "ip_blacklist: "+matched)
 	}
 	return nil
 }
 
 func matchPortBlacklist(rule *model.Rule, pkt *model.PacketInfo, s *ruleState) *model.Alert {
-	if rules, ok := s.portRules[pkt.DstPort]; ok {
-		for _, r := range rules {
-			if r.ID == rule.ID {
-				return buildAlert(rule, pkt, "", fmt.Sprintf("port_blacklist: %d", pkt.DstPort))
-			}
-		}
+	cfg, ok := s.portRules[rule.ID]
+	if !ok || !protocolMatches(cfg.protocols, pkt.Protocol) {
+		return nil
+	}
+	if matched, ok := portRuleMatches(cfg, pkt); ok {
+		return buildAlert(rule, pkt, "", fmt.Sprintf("port_blacklist: %d", matched))
 	}
 	return nil
+}
+
+func ipRuleMatches(cfg compiledIPRule, pkt *model.PacketInfo) (string, bool) {
+	switch cfg.direction {
+	case "source":
+		return ipValueMatches(cfg, pkt.SrcIP)
+	case "dest":
+		return ipValueMatches(cfg, pkt.DstIP)
+	default:
+		if matched, ok := ipValueMatches(cfg, pkt.SrcIP); ok {
+			return matched, true
+		}
+		return ipValueMatches(cfg, pkt.DstIP)
+	}
+}
+
+func ipValueMatches(cfg compiledIPRule, value string) (string, bool) {
+	if _, ok := cfg.ips[value]; ok {
+		return value, true
+	}
+	ip := net.ParseIP(value)
+	if ip == nil {
+		return "", false
+	}
+	for _, ipNet := range cfg.nets {
+		if ipNet.Contains(ip) {
+			return ipNet.String(), true
+		}
+	}
+	return "", false
+}
+
+func portRuleMatches(cfg compiledPortRule, pkt *model.PacketInfo) (uint16, bool) {
+	_, srcOK := cfg.ports[pkt.SrcPort]
+	_, dstOK := cfg.ports[pkt.DstPort]
+	switch cfg.direction {
+	case "source":
+		return pkt.SrcPort, srcOK
+	case "any":
+		if srcOK {
+			return pkt.SrcPort, true
+		}
+		return pkt.DstPort, dstOK
+	default:
+		return pkt.DstPort, dstOK
+	}
+}
+
+func protocolMatches(protocols map[uint8]struct{}, protocol uint8) bool {
+	if len(protocols) == 0 {
+		return true
+	}
+	_, ok := protocols[protocol]
+	return ok
 }
 
 // ---- helpers ----------------------------------------------------------------

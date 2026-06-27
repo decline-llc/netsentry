@@ -2,7 +2,7 @@
 
 > **Status**: v0.1.0 development / pre-alpha
 
-NetSentry is a lightweight C/Go network intrusion detection and pcap forensics engine. The current repository is a working development build: it can compile the C capture binary and Go engine, generate a synthetic pcap, pass packets over a Unix Domain Socket, match seed rules, and expose in-memory alerts over a minimal HTTP API.
+NetSentry is a lightweight C/Go network intrusion detection and pcap forensics engine. The current repository is a working development build: it can compile the C capture binary and Go engine, generate a synthetic pcap, pass packets over a Unix Domain Socket, match seed rules, persist aggregated alerts in SQLite, and expose them over a minimal HTTP API.
 
 The project goal remains a small, honest IDS for offline pcap analysis and edge deployments. It is not intended to replace Suricata or Zeek for 10 Gbps production IDS workloads.
 
@@ -32,8 +32,8 @@ Expected result in the current seed setup: `5` alerts from SQL injection, Log4Sh
 - Go rule engine using `atomic.Pointer[ruleState]` immutable snapshots.
 - Rule types: `payload_match`, `ip_blacklist`, `port_blacklist`.
 - A self-contained Aho-Corasick matcher.
-- Minimal Go UDS receiver and in-memory alert store.
-- Minimal HTTP endpoints: `/api/health` and `/api/alerts`.
+- Minimal Go UDS receiver and SQLite alert store with UPSERT aggregation.
+- Minimal HTTP endpoints: `/api/health`, `/api/alerts`, and `/api/metrics`.
 - Seed rules in canonical wrapped JSON schema, with legacy schema compatibility retained in the loader.
 
 ---
@@ -42,8 +42,8 @@ Expected result in the current seed setup: `5` alerts from SQL injection, Log4Sh
 
 These are v0.1.0 goals, not current behavior:
 
-- SQLite persistence, UPSERT aggregation, daily DB sharding, WAL replay, TTL cleanup.
-- Prometheus `/api/metrics`.
+- Daily DB sharding, WAL replay, TTL cleanup.
+- Full Prometheus metric coverage beyond the current basic `/api/metrics`.
 - Full `/api/health?verbose=true` component snapshot.
 - PSK authentication, audit logs, payload redaction.
 - Rules CRUD API, suppressions API, pagination and unified error envelope.

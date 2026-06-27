@@ -21,7 +21,7 @@ Returns a minimal liveness response. Query parameters are currently ignored.
 
 ### `GET /api/alerts`
 
-Returns the in-memory alerts accumulated since process start.
+Returns SQLite-backed aggregated alerts ordered by most recent activity.
 
 ```json
 {
@@ -49,10 +49,15 @@ Returns the in-memory alerts accumulated since process start.
 }
 ```
 
+### `GET /api/metrics`
+
+Returns Prometheus text format with basic process counters and gauges.
+
 Current limitations:
 
-- No pagination, filtering, sorting, or stable envelope yet.
-- Alerts are in memory only and disappear when the engine exits.
+- No pagination, filtering, or stable envelope yet.
+- Alert storage is SQLite-backed, but daily sharding and TTL cleanup are not implemented yet.
+- Errors still use ad hoc JSON rather than the planned unified error envelope.
 - No authentication yet.
 - No payload redaction yet.
 
@@ -92,8 +97,8 @@ Planned endpoints:
 | --- | --- | --- |
 | `GET /api/health` | partial | Minimal response exists; verbose component snapshot pending. |
 | `GET /api/health?verbose=true` | planned | Capture heartbeat, channel depth, storage and throughput details. |
-| `GET /api/alerts` | partial | In-memory list exists; pagination/filtering/storage pending. |
-| `GET /api/metrics` | planned | Prometheus text format. |
+| `GET /api/alerts` | partial | SQLite-backed aggregated list exists; pagination/filtering pending. |
+| `GET /api/metrics` | partial | Basic Prometheus text format exists; fuller coverage pending. |
 | `GET/POST /api/rules` | planned | Rule listing and hot reload. |
 | `GET/PUT/PATCH/DELETE /api/rules/:id` | planned | Rule CRUD. |
 | `GET/POST /api/suppressions` | planned | Suppression rules after alert storage stabilizes. |

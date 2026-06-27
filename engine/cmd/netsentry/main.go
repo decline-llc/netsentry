@@ -7,56 +7,18 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"sync"
 	"time"
 
 	"go.uber.org/zap"
 
+	"github.com/decline-llc/netsentry/internal/alert"
 	"github.com/decline-llc/netsentry/internal/config"
 	"github.com/decline-llc/netsentry/internal/pipeline"
 	"github.com/decline-llc/netsentry/internal/receiver"
 	"github.com/decline-llc/netsentry/internal/rule"
 	nssignal "github.com/decline-llc/netsentry/internal/signal"
-	"github.com/decline-llc/netsentry/pkg/model"
+	"github.com/decline-llc/netsentry/internal/stats"
 )
-
-type alertStore struct {
-	mu     sync.Mutex
-	alerts []*model.Alert
-}
-
-func (s *alertStore) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
-	if err := ctx.Err(); err != nil {
-		return err
-	}
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	for _, alert := range alerts {
-		if alert == nil {
-			continue
-		}
-		now := time.Now().UTC()
-		if alert.Timestamp.IsZero() {
-			alert.Timestamp = now
-		}
-		alert.FirstSeen = alert.Timestamp
-		alert.LastSeen = alert.Timestamp
-		alert.WindowStart = alert.Timestamp
-		alert.AggregatedCount = 1
-		alert.ID = fmt.Sprintf("%s-%d", alert.RuleID, len(s.alerts)+1)
-		alert.EventID = alert.ID
-		s.alerts = append(s.alerts, alert)
-	}
-	return nil
-}
-
-func (s *alertStore) List() []*model.Alert {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	out := make([]*model.Alert, len(s.alerts))
-	copy(out, s.alerts)
-	return out
-}
 
 func main() {
 	cfgPath := flag.String("config", "config.yaml", "path to config.yaml")
@@ -100,21 +62,33 @@ func main() {
 		}
 	}
 
+	metrics := stats.New()
 	ctx, cancel := nssignal.WaitForShutdown()
 	defer cancel()
 
-	store := &alertStore{}
+	store, err := alert.Open(ctx, alert.Options{
+		Path:              cfg.Engine.DBPath,
+		JournalMode:       cfg.Engine.DBJournalMode,
+		BusyTimeoutMS:     cfg.Engine.DBBusyTimeout,
+		AggregationWindow: time.Duration(cfg.Engine.AlertAggregationWindow) * time.Second,
+	})
+	if err != nil {
+		logger.Fatal("open alert store", zap.Error(err))
+	}
+	defer store.Close() //nolint:errcheck
+
 	recv := receiver.New(receiver.Config{
 		Path:       cfg.Engine.UDSSocketPath,
 		SocketMode: receiver.ParseSocketMode(cfg.Capture.UDSSocketMode),
 		BufferSize: cfg.Engine.ChannelBufferSize,
+		Stats:      metrics,
 	}, logger)
 	if err := recv.Start(ctx); err != nil {
 		logger.Fatal("start uds receiver", zap.Error(err))
 	}
-	worker := pipeline.NewWorker(ruleEngine, store, logger)
+	worker := pipeline.NewWorker(ruleEngine, store, logger, metrics)
 	go worker.Run(ctx, recv.Packets())
-	startHTTPServer(ctx, cfg.Engine.APIPort, store, logger)
+	startHTTPServer(ctx, cfg.Engine.APIPort, store, recv, ruleEngine, metrics, logger)
 
 	logger.Info("engine ready — waiting for shutdown signal (SIGINT/SIGTERM)",
 		zap.String("uds", cfg.Engine.UDSSocketPath),
@@ -123,19 +97,43 @@ func main() {
 	logger.Info("shutdown signal received, exiting")
 }
 
-func startHTTPServer(ctx context.Context, port int, store *alertStore, logger *zap.Logger) {
+func startHTTPServer(ctx context.Context, port int, store *alert.Store, recv *receiver.Receiver, ruleEngine *rule.Engine, metrics *stats.Stats, logger *zap.Logger) {
 	if port == 0 {
 		port = 8080
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
+		count, err := store.Count(r.Context())
+		if err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]any{"error": err.Error()})
+			return
+		}
 		writeJSON(w, http.StatusOK, map[string]any{
 			"status": "ok",
-			"alerts": len(store.List()),
+			"alerts": count,
 		})
 	})
+	mux.HandleFunc("/api/metrics", func(w http.ResponseWriter, r *http.Request) {
+		count, err := store.Count(r.Context())
+		if err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]any{"error": err.Error()})
+			return
+		}
+		body := stats.RenderPrometheus(metrics.Snapshot(), map[string]float64{
+			"netsentry_alerts_current":     float64(count),
+			"netsentry_packet_queue_depth": float64(recv.QueueDepth()),
+			"netsentry_rules_loaded":       float64(ruleEngine.RuleCount()),
+		})
+		w.Header().Set("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(body))
+	})
 	mux.HandleFunc("/api/alerts", func(w http.ResponseWriter, r *http.Request) {
-		alerts := store.List()
+		alerts, err := store.List(r.Context())
+		if err != nil {
+			writeJSON(w, http.StatusInternalServerError, map[string]any{"error": err.Error()})
+			return
+		}
 		writeJSON(w, http.StatusOK, map[string]any{
 			"alerts": alerts,
 			"total":  len(alerts),

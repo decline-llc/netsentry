@@ -181,7 +181,7 @@ Planned tests:
 - Broader UDS sender tests for edge-case write failures.
 - Fuzz targets and full capture ASan build.
 - Broader UDS receiver integration tests for multi-session lifecycle.
-- SQLite aggregation tests once storage is implemented.
+- SQLite aggregation tests for alert storage changes.
 - Full graceful shutdown tests.
 
 ---
