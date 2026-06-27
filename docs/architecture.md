@@ -146,7 +146,21 @@ The current development build has basic signal handling and HTTP shutdown, but n
 
 ---
 
-## 7. Storage
+## 7. Alert Suppression
+
+Current build:
+
+- `internal/alert` includes a CIDR/exact-IP suppressor component.
+- Suppressions can be scoped by rule ID and source, destination, or either-side IP ranges.
+
+Remaining v0.1.0 suppression work:
+
+- API wiring for `/api/suppressions`.
+- Persistence and hot reload of suppression rules.
+
+---
+
+## 8. Storage
 
 Current build:
 
@@ -167,7 +181,7 @@ All SQL values must use placeholders. Do not format user-controlled values into 
 
 ---
 
-## 8. Observability Target
+## 9. Observability Target
 
 Current build: zap startup and match logs.
 

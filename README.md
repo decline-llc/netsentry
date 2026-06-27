@@ -32,7 +32,7 @@ Expected result in the current seed setup: `5` alerts from SQL injection, Log4Sh
 - Go rule engine using `atomic.Pointer[ruleState]` immutable snapshots.
 - Rule types: `payload_match`, `ip_blacklist`, `port_blacklist`.
 - A self-contained Aho-Corasick matcher.
-- Minimal Go UDS receiver and SQLite alert store with UPSERT aggregation, startup TTL pruning, and optional daily DB shard pathing/cleanup.
+- Minimal Go UDS receiver, CIDR alert suppressor component, and SQLite alert store with UPSERT aggregation, startup TTL pruning, and optional daily DB shard pathing/cleanup.
 - Minimal HTTP endpoints: `/api/health`, `/api/alerts`, and `/api/metrics`.
 - Seed rules in canonical wrapped JSON schema, with legacy schema compatibility retained in the loader.
 
@@ -46,7 +46,7 @@ These are v0.1.0 goals, not current behavior:
 - Full Prometheus metric coverage beyond the current basic `/api/metrics`.
 - Full `/api/health?verbose=true` component snapshot.
 - PSK authentication, audit logs, payload redaction.
-- Rules CRUD API, suppressions API, pagination and unified error envelope.
+- Rules CRUD API, suppressions API wiring, pagination and unified error envelope.
 - C-side cJSON serializer, C unit tests, ASan/fuzz targets.
 - Docker image and binary release packaging.
 

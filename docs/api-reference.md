@@ -101,7 +101,7 @@ Planned endpoints:
 | `GET /api/metrics` | partial | Basic Prometheus text format exists; fuller coverage pending. |
 | `GET/POST /api/rules` | planned | Rule listing and hot reload. |
 | `GET/PUT/PATCH/DELETE /api/rules/:id` | planned | Rule CRUD. |
-| `GET/POST /api/suppressions` | planned | Suppression rules after alert storage stabilizes. |
+| `GET/POST /api/suppressions` | planned | CIDR suppressor component exists; API wiring is pending. |
 | `GET /debug/pprof/*` | planned | Separate localhost server, not public API. |
 
 Planned authentication: PSK Bearer token for modifying endpoints, configured under `engine.api_auth_enabled` and `engine.api_auth_token`.
