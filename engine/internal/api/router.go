@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/decline-llc/netsentry/internal/rule"
 	"github.com/decline-llc/netsentry/internal/stats"
 	"github.com/decline-llc/netsentry/pkg/model"
 )
@@ -17,19 +18,30 @@ type QueueDepthProvider interface {
 	QueueDepth() int
 }
 
-type RuleCounter interface {
+type RuleManager interface {
 	RuleCount() int
+	Rules() []*model.Rule
+	Reload([]*model.Rule) error
+}
+
+type Options struct {
+	RulesSeedFile string
 }
 
 type Server struct {
 	store AlertStore
 	queue QueueDepthProvider
-	rules RuleCounter
+	rules RuleManager
 	stats *stats.Stats
+	opts  Options
 }
 
-func NewServer(store AlertStore, queue QueueDepthProvider, rules RuleCounter, metrics *stats.Stats) *Server {
-	return &Server{store: store, queue: queue, rules: rules, stats: metrics}
+func NewServer(store AlertStore, queue QueueDepthProvider, rules RuleManager, metrics *stats.Stats) *Server {
+	return NewServerWithOptions(store, queue, rules, metrics, Options{})
+}
+
+func NewServerWithOptions(store AlertStore, queue QueueDepthProvider, rules RuleManager, metrics *stats.Stats, opts Options) *Server {
+	return &Server{store: store, queue: queue, rules: rules, stats: metrics, opts: opts}
 }
 
 func (s *Server) Handler() http.Handler {
@@ -37,6 +49,8 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("/api/health", s.handleHealth)
 	mux.HandleFunc("/api/metrics", s.handleMetrics)
 	mux.HandleFunc("/api/alerts", s.handleAlerts)
+	mux.HandleFunc("/api/rules", s.handleRules)
+	mux.HandleFunc("/api/rules/reload", s.handleRulesReload)
 	return mux
 }
 
@@ -96,4 +110,41 @@ func (s *Server) handleAlerts(w http.ResponseWriter, r *http.Request) {
 		Data:       filtered[start:end],
 		Pagination: p,
 	})
+}
+
+type ruleListResponse struct {
+	Data []*model.Rule `json:"data"`
+}
+
+type ruleReloadResponse struct {
+	Reloaded int `json:"reloaded"`
+}
+
+func (s *Server) handleRules(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
+		return
+	}
+	writeJSON(w, http.StatusOK, ruleListResponse{Data: s.rules.Rules()})
+}
+
+func (s *Server) handleRulesReload(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
+		return
+	}
+	if s.opts.RulesSeedFile == "" {
+		writeError(w, r, http.StatusConflict, "RULES_RELOAD_UNAVAILABLE", "Rules seed file is not configured")
+		return
+	}
+	rules, err := rule.LoadFromFile(s.opts.RulesSeedFile)
+	if err != nil {
+		writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not load rules", err.Error())
+		return
+	}
+	if err := s.rules.Reload(rules); err != nil {
+		writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Could not reload rules", err.Error())
+		return
+	}
+	writeJSON(w, http.StatusOK, ruleReloadResponse{Reloaded: len(rules)})
 }

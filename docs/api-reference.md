@@ -70,11 +70,51 @@ Query parameters:
 
 Returns Prometheus text format with basic process counters and gauges.
 
+### `GET /api/rules`
+
+Returns the currently loaded rule snapshot in priority order.
+
+```json
+{
+  "data": [
+    {
+      "id": "rule-001",
+      "name": "SQL Injection - Union Select",
+      "type": "payload_match",
+      "severity": "high",
+      "priority": 150,
+      "enabled": true,
+      "early_exit": false,
+      "config": {
+        "keywords": ["UNION SELECT", "DROP TABLE"],
+        "case_insensitive": true,
+        "protocols": ["TCP"],
+        "ports": [80, 8080, 443],
+        "direction": "dest",
+        "depth": 4096,
+        "offset": 0
+      }
+    }
+  ]
+}
+```
+
+### `POST /api/rules/reload`
+
+Reloads rules from `engine.rules_seed_file` and atomically swaps the active rule snapshot when validation succeeds.
+
+```json
+{
+  "reloaded": 8
+}
+```
+
 Current limitations:
 
 - Alert pagination, the stable list envelope, and basic exact-match filters exist; advanced query features are still pending.
 - Alert storage is SQLite-backed with startup TTL pruning and old daily shard file cleanup; optional daily shard pathing exists, but runtime cross-day rotation and cross-day querying are not implemented yet.
 - Validation and internal API errors use the unified error envelope.
+- Rules can be listed and reloaded from the configured seed file; create/update/delete endpoints are still pending.
 - No authentication yet.
 - No payload redaction yet.
 
@@ -116,8 +156,9 @@ Planned endpoints:
 | `GET /api/health?verbose=true` | planned | Capture heartbeat, channel depth, storage and throughput details. |
 | `GET /api/alerts` | partial | SQLite-backed paginated list with basic exact-match filters exists; advanced query features pending. |
 | `GET /api/metrics` | partial | Basic Prometheus text format exists; fuller coverage pending. |
-| `GET/POST /api/rules` | planned | Rule listing and hot reload. |
-| `GET/PUT/PATCH/DELETE /api/rules/:id` | planned | Rule CRUD. |
+| `GET /api/rules` | partial | Current rule snapshot listing exists. |
+| `POST /api/rules/reload` | partial | Hot reload from `engine.rules_seed_file` exists. |
+| `POST/PUT/PATCH/DELETE /api/rules/:id` | planned | Rule CRUD and persistence. |
 | `GET/POST /api/suppressions` | planned | CIDR suppressor component exists; API wiring is pending. |
 | `GET /debug/pprof/*` | planned | Separate localhost server, not public API. |
 

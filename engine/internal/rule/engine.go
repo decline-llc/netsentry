@@ -78,6 +78,19 @@ func (e *Engine) RuleCount() int {
 	return len(e.state.Load().allByPriority)
 }
 
+// Rules returns a defensive copy of the currently loaded rules.
+func (e *Engine) Rules() []*model.Rule {
+	s := e.state.Load()
+	if s == nil || len(s.allByPriority) == 0 {
+		return nil
+	}
+	out := make([]*model.Rule, 0, len(s.allByPriority))
+	for _, r := range s.allByPriority {
+		out = append(out, cloneRule(r))
+	}
+	return out
+}
+
 // Match runs all enabled rules against pkt and returns triggered alerts.
 func (e *Engine) Match(pkt *model.PacketInfo) []*model.Alert {
 	s := e.state.Load()
@@ -135,6 +148,16 @@ func (e *Engine) Match(pkt *model.PacketInfo) []*model.Alert {
 }
 
 // ---- state builder ----------------------------------------------------------
+
+func cloneRule(r *model.Rule) *model.Rule {
+	if r == nil {
+		return nil
+	}
+	clone := *r
+	clone.Config = append(json.RawMessage(nil), r.Config...)
+	clone.MITRETechs = append([]model.MITRETechnique(nil), r.MITRETechs...)
+	return &clone
+}
 
 func buildState(rules []*model.Rule) (*ruleState, error) {
 	s := &ruleState{

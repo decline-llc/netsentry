@@ -6,6 +6,8 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -36,16 +38,33 @@ type fakeQueue struct{ depth int }
 
 func (q fakeQueue) QueueDepth() int { return q.depth }
 
-type fakeRules struct{ count int }
+type fakeRules struct {
+	count     int
+	rules     []*model.Rule
+	reloadErr error
+	reloaded  []*model.Rule
+}
 
-func (r fakeRules) RuleCount() int { return r.count }
+func (r *fakeRules) RuleCount() int { return r.count }
+
+func (r *fakeRules) Rules() []*model.Rule { return r.rules }
+
+func (r *fakeRules) Reload(rules []*model.Rule) error {
+	if r.reloadErr != nil {
+		return r.reloadErr
+	}
+	r.reloaded = rules
+	r.rules = rules
+	r.count = len(rules)
+	return nil
+}
 
 func TestAlertsPaginationEnvelope(t *testing.T) {
 	server := NewServer(&fakeStore{alerts: []*model.Alert{
 		{RuleID: "rule-1"},
 		{RuleID: "rule-2"},
 		{RuleID: "rule-3"},
-	}}, fakeQueue{}, fakeRules{}, stats.New())
+	}}, fakeQueue{}, &fakeRules{}, stats.New())
 
 	rec := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/api/alerts?page=2&per_page=2", nil)
@@ -70,7 +89,7 @@ func TestAlertsPaginationEnvelope(t *testing.T) {
 }
 
 func TestAlertsInvalidPaginationUsesErrorEnvelope(t *testing.T) {
-	server := NewServer(&fakeStore{}, fakeQueue{}, fakeRules{}, stats.New())
+	server := NewServer(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New())
 	rec := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/api/alerts?page=0", nil)
 	req.Header.Set("X-Request-ID", "req-test")
@@ -91,7 +110,7 @@ func TestAlertsFilters(t *testing.T) {
 	server := NewServer(&fakeStore{alerts: []*model.Alert{
 		{RuleID: "rule-1", Severity: model.SeverityHigh, SrcIP: "10.0.0.1", DstIP: "10.0.0.2", DstPort: 80, Protocol: "TCP"},
 		{RuleID: "rule-2", Severity: model.SeverityLow, SrcIP: "10.0.0.3", DstIP: "10.0.0.4", DstPort: 53, Protocol: "UDP"},
-	}}, fakeQueue{}, fakeRules{}, stats.New())
+	}}, fakeQueue{}, &fakeRules{}, stats.New())
 
 	rec := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/api/alerts?severity=high&src_ip=10.0.0.1&protocol=tcp&dst_port=80", nil)
@@ -116,7 +135,7 @@ func TestAlertsFilters(t *testing.T) {
 }
 
 func TestAlertsInvalidFilterUsesErrorEnvelope(t *testing.T) {
-	server := NewServer(&fakeStore{}, fakeQueue{}, fakeRules{}, stats.New())
+	server := NewServer(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New())
 	rec := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/api/alerts?dst_port=70000", nil)
 	req.Header.Set("X-Request-ID", "req-filter")
@@ -133,8 +152,71 @@ func TestAlertsInvalidFilterUsesErrorEnvelope(t *testing.T) {
 	}
 }
 
+func TestRulesList(t *testing.T) {
+	rules := &fakeRules{rules: []*model.Rule{{ID: "rule-2", Name: "Second"}, {ID: "rule-1", Name: "First"}}}
+	server := NewServer(&fakeStore{}, fakeQueue{}, rules, stats.New())
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/rules", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	var got struct {
+		Data []model.Rule `json:"data"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &got); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if len(got.Data) != 2 || got.Data[0].ID != "rule-2" || got.Data[1].ID != "rule-1" {
+		t.Fatalf("unexpected rules: %+v", got.Data)
+	}
+}
+
+func TestRulesReloadFromSeedFile(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "rules.json")
+	data := `{"rules":[{"id":"rule-reload","name":"Reloaded","type":"payload_match","severity":"high","enabled":true,"config":{"keywords":["test"]}}]}`
+	if err := os.WriteFile(path, []byte(data), 0o600); err != nil {
+		t.Fatalf("write rules seed: %v", err)
+	}
+	rules := &fakeRules{}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, rules, stats.New(), Options{RulesSeedFile: path})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/rules/reload", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	if len(rules.reloaded) != 1 || rules.reloaded[0].ID != "rule-reload" {
+		t.Fatalf("unexpected reloaded rules: %+v", rules.reloaded)
+	}
+	if !strings.Contains(rec.Body.String(), `"reloaded":1`) {
+		t.Fatalf("unexpected body: %s", rec.Body.String())
+	}
+}
+
+func TestRulesReloadWithoutSeedFileUsesErrorEnvelope(t *testing.T) {
+	server := NewServer(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New())
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/rules/reload", nil)
+	req.Header.Set("X-Request-ID", "req-rules")
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusConflict {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	body := rec.Body.String()
+	for _, want := range []string{`"code":"RULES_RELOAD_UNAVAILABLE"`, `"request_id":"req-rules"`} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("response missing %q: %s", want, body)
+		}
+	}
+}
+
 func TestStoreErrorUsesErrorEnvelope(t *testing.T) {
-	server := NewServer(&fakeStore{err: errors.New("disk offline")}, fakeQueue{}, fakeRules{}, stats.New())
+	server := NewServer(&fakeStore{err: errors.New("disk offline")}, fakeQueue{}, &fakeRules{}, stats.New())
 	rec := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/api/alerts", nil)
 	server.Handler().ServeHTTP(rec, req)
@@ -148,7 +230,7 @@ func TestStoreErrorUsesErrorEnvelope(t *testing.T) {
 }
 
 func TestMetricsEndpoint(t *testing.T) {
-	server := NewServer(&fakeStore{alerts: []*model.Alert{{RuleID: "rule-1"}}}, fakeQueue{depth: 7}, fakeRules{count: 3}, stats.New())
+	server := NewServer(&fakeStore{alerts: []*model.Alert{{RuleID: "rule-1"}}}, fakeQueue{depth: 7}, &fakeRules{count: 3}, stats.New())
 	rec := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/api/metrics", nil)
 	server.Handler().ServeHTTP(rec, req)
