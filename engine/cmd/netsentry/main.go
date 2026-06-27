@@ -68,6 +68,8 @@ func main() {
 
 	store, err := alert.Open(ctx, alert.Options{
 		Path:              cfg.Engine.DBPath,
+		Dir:               cfg.Engine.DBDir,
+		DailyShard:        cfg.Engine.DBShardDaily,
 		JournalMode:       cfg.Engine.DBJournalMode,
 		BusyTimeoutMS:     cfg.Engine.DBBusyTimeout,
 		AggregationWindow: time.Duration(cfg.Engine.AlertAggregationWindow) * time.Second,

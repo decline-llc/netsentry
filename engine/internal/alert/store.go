@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -15,22 +17,23 @@ import (
 // Options controls the SQLite alert store.
 type Options struct {
 	Path              string
+	Dir               string
+	DailyShard        bool
 	JournalMode       string
 	BusyTimeoutMS     int
 	AggregationWindow time.Duration
+	Now               func() time.Time
 }
 
 // Store persists alerts and aggregates repeated hits in a fixed time window.
 type Store struct {
 	db                *sql.DB
+	path              string
 	aggregationWindow time.Duration
 }
 
 // Open creates the SQLite database and initializes its schema.
 func Open(ctx context.Context, opts Options) (*Store, error) {
-	if opts.Path == "" {
-		opts.Path = "data/netsentry.db"
-	}
 	if opts.JournalMode == "" {
 		opts.JournalMode = "WAL"
 	}
@@ -41,19 +44,49 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 		opts.AggregationWindow = time.Minute
 	}
 
-	db, err := sql.Open("sqlite", opts.Path)
+	dbPath := resolveDBPath(opts)
+	if err := os.MkdirAll(filepath.Dir(dbPath), 0o750); err != nil {
+		return nil, fmt.Errorf("create sqlite alert dir: %w", err)
+	}
+
+	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("open sqlite alerts store: %w", err)
 	}
 	db.SetMaxOpenConns(1)
 
-	store := &Store{db: db, aggregationWindow: opts.AggregationWindow}
+	store := &Store{db: db, path: dbPath, aggregationWindow: opts.AggregationWindow}
 	if err := store.init(ctx, opts); err != nil {
 		_ = db.Close()
 		return nil, err
 	}
 	return store, nil
 }
+
+func resolveDBPath(opts Options) string {
+	if !opts.DailyShard {
+		if opts.Path != "" {
+			return opts.Path
+		}
+		return filepath.Join(defaultDBDir(opts.Dir), "netsentry.db")
+	}
+
+	now := time.Now().UTC()
+	if opts.Now != nil {
+		now = opts.Now().UTC()
+	}
+	return filepath.Join(defaultDBDir(opts.Dir), fmt.Sprintf("netsentry-%s.db", now.Format("2006-01-02")))
+}
+
+func defaultDBDir(dir string) string {
+	if dir == "" {
+		return "data"
+	}
+	return dir
+}
+
+// Path returns the concrete SQLite database path in use.
+func (s *Store) Path() string { return s.path }
 
 func (s *Store) init(ctx context.Context, opts Options) error {
 	journalMode := strings.ToUpper(strings.TrimSpace(opts.JournalMode))

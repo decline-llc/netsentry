@@ -57,6 +57,7 @@ quickstart: build
 	@python3 scripts/gen_test_pcap.py
 	@echo "==> Starting engine in background…"
 	@mkdir -p data
+	@rm -f data/netsentry.db data/netsentry.db-shm data/netsentry.db-wal
 	$(BIN_DIR)/netsentry-engine -config configs/config.yaml &
 	@ENGINE_PID=$$!; \
 	    sleep 2; \

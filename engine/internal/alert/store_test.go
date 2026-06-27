@@ -60,6 +60,40 @@ func TestStoreSeparatesAggregationWindows(t *testing.T) {
 	}
 }
 
+func TestStoreResolvesDailyShardPath(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	store, err := Open(ctx, Options{
+		Dir:               dir,
+		DailyShard:        true,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now: func() time.Time {
+			return time.Date(2026, 6, 27, 12, 0, 0, 0, time.UTC)
+		},
+	})
+	if err != nil {
+		t.Fatalf("open daily shard store: %v", err)
+	}
+	defer store.Close()
+
+	want := filepath.Join(dir, "netsentry-2026-06-27.db")
+	if store.Path() != want {
+		t.Fatalf("store path = %q, want %q", store.Path(), want)
+	}
+	if err := store.WriteBatch(ctx, []*model.Alert{makeAlert(time.Date(2026, 6, 27, 12, 1, 0, 0, time.UTC), "daily")}); err != nil {
+		t.Fatalf("write daily shard alert: %v", err)
+	}
+	count, err := store.Count(ctx)
+	if err != nil {
+		t.Fatalf("count daily shard alerts: %v", err)
+	}
+	if count != 1 {
+		t.Fatalf("count = %d, want 1", count)
+	}
+}
+
 func openTestStore(t *testing.T, window time.Duration) *Store {
 	t.Helper()
 	store, err := Open(context.Background(), Options{

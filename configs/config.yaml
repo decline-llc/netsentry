@@ -15,6 +15,7 @@ engine:
   worker_count: 1
   db_dir: "data"
   db_path: "data/netsentry.db"
+  db_shard_daily: false
   db_journal_mode: "WAL"
   db_busy_timeout: 5000
   rules_seed_file: "configs/rules.json"

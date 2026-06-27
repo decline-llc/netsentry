@@ -19,23 +19,24 @@ type CaptureConfig struct {
 }
 
 type EngineConfig struct {
-	UDSSocketPath              string   `yaml:"uds_socket_path"`
-	ChannelBufferSize          int      `yaml:"channel_buffer_size"`
-	WorkerCount                int      `yaml:"worker_count"`
-	DBDir                      string   `yaml:"db_dir"`
-	DBPath                     string   `yaml:"db_path"`
-	DBJournalMode              string   `yaml:"db_journal_mode"`
-	DBBusyTimeout              int      `yaml:"db_busy_timeout"`
-	RulesSeedFile              string   `yaml:"rules_seed_file"`
-	APIPort                    int      `yaml:"api_port"`
-	CORSAllowedOrigins         []string `yaml:"cors_allowed_origins"`
-	AlertAggregationWindow     int      `yaml:"alert_aggregation_window"`
-	AlertAggregationMaxCount   int      `yaml:"alert_aggregation_max_count"`
-	AlertRetentionDays         int      `yaml:"alert_retention_days"`
-	APIAuthToken               string   `yaml:"api_auth_token"`
-	APIAuthEnabled             bool     `yaml:"api_auth_enabled"`
-	RedactSensitiveFields      bool     `yaml:"redact_sensitive_fields"`
-	HealthFreshnessLimitSeconds int     `yaml:"health_freshness_limit_seconds"`
+	UDSSocketPath               string   `yaml:"uds_socket_path"`
+	ChannelBufferSize           int      `yaml:"channel_buffer_size"`
+	WorkerCount                 int      `yaml:"worker_count"`
+	DBDir                       string   `yaml:"db_dir"`
+	DBPath                      string   `yaml:"db_path"`
+	DBShardDaily                bool     `yaml:"db_shard_daily"`
+	DBJournalMode               string   `yaml:"db_journal_mode"`
+	DBBusyTimeout               int      `yaml:"db_busy_timeout"`
+	RulesSeedFile               string   `yaml:"rules_seed_file"`
+	APIPort                     int      `yaml:"api_port"`
+	CORSAllowedOrigins          []string `yaml:"cors_allowed_origins"`
+	AlertAggregationWindow      int      `yaml:"alert_aggregation_window"`
+	AlertAggregationMaxCount    int      `yaml:"alert_aggregation_max_count"`
+	AlertRetentionDays          int      `yaml:"alert_retention_days"`
+	APIAuthToken                string   `yaml:"api_auth_token"`
+	APIAuthEnabled              bool     `yaml:"api_auth_enabled"`
+	RedactSensitiveFields       bool     `yaml:"redact_sensitive_fields"`
+	HealthFreshnessLimitSeconds int      `yaml:"health_freshness_limit_seconds"`
 }
 
 type LoggingConfig struct {
@@ -106,6 +107,7 @@ func defaults() *Config {
 			WorkerCount:                 1,
 			DBDir:                       "data/",
 			DBPath:                      "data/netsentry.db",
+			DBShardDaily:                false,
 			DBJournalMode:               "WAL",
 			DBBusyTimeout:               5000,
 			RulesSeedFile:               "configs/rules.json",

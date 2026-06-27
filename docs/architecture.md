@@ -153,10 +153,11 @@ Current build:
 - SQLite using `modernc.org/sqlite`.
 - UPSERT aggregation by `(rule_id, src_ip, dst_ip, dst_port, window_start)`.
 - Fixed aggregation window from `engine.alert_aggregation_window`.
+- Optional daily shard pathing with `engine.db_shard_daily`, which opens `engine.db_dir/netsentry-YYYY-MM-DD.db` at process start.
 
 Remaining v0.1.0 storage work:
 
-- Daily alert DB files.
+- Runtime cross-day DB rotation and cross-day querying.
 - TTL cleanup.
 - WAL replay, if the write-ahead JSONL path is kept.
 - No unbounded memory buffering on disk-full conditions.
