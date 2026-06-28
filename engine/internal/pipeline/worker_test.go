@@ -28,6 +28,14 @@ type fakeWriter struct {
 	err    error
 }
 
+type fakeSuppressor struct {
+	alerts []*model.Alert
+}
+
+func (s fakeSuppressor) Filter(alerts []*model.Alert) []*model.Alert {
+	return s.alerts
+}
+
 func (w *fakeWriter) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 	if err := ctx.Err(); err != nil {
 		return err
@@ -54,6 +62,38 @@ func TestWorkerWritesAlertsWithPacketTimestamp(t *testing.T) {
 	}
 	if writer.alerts[0].Timestamp.IsZero() || writer.alerts[0].Timestamp.Nanosecond() != 123456000 {
 		t.Fatalf("unexpected timestamp: %s", writer.alerts[0].Timestamp)
+	}
+}
+
+func TestWorkerFiltersSuppressedAlerts(t *testing.T) {
+	writer := &fakeWriter{}
+	matcher := &fakeMatcher{alerts: []*model.Alert{{RuleID: "suppressed"}, {RuleID: "kept"}}}
+	worker := NewWorker(matcher, writer, zap.NewNop())
+	worker.SetSuppressor(fakeSuppressor{alerts: []*model.Alert{{RuleID: "kept"}}})
+
+	packets := make(chan *model.PacketInfo, 1)
+	packets <- &model.PacketInfo{TimestampSec: 1}
+	close(packets)
+
+	worker.Run(context.Background(), packets)
+	if len(writer.alerts) != 1 || writer.alerts[0].RuleID != "kept" {
+		t.Fatalf("unexpected written alerts: %+v", writer.alerts)
+	}
+}
+
+func TestWorkerSkipsWriteWhenAllAlertsSuppressed(t *testing.T) {
+	writer := &fakeWriter{}
+	matcher := &fakeMatcher{alerts: []*model.Alert{{RuleID: "suppressed"}}}
+	worker := NewWorker(matcher, writer, zap.NewNop())
+	worker.SetSuppressor(fakeSuppressor{})
+
+	packets := make(chan *model.PacketInfo, 1)
+	packets <- &model.PacketInfo{TimestampSec: 1}
+	close(packets)
+
+	worker.Run(context.Background(), packets)
+	if len(writer.alerts) != 0 {
+		t.Fatalf("expected no written alerts, got %+v", writer.alerts)
 	}
 }
 
