@@ -71,6 +71,43 @@ func TestSuppressorRejectsInvalidCIDR(t *testing.T) {
 	}
 }
 
+func TestSuppressionManagerAddsAndFilters(t *testing.T) {
+	manager, err := NewSuppressionManager(nil)
+	if err != nil {
+		t.Fatalf("new manager: %v", err)
+	}
+	if err := manager.Add(Suppression{ID: "src", Enabled: true, SrcCIDRs: []string{"10.0.0.0/24"}}); err != nil {
+		t.Fatalf("add suppression: %v", err)
+	}
+	rules := manager.List()
+	if len(rules) != 1 || rules[0].ID != "src" {
+		t.Fatalf("unexpected rules: %+v", rules)
+	}
+	filtered := manager.Filter([]*model.Alert{
+		alertForSuppression("rule-1", "10.0.0.10", "198.51.100.1"),
+		alertForSuppression("rule-2", "198.51.100.2", "198.51.100.1"),
+	})
+	if len(filtered) != 1 || filtered[0].RuleID != "rule-2" {
+		t.Fatalf("unexpected filtered alerts: %+v", filtered)
+	}
+}
+
+func TestSuppressionManagerRejectsDuplicateID(t *testing.T) {
+	manager, err := NewSuppressionManager([]Suppression{{ID: "dup", Enabled: true, AnyCIDRs: []string{"10.0.0.0/24"}}})
+	if err != nil {
+		t.Fatalf("new manager: %v", err)
+	}
+	if err := manager.Add(Suppression{ID: "dup", Enabled: true, AnyCIDRs: []string{"192.0.2.0/24"}}); err == nil {
+		t.Fatal("expected duplicate suppression ID error")
+	}
+}
+
+func TestSuppressionManagerRejectsEnabledRuleWithoutCIDR(t *testing.T) {
+	if _, err := NewSuppressionManager([]Suppression{{ID: "empty", Enabled: true}}); err == nil {
+		t.Fatal("expected missing CIDR error")
+	}
+}
+
 func alertForSuppression(ruleID, srcIP, dstIP string) *model.Alert {
 	return &model.Alert{RuleID: ruleID, SrcIP: srcIP, DstIP: dstIP}
 }
