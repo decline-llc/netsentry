@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
+	"github.com/decline-llc/netsentry/internal/receiver"
 	"github.com/decline-llc/netsentry/internal/rule"
 	"github.com/decline-llc/netsentry/internal/stats"
 	"github.com/decline-llc/netsentry/pkg/model"
@@ -22,6 +24,10 @@ type QueueDepthProvider interface {
 	QueueDepth() int
 }
 
+type CaptureStateProvider interface {
+	State() receiver.State
+}
+
 type RuleManager interface {
 	RuleCount() int
 	Rules() []*model.Rule
@@ -29,9 +35,10 @@ type RuleManager interface {
 }
 
 type Options struct {
-	RulesSeedFile string
-	AuthEnabled   bool
-	AuthToken     string
+	RulesSeedFile        string
+	AuthEnabled          bool
+	AuthToken            string
+	HealthFreshnessLimit time.Duration
 }
 
 type Server struct {
@@ -89,10 +96,121 @@ func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not count alerts")
 		return
 	}
-	writeJSON(w, http.StatusOK, map[string]any{
-		"status": "ok",
-		"alerts": count,
-	})
+	if r.URL.Query().Get("verbose") != "true" {
+		writeJSON(w, http.StatusOK, map[string]any{
+			"status": "ok",
+			"alerts": count,
+		})
+		return
+	}
+	writeJSON(w, http.StatusOK, s.verboseHealth(count))
+}
+
+type verboseHealthResponse struct {
+	Status     string           `json:"status"`
+	Alerts     int              `json:"alerts"`
+	Capture    captureHealth    `json:"capture"`
+	Engine     engineHealth     `json:"engine"`
+	Storage    storageHealth    `json:"storage"`
+	Throughput throughputHealth `json:"throughput"`
+}
+
+type captureHealth struct {
+	Status                string                  `json:"status"`
+	SessionID             string                  `json:"session_id,omitempty"`
+	Hello                 receiver.HelloFrame     `json:"hello,omitempty"`
+	Heartbeat             receiver.HeartbeatFrame `json:"heartbeat,omitempty"`
+	LastHeartbeatAt       string                  `json:"last_heartbeat_at,omitempty"`
+	HeartbeatAgeSeconds   float64                 `json:"heartbeat_age_seconds,omitempty"`
+	FreshnessLimitSeconds float64                 `json:"freshness_limit_seconds"`
+}
+
+type engineHealth struct {
+	QueueDepth  int `json:"queue_depth"`
+	RulesLoaded int `json:"rules_loaded"`
+}
+
+type storageHealth struct {
+	Status string `json:"status"`
+	Alerts int    `json:"alerts"`
+}
+
+type throughputHealth struct {
+	FramesTotal      uint64                    `json:"frames_total"`
+	ControlFrames    uint64                    `json:"control_frames"`
+	PacketsReceived  uint64                    `json:"packets_received"`
+	PacketsProcessed uint64                    `json:"packets_processed"`
+	DecodeErrors     uint64                    `json:"decode_errors"`
+	AlertsGenerated  uint64                    `json:"alerts_generated"`
+	WorkerPanics     uint64                    `json:"worker_panics"`
+	AlertWriteErrors uint64                    `json:"alert_write_errors"`
+	AlertsBySeverity map[model.Severity]uint64 `json:"alerts_by_severity"`
+}
+
+func (s *Server) verboseHealth(alertCount int) verboseHealthResponse {
+	capture := s.captureHealth()
+	status := "ok"
+	if capture.Status == "stale" {
+		status = "degraded"
+	}
+	return verboseHealthResponse{
+		Status:  status,
+		Alerts:  alertCount,
+		Capture: capture,
+		Engine: engineHealth{
+			QueueDepth:  s.queue.QueueDepth(),
+			RulesLoaded: s.rules.RuleCount(),
+		},
+		Storage: storageHealth{
+			Status: "ok",
+			Alerts: alertCount,
+		},
+		Throughput: throughputFromStats(s.stats.Snapshot()),
+	}
+}
+
+func throughputFromStats(snapshot stats.Snapshot) throughputHealth {
+	return throughputHealth{
+		FramesTotal:      snapshot.FramesTotal,
+		ControlFrames:    snapshot.ControlFrames,
+		PacketsReceived:  snapshot.PacketsReceived,
+		PacketsProcessed: snapshot.PacketsProcessed,
+		DecodeErrors:     snapshot.DecodeErrors,
+		AlertsGenerated:  snapshot.AlertsGenerated,
+		WorkerPanics:     snapshot.WorkerPanics,
+		AlertWriteErrors: snapshot.AlertWriteErrors,
+		AlertsBySeverity: snapshot.AlertsBySeverity,
+	}
+}
+
+func (s *Server) captureHealth() captureHealth {
+	limit := s.opts.HealthFreshnessLimit
+	if limit <= 0 {
+		limit = 30 * time.Second
+	}
+	out := captureHealth{
+		Status:                "unknown",
+		FreshnessLimitSeconds: limit.Seconds(),
+	}
+	provider, ok := s.queue.(CaptureStateProvider)
+	if !ok {
+		return out
+	}
+	state := provider.State()
+	out.SessionID = state.SessionID
+	out.Hello = state.Hello
+	out.Heartbeat = state.Heartbeat
+	if state.LastHeartbeatAt.IsZero() {
+		return out
+	}
+	age := time.Since(state.LastHeartbeatAt)
+	out.LastHeartbeatAt = state.LastHeartbeatAt.Format(time.RFC3339Nano)
+	out.HeartbeatAgeSeconds = age.Seconds()
+	out.Status = "ok"
+	if age > limit {
+		out.Status = "stale"
+	}
+	return out
 }
 
 func (s *Server) handleMetrics(w http.ResponseWriter, r *http.Request) {
