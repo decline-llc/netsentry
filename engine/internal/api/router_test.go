@@ -10,7 +10,9 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
+	"github.com/decline-llc/netsentry/internal/receiver"
 	"github.com/decline-llc/netsentry/internal/stats"
 	"github.com/decline-llc/netsentry/pkg/model"
 )
@@ -38,6 +40,15 @@ type fakeQueue struct{ depth int }
 
 func (q fakeQueue) QueueDepth() int { return q.depth }
 
+type fakeHealthQueue struct {
+	depth int
+	state receiver.State
+}
+
+func (q fakeHealthQueue) QueueDepth() int { return q.depth }
+
+func (q fakeHealthQueue) State() receiver.State { return q.state }
+
 type fakeRules struct {
 	count     int
 	rules     []*model.Rule
@@ -57,6 +68,121 @@ func (r *fakeRules) Reload(rules []*model.Rule) error {
 	r.rules = rules
 	r.count = len(rules)
 	return nil
+}
+
+func TestHealthMinimalResponse(t *testing.T) {
+	server := NewServer(&fakeStore{alerts: []*model.Alert{{RuleID: "rule-1"}}}, fakeQueue{depth: 7}, &fakeRules{count: 3}, stats.New())
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/health", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	var got map[string]any
+	if err := json.Unmarshal(rec.Body.Bytes(), &got); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if got["status"] != "ok" || got["alerts"] != float64(1) {
+		t.Fatalf("unexpected health response: %+v", got)
+	}
+	if _, ok := got["capture"]; ok {
+		t.Fatalf("minimal health should not include verbose fields: %+v", got)
+	}
+}
+
+func TestHealthVerboseResponse(t *testing.T) {
+	metrics := stats.New()
+	metrics.IncFrame()
+	metrics.IncPacketReceived()
+	queue := fakeHealthQueue{
+		depth: 4,
+		state: receiver.State{
+			SessionID: "session-1",
+			Hello: receiver.HelloFrame{
+				Type:      "hello",
+				Version:   "0.1.0",
+				SessionID: "session-1",
+				PID:       42,
+			},
+			Heartbeat: receiver.HeartbeatFrame{
+				Type:      "heartbeat",
+				SessionID: "session-1",
+				Seq:       7,
+				Sent:      10,
+			},
+			LastHeartbeatAt: time.Now().UTC(),
+		},
+	}
+	server := NewServerWithOptions(&fakeStore{alerts: []*model.Alert{{RuleID: "rule-1"}}}, queue, &fakeRules{count: 3}, metrics, Options{HealthFreshnessLimit: time.Minute})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/health?verbose=true", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	var got struct {
+		Status  string `json:"status"`
+		Alerts  int    `json:"alerts"`
+		Capture struct {
+			Status    string `json:"status"`
+			SessionID string `json:"session_id"`
+		} `json:"capture"`
+		Engine struct {
+			QueueDepth  int `json:"queue_depth"`
+			RulesLoaded int `json:"rules_loaded"`
+		} `json:"engine"`
+		Storage struct {
+			Status string `json:"status"`
+			Alerts int    `json:"alerts"`
+		} `json:"storage"`
+		Throughput struct {
+			FramesTotal     uint64 `json:"frames_total"`
+			PacketsReceived uint64 `json:"packets_received"`
+		} `json:"throughput"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &got); err != nil {
+		t.Fatalf("decode response: %v\n%s", err, rec.Body.String())
+	}
+	if got.Status != "ok" || got.Alerts != 1 {
+		t.Fatalf("unexpected health status: %+v", got)
+	}
+	if got.Capture.Status != "ok" || got.Capture.SessionID != "session-1" {
+		t.Fatalf("unexpected capture health: %+v", got.Capture)
+	}
+	if got.Engine.QueueDepth != 4 || got.Engine.RulesLoaded != 3 {
+		t.Fatalf("unexpected engine health: %+v", got.Engine)
+	}
+	if got.Storage.Status != "ok" || got.Storage.Alerts != 1 {
+		t.Fatalf("unexpected storage health: %+v", got.Storage)
+	}
+	if got.Throughput.FramesTotal != 1 || got.Throughput.PacketsReceived != 1 {
+		t.Fatalf("unexpected throughput: %+v", got.Throughput)
+	}
+}
+
+func TestHealthVerboseReportsStaleCapture(t *testing.T) {
+	queue := fakeHealthQueue{
+		state: receiver.State{
+			SessionID:       "session-old",
+			LastHeartbeatAt: time.Now().Add(-2 * time.Minute).UTC(),
+		},
+	}
+	server := NewServerWithOptions(&fakeStore{}, queue, &fakeRules{}, stats.New(), Options{HealthFreshnessLimit: time.Second})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/health?verbose=true", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	body := rec.Body.String()
+	for _, want := range []string{`"status":"degraded"`, `"capture":{"status":"stale"`} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("response missing %q: %s", want, body)
+		}
+	}
 }
 
 func TestAlertsPaginationEnvelope(t *testing.T) {
