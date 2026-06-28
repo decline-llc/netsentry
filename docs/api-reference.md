@@ -99,6 +99,18 @@ Returns the currently loaded rule snapshot in priority order.
 }
 ```
 
+### `POST /api/rules`
+
+Creates a rule, writes the canonical wrapped rules file, reloads the saved file, and atomically swaps the active rule snapshot. The request body is a single rule object using the schema below. Duplicate IDs return `RULE_ALREADY_EXISTS`.
+
+### `PUT /api/rules/{id}`
+
+Replaces an existing rule, persists the full rules file, reloads it, and atomically swaps the active snapshot. If the body includes `id`, it must match the path ID.
+
+### `DELETE /api/rules/{id}`
+
+Deletes an existing rule, persists the full rules file, reloads it, and returns `204 No Content`.
+
 ### `POST /api/rules/reload`
 
 Reloads rules from `engine.rules_seed_file` and atomically swaps the active rule snapshot when validation succeeds.
@@ -114,7 +126,7 @@ Current limitations:
 - Alert pagination, the stable list envelope, and basic exact-match filters exist; advanced query features are still pending.
 - Alert storage is SQLite-backed with startup TTL pruning and old daily shard file cleanup; optional daily shard pathing exists, but runtime cross-day rotation and cross-day querying are not implemented yet.
 - Validation and internal API errors use the unified error envelope.
-- Rules can be listed and reloaded from the configured seed file; create/update/delete endpoints are still pending.
+- Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk.
 - No authentication yet.
 - No payload redaction yet.
 
@@ -157,8 +169,10 @@ Planned endpoints:
 | `GET /api/alerts` | partial | SQLite-backed paginated list with basic exact-match filters exists; advanced query features pending. |
 | `GET /api/metrics` | partial | Basic Prometheus text format exists; fuller coverage pending. |
 | `GET /api/rules` | partial | Current rule snapshot listing exists. |
-| `POST /api/rules/reload` | partial | Hot reload from `engine.rules_seed_file` exists. |
-| `POST/PUT/PATCH/DELETE /api/rules/:id` | planned | Rule CRUD and persistence. |
+| `POST /api/rules` | partial | Creates and persists one rule; PSK auth pending. |
+| `PUT /api/rules/{id}` | partial | Replaces and persists one rule; PSK auth pending. |
+| `DELETE /api/rules/{id}` | partial | Deletes and persists one rule; PSK auth pending. |
+| `POST /api/rules/reload` | partial | Hot reload from `engine.rules_seed_file` exists; PSK auth pending. |
 | `GET/POST /api/suppressions` | planned | CIDR suppressor component exists; API wiring is pending. |
 | `GET /debug/pprof/*` | planned | Separate localhost server, not public API. |
 
