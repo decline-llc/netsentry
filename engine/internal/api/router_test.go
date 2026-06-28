@@ -215,6 +215,85 @@ func TestRulesReloadWithoutSeedFileUsesErrorEnvelope(t *testing.T) {
 	}
 }
 
+func TestRulesCreatePersistsAndReloads(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "rules.json")
+	if err := os.WriteFile(path, []byte(`{"rules":[]}`), 0o600); err != nil {
+		t.Fatalf("write rules seed: %v", err)
+	}
+	rules := &fakeRules{}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, rules, stats.New(), Options{RulesSeedFile: path})
+	body := `{"id":"rule-new","name":"New Rule","type":"payload_match","severity":"high","enabled":true,"config":{"keywords":["needle"]}}`
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/rules", strings.NewReader(body))
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusCreated {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	if len(rules.reloaded) != 1 || rules.reloaded[0].ID != "rule-new" {
+		t.Fatalf("unexpected reloaded rules: %+v", rules.reloaded)
+	}
+	written, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read rules seed: %v", err)
+	}
+	if !strings.Contains(string(written), `"rules"`) || !strings.Contains(string(written), `"rule-new"`) {
+		t.Fatalf("rules file was not updated: %s", string(written))
+	}
+}
+
+func TestRulesUpdateRequiresMatchingID(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "rules.json")
+	if err := os.WriteFile(path, []byte(`{"rules":[]}`), 0o600); err != nil {
+		t.Fatalf("write rules seed: %v", err)
+	}
+	rules := &fakeRules{rules: []*model.Rule{{ID: "rule-1", Name: "Old", Type: model.RuleTypePayloadMatch, Severity: model.SeverityLow, Enabled: true, Config: json.RawMessage(`{"keywords":["old"]}`)}}}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, rules, stats.New(), Options{RulesSeedFile: path})
+	body := `{"id":"other","name":"Updated","type":"payload_match","severity":"high","enabled":true,"config":{"keywords":["new"]}}`
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPut, "/api/rules/rule-1", strings.NewReader(body))
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), "Rule ID in path and body must match") {
+		t.Fatalf("unexpected body: %s", rec.Body.String())
+	}
+}
+
+func TestRulesDeletePersistsAndReloads(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "rules.json")
+	if err := os.WriteFile(path, []byte(`{"rules":[]}`), 0o600); err != nil {
+		t.Fatalf("write rules seed: %v", err)
+	}
+	rules := &fakeRules{rules: []*model.Rule{
+		{ID: "rule-1", Name: "One", Type: model.RuleTypePayloadMatch, Severity: model.SeverityLow, Enabled: true, Config: json.RawMessage(`{"keywords":["one"]}`)},
+		{ID: "rule-2", Name: "Two", Type: model.RuleTypePayloadMatch, Severity: model.SeverityHigh, Enabled: true, Config: json.RawMessage(`{"keywords":["two"]}`)},
+	}}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, rules, stats.New(), Options{RulesSeedFile: path})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodDelete, "/api/rules/rule-1", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusNoContent {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	if len(rules.reloaded) != 1 || rules.reloaded[0].ID != "rule-2" {
+		t.Fatalf("unexpected reloaded rules: %+v", rules.reloaded)
+	}
+	written, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read rules seed: %v", err)
+	}
+	if strings.Contains(string(written), "rule-1") || !strings.Contains(string(written), "rule-2") {
+		t.Fatalf("rules file was not updated: %s", string(written))
+	}
+}
+
 func TestStoreErrorUsesErrorEnvelope(t *testing.T) {
 	server := NewServer(&fakeStore{err: errors.New("disk offline")}, fakeQueue{}, &fakeRules{}, stats.New())
 	rec := httptest.NewRecorder()
