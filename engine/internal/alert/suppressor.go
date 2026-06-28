@@ -3,18 +3,119 @@ package alert
 import (
 	"fmt"
 	"net/netip"
+	"strings"
+	"sync"
 
 	"github.com/decline-llc/netsentry/pkg/model"
 )
 
 // Suppression describes an alert suppression rule scoped by rule ID and IP range.
 type Suppression struct {
-	ID       string
-	Enabled  bool
-	RuleIDs  []string
-	SrcCIDRs []string
-	DstCIDRs []string
-	AnyCIDRs []string
+	ID       string   `json:"id"`
+	Enabled  bool     `json:"enabled"`
+	RuleIDs  []string `json:"rule_ids"`
+	SrcCIDRs []string `json:"src_cidrs"`
+	DstCIDRs []string `json:"dst_cidrs"`
+	AnyCIDRs []string `json:"any_cidrs"`
+}
+
+// SuppressionManager owns the active in-memory suppression rules and compiled filter.
+type SuppressionManager struct {
+	mu         sync.RWMutex
+	rules      []Suppression
+	suppressor *Suppressor
+}
+
+// NewSuppressionManager constructs an in-memory suppression manager.
+func NewSuppressionManager(rules []Suppression) (*SuppressionManager, error) {
+	if err := validateSuppressionSet(rules); err != nil {
+		return nil, err
+	}
+	suppressor, err := NewSuppressor(rules)
+	if err != nil {
+		return nil, err
+	}
+	return &SuppressionManager{rules: cloneSuppressions(rules), suppressor: suppressor}, nil
+}
+
+// List returns the configured suppression rules in insertion order.
+func (m *SuppressionManager) List() []Suppression {
+	if m == nil {
+		return nil
+	}
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	return cloneSuppressions(m.rules)
+}
+
+// Add validates and appends one suppression rule, then atomically swaps the compiled filter.
+func (m *SuppressionManager) Add(rule Suppression) error {
+	if m == nil {
+		return fmt.Errorf("suppression manager is not configured")
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	candidate := append(cloneSuppressions(m.rules), cloneSuppression(rule))
+	if err := validateSuppressionSet(candidate); err != nil {
+		return err
+	}
+	suppressor, err := NewSuppressor(candidate)
+	if err != nil {
+		return err
+	}
+	m.rules = candidate
+	m.suppressor = suppressor
+	return nil
+}
+
+// Filter returns only alerts not matching active suppressions.
+func (m *SuppressionManager) Filter(alerts []*model.Alert) []*model.Alert {
+	if m == nil || len(alerts) == 0 {
+		return alerts
+	}
+	m.mu.RLock()
+	suppressor := m.suppressor
+	m.mu.RUnlock()
+	if suppressor == nil {
+		return alerts
+	}
+	return suppressor.Filter(alerts)
+}
+
+func validateSuppressionSet(rules []Suppression) error {
+	seen := make(map[string]struct{}, len(rules))
+	for _, rule := range rules {
+		if strings.TrimSpace(rule.ID) == "" {
+			return fmt.Errorf("id is required")
+		}
+		if _, ok := seen[rule.ID]; ok {
+			return fmt.Errorf("suppression %q already exists", rule.ID)
+		}
+		seen[rule.ID] = struct{}{}
+		if rule.Enabled && len(rule.SrcCIDRs) == 0 && len(rule.DstCIDRs) == 0 && len(rule.AnyCIDRs) == 0 {
+			return fmt.Errorf("suppression %q must include at least one CIDR", rule.ID)
+		}
+	}
+	return nil
+}
+
+func cloneSuppressions(rules []Suppression) []Suppression {
+	out := make([]Suppression, 0, len(rules))
+	for _, rule := range rules {
+		out = append(out, cloneSuppression(rule))
+	}
+	return out
+}
+
+func cloneSuppression(rule Suppression) Suppression {
+	return Suppression{
+		ID:       rule.ID,
+		Enabled:  rule.Enabled,
+		RuleIDs:  append([]string(nil), rule.RuleIDs...),
+		SrcCIDRs: append([]string(nil), rule.SrcCIDRs...),
+		DstCIDRs: append([]string(nil), rule.DstCIDRs...),
+		AnyCIDRs: append([]string(nil), rule.AnyCIDRs...),
+	}
 }
 
 // Suppressor filters alerts using precompiled CIDR and exact-IP suppression rules.
