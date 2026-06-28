@@ -150,12 +150,12 @@ The current development build has basic signal handling and HTTP shutdown, but n
 
 Current build:
 
-- `internal/alert` includes a CIDR/exact-IP suppressor component.
+- `internal/alert` includes a CIDR/exact-IP suppressor component and in-memory suppression manager.
 - Suppressions can be scoped by rule ID and source, destination, or either-side IP ranges.
+- `/api/suppressions` can list and add in-memory suppressions that apply to newly generated alerts.
 
 Remaining v0.1.0 suppression work:
 
-- API wiring for `/api/suppressions`.
 - Persistence and hot reload of suppression rules.
 
 ---
