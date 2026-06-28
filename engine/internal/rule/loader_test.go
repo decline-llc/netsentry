@@ -1,6 +1,7 @@
 package rule
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"testing"
@@ -52,5 +53,57 @@ func TestLoadFromFileSupportsLegacyArrayRules(t *testing.T) {
 	alerts := e.Match(&model.PacketInfo{DstPort: 80, Protocol: 6, PayloadPreview: b64("UNION SELECT 1")})
 	if len(alerts) != 1 {
 		t.Fatalf("expected normalized rule to match, got %d alerts", len(alerts))
+	}
+}
+
+func TestSaveToFileWritesWrappedSchemaAndPreservesMode(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "rules.json")
+	if err := os.WriteFile(path, []byte(`{"rules":[]}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	rules := []*model.Rule{
+		{
+			ID:       "saved-001",
+			Name:     "Saved Payload",
+			Type:     model.RuleTypePayloadMatch,
+			Severity: model.SeverityHigh,
+			Enabled:  true,
+			Config:   json.RawMessage(`{"keywords":["needle"],"case_insensitive":true}`),
+		},
+	}
+	if err := SaveToFile(path, rules); err != nil {
+		t.Fatal(err)
+	}
+
+	info, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := info.Mode().Perm(); got != 0o600 {
+		t.Fatalf("mode = %v, want 0600", got)
+	}
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var wrapped struct {
+		Rules []model.Rule `json:"rules"`
+	}
+	if err := json.Unmarshal(data, &wrapped); err != nil {
+		t.Fatalf("decode saved rules: %v\n%s", err, data)
+	}
+	if len(wrapped.Rules) != 1 || wrapped.Rules[0].ID != "saved-001" {
+		t.Fatalf("unexpected saved rules: %+v", wrapped.Rules)
+	}
+
+	loaded, err := LoadFromFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(loaded) != 1 || loaded[0].ID != "saved-001" {
+		t.Fatalf("unexpected loaded rules: %+v", loaded)
 	}
 }
