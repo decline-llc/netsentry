@@ -173,6 +173,75 @@ func TestRulesList(t *testing.T) {
 	}
 }
 
+func TestRulesListDoesNotRequireAuth(t *testing.T) {
+	rules := &fakeRules{rules: []*model.Rule{{ID: "rule-1", Name: "First"}}}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, rules, stats.New(), Options{AuthEnabled: true, AuthToken: "secret"})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/rules", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+}
+
+func TestRuleMutationRequiresBearerToken(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "rules.json")
+	if err := os.WriteFile(path, []byte(`{"rules":[]}`), 0o600); err != nil {
+		t.Fatalf("write rules seed: %v", err)
+	}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{
+		RulesSeedFile: path,
+		AuthEnabled:   true,
+		AuthToken:     "secret",
+	})
+	body := `{"id":"rule-new","name":"New Rule","type":"payload_match","severity":"high","enabled":true,"config":{"keywords":["needle"]}}`
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/rules", strings.NewReader(body))
+	req.Header.Set("X-Request-ID", "req-auth")
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	bodyText := rec.Body.String()
+	for _, want := range []string{`"code":"UNAUTHORIZED"`, `"request_id":"req-auth"`} {
+		if !strings.Contains(bodyText, want) {
+			t.Fatalf("response missing %q: %s", want, bodyText)
+		}
+	}
+	if got := rec.Header().Get("WWW-Authenticate"); got != `Bearer realm="netsentry"` {
+		t.Fatalf("WWW-Authenticate = %q", got)
+	}
+}
+
+func TestRuleMutationAcceptsBearerToken(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "rules.json")
+	if err := os.WriteFile(path, []byte(`{"rules":[]}`), 0o600); err != nil {
+		t.Fatalf("write rules seed: %v", err)
+	}
+	rules := &fakeRules{}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, rules, stats.New(), Options{
+		RulesSeedFile: path,
+		AuthEnabled:   true,
+		AuthToken:     "secret",
+	})
+	body := `{"id":"rule-new","name":"New Rule","type":"payload_match","severity":"high","enabled":true,"config":{"keywords":["needle"]}}`
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/rules", strings.NewReader(body))
+	req.Header.Set("Authorization", "Bearer secret")
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusCreated {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	if len(rules.reloaded) != 1 || rules.reloaded[0].ID != "rule-new" {
+		t.Fatalf("unexpected reloaded rules: %+v", rules.reloaded)
+	}
+}
+
 func TestRulesReloadFromSeedFile(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "rules.json")
