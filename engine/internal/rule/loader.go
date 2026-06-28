@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/decline-llc/netsentry/pkg/model"
 )
@@ -36,6 +37,46 @@ func LoadFromFile(path string) ([]*model.Rule, error) {
 		applyRuleDefaults(r)
 	}
 	return rules, nil
+}
+
+// SaveToFile writes rules using the canonical wrapped schema.
+func SaveToFile(path string, rules []*model.Rule) error {
+	data, err := json.MarshalIndent(rulesFile{Rules: rules}, "", "  ")
+	if err != nil {
+		return fmt.Errorf("marshal rules: %w", err)
+	}
+	data = append(data, '\n')
+
+	mode := os.FileMode(0o644)
+	if info, err := os.Stat(path); err == nil {
+		mode = info.Mode().Perm()
+	}
+
+	dir := filepath.Dir(path)
+	tmp, err := os.CreateTemp(dir, ".rules-*.json")
+	if err != nil {
+		return fmt.Errorf("create temp rules file: %w", err)
+	}
+	tmpName := tmp.Name()
+	defer func() {
+		_ = os.Remove(tmpName)
+	}()
+
+	if _, err := tmp.Write(data); err != nil {
+		_ = tmp.Close()
+		return fmt.Errorf("write temp rules file: %w", err)
+	}
+	if err := tmp.Chmod(mode); err != nil {
+		_ = tmp.Close()
+		return fmt.Errorf("chmod temp rules file: %w", err)
+	}
+	if err := tmp.Close(); err != nil {
+		return fmt.Errorf("close temp rules file: %w", err)
+	}
+	if err := os.Rename(tmpName, path); err != nil {
+		return fmt.Errorf("replace rules file: %w", err)
+	}
+	return nil
 }
 
 func parseRules(data []byte) ([]*model.Rule, error) {
