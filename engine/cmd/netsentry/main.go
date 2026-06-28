@@ -89,9 +89,14 @@ func main() {
 	if err := recv.Start(ctx); err != nil {
 		logger.Fatal("start uds receiver", zap.Error(err))
 	}
+	suppressions, err := alert.NewSuppressionManager(nil)
+	if err != nil {
+		logger.Fatal("create suppression manager", zap.Error(err))
+	}
 	worker := pipeline.NewWorker(ruleEngine, store, logger, metrics)
+	worker.SetSuppressor(suppressions)
 	go worker.Run(ctx, recv.Packets())
-	startHTTPServer(ctx, cfg.Engine, store, recv, ruleEngine, metrics, logger)
+	startHTTPServer(ctx, cfg.Engine, store, recv, ruleEngine, metrics, suppressions, logger)
 
 	logger.Info("engine ready — waiting for shutdown signal (SIGINT/SIGTERM)",
 		zap.String("uds", cfg.Engine.UDSSocketPath),
@@ -100,7 +105,7 @@ func main() {
 	logger.Info("shutdown signal received, exiting")
 }
 
-func startHTTPServer(ctx context.Context, engineCfg config.EngineConfig, store *alert.Store, recv *receiver.Receiver, ruleEngine *rule.Engine, metrics *stats.Stats, logger *zap.Logger) {
+func startHTTPServer(ctx context.Context, engineCfg config.EngineConfig, store *alert.Store, recv *receiver.Receiver, ruleEngine *rule.Engine, metrics *stats.Stats, suppressions *alert.SuppressionManager, logger *zap.Logger) {
 	port := engineCfg.APIPort
 	if port == 0 {
 		port = 8080
@@ -112,6 +117,7 @@ func startHTTPServer(ctx context.Context, engineCfg config.EngineConfig, store *
 			AuthEnabled:          engineCfg.APIAuthEnabled,
 			AuthToken:            engineCfg.APIAuthToken,
 			HealthFreshnessLimit: time.Duration(engineCfg.HealthFreshnessLimitSeconds) * time.Second,
+			Suppressions:         suppressions,
 		}).Handler(),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
