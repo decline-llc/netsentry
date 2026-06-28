@@ -128,7 +128,7 @@ Planned modules:
 - `internal/receiver`: UDS listener, hello validation, heartbeat state. Implemented in the current build; broader Go engine lifecycle integration remains future work.
 - `internal/pipeline`: worker lifecycle and alert flow. Implemented as a single worker in the current build.
 - `internal/alert`: aggregation, SQLite store, optional WAL replay.
-- `internal/api`: router, pagination, basic alert filters, rule CRUD/reload, errors, health, metrics, auth.
+- `internal/api`: router, pagination, basic alert filters, rule CRUD/reload, PSK auth for mutations, errors, health, metrics.
 - `internal/stats`: counters and Prometheus collectors.
 
 ---
