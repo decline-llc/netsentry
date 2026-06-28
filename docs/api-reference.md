@@ -129,6 +129,30 @@ Returns the currently loaded rule snapshot in priority order.
 }
 ```
 
+
+### `GET /api/suppressions`
+
+Returns the active in-memory suppression rules in insertion order.
+
+```json
+{
+  "data": [
+    {
+      "id": "internal-subnet",
+      "enabled": true,
+      "rule_ids": ["rule-001"],
+      "src_cidrs": ["10.0.0.0/24"],
+      "dst_cidrs": [],
+      "any_cidrs": []
+    }
+  ]
+}
+```
+
+### `POST /api/suppressions`
+
+Adds an in-memory suppression rule and immediately applies it to newly generated alerts. Enabled suppressions require at least one `src_cidrs`, `dst_cidrs`, or `any_cidrs` entry. Persistence and hot reload are still pending.
+
 ### `POST /api/rules`
 
 Creates a rule, writes the canonical wrapped rules file, reloads the saved file, and atomically swaps the active rule snapshot. The request body is a single rule object using the schema below. Duplicate IDs return `RULE_ALREADY_EXISTS`.
@@ -157,7 +181,8 @@ Current limitations:
 - Alert storage is SQLite-backed with startup TTL pruning and old daily shard file cleanup; optional daily shard pathing exists, but runtime cross-day rotation and cross-day querying are not implemented yet.
 - Validation and internal API errors use the unified error envelope.
 - Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk.
-- Optional PSK Bearer authentication protects modifying rule endpoints when `engine.api_auth_enabled` is true.
+- Optional PSK Bearer authentication protects modifying rule and suppression endpoints when `engine.api_auth_enabled` is true.
+- Suppressions are in-memory only; persistence and hot reload are pending.
 - No payload redaction yet.
 
 ---
@@ -203,10 +228,10 @@ Planned endpoints:
 | `PUT /api/rules/{id}` | partial | Replaces and persists one rule; optional PSK auth exists. |
 | `DELETE /api/rules/{id}` | partial | Deletes and persists one rule; optional PSK auth exists. |
 | `POST /api/rules/reload` | partial | Hot reload from `engine.rules_seed_file` exists; optional PSK auth exists. |
-| `GET/POST /api/suppressions` | planned | CIDR suppressor component exists; API wiring is pending. |
+| `GET/POST /api/suppressions` | partial | In-memory suppression listing/create exists and filters newly generated alerts; persistence and hot reload pending. |
 | `GET /debug/pprof/*` | planned | Separate localhost server, not public API. |
 
-Authentication: modifying rule endpoints require `Authorization: Bearer <token>` when `engine.api_auth_enabled` is true. The token is configured with `engine.api_auth_token`.
+Authentication: modifying rule and suppression endpoints require `Authorization: Bearer <token>` when `engine.api_auth_enabled` is true. The token is configured with `engine.api_auth_token`.
 
 ---
 
