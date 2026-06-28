@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/decline-llc/netsentry/internal/alert"
 	"github.com/decline-llc/netsentry/internal/receiver"
 	"github.com/decline-llc/netsentry/internal/rule"
 	"github.com/decline-llc/netsentry/internal/stats"
@@ -28,6 +29,11 @@ type CaptureStateProvider interface {
 	State() receiver.State
 }
 
+type SuppressionManager interface {
+	List() []alert.Suppression
+	Add(alert.Suppression) error
+}
+
 type RuleManager interface {
 	RuleCount() int
 	Rules() []*model.Rule
@@ -39,6 +45,7 @@ type Options struct {
 	AuthEnabled          bool
 	AuthToken            string
 	HealthFreshnessLimit time.Duration
+	Suppressions         SuppressionManager
 }
 
 type Server struct {
@@ -62,6 +69,7 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("/api/health", s.handleHealth)
 	mux.HandleFunc("/api/metrics", s.handleMetrics)
 	mux.HandleFunc("/api/alerts", s.handleAlerts)
+	mux.HandleFunc("/api/suppressions", s.handleSuppressions)
 	mux.HandleFunc("/api/rules", s.handleRules)
 	mux.HandleFunc("/api/rules/", s.handleRuleByID)
 	mux.HandleFunc("/api/rules/reload", s.handleRulesReload)
@@ -227,6 +235,56 @@ func (s *Server) handleMetrics(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte(body))
+}
+
+type suppressionListResponse struct {
+	Data []alert.Suppression `json:"data"`
+}
+
+func (s *Server) handleSuppressions(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		rules := []alert.Suppression{}
+		if s.opts.Suppressions != nil {
+			rules = s.opts.Suppressions.List()
+		}
+		writeJSON(w, http.StatusOK, suppressionListResponse{Data: rules})
+	case http.MethodPost:
+		if !s.requireMutationAuth(w, r) {
+			return
+		}
+		if s.opts.Suppressions == nil {
+			writeError(w, r, http.StatusConflict, "SUPPRESSIONS_UNAVAILABLE", "Suppressions manager is not configured")
+			return
+		}
+		suppression, err := decodeSuppression(r)
+		if err != nil {
+			writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid suppression request", err.Error())
+			return
+		}
+		if err := s.opts.Suppressions.Add(*suppression); err != nil {
+			if strings.Contains(err.Error(), "already exists") {
+				writeError(w, r, http.StatusConflict, "SUPPRESSION_ALREADY_EXISTS", "Suppression already exists")
+				return
+			}
+			writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid suppression request", err.Error())
+			return
+		}
+		writeJSON(w, http.StatusCreated, suppression)
+	default:
+		writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
+	}
+}
+
+func decodeSuppression(r *http.Request) (*alert.Suppression, error) {
+	defer r.Body.Close()
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+	var suppression alert.Suppression
+	if err := dec.Decode(&suppression); err != nil {
+		return nil, err
+	}
+	return &suppression, nil
 }
 
 type alertListResponse struct {
