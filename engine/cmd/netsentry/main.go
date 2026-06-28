@@ -91,7 +91,7 @@ func main() {
 	}
 	worker := pipeline.NewWorker(ruleEngine, store, logger, metrics)
 	go worker.Run(ctx, recv.Packets())
-	startHTTPServer(ctx, cfg.Engine.APIPort, cfg.Engine.RulesSeedFile, store, recv, ruleEngine, metrics, logger)
+	startHTTPServer(ctx, cfg.Engine, store, recv, ruleEngine, metrics, logger)
 
 	logger.Info("engine ready — waiting for shutdown signal (SIGINT/SIGTERM)",
 		zap.String("uds", cfg.Engine.UDSSocketPath),
@@ -100,13 +100,18 @@ func main() {
 	logger.Info("shutdown signal received, exiting")
 }
 
-func startHTTPServer(ctx context.Context, port int, rulesSeedFile string, store *alert.Store, recv *receiver.Receiver, ruleEngine *rule.Engine, metrics *stats.Stats, logger *zap.Logger) {
+func startHTTPServer(ctx context.Context, engineCfg config.EngineConfig, store *alert.Store, recv *receiver.Receiver, ruleEngine *rule.Engine, metrics *stats.Stats, logger *zap.Logger) {
+	port := engineCfg.APIPort
 	if port == 0 {
 		port = 8080
 	}
 	srv := &http.Server{
-		Addr:              fmt.Sprintf(":%d", port),
-		Handler:           api.NewServerWithOptions(store, recv, ruleEngine, metrics, api.Options{RulesSeedFile: rulesSeedFile}).Handler(),
+		Addr: fmt.Sprintf(":%d", port),
+		Handler: api.NewServerWithOptions(store, recv, ruleEngine, metrics, api.Options{
+			RulesSeedFile: engineCfg.RulesSeedFile,
+			AuthEnabled:   engineCfg.APIAuthEnabled,
+			AuthToken:     engineCfg.APIAuthToken,
+		}).Handler(),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 	go func() {
