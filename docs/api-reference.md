@@ -10,12 +10,42 @@ Base URL: `http://localhost:8080`
 
 ### `GET /api/health`
 
-Returns a minimal liveness response. Query parameters are currently ignored.
+Returns a minimal liveness response by default.
 
 ```json
 {
   "status": "ok",
   "alerts": 5
+}
+```
+
+With `verbose=true`, returns capture heartbeat status, engine queue/rule counts, storage status, and throughput counters. Capture status is `unknown` before the first heartbeat, `ok` while the latest heartbeat is within `engine.health_freshness_limit_seconds`, and `stale` after that limit.
+
+```json
+{
+  "status": "ok",
+  "alerts": 5,
+  "capture": {
+    "status": "ok",
+    "session_id": "capture-123",
+    "last_heartbeat_at": "2026-06-27T12:00:00Z",
+    "heartbeat_age_seconds": 1.2,
+    "freshness_limit_seconds": 30
+  },
+  "engine": {
+    "queue_depth": 0,
+    "rules_loaded": 8
+  },
+  "storage": {
+    "status": "ok",
+    "alerts": 5
+  },
+  "throughput": {
+    "frames_total": 12,
+    "packets_received": 5,
+    "packets_processed": 5,
+    "decode_errors": 0
+  }
 }
 ```
 
@@ -164,8 +194,8 @@ Planned endpoints:
 
 | Endpoint | Status | Notes |
 | --- | --- | --- |
-| `GET /api/health` | partial | Minimal response exists; verbose component snapshot pending. |
-| `GET /api/health?verbose=true` | planned | Capture heartbeat, channel depth, storage and throughput details. |
+| `GET /api/health` | partial | Minimal and verbose component snapshot responses exist; deeper dependency checks pending. |
+| `GET /api/health?verbose=true` | partial | Capture heartbeat freshness, queue depth, rule count, storage status, and throughput counters exist. |
 | `GET /api/alerts` | partial | SQLite-backed paginated list with basic exact-match filters exists; advanced query features pending. |
 | `GET /api/metrics` | partial | Basic Prometheus text format exists; fuller coverage pending. |
 | `GET /api/rules` | partial | Current rule snapshot listing exists. |
