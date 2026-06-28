@@ -108,9 +108,10 @@ func startHTTPServer(ctx context.Context, engineCfg config.EngineConfig, store *
 	srv := &http.Server{
 		Addr: fmt.Sprintf(":%d", port),
 		Handler: api.NewServerWithOptions(store, recv, ruleEngine, metrics, api.Options{
-			RulesSeedFile: engineCfg.RulesSeedFile,
-			AuthEnabled:   engineCfg.APIAuthEnabled,
-			AuthToken:     engineCfg.APIAuthToken,
+			RulesSeedFile:        engineCfg.RulesSeedFile,
+			AuthEnabled:          engineCfg.APIAuthEnabled,
+			AuthToken:            engineCfg.APIAuthToken,
+			HealthFreshnessLimit: time.Duration(engineCfg.HealthFreshnessLimitSeconds) * time.Second,
 		}).Handler(),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
