@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"crypto/subtle"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -29,6 +30,8 @@ type RuleManager interface {
 
 type Options struct {
 	RulesSeedFile string
+	AuthEnabled   bool
+	AuthToken     string
 }
 
 type Server struct {
@@ -56,6 +59,28 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("/api/rules/", s.handleRuleByID)
 	mux.HandleFunc("/api/rules/reload", s.handleRulesReload)
 	return mux
+}
+
+func (s *Server) requireMutationAuth(w http.ResponseWriter, r *http.Request) bool {
+	if !s.opts.AuthEnabled {
+		return true
+	}
+	const bearerPrefix = "Bearer "
+	auth := r.Header.Get("Authorization")
+	if !strings.HasPrefix(auth, bearerPrefix) {
+		writeAuthError(w, r)
+		return false
+	}
+	if subtle.ConstantTimeCompare([]byte(strings.TrimPrefix(auth, bearerPrefix)), []byte(s.opts.AuthToken)) != 1 {
+		writeAuthError(w, r)
+		return false
+	}
+	return true
+}
+
+func writeAuthError(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("WWW-Authenticate", `Bearer realm="netsentry"`)
+	writeError(w, r, http.StatusUnauthorized, "UNAUTHORIZED", "Valid bearer token required")
 }
 
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
@@ -129,6 +154,9 @@ func (s *Server) handleRules(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		writeJSON(w, http.StatusOK, ruleListResponse{Data: s.rules.Rules()})
 	case http.MethodPost:
+		if !s.requireMutationAuth(w, r) {
+			return
+		}
 		s.handleRuleCreate(w, r)
 	default:
 		writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
@@ -144,8 +172,14 @@ func (s *Server) handleRuleByID(w http.ResponseWriter, r *http.Request) {
 	}
 	switch r.Method {
 	case http.MethodPut:
+		if !s.requireMutationAuth(w, r) {
+			return
+		}
 		s.handleRuleUpdate(w, r, id)
 	case http.MethodDelete:
+		if !s.requireMutationAuth(w, r) {
+			return
+		}
 		s.handleRuleDelete(w, r, id)
 	default:
 		writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
@@ -319,6 +353,9 @@ func cloneRules(rules []*model.Rule) []*model.Rule {
 func (s *Server) handleRulesReload(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
+		return
+	}
+	if !s.requireMutationAuth(w, r) {
 		return
 	}
 	if s.opts.RulesSeedFile == "" {
