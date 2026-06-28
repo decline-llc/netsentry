@@ -15,3 +15,8 @@ type Matcher interface {
 type AlertWriter interface {
 	WriteBatch(ctx context.Context, alerts []*model.Alert) error
 }
+
+// SuppressionFilter removes alerts that should not be written.
+type SuppressionFilter interface {
+	Filter(alerts []*model.Alert) []*model.Alert
+}
