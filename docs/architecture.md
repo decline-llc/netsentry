@@ -188,7 +188,7 @@ Current build: zap startup and match logs.
 v0.1.0 target:
 
 - `/api/metrics` Prometheus endpoint.
-- `/api/health?verbose=true` with capture, engine, storage, and throughput status.
+- `/api/health?verbose=true` with capture heartbeat freshness, engine queue/rule counts, storage status, and throughput counters.
 - Structured JSON logs.
 - Localhost-only pprof server.
 
