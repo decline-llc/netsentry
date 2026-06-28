@@ -127,7 +127,7 @@ Current limitations:
 - Alert storage is SQLite-backed with startup TTL pruning and old daily shard file cleanup; optional daily shard pathing exists, but runtime cross-day rotation and cross-day querying are not implemented yet.
 - Validation and internal API errors use the unified error envelope.
 - Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk.
-- No authentication yet.
+- Optional PSK Bearer authentication protects modifying rule endpoints when `engine.api_auth_enabled` is true.
 - No payload redaction yet.
 
 ---
@@ -169,14 +169,14 @@ Planned endpoints:
 | `GET /api/alerts` | partial | SQLite-backed paginated list with basic exact-match filters exists; advanced query features pending. |
 | `GET /api/metrics` | partial | Basic Prometheus text format exists; fuller coverage pending. |
 | `GET /api/rules` | partial | Current rule snapshot listing exists. |
-| `POST /api/rules` | partial | Creates and persists one rule; PSK auth pending. |
-| `PUT /api/rules/{id}` | partial | Replaces and persists one rule; PSK auth pending. |
-| `DELETE /api/rules/{id}` | partial | Deletes and persists one rule; PSK auth pending. |
-| `POST /api/rules/reload` | partial | Hot reload from `engine.rules_seed_file` exists; PSK auth pending. |
+| `POST /api/rules` | partial | Creates and persists one rule; optional PSK auth exists. |
+| `PUT /api/rules/{id}` | partial | Replaces and persists one rule; optional PSK auth exists. |
+| `DELETE /api/rules/{id}` | partial | Deletes and persists one rule; optional PSK auth exists. |
+| `POST /api/rules/reload` | partial | Hot reload from `engine.rules_seed_file` exists; optional PSK auth exists. |
 | `GET/POST /api/suppressions` | planned | CIDR suppressor component exists; API wiring is pending. |
 | `GET /debug/pprof/*` | planned | Separate localhost server, not public API. |
 
-Planned authentication: PSK Bearer token for modifying endpoints, configured under `engine.api_auth_enabled` and `engine.api_auth_token`.
+Authentication: modifying rule endpoints require `Authorization: Bearer <token>` when `engine.api_auth_enabled` is true. The token is configured with `engine.api_auth_token`.
 
 ---
 
