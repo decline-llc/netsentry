@@ -12,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/decline-llc/netsentry/internal/alert"
 	"github.com/decline-llc/netsentry/internal/receiver"
 	"github.com/decline-llc/netsentry/internal/stats"
 	"github.com/decline-llc/netsentry/pkg/model"
@@ -275,6 +276,83 @@ func TestAlertsInvalidFilterUsesErrorEnvelope(t *testing.T) {
 		if !strings.Contains(body, want) {
 			t.Fatalf("response missing %q: %s", want, body)
 		}
+	}
+}
+
+func TestSuppressionsList(t *testing.T) {
+	manager, err := alert.NewSuppressionManager([]alert.Suppression{{ID: "existing", Enabled: true, AnyCIDRs: []string{"10.0.0.0/24"}}})
+	if err != nil {
+		t.Fatalf("new suppressions: %v", err)
+	}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{Suppressions: manager})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/suppressions", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	var got struct {
+		Data []alert.Suppression `json:"data"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &got); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if len(got.Data) != 1 || got.Data[0].ID != "existing" {
+		t.Fatalf("unexpected suppressions: %+v", got.Data)
+	}
+}
+
+func TestSuppressionsCreateRequiresBearerToken(t *testing.T) {
+	manager, err := alert.NewSuppressionManager(nil)
+	if err != nil {
+		t.Fatalf("new suppressions: %v", err)
+	}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{Suppressions: manager, AuthEnabled: true, AuthToken: "secret"})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/suppressions", strings.NewReader(`{"id":"s1","enabled":true,"any_cidrs":["10.0.0.0/24"]}`))
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusUnauthorized {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+}
+
+func TestSuppressionsCreateAddsRule(t *testing.T) {
+	manager, err := alert.NewSuppressionManager(nil)
+	if err != nil {
+		t.Fatalf("new suppressions: %v", err)
+	}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{Suppressions: manager, AuthEnabled: true, AuthToken: "secret"})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/suppressions", strings.NewReader(`{"id":"s1","enabled":true,"rule_ids":["rule-1"],"src_cidrs":["10.0.0.0/24"]}`))
+	req.Header.Set("Authorization", "Bearer secret")
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusCreated {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	listed := manager.List()
+	if len(listed) != 1 || listed[0].ID != "s1" {
+		t.Fatalf("unexpected suppressions: %+v", listed)
+	}
+}
+
+func TestSuppressionsCreateRejectsInvalidCIDR(t *testing.T) {
+	manager, err := alert.NewSuppressionManager(nil)
+	if err != nil {
+		t.Fatalf("new suppressions: %v", err)
+	}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{Suppressions: manager})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/suppressions", strings.NewReader(`{"id":"bad","enabled":true,"any_cidrs":["not-a-cidr"]}`))
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), `"code":"VALIDATION_ERROR"`) {
+		t.Fatalf("unexpected body: %s", rec.Body.String())
 	}
 }
 
