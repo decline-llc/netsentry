@@ -1,6 +1,9 @@
 package receiver
 
-import "sync/atomic"
+import (
+	"sync/atomic"
+	"time"
+)
 
 // HelloFrame is the capture-side handshake frame.
 type HelloFrame struct {
@@ -27,9 +30,10 @@ type HeartbeatFrame struct {
 
 // State keeps the most recent capture control frames.
 type State struct {
-	SessionID string
-	Hello     HelloFrame
-	Heartbeat HeartbeatFrame
+	SessionID       string
+	Hello           HelloFrame
+	Heartbeat       HeartbeatFrame
+	LastHeartbeatAt time.Time
 }
 
 type heartbeatState struct {
@@ -58,5 +62,6 @@ func (s *heartbeatState) SetHeartbeat(h HeartbeatFrame) {
 	cur := s.Snapshot()
 	cur.SessionID = h.SessionID
 	cur.Heartbeat = h
+	cur.LastHeartbeatAt = time.Now().UTC()
 	s.value.Store(cur)
 }
