@@ -106,7 +106,7 @@ Current rule semantics:
 
 Known implementation gaps to close before v0.1.0:
 
-- Rule management can list the active snapshot and hot reload from the configured seed file; REST create/update/delete persistence remains planned.
+- Rule management can list the active snapshot, create/update/delete rules with seed-file persistence, and hot reload from the configured seed file.
 
 ---
 
@@ -128,7 +128,7 @@ Planned modules:
 - `internal/receiver`: UDS listener, hello validation, heartbeat state. Implemented in the current build; broader Go engine lifecycle integration remains future work.
 - `internal/pipeline`: worker lifecycle and alert flow. Implemented as a single worker in the current build.
 - `internal/alert`: aggregation, SQLite store, optional WAL replay.
-- `internal/api`: router, pagination, basic alert filters, rule listing/reload, errors, health, metrics, auth.
+- `internal/api`: router, pagination, basic alert filters, rule CRUD/reload, errors, health, metrics, auth.
 - `internal/stats`: counters and Prometheus collectors.
 
 ---
