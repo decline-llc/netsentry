@@ -12,11 +12,12 @@ import (
 
 // Worker reads packets, matches rules, and writes generated alerts.
 type Worker struct {
-	matcher Matcher
-	writer  AlertWriter
-	logger  *zap.Logger
-	now     func() time.Time
-	stats   *stats.Stats
+	matcher    Matcher
+	writer     AlertWriter
+	logger     *zap.Logger
+	now        func() time.Time
+	stats      *stats.Stats
+	suppressor SuppressionFilter
 }
 
 // NewWorker constructs a single packet processing worker.
@@ -35,6 +36,11 @@ func NewWorker(matcher Matcher, writer AlertWriter, logger *zap.Logger, statsOpt
 		now:     func() time.Time { return time.Now().UTC() },
 		stats:   metrics,
 	}
+}
+
+// SetSuppressor configures an optional alert suppression filter.
+func (w *Worker) SetSuppressor(filter SuppressionFilter) {
+	w.suppressor = filter
 }
 
 // Run processes packets until the input channel is closed or ctx is cancelled.
@@ -69,6 +75,12 @@ func (w *Worker) processPacket(ctx context.Context, pkt *model.PacketInfo) {
 	w.stats.ObserveMatchDuration(time.Since(start))
 	if len(alerts) == 0 {
 		return
+	}
+	if w.suppressor != nil {
+		alerts = w.suppressor.Filter(alerts)
+		if len(alerts) == 0 {
+			return
+		}
 	}
 
 	packetTime := pkt.Timestamp().UTC()
