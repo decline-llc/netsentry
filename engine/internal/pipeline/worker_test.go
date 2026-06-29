@@ -137,3 +137,26 @@ func TestWorkerRecoversMatcherPanic(t *testing.T) {
 
 	worker.Run(context.Background(), packets)
 }
+
+func TestWorkerRedactsAlertsBeforeWrite(t *testing.T) {
+	writer := &fakeWriter{}
+	matcher := &fakeMatcher{alerts: []*model.Alert{{RuleID: "rule-1", PayloadPreview: "password=secret"}}}
+	worker := NewWorker(matcher, writer, zap.NewNop())
+	worker.SetRedactor(func(alerts []*model.Alert) {
+		for _, alert := range alerts {
+			alert.PayloadPreview = "redacted:" + alert.PayloadPreview
+		}
+	})
+
+	packets := make(chan *model.PacketInfo, 1)
+	packets <- &model.PacketInfo{TimestampSec: 1}
+	close(packets)
+
+	worker.Run(context.Background(), packets)
+	if len(writer.alerts) != 1 {
+		t.Fatalf("expected 1 alert, got %d", len(writer.alerts))
+	}
+	if writer.alerts[0].PayloadPreview != "redacted:password=secret" {
+		t.Fatalf("unexpected payload preview: %s", writer.alerts[0].PayloadPreview)
+	}
+}

@@ -20,3 +20,6 @@ type AlertWriter interface {
 type SuppressionFilter interface {
 	Filter(alerts []*model.Alert) []*model.Alert
 }
+
+// AlertRedactor mutates alerts before they are persisted or returned by storage-backed APIs.
+type AlertRedactor func(alerts []*model.Alert)

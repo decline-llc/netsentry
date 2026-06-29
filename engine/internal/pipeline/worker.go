@@ -18,6 +18,7 @@ type Worker struct {
 	now        func() time.Time
 	stats      *stats.Stats
 	suppressor SuppressionFilter
+	redactor   AlertRedactor
 }
 
 // NewWorker constructs a single packet processing worker.
@@ -41,6 +42,11 @@ func NewWorker(matcher Matcher, writer AlertWriter, logger *zap.Logger, statsOpt
 // SetSuppressor configures an optional alert suppression filter.
 func (w *Worker) SetSuppressor(filter SuppressionFilter) {
 	w.suppressor = filter
+}
+
+// SetRedactor configures an optional alert payload redactor.
+func (w *Worker) SetRedactor(redactor AlertRedactor) {
+	w.redactor = redactor
 }
 
 // Run processes packets until the input channel is closed or ctx is cancelled.
@@ -91,6 +97,10 @@ func (w *Worker) processPacket(ctx context.Context, pkt *model.PacketInfo) {
 		if alert != nil {
 			alert.Timestamp = packetTime
 		}
+	}
+
+	if w.redactor != nil {
+		w.redactor(alerts)
 	}
 
 	if err := w.writer.WriteBatch(ctx, alerts); err != nil {
