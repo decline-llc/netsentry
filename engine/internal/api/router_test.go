@@ -16,6 +16,8 @@ import (
 	"github.com/decline-llc/netsentry/internal/receiver"
 	"github.com/decline-llc/netsentry/internal/stats"
 	"github.com/decline-llc/netsentry/pkg/model"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zaptest/observer"
 )
 
 type fakeStore struct {
@@ -595,5 +597,58 @@ func TestMetricsEndpoint(t *testing.T) {
 		if !strings.Contains(body, want) {
 			t.Fatalf("metrics missing %q:\n%s", want, body)
 		}
+	}
+}
+
+func TestAuditLogsMutationRequests(t *testing.T) {
+	core, observed := observer.New(zap.InfoLevel)
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{AuditLogger: zap.New(core)})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/rules/reload", nil)
+	req.Header.Set("X-Request-ID", "req-audit")
+	server.Handler().ServeHTTP(rec, req)
+
+	entries := observed.FilterMessage("api audit").All()
+	if len(entries) != 1 {
+		t.Fatalf("audit entries = %d, want 1", len(entries))
+	}
+	fields := entries[0].ContextMap()
+	if fields["request_id"] != "req-audit" || fields["method"] != http.MethodPost || fields["path"] != "/api/rules/reload" {
+		t.Fatalf("unexpected audit fields: %+v", fields)
+	}
+	if fields["status"] != int64(http.StatusConflict) || fields["target"] != "rules" {
+		t.Fatalf("unexpected audit result fields: %+v", fields)
+	}
+}
+
+func TestAuditSkipsGetRequests(t *testing.T) {
+	core, observed := observer.New(zap.InfoLevel)
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{AuditLogger: zap.New(core)})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/health", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if got := observed.FilterMessage("api audit").Len(); got != 0 {
+		t.Fatalf("audit entries = %d, want 0", got)
+	}
+}
+
+func TestAuditSharesGeneratedRequestIDWithErrorEnvelope(t *testing.T) {
+	core, observed := observer.New(zap.InfoLevel)
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{AuditLogger: zap.New(core)})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/rules/reload", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	entries := observed.FilterMessage("api audit").All()
+	if len(entries) != 1 {
+		t.Fatalf("audit entries = %d, want 1", len(entries))
+	}
+	requestID, ok := entries[0].ContextMap()["request_id"].(string)
+	if !ok || requestID == "" {
+		t.Fatalf("missing audit request id: %+v", entries[0].ContextMap())
+	}
+	if !strings.Contains(rec.Body.String(), `"request_id":"`+requestID+`"`) {
+		t.Fatalf("response and audit request ids differ: body=%s audit=%s", rec.Body.String(), requestID)
 	}
 }
