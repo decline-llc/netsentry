@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net"
+	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -118,6 +119,39 @@ func TestStartReceivesFramesOverUnixSocket(t *testing.T) {
 	}
 	if pkt.DstPort != 80 || r.State().SessionID != "abcd1234" {
 		t.Fatalf("unexpected receiver state packet=%+v state=%+v", pkt, r.State())
+	}
+}
+
+func TestStartStopsActiveConnectionOnContextCancel(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	r := New(Config{Path: path, BufferSize: 1}, zap.NewNop())
+	if err := r.Start(ctx); err != nil {
+		t.Fatalf("start receiver: %v", err)
+	}
+
+	conn, err := dialUnix(path)
+	if err != nil {
+		t.Fatalf("dial receiver: %v", err)
+	}
+	defer conn.Close()
+
+	cancel()
+	done := make(chan struct{})
+	go func() {
+		r.Wait()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("receiver did not stop after context cancellation")
+	}
+
+	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		t.Fatalf("socket path should be removed after stop, err=%v", err)
 	}
 }
 
