@@ -1,9 +1,26 @@
 package config
 
 import (
+	"path/filepath"
 	"strings"
 	"testing"
 )
+
+func TestLoadRepositoryConfigFile(t *testing.T) {
+	cfg, err := Load(filepath.Join("..", "..", "..", "configs", "config.yaml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cfg.Capture.UDSSocketPath == "" || cfg.Engine.UDSSocketPath == "" {
+		t.Fatalf("expected capture and engine UDS paths, got capture=%q engine=%q", cfg.Capture.UDSSocketPath, cfg.Engine.UDSSocketPath)
+	}
+	if cfg.Engine.RulesSeedFile == "" {
+		t.Fatal("expected engine.rules_seed_file to be configured")
+	}
+	if cfg.Engine.PprofEnabled {
+		t.Fatal("repository config should not enable pprof by default")
+	}
+}
 
 func TestValidateAllowsLoopbackPprofAddress(t *testing.T) {
 	for _, addr := range []string{"127.0.0.1:6060", "localhost:6060", "[::1]:6060"} {

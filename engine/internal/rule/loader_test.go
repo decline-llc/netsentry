@@ -9,6 +9,53 @@ import (
 	"github.com/decline-llc/netsentry/pkg/model"
 )
 
+func TestRepositoryRuleFilesUseCanonicalWrappedSchema(t *testing.T) {
+	for _, name := range []string{"rules.json", "rules.example.json"} {
+		t.Run(name, func(t *testing.T) {
+			path := filepath.Join("..", "..", "..", "configs", name)
+			data, err := os.ReadFile(path)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			var raw struct {
+				Rules []map[string]json.RawMessage `json:"rules"`
+			}
+			if err := json.Unmarshal(data, &raw); err != nil {
+				t.Fatalf("decode %s: %v", name, err)
+			}
+			if len(raw.Rules) == 0 {
+				t.Fatalf("%s should contain wrapped rules", name)
+			}
+			for i, rule := range raw.Rules {
+				if _, ok := rule["config"]; !ok {
+					t.Fatalf("%s rule %d missing canonical config object", name, i)
+				}
+				if _, ok := rule["mitre_techniques"]; !ok {
+					t.Fatalf("%s rule %d missing canonical mitre_techniques array", name, i)
+				}
+				for _, legacyKey := range []string{"payload_match", "ip_blacklist", "port_blacklist", "mitre_tactic", "mitre_technique_id", "mitre_technique_name"} {
+					if _, ok := rule[legacyKey]; ok {
+						t.Fatalf("%s rule %d still uses legacy key %q", name, i, legacyKey)
+					}
+				}
+			}
+
+			rules, err := LoadFromFile(path)
+			if err != nil {
+				t.Fatalf("load %s: %v", name, err)
+			}
+			e := NewEngine()
+			if err := e.Reload(rules); err != nil {
+				t.Fatalf("compile %s: %v", name, err)
+			}
+			if e.RuleCount() != len(raw.Rules) {
+				t.Fatalf("%s rule count = %d, want %d", name, e.RuleCount(), len(raw.Rules))
+			}
+		})
+	}
+}
+
 func TestLoadFromFileSupportsLegacyArrayRules(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "rules.json")
