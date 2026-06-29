@@ -178,6 +178,8 @@ For parser performance changes, also run:
 make bench
 ```
 
+The current benchmark scope and local baseline are documented in `docs/performance.md`.
+
 Planned tests:
 
 - More C parser unit tests for malformed input.

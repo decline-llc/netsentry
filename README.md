@@ -85,6 +85,8 @@ Current alert responses use the stable list envelope:
 
 Supported filters are documented in `docs/api-reference.md`.
 
+Performance microbenchmark scope and the current local baseline are documented in `docs/performance.md`.
+
 ---
 
 ## Detection Boundaries
