@@ -9,6 +9,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"go.uber.org/zap"
@@ -35,6 +36,7 @@ type Receiver struct {
 	state   *heartbeatState
 	ln      net.Listener
 	stats   *stats.Stats
+	wg      sync.WaitGroup
 }
 
 // New constructs a receiver. Start must be called before packets arrive.
@@ -69,6 +71,20 @@ func (r *Receiver) QueueDepth() int { return len(r.packets) }
 // State returns the latest capture control-frame state.
 func (r *Receiver) State() State { return r.state.Snapshot() }
 
+// Stop closes the listening socket and removes the socket path. Existing
+// connections also stop when the context passed to Start is cancelled.
+func (r *Receiver) Stop() {
+	if r.ln != nil {
+		_ = r.ln.Close()
+	}
+	_ = os.Remove(r.cfg.Path)
+}
+
+// Wait blocks until the receiver accept loop and connection handlers exit.
+func (r *Receiver) Wait() {
+	r.wg.Wait()
+}
+
 // Start begins accepting UDS connections until ctx is cancelled.
 func (r *Receiver) Start(ctx context.Context) error {
 	_ = os.Remove(r.cfg.Path)
@@ -83,11 +99,14 @@ func (r *Receiver) Start(ctx context.Context) error {
 
 	go func() {
 		<-ctx.Done()
-		_ = ln.Close()
-		_ = os.Remove(r.cfg.Path)
+		r.Stop()
 	}()
 
-	go r.acceptLoop(ctx, ln)
+	r.wg.Add(1)
+	go func() {
+		defer r.wg.Done()
+		r.acceptLoop(ctx, ln)
+	}()
 	return nil
 }
 
@@ -102,12 +121,25 @@ func (r *Receiver) acceptLoop(ctx context.Context, ln net.Listener) {
 			r.logger.Warn("accept uds connection", zap.Error(err))
 			continue
 		}
-		go r.handleConn(ctx, conn)
+		r.wg.Add(1)
+		go func() {
+			defer r.wg.Done()
+			r.handleConn(ctx, conn)
+		}()
 	}
 }
 
 func (r *Receiver) handleConn(ctx context.Context, conn net.Conn) {
 	defer conn.Close()
+	done := make(chan struct{})
+	defer close(done)
+	go func() {
+		select {
+		case <-ctx.Done():
+			_ = conn.Close()
+		case <-done:
+		}
+	}()
 	scanner := bufio.NewScanner(conn)
 	scanner.Buffer(make([]byte, 0, 64*1024), 1024*1024)
 	for scanner.Scan() {
