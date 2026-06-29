@@ -183,6 +183,7 @@ Current limitations:
 - Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk.
 - Optional PSK Bearer authentication protects modifying rule and suppression endpoints when `engine.api_auth_enabled` is true.
 - Non-GET API requests emit structured zap audit logs with request ID, method, path, status, authorization outcome, target, remote address, and duration.
+- Optional pprof runs on a separate localhost-only server when `engine.pprof_enabled` is true.
 - Suppressions are in-memory only; persistence and hot reload are pending.
 - No payload redaction yet.
 
@@ -230,7 +231,7 @@ Planned endpoints:
 | `DELETE /api/rules/{id}` | partial | Deletes and persists one rule; optional PSK auth exists. |
 | `POST /api/rules/reload` | partial | Hot reload from `engine.rules_seed_file` exists; optional PSK auth exists. |
 | `GET/POST /api/suppressions` | partial | In-memory suppression listing/create exists and filters newly generated alerts; persistence and hot reload pending. |
-| `GET /debug/pprof/*` | planned | Separate localhost server, not public API. |
+| `GET /debug/pprof/*` | partial | Optional separate localhost-only server when `engine.pprof_enabled` is true; not public API. |
 
 Authentication: modifying rule and suppression endpoints require `Authorization: Bearer <token>` when `engine.api_auth_enabled` is true. The token is configured with `engine.api_auth_token`.
 

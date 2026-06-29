@@ -89,6 +89,9 @@ engine:
   api_port: 8080
   api_auth_enabled: false
   api_auth_token: "${NETSENTRY_API_TOKEN:}"
+  health_freshness_limit_seconds: 30
+  pprof_enabled: false
+  pprof_addr: "127.0.0.1:6060"
 
 logging:
   level: "info"
