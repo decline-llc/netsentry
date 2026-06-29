@@ -182,6 +182,7 @@ Current limitations:
 - Validation and internal API errors use the unified error envelope.
 - Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk.
 - Optional PSK Bearer authentication protects modifying rule and suppression endpoints when `engine.api_auth_enabled` is true.
+- Non-GET API requests emit structured zap audit logs with request ID, method, path, status, authorization outcome, target, remote address, and duration.
 - Suppressions are in-memory only; persistence and hot reload are pending.
 - No payload redaction yet.
 

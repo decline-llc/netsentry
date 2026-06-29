@@ -183,7 +183,7 @@ All SQL values must use placeholders. Do not format user-controlled values into 
 
 ## 9. Observability Target
 
-Current build: zap startup and match logs.
+Current build: zap startup and match logs, verbose health, Prometheus metrics, and structured audit logs for non-GET API requests.
 
 v0.1.0 target:
 
