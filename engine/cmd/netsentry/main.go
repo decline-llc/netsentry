@@ -96,6 +96,9 @@ func main() {
 	}
 	worker := pipeline.NewWorker(ruleEngine, store, logger, metrics)
 	worker.SetSuppressor(suppressions)
+	if cfg.Engine.RedactSensitiveFields {
+		worker.SetRedactor(alert.RedactSensitivePayloads)
+	}
 	go worker.Run(ctx, recv.Packets())
 	startHTTPServer(ctx, cfg.Engine, store, recv, ruleEngine, metrics, suppressions, logger)
 	startPprofServer(ctx, cfg.Engine, logger)
