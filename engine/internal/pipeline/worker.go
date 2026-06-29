@@ -75,6 +75,13 @@ func (w *Worker) Run(ctx context.Context, packets <-chan *model.PacketInfo) {
 }
 
 func (w *Worker) processPacket(ctx context.Context, pkt *model.PacketInfo) {
+	defer func() {
+		if r := recover(); r != nil {
+			w.stats.IncWorkerPanic()
+			w.logger.Error("pipeline packet panic", zap.Any("panic", r), zap.String("src_ip", pkt.SrcIP), zap.String("dst_ip", pkt.DstIP))
+		}
+	}()
+
 	w.stats.IncPacketProcessed()
 	start := time.Now()
 	alerts := w.matcher.Match(pkt)

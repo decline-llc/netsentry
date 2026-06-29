@@ -8,6 +8,7 @@ import (
 
 	"go.uber.org/zap"
 
+	"github.com/decline-llc/netsentry/internal/stats"
 	"github.com/decline-llc/netsentry/pkg/model"
 )
 
@@ -21,6 +22,18 @@ func (m *fakeMatcher) Match(pkt *model.PacketInfo) []*model.Alert {
 		panic("matcher failed")
 	}
 	return m.alerts
+}
+
+type sequenceMatcher struct {
+	calls int
+}
+
+func (m *sequenceMatcher) Match(pkt *model.PacketInfo) []*model.Alert {
+	m.calls++
+	if m.calls == 1 {
+		panic("first packet failed")
+	}
+	return []*model.Alert{{RuleID: "rule-after-panic"}}
 }
 
 type fakeWriter struct {
@@ -136,6 +149,25 @@ func TestWorkerRecoversMatcherPanic(t *testing.T) {
 	close(packets)
 
 	worker.Run(context.Background(), packets)
+}
+
+func TestWorkerContinuesAfterPacketPanic(t *testing.T) {
+	metrics := stats.New()
+	writer := &fakeWriter{}
+	worker := NewWorker(&sequenceMatcher{}, writer, zap.NewNop(), metrics)
+	packets := make(chan *model.PacketInfo, 2)
+	packets <- &model.PacketInfo{TimestampSec: 1, SrcIP: "10.0.0.1", DstIP: "10.0.0.2"}
+	packets <- &model.PacketInfo{TimestampSec: 2, SrcIP: "10.0.0.3", DstIP: "10.0.0.4"}
+	close(packets)
+
+	worker.Run(context.Background(), packets)
+
+	if len(writer.alerts) != 1 || writer.alerts[0].RuleID != "rule-after-panic" {
+		t.Fatalf("worker did not continue after panic, alerts=%+v", writer.alerts)
+	}
+	if got := metrics.Snapshot().WorkerPanics; got != 1 {
+		t.Fatalf("expected 1 worker panic, got %d", got)
+	}
 }
 
 func TestWorkerRedactsAlertsBeforeWrite(t *testing.T) {
