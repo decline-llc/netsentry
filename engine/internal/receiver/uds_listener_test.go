@@ -83,13 +83,16 @@ func TestHandleLineContextCancelWhileBlocked(t *testing.T) {
 
 func TestStartReceivesFramesOverUnixSocket(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	path := filepath.Join(t.TempDir(), "netsentry.sock")
 	r := New(Config{Path: path, BufferSize: 4}, zap.NewNop())
 	if err := r.Start(ctx); err != nil {
 		t.Fatalf("start receiver: %v", err)
 	}
+	defer func() {
+		cancel()
+		r.Wait()
+	}()
 
 	conn, err := dialUnix(path)
 	if err != nil {
@@ -102,11 +105,7 @@ func TestStartReceivesFramesOverUnixSocket(t *testing.T) {
 		map[string]any{"timestamp_sec": 1, "timestamp_usec": 2, "src_ip": "10.0.0.1", "dst_ip": "10.0.0.2", "src_port": 1, "dst_port": 80, "protocol": 6, "payload_len": 0, "is_fragment": false, "truncated": false},
 	}
 	for _, frame := range frames {
-		b, err := json.Marshal(frame)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if _, err := conn.Write(append(b, '\n')); err != nil {
+		if err := writeJSONFrame(conn, frame); err != nil {
 			t.Fatalf("write frame: %v", err)
 		}
 	}
@@ -119,6 +118,69 @@ func TestStartReceivesFramesOverUnixSocket(t *testing.T) {
 	}
 	if pkt.DstPort != 80 || r.State().SessionID != "abcd1234" {
 		t.Fatalf("unexpected receiver state packet=%+v state=%+v", pkt, r.State())
+	}
+}
+
+func TestStartAcceptsReconnectOnSameUnixSocket(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	r := New(Config{Path: path, BufferSize: 4}, zap.NewNop())
+	if err := r.Start(ctx); err != nil {
+		t.Fatalf("start receiver: %v", err)
+	}
+	defer func() {
+		cancel()
+		r.Wait()
+	}()
+
+	first, err := dialUnix(path)
+	if err != nil {
+		t.Fatalf("dial first receiver connection: %v", err)
+	}
+	if err := writeJSONFrame(first, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "session-one", PID: 1, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
+		t.Fatalf("write first hello: %v", err)
+	}
+	if err := writeJSONFrame(first, map[string]any{"timestamp_sec": 1, "timestamp_usec": 2, "src_ip": "10.0.0.1", "dst_ip": "10.0.0.2", "src_port": 1000, "dst_port": 80, "protocol": 6, "payload_len": 0, "is_fragment": false, "truncated": false}); err != nil {
+		t.Fatalf("write first packet: %v", err)
+	}
+	if err := first.Close(); err != nil {
+		t.Fatalf("close first connection: %v", err)
+	}
+
+	packetCtx, packetCancel := context.WithTimeout(context.Background(), time.Second)
+	firstPkt, err := WaitForPacket(packetCtx, r.Packets())
+	packetCancel()
+	if err != nil {
+		t.Fatalf("wait first packet: %v", err)
+	}
+	if firstPkt.DstPort != 80 {
+		t.Fatalf("unexpected first packet: %+v", firstPkt)
+	}
+
+	second, err := dialUnix(path)
+	if err != nil {
+		t.Fatalf("dial second receiver connection: %v", err)
+	}
+	defer second.Close()
+	if err := writeJSONFrame(second, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "session-two", PID: 2, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
+		t.Fatalf("write second hello: %v", err)
+	}
+	if err := writeJSONFrame(second, map[string]any{"timestamp_sec": 3, "timestamp_usec": 4, "src_ip": "10.0.0.3", "dst_ip": "10.0.0.4", "src_port": 2000, "dst_port": 443, "protocol": 6, "payload_len": 0, "is_fragment": false, "truncated": false}); err != nil {
+		t.Fatalf("write second packet: %v", err)
+	}
+
+	packetCtx, packetCancel = context.WithTimeout(context.Background(), time.Second)
+	secondPkt, err := WaitForPacket(packetCtx, r.Packets())
+	packetCancel()
+	if err != nil {
+		t.Fatalf("wait second packet: %v", err)
+	}
+	if secondPkt.DstPort != 443 {
+		t.Fatalf("unexpected second packet: %+v", secondPkt)
+	}
+	if got := r.State(); got.SessionID != "session-two" {
+		t.Fatalf("receiver state did not update after reconnect: %+v", got)
 	}
 }
 
@@ -153,6 +215,15 @@ func TestStartStopsActiveConnectionOnContextCancel(t *testing.T) {
 	if _, err := os.Stat(path); !os.IsNotExist(err) {
 		t.Fatalf("socket path should be removed after stop, err=%v", err)
 	}
+}
+
+func writeJSONFrame(conn net.Conn, frame any) error {
+	b, err := json.Marshal(frame)
+	if err != nil {
+		return err
+	}
+	_, err = conn.Write(append(b, '\n'))
+	return err
 }
 
 func dialUnix(path string) (net.Conn, error) {
