@@ -7,7 +7,7 @@ GO_MODULE  := ./engine
 BIN_DIR    := bin
 BENCH_ITERATIONS ?= 100000
 
-.PHONY: all build-c build-go build test asan-test bench lint clean quickstart help
+.PHONY: all build-c build-go build test asan-test bench e2e-smoke lint clean quickstart help
 
 all: build
 
@@ -37,6 +37,10 @@ asan-test:
 bench:
 	$(MAKE) -C capture bench BENCH_ITERATIONS=$(BENCH_ITERATIONS)
 	cd $(GO_MODULE) && GOPROXY=$(GOPROXY) $(GO) test -bench=. -benchtime=10s -benchmem ./...
+
+## e2e-smoke — run deterministic pcap -> UDS -> engine -> SQLite -> API smoke test
+e2e-smoke: build
+	@bash scripts/e2e_smoke.sh
 
 ## lint      — run go vet and staticcheck (if installed)
 lint:

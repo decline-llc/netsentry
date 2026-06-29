@@ -29,6 +29,7 @@ make build-go      # compile Go engine
 make build         # build both binaries
 make test          # C parser/UDS tests + Go race tests
 make bench         # C parser/UDS microbenchmarks + Go benchmarks
+make e2e-smoke     # deterministic pcap -> SQLite -> API smoke test
 make lint          # go vet + optional staticcheck
 make quickstart    # build, generate pcap, run engine/capture, print alerts
 make asan-test     # C parser tests under AddressSanitizer
@@ -179,6 +180,14 @@ make bench
 ```
 
 The current benchmark scope and local baseline are documented in `docs/performance.md`.
+
+For release-candidate checks, run:
+
+```bash
+make e2e-smoke
+```
+
+This uses a temporary config, Unix socket, API port, and SQLite database, then asserts that the synthetic pcap produces 6 processed packets, 5 alerts, and 8 loaded rules.
 
 Planned tests:
 

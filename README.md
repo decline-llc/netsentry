@@ -24,6 +24,12 @@ This currently does the following:
 
 Expected result in the current seed setup: `5` alerts from SQL injection, Log4Shell, reverse shell, shell command injection, and scanner user-agent rules.
 
+For a non-interactive release smoke check, run:
+
+```bash
+make e2e-smoke
+```
+
 ---
 
 ## Implemented Today
