@@ -6,8 +6,9 @@ GOPROXY    ?= https://goproxy.cn,direct
 GO_MODULE  := ./engine
 BIN_DIR    := bin
 BENCH_ITERATIONS ?= 100000
+VERSION    ?= 0.1.0-dev
 
-.PHONY: all build-c build-go build test asan-test bench e2e-smoke lint clean quickstart help
+.PHONY: all build-c build-go build test asan-test bench e2e-smoke dist lint clean quickstart help
 
 all: build
 
@@ -42,6 +43,10 @@ bench:
 e2e-smoke: build
 	@bash scripts/e2e_smoke.sh
 
+## dist      — build a local release archive under dist/
+dist: build
+	@bash scripts/package_release.sh $(VERSION)
+
 ## lint      — run go vet and staticcheck (if installed)
 lint:
 	cd $(GO_MODULE) && $(GO) vet ./...
@@ -52,7 +57,7 @@ lint:
 ## clean     — remove compiled binaries and object files
 clean:
 	$(MAKE) -C capture clean
-	rm -rf $(BIN_DIR)
+	rm -rf $(BIN_DIR) dist
 
 ## quickstart — generate a sample pcap and run a full analysis
 quickstart: build

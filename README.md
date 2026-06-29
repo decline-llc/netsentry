@@ -30,6 +30,12 @@ For a non-interactive release smoke check, run:
 make e2e-smoke
 ```
 
+To create a local binary release archive:
+
+```bash
+make dist
+```
+
 ---
 
 ## Implemented Today
@@ -52,7 +58,7 @@ These are v0.1.0 goals, not current behavior:
 - Full Prometheus metric coverage beyond the current basic `/api/metrics`.
 - Suppression persistence/hot reload, advanced alert querying, and remaining error envelope coverage.
 - C-side cJSON serializer, C unit tests, ASan/fuzz targets.
-- Docker image and binary release packaging.
+- Docker image packaging.
 
 ---
 

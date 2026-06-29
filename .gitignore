@@ -70,6 +70,7 @@ go.work.sum
 # --- Project Specific ---
 # Ignore generated binaries
 bin/
+dist/
 netsentry-engine
 netsentry-capture
 
