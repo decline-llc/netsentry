@@ -7,8 +7,10 @@ GO_MODULE  := ./engine
 BIN_DIR    := bin
 BENCH_ITERATIONS ?= 100000
 VERSION    ?= 0.1.0-dev
+IMAGE      ?= netsentry:$(VERSION)
+DOCKER     ?= docker
 
-.PHONY: all build-c build-go build test asan-test bench e2e-smoke dist lint clean quickstart help
+.PHONY: all build-c build-go build test asan-test bench e2e-smoke dist docker-build lint clean quickstart help
 
 all: build
 
@@ -46,6 +48,11 @@ e2e-smoke: build
 ## dist      — build a local release archive under dist/
 dist: build
 	@bash scripts/package_release.sh $(VERSION)
+
+## docker-build — build a local Docker image
+docker-build:
+	@command -v $(firstword $(DOCKER)) >/dev/null 2>&1 || { echo "$(firstword $(DOCKER)) not found"; exit 1; }
+	$(DOCKER) build -t $(IMAGE) .
 
 ## lint      — run go vet and staticcheck (if installed)
 lint:

@@ -31,6 +31,7 @@ make test          # C parser/UDS tests + Go race tests
 make bench         # C parser/UDS microbenchmarks + Go benchmarks
 make e2e-smoke     # deterministic pcap -> SQLite -> API smoke test
 make dist          # build a local release archive under dist/
+make docker-build  # build a local Docker image
 make lint          # go vet + optional staticcheck
 make quickstart    # build, generate pcap, run engine/capture, print alerts
 make asan-test     # C parser tests under AddressSanitizer
@@ -42,7 +43,7 @@ Planned but not implemented yet:
 - full `make build-asan` capture binary target
 - C fuzz targets
 - `make sanitize-pcap`
-- Docker image target
+- published Docker image workflow
 
 ---
 
@@ -198,6 +199,16 @@ VERSION=0.1.0-rc1 make dist
 ```
 
 The archive and SHA-256 checksum are written to `dist/`. Generated release archives are ignored by Git.
+
+To build the local Docker image:
+
+```bash
+make docker-build
+IMAGE=netsentry:0.1.0-rc1 make docker-build
+DOCKER="sudo docker" make docker-build
+```
+
+The image contains both `netsentry-engine` and `netsentry-capture`. The default entrypoint starts the engine with `configs/config.yaml`; use `docker run --entrypoint netsentry-capture ...` when you need to run the capture binary from the same image.
 
 Planned tests:
 

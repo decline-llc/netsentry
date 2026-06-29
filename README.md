@@ -36,6 +36,14 @@ To create a local binary release archive:
 make dist
 ```
 
+To build the local Docker image:
+
+```bash
+make docker-build
+# If your Docker daemon requires elevated privileges:
+DOCKER="sudo docker" make docker-build
+```
+
 ---
 
 ## Implemented Today
@@ -58,7 +66,7 @@ These are v0.1.0 goals, not current behavior:
 - Full Prometheus metric coverage beyond the current basic `/api/metrics`.
 - Suppression persistence/hot reload, advanced alert querying, and remaining error envelope coverage.
 - C-side cJSON serializer, C unit tests, ASan/fuzz targets.
-- Docker image packaging.
+- Published Docker image workflow.
 
 ---
 
