@@ -185,7 +185,7 @@ Current limitations:
 - Non-GET API requests emit structured zap audit logs with request ID, method, path, status, authorization outcome, target, remote address, and duration.
 - Optional pprof runs on a separate localhost-only server when `engine.pprof_enabled` is true.
 - Suppressions are in-memory only; persistence and hot reload are pending.
-- No payload redaction yet.
+- Payload previews are redacted before SQLite writes when `engine.redact_sensitive_fields` is true; current redaction covers Authorization, Cookie, Set-Cookie, password, and token patterns.
 
 ---
 

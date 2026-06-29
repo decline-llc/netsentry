@@ -183,7 +183,7 @@ All SQL values must use placeholders. Do not format user-controlled values into 
 
 ## 9. Observability Target
 
-Current build: zap startup and match logs, verbose health, Prometheus metrics, structured audit logs for non-GET API requests, and optional localhost-only pprof.
+Current build: zap startup and match logs, verbose health, Prometheus metrics, structured audit logs for non-GET API requests, optional localhost-only pprof, and configurable payload preview redaction before alert writes.
 
 v0.1.0 target:
 
