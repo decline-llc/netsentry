@@ -2,6 +2,8 @@ package config
 
 import (
 	"fmt"
+	"net"
+	"net/netip"
 	"os"
 	"regexp"
 	"strings"
@@ -37,6 +39,8 @@ type EngineConfig struct {
 	APIAuthEnabled              bool     `yaml:"api_auth_enabled"`
 	RedactSensitiveFields       bool     `yaml:"redact_sensitive_fields"`
 	HealthFreshnessLimitSeconds int      `yaml:"health_freshness_limit_seconds"`
+	PprofEnabled                bool     `yaml:"pprof_enabled"`
+	PprofAddr                   string   `yaml:"pprof_addr"`
 }
 
 type LoggingConfig struct {
@@ -119,6 +123,8 @@ func defaults() *Config {
 			APIAuthEnabled:              false,
 			RedactSensitiveFields:       true,
 			HealthFreshnessLimitSeconds: 30,
+			PprofEnabled:                false,
+			PprofAddr:                   "127.0.0.1:6060",
 		},
 		Logging: LoggingConfig{
 			Level:     "info",
@@ -133,8 +139,26 @@ func validate(cfg *Config) error {
 	if cfg.Engine.APIAuthEnabled && strings.TrimSpace(cfg.Engine.APIAuthToken) == "" {
 		errs = append(errs, "engine.api_auth_token must be set when api_auth_enabled is true")
 	}
+	if cfg.Engine.PprofEnabled && !isLoopbackListenAddr(cfg.Engine.PprofAddr) {
+		errs = append(errs, "engine.pprof_addr must be a localhost or loopback address when pprof_enabled is true")
+	}
 	if len(errs) > 0 {
 		return fmt.Errorf("config validation failed:\n  - %s", strings.Join(errs, "\n  - "))
 	}
 	return nil
+}
+
+func isLoopbackListenAddr(addr string) bool {
+	host, _, err := net.SplitHostPort(strings.TrimSpace(addr))
+	if err != nil || strings.TrimSpace(host) == "" {
+		return false
+	}
+	if strings.EqualFold(host, "localhost") {
+		return true
+	}
+	ip, err := netip.ParseAddr(host)
+	if err != nil {
+		return false
+	}
+	return ip.IsLoopback()
 }

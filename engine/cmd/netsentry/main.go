@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+	"net/http/pprof"
 	"os"
 	"time"
 
@@ -97,6 +98,7 @@ func main() {
 	worker.SetSuppressor(suppressions)
 	go worker.Run(ctx, recv.Packets())
 	startHTTPServer(ctx, cfg.Engine, store, recv, ruleEngine, metrics, suppressions, logger)
+	startPprofServer(ctx, cfg.Engine, logger)
 
 	logger.Info("engine ready — waiting for shutdown signal (SIGINT/SIGTERM)",
 		zap.String("uds", cfg.Engine.UDSSocketPath),
@@ -132,6 +134,36 @@ func startHTTPServer(ctx context.Context, engineCfg config.EngineConfig, store *
 		logger.Info("http api started", zap.Int("port", port))
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.Fatal("http api failed", zap.Error(err))
+		}
+	}()
+}
+
+func startPprofServer(ctx context.Context, engineCfg config.EngineConfig, logger *zap.Logger) {
+	if !engineCfg.PprofEnabled {
+		return
+	}
+	mux := http.NewServeMux()
+	mux.HandleFunc("/debug/pprof/", pprof.Index)
+	mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
+	mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
+	mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+	mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
+
+	srv := &http.Server{
+		Addr:              engineCfg.PprofAddr,
+		Handler:           mux,
+		ReadHeaderTimeout: 5 * time.Second,
+	}
+	go func() {
+		<-ctx.Done()
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+		_ = srv.Shutdown(shutdownCtx)
+	}()
+	go func() {
+		logger.Info("pprof server started", zap.String("addr", engineCfg.PprofAddr))
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logger.Fatal("pprof server failed", zap.Error(err))
 		}
 	}()
 }
