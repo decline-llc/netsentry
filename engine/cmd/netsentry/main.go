@@ -118,6 +118,7 @@ func startHTTPServer(ctx context.Context, engineCfg config.EngineConfig, store *
 			AuthToken:            engineCfg.APIAuthToken,
 			HealthFreshnessLimit: time.Duration(engineCfg.HealthFreshnessLimitSeconds) * time.Second,
 			Suppressions:         suppressions,
+			AuditLogger:          logger,
 		}).Handler(),
 		ReadHeaderTimeout: 5 * time.Second,
 	}

@@ -14,6 +14,7 @@ import (
 	"github.com/decline-llc/netsentry/internal/rule"
 	"github.com/decline-llc/netsentry/internal/stats"
 	"github.com/decline-llc/netsentry/pkg/model"
+	"go.uber.org/zap"
 )
 
 type AlertStore interface {
@@ -46,6 +47,7 @@ type Options struct {
 	AuthToken            string
 	HealthFreshnessLimit time.Duration
 	Suppressions         SuppressionManager
+	AuditLogger          *zap.Logger
 }
 
 type Server struct {
@@ -73,7 +75,7 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("/api/rules", s.handleRules)
 	mux.HandleFunc("/api/rules/", s.handleRuleByID)
 	mux.HandleFunc("/api/rules/reload", s.handleRulesReload)
-	return mux
+	return s.audit(mux)
 }
 
 func (s *Server) requireMutationAuth(w http.ResponseWriter, r *http.Request) bool {
