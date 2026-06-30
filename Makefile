@@ -10,7 +10,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build test asan-test bench e2e-smoke dist docker-build rc-check lint clean quickstart help
+.PHONY: all build-c build-go build test asan-test bench e2e-smoke e2e-pressure dist docker-build rc-check lint clean quickstart help
 
 all: build
 
@@ -44,6 +44,10 @@ bench:
 ## e2e-smoke — run deterministic pcap -> UDS -> engine -> SQLite -> API smoke test
 e2e-smoke: build
 	@bash scripts/e2e_smoke.sh
+
+## e2e-pressure — run repeat-pcap end-to-end throughput smoke test
+e2e-pressure: build
+	@bash scripts/e2e_pressure.sh
 
 ## dist      — build a local release archive under dist/
 dist: build

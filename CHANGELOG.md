@@ -22,6 +22,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Prometheus text metrics for current packet, alert, queue, rule, and worker counters.
 - Deterministic synthetic pcap generator with a Python stdlib fallback when Scapy is unavailable.
 - Non-interactive end-to-end smoke test via `make e2e-smoke`.
+- Repeat-pcap end-to-end throughput smoke test via `make e2e-pressure`.
 - Local release archive packaging via `make dist`, including SHA-256 checksum generation.
 - Local Docker image build via `make docker-build`.
 - Release-candidate verification bundle via `make rc-check`, including release archive, Docker image content, and runtime health smoke checks.
@@ -41,7 +42,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Runtime cross-day database rotation and cross-day alert querying are not implemented.
 - WAL JSONL replay and degraded-mode disk-full handling are not implemented.
 - Suppression persistence and hot reload are not implemented.
-- Full end-to-end throughput pressure testing is still pending; current performance data is limited to microbenchmarks.
+- Broader end-to-end throughput pressure testing with realistic pcap corpora and latency distributions is still pending; current pressure coverage is a repeat-pcap smoke plus microbenchmarks.
 - C fuzz targets and a full capture ASan build target are still pending.
 
 ---

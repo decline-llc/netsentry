@@ -30,6 +30,14 @@ For a non-interactive release smoke check, run:
 make e2e-smoke
 ```
 
+For a local end-to-end throughput smoke check, run:
+
+```bash
+make e2e-pressure
+# Optional larger run:
+PRESSURE_REPEATS=10000 make e2e-pressure
+```
+
 To create a local binary release archive:
 
 ```bash
@@ -113,7 +121,7 @@ Current alert responses use the stable list envelope:
 
 Supported filters are documented in `docs/api-reference.md`.
 
-Performance microbenchmark scope and the current local baseline are documented in `docs/performance.md`.
+Performance microbenchmark scope, local baseline, and the repeat-pcap end-to-end pressure smoke are documented in `docs/performance.md`.
 
 ---
 

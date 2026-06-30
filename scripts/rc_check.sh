@@ -30,6 +30,7 @@ cd "${ROOT_DIR}"
 
 echo "[rc-check] shell syntax"
 bash -n scripts/e2e_smoke.sh
+bash -n scripts/e2e_pressure.sh
 bash -n scripts/package_release.sh
 bash -n scripts/rc_check.sh
 

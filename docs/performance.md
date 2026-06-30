@@ -12,8 +12,9 @@ The current benchmark target measures the parts that already have stable standal
 - C packet and heartbeat JSON formatting microbenchmarks.
 - C Unix Domain Socket line write microbenchmark against a local drain listener.
 - Go package benchmark command execution with `go test -bench=.`, although the current Go packages do not yet expose `Benchmark*` functions.
+- A repeat-pcap end-to-end pressure smoke test across C capture, UDS, Go receiver, rule matching, SQLite aggregation, and API health/alerts checks.
 
-It does not yet measure full pcap-to-SQLite throughput across the C capture process, UDS transport, Go receiver, rule engine, worker, SQLite writer, and HTTP API.
+The repeat-pcap pressure smoke is intended to catch obvious pipeline regressions and provide a local baseline. It is not a production traffic model and does not replace a broader benchmark corpus.
 
 ---
 
@@ -30,6 +31,26 @@ BENCH_ITERATIONS=1000000 make bench
 ```
 
 Some sandboxed environments block Unix socket `bind(2)` or tracing-sensitive sanitizer behavior. In that case, run the same command in a normal local shell.
+
+For an end-to-end pressure smoke:
+
+```bash
+make e2e-pressure
+```
+
+The default run repeats the six-packet synthetic pcap pattern 1000 times, for 6000 packets and 5000 generated alerts before SQLite aggregation. Increase the size with:
+
+```bash
+PRESSURE_REPEATS=10000 make e2e-pressure
+```
+
+The script reports elapsed time, packet throughput, alert throughput, and verifies:
+
+- expected packets received and processed
+- expected raw alerts generated
+- zero decode and alert write errors
+- five SQLite aggregated alert rows
+- aggregated alert counts equal the raw alert total
 
 ---
 
@@ -63,21 +84,27 @@ The C UDS sender reported:
 avg_json_serialize_us=0.24 write_errors=0
 ```
 
+The end-to-end pressure smoke prints a result line like:
+
+```text
+[pressure] ok: packets=6000 alerts=5000 aggregated_rows=5 elapsed_sec=... pps=... alerts_per_sec=...
+```
+
+Record local pressure-smoke samples here only when the run is representative for the current machine and configuration.
+
 ---
 
 ## Current Interpretation
 
 Parser and JSON formatting costs are not the obvious bottleneck in the current microbenchmarks. The UDS line write benchmark is materially slower than parser-only and JSON-only paths, which is expected because it crosses the socket boundary.
 
-For v0.1.0, the next performance question is end-to-end throughput under realistic rule sets and SQLite writes. That requires a dedicated pressure harness that reports:
+For v0.1.0, the remaining performance question is end-to-end throughput under larger and more realistic rule sets and pcap corpora. The current pressure smoke reports:
 
 - packets read from pcap
-- packets delivered over UDS
+- packets delivered over UDS and processed by the worker
 - Go receiver decode errors
-- packet queue depth
-- worker match latency
-- alert write latency
+- raw alerts generated
 - SQLite aggregation rate
 - total pcap-to-alert runtime
 
-Until that exists, the honest target remains functional correctness plus measured microbenchmarks, not a published production PPS guarantee.
+It does not yet report packet queue depth over time, worker match latency distribution, or SQLite write latency distribution. Until those exist, the honest target remains functional correctness plus measured local benchmarks, not a published production PPS guarantee.

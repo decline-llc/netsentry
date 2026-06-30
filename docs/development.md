@@ -30,6 +30,7 @@ make build         # build both binaries
 make test          # C parser/UDS tests + Go race tests
 make bench         # C parser/UDS microbenchmarks + Go benchmarks
 make e2e-smoke     # deterministic pcap -> SQLite -> API smoke test
+make e2e-pressure  # repeat-pcap end-to-end throughput smoke test
 make dist          # build a local release archive under dist/
 make docker-build  # build a local Docker image
 make rc-check      # release-candidate verification bundle
@@ -182,7 +183,15 @@ For parser performance changes, also run:
 make bench
 ```
 
-The current benchmark scope and local baseline are documented in `docs/performance.md`.
+For changes that may affect the full offline pipeline, also run:
+
+```bash
+make e2e-pressure
+# Optional larger run:
+PRESSURE_REPEATS=10000 make e2e-pressure
+```
+
+The current benchmark scope, local baseline, and pressure smoke behavior are documented in `docs/performance.md`.
 
 For release-candidate checks, run:
 
