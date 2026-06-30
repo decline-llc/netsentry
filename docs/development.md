@@ -27,6 +27,7 @@ These targets exist today:
 make build-c       # compile C capture
 make build-go      # compile Go engine
 make build         # build both binaries
+make build-asan    # compile C capture with AddressSanitizer
 make test          # C parser/UDS tests + Go race tests
 make bench         # C parser/UDS microbenchmarks + Go benchmarks
 make e2e-smoke     # deterministic pcap -> SQLite -> API smoke test
@@ -42,7 +43,6 @@ make clean
 
 Planned but not implemented yet:
 
-- full `make build-asan` capture binary target
 - C fuzz targets
 - `make sanitize-pcap`
 - published Docker image workflow
@@ -185,6 +185,7 @@ Current verification before committing:
 ```bash
 make test
 make asan-test
+make build-asan
 make quickstart
 ```
 
@@ -241,7 +242,7 @@ Planned tests:
 
 - More C parser unit tests for malformed input.
 - Broader UDS sender tests for edge-case write failures.
-- Fuzz targets and full capture ASan build.
+- C fuzz targets.
 - Broader UDS receiver integration tests for multi-session lifecycle.
 - SQLite aggregation tests for alert storage changes.
 - Full graceful shutdown tests.
