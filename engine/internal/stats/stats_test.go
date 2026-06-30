@@ -31,6 +31,7 @@ func TestRenderPrometheusIncludesCountersLabelsAndGauges(t *testing.T) {
 	s.IncFrame()
 	s.IncPacketReceived()
 	s.ObserveMatchDuration(250 * time.Millisecond)
+	s.ObserveAlertWriteDuration(750 * time.Millisecond)
 	s.ObserveAlerts([]*model.Alert{{Severity: model.SeverityCritical}})
 
 	body := RenderPrometheus(s.Snapshot(), map[string]float64{
@@ -51,6 +52,14 @@ func TestRenderPrometheusIncludesCountersLabelsAndGauges(t *testing.T) {
 		`netsentry_rule_match_duration_seconds_bucket{le="+Inf"} 1`,
 		"netsentry_rule_match_duration_seconds_sum 0.25",
 		"netsentry_rule_match_duration_seconds_count 1",
+		"netsentry_alert_write_duration_seconds_total 0.75",
+		"# HELP netsentry_alert_write_duration_seconds Alert write duration distribution.",
+		"# TYPE netsentry_alert_write_duration_seconds histogram",
+		`netsentry_alert_write_duration_seconds_bucket{le="0.5"} 0`,
+		`netsentry_alert_write_duration_seconds_bucket{le="1"} 1`,
+		`netsentry_alert_write_duration_seconds_bucket{le="+Inf"} 1`,
+		"netsentry_alert_write_duration_seconds_sum 0.75",
+		"netsentry_alert_write_duration_seconds_count 1",
 		"# HELP netsentry_capture_connected Whether the capture heartbeat is currently fresh.",
 		"netsentry_capture_connected 1",
 		"# HELP netsentry_rules_loaded Current number of loaded rules.",

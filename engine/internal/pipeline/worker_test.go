@@ -61,9 +61,10 @@ func (w *fakeWriter) WriteBatch(ctx context.Context, alerts []*model.Alert) erro
 }
 
 func TestWorkerWritesAlertsWithPacketTimestamp(t *testing.T) {
+	metrics := stats.New()
 	writer := &fakeWriter{}
 	matcher := &fakeMatcher{alerts: []*model.Alert{{RuleID: "rule-1"}}}
-	worker := NewWorker(matcher, writer, zap.NewNop())
+	worker := NewWorker(matcher, writer, zap.NewNop(), metrics)
 
 	packets := make(chan *model.PacketInfo, 1)
 	packets <- &model.PacketInfo{TimestampSec: 1719300000, TimestampUsec: 123456, SrcIP: "10.0.0.1", DstIP: "10.0.0.2"}
@@ -75,6 +76,9 @@ func TestWorkerWritesAlertsWithPacketTimestamp(t *testing.T) {
 	}
 	if writer.alerts[0].Timestamp.IsZero() || writer.alerts[0].Timestamp.Nanosecond() != 123456000 {
 		t.Fatalf("unexpected timestamp: %s", writer.alerts[0].Timestamp)
+	}
+	if got := metrics.Snapshot().AlertWriteCount; got != 1 {
+		t.Fatalf("alert write observations = %d, want 1", got)
 	}
 }
 

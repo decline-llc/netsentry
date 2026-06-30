@@ -110,7 +110,10 @@ func (w *Worker) processPacket(ctx context.Context, pkt *model.PacketInfo) {
 		w.redactor(alerts)
 	}
 
-	if err := w.writer.WriteBatch(ctx, alerts); err != nil {
+	writeStart := time.Now()
+	err := w.writer.WriteBatch(ctx, alerts)
+	w.stats.ObserveAlertWriteDuration(time.Since(writeStart))
+	if err != nil {
 		w.stats.IncAlertWriteError()
 		w.logger.Warn("write pipeline alerts", zap.Error(err))
 		return

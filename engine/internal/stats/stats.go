@@ -36,17 +36,20 @@ var matchDurationBuckets = [...]float64{
 
 // Stats holds process-local counters exported through /api/metrics.
 type Stats struct {
-	framesTotal      atomic.Uint64
-	controlFrames    atomic.Uint64
-	packetsReceived  atomic.Uint64
-	packetsProcessed atomic.Uint64
-	decodeErrors     atomic.Uint64
-	alertsGenerated  atomic.Uint64
-	matchCount       atomic.Uint64
-	matchDurationNS  atomic.Uint64
-	matchBuckets     [len(matchDurationBuckets)]atomic.Uint64
-	workerPanics     atomic.Uint64
-	alertWriteErrors atomic.Uint64
+	framesTotal       atomic.Uint64
+	controlFrames     atomic.Uint64
+	packetsReceived   atomic.Uint64
+	packetsProcessed  atomic.Uint64
+	decodeErrors      atomic.Uint64
+	alertsGenerated   atomic.Uint64
+	matchCount        atomic.Uint64
+	matchDurationNS   atomic.Uint64
+	matchBuckets      [len(matchDurationBuckets)]atomic.Uint64
+	workerPanics      atomic.Uint64
+	alertWriteErrors  atomic.Uint64
+	alertWriteCount   atomic.Uint64
+	alertWriteNS      atomic.Uint64
+	alertWriteBuckets [len(matchDurationBuckets)]atomic.Uint64
 
 	mu               sync.RWMutex
 	alertsBySeverity map[model.Severity]uint64
@@ -109,10 +112,23 @@ func (s *Stats) ObserveMatchDuration(d time.Duration) {
 	}
 	s.matchCount.Add(1)
 	s.matchDurationNS.Add(uint64(d))
+	observeDurationBucket(s.matchBuckets[:], d)
+}
+
+func (s *Stats) ObserveAlertWriteDuration(d time.Duration) {
+	if s == nil {
+		return
+	}
+	s.alertWriteCount.Add(1)
+	s.alertWriteNS.Add(uint64(d))
+	observeDurationBucket(s.alertWriteBuckets[:], d)
+}
+
+func observeDurationBucket(buckets []atomic.Uint64, d time.Duration) {
 	seconds := d.Seconds()
 	for i, bucket := range matchDurationBuckets {
 		if seconds <= bucket {
-			s.matchBuckets[i].Add(1)
+			buckets[i].Add(1)
 		}
 	}
 }
@@ -138,18 +154,21 @@ func (s *Stats) ObserveAlerts(alerts []*model.Alert) {
 
 // Snapshot is a point-in-time view of exported counters.
 type Snapshot struct {
-	FramesTotal      uint64
-	ControlFrames    uint64
-	PacketsReceived  uint64
-	PacketsProcessed uint64
-	DecodeErrors     uint64
-	AlertsGenerated  uint64
-	MatchCount       uint64
-	MatchDurationNS  uint64
-	MatchBuckets     []HistogramBucket
-	WorkerPanics     uint64
-	AlertWriteErrors uint64
-	AlertsBySeverity map[model.Severity]uint64
+	FramesTotal       uint64
+	ControlFrames     uint64
+	PacketsReceived   uint64
+	PacketsProcessed  uint64
+	DecodeErrors      uint64
+	AlertsGenerated   uint64
+	MatchCount        uint64
+	MatchDurationNS   uint64
+	MatchBuckets      []HistogramBucket
+	WorkerPanics      uint64
+	AlertWriteErrors  uint64
+	AlertWriteCount   uint64
+	AlertWriteNS      uint64
+	AlertWriteBuckets []HistogramBucket
+	AlertsBySeverity  map[model.Severity]uint64
 }
 
 type HistogramBucket struct {
@@ -168,25 +187,33 @@ func (s *Stats) Snapshot() Snapshot {
 		bySeverity[sev] = count
 	}
 	buckets := make([]HistogramBucket, 0, len(matchDurationBuckets))
+	alertWriteBuckets := make([]HistogramBucket, 0, len(matchDurationBuckets))
 	for i, upperBound := range matchDurationBuckets {
 		buckets = append(buckets, HistogramBucket{
 			Le:    upperBound,
 			Count: s.matchBuckets[i].Load(),
 		})
+		alertWriteBuckets = append(alertWriteBuckets, HistogramBucket{
+			Le:    upperBound,
+			Count: s.alertWriteBuckets[i].Load(),
+		})
 	}
 	return Snapshot{
-		FramesTotal:      s.framesTotal.Load(),
-		ControlFrames:    s.controlFrames.Load(),
-		PacketsReceived:  s.packetsReceived.Load(),
-		PacketsProcessed: s.packetsProcessed.Load(),
-		DecodeErrors:     s.decodeErrors.Load(),
-		AlertsGenerated:  s.alertsGenerated.Load(),
-		MatchCount:       s.matchCount.Load(),
-		MatchDurationNS:  s.matchDurationNS.Load(),
-		MatchBuckets:     buckets,
-		WorkerPanics:     s.workerPanics.Load(),
-		AlertWriteErrors: s.alertWriteErrors.Load(),
-		AlertsBySeverity: bySeverity,
+		FramesTotal:       s.framesTotal.Load(),
+		ControlFrames:     s.controlFrames.Load(),
+		PacketsReceived:   s.packetsReceived.Load(),
+		PacketsProcessed:  s.packetsProcessed.Load(),
+		DecodeErrors:      s.decodeErrors.Load(),
+		AlertsGenerated:   s.alertsGenerated.Load(),
+		MatchCount:        s.matchCount.Load(),
+		MatchDurationNS:   s.matchDurationNS.Load(),
+		MatchBuckets:      buckets,
+		WorkerPanics:      s.workerPanics.Load(),
+		AlertWriteErrors:  s.alertWriteErrors.Load(),
+		AlertWriteCount:   s.alertWriteCount.Load(),
+		AlertWriteNS:      s.alertWriteNS.Load(),
+		AlertWriteBuckets: alertWriteBuckets,
+		AlertsBySeverity:  bySeverity,
 	}
 }
 
@@ -205,6 +232,8 @@ func RenderPrometheus(snapshot Snapshot, gauges map[string]float64) string {
 	writeHistogram(&b, "netsentry_rule_match_duration_seconds", "Rule match duration distribution.", snapshot.MatchBuckets, snapshot.MatchCount, float64(snapshot.MatchDurationNS)/float64(time.Second))
 	writeCounter(&b, "netsentry_worker_panics_total", "Pipeline worker panics recovered.", snapshot.WorkerPanics)
 	writeCounter(&b, "netsentry_alert_write_errors_total", "Alert write failures.", snapshot.AlertWriteErrors)
+	writeCounter(&b, "netsentry_alert_write_duration_seconds_total", "Total time spent writing alert batches.", float64(snapshot.AlertWriteNS)/float64(time.Second))
+	writeHistogram(&b, "netsentry_alert_write_duration_seconds", "Alert write duration distribution.", snapshot.AlertWriteBuckets, snapshot.AlertWriteCount, float64(snapshot.AlertWriteNS)/float64(time.Second))
 
 	severities := make([]string, 0, len(snapshot.AlertsBySeverity))
 	for sev := range snapshot.AlertsBySeverity {
