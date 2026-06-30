@@ -104,7 +104,7 @@ Current rule semantics:
 - `ip_blacklist` enforces `ips`, `direction`, and optional `protocols` per rule. Exact IPs and CIDRs stay scoped to the owning rule.
 - `port_blacklist` enforces `ports`, `direction`, and optional `protocols` per rule.
 
-Known implementation gaps to close before v0.1.0:
+Current rule management:
 
 - Rule management can list the active snapshot, create/update/delete rules with seed-file persistence, and hot reload from the configured seed file.
 
@@ -127,9 +127,9 @@ Planned modules:
 
 - `internal/receiver`: UDS listener, hello validation, heartbeat state. Implemented in the current build; broader Go engine lifecycle integration remains future work.
 - `internal/pipeline`: worker lifecycle and alert flow. Implemented as a single worker in the current build.
-- `internal/alert`: aggregation, SQLite store, optional WAL replay.
-- `internal/api`: router, pagination, basic alert filters, rule CRUD/reload, PSK auth for mutations, errors, health, metrics.
-- `internal/stats`: counters and Prometheus collectors.
+- `internal/alert`: aggregation, SQLite store, TTL pruning, daily shard pathing, old shard cleanup, payload redaction, and in-memory suppressions. WAL replay remains future work.
+- `internal/api`: router, pagination, basic alert filters, rule CRUD/reload, in-memory suppressions API, PSK auth for mutations, errors, health, audit middleware, and metrics.
+- `internal/stats`: counters and Prometheus text rendering for process, queue, rule, alert, worker, and capture heartbeat metrics.
 
 ---
 
@@ -183,11 +183,11 @@ All SQL values must use placeholders. Do not format user-controlled values into 
 
 ## 9. Observability Target
 
-Current build: zap startup and match logs, verbose health, Prometheus metrics, structured audit logs for non-GET API requests, optional localhost-only pprof, and configurable payload preview redaction before alert writes.
+Current build: zap startup and match logs, verbose health, Prometheus metrics for process/queue/rule/alert/worker/capture heartbeat state, structured audit logs for non-GET API requests, optional localhost-only pprof, and configurable payload preview redaction before alert writes.
 
 v0.1.0 target:
 
-- `/api/metrics` Prometheus endpoint.
+- `/api/metrics` Prometheus endpoint with latency distributions and disk-space metrics still pending.
 - `/api/health?verbose=true` with capture heartbeat freshness, engine queue/rule counts, storage status, and throughput counters.
 - Structured JSON logs.
 - Localhost-only pprof server.
