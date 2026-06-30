@@ -67,6 +67,13 @@ Current seed rules should produce 5 alerts.
 
 The capture binary accepts `-c <connect_retries>` to bound initial UDS connection attempts. Offline mode defaults to 5 attempts so a missing engine fails clearly instead of retrying forever; live mode keeps retrying unless `-c` is set.
 
+Latest local quickstart verification:
+
+```text
+Run date: 2026-06-30
+Result: generated 6 packets, processed them through C capture -> UDS -> Go engine -> SQLite -> API, and returned 5 alerts.
+```
+
 ---
 
 ## 4. Configuration
@@ -110,25 +117,25 @@ Environment expansion supports `${ENV_VAR}` and `${ENV_VAR:default}`. At the mom
 
 ## 5. Current Source Layout
 
-Tracked implementation files today:
+Tracked implementation areas today:
 
 ```text
 capture/
-  include/
-  src/main.c
-  src/eth_parser.c
-  src/parser_registry.c
-  src/passthrough_parser.c
-  src/uds_sender.c
+  include/              public C parser, packet, and UDS sender headers
+  src/                  capture CLI, Ethernet/VLAN parser, passthrough parser, UDS sender
+  tests/                parser tests, UDS sender tests, and C microbenchmarks
 
 engine/
-  cmd/netsentry/main.go
-  internal/config/
-  internal/pipeline/
-  internal/receiver/
-  internal/rule/
-  internal/signal/
-  pkg/model/
+  cmd/netsentry/        engine entrypoint and process wiring
+  internal/alert/       SQLite store, aggregation, suppressor, payload redaction
+  internal/api/         HTTP router, handlers, pagination, errors, audit middleware
+  internal/config/      YAML config loading, environment expansion, validation
+  internal/pipeline/    single-worker packet processing loop
+  internal/receiver/    Unix socket listener and heartbeat/session state
+  internal/rule/        rule loader, rule engine, and Aho-Corasick matcher
+  internal/signal/      shutdown signal context helper
+  internal/stats/       atomic counters and Prometheus text rendering
+  pkg/model/            shared packet, alert, and rule models
 
 configs/
   config.yaml
@@ -136,10 +143,14 @@ configs/
   rules.example.json
 
 scripts/
+  e2e_smoke.sh
+  e2e_pressure.sh
   gen_test_pcap.py
+  package_release.sh
+  rc_check.sh
 ```
 
-Empty future directories may exist locally, but only tracked files above should be treated as implemented.
+Empty future directories may exist locally; treat only directories with tracked source files as implemented.
 
 ---
 
