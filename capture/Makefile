@@ -16,6 +16,8 @@ SRCS := src/main.c \
 
 OBJS    := $(SRCS:.c=.o)
 TARGET  := ../bin/netsentry-capture
+ASAN_TARGET := ../bin/netsentry-capture-asan
+ASAN_CFLAGS := $(CFLAGS) -fsanitize=address -fno-omit-frame-pointer -g
 
 TEST_PARSER_TARGET := ../bin/test-parser
 TEST_PARSER_SRCS   := tests/test_parser.c \
@@ -42,7 +44,7 @@ BENCH_UDS_SRCS   := tests/bench_uds_sender.c \
 BENCH_TARGETS := $(BENCH_PARSER_TARGET) $(BENCH_UDS_TARGET)
 BENCH_ITERATIONS ?= 100000
 
-.PHONY: all test asan-test bench clean
+.PHONY: all build-asan test asan-test bench clean
 
 all: $(TARGET)
 
@@ -52,6 +54,12 @@ $(TARGET): $(OBJS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
+
+build-asan: $(ASAN_TARGET)
+
+$(ASAN_TARGET): $(SRCS)
+	@mkdir -p $(dir $@)
+	$(CC) $(ASAN_CFLAGS) -o $@ $^ $(LDFLAGS)
 
 $(TEST_PARSER_TARGET): $(TEST_PARSER_SRCS)
 	@mkdir -p $(dir $@)
@@ -83,4 +91,4 @@ bench: $(BENCH_TARGETS)
 	$(BENCH_UDS_TARGET) $(BENCH_ITERATIONS)
 
 clean:
-	rm -f $(OBJS) $(TARGET) $(TEST_TARGETS) $(BENCH_TARGETS)
+	rm -f $(OBJS) $(TARGET) $(ASAN_TARGET) $(TEST_TARGETS) $(BENCH_TARGETS)
