@@ -6,7 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"path/filepath"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/decline-llc/netsentry/internal/alert"
@@ -20,6 +22,10 @@ import (
 type AlertStore interface {
 	List(ctx context.Context) ([]*model.Alert, error)
 	Count(ctx context.Context) (int, error)
+}
+
+type StoragePathProvider interface {
+	Path() string
 }
 
 type QueueDepthProvider interface {
@@ -241,6 +247,9 @@ func (s *Server) metricsGauges(alertCount int) map[string]float64 {
 		"netsentry_packet_queue_depth": float64(s.queue.QueueDepth()),
 		"netsentry_rules_loaded":       float64(s.rules.RuleCount()),
 	}
+	if available, ok := s.storageAvailableBytes(); ok {
+		gauges["netsentry_storage_available_bytes"] = available
+	}
 	capture := s.captureHealth()
 	if capture.Status == "unknown" {
 		return gauges
@@ -257,6 +266,22 @@ func (s *Server) metricsGauges(alertCount int) map[string]float64 {
 	gauges["netsentry_capture_uds_write_errors"] = float64(capture.Heartbeat.UDSWriteErrors)
 	gauges["netsentry_capture_avg_json_serialize_seconds"] = capture.Heartbeat.AvgJSONSerializeUS / float64(time.Second/time.Microsecond)
 	return gauges
+}
+
+func (s *Server) storageAvailableBytes() (float64, bool) {
+	provider, ok := s.store.(StoragePathProvider)
+	if !ok {
+		return 0, false
+	}
+	path := provider.Path()
+	if path == "" {
+		return 0, false
+	}
+	var stat syscall.Statfs_t
+	if err := syscall.Statfs(filepath.Dir(path), &stat); err != nil {
+		return 0, false
+	}
+	return float64(stat.Bavail) * float64(stat.Bsize), true
 }
 
 type suppressionListResponse struct {

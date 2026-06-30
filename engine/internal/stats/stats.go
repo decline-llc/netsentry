@@ -224,6 +224,8 @@ func gaugeHelp(name string) string {
 		return "Current packet queue depth."
 	case "netsentry_rules_loaded":
 		return "Current number of loaded rules."
+	case "netsentry_storage_available_bytes":
+		return "Available bytes on the alert storage filesystem."
 	default:
 		return "Gauge value."
 	}

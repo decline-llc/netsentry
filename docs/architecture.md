@@ -187,7 +187,7 @@ Current build: zap startup and match logs, verbose health, Prometheus metrics fo
 
 v0.1.0 target:
 
-- `/api/metrics` Prometheus endpoint with latency distributions and disk-space metrics still pending.
+- `/api/metrics` Prometheus endpoint with latency distributions still pending.
 - `/api/health?verbose=true` with capture heartbeat freshness, engine queue/rule counts, storage status, and throughput counters.
 - Structured JSON logs.
 - Localhost-only pprof server.

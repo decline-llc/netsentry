@@ -39,6 +39,13 @@ func (s *fakeStore) Count(ctx context.Context) (int, error) {
 	return len(s.alerts), nil
 }
 
+type fakeStoreWithPath struct {
+	fakeStore
+	path string
+}
+
+func (s *fakeStoreWithPath) Path() string { return s.path }
+
 type fakeQueue struct{ depth int }
 
 func (q fakeQueue) QueueDepth() int { return q.depth }
@@ -640,6 +647,28 @@ func TestMetricsEndpointIncludesCaptureHeartbeatGauges(t *testing.T) {
 		"netsentry_capture_parse_errors 2",
 		"netsentry_capture_uds_write_errors 3",
 		"netsentry_capture_avg_json_serialize_seconds 2.5e-06",
+	} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("metrics missing %q:\n%s", want, body)
+		}
+	}
+}
+
+func TestMetricsEndpointIncludesStorageAvailableGauge(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "netsentry.db")
+	server := NewServer(&fakeStoreWithPath{path: path}, fakeQueue{}, &fakeRules{}, stats.New())
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/metrics", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	body := rec.Body.String()
+	for _, want := range []string{
+		"# HELP netsentry_storage_available_bytes Available bytes on the alert storage filesystem.",
+		"# TYPE netsentry_storage_available_bytes gauge",
+		"netsentry_storage_available_bytes ",
 	} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("metrics missing %q:\n%s", want, body)
