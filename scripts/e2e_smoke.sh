@@ -90,6 +90,7 @@ bin/netsentry-capture -r "${PCAP_PATH}" -s "${UDS_PATH}" -c 5 >"${TMP_DIR}/captu
 
 ALERTS_JSON="${TMP_DIR}/alerts.json"
 HEALTH_JSON="${TMP_DIR}/health.json"
+METRICS_TXT="${TMP_DIR}/metrics.txt"
 
 for _ in $(seq 1 50); do
     curl -fsS "http://127.0.0.1:${PORT}/api/alerts" >"${ALERTS_JSON}"
@@ -108,16 +109,29 @@ PY
 done
 
 curl -fsS "http://127.0.0.1:${PORT}/api/health?verbose=true" >"${HEALTH_JSON}"
+curl -fsS "http://127.0.0.1:${PORT}/api/metrics" >"${METRICS_TXT}"
 
-python3 - "${ALERTS_JSON}" "${HEALTH_JSON}" <<'PY'
+python3 - "${ALERTS_JSON}" "${HEALTH_JSON}" "${METRICS_TXT}" <<'PY'
 import json
 import sys
 
-alerts_path, health_path = sys.argv[1], sys.argv[2]
+alerts_path, health_path, metrics_path = sys.argv[1], sys.argv[2], sys.argv[3]
 with open(alerts_path, "r", encoding="utf-8") as f:
     alerts = json.load(f)
 with open(health_path, "r", encoding="utf-8") as f:
     health = json.load(f)
+metrics = {}
+with open(metrics_path, "r", encoding="utf-8") as f:
+    for line in f:
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        parts = line.split()
+        if len(parts) == 2:
+            try:
+                metrics[parts[0]] = float(parts[1])
+            except ValueError:
+                pass
 
 errors = []
 pagination = alerts.get("pagination", {})
@@ -148,6 +162,16 @@ if throughput.get("decode_errors") != 0:
     errors.append(f"expected 0 decode_errors, got {throughput.get('decode_errors')!r}")
 if capture.get("heartbeat", {}).get("sent") != 6:
     errors.append(f"expected final heartbeat sent=6, got {capture.get('heartbeat', {}).get('sent')!r}")
+if metrics.get("netsentry_capture_connected") != 1:
+    errors.append(f"expected capture_connected=1, got {metrics.get('netsentry_capture_connected')!r}")
+if metrics.get("netsentry_capture_packets_sent") != 6:
+    errors.append(f"expected capture_packets_sent=6, got {metrics.get('netsentry_capture_packets_sent')!r}")
+if metrics.get("netsentry_capture_packets_dropped") != 0:
+    errors.append(f"expected capture_packets_dropped=0, got {metrics.get('netsentry_capture_packets_dropped')!r}")
+if metrics.get("netsentry_capture_parse_errors") != 0:
+    errors.append(f"expected capture_parse_errors=0, got {metrics.get('netsentry_capture_parse_errors')!r}")
+if metrics.get("netsentry_capture_uds_write_errors") != 0:
+    errors.append(f"expected capture_uds_write_errors=0, got {metrics.get('netsentry_capture_uds_write_errors')!r}")
 
 if errors:
     for err in errors:
