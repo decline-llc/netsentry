@@ -42,7 +42,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Runtime cross-day database rotation and cross-day alert querying are not implemented.
 - WAL JSONL replay and degraded-mode disk-full handling are not implemented.
 - Suppression persistence and hot reload are not implemented.
-- Broader end-to-end throughput pressure testing with realistic pcap corpora and latency distributions is still pending; current pressure coverage is a repeat-pcap smoke plus microbenchmarks.
+- End-to-end pressure coverage currently includes repeat-pcap runs up to 60,000 packets locally, but realistic pcap corpora and latency distributions are still pending.
 - C fuzz targets and a full capture ASan build target are still pending.
 
 ---
