@@ -10,7 +10,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build test asan-test bench e2e-smoke dist docker-build lint clean quickstart help
+.PHONY: all build-c build-go build test asan-test bench e2e-smoke dist docker-build rc-check lint clean quickstart help
 
 all: build
 
@@ -53,6 +53,10 @@ dist: build
 docker-build:
 	@command -v $(firstword $(DOCKER)) >/dev/null 2>&1 || { echo "$(firstword $(DOCKER)) not found"; exit 1; }
 	$(DOCKER) build -t $(IMAGE) .
+
+## rc-check   — run local release-candidate checks, including Docker unless SKIP_DOCKER=1
+rc-check:
+	@bash scripts/rc_check.sh
 
 ## lint      — run go vet and staticcheck (if installed)
 lint:
