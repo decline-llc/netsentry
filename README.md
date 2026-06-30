@@ -36,6 +36,14 @@ To create a local binary release archive:
 make dist
 ```
 
+For a local release-candidate verification bundle:
+
+```bash
+make rc-check
+# If your Docker daemon requires elevated privileges:
+DOCKER="sudo docker" make rc-check
+```
+
 To build the local Docker image:
 
 ```bash
