@@ -224,7 +224,7 @@ Planned endpoints:
 | `GET /api/health` | partial | Minimal and verbose component snapshot responses exist; deeper dependency checks pending. |
 | `GET /api/health?verbose=true` | partial | Capture heartbeat freshness, queue depth, rule count, storage status, and throughput counters exist. |
 | `GET /api/alerts` | partial | SQLite-backed paginated list with basic exact-match filters exists; advanced query features pending. |
-| `GET /api/metrics` | partial | Prometheus text output exists for process counters, queue/rule/alert/storage gauges, worker counters, and capture heartbeat gauges; latency distributions are still pending. |
+| `GET /api/metrics` | partial | Prometheus text output exists for process counters, rule match latency buckets, queue/rule/alert/storage gauges, worker counters, and capture heartbeat gauges. |
 | `GET /api/rules` | partial | Current rule snapshot listing exists. |
 | `POST /api/rules` | partial | Creates and persists one rule; optional PSK auth exists. |
 | `PUT /api/rules/{id}` | partial | Replaces and persists one rule; optional PSK auth exists. |

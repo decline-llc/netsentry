@@ -19,7 +19,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Payload preview redaction before alert writes when `engine.redact_sensitive_fields` is enabled.
 - REST API for health, alerts, metrics, rules CRUD/reload, and in-memory suppressions.
 - Unified API error envelope, pagination envelope, request IDs, optional PSK Bearer auth, non-GET audit logs, and localhost-only pprof.
-- Prometheus text metrics for current packet, alert, queue, rule, storage, worker, and capture heartbeat counters, with HELP text for exported gauges.
+- Prometheus text metrics for current packet, alert, queue, rule latency, storage, worker, and capture heartbeat counters, with HELP text for exported gauges.
 - Deterministic synthetic pcap generator with a Python stdlib fallback when Scapy is unavailable.
 - Non-interactive end-to-end smoke test via `make e2e-smoke`, including capture heartbeat metrics assertions.
 - Repeat-pcap end-to-end throughput smoke test via `make e2e-pressure`.
@@ -43,7 +43,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Runtime cross-day database rotation and cross-day alert querying are not implemented.
 - WAL JSONL replay and degraded-mode disk-full handling are not implemented.
 - Suppression persistence and hot reload are not implemented.
-- End-to-end pressure coverage currently includes repeat-pcap runs up to 60,000 packets locally, but realistic pcap corpora and latency distributions are still pending.
+- End-to-end pressure coverage currently includes repeat-pcap runs up to 60,000 packets locally, but realistic pcap corpora are still pending.
 - C fuzz targets are still pending.
 
 ---
