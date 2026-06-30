@@ -32,6 +32,7 @@ make bench         # C parser/UDS microbenchmarks + Go benchmarks
 make e2e-smoke     # deterministic pcap -> SQLite -> API smoke test
 make dist          # build a local release archive under dist/
 make docker-build  # build a local Docker image
+make rc-check      # release-candidate verification bundle
 make lint          # go vet + optional staticcheck
 make quickstart    # build, generate pcap, run engine/capture, print alerts
 make asan-test     # C parser tests under AddressSanitizer
@@ -186,10 +187,16 @@ The current benchmark scope and local baseline are documented in `docs/performan
 For release-candidate checks, run:
 
 ```bash
-make e2e-smoke
+make rc-check
 ```
 
-This uses a temporary config, Unix socket, API port, and SQLite database, then asserts that the synthetic pcap produces 6 processed packets, 5 alerts, and 8 loaded rules.
+This runs shell syntax checks, `make test`, `make e2e-smoke`, `make dist`, `make docker-build`, and a minimal Docker image content smoke check. If Docker is unavailable in the current environment, use:
+
+```bash
+SKIP_DOCKER=1 make rc-check
+```
+
+The `e2e-smoke` step uses a temporary config, Unix socket, API port, and SQLite database, then asserts that the synthetic pcap produces 6 processed packets, 5 alerts, and 8 loaded rules.
 
 To create a local release archive:
 
