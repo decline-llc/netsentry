@@ -6,6 +6,15 @@ VERSION="${VERSION:-0.1.0-dev}"
 IMAGE="${IMAGE:-netsentry:${VERSION}}"
 DOCKER_CMD="${DOCKER:-docker}"
 SKIP_DOCKER="${SKIP_DOCKER:-0}"
+DOCKER_CONTAINER_ID=""
+
+cleanup() {
+    if [[ -n "${DOCKER_CONTAINER_ID}" ]]; then
+        read -r -a docker_parts <<<"${DOCKER_CMD}"
+        "${docker_parts[@]}" rm -f "${DOCKER_CONTAINER_ID}" >/dev/null 2>&1 || true
+    fi
+}
+trap cleanup EXIT
 
 cd "${ROOT_DIR}"
 
@@ -39,4 +48,26 @@ read -r -a docker_parts <<<"${DOCKER_CMD}"
      test -f configs/config.yaml &&
      test -f configs/rules.json'
 
-echo "[rc-check] ok"
+echo "[rc-check] docker runtime health smoke"
+DOCKER_CONTAINER_ID="$("${docker_parts[@]}" run --rm -d "${IMAGE}")"
+DOCKER_HEALTH_OK=0
+for _ in $(seq 1 50); do
+    if "${docker_parts[@]}" exec "${DOCKER_CONTAINER_ID}" \
+        curl -fsS "http://127.0.0.1:8080/api/health" >/dev/null 2>&1; then
+        DOCKER_HEALTH_OK=1
+        break
+    fi
+    sleep 0.2
+done
+
+if [[ "${DOCKER_HEALTH_OK}" == "1" ]]; then
+    "${docker_parts[@]}" rm -f "${DOCKER_CONTAINER_ID}" >/dev/null
+    DOCKER_CONTAINER_ID=""
+    echo "[rc-check] docker runtime health ok"
+    echo "[rc-check] ok"
+    exit 0
+fi
+
+echo "[rc-check] docker runtime health failed" >&2
+"${docker_parts[@]}" logs "${DOCKER_CONTAINER_ID}" >&2 || true
+exit 1
