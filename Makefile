@@ -10,7 +10,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build test asan-test bench e2e-smoke e2e-pressure dist docker-build rc-check lint clean quickstart help
+.PHONY: all build-c build-go build build-asan test asan-test bench e2e-smoke e2e-pressure dist docker-build rc-check lint clean quickstart help
 
 all: build
 
@@ -26,6 +26,10 @@ build-go:
 
 ## build     — compile both C and Go binaries
 build: build-c build-go
+
+## build-asan — compile the C capture binary with AddressSanitizer
+build-asan:
+	$(MAKE) -C capture build-asan
 
 ## test      — run C parser tests and Go unit tests with race detector
 test:
