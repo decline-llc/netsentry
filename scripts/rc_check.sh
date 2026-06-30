@@ -7,6 +7,16 @@ IMAGE="${IMAGE:-netsentry:${VERSION}}"
 DOCKER_CMD="${DOCKER:-docker}"
 SKIP_DOCKER="${SKIP_DOCKER:-0}"
 DOCKER_CONTAINER_ID=""
+OS_NAME="$(uname -s | tr '[:upper:]' '[:lower:]')"
+ARCH_NAME="$(uname -m)"
+
+case "${ARCH_NAME}" in
+    x86_64) ARCH_NAME="amd64" ;;
+    aarch64 | arm64) ARCH_NAME="arm64" ;;
+esac
+
+PACKAGE_NAME="netsentry-${VERSION}-${OS_NAME}-${ARCH_NAME}"
+ARCHIVE_PATH="dist/${PACKAGE_NAME}.tar.gz"
 
 cleanup() {
     if [[ -n "${DOCKER_CONTAINER_ID}" ]]; then
@@ -31,6 +41,21 @@ make e2e-smoke
 
 echo "[rc-check] make dist VERSION=${VERSION}"
 make dist VERSION="${VERSION}"
+
+echo "[rc-check] dist archive smoke"
+(
+    cd dist
+    sha256sum -c "${PACKAGE_NAME}.tar.gz.sha256"
+)
+tar -tzf "${ARCHIVE_PATH}" \
+    "${PACKAGE_NAME}/bin/netsentry-capture" \
+    "${PACKAGE_NAME}/bin/netsentry-engine" \
+    "${PACKAGE_NAME}/configs/config.yaml" \
+    "${PACKAGE_NAME}/configs/rules.json" \
+    "${PACKAGE_NAME}/docs/development.md" \
+    "${PACKAGE_NAME}/README.md" \
+    "${PACKAGE_NAME}/CHANGELOG.md" \
+    "${PACKAGE_NAME}/RELEASE_NOTES.md" >/dev/null
 
 if [[ "${SKIP_DOCKER}" == "1" ]]; then
     echo "[rc-check] docker checks skipped"
