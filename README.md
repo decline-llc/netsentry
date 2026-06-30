@@ -79,7 +79,7 @@ DOCKER="sudo docker" make docker-build
 These are v0.1.0 goals, not current behavior:
 
 - Runtime cross-day DB rotation, cross-day alert querying, WAL replay.
-- Full Prometheus metric coverage beyond the current basic `/api/metrics`.
+- Full Prometheus metric coverage beyond the current process, queue, rule, alert, worker, and capture heartbeat metrics.
 - Suppression persistence/hot reload, advanced alert querying, and remaining error envelope coverage.
 - C-side cJSON serializer and fuzz targets.
 - Published Docker image workflow.
