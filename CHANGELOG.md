@@ -24,7 +24,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Non-interactive end-to-end smoke test via `make e2e-smoke`.
 - Local release archive packaging via `make dist`, including SHA-256 checksum generation.
 - Local Docker image build via `make docker-build`.
-- Release-candidate verification bundle via `make rc-check`, including Docker image content and runtime health smoke checks.
+- Release-candidate verification bundle via `make rc-check`, including release archive, Docker image content, and runtime health smoke checks.
 
 ### Changed
 - Public rule samples now use the canonical wrapped schema while the loader remains backward compatible with legacy rule files.
@@ -52,5 +52,5 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Offline pcap to alert workflow through C capture, UDS transport, Go receiver, rule engine, SQLite storage, and REST API.
 - Honest documentation of v0.1.0 protocol and detection boundaries.
 - Local binary release archive and Docker image.
-- Repeatable release-candidate checks for tests, smoke tests, archives, image content, and Docker runtime health.
+- Repeatable release-candidate checks for tests, smoke tests, archive checksum/content, image content, and Docker runtime health.
 - Unit and integration test coverage for implemented components.
