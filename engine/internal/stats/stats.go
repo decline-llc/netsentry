@@ -197,6 +197,34 @@ func writeCounter[T ~uint64 | ~float64](b *strings.Builder, name, help string, v
 }
 
 func writeGauge(b *strings.Builder, name string, value float64) {
+	fmt.Fprintf(b, "# HELP %s %s\n", name, gaugeHelp(name))
 	fmt.Fprintf(b, "# TYPE %s gauge\n", name)
 	fmt.Fprintf(b, "%s %v\n", name, value)
+}
+
+func gaugeHelp(name string) string {
+	switch name {
+	case "netsentry_alerts_current":
+		return "Current number of aggregated alerts in storage."
+	case "netsentry_capture_avg_json_serialize_seconds":
+		return "Latest capture-reported average JSON serialization time."
+	case "netsentry_capture_connected":
+		return "Whether the capture heartbeat is currently fresh."
+	case "netsentry_capture_heartbeat_age_seconds":
+		return "Age of the latest capture heartbeat."
+	case "netsentry_capture_packets_dropped":
+		return "Latest capture-reported dropped packet count."
+	case "netsentry_capture_packets_sent":
+		return "Latest capture-reported sent packet count."
+	case "netsentry_capture_parse_errors":
+		return "Latest capture-reported parse error count."
+	case "netsentry_capture_uds_write_errors":
+		return "Latest capture-reported UDS write error count."
+	case "netsentry_packet_queue_depth":
+		return "Current packet queue depth."
+	case "netsentry_rules_loaded":
+		return "Current number of loaded rules."
+	default:
+		return "Gauge value."
+	}
 }

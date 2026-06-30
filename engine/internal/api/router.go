@@ -229,14 +229,34 @@ func (s *Server) handleMetrics(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not count alerts")
 		return
 	}
-	body := stats.RenderPrometheus(s.stats.Snapshot(), map[string]float64{
-		"netsentry_alerts_current":     float64(count),
-		"netsentry_packet_queue_depth": float64(s.queue.QueueDepth()),
-		"netsentry_rules_loaded":       float64(s.rules.RuleCount()),
-	})
+	body := stats.RenderPrometheus(s.stats.Snapshot(), s.metricsGauges(count))
 	w.Header().Set("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte(body))
+}
+
+func (s *Server) metricsGauges(alertCount int) map[string]float64 {
+	gauges := map[string]float64{
+		"netsentry_alerts_current":     float64(alertCount),
+		"netsentry_packet_queue_depth": float64(s.queue.QueueDepth()),
+		"netsentry_rules_loaded":       float64(s.rules.RuleCount()),
+	}
+	capture := s.captureHealth()
+	if capture.Status == "unknown" {
+		return gauges
+	}
+	if capture.Status == "ok" {
+		gauges["netsentry_capture_connected"] = 1
+	} else {
+		gauges["netsentry_capture_connected"] = 0
+	}
+	gauges["netsentry_capture_heartbeat_age_seconds"] = capture.HeartbeatAgeSeconds
+	gauges["netsentry_capture_packets_sent"] = float64(capture.Heartbeat.Sent)
+	gauges["netsentry_capture_packets_dropped"] = float64(capture.Heartbeat.Dropped)
+	gauges["netsentry_capture_parse_errors"] = float64(capture.Heartbeat.ParseErrors)
+	gauges["netsentry_capture_uds_write_errors"] = float64(capture.Heartbeat.UDSWriteErrors)
+	gauges["netsentry_capture_avg_json_serialize_seconds"] = capture.Heartbeat.AvgJSONSerializeUS / float64(time.Second/time.Microsecond)
+	return gauges
 }
 
 type suppressionListResponse struct {

@@ -593,7 +593,54 @@ func TestMetricsEndpoint(t *testing.T) {
 		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
 	}
 	body := rec.Body.String()
-	for _, want := range []string{"netsentry_alerts_current 1", "netsentry_packet_queue_depth 7", "netsentry_rules_loaded 3"} {
+	for _, want := range []string{
+		"# HELP netsentry_alerts_current Current number of aggregated alerts in storage.",
+		"# HELP netsentry_packet_queue_depth Current packet queue depth.",
+		"# HELP netsentry_rules_loaded Current number of loaded rules.",
+		"netsentry_alerts_current 1",
+		"netsentry_packet_queue_depth 7",
+		"netsentry_rules_loaded 3",
+	} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("metrics missing %q:\n%s", want, body)
+		}
+	}
+}
+
+func TestMetricsEndpointIncludesCaptureHeartbeatGauges(t *testing.T) {
+	queue := fakeHealthQueue{
+		depth: 2,
+		state: receiver.State{
+			SessionID: "session-1",
+			Heartbeat: receiver.HeartbeatFrame{
+				SessionID:          "session-1",
+				Sent:               10,
+				Dropped:            1,
+				ParseErrors:        2,
+				AvgJSONSerializeUS: 2.5,
+				UDSWriteErrors:     3,
+			},
+			LastHeartbeatAt: time.Now().Add(-time.Second).UTC(),
+		},
+	}
+	server := NewServerWithOptions(&fakeStore{}, queue, &fakeRules{count: 4}, stats.New(), Options{HealthFreshnessLimit: time.Minute})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/metrics", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	body := rec.Body.String()
+	for _, want := range []string{
+		"# HELP netsentry_capture_connected Whether the capture heartbeat is currently fresh.",
+		"netsentry_capture_connected 1",
+		"netsentry_capture_packets_sent 10",
+		"netsentry_capture_packets_dropped 1",
+		"netsentry_capture_parse_errors 2",
+		"netsentry_capture_uds_write_errors 3",
+		"netsentry_capture_avg_json_serialize_seconds 2.5e-06",
+	} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("metrics missing %q:\n%s", want, body)
 		}
