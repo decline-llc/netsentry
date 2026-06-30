@@ -190,7 +190,7 @@ For release-candidate checks, run:
 make rc-check
 ```
 
-This runs shell syntax checks, `make test`, `make e2e-smoke`, `make dist`, `make docker-build`, a minimal Docker image content smoke check, and a Docker runtime `/api/health` smoke check. If Docker is unavailable in the current environment, use:
+This runs shell syntax checks, `make test`, `make e2e-smoke`, `make dist`, release archive checksum/content smoke checks, `make docker-build`, a minimal Docker image content smoke check, and a Docker runtime `/api/health` smoke check. If Docker is unavailable in the current environment, use:
 
 ```bash
 SKIP_DOCKER=1 make rc-check
