@@ -90,7 +90,12 @@ The end-to-end pressure smoke prints a result line like:
 [pressure] ok: packets=6000 alerts=5000 aggregated_rows=5 elapsed_sec=... pps=... alerts_per_sec=...
 ```
 
-Record local pressure-smoke samples here only when the run is representative for the current machine and configuration.
+Local pressure-smoke samples for the current machine and configuration:
+
+| Run date | Repeats | Packets | Raw alerts | Aggregated rows | Elapsed | Packet rate | Alert rate |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 2026-06-29 | 1000 | 6000 | 5000 | 5 | 4.582 s | 1309 pps | 1091 alerts/sec |
+| 2026-06-30 | 10000 | 60000 | 50000 | 5 | 42.788 s | 1402 pps | 1169 alerts/sec |
 
 ---
 
@@ -98,7 +103,7 @@ Record local pressure-smoke samples here only when the run is representative for
 
 Parser and JSON formatting costs are not the obvious bottleneck in the current microbenchmarks. The UDS line write benchmark is materially slower than parser-only and JSON-only paths, which is expected because it crosses the socket boundary.
 
-For v0.1.0, the remaining performance question is end-to-end throughput under larger and more realistic rule sets and pcap corpora. The current pressure smoke reports:
+For v0.1.0, the remaining performance question is end-to-end throughput under more realistic rule sets and pcap corpora. The current pressure smoke reports:
 
 - packets read from pcap
 - packets delivered over UDS and processed by the worker
