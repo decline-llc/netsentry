@@ -23,6 +23,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Deterministic synthetic pcap generator with a Python stdlib fallback when Scapy is unavailable.
 - Non-interactive end-to-end smoke test via `make e2e-smoke`, including capture heartbeat metrics assertions.
 - Repeat-pcap end-to-end throughput smoke test via `make e2e-pressure`.
+- Pcap sanitization helper via `make sanitize-pcap INPUT=... OUTPUT=...`.
 - Full C capture AddressSanitizer build target via `make build-asan`.
 - Local release archive packaging via `make dist`, including SHA-256 checksum generation.
 - Local Docker image build via `make docker-build`.

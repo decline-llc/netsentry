@@ -10,7 +10,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build build-asan test asan-test bench e2e-smoke e2e-pressure dist docker-build rc-check lint clean quickstart help
+.PHONY: all build-c build-go build build-asan test asan-test bench e2e-smoke e2e-pressure sanitize-pcap dist docker-build rc-check lint clean quickstart help
 
 all: build
 
@@ -52,6 +52,12 @@ e2e-smoke: build
 ## e2e-pressure — run repeat-pcap end-to-end throughput smoke test
 e2e-pressure: build
 	@bash scripts/e2e_pressure.sh
+
+## sanitize-pcap — write a sanitized pcap: make sanitize-pcap INPUT=in.pcap OUTPUT=out.pcap
+sanitize-pcap:
+	@test -n "$(INPUT)" || { echo "INPUT is required"; exit 1; }
+	@test -n "$(OUTPUT)" || { echo "OUTPUT is required"; exit 1; }
+	@python3 scripts/sanitize_pcap.py -i "$(INPUT)" -o "$(OUTPUT)"
 
 ## dist      — build a local release archive under dist/
 dist: build
