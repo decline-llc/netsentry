@@ -3,6 +3,7 @@ module github.com/decline-llc/netsentry
 go 1.22.2
 
 require (
+	go.uber.org/goleak v1.3.0
 	go.uber.org/zap v1.28.0
 	gopkg.in/yaml.v3 v3.0.1
 	modernc.org/sqlite v1.34.5

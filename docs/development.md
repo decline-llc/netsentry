@@ -251,7 +251,7 @@ Planned tests:
 - More C parser unit tests for malformed input.
 - Broader UDS sender tests for edge-case write failures.
 - Longer C parser fuzz runs against a broader corpus.
-- Broader UDS receiver integration tests for multi-session lifecycle.
+- Broader full-engine lifecycle tests across receiver, worker, HTTP, and storage shutdown.
 - SQLite aggregation tests for alert storage changes.
 - Full graceful shutdown tests.
 

@@ -9,8 +9,13 @@ import (
 	"testing"
 	"time"
 
+	"go.uber.org/goleak"
 	"go.uber.org/zap"
 )
+
+func TestMain(m *testing.M) {
+	goleak.VerifyTestMain(m)
+}
 
 func TestHandleLineControlFrames(t *testing.T) {
 	r := New(Config{BufferSize: 1}, zap.NewNop())
@@ -214,6 +219,55 @@ func TestStartStopsActiveConnectionOnContextCancel(t *testing.T) {
 
 	if _, err := os.Stat(path); !os.IsNotExist(err) {
 		t.Fatalf("socket path should be removed after stop, err=%v", err)
+	}
+}
+
+func TestStartStopsMultipleActiveConnectionsOnContextCancel(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	r := New(Config{Path: path, BufferSize: 4}, zap.NewNop())
+	if err := r.Start(ctx); err != nil {
+		t.Fatalf("start receiver: %v", err)
+	}
+
+	first, err := dialUnix(path)
+	if err != nil {
+		t.Fatalf("dial first receiver connection: %v", err)
+	}
+	defer first.Close()
+	second, err := dialUnix(path)
+	if err != nil {
+		t.Fatalf("dial second receiver connection: %v", err)
+	}
+	defer second.Close()
+
+	if err := writeJSONFrame(first, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "session-one", PID: 1, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
+		t.Fatalf("write first hello: %v", err)
+	}
+	if err := writeJSONFrame(second, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "session-two", PID: 2, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
+		t.Fatalf("write second hello: %v", err)
+	}
+
+	cancel()
+	done := make(chan struct{})
+	go func() {
+		r.Wait()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("receiver did not stop multiple active connections after context cancellation")
+	}
+
+	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		t.Fatalf("socket path should be removed after stop, err=%v", err)
+	}
+	if conn, err := net.DialTimeout("unix", path, 50*time.Millisecond); err == nil {
+		conn.Close()
+		t.Fatal("dial should fail after receiver shutdown")
 	}
 }
 

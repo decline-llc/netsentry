@@ -25,6 +25,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Repeat-pcap end-to-end throughput smoke test via `make e2e-pressure`.
 - Pcap sanitization helper via `make sanitize-pcap INPUT=... OUTPUT=...`.
 - Deterministic AddressSanitizer fuzz smoke for the C frame parser via `make fuzz-parser`.
+- Receiver lifecycle tests for multiple active UDS connections during context cancellation, with goleak coverage for the receiver package.
 - Full C capture AddressSanitizer build target via `make build-asan`.
 - Local release archive packaging via `make dist`, including SHA-256 checksum generation.
 - Local Docker image build via `make docker-build`.
@@ -38,7 +39,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ### Fixed
 - C parser and UDS sender edge cases are covered by unit tests, ASan tests, and microbenchmarks.
 - UDS reconnect behavior is tested across listener restart and receiver reconnection paths.
-- Receiver shutdown closes active Unix socket connections and removes the socket path.
+- Receiver shutdown closes single and multiple active Unix socket connections and removes the socket path.
 - Worker panic recovery no longer terminates the worker loop after a single bad packet.
 
 ### Known Gaps

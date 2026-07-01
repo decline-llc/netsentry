@@ -196,13 +196,13 @@ v0.1.0 target:
 
 ## 9. Testing Target
 
-Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes.
+Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
 
 Next layers:
 
 - Broader C parser tests for additional malformed frames.
 - Broader reconnect integration tests against the Go engine lifecycle.
 - Full ASan capture binary target.
-- Broader receiver tests for multi-session lifecycle and engine shutdown behavior.
+- Broader full-engine lifecycle tests across receiver, worker, HTTP, and storage shutdown behavior.
 - End-to-end quickstart regression.
 - Race tests for rule reload and matching.
