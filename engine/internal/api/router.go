@@ -28,6 +28,10 @@ type StoragePathProvider interface {
 	Path() string
 }
 
+type StorageHealthProvider interface {
+	Health() alert.StorageHealth
+}
+
 type QueueDepthProvider interface {
 	QueueDepth() int
 }
@@ -147,8 +151,10 @@ type engineHealth struct {
 }
 
 type storageHealth struct {
-	Status string `json:"status"`
-	Alerts int    `json:"alerts"`
+	Status      string `json:"status"`
+	Alerts      int    `json:"alerts"`
+	LastError   string `json:"last_error,omitempty"`
+	LastErrorAt string `json:"last_error_at,omitempty"`
 }
 
 type throughputHealth struct {
@@ -165,8 +171,9 @@ type throughputHealth struct {
 
 func (s *Server) verboseHealth(alertCount int) verboseHealthResponse {
 	capture := s.captureHealth()
+	storage := s.storageHealth(alertCount)
 	status := "ok"
-	if capture.Status == "stale" {
+	if capture.Status == "stale" || storage.Status != "ok" {
 		status = "degraded"
 	}
 	return verboseHealthResponse{
@@ -177,12 +184,29 @@ func (s *Server) verboseHealth(alertCount int) verboseHealthResponse {
 			QueueDepth:  s.queue.QueueDepth(),
 			RulesLoaded: s.rules.RuleCount(),
 		},
-		Storage: storageHealth{
-			Status: "ok",
-			Alerts: alertCount,
-		},
+		Storage:    storage,
 		Throughput: throughputFromStats(s.stats.Snapshot()),
 	}
+}
+
+func (s *Server) storageHealth(alertCount int) storageHealth {
+	out := storageHealth{
+		Status: "ok",
+		Alerts: alertCount,
+	}
+	provider, ok := s.store.(StorageHealthProvider)
+	if !ok {
+		return out
+	}
+	health := provider.Health()
+	if health.Status != "" {
+		out.Status = health.Status
+	}
+	out.LastError = health.LastError
+	if !health.LastErrorAt.IsZero() {
+		out.LastErrorAt = health.LastErrorAt.Format(time.RFC3339Nano)
+	}
+	return out
 }
 
 func throughputFromStats(snapshot stats.Snapshot) throughputHealth {
@@ -250,6 +274,9 @@ func (s *Server) metricsGauges(alertCount int) map[string]float64 {
 	if available, ok := s.storageAvailableBytes(); ok {
 		gauges["netsentry_storage_available_bytes"] = available
 	}
+	if healthy, ok := s.storageHealthyGauge(); ok {
+		gauges["netsentry_storage_healthy"] = healthy
+	}
 	capture := s.captureHealth()
 	if capture.Status == "unknown" {
 		return gauges
@@ -266,6 +293,17 @@ func (s *Server) metricsGauges(alertCount int) map[string]float64 {
 	gauges["netsentry_capture_uds_write_errors"] = float64(capture.Heartbeat.UDSWriteErrors)
 	gauges["netsentry_capture_avg_json_serialize_seconds"] = capture.Heartbeat.AvgJSONSerializeUS / float64(time.Second/time.Microsecond)
 	return gauges
+}
+
+func (s *Server) storageHealthyGauge() (float64, bool) {
+	provider, ok := s.store.(StorageHealthProvider)
+	if !ok {
+		return 0, false
+	}
+	if provider.Health().Status == "ok" {
+		return 1, true
+	}
+	return 0, true
 }
 
 func (s *Server) storageAvailableBytes() (float64, bool) {

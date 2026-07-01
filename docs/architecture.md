@@ -170,12 +170,13 @@ Current build:
 - Optional daily shard pathing with `engine.db_shard_daily`, which opens `engine.db_dir/netsentry-YYYY-MM-DD.db` at process start.
 - Row-level TTL pruning in the opened database using `engine.alert_retention_days`.
 - Startup cleanup of old `netsentry-YYYY-MM-DD.db` daily shard files and their WAL/SHM sidecars when retention is enabled.
+- Basic storage health tracking marks the store degraded after SQLite write/query errors and exposes that state through verbose health and Prometheus gauges.
 
 Remaining v0.1.0 storage work:
 
 - Runtime cross-day DB rotation and cross-day querying.
 - WAL replay, if the write-ahead JSONL path is kept.
-- No unbounded memory buffering on disk-full conditions.
+- Automatic disk-full recovery and a fuller emergency-mode policy.
 
 All SQL values must use placeholders. Do not format user-controlled values into SQL strings.
 

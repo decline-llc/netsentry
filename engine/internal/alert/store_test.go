@@ -139,6 +139,29 @@ func TestStoreWriteBatchHonorsCanceledContext(t *testing.T) {
 	if count != 0 {
 		t.Fatalf("count = %d, want 0", count)
 	}
+	if health := store.Health(); health.Status != "ok" {
+		t.Fatalf("canceled context should not degrade storage health: %+v", health)
+	}
+}
+
+func TestStoreHealthMarksDegradedAndRecovers(t *testing.T) {
+	ctx := context.Background()
+	store := openTestStore(t, 60*time.Second)
+	defer store.Close()
+
+	store.markDegraded(os.ErrPermission)
+	health := store.Health()
+	if health.Status != "degraded" || health.LastError == "" || health.LastErrorAt.IsZero() {
+		t.Fatalf("unexpected degraded health: %+v", health)
+	}
+
+	if err := store.WriteBatch(ctx, []*model.Alert{makeAlert(time.Now().UTC(), "recover")}); err != nil {
+		t.Fatalf("write alerts: %v", err)
+	}
+	health = store.Health()
+	if health.Status != "ok" || health.LastError != "" || !health.LastErrorAt.IsZero() {
+		t.Fatalf("unexpected recovered health: %+v", health)
+	}
 }
 
 func TestStoreSeparatesAggregationWindows(t *testing.T) {

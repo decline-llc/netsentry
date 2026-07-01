@@ -68,8 +68,8 @@ DOCKER="sudo docker" make docker-build
 - Go rule engine using `atomic.Pointer[ruleState]` immutable snapshots.
 - Rule types: `payload_match`, `ip_blacklist`, `port_blacklist`.
 - A self-contained Aho-Corasick matcher.
-- Minimal Go UDS receiver, CIDR alert suppressor component, and SQLite alert store with UPSERT aggregation, startup TTL pruning, and optional daily DB shard pathing/cleanup.
-- Minimal HTTP endpoints: `/api/health` with verbose component snapshot, paginated and filterable `/api/alerts`, `/api/metrics`, rule listing, rule create/update/delete, rule reload, in-memory suppressions, optional PSK Bearer auth for modifying endpoints, non-GET audit logs, optional localhost-only pprof, and payload preview redaction before alert writes.
+- Minimal Go UDS receiver, CIDR alert suppressor component, and SQLite alert store with UPSERT aggregation, startup TTL pruning, optional daily DB shard pathing/cleanup, and basic degraded health tracking after storage errors.
+- Minimal HTTP endpoints: `/api/health` with verbose component snapshot, paginated and filterable `/api/alerts`, `/api/metrics`, rule listing, rule create/update/delete, rule reload, in-memory suppressions, optional PSK Bearer auth for modifying endpoints, non-GET audit logs, optional localhost-only pprof, storage health gauges, and payload preview redaction before alert writes.
 - Seed rules in canonical wrapped JSON schema, with legacy schema compatibility retained in the loader.
 
 ---
@@ -78,7 +78,7 @@ DOCKER="sudo docker" make docker-build
 
 These are v0.1.0 goals, not current behavior:
 
-- Runtime cross-day DB rotation, cross-day alert querying, WAL replay.
+- Runtime cross-day DB rotation, cross-day alert querying, WAL replay, and automatic disk-full recovery.
 - Full Prometheus metric coverage beyond the current process, queue, rule/write latency, alert, storage, worker, and capture heartbeat metrics.
 - Suppression persistence/hot reload, advanced alert querying, and remaining error envelope coverage.
 - C-side cJSON serializer and longer fuzz runs with broader seed corpora.

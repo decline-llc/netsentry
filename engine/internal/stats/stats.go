@@ -308,6 +308,8 @@ func gaugeHelp(name string) string {
 		return "Current number of loaded rules."
 	case "netsentry_storage_available_bytes":
 		return "Available bytes on the alert storage filesystem."
+	case "netsentry_storage_healthy":
+		return "Whether alert storage is currently healthy."
 	default:
 		return "Gauge value."
 	}

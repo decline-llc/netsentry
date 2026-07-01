@@ -23,6 +23,7 @@ import (
 type fakeStore struct {
 	alerts []*model.Alert
 	err    error
+	health alert.StorageHealth
 }
 
 func (s *fakeStore) List(ctx context.Context) ([]*model.Alert, error) {
@@ -37,6 +38,13 @@ func (s *fakeStore) Count(ctx context.Context) (int, error) {
 		return 0, s.err
 	}
 	return len(s.alerts), nil
+}
+
+func (s *fakeStore) Health() alert.StorageHealth {
+	if s.health.Status == "" {
+		return alert.StorageHealth{Status: "ok"}
+	}
+	return s.health
 }
 
 type fakeStoreWithPath struct {
@@ -189,6 +197,31 @@ func TestHealthVerboseReportsStaleCapture(t *testing.T) {
 	}
 	body := rec.Body.String()
 	for _, want := range []string{`"status":"degraded"`, `"capture":{"status":"stale"`} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("response missing %q: %s", want, body)
+		}
+	}
+}
+
+func TestHealthVerboseReportsDegradedStorage(t *testing.T) {
+	store := &fakeStore{
+		alerts: []*model.Alert{{RuleID: "rule-1"}},
+		health: alert.StorageHealth{
+			Status:      "degraded",
+			LastError:   "disk full",
+			LastErrorAt: time.Date(2026, 7, 1, 12, 0, 0, 0, time.UTC),
+		},
+	}
+	server := NewServer(store, fakeQueue{}, &fakeRules{}, stats.New())
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/health?verbose=true", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	body := rec.Body.String()
+	for _, want := range []string{`"status":"degraded"`, `"storage":{"status":"degraded"`, `"last_error":"disk full"`} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("response missing %q: %s", want, body)
 		}
@@ -669,6 +702,28 @@ func TestMetricsEndpointIncludesStorageAvailableGauge(t *testing.T) {
 		"# HELP netsentry_storage_available_bytes Available bytes on the alert storage filesystem.",
 		"# TYPE netsentry_storage_available_bytes gauge",
 		"netsentry_storage_available_bytes ",
+	} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("metrics missing %q:\n%s", want, body)
+		}
+	}
+}
+
+func TestMetricsEndpointIncludesStorageHealthGauge(t *testing.T) {
+	store := &fakeStore{health: alert.StorageHealth{Status: "degraded", LastError: "disk full"}}
+	server := NewServer(store, fakeQueue{}, &fakeRules{}, stats.New())
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/metrics", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	body := rec.Body.String()
+	for _, want := range []string{
+		"# HELP netsentry_storage_healthy Whether alert storage is currently healthy.",
+		"# TYPE netsentry_storage_healthy gauge",
+		"netsentry_storage_healthy 0",
 	} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("metrics missing %q:\n%s", want, body)

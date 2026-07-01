@@ -19,7 +19,7 @@ Returns a minimal liveness response by default.
 }
 ```
 
-With `verbose=true`, returns capture heartbeat status, engine queue/rule counts, storage status, and throughput counters. Capture status is `unknown` before the first heartbeat, `ok` while the latest heartbeat is within `engine.health_freshness_limit_seconds`, and `stale` after that limit.
+With `verbose=true`, returns capture heartbeat status, engine queue/rule counts, storage status, and throughput counters. Capture status is `unknown` before the first heartbeat, `ok` while the latest heartbeat is within `engine.health_freshness_limit_seconds`, and `stale` after that limit. Storage status is `ok` by default and becomes `degraded` after SQLite write/query errors until a later successful write or full alert list query clears it.
 
 ```json
 {
@@ -98,7 +98,7 @@ Query parameters:
 
 ### `GET /api/metrics`
 
-Returns Prometheus text format with process counters, packet queue depth, loaded rules, alert counts, storage availability, worker counters, rule match latency buckets, alert write latency buckets, and the latest capture heartbeat state when available.
+Returns Prometheus text format with process counters, packet queue depth, loaded rules, alert counts, storage availability and health gauges, worker counters, rule match latency buckets, alert write latency buckets, and the latest capture heartbeat state when available.
 
 ### `GET /api/rules`
 

@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 
 	_ "modernc.org/sqlite"
@@ -34,6 +35,15 @@ type Store struct {
 	aggregationWindow time.Duration
 	retentionDays     int
 	now               func() time.Time
+	healthMu          sync.RWMutex
+	health            StorageHealth
+}
+
+// StorageHealth describes the current alert storage state.
+type StorageHealth struct {
+	Status      string    `json:"status"`
+	LastError   string    `json:"last_error,omitempty"`
+	LastErrorAt time.Time `json:"last_error_at,omitempty"`
 }
 
 // Open creates the SQLite database and initializes its schema.
@@ -65,6 +75,7 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 		aggregationWindow: opts.AggregationWindow,
 		retentionDays:     opts.RetentionDays,
 		now:               clock(opts.Now),
+		health:            StorageHealth{Status: "ok"},
 	}
 	if err := store.init(ctx, opts); err != nil {
 		_ = db.Close()
@@ -112,6 +123,32 @@ func clock(now func() time.Time) func() time.Time {
 
 // Path returns the concrete SQLite database path in use.
 func (s *Store) Path() string { return s.path }
+
+// Health returns the latest known alert storage status.
+func (s *Store) Health() StorageHealth {
+	s.healthMu.RLock()
+	defer s.healthMu.RUnlock()
+	return s.health
+}
+
+func (s *Store) markHealthy() {
+	s.healthMu.Lock()
+	defer s.healthMu.Unlock()
+	s.health = StorageHealth{Status: "ok"}
+}
+
+func (s *Store) markDegraded(err error) {
+	if err == nil {
+		return
+	}
+	s.healthMu.Lock()
+	defer s.healthMu.Unlock()
+	s.health = StorageHealth{
+		Status:      "degraded",
+		LastError:   err.Error(),
+		LastErrorAt: s.now(),
+	}
+}
 
 func (s *Store) init(ctx context.Context, opts Options) error {
 	journalMode := strings.ToUpper(strings.TrimSpace(opts.JournalMode))
@@ -202,11 +239,13 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 	}
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
+		s.markDegraded(err)
 		return fmt.Errorf("begin alert transaction: %w", err)
 	}
 	stmt, err := tx.PrepareContext(ctx, upsertAlertSQL)
 	if err != nil {
 		_ = tx.Rollback()
+		s.markDegraded(err)
 		return fmt.Errorf("prepare alert upsert: %w", err)
 	}
 	defer stmt.Close()
@@ -240,12 +279,15 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 			formatTime(now),
 		); err != nil {
 			_ = tx.Rollback()
+			s.markDegraded(err)
 			return fmt.Errorf("upsert alert %s: %w", normalized.RuleID, err)
 		}
 	}
 	if err := tx.Commit(); err != nil {
+		s.markDegraded(err)
 		return fmt.Errorf("commit alert transaction: %w", err)
 	}
+	s.markHealthy()
 	return nil
 }
 
@@ -275,6 +317,7 @@ FROM alerts
 ORDER BY last_seen DESC, id ASC
 LIMIT 1000`)
 	if err != nil {
+		s.markDegraded(err)
 		return nil, fmt.Errorf("list alerts: %w", err)
 	}
 	defer rows.Close()
@@ -288,8 +331,10 @@ LIMIT 1000`)
 		alerts = append(alerts, alert)
 	}
 	if err := rows.Err(); err != nil {
+		s.markDegraded(err)
 		return nil, fmt.Errorf("iterate alerts: %w", err)
 	}
+	s.markHealthy()
 	return alerts, nil
 }
 
@@ -297,6 +342,7 @@ LIMIT 1000`)
 func (s *Store) Count(ctx context.Context) (int, error) {
 	var count int
 	if err := s.db.QueryRowContext(ctx, "SELECT COUNT(*) FROM alerts").Scan(&count); err != nil {
+		s.markDegraded(err)
 		return 0, fmt.Errorf("count alerts: %w", err)
 	}
 	return count, nil
