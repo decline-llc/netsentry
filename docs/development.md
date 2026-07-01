@@ -43,9 +43,7 @@ make asan-test     # C parser tests under AddressSanitizer
 make clean
 ```
 
-Planned but not implemented yet:
-
-- published Docker image workflow
+Published registry images and CI publishing are still pending. Local Docker image builds are available through `make docker-build` and are covered by `make rc-check`.
 
 ---
 

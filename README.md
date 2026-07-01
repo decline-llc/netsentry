@@ -82,7 +82,7 @@ These are v0.1.0 goals, not current behavior:
 - Full Prometheus metric coverage beyond the current process, queue, rule/write latency, alert, storage, worker, and capture heartbeat metrics.
 - Suppression persistence/hot reload, advanced alert querying, and remaining error envelope coverage.
 - C-side cJSON serializer and longer fuzz runs with broader seed corpora.
-- Published Docker image workflow.
+- Registry-published Docker image and CI publishing workflow.
 
 ---
 
@@ -146,7 +146,7 @@ capture/    C capture and packet parsing code
 engine/     Go engine, rule matcher, models, minimal API
 configs/    Runtime config and seed rules
 docs/       Architecture, API, and development notes
-scripts/    Quickstart pcap generator
+scripts/    Quickstart pcap generator, e2e checks, release packaging, pcap sanitizer
 ```
 
 ---

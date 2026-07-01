@@ -98,7 +98,7 @@ Query parameters:
 
 ### `GET /api/metrics`
 
-Returns Prometheus text format with process counters and documented gauges for current alert count, packet queue depth, loaded rules, and the latest capture heartbeat state when available.
+Returns Prometheus text format with process counters, packet queue depth, loaded rules, alert counts, storage availability, worker counters, rule match latency buckets, alert write latency buckets, and the latest capture heartbeat state when available.
 
 ### `GET /api/rules`
 
