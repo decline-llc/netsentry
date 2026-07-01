@@ -252,7 +252,7 @@ Planned tests:
 - Broader UDS sender tests for edge-case write failures.
 - Longer C parser fuzz runs against a broader corpus.
 - Broader full-engine lifecycle tests across receiver, worker, HTTP, and storage shutdown.
-- SQLite aggregation tests for alert storage changes.
+- Broader SQLite disk and corruption failure-mode tests for alert storage changes.
 - Full graceful shutdown tests.
 
 ---

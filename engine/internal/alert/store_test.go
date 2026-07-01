@@ -39,6 +39,108 @@ func TestStoreAggregatesAlertsInWindow(t *testing.T) {
 	}
 }
 
+func TestStoreAggregatesOutOfOrderAlertsWithoutRegressingLatestFields(t *testing.T) {
+	ctx := context.Background()
+	store := openTestStore(t, 60*time.Second)
+	defer store.Close()
+
+	base := time.Date(2026, 6, 27, 3, 0, 0, 0, time.UTC)
+	latest := makeAlert(base.Add(40*time.Second), "latest")
+	latest.PayloadPreview = "latest payload"
+	earlier := makeAlert(base.Add(5*time.Second), "earlier")
+	earlier.PayloadPreview = "earlier payload"
+	if err := store.WriteBatch(ctx, []*model.Alert{latest}); err != nil {
+		t.Fatalf("write latest alert: %v", err)
+	}
+	if err := store.WriteBatch(ctx, []*model.Alert{earlier}); err != nil {
+		t.Fatalf("write earlier alert: %v", err)
+	}
+
+	listed, err := store.List(ctx)
+	if err != nil {
+		t.Fatalf("list alerts: %v", err)
+	}
+	if len(listed) != 1 {
+		t.Fatalf("expected 1 aggregated row, got %d", len(listed))
+	}
+	got := listed[0]
+	if got.AggregatedCount != 2 {
+		t.Fatalf("aggregated count = %d, want 2", got.AggregatedCount)
+	}
+	if !got.FirstSeen.Equal(earlier.Timestamp) {
+		t.Fatalf("first_seen = %s, want %s", got.FirstSeen, earlier.Timestamp)
+	}
+	if !got.LastSeen.Equal(latest.Timestamp) {
+		t.Fatalf("last_seen = %s, want %s", got.LastSeen, latest.Timestamp)
+	}
+	if got.MatchedKeyword != "latest" || got.PayloadPreview != "latest payload" {
+		t.Fatalf("latest fields regressed: keyword=%q payload=%q", got.MatchedKeyword, got.PayloadPreview)
+	}
+}
+
+func TestStoreKeepsAggregationKeysSeparate(t *testing.T) {
+	ctx := context.Background()
+	store := openTestStore(t, 60*time.Second)
+	defer store.Close()
+
+	base := time.Date(2026, 6, 27, 3, 0, 10, 0, time.UTC)
+	sameWindow := makeAlert(base, "same")
+	otherRule := makeAlert(base.Add(10*time.Second), "rule")
+	otherRule.RuleID = "rule-2"
+	otherSrc := makeAlert(base.Add(20*time.Second), "src")
+	otherSrc.SrcIP = "10.0.0.3"
+	otherDst := makeAlert(base.Add(30*time.Second), "dst")
+	otherDst.DstIP = "10.0.0.4"
+	otherPort := makeAlert(base.Add(40*time.Second), "port")
+	otherPort.DstPort = 443
+
+	if err := store.WriteBatch(ctx, []*model.Alert{sameWindow, otherRule, otherSrc, otherDst, otherPort}); err != nil {
+		t.Fatalf("write alerts: %v", err)
+	}
+
+	count, err := store.Count(ctx)
+	if err != nil {
+		t.Fatalf("count alerts: %v", err)
+	}
+	if count != 5 {
+		t.Fatalf("count = %d, want 5", count)
+	}
+}
+
+func TestStoreRejectsUnsupportedJournalMode(t *testing.T) {
+	ctx := context.Background()
+	store, err := Open(ctx, Options{
+		Path:              filepath.Join(t.TempDir(), "alerts.db"),
+		JournalMode:       "INVALID",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+	})
+	if err == nil {
+		store.Close()
+		t.Fatal("expected unsupported journal mode error")
+	}
+}
+
+func TestStoreWriteBatchHonorsCanceledContext(t *testing.T) {
+	ctx := context.Background()
+	store := openTestStore(t, 60*time.Second)
+	defer store.Close()
+
+	canceled, cancel := context.WithCancel(ctx)
+	cancel()
+	if err := store.WriteBatch(canceled, []*model.Alert{makeAlert(time.Now().UTC(), "canceled")}); err == nil {
+		t.Fatal("expected canceled context error")
+	}
+
+	count, err := store.Count(ctx)
+	if err != nil {
+		t.Fatalf("count alerts: %v", err)
+	}
+	if count != 0 {
+		t.Fatalf("count = %d, want 0", count)
+	}
+}
+
 func TestStoreSeparatesAggregationWindows(t *testing.T) {
 	ctx := context.Background()
 	store := openTestStore(t, 60*time.Second)

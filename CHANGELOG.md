@@ -26,6 +26,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Pcap sanitization helper via `make sanitize-pcap INPUT=... OUTPUT=...`.
 - Deterministic AddressSanitizer fuzz smoke for the C frame parser via `make fuzz-parser`.
 - Receiver lifecycle tests for multiple active UDS connections during context cancellation, with goleak coverage for the receiver package.
+- SQLite aggregation tests now cover out-of-order alert writes, rule/source/destination/port aggregation key separation, canceled write contexts, and unsupported journal mode validation.
 - Full C capture AddressSanitizer build target via `make build-asan`.
 - Local release archive packaging via `make dist`, including SHA-256 checksum generation.
 - Local Docker image build via `make docker-build`.
@@ -41,6 +42,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - UDS reconnect behavior is tested across listener restart and receiver reconnection paths.
 - Receiver shutdown closes single and multiple active Unix socket connections and removes the socket path.
 - Worker panic recovery no longer terminates the worker loop after a single bad packet.
+- Alert aggregation preserves earliest `first_seen`, latest `last_seen`, and latest payload/match fields when older events arrive after newer events in the same aggregation window.
 
 ### Known Gaps
 - Runtime cross-day database rotation and cross-day alert querying are not implemented.

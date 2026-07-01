@@ -173,9 +173,22 @@ INSERT INTO alerts (
 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ON CONFLICT(rule_id, src_ip, dst_ip, dst_port, window_start) DO UPDATE SET
     aggregated_count = alerts.aggregated_count + excluded.aggregated_count,
-    last_seen = excluded.last_seen,
-    payload_preview = excluded.payload_preview,
-    matched_keyword = excluded.matched_keyword,
+    first_seen = CASE
+        WHEN excluded.first_seen < alerts.first_seen THEN excluded.first_seen
+        ELSE alerts.first_seen
+    END,
+    last_seen = CASE
+        WHEN excluded.last_seen > alerts.last_seen THEN excluded.last_seen
+        ELSE alerts.last_seen
+    END,
+    payload_preview = CASE
+        WHEN excluded.last_seen >= alerts.last_seen THEN excluded.payload_preview
+        ELSE alerts.payload_preview
+    END,
+    matched_keyword = CASE
+        WHEN excluded.last_seen >= alerts.last_seen THEN excluded.matched_keyword
+        ELSE alerts.matched_keyword
+    END,
     updated_at = excluded.updated_at;
 `
 
