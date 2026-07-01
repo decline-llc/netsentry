@@ -10,7 +10,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build build-asan test asan-test bench e2e-smoke e2e-pressure sanitize-pcap dist docker-build rc-check lint clean quickstart help
+.PHONY: all build-c build-go build build-asan test asan-test bench fuzz-parser e2e-smoke e2e-pressure sanitize-pcap dist docker-build rc-check lint clean quickstart help
 
 all: build
 
@@ -44,6 +44,10 @@ asan-test:
 bench:
 	$(MAKE) -C capture bench BENCH_ITERATIONS=$(BENCH_ITERATIONS)
 	cd $(GO_MODULE) && GOPROXY=$(GOPROXY) $(GO) test -bench=. -benchtime=10s -benchmem ./...
+
+## fuzz-parser — run deterministic ASan fuzz smoke for the C frame parser
+fuzz-parser:
+	$(MAKE) -C capture fuzz-parser
 
 ## e2e-smoke — run deterministic pcap -> UDS -> engine -> SQLite -> API smoke test
 e2e-smoke: build

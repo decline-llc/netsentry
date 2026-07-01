@@ -7,6 +7,7 @@
 #define NS_MAX_PAYLOAD_LEN   4096
 #define NS_MAX_IP_STR        40
 #define NS_SESSION_ID_LEN    9   /* 8 hex chars + NUL */
+#define NS_TCP_FLAGS_LEN     32
 
 typedef struct {
     int64_t  timestamp_sec;
@@ -16,7 +17,7 @@ typedef struct {
     uint16_t src_port;
     uint16_t dst_port;
     uint8_t  protocol;          /* IPPROTO_TCP / IPPROTO_UDP */
-    char     tcp_flags[8];      /* e.g. "SYN", "ACK", "FIN|ACK" */
+    char     tcp_flags[NS_TCP_FLAGS_LEN]; /* e.g. "SYN", "ACK", "FIN|ACK" */
     uint16_t payload_len;
     uint8_t  payload[NS_MAX_PAYLOAD_LEN];
     bool     is_fragment;

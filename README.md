@@ -81,7 +81,7 @@ These are v0.1.0 goals, not current behavior:
 - Runtime cross-day DB rotation, cross-day alert querying, WAL replay.
 - Full Prometheus metric coverage beyond the current process, queue, rule/write latency, alert, storage, worker, and capture heartbeat metrics.
 - Suppression persistence/hot reload, advanced alert querying, and remaining error envelope coverage.
-- C-side cJSON serializer and fuzz targets.
+- C-side cJSON serializer and longer fuzz runs with broader seed corpora.
 - Published Docker image workflow.
 
 ---

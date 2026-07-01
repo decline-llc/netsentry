@@ -30,8 +30,10 @@ make build         # build both binaries
 make build-asan    # compile C capture with AddressSanitizer
 make test          # C parser/UDS tests + Go race tests
 make bench         # C parser/UDS microbenchmarks + Go benchmarks
+make fuzz-parser   # deterministic ASan fuzz smoke for the C frame parser
 make e2e-smoke     # deterministic pcap -> SQLite -> API smoke test
 make e2e-pressure  # repeat-pcap end-to-end throughput smoke test
+make sanitize-pcap # sanitize an Ethernet pcap before sharing it
 make dist          # build a local release archive under dist/
 make docker-build  # build a local Docker image
 make rc-check      # release-candidate verification bundle
@@ -43,8 +45,6 @@ make clean
 
 Planned but not implemented yet:
 
-- C fuzz targets
-- `make sanitize-pcap`
 - published Docker image workflow
 
 ---
@@ -250,7 +250,7 @@ Planned tests:
 
 - More C parser unit tests for malformed input.
 - Broader UDS sender tests for edge-case write failures.
-- C fuzz targets.
+- Longer C parser fuzz runs against a broader corpus.
 - Broader UDS receiver integration tests for multi-session lifecycle.
 - SQLite aggregation tests for alert storage changes.
 - Full graceful shutdown tests.

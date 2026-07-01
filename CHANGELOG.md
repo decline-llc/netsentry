@@ -24,10 +24,11 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Non-interactive end-to-end smoke test via `make e2e-smoke`, including capture heartbeat metrics assertions.
 - Repeat-pcap end-to-end throughput smoke test via `make e2e-pressure`.
 - Pcap sanitization helper via `make sanitize-pcap INPUT=... OUTPUT=...`.
+- Deterministic AddressSanitizer fuzz smoke for the C frame parser via `make fuzz-parser`.
 - Full C capture AddressSanitizer build target via `make build-asan`.
 - Local release archive packaging via `make dist`, including SHA-256 checksum generation.
 - Local Docker image build via `make docker-build`.
-- Release-candidate verification bundle via `make rc-check`, including release archive, Docker image content, and runtime health smoke checks.
+- Release-candidate verification bundle via `make rc-check`, including fuzz smoke, release archive, Docker image content, and runtime health smoke checks.
 
 ### Changed
 - Public rule samples now use the canonical wrapped schema while the loader remains backward compatible with legacy rule files.
@@ -45,7 +46,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - WAL JSONL replay and degraded-mode disk-full handling are not implemented.
 - Suppression persistence and hot reload are not implemented.
 - End-to-end pressure coverage currently includes repeat-pcap runs up to 60,000 packets locally, but realistic pcap corpora are still pending.
-- C fuzz targets are still pending.
+- Longer C fuzz runs with broader seed corpora are still pending.
 
 ---
 

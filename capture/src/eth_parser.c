@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "packet_types.h"
@@ -25,6 +26,23 @@
 
 static inline uint16_t read_u16_be(const uint8_t *p) {
     return (uint16_t)((p[0] << 8) | p[1]);
+}
+
+static void append_tcp_flag(char *dst, size_t dst_len, const char *flag) {
+    size_t used;
+
+    if (!dst || !flag || dst_len == 0) return;
+
+    used = strnlen(dst, dst_len);
+    if (used >= dst_len - 1) return;
+
+    if (used > 0) {
+        size_t remaining = dst_len - used;
+        int n = snprintf(dst + used, remaining, "|%s", flag);
+        (void)n;
+    } else {
+        snprintf(dst, dst_len, "%s", flag);
+    }
 }
 
 /* Parse IPv4 header starting at ip_start; fill PacketInfo.
@@ -66,14 +84,11 @@ static int parse_ipv4(const uint8_t *ip_start, uint32_t avail,
         if (data_offset < 20 || data_offset > transport_len) return -1;
 
         uint8_t flags = transport[13];
-        char *f = info->tcp_flags;
-        int   n = 0;
-        if (flags & 0x02) { if (n++) strcat(f, "|"); strcat(f, "SYN"); }
-        if (flags & 0x10) { if (n++) strcat(f, "|"); strcat(f, "ACK"); }
-        if (flags & 0x01) { if (n++) strcat(f, "|"); strcat(f, "FIN"); }
-        if (flags & 0x04) { if (n++) strcat(f, "|"); strcat(f, "RST"); }
-        if (flags & 0x08) { if (n++) strcat(f, "|"); strcat(f, "PSH"); }
-        (void)n;
+        if (flags & 0x02) append_tcp_flag(info->tcp_flags, sizeof(info->tcp_flags), "SYN");
+        if (flags & 0x10) append_tcp_flag(info->tcp_flags, sizeof(info->tcp_flags), "ACK");
+        if (flags & 0x01) append_tcp_flag(info->tcp_flags, sizeof(info->tcp_flags), "FIN");
+        if (flags & 0x04) append_tcp_flag(info->tcp_flags, sizeof(info->tcp_flags), "RST");
+        if (flags & 0x08) append_tcp_flag(info->tcp_flags, sizeof(info->tcp_flags), "PSH");
 
         const uint8_t *payload     = transport + data_offset;
         uint32_t       payload_len = transport_len - data_offset;

@@ -176,6 +176,23 @@ static void test_malformed_tcp_data_offset_rejected(void) {
     CHECK(parse_frame(frame, (uint32_t)off, 1, 0, &info) == -1);
 }
 
+static void test_all_tcp_flags_fit(void) {
+    uint8_t frame[128];
+    size_t off = write_eth(frame, 0x0800);
+    off += write_ipv4(frame + off, IPPROTO_TCP, 20, 0);
+    uint8_t *tcp = frame + off;
+    memset(tcp, 0, 20);
+    put_u16(tcp, 12345);
+    put_u16(tcp + 2, 80);
+    tcp[12] = 0x50;
+    tcp[13] = 0x1f;
+    off += 20;
+
+    PacketInfo info;
+    CHECK(parse_frame(frame, (uint32_t)off, 1, 0, &info) == 0);
+    CHECK(strcmp(info.tcp_flags, "SYN|ACK|FIN|RST|PSH") == 0);
+}
+
 int main(void) {
     parser_registry_register(IPPROTO_TCP, 0, passthrough_parser, "passthrough_tcp");
     parser_registry_register(IPPROTO_UDP, 0, passthrough_parser, "passthrough_udp");
@@ -186,6 +203,7 @@ int main(void) {
     test_vlan_and_qinq_offsets();
     test_fragment_skips_transport();
     test_malformed_tcp_data_offset_rejected();
+    test_all_tcp_flags_fit();
 
     puts("test_parser: ok");
     return 0;
