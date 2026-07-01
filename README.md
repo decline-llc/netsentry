@@ -69,7 +69,7 @@ DOCKER="sudo docker" make docker-build
 - Rule types: `payload_match`, `ip_blacklist`, `port_blacklist`.
 - A self-contained Aho-Corasick matcher.
 - Minimal Go UDS receiver, CIDR alert suppressor component, and SQLite alert store with UPSERT aggregation, startup TTL pruning, optional daily DB shard pathing/cleanup, and basic degraded health tracking after storage errors.
-- Minimal HTTP endpoints: `/api/health` with verbose component snapshot, paginated and filterable `/api/alerts`, `/api/metrics`, rule listing, rule create/update/delete, rule reload, in-memory suppressions, optional PSK Bearer auth for modifying endpoints, non-GET audit logs, optional localhost-only pprof, storage health gauges, and payload preview redaction before alert writes.
+- Minimal HTTP endpoints: `/api/health` with verbose component snapshot, paginated and filterable `/api/alerts`, `/api/metrics`, rule listing, rule create/update/delete, rule reload, file-backed suppressions, optional PSK Bearer auth for modifying endpoints, non-GET audit logs, optional localhost-only pprof, storage health gauges, and payload preview redaction before alert writes.
 - Seed rules in canonical wrapped JSON schema, with legacy schema compatibility retained in the loader.
 
 ---
@@ -80,7 +80,7 @@ These are v0.1.0 goals, not current behavior:
 
 - Runtime cross-day DB rotation, cross-day alert querying, WAL replay, and automatic disk-full recovery.
 - Full Prometheus metric coverage beyond the current process, queue, rule/write latency, alert, storage, worker, and capture heartbeat metrics.
-- Suppression persistence/hot reload, advanced alert querying, and remaining error envelope coverage.
+- Suppression update/delete/hot reload, advanced alert querying, and remaining error envelope coverage.
 - C-side cJSON serializer and longer fuzz runs with broader seed corpora.
 - Registry-published Docker image and CI publishing workflow.
 
@@ -144,7 +144,7 @@ Payload matching runs on per-packet cleartext payload only. If an attack string 
 ```text
 capture/    C capture and packet parsing code
 engine/     Go engine, rule matcher, models, minimal API
-configs/    Runtime config and seed rules
+configs/    Runtime config, seed rules, and seed suppressions
 docs/       Architecture, API, and development notes
 scripts/    Quickstart pcap generator, e2e checks, release packaging, pcap sanitizer
 ```

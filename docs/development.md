@@ -96,6 +96,7 @@ engine:
   db_journal_mode: "WAL"
   db_busy_timeout: 5000
   rules_seed_file: "configs/rules.json"
+  suppressions_file: "configs/suppressions.json"
   api_port: 8080
   api_auth_enabled: false
   api_auth_token: "${NETSENTRY_API_TOKEN:}"
@@ -139,6 +140,7 @@ configs/
   config.yaml
   rules.json
   rules.example.json
+  suppressions.json
 
 scripts/
   e2e_smoke.sh
@@ -173,6 +175,25 @@ Empty future directories may exist locally; treat only directories with tracked 
 ```
 
 The loader still accepts legacy top-level arrays and legacy `payload_match`, `ip_blacklist`, and MITRE scalar fields while old files are migrated.
+
+`configs/suppressions.json` uses the canonical wrapped schema:
+
+```json
+{
+  "suppressions": [
+    {
+      "id": "internal-subnet",
+      "enabled": true,
+      "rule_ids": ["rule-001"],
+      "src_cidrs": ["10.0.0.0/24"],
+      "dst_cidrs": [],
+      "any_cidrs": []
+    }
+  ]
+}
+```
+
+The engine loads this file at startup. `POST /api/suppressions` appends validated suppressions and persists the full file before swapping the active in-memory filter.
 
 ---
 

@@ -17,10 +17,11 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Rule types for `payload_match`, `ip_blacklist`, and `port_blacklist`, including protocol, port, direction, offset, depth, case-insensitive matching, exact IP, and CIDR support.
 - SQLite-backed alert store with UPSERT aggregation, startup TTL pruning, optional daily shard pathing, and old daily shard file cleanup.
 - Payload preview redaction before alert writes when `engine.redact_sensitive_fields` is enabled.
-- REST API for health, alerts, metrics, rules CRUD/reload, and in-memory suppressions.
+- REST API for health, alerts, metrics, rules CRUD/reload, and file-backed suppressions.
 - Unified API error envelope, pagination envelope, request IDs, optional PSK Bearer auth, non-GET audit logs, and localhost-only pprof.
 - Prometheus text metrics for current packet, alert, queue, rule latency, alert write latency, storage, worker, and capture heartbeat counters, with HELP text for exported gauges.
 - Basic alert storage health tracking after SQLite write/query errors, surfaced through verbose health and `netsentry_storage_healthy`.
+- Suppression rules can load from `engine.suppressions_file`; `POST /api/suppressions` persists successful creates before updating the active filter.
 - Deterministic synthetic pcap generator with a Python stdlib fallback when Scapy is unavailable.
 - Non-interactive end-to-end smoke test via `make e2e-smoke`, including capture heartbeat metrics assertions.
 - Repeat-pcap end-to-end throughput smoke test via `make e2e-pressure`.
@@ -48,7 +49,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ### Known Gaps
 - Runtime cross-day database rotation and cross-day alert querying are not implemented.
 - WAL JSONL replay and automatic disk-full recovery are not implemented.
-- Suppression persistence and hot reload are not implemented.
+- Suppression update/delete and hot reload are not implemented.
 - End-to-end pressure coverage currently includes repeat-pcap runs up to 60,000 packets locally, but realistic pcap corpora are still pending.
 - Longer C fuzz runs with broader seed corpora are still pending.
 

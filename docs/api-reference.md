@@ -132,7 +132,7 @@ Returns the currently loaded rule snapshot in priority order.
 
 ### `GET /api/suppressions`
 
-Returns the active in-memory suppression rules in insertion order.
+Returns the active suppression rules in insertion order. At startup, suppressions are loaded from `engine.suppressions_file` when configured.
 
 ```json
 {
@@ -151,7 +151,7 @@ Returns the active in-memory suppression rules in insertion order.
 
 ### `POST /api/suppressions`
 
-Adds an in-memory suppression rule and immediately applies it to newly generated alerts. Enabled suppressions require at least one `src_cidrs`, `dst_cidrs`, or `any_cidrs` entry. Persistence and hot reload are still pending.
+Adds a suppression rule and immediately applies it to newly generated alerts. Enabled suppressions require at least one `src_cidrs`, `dst_cidrs`, or `any_cidrs` entry. When `engine.suppressions_file` is configured, successful creates are persisted to that JSON file before the in-memory snapshot is updated.
 
 ### `POST /api/rules`
 
@@ -184,7 +184,7 @@ Current limitations:
 - Optional PSK Bearer authentication protects modifying rule and suppression endpoints when `engine.api_auth_enabled` is true.
 - Non-GET API requests emit structured zap audit logs with request ID, method, path, status, authorization outcome, target, remote address, and duration.
 - Optional pprof runs on a separate localhost-only server when `engine.pprof_enabled` is true.
-- Suppressions are in-memory only; persistence and hot reload are pending.
+- Suppressions load from `engine.suppressions_file` at startup and `POST /api/suppressions` persists creates; update/delete and hot reload are pending.
 - Payload previews are redacted before SQLite writes when `engine.redact_sensitive_fields` is true; current redaction covers Authorization, Cookie, Set-Cookie, password, and token patterns.
 
 ---
@@ -230,7 +230,7 @@ Planned endpoints:
 | `PUT /api/rules/{id}` | partial | Replaces and persists one rule; optional PSK auth exists. |
 | `DELETE /api/rules/{id}` | partial | Deletes and persists one rule; optional PSK auth exists. |
 | `POST /api/rules/reload` | partial | Hot reload from `engine.rules_seed_file` exists; optional PSK auth exists. |
-| `GET/POST /api/suppressions` | partial | In-memory suppression listing/create exists and filters newly generated alerts; persistence and hot reload pending. |
+| `GET/POST /api/suppressions` | partial | Suppression listing/create exists, filters newly generated alerts, and persists creates to `engine.suppressions_file`; update/delete and hot reload pending. |
 | `GET /debug/pprof/*` | partial | Optional separate localhost-only server when `engine.pprof_enabled` is true; not public API. |
 
 Authentication: modifying rule and suppression endpoints require `Authorization: Bearer <token>` when `engine.api_auth_enabled` is true. The token is configured with `engine.api_auth_token`.

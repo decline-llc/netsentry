@@ -127,8 +127,8 @@ Planned modules:
 
 - `internal/receiver`: UDS listener, hello validation, heartbeat state. Implemented in the current build; broader Go engine lifecycle integration remains future work.
 - `internal/pipeline`: worker lifecycle and alert flow. Implemented as a single worker in the current build.
-- `internal/alert`: aggregation, SQLite store, TTL pruning, daily shard pathing, old shard cleanup, payload redaction, and in-memory suppressions. WAL replay remains future work.
-- `internal/api`: router, pagination, basic alert filters, rule CRUD/reload, in-memory suppressions API, PSK auth for mutations, errors, health, audit middleware, and metrics.
+- `internal/alert`: aggregation, SQLite store, TTL pruning, daily shard pathing, old shard cleanup, payload redaction, and file-backed suppressions. WAL replay remains future work.
+- `internal/api`: router, pagination, basic alert filters, rule CRUD/reload, suppressions API, PSK auth for mutations, errors, health, audit middleware, and metrics.
 - `internal/stats`: counters and Prometheus text rendering for process, queue, rule, alert, worker, and capture heartbeat metrics.
 
 ---
@@ -152,11 +152,12 @@ Current build:
 
 - `internal/alert` includes a CIDR/exact-IP suppressor component and in-memory suppression manager.
 - Suppressions can be scoped by rule ID and source, destination, or either-side IP ranges.
-- `/api/suppressions` can list and add in-memory suppressions that apply to newly generated alerts.
+- Suppressions load from `engine.suppressions_file` at startup.
+- `/api/suppressions` can list and add suppressions that apply to newly generated alerts; creates are persisted to `engine.suppressions_file` when configured.
 
 Remaining v0.1.0 suppression work:
 
-- Persistence and hot reload of suppression rules.
+- Suppression update/delete and hot reload from disk.
 
 ---
 

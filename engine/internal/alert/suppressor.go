@@ -1,8 +1,11 @@
 package alert
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/netip"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -24,10 +27,21 @@ type SuppressionManager struct {
 	mu         sync.RWMutex
 	rules      []Suppression
 	suppressor *Suppressor
+	filePath   string
+}
+
+type suppressionsFile struct {
+	Suppressions []Suppression `json:"suppressions"`
 }
 
 // NewSuppressionManager constructs an in-memory suppression manager.
 func NewSuppressionManager(rules []Suppression) (*SuppressionManager, error) {
+	return NewSuppressionManagerWithFile(rules, "")
+}
+
+// NewSuppressionManagerWithFile constructs a suppression manager that persists
+// successful changes to path when path is not empty.
+func NewSuppressionManagerWithFile(rules []Suppression, path string) (*SuppressionManager, error) {
 	if err := validateSuppressionSet(rules); err != nil {
 		return nil, err
 	}
@@ -35,7 +49,77 @@ func NewSuppressionManager(rules []Suppression) (*SuppressionManager, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &SuppressionManager{rules: cloneSuppressions(rules), suppressor: suppressor}, nil
+	return &SuppressionManager{rules: cloneSuppressions(rules), suppressor: suppressor, filePath: path}, nil
+}
+
+// LoadSuppressionsFromFile reads suppression rules from a canonical JSON file.
+// A missing file is treated as an empty suppression set.
+func LoadSuppressionsFromFile(path string) ([]Suppression, error) {
+	if path == "" {
+		return nil, nil
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("read suppressions %s: %w", path, err)
+	}
+	var wrapped suppressionsFile
+	if err := json.Unmarshal(data, &wrapped); err != nil {
+		return nil, fmt.Errorf("parse suppressions %s: %w", path, err)
+	}
+	if err := validateSuppressionSet(wrapped.Suppressions); err != nil {
+		return nil, fmt.Errorf("validate suppressions %s: %w", path, err)
+	}
+	return cloneSuppressions(wrapped.Suppressions), nil
+}
+
+// SaveSuppressionsToFile writes suppression rules using the canonical wrapped schema.
+func SaveSuppressionsToFile(path string, rules []Suppression) error {
+	if path == "" {
+		return nil
+	}
+	if err := validateSuppressionSet(rules); err != nil {
+		return err
+	}
+	data, err := json.MarshalIndent(suppressionsFile{Suppressions: cloneSuppressions(rules)}, "", "  ")
+	if err != nil {
+		return fmt.Errorf("marshal suppressions: %w", err)
+	}
+	data = append(data, '\n')
+
+	mode := os.FileMode(0o644)
+	if info, err := os.Stat(path); err == nil {
+		mode = info.Mode().Perm()
+	}
+	dir := filepath.Dir(path)
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		return fmt.Errorf("create suppressions dir: %w", err)
+	}
+	tmp, err := os.CreateTemp(dir, ".suppressions-*.json")
+	if err != nil {
+		return fmt.Errorf("create temp suppressions file: %w", err)
+	}
+	tmpName := tmp.Name()
+	defer func() {
+		_ = os.Remove(tmpName)
+	}()
+	if _, err := tmp.Write(data); err != nil {
+		_ = tmp.Close()
+		return fmt.Errorf("write temp suppressions file: %w", err)
+	}
+	if err := tmp.Chmod(mode); err != nil {
+		_ = tmp.Close()
+		return fmt.Errorf("chmod temp suppressions file: %w", err)
+	}
+	if err := tmp.Close(); err != nil {
+		return fmt.Errorf("close temp suppressions file: %w", err)
+	}
+	if err := os.Rename(tmpName, path); err != nil {
+		return fmt.Errorf("replace suppressions file: %w", err)
+	}
+	return nil
 }
 
 // List returns the configured suppression rules in insertion order.
@@ -62,6 +146,11 @@ func (m *SuppressionManager) Add(rule Suppression) error {
 	suppressor, err := NewSuppressor(candidate)
 	if err != nil {
 		return err
+	}
+	if m.filePath != "" {
+		if err := SaveSuppressionsToFile(m.filePath, candidate); err != nil {
+			return fmt.Errorf("persist suppressions: %w", err)
+		}
 	}
 	m.rules = candidate
 	m.suppressor = suppressor

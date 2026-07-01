@@ -30,6 +30,7 @@ type EngineConfig struct {
 	DBJournalMode               string   `yaml:"db_journal_mode"`
 	DBBusyTimeout               int      `yaml:"db_busy_timeout"`
 	RulesSeedFile               string   `yaml:"rules_seed_file"`
+	SuppressionsFile            string   `yaml:"suppressions_file"`
 	APIPort                     int      `yaml:"api_port"`
 	CORSAllowedOrigins          []string `yaml:"cors_allowed_origins"`
 	AlertAggregationWindow      int      `yaml:"alert_aggregation_window"`
@@ -115,6 +116,7 @@ func defaults() *Config {
 			DBJournalMode:               "WAL",
 			DBBusyTimeout:               5000,
 			RulesSeedFile:               "configs/rules.json",
+			SuppressionsFile:            "configs/suppressions.json",
 			APIPort:                     8080,
 			CORSAllowedOrigins:          []string{"http://localhost:3000"},
 			AlertAggregationWindow:      60,

@@ -90,7 +90,17 @@ func main() {
 	if err := recv.Start(ctx); err != nil {
 		logger.Fatal("start uds receiver", zap.Error(err))
 	}
-	suppressions, err := alert.NewSuppressionManager(nil)
+	var suppressionRules []alert.Suppression
+	if cfg.Engine.SuppressionsFile != "" {
+		loaded, err := alert.LoadSuppressionsFromFile(cfg.Engine.SuppressionsFile)
+		if err != nil {
+			logger.Warn("could not load suppressions", zap.Error(err), zap.String("path", cfg.Engine.SuppressionsFile))
+		} else {
+			suppressionRules = loaded
+			logger.Info("suppressions loaded", zap.Int("count", len(suppressionRules)))
+		}
+	}
+	suppressions, err := alert.NewSuppressionManagerWithFile(suppressionRules, cfg.Engine.SuppressionsFile)
 	if err != nil {
 		logger.Fatal("create suppression manager", zap.Error(err))
 	}

@@ -56,6 +56,7 @@ tar -tzf "${ARCHIVE_PATH}" \
     "${PACKAGE_NAME}/bin/netsentry-engine" \
     "${PACKAGE_NAME}/configs/config.yaml" \
     "${PACKAGE_NAME}/configs/rules.json" \
+    "${PACKAGE_NAME}/configs/suppressions.json" \
     "${PACKAGE_NAME}/docs/development.md" \
     "${PACKAGE_NAME}/README.md" \
     "${PACKAGE_NAME}/CHANGELOG.md" \
@@ -75,7 +76,8 @@ read -r -a docker_parts <<<"${DOCKER_CMD}"
     'test -x /usr/local/bin/netsentry-engine &&
      test -x /usr/local/bin/netsentry-capture &&
      test -f configs/config.yaml &&
-     test -f configs/rules.json'
+     test -f configs/rules.json &&
+     test -f configs/suppressions.json'
 
 echo "[rc-check] docker runtime health smoke"
 DOCKER_CONTAINER_ID="$("${docker_parts[@]}" run --rm -d "${IMAGE}")"

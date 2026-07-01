@@ -380,6 +380,29 @@ func TestSuppressionsCreateAddsRule(t *testing.T) {
 	}
 }
 
+func TestSuppressionsCreatePersistsRule(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "suppressions.json")
+	manager, err := alert.NewSuppressionManagerWithFile(nil, path)
+	if err != nil {
+		t.Fatalf("new suppressions: %v", err)
+	}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{Suppressions: manager})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/suppressions", strings.NewReader(`{"id":"s1","enabled":true,"any_cidrs":["10.0.0.0/24"]}`))
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusCreated {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	loaded, err := alert.LoadSuppressionsFromFile(path)
+	if err != nil {
+		t.Fatalf("load suppressions: %v", err)
+	}
+	if len(loaded) != 1 || loaded[0].ID != "s1" {
+		t.Fatalf("unexpected persisted suppressions: %+v", loaded)
+	}
+}
+
 func TestSuppressionsCreateRejectsInvalidCIDR(t *testing.T) {
 	manager, err := alert.NewSuppressionManager(nil)
 	if err != nil {

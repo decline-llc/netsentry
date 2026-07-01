@@ -17,6 +17,9 @@ func TestLoadRepositoryConfigFile(t *testing.T) {
 	if cfg.Engine.RulesSeedFile == "" {
 		t.Fatal("expected engine.rules_seed_file to be configured")
 	}
+	if cfg.Engine.SuppressionsFile == "" {
+		t.Fatal("expected engine.suppressions_file to be configured")
+	}
 	if cfg.Engine.PprofEnabled {
 		t.Fatal("repository config should not enable pprof by default")
 	}

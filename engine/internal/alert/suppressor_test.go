@@ -1,6 +1,9 @@
 package alert
 
 import (
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/decline-llc/netsentry/pkg/model"
@@ -105,6 +108,56 @@ func TestSuppressionManagerRejectsDuplicateID(t *testing.T) {
 func TestSuppressionManagerRejectsEnabledRuleWithoutCIDR(t *testing.T) {
 	if _, err := NewSuppressionManager([]Suppression{{ID: "empty", Enabled: true}}); err == nil {
 		t.Fatal("expected missing CIDR error")
+	}
+}
+
+func TestLoadAndSaveSuppressionsFile(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "suppressions.json")
+	rules := []Suppression{{ID: "src", Enabled: true, RuleIDs: []string{"rule-1"}, SrcCIDRs: []string{"10.0.0.0/24"}}}
+	if err := SaveSuppressionsToFile(path, rules); err != nil {
+		t.Fatalf("save suppressions: %v", err)
+	}
+	loaded, err := LoadSuppressionsFromFile(path)
+	if err != nil {
+		t.Fatalf("load suppressions: %v", err)
+	}
+	if len(loaded) != 1 || loaded[0].ID != "src" || loaded[0].SrcCIDRs[0] != "10.0.0.0/24" {
+		t.Fatalf("unexpected suppressions: %+v", loaded)
+	}
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read suppressions file: %v", err)
+	}
+	if !strings.Contains(string(raw), `"suppressions"`) {
+		t.Fatalf("expected canonical wrapper, got %s", string(raw))
+	}
+}
+
+func TestLoadSuppressionsFromMissingFileReturnsEmpty(t *testing.T) {
+	loaded, err := LoadSuppressionsFromFile(filepath.Join(t.TempDir(), "missing.json"))
+	if err != nil {
+		t.Fatalf("load missing suppressions: %v", err)
+	}
+	if len(loaded) != 0 {
+		t.Fatalf("expected empty suppressions, got %+v", loaded)
+	}
+}
+
+func TestPersistentSuppressionManagerWritesOnAdd(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "suppressions.json")
+	manager, err := NewSuppressionManagerWithFile(nil, path)
+	if err != nil {
+		t.Fatalf("new manager: %v", err)
+	}
+	if err := manager.Add(Suppression{ID: "persisted", Enabled: true, AnyCIDRs: []string{"10.0.0.0/24"}}); err != nil {
+		t.Fatalf("add suppression: %v", err)
+	}
+	loaded, err := LoadSuppressionsFromFile(path)
+	if err != nil {
+		t.Fatalf("load suppressions: %v", err)
+	}
+	if len(loaded) != 1 || loaded[0].ID != "persisted" {
+		t.Fatalf("unexpected persisted suppressions: %+v", loaded)
 	}
 }
 

@@ -352,6 +352,10 @@ func (s *Server) handleSuppressions(w http.ResponseWriter, r *http.Request) {
 				writeError(w, r, http.StatusConflict, "SUPPRESSION_ALREADY_EXISTS", "Suppression already exists")
 				return
 			}
+			if strings.HasPrefix(err.Error(), "persist suppressions:") {
+				writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not persist suppression", err.Error())
+				return
+			}
 			writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid suppression request", err.Error())
 			return
 		}
