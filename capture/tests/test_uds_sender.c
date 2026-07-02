@@ -18,10 +18,17 @@
     } \
 } while (0)
 
+#define CHECK_SYS(cond) do { \
+    if (!(cond)) { \
+        fprintf(stderr, "FAIL %s:%d: %s: %s\n", __FILE__, __LINE__, #cond, strerror(errno)); \
+        exit(1); \
+    } \
+} while (0)
+
 
 static pid_t start_one_line_listener(const char *path) {
     int fd = socket(AF_UNIX, SOCK_STREAM, 0);
-    CHECK(fd >= 0);
+    CHECK_SYS(fd >= 0);
 
     struct sockaddr_un addr;
     memset(&addr, 0, sizeof(addr));
@@ -29,11 +36,11 @@ static pid_t start_one_line_listener(const char *path) {
     CHECK(strlen(path) < sizeof(addr.sun_path));
     snprintf(addr.sun_path, sizeof(addr.sun_path), "%s", path);
     unlink(path);
-    CHECK(bind(fd, (struct sockaddr *)&addr, sizeof(addr)) == 0);
-    CHECK(listen(fd, 1) == 0);
+    CHECK_SYS(bind(fd, (struct sockaddr *)&addr, sizeof(addr)) == 0);
+    CHECK_SYS(listen(fd, 1) == 0);
 
     pid_t pid = fork();
-    CHECK(pid >= 0);
+    CHECK_SYS(pid >= 0);
     if (pid == 0) {
         int conn = accept(fd, NULL, NULL);
         close(fd);
@@ -132,8 +139,12 @@ static void test_limited_connect_fails_fast(void) {
 
 
 static void test_reconnect_reuses_last_path(void) {
+    char tmpdir[] = "/tmp/netsentry-uds-test-XXXXXX";
+    CHECK_SYS(mkdtemp(tmpdir) != NULL);
+
     char path[108];
-    snprintf(path, sizeof(path), "/tmp/netsentry_reconnect_test_%ld.sock", (long)getpid());
+    int n = snprintf(path, sizeof(path), "%s/reconnect.sock", tmpdir);
+    CHECK(n > 0 && (size_t)n < sizeof(path));
 
     pid_t first = start_one_line_listener(path);
     CHECK(uds_connect_with_retries(path, 5) == UDS_OK);
@@ -156,6 +167,7 @@ static void test_reconnect_reuses_last_path(void) {
     uds_close();
     wait_listener(second);
     unlink(path);
+    CHECK_SYS(rmdir(tmpdir) == 0);
 }
 
 static void test_format_rejects_truncation(void) {
