@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rc-check:
+    name: Release candidate checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: engine/go.mod
+          cache-dependency-path: engine/go.sum
+
+      - name: Install native dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential gcc make libpcap-dev python3 curl
+
+      - name: Run release-candidate checks
+        env:
+          DOCKER: docker
+          IMAGE: netsentry:ci-${{ github.run_id }}
+          VERSION: 0.1.0-ci.${{ github.run_number }}
+        run: make rc-check

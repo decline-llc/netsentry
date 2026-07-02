@@ -60,6 +60,10 @@ make docker-build
 DOCKER="sudo docker" make docker-build
 ```
 
+The repository also includes GitHub Actions workflows for release-candidate checks
+and GHCR image publishing. Docker publishing runs the same `make rc-check`
+bundle first, then only pushes on version tags or an explicit manual workflow run.
+
 ---
 
 ## Implemented Today
@@ -82,7 +86,7 @@ These are v0.1.0 goals, not current behavior:
 - Full Prometheus metric coverage beyond the current process, queue, rule/write latency, alert, storage, worker, and capture heartbeat metrics.
 - Suppression update/delete/hot reload, advanced alert querying, and remaining error envelope coverage.
 - C-side cJSON serializer and longer fuzz runs with broader seed corpora.
-- Registry-published Docker image and CI publishing workflow.
+- Published registry image for a named release.
 
 ---
 

@@ -33,6 +33,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Local release archive packaging via `make dist`, including SHA-256 checksum generation.
 - Local Docker image build via `make docker-build`.
 - Release-candidate verification bundle via `make rc-check`, including fuzz smoke, release archive, Docker image content, and runtime health smoke checks.
+- GitHub Actions workflows for release-candidate checks and GHCR Docker image publishing.
 
 ### Changed
 - Public rule samples now use the canonical wrapped schema while the loader remains backward compatible with legacy rule files.

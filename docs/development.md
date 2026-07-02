@@ -43,7 +43,7 @@ make asan-test     # C parser tests under AddressSanitizer
 make clean
 ```
 
-Published registry images and CI publishing are still pending. Local Docker image builds are available through `make docker-build` and are covered by `make rc-check`.
+Local Docker image builds are available through `make docker-build` and are covered by `make rc-check`. GitHub Actions workflows are present for release-candidate checks and GHCR image publishing; the publish workflow runs `make rc-check` before building the registry image, then only pushes on version tags or explicit manual approval.
 
 ---
 
