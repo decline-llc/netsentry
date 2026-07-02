@@ -43,6 +43,9 @@ type CaptureStateProvider interface {
 type SuppressionManager interface {
 	List() []alert.Suppression
 	Add(alert.Suppression) error
+	Update(string, alert.Suppression) error
+	Delete(string) error
+	ReloadFromFile() error
 }
 
 type RuleManager interface {
@@ -82,6 +85,8 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("/api/metrics", s.handleMetrics)
 	mux.HandleFunc("/api/alerts", s.handleAlerts)
 	mux.HandleFunc("/api/suppressions", s.handleSuppressions)
+	mux.HandleFunc("/api/suppressions/", s.handleSuppressionByID)
+	mux.HandleFunc("/api/suppressions/reload", s.handleSuppressionsReload)
 	mux.HandleFunc("/api/rules", s.handleRules)
 	mux.HandleFunc("/api/rules/", s.handleRuleByID)
 	mux.HandleFunc("/api/rules/reload", s.handleRulesReload)
@@ -326,6 +331,10 @@ type suppressionListResponse struct {
 	Data []alert.Suppression `json:"data"`
 }
 
+type suppressionReloadResponse struct {
+	Reloaded int `json:"reloaded"`
+}
+
 func (s *Server) handleSuppressions(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
@@ -362,6 +371,97 @@ func (s *Server) handleSuppressions(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusCreated, suppression)
 	default:
 		writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
+	}
+}
+
+func (s *Server) handleSuppressionByID(w http.ResponseWriter, r *http.Request) {
+	id := strings.TrimPrefix(r.URL.Path, "/api/suppressions/")
+	id = strings.Trim(id, "/")
+	if id == "" || strings.Contains(id, "/") || id == "reload" {
+		writeError(w, r, http.StatusNotFound, "NOT_FOUND", "Suppression not found")
+		return
+	}
+	switch r.Method {
+	case http.MethodPut:
+		if !s.requireMutationAuth(w, r) {
+			return
+		}
+		s.handleSuppressionUpdate(w, r, id)
+	case http.MethodDelete:
+		if !s.requireMutationAuth(w, r) {
+			return
+		}
+		s.handleSuppressionDelete(w, r, id)
+	default:
+		writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
+	}
+}
+
+func (s *Server) handleSuppressionUpdate(w http.ResponseWriter, r *http.Request, id string) {
+	if s.opts.Suppressions == nil {
+		writeError(w, r, http.StatusConflict, "SUPPRESSIONS_UNAVAILABLE", "Suppressions manager is not configured")
+		return
+	}
+	suppression, err := decodeSuppression(r)
+	if err != nil {
+		writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid suppression request", err.Error())
+		return
+	}
+	if suppression.ID != "" && suppression.ID != id {
+		writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Suppression ID must match path")
+		return
+	}
+	suppression.ID = id
+	if err := s.opts.Suppressions.Update(id, *suppression); err != nil {
+		s.writeSuppressionMutationError(w, r, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, suppression)
+}
+
+func (s *Server) handleSuppressionDelete(w http.ResponseWriter, r *http.Request, id string) {
+	if s.opts.Suppressions == nil {
+		writeError(w, r, http.StatusConflict, "SUPPRESSIONS_UNAVAILABLE", "Suppressions manager is not configured")
+		return
+	}
+	if err := s.opts.Suppressions.Delete(id); err != nil {
+		s.writeSuppressionMutationError(w, r, err)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (s *Server) handleSuppressionsReload(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
+		return
+	}
+	if !s.requireMutationAuth(w, r) {
+		return
+	}
+	if s.opts.Suppressions == nil {
+		writeError(w, r, http.StatusConflict, "SUPPRESSIONS_UNAVAILABLE", "Suppressions manager is not configured")
+		return
+	}
+	if err := s.opts.Suppressions.ReloadFromFile(); err != nil {
+		if strings.Contains(err.Error(), "not configured") {
+			writeError(w, r, http.StatusConflict, "SUPPRESSIONS_RELOAD_UNAVAILABLE", "Suppressions file is not configured")
+			return
+		}
+		writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not reload suppressions", err.Error())
+		return
+	}
+	writeJSON(w, http.StatusOK, suppressionReloadResponse{Reloaded: len(s.opts.Suppressions.List())})
+}
+
+func (s *Server) writeSuppressionMutationError(w http.ResponseWriter, r *http.Request, err error) {
+	switch {
+	case strings.Contains(err.Error(), "not found"):
+		writeError(w, r, http.StatusNotFound, "SUPPRESSION_NOT_FOUND", "Suppression not found")
+	case strings.HasPrefix(err.Error(), "persist suppressions:"):
+		writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not persist suppression", err.Error())
+	default:
+		writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid suppression request", err.Error())
 	}
 }
 

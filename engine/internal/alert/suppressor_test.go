@@ -161,6 +161,65 @@ func TestPersistentSuppressionManagerWritesOnAdd(t *testing.T) {
 	}
 }
 
+func TestSuppressionManagerUpdateDeleteAndReload(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "suppressions.json")
+	initial := []Suppression{{ID: "s1", Enabled: true, SrcCIDRs: []string{"10.0.0.0/24"}}}
+	if err := SaveSuppressionsToFile(path, initial); err != nil {
+		t.Fatalf("save initial suppressions: %v", err)
+	}
+	manager, err := NewSuppressionManagerWithFile(initial, path)
+	if err != nil {
+		t.Fatalf("new manager: %v", err)
+	}
+
+	if err := manager.Update("s1", Suppression{ID: "s1", Enabled: true, DstCIDRs: []string{"192.0.2.0/24"}}); err != nil {
+		t.Fatalf("update suppression: %v", err)
+	}
+	if !manager.suppressor.Suppressed(alertForSuppression("rule-1", "198.51.100.1", "192.0.2.10")) {
+		t.Fatal("expected updated destination suppression to be active")
+	}
+
+	loaded, err := LoadSuppressionsFromFile(path)
+	if err != nil {
+		t.Fatalf("load updated suppressions: %v", err)
+	}
+	if len(loaded) != 1 || len(loaded[0].DstCIDRs) != 1 || loaded[0].DstCIDRs[0] != "192.0.2.0/24" {
+		t.Fatalf("unexpected updated file suppressions: %+v", loaded)
+	}
+
+	if err := manager.Delete("s1"); err != nil {
+		t.Fatalf("delete suppression: %v", err)
+	}
+	if listed := manager.List(); len(listed) != 0 {
+		t.Fatalf("expected delete to clear suppression, got %+v", listed)
+	}
+
+	reloadedRules := []Suppression{{ID: "disk", Enabled: true, AnyCIDRs: []string{"203.0.113.0/24"}}}
+	if err := SaveSuppressionsToFile(path, reloadedRules); err != nil {
+		t.Fatalf("save reload suppressions: %v", err)
+	}
+	if err := manager.ReloadFromFile(); err != nil {
+		t.Fatalf("reload suppressions: %v", err)
+	}
+	listed := manager.List()
+	if len(listed) != 1 || listed[0].ID != "disk" {
+		t.Fatalf("unexpected reloaded suppressions: %+v", listed)
+	}
+}
+
+func TestSuppressionManagerUpdateDeleteMissingID(t *testing.T) {
+	manager, err := NewSuppressionManager(nil)
+	if err != nil {
+		t.Fatalf("new manager: %v", err)
+	}
+	if err := manager.Update("missing", Suppression{Enabled: true, AnyCIDRs: []string{"10.0.0.0/24"}}); err == nil {
+		t.Fatal("expected missing update error")
+	}
+	if err := manager.Delete("missing"); err == nil {
+		t.Fatal("expected missing delete error")
+	}
+}
+
 func alertForSuppression(ruleID, srcIP, dstIP string) *model.Alert {
 	return &model.Alert{RuleID: ruleID, SrcIP: srcIP, DstIP: dstIP}
 }

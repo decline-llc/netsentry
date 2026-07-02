@@ -421,6 +421,100 @@ func TestSuppressionsCreateRejectsInvalidCIDR(t *testing.T) {
 	}
 }
 
+func TestSuppressionsUpdatePersistsRule(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "suppressions.json")
+	initial := []alert.Suppression{{ID: "s1", Enabled: true, AnyCIDRs: []string{"10.0.0.0/24"}}}
+	if err := alert.SaveSuppressionsToFile(path, initial); err != nil {
+		t.Fatalf("save suppressions: %v", err)
+	}
+	manager, err := alert.NewSuppressionManagerWithFile(initial, path)
+	if err != nil {
+		t.Fatalf("new suppressions: %v", err)
+	}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{Suppressions: manager})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPut, "/api/suppressions/s1", strings.NewReader(`{"enabled":true,"dst_cidrs":["192.0.2.0/24"]}`))
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	loaded, err := alert.LoadSuppressionsFromFile(path)
+	if err != nil {
+		t.Fatalf("load suppressions: %v", err)
+	}
+	if len(loaded) != 1 || loaded[0].ID != "s1" || len(loaded[0].DstCIDRs) != 1 {
+		t.Fatalf("unexpected persisted suppressions: %+v", loaded)
+	}
+}
+
+func TestSuppressionsDeleteRemovesRule(t *testing.T) {
+	manager, err := alert.NewSuppressionManager([]alert.Suppression{{ID: "s1", Enabled: true, AnyCIDRs: []string{"10.0.0.0/24"}}})
+	if err != nil {
+		t.Fatalf("new suppressions: %v", err)
+	}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{Suppressions: manager})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodDelete, "/api/suppressions/s1", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusNoContent {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	if listed := manager.List(); len(listed) != 0 {
+		t.Fatalf("expected delete to clear suppressions, got %+v", listed)
+	}
+}
+
+func TestSuppressionsDeleteMissingRuleUsesNotFoundEnvelope(t *testing.T) {
+	manager, err := alert.NewSuppressionManager(nil)
+	if err != nil {
+		t.Fatalf("new suppressions: %v", err)
+	}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{Suppressions: manager})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodDelete, "/api/suppressions/missing", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), `"code":"SUPPRESSION_NOT_FOUND"`) {
+		t.Fatalf("unexpected body: %s", rec.Body.String())
+	}
+}
+
+func TestSuppressionsReloadFromFile(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "suppressions.json")
+	initial := []alert.Suppression{{ID: "old", Enabled: true, AnyCIDRs: []string{"10.0.0.0/24"}}}
+	if err := alert.SaveSuppressionsToFile(path, initial); err != nil {
+		t.Fatalf("save initial suppressions: %v", err)
+	}
+	manager, err := alert.NewSuppressionManagerWithFile(initial, path)
+	if err != nil {
+		t.Fatalf("new suppressions: %v", err)
+	}
+	next := []alert.Suppression{{ID: "new", Enabled: true, AnyCIDRs: []string{"192.0.2.0/24"}}}
+	if err := alert.SaveSuppressionsToFile(path, next); err != nil {
+		t.Fatalf("save next suppressions: %v", err)
+	}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{Suppressions: manager})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/suppressions/reload", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	listed := manager.List()
+	if len(listed) != 1 || listed[0].ID != "new" {
+		t.Fatalf("unexpected reloaded suppressions: %+v", listed)
+	}
+	if !strings.Contains(rec.Body.String(), `"reloaded":1`) {
+		t.Fatalf("unexpected body: %s", rec.Body.String())
+	}
+}
+
 func TestRulesList(t *testing.T) {
 	rules := &fakeRules{rules: []*model.Rule{{ID: "rule-2", Name: "Second"}, {ID: "rule-1", Name: "First"}}}
 	server := NewServer(&fakeStore{}, fakeQueue{}, rules, stats.New())

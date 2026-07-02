@@ -193,7 +193,7 @@ The loader still accepts legacy top-level arrays and legacy `payload_match`, `ip
 }
 ```
 
-The engine loads this file at startup. `POST /api/suppressions` appends validated suppressions and persists the full file before swapping the active in-memory filter.
+The engine loads this file at startup. Suppression create, update, and delete requests persist the full file before swapping the active in-memory filter. `POST /api/suppressions/reload` reloads the file from disk and swaps the active filter after validation succeeds.
 
 ---
 

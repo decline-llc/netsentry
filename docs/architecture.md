@@ -153,11 +153,8 @@ Current build:
 - `internal/alert` includes a CIDR/exact-IP suppressor component and in-memory suppression manager.
 - Suppressions can be scoped by rule ID and source, destination, or either-side IP ranges.
 - Suppressions load from `engine.suppressions_file` at startup.
-- `/api/suppressions` can list and add suppressions that apply to newly generated alerts; creates are persisted to `engine.suppressions_file` when configured.
-
-Remaining v0.1.0 suppression work:
-
-- Suppression update/delete and hot reload from disk.
+- `/api/suppressions` can list, add, replace, and delete suppressions that apply to newly generated alerts; mutations are persisted to `engine.suppressions_file` when configured.
+- `/api/suppressions/reload` hot reloads suppressions from disk and swaps the active filter after validation succeeds.
 
 ---
 

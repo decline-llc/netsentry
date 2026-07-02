@@ -153,6 +153,24 @@ Returns the active suppression rules in insertion order. At startup, suppression
 
 Adds a suppression rule and immediately applies it to newly generated alerts. Enabled suppressions require at least one `src_cidrs`, `dst_cidrs`, or `any_cidrs` entry. When `engine.suppressions_file` is configured, successful creates are persisted to that JSON file before the in-memory snapshot is updated.
 
+### `PUT /api/suppressions/{id}`
+
+Replaces an existing suppression, persists the full suppressions file when configured, and atomically swaps the active in-memory filter. If the request body includes `id`, it must match the path ID.
+
+### `DELETE /api/suppressions/{id}`
+
+Deletes an existing suppression, persists the full suppressions file when configured, and returns `204 No Content`.
+
+### `POST /api/suppressions/reload`
+
+Reloads suppressions from `engine.suppressions_file` and atomically swaps the active in-memory filter when validation succeeds.
+
+```json
+{
+  "reloaded": 1
+}
+```
+
 ### `POST /api/rules`
 
 Creates a rule, writes the canonical wrapped rules file, reloads the saved file, and atomically swaps the active rule snapshot. The request body is a single rule object using the schema below. Duplicate IDs return `RULE_ALREADY_EXISTS`.
@@ -184,7 +202,7 @@ Current limitations:
 - Optional PSK Bearer authentication protects modifying rule and suppression endpoints when `engine.api_auth_enabled` is true.
 - Non-GET API requests emit structured zap audit logs with request ID, method, path, status, authorization outcome, target, remote address, and duration.
 - Optional pprof runs on a separate localhost-only server when `engine.pprof_enabled` is true.
-- Suppressions load from `engine.suppressions_file` at startup and `POST /api/suppressions` persists creates; update/delete and hot reload are pending.
+- Suppressions load from `engine.suppressions_file` at startup; create, update, delete, and reload operations persist or reload that file before swapping the active in-memory filter.
 - Payload previews are redacted before SQLite writes when `engine.redact_sensitive_fields` is true; current redaction covers Authorization, Cookie, Set-Cookie, password, and token patterns.
 
 ---
@@ -230,7 +248,8 @@ Planned endpoints:
 | `PUT /api/rules/{id}` | partial | Replaces and persists one rule; optional PSK auth exists. |
 | `DELETE /api/rules/{id}` | partial | Deletes and persists one rule; optional PSK auth exists. |
 | `POST /api/rules/reload` | partial | Hot reload from `engine.rules_seed_file` exists; optional PSK auth exists. |
-| `GET/POST /api/suppressions` | partial | Suppression listing/create exists, filters newly generated alerts, and persists creates to `engine.suppressions_file`; update/delete and hot reload pending. |
+| `GET/POST/PUT/DELETE /api/suppressions` | partial | Suppression listing, create, update, delete, and file reload exist; filters newly generated alerts and persists mutations to `engine.suppressions_file`. |
+| `POST /api/suppressions/reload` | partial | Hot reload from `engine.suppressions_file` exists; optional PSK auth exists. |
 | `GET /debug/pprof/*` | partial | Optional separate localhost-only server when `engine.pprof_enabled` is true; not public API. |
 
 Authentication: modifying rule and suppression endpoints require `Authorization: Bearer <token>` when `engine.api_auth_enabled` is true. The token is configured with `engine.api_auth_token`.

@@ -62,7 +62,7 @@ func auditTarget(path string) string {
 	switch {
 	case path == "/api/rules" || strings.HasPrefix(path, "/api/rules/"):
 		return "rules"
-	case path == "/api/suppressions":
+	case path == "/api/suppressions" || strings.HasPrefix(path, "/api/suppressions/"):
 		return "suppressions"
 	default:
 		return "api"

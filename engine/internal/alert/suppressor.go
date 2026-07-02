@@ -140,21 +140,57 @@ func (m *SuppressionManager) Add(rule Suppression) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	candidate := append(cloneSuppressions(m.rules), cloneSuppression(rule))
-	if err := validateSuppressionSet(candidate); err != nil {
-		return err
+	return m.replaceLocked(candidate, true)
+}
+
+// Update replaces an existing suppression rule by ID, then atomically swaps the compiled filter.
+func (m *SuppressionManager) Update(id string, rule Suppression) error {
+	if m == nil {
+		return fmt.Errorf("suppression manager is not configured")
 	}
-	suppressor, err := NewSuppressor(candidate)
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	candidate := cloneSuppressions(m.rules)
+	idx := findSuppression(candidate, id)
+	if idx < 0 {
+		return fmt.Errorf("suppression %q not found", id)
+	}
+	rule.ID = id
+	candidate[idx] = cloneSuppression(rule)
+	return m.replaceLocked(candidate, true)
+}
+
+// Delete removes an existing suppression rule by ID, then atomically swaps the compiled filter.
+func (m *SuppressionManager) Delete(id string) error {
+	if m == nil {
+		return fmt.Errorf("suppression manager is not configured")
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	candidate := cloneSuppressions(m.rules)
+	idx := findSuppression(candidate, id)
+	if idx < 0 {
+		return fmt.Errorf("suppression %q not found", id)
+	}
+	candidate = append(candidate[:idx], candidate[idx+1:]...)
+	return m.replaceLocked(candidate, true)
+}
+
+// ReloadFromFile reloads configured suppressions from disk and atomically swaps the compiled filter.
+func (m *SuppressionManager) ReloadFromFile() error {
+	if m == nil {
+		return fmt.Errorf("suppression manager is not configured")
+	}
+	if m.filePath == "" {
+		return fmt.Errorf("suppressions file is not configured")
+	}
+	rules, err := LoadSuppressionsFromFile(m.filePath)
 	if err != nil {
 		return err
 	}
-	if m.filePath != "" {
-		if err := SaveSuppressionsToFile(m.filePath, candidate); err != nil {
-			return fmt.Errorf("persist suppressions: %w", err)
-		}
-	}
-	m.rules = candidate
-	m.suppressor = suppressor
-	return nil
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return m.replaceLocked(rules, false)
 }
 
 // Filter returns only alerts not matching active suppressions.
@@ -169,6 +205,24 @@ func (m *SuppressionManager) Filter(alerts []*model.Alert) []*model.Alert {
 		return alerts
 	}
 	return suppressor.Filter(alerts)
+}
+
+func (m *SuppressionManager) replaceLocked(candidate []Suppression, persist bool) error {
+	if err := validateSuppressionSet(candidate); err != nil {
+		return err
+	}
+	suppressor, err := NewSuppressor(candidate)
+	if err != nil {
+		return err
+	}
+	if persist && m.filePath != "" {
+		if err := SaveSuppressionsToFile(m.filePath, candidate); err != nil {
+			return fmt.Errorf("persist suppressions: %w", err)
+		}
+	}
+	m.rules = cloneSuppressions(candidate)
+	m.suppressor = suppressor
+	return nil
 }
 
 func validateSuppressionSet(rules []Suppression) error {
@@ -186,6 +240,15 @@ func validateSuppressionSet(rules []Suppression) error {
 		}
 	}
 	return nil
+}
+
+func findSuppression(rules []Suppression, id string) int {
+	for i, rule := range rules {
+		if rule.ID == id {
+			return i
+		}
+	}
+	return -1
 }
 
 func cloneSuppressions(rules []Suppression) []Suppression {
