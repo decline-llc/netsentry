@@ -116,6 +116,10 @@ func writeAuthError(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeMethodNotAllowed(w, r, http.MethodGet)
+		return
+	}
 	count, err := s.store.Count(r.Context())
 	if err != nil {
 		writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not count alerts")
@@ -259,6 +263,10 @@ func (s *Server) captureHealth() captureHealth {
 }
 
 func (s *Server) handleMetrics(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeMethodNotAllowed(w, r, http.MethodGet)
+		return
+	}
 	count, err := s.store.Count(r.Context())
 	if err != nil {
 		writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not count alerts")
@@ -482,6 +490,10 @@ type alertListResponse struct {
 }
 
 func (s *Server) handleAlerts(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeMethodNotAllowed(w, r, http.MethodGet)
+		return
+	}
 	p, err := parsePagination(r)
 	if err != nil {
 		writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid pagination parameters", err.Error())

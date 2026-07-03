@@ -27,6 +27,11 @@ func writeError(w http.ResponseWriter, r *http.Request, status int, code, messag
 	}})
 }
 
+func writeMethodNotAllowed(w http.ResponseWriter, r *http.Request, allowed string) {
+	w.Header().Set("Allow", allowed)
+	writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
+}
+
 func requestID(r *http.Request) string {
 	if id := r.Header.Get("X-Request-ID"); id != "" {
 		return id

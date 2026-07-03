@@ -228,6 +228,31 @@ func TestHealthVerboseReportsDegradedStorage(t *testing.T) {
 	}
 }
 
+func TestReadOnlyEndpointsRejectNonGET(t *testing.T) {
+	server := NewServer(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New())
+	for _, path := range []string{"/api/health", "/api/metrics", "/api/alerts"} {
+		t.Run(path, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			req := httptest.NewRequest(http.MethodPost, path, nil)
+			req.Header.Set("X-Request-ID", "req-method")
+			server.Handler().ServeHTTP(rec, req)
+
+			if rec.Code != http.StatusMethodNotAllowed {
+				t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+			}
+			if allow := rec.Header().Get("Allow"); allow != http.MethodGet {
+				t.Fatalf("Allow = %q, want %q", allow, http.MethodGet)
+			}
+			body := rec.Body.String()
+			for _, want := range []string{`"code":"METHOD_NOT_ALLOWED"`, `"request_id":"req-method"`} {
+				if !strings.Contains(body, want) {
+					t.Fatalf("response missing %q: %s", want, body)
+				}
+			}
+		})
+	}
+}
+
 func TestAlertsPaginationEnvelope(t *testing.T) {
 	server := NewServer(&fakeStore{alerts: []*model.Alert{
 		{RuleID: "rule-1"},
