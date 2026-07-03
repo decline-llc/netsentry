@@ -202,7 +202,7 @@ Reloads rules from `engine.rules_seed_file` and atomically swaps the active rule
 Current limitations:
 
 - Alert pagination, the stable list envelope, exact-match filters, time range filters, MITRE filters, matched-keyword substring filtering, and minimum aggregate-count filtering exist. The SQLite-backed store applies those filters and pagination in SQL, with indexes for common exact/range filters; matched-keyword substring filtering remains a regular SQL substring predicate.
-- Alert storage is SQLite-backed with startup TTL pruning and old daily shard file cleanup; optional daily shard pathing exists, but runtime cross-day rotation and cross-day querying are not implemented yet.
+- Alert storage is SQLite-backed with startup TTL pruning and old daily shard file cleanup. When `engine.db_shard_daily` is enabled, alert queries scan matching `netsentry-YYYY-MM-DD.db` shards and apply the same filters, ordering, and pagination across shards. Runtime cross-day rotation is not implemented yet.
 - Validation, unsupported method, and internal API errors use the unified error envelope.
 - Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk.
 - Optional PSK Bearer authentication protects modifying rule and suppression endpoints when `engine.api_auth_enabled` is true.
@@ -248,7 +248,7 @@ Planned endpoints:
 | --- | --- | --- |
 | `GET /api/health` | partial | Minimal and verbose component snapshot responses exist; deeper dependency checks pending. |
 | `GET /api/health?verbose=true` | partial | Capture heartbeat freshness, queue depth, rule count, storage status, and throughput counters exist. |
-| `GET /api/alerts` | partial | SQLite-backed paginated list with exact-match, time range, MITRE, matched-keyword, and aggregate-count filters exists; cross-day querying is pending. |
+| `GET /api/alerts` | partial | SQLite-backed paginated list with exact-match, time range, MITRE, matched-keyword, and aggregate-count filters exists; daily-shard mode queries across matching shard files. |
 | `GET /api/metrics` | partial | Prometheus text output exists for process counters, rule match and alert write latency buckets, queue/rule/alert/storage gauges, worker counters, and capture heartbeat gauges. |
 | `GET /api/rules` | partial | Current rule snapshot listing exists. |
 | `POST /api/rules` | partial | Creates and persists one rule; optional PSK auth exists. |

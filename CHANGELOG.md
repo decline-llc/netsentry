@@ -15,10 +15,10 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Lock-free rule engine using immutable `atomic.Pointer[ruleState]` snapshots.
 - Pure Go Aho-Corasick matcher for `payload_match` rules.
 - Rule types for `payload_match`, `ip_blacklist`, and `port_blacklist`, including protocol, port, direction, offset, depth, case-insensitive matching, exact IP, and CIDR support.
-- SQLite-backed alert store with UPSERT aggregation, startup TTL pruning, optional daily shard pathing, and old daily shard file cleanup.
+- SQLite-backed alert store with UPSERT aggregation, startup TTL pruning, optional daily shard pathing, cross-shard alert querying in daily-shard mode, and old daily shard file cleanup.
 - Payload preview redaction before alert writes when `engine.redact_sensitive_fields` is enabled.
 - REST API for health, alerts, metrics, rules CRUD/reload, and file-backed suppressions.
-- Alert queries support SQLite-backed exact-match filters, RFC3339 time ranges, MITRE tactic/technique filters, matched-keyword substring filtering, minimum aggregate-count filtering, pagination, and indexes for common exact/range filters.
+- Alert queries support SQLite-backed exact-match filters, RFC3339 time ranges, MITRE tactic/technique filters, matched-keyword substring filtering, minimum aggregate-count filtering, pagination, daily-shard cross-file querying, and indexes for common exact/range filters.
 - Unified API error envelope, pagination envelope, request IDs, method-aware 405 responses, optional PSK Bearer auth, non-GET audit logs, and localhost-only pprof.
 - Prometheus text metrics for current packet, alert, queue, rule latency, alert write latency, storage, worker, and capture heartbeat counters, with HELP text for exported gauges.
 - Basic alert storage health tracking after SQLite write/query errors, surfaced through verbose health and `netsentry_storage_healthy`.
@@ -49,7 +49,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Alert aggregation preserves earliest `first_seen`, latest `last_seen`, and latest payload/match fields when older events arrive after newer events in the same aggregation window.
 
 ### Known Gaps
-- Runtime cross-day database rotation and cross-day alert querying are not implemented.
+- Runtime cross-day database rotation is not implemented.
 - WAL JSONL replay and automatic disk-full recovery are not implemented.
 - End-to-end pressure coverage currently includes repeat-pcap runs up to 60,000 packets locally, but realistic pcap corpora are still pending.
 - Longer C fuzz runs with broader seed corpora are still pending.
