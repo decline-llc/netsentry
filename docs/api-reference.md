@@ -65,6 +65,12 @@ Query parameters:
 | `dst_ip` | Exact destination IP match. |
 | `protocol` | Exact protocol match; compared case-insensitively. |
 | `dst_port` | Destination port from `0` to `65535`. |
+| `since` | Include alerts whose `last_seen` is greater than or equal to this RFC3339 timestamp. |
+| `until` | Include alerts whose `last_seen` is less than or equal to this RFC3339 timestamp. |
+| `mitre_tactic` | MITRE tactic match; compared case-insensitively. |
+| `mitre_technique_id` | MITRE technique ID match; compared case-insensitively. |
+| `matched_keyword` | Case-insensitive substring match against the recorded matched keyword. |
+| `min_count` | Minimum `aggregated_count`; must be a positive integer. |
 
 ```json
 {
@@ -195,7 +201,7 @@ Reloads rules from `engine.rules_seed_file` and atomically swaps the active rule
 
 Current limitations:
 
-- Alert pagination, the stable list envelope, and basic exact-match filters exist; advanced query features are still pending.
+- Alert pagination, the stable list envelope, exact-match filters, time range filters, MITRE filters, matched-keyword substring filtering, and minimum aggregate-count filtering exist. Filtering currently runs after the SQLite list query, which is capped to the most recent 1000 aggregated rows.
 - Alert storage is SQLite-backed with startup TTL pruning and old daily shard file cleanup; optional daily shard pathing exists, but runtime cross-day rotation and cross-day querying are not implemented yet.
 - Validation and internal API errors use the unified error envelope.
 - Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk.
@@ -241,7 +247,7 @@ Planned endpoints:
 | --- | --- | --- |
 | `GET /api/health` | partial | Minimal and verbose component snapshot responses exist; deeper dependency checks pending. |
 | `GET /api/health?verbose=true` | partial | Capture heartbeat freshness, queue depth, rule count, storage status, and throughput counters exist. |
-| `GET /api/alerts` | partial | SQLite-backed paginated list with basic exact-match filters exists; advanced query features pending. |
+| `GET /api/alerts` | partial | SQLite-backed paginated list with exact-match, time range, MITRE, matched-keyword, and aggregate-count filters exists; cross-day querying is pending. |
 | `GET /api/metrics` | partial | Prometheus text output exists for process counters, rule match and alert write latency buckets, queue/rule/alert/storage gauges, worker counters, and capture heartbeat gauges. |
 | `GET /api/rules` | partial | Current rule snapshot listing exists. |
 | `POST /api/rules` | partial | Creates and persists one rule; optional PSK auth exists. |

@@ -18,6 +18,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - SQLite-backed alert store with UPSERT aggregation, startup TTL pruning, optional daily shard pathing, and old daily shard file cleanup.
 - Payload preview redaction before alert writes when `engine.redact_sensitive_fields` is enabled.
 - REST API for health, alerts, metrics, rules CRUD/reload, and file-backed suppressions.
+- Alert queries support exact-match filters, RFC3339 time ranges, MITRE tactic/technique filters, matched-keyword substring filtering, and minimum aggregate-count filtering.
 - Unified API error envelope, pagination envelope, request IDs, optional PSK Bearer auth, non-GET audit logs, and localhost-only pprof.
 - Prometheus text metrics for current packet, alert, queue, rule latency, alert write latency, storage, worker, and capture heartbeat counters, with HELP text for exported gauges.
 - Basic alert storage health tracking after SQLite write/query errors, surfaced through verbose health and `netsentry_storage_healthy`.
