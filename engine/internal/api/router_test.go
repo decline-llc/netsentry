@@ -276,13 +276,39 @@ func TestAlertsInvalidPaginationUsesErrorEnvelope(t *testing.T) {
 }
 
 func TestAlertsFilters(t *testing.T) {
+	recent := time.Date(2026, 7, 2, 12, 0, 0, 0, time.UTC)
+	older := recent.Add(-2 * time.Hour)
 	server := NewServer(&fakeStore{alerts: []*model.Alert{
-		{RuleID: "rule-1", Severity: model.SeverityHigh, SrcIP: "10.0.0.1", DstIP: "10.0.0.2", DstPort: 80, Protocol: "TCP"},
-		{RuleID: "rule-2", Severity: model.SeverityLow, SrcIP: "10.0.0.3", DstIP: "10.0.0.4", DstPort: 53, Protocol: "UDP"},
+		{
+			RuleID:           "rule-1",
+			Severity:         model.SeverityHigh,
+			SrcIP:            "10.0.0.1",
+			DstIP:            "10.0.0.2",
+			DstPort:          80,
+			Protocol:         "TCP",
+			LastSeen:         recent,
+			MitreTactic:      "Initial Access",
+			MitreTechniqueID: "T1190",
+			MatchedKeyword:   "UNION SELECT",
+			AggregatedCount:  3,
+		},
+		{
+			RuleID:           "rule-2",
+			Severity:         model.SeverityLow,
+			SrcIP:            "10.0.0.3",
+			DstIP:            "10.0.0.4",
+			DstPort:          53,
+			Protocol:         "UDP",
+			LastSeen:         older,
+			MitreTactic:      "Discovery",
+			MitreTechniqueID: "T1046",
+			MatchedKeyword:   "scanner",
+			AggregatedCount:  1,
+		},
 	}}, fakeQueue{}, &fakeRules{}, stats.New())
 
 	rec := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, "/api/alerts?severity=high&src_ip=10.0.0.1&protocol=tcp&dst_port=80", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/alerts?severity=high&src_ip=10.0.0.1&protocol=tcp&dst_port=80&since=2026-07-02T11:00:00Z&until=2026-07-02T13:00:00Z&mitre_tactic=initial+access&mitre_technique_id=t1190&matched_keyword=union&min_count=2", nil)
 	server.Handler().ServeHTTP(rec, req)
 
 	if rec.Code != http.StatusOK {
@@ -315,6 +341,24 @@ func TestAlertsInvalidFilterUsesErrorEnvelope(t *testing.T) {
 	}
 	body := rec.Body.String()
 	for _, want := range []string{`"code":"VALIDATION_ERROR"`, `"request_id":"req-filter"`, "dst_port must be an integer from 0 to 65535"} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("response missing %q: %s", want, body)
+		}
+	}
+}
+
+func TestAlertsInvalidTimeRangeUsesErrorEnvelope(t *testing.T) {
+	server := NewServer(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New())
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/alerts?since=2026-07-02T13:00:00Z&until=2026-07-02T12:00:00Z", nil)
+	req.Header.Set("X-Request-ID", "req-time")
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	body := rec.Body.String()
+	for _, want := range []string{`"code":"VALIDATION_ERROR"`, `"request_id":"req-time"`, "until must be greater than or equal to since"} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("response missing %q: %s", want, body)
 		}
