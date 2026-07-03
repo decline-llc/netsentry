@@ -203,7 +203,7 @@ Current limitations:
 
 - Alert pagination, the stable list envelope, exact-match filters, time range filters, MITRE filters, matched-keyword substring filtering, and minimum aggregate-count filtering exist. Filtering currently runs after the SQLite list query, which is capped to the most recent 1000 aggregated rows.
 - Alert storage is SQLite-backed with startup TTL pruning and old daily shard file cleanup; optional daily shard pathing exists, but runtime cross-day rotation and cross-day querying are not implemented yet.
-- Validation and internal API errors use the unified error envelope.
+- Validation, unsupported method, and internal API errors use the unified error envelope.
 - Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk.
 - Optional PSK Bearer authentication protects modifying rule and suppression endpoints when `engine.api_auth_enabled` is true.
 - Non-GET API requests emit structured zap audit logs with request ID, method, path, status, authorization outcome, target, remote address, and duration.
@@ -228,7 +228,8 @@ List responses use:
 }
 ```
 
-Error responses use:
+Error responses use the envelope below. Unsupported methods return `METHOD_NOT_ALLOWED`;
+read-only endpoints include `Allow: GET` in that response.
 
 ```json
 {
