@@ -351,6 +351,29 @@ func TestStoreQueriesAcrossDailyShards(t *testing.T) {
 	}
 }
 
+func TestStoreCountsAcrossDailyShards(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	firstDay := time.Date(2026, 6, 27, 12, 0, 0, 0, time.UTC)
+	secondDay := time.Date(2026, 6, 28, 12, 0, 0, 0, time.UTC)
+	thirdDay := time.Date(2026, 6, 29, 12, 0, 0, 0, time.UTC)
+
+	writeDailyShardAlert(t, dir, firstDay, makeAlert(firstDay, "first-day"))
+	writeDailyShardAlert(t, dir, secondDay, makeAlert(secondDay, "second-day"))
+	writeDailyShardAlert(t, dir, thirdDay, makeAlert(thirdDay, "third-day"))
+
+	store := openDailyShardStoreAt(t, dir, thirdDay)
+	defer store.Close()
+
+	count, err := store.Count(ctx)
+	if err != nil {
+		t.Fatalf("count across daily shards: %v", err)
+	}
+	if count != 3 {
+		t.Fatalf("count = %d, want 3", count)
+	}
+}
+
 func TestStoreDailyShardQueryHonorsTimeRange(t *testing.T) {
 	ctx := context.Background()
 	dir := t.TempDir()

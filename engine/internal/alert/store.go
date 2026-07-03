@@ -605,9 +605,52 @@ func sliceBounds(length, limit, offset int) (int, int) {
 
 // Count returns the number of aggregated alert rows.
 func (s *Store) Count(ctx context.Context) (int, error) {
-	var count int
-	if err := s.db.QueryRowContext(ctx, "SELECT COUNT(*) FROM alerts").Scan(&count); err != nil {
+	if !s.dailyShard {
+		count, err := countAlertsDB(ctx, s.db)
+		if err != nil {
+			s.markDegraded(err)
+			return 0, err
+		}
+		return count, nil
+	}
+
+	paths, err := s.alertShardPaths(ctx, Query{})
+	if err != nil {
 		s.markDegraded(err)
+		return 0, err
+	}
+	total := 0
+	for _, path := range paths {
+		if err := ctx.Err(); err != nil {
+			return 0, err
+		}
+		var count int
+		if path == s.path {
+			count, err = countAlertsDB(ctx, s.db)
+		} else {
+			var db *sql.DB
+			db, err = sql.Open("sqlite", path)
+			if err == nil {
+				db.SetMaxOpenConns(1)
+				count, err = countAlertsDB(ctx, db)
+				closeErr := db.Close()
+				if err == nil && closeErr != nil {
+					err = fmt.Errorf("close alert shard %s: %w", path, closeErr)
+				}
+			}
+		}
+		if err != nil {
+			s.markDegraded(err)
+			return 0, fmt.Errorf("count alert shard %s: %w", path, err)
+		}
+		total += count
+	}
+	return total, nil
+}
+
+func countAlertsDB(ctx context.Context, db *sql.DB) (int, error) {
+	var count int
+	if err := db.QueryRowContext(ctx, "SELECT COUNT(*) FROM alerts").Scan(&count); err != nil {
 		return 0, fmt.Errorf("count alerts: %w", err)
 	}
 	return count, nil
