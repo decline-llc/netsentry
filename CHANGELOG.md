@@ -18,7 +18,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - SQLite-backed alert store with UPSERT aggregation, startup TTL pruning, optional daily shard pathing, and old daily shard file cleanup.
 - Payload preview redaction before alert writes when `engine.redact_sensitive_fields` is enabled.
 - REST API for health, alerts, metrics, rules CRUD/reload, and file-backed suppressions.
-- Alert queries support exact-match filters, RFC3339 time ranges, MITRE tactic/technique filters, matched-keyword substring filtering, and minimum aggregate-count filtering.
+- Alert queries support SQLite-backed exact-match filters, RFC3339 time ranges, MITRE tactic/technique filters, matched-keyword substring filtering, minimum aggregate-count filtering, and pagination.
 - Unified API error envelope, pagination envelope, request IDs, method-aware 405 responses, optional PSK Bearer auth, non-GET audit logs, and localhost-only pprof.
 - Prometheus text metrics for current packet, alert, queue, rule latency, alert write latency, storage, worker, and capture heartbeat counters, with HELP text for exported gauges.
 - Basic alert storage health tracking after SQLite write/query errors, surfaced through verbose health and `netsentry_storage_healthy`.
@@ -29,7 +29,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Pcap sanitization helper via `make sanitize-pcap INPUT=... OUTPUT=...`.
 - Deterministic AddressSanitizer fuzz smoke for the C frame parser via `make fuzz-parser`.
 - Receiver lifecycle tests for multiple active UDS connections during context cancellation, with goleak coverage for the receiver package.
-- SQLite aggregation tests now cover out-of-order alert writes, rule/source/destination/port aggregation key separation, canceled write contexts, and unsupported journal mode validation.
+- SQLite aggregation tests now cover SQL-backed filtering/pagination, out-of-order alert writes, rule/source/destination/port aggregation key separation, canceled write contexts, and unsupported journal mode validation.
 - Full C capture AddressSanitizer build target via `make build-asan`.
 - Local release archive packaging via `make dist`, including SHA-256 checksum generation.
 - Local Docker image build via `make docker-build`.

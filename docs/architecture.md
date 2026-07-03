@@ -38,7 +38,7 @@ Current implementation notes:
 - `capture/src/uds_sender.c` formats JSON frames with explicit string escaping, Base64 payload preview encoding, full-line UDS writes, write-error counters, and bounded initial reconnect support.
 - `engine/internal/receiver` owns the UDS listener, hello/heartbeat state, and context-aware packet channel.
 - `engine/internal/pipeline` owns the single worker that consumes packets, calls the rule engine, timestamps alerts, and writes them through an `AlertWriter`.
-- `engine/internal/alert` owns the SQLite alert store; `engine/internal/api` owns the minimal HTTP router, pagination, basic alert filters, and error envelopes.
+- `engine/internal/alert` owns the SQLite alert store, aggregation, and SQL-backed alert querying; `engine/internal/api` owns the minimal HTTP router, pagination, request validation, and error envelopes.
 - `engine/internal/rule` already uses immutable rule snapshots via `atomic.Pointer[ruleState]`.
 
 ---
@@ -127,8 +127,8 @@ Planned modules:
 
 - `internal/receiver`: UDS listener, hello validation, heartbeat state. Implemented in the current build; broader Go engine lifecycle integration remains future work.
 - `internal/pipeline`: worker lifecycle and alert flow. Implemented as a single worker in the current build.
-- `internal/alert`: aggregation, SQLite store, TTL pruning, daily shard pathing, old shard cleanup, payload redaction, and file-backed suppressions. WAL replay remains future work.
-- `internal/api`: router, pagination, basic alert filters, rule CRUD/reload, suppressions API, PSK auth for mutations, errors, health, audit middleware, and metrics.
+- `internal/alert`: aggregation, SQLite store, SQL-backed alert filtering/pagination, TTL pruning, daily shard pathing, old shard cleanup, payload redaction, and file-backed suppressions. WAL replay remains future work.
+- `internal/api`: router, pagination request parsing, rule CRUD/reload, suppressions API, PSK auth for mutations, errors, health, audit middleware, and metrics.
 - `internal/stats`: counters and Prometheus text rendering for process, queue, rule, alert, worker, and capture heartbeat metrics.
 
 ---
@@ -197,7 +197,7 @@ v0.1.0 target:
 
 Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
 
-Alert storage tests cover SQLite aggregation windows, out-of-order writes, aggregation key separation, canceled write contexts, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup.
+Alert storage tests cover SQLite aggregation windows, SQL-backed filtering/pagination, out-of-order writes, aggregation key separation, canceled write contexts, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup.
 
 Next layers:
 

@@ -201,7 +201,7 @@ Reloads rules from `engine.rules_seed_file` and atomically swaps the active rule
 
 Current limitations:
 
-- Alert pagination, the stable list envelope, exact-match filters, time range filters, MITRE filters, matched-keyword substring filtering, and minimum aggregate-count filtering exist. Filtering currently runs after the SQLite list query, which is capped to the most recent 1000 aggregated rows.
+- Alert pagination, the stable list envelope, exact-match filters, time range filters, MITRE filters, matched-keyword substring filtering, and minimum aggregate-count filtering exist. The SQLite-backed store applies those filters and pagination in SQL.
 - Alert storage is SQLite-backed with startup TTL pruning and old daily shard file cleanup; optional daily shard pathing exists, but runtime cross-day rotation and cross-day querying are not implemented yet.
 - Validation, unsupported method, and internal API errors use the unified error envelope.
 - Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk.

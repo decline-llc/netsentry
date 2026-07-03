@@ -84,7 +84,7 @@ These are v0.1.0 goals, not current behavior:
 
 - Runtime cross-day DB rotation, cross-day alert querying, WAL replay, and automatic disk-full recovery.
 - Full Prometheus metric coverage beyond the current process, queue, rule/write latency, alert, storage, worker, and capture heartbeat metrics.
-- Moving alert filtering deeper into SQLite when larger local corpora justify it.
+- Cross-day alert querying and remaining large-corpus query tuning.
 - C-side cJSON serializer and longer fuzz runs with broader seed corpora.
 - Published registry image for a named release.
 
