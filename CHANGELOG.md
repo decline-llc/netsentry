@@ -30,6 +30,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Deterministic AddressSanitizer fuzz smoke for the C frame parser via `make fuzz-parser`.
 - Receiver lifecycle tests for multiple active UDS connections during context cancellation, with goleak coverage for the receiver package.
 - SQLite aggregation tests now cover query index creation, SQL-backed filtering/pagination, out-of-order alert writes, rule/source/destination/port aggregation key separation, canceled write contexts, and unsupported journal mode validation.
+- API tests cover health and metrics alert counts backed by a real daily-shard SQLite store.
 - Full C capture AddressSanitizer build target via `make build-asan`.
 - Local release archive packaging via `make dist`, including SHA-256 checksum generation.
 - Local Docker image build via `make docker-build`.
