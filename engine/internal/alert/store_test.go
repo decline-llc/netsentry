@@ -314,6 +314,71 @@ func TestStoreResolvesDailyShardPath(t *testing.T) {
 	}
 }
 
+func TestStoreQueriesAcrossDailyShards(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	firstDay := time.Date(2026, 6, 27, 12, 0, 0, 0, time.UTC)
+	secondDay := time.Date(2026, 6, 28, 12, 0, 0, 0, time.UTC)
+	thirdDay := time.Date(2026, 6, 29, 12, 0, 0, 0, time.UTC)
+
+	writeDailyShardAlert(t, dir, firstDay, makeAlert(firstDay, "first-day"))
+	writeDailyShardAlert(t, dir, secondDay, makeAlert(secondDay, "second-day"))
+	writeDailyShardAlert(t, dir, thirdDay, makeAlert(thirdDay, "third-day"))
+
+	store := openDailyShardStoreAt(t, dir, thirdDay)
+	defer store.Close()
+
+	alerts, total, err := store.Query(ctx, Query{Limit: 2})
+	if err != nil {
+		t.Fatalf("query across daily shards: %v", err)
+	}
+	if total != 3 {
+		t.Fatalf("total = %d, want 3", total)
+	}
+	if len(alerts) != 2 {
+		t.Fatalf("len(alerts) = %d, want 2", len(alerts))
+	}
+	if alerts[0].MatchedKeyword != "third-day" || alerts[1].MatchedKeyword != "second-day" {
+		t.Fatalf("alerts not ordered across shards: %+v", alerts)
+	}
+
+	alerts, total, err = store.Query(ctx, Query{Limit: 1, Offset: 2})
+	if err != nil {
+		t.Fatalf("page across daily shards: %v", err)
+	}
+	if total != 3 || len(alerts) != 1 || alerts[0].MatchedKeyword != "first-day" {
+		t.Fatalf("paged query returned total=%d alerts=%+v, want first-day", total, alerts)
+	}
+}
+
+func TestStoreDailyShardQueryHonorsTimeRange(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	firstDay := time.Date(2026, 6, 27, 12, 0, 0, 0, time.UTC)
+	secondDay := time.Date(2026, 6, 28, 12, 0, 0, 0, time.UTC)
+	thirdDay := time.Date(2026, 6, 29, 12, 0, 0, 0, time.UTC)
+
+	writeDailyShardAlert(t, dir, firstDay, makeAlert(firstDay, "first-day"))
+	writeDailyShardAlert(t, dir, secondDay, makeAlert(secondDay, "second-day"))
+	writeDailyShardAlert(t, dir, thirdDay, makeAlert(thirdDay, "third-day"))
+
+	store := openDailyShardStoreAt(t, dir, thirdDay)
+	defer store.Close()
+
+	since := secondDay.Add(-time.Hour)
+	until := secondDay.Add(time.Hour)
+	alerts, total, err := store.Query(ctx, Query{Since: &since, Until: &until, Limit: 10})
+	if err != nil {
+		t.Fatalf("query daily shard time range: %v", err)
+	}
+	if total != 1 || len(alerts) != 1 {
+		t.Fatalf("time range returned total=%d len=%d, want 1/1", total, len(alerts))
+	}
+	if alerts[0].MatchedKeyword != "second-day" {
+		t.Fatalf("matched keyword = %q, want second-day", alerts[0].MatchedKeyword)
+	}
+}
+
 func TestStorePrunesExpiredAlerts(t *testing.T) {
 	ctx := context.Background()
 	now := time.Date(2026, 6, 27, 12, 0, 0, 0, time.UTC)
@@ -429,6 +494,33 @@ func openTestStore(t *testing.T, window time.Duration) *Store {
 		t.Fatalf("open store: %v", err)
 	}
 	return store
+}
+
+func openDailyShardStoreAt(t *testing.T, dir string, now time.Time) *Store {
+	t.Helper()
+	store, err := Open(context.Background(), Options{
+		Dir:               dir,
+		DailyShard:        true,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now: func() time.Time {
+			return now
+		},
+	})
+	if err != nil {
+		t.Fatalf("open daily shard store at %s: %v", now, err)
+	}
+	return store
+}
+
+func writeDailyShardAlert(t *testing.T, dir string, now time.Time, alert *model.Alert) {
+	t.Helper()
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+	if err := store.WriteBatch(context.Background(), []*model.Alert{alert}); err != nil {
+		t.Fatalf("write daily shard alert at %s: %v", now, err)
+	}
 }
 
 func makeAlert(ts time.Time, keyword string) *model.Alert {

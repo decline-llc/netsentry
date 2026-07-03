@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -32,6 +33,8 @@ type Options struct {
 type Store struct {
 	db                *sql.DB
 	path              string
+	dir               string
+	dailyShard        bool
 	aggregationWindow time.Duration
 	retentionDays     int
 	now               func() time.Time
@@ -90,6 +93,8 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 	store := &Store{
 		db:                db,
 		path:              dbPath,
+		dir:               defaultDBDir(opts.Dir),
+		dailyShard:        opts.DailyShard,
 		aggregationWindow: opts.AggregationWindow,
 		retentionDays:     opts.RetentionDays,
 		now:               clock(opts.Now),
@@ -372,16 +377,30 @@ FROM alerts`
 
 // Query returns filtered and paginated alerts plus the total filtered row count.
 func (s *Store) Query(ctx context.Context, query Query) ([]*model.Alert, int, error) {
+	if s.dailyShard {
+		return s.queryDailyShards(ctx, query)
+	}
+	alerts, total, err := queryAlertsDB(ctx, s.db, query)
+	if err != nil {
+		s.markDegraded(err)
+		return nil, 0, err
+	}
+	s.markHealthy()
+	return alerts, total, nil
+}
+
+func queryAlertsDB(ctx context.Context, db *sql.DB, query Query) ([]*model.Alert, int, error) {
 	where, args := alertQueryWhere(query)
 	countSQL := "SELECT COUNT(*) FROM alerts" + where
 	var total int
-	if err := s.db.QueryRowContext(ctx, countSQL, args...).Scan(&total); err != nil {
-		s.markDegraded(err)
+	if err := db.QueryRowContext(ctx, countSQL, args...).Scan(&total); err != nil {
 		return nil, 0, fmt.Errorf("count filtered alerts: %w", err)
 	}
 
 	limit := query.Limit
-	if limit <= 0 {
+	if limit < 0 {
+		limit = total
+	} else if limit <= 0 {
 		limit = 1000
 	}
 	offset := query.Offset
@@ -390,11 +409,10 @@ func (s *Store) Query(ctx context.Context, query Query) ([]*model.Alert, int, er
 	}
 	listArgs := append([]any{}, args...)
 	listArgs = append(listArgs, limit, offset)
-	rows, err := s.db.QueryContext(ctx, alertSelectColumns+where+`
+	rows, err := db.QueryContext(ctx, alertSelectColumns+where+`
 ORDER BY last_seen DESC, id ASC
 LIMIT ? OFFSET ?`, listArgs...)
 	if err != nil {
-		s.markDegraded(err)
 		return nil, 0, fmt.Errorf("query alerts: %w", err)
 	}
 	defer rows.Close()
@@ -408,11 +426,67 @@ LIMIT ? OFFSET ?`, listArgs...)
 		alerts = append(alerts, alert)
 	}
 	if err := rows.Err(); err != nil {
-		s.markDegraded(err)
 		return nil, 0, fmt.Errorf("iterate queried alerts: %w", err)
 	}
-	s.markHealthy()
 	return alerts, total, nil
+}
+
+func (s *Store) queryDailyShards(ctx context.Context, query Query) ([]*model.Alert, int, error) {
+	paths, err := s.alertShardPaths(ctx, query)
+	if err != nil {
+		s.markDegraded(err)
+		return nil, 0, err
+	}
+
+	var all []*model.Alert
+	total := 0
+	for _, path := range paths {
+		if err := ctx.Err(); err != nil {
+			return nil, 0, err
+		}
+		shardQuery := query
+		shardQuery.Limit = -1
+		shardQuery.Offset = 0
+		var (
+			alerts []*model.Alert
+			count  int
+			err    error
+		)
+		if path == s.path {
+			alerts, count, err = queryAlertsDB(ctx, s.db, shardQuery)
+		} else {
+			db, openErr := sql.Open("sqlite", path)
+			if openErr != nil {
+				s.markDegraded(openErr)
+				return nil, 0, fmt.Errorf("open alert shard %s: %w", path, openErr)
+			}
+			db.SetMaxOpenConns(1)
+			alerts, count, err = queryAlertsDB(ctx, db, shardQuery)
+			closeErr := db.Close()
+			if err == nil && closeErr != nil {
+				err = fmt.Errorf("close alert shard %s: %w", path, closeErr)
+			}
+		}
+		if err != nil {
+			s.markDegraded(err)
+			return nil, 0, fmt.Errorf("query alert shard %s: %w", path, err)
+		}
+		total += count
+		all = append(all, alerts...)
+	}
+
+	sortAlerts(all)
+	limit := query.Limit
+	if limit <= 0 {
+		limit = 1000
+	}
+	offset := query.Offset
+	if offset < 0 {
+		offset = 0
+	}
+	start, end := sliceBounds(len(all), limit, offset)
+	s.markHealthy()
+	return all[start:end], total, nil
 }
 
 func alertQueryWhere(query Query) (string, []any) {
@@ -462,6 +536,71 @@ func alertQueryWhere(query Query) (string, []any) {
 		return "", nil
 	}
 	return " WHERE " + strings.Join(clauses, " AND "), args
+}
+
+func (s *Store) alertShardPaths(ctx context.Context, query Query) ([]string, error) {
+	entries, err := os.ReadDir(s.dir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return []string{s.path}, nil
+		}
+		return nil, fmt.Errorf("read alert shard dir: %w", err)
+	}
+	seen := map[string]bool{}
+	var paths []string
+	addPath := func(path string) {
+		if seen[path] {
+			return
+		}
+		seen[path] = true
+		paths = append(paths, path)
+	}
+	for _, entry := range entries {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		if entry.IsDir() {
+			continue
+		}
+		match := dailyShardNameRe.FindStringSubmatch(entry.Name())
+		if match == nil || !shardDateMatchesQuery(match[1], query) {
+			continue
+		}
+		addPath(filepath.Join(s.dir, entry.Name()))
+	}
+	addPath(s.path)
+	sort.Strings(paths)
+	return paths, nil
+}
+
+func shardDateMatchesQuery(date string, query Query) bool {
+	if query.Since != nil && date < query.Since.UTC().Format("2006-01-02") {
+		return false
+	}
+	if query.Until != nil && date > query.Until.UTC().Format("2006-01-02") {
+		return false
+	}
+	return true
+}
+
+func sortAlerts(alerts []*model.Alert) {
+	sort.Slice(alerts, func(i, j int) bool {
+		if alerts[i].LastSeen.Equal(alerts[j].LastSeen) {
+			return alerts[i].ID < alerts[j].ID
+		}
+		return alerts[i].LastSeen.After(alerts[j].LastSeen)
+	})
+}
+
+func sliceBounds(length, limit, offset int) (int, int) {
+	if offset >= length {
+		return length, length
+	}
+	end := offset + limit
+	if end > length {
+		end = length
+	}
+	return offset, end
 }
 
 // Count returns the number of aggregated alert rows.
