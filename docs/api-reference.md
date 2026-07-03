@@ -228,8 +228,8 @@ List responses use:
 }
 ```
 
-Error responses use the envelope below. Unsupported methods return `METHOD_NOT_ALLOWED`;
-read-only endpoints include `Allow: GET` in that response.
+Error responses use the envelope below. Unsupported methods return `METHOD_NOT_ALLOWED`
+and include an `Allow` header listing the supported methods for that endpoint.
 
 ```json
 {
