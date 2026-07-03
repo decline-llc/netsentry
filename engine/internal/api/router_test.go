@@ -253,6 +253,50 @@ func TestReadOnlyEndpointsRejectNonGET(t *testing.T) {
 	}
 }
 
+func TestMutationEndpointsRejectUnsupportedMethods(t *testing.T) {
+	manager, err := alert.NewSuppressionManager([]alert.Suppression{{ID: "s1", Enabled: true, AnyCIDRs: []string{"10.0.0.0/24"}}})
+	if err != nil {
+		t.Fatalf("new suppressions: %v", err)
+	}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{rules: []*model.Rule{{ID: "rule-1"}}}, stats.New(), Options{
+		Suppressions: manager,
+	})
+	tests := []struct {
+		name   string
+		method string
+		path   string
+		allow  string
+	}{
+		{name: "suppressions collection", method: http.MethodPut, path: "/api/suppressions", allow: "GET, POST"},
+		{name: "suppression resource", method: http.MethodPost, path: "/api/suppressions/s1", allow: "PUT, DELETE"},
+		{name: "suppressions reload", method: http.MethodGet, path: "/api/suppressions/reload", allow: http.MethodPost},
+		{name: "rules collection", method: http.MethodPut, path: "/api/rules", allow: "GET, POST"},
+		{name: "rule resource", method: http.MethodPost, path: "/api/rules/rule-1", allow: "PUT, DELETE"},
+		{name: "rules reload", method: http.MethodGet, path: "/api/rules/reload", allow: http.MethodPost},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			req := httptest.NewRequest(tt.method, tt.path, nil)
+			req.Header.Set("X-Request-ID", "req-method")
+			server.Handler().ServeHTTP(rec, req)
+
+			if rec.Code != http.StatusMethodNotAllowed {
+				t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+			}
+			if allow := rec.Header().Get("Allow"); allow != tt.allow {
+				t.Fatalf("Allow = %q, want %q", allow, tt.allow)
+			}
+			body := rec.Body.String()
+			for _, want := range []string{`"code":"METHOD_NOT_ALLOWED"`, `"request_id":"req-method"`} {
+				if !strings.Contains(body, want) {
+					t.Fatalf("response missing %q: %s", want, body)
+				}
+			}
+		})
+	}
+}
+
 func TestAlertsPaginationEnvelope(t *testing.T) {
 	server := NewServer(&fakeStore{alerts: []*model.Alert{
 		{RuleID: "rule-1"},

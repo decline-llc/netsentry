@@ -378,7 +378,7 @@ func (s *Server) handleSuppressions(w http.ResponseWriter, r *http.Request) {
 		}
 		writeJSON(w, http.StatusCreated, suppression)
 	default:
-		writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
+		writeMethodNotAllowed(w, r, "GET, POST")
 	}
 }
 
@@ -401,7 +401,7 @@ func (s *Server) handleSuppressionByID(w http.ResponseWriter, r *http.Request) {
 		}
 		s.handleSuppressionDelete(w, r, id)
 	default:
-		writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
+		writeMethodNotAllowed(w, r, "PUT, DELETE")
 	}
 }
 
@@ -441,7 +441,7 @@ func (s *Server) handleSuppressionDelete(w http.ResponseWriter, r *http.Request,
 
 func (s *Server) handleSuppressionsReload(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
+		writeMethodNotAllowed(w, r, http.MethodPost)
 		return
 	}
 	if !s.requireMutationAuth(w, r) {
@@ -536,7 +536,7 @@ func (s *Server) handleRules(w http.ResponseWriter, r *http.Request) {
 		}
 		s.handleRuleCreate(w, r)
 	default:
-		writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
+		writeMethodNotAllowed(w, r, "GET, POST")
 	}
 }
 
@@ -559,7 +559,7 @@ func (s *Server) handleRuleByID(w http.ResponseWriter, r *http.Request) {
 		}
 		s.handleRuleDelete(w, r, id)
 	default:
-		writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
+		writeMethodNotAllowed(w, r, "PUT, DELETE")
 	}
 }
 
@@ -729,7 +729,7 @@ func cloneRules(rules []*model.Rule) []*model.Rule {
 
 func (s *Server) handleRulesReload(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		writeError(w, r, http.StatusMethodNotAllowed, "METHOD_NOT_ALLOWED", "Method not allowed")
+		writeMethodNotAllowed(w, r, http.MethodPost)
 		return
 	}
 	if !s.requireMutationAuth(w, r) {
