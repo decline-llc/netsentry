@@ -1020,6 +1020,49 @@ func TestMetricsEndpointIncludesStorageHealthGauge(t *testing.T) {
 	}
 }
 
+func TestHealthAndMetricsCountDailyShardStore(t *testing.T) {
+	dir := t.TempDir()
+	days := []time.Time{
+		time.Date(2026, 7, 1, 12, 0, 0, 0, time.UTC),
+		time.Date(2026, 7, 2, 12, 0, 0, 0, time.UTC),
+		time.Date(2026, 7, 3, 12, 0, 0, 0, time.UTC),
+	}
+	for _, day := range days {
+		writeDailyShardAPIAlert(t, dir, day)
+	}
+	store := openDailyShardAPIStore(t, dir, days[len(days)-1])
+	defer store.Close()
+
+	server := NewServer(store, fakeQueue{}, &fakeRules{}, stats.New())
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/health", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("health status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	var health struct {
+		Alerts int `json:"alerts"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &health); err != nil {
+		t.Fatalf("decode health response: %v", err)
+	}
+	if health.Alerts != len(days) {
+		t.Fatalf("health alerts = %d, want %d", health.Alerts, len(days))
+	}
+
+	rec = httptest.NewRecorder()
+	req = httptest.NewRequest(http.MethodGet, "/api/metrics", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("metrics status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), "netsentry_alerts_current 3") {
+		t.Fatalf("metrics missing daily shard alert count:\n%s", rec.Body.String())
+	}
+}
+
 func TestAuditLogsMutationRequests(t *testing.T) {
 	core, observed := observer.New(zap.InfoLevel)
 	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{AuditLogger: zap.New(core)})
@@ -1070,5 +1113,47 @@ func TestAuditSharesGeneratedRequestIDWithErrorEnvelope(t *testing.T) {
 	}
 	if !strings.Contains(rec.Body.String(), `"request_id":"`+requestID+`"`) {
 		t.Fatalf("response and audit request ids differ: body=%s audit=%s", rec.Body.String(), requestID)
+	}
+}
+
+func openDailyShardAPIStore(t *testing.T, dir string, now time.Time) *alert.Store {
+	t.Helper()
+	store, err := alert.Open(context.Background(), alert.Options{
+		Dir:               dir,
+		DailyShard:        true,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now: func() time.Time {
+			return now
+		},
+	})
+	if err != nil {
+		t.Fatalf("open daily shard alert store: %v", err)
+	}
+	return store
+}
+
+func writeDailyShardAPIAlert(t *testing.T, dir string, ts time.Time) {
+	t.Helper()
+	store := openDailyShardAPIStore(t, dir, ts)
+	defer store.Close()
+	alert := &model.Alert{
+		RuleID:             "rule-" + ts.Format("20060102"),
+		RuleName:           "Daily Shard Test",
+		Timestamp:          ts,
+		SrcIP:              "10.0.0.1",
+		DstIP:              "10.0.0.2",
+		DstPort:            80,
+		Protocol:           "TCP",
+		Severity:           model.SeverityHigh,
+		MitreTactic:        "Initial Access",
+		MitreTechniqueID:   "T1190",
+		MitreTechniqueName: "Exploit Public-Facing Application",
+		PayloadPreview:     "GET / HTTP/1.1",
+		MatchedKeyword:     "daily-shard",
+	}
+	if err := store.WriteBatch(context.Background(), []*model.Alert{alert}); err != nil {
+		t.Fatalf("write daily shard alert: %v", err)
 	}
 }
