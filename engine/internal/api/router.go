@@ -24,6 +24,10 @@ type AlertStore interface {
 	Count(ctx context.Context) (int, error)
 }
 
+type AlertQueryStore interface {
+	Query(ctx context.Context, query alert.Query) ([]*model.Alert, int, error)
+}
+
 type StoragePathProvider interface {
 	Path() string
 }
@@ -504,6 +508,20 @@ func (s *Server) handleAlerts(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid alert filters", err.Error())
 		return
 	}
+	if queryStore, ok := s.store.(AlertQueryStore); ok {
+		alerts, total, err := queryStore.Query(r.Context(), filters.toAlertQuery(p))
+		if err != nil {
+			writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not list alerts")
+			return
+		}
+		p.Total = total
+		writeJSON(w, http.StatusOK, alertListResponse{
+			Data:       alerts,
+			Pagination: p,
+		})
+		return
+	}
+
 	alerts, err := s.store.List(r.Context())
 	if err != nil {
 		writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not list alerts")

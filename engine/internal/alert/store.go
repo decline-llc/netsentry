@@ -46,6 +46,24 @@ type StorageHealth struct {
 	LastErrorAt time.Time `json:"last_error_at,omitempty"`
 }
 
+// Query filters, counts, and pages aggregated alert rows.
+type Query struct {
+	RuleID           string
+	Severity         model.Severity
+	SrcIP            string
+	DstIP            string
+	Protocol         string
+	DstPort          *uint16
+	Since            *time.Time
+	Until            *time.Time
+	MitreTactic      string
+	MitreTechniqueID string
+	MatchedKeyword   string
+	MinCount         *int
+	Limit            int
+	Offset           int
+}
+
 // Open creates the SQLite database and initializes its schema.
 func Open(ctx context.Context, opts Options) (*Store, error) {
 	if opts.JournalMode == "" {
@@ -336,6 +354,107 @@ LIMIT 1000`)
 	}
 	s.markHealthy()
 	return alerts, nil
+}
+
+const alertSelectColumns = `
+SELECT id, event_id, rule_id, rule_name, severity, protocol, src_ip, dst_ip, dst_port,
+       mitre_tactic, mitre_technique_id, mitre_technique_name,
+       payload_preview, matched_keyword,
+       aggregated_count, first_seen, last_seen, window_start
+FROM alerts`
+
+// Query returns filtered and paginated alerts plus the total filtered row count.
+func (s *Store) Query(ctx context.Context, query Query) ([]*model.Alert, int, error) {
+	where, args := alertQueryWhere(query)
+	countSQL := "SELECT COUNT(*) FROM alerts" + where
+	var total int
+	if err := s.db.QueryRowContext(ctx, countSQL, args...).Scan(&total); err != nil {
+		s.markDegraded(err)
+		return nil, 0, fmt.Errorf("count filtered alerts: %w", err)
+	}
+
+	limit := query.Limit
+	if limit <= 0 {
+		limit = 1000
+	}
+	offset := query.Offset
+	if offset < 0 {
+		offset = 0
+	}
+	listArgs := append([]any{}, args...)
+	listArgs = append(listArgs, limit, offset)
+	rows, err := s.db.QueryContext(ctx, alertSelectColumns+where+`
+ORDER BY last_seen DESC, id ASC
+LIMIT ? OFFSET ?`, listArgs...)
+	if err != nil {
+		s.markDegraded(err)
+		return nil, 0, fmt.Errorf("query alerts: %w", err)
+	}
+	defer rows.Close()
+
+	var alerts []*model.Alert
+	for rows.Next() {
+		alert, err := scanAlert(rows)
+		if err != nil {
+			return nil, 0, err
+		}
+		alerts = append(alerts, alert)
+	}
+	if err := rows.Err(); err != nil {
+		s.markDegraded(err)
+		return nil, 0, fmt.Errorf("iterate queried alerts: %w", err)
+	}
+	s.markHealthy()
+	return alerts, total, nil
+}
+
+func alertQueryWhere(query Query) (string, []any) {
+	var clauses []string
+	var args []any
+	add := func(clause string, value any) {
+		clauses = append(clauses, clause)
+		args = append(args, value)
+	}
+	if query.RuleID != "" {
+		add("rule_id = ?", query.RuleID)
+	}
+	if query.Severity != "" {
+		add("severity = ?", string(query.Severity))
+	}
+	if query.SrcIP != "" {
+		add("src_ip = ?", query.SrcIP)
+	}
+	if query.DstIP != "" {
+		add("dst_ip = ?", query.DstIP)
+	}
+	if query.Protocol != "" {
+		add("UPPER(protocol) = ?", strings.ToUpper(query.Protocol))
+	}
+	if query.DstPort != nil {
+		add("dst_port = ?", int(*query.DstPort))
+	}
+	if query.Since != nil {
+		add("julianday(last_seen) >= julianday(?)", formatTime(*query.Since))
+	}
+	if query.Until != nil {
+		add("julianday(last_seen) <= julianday(?)", formatTime(*query.Until))
+	}
+	if query.MitreTactic != "" {
+		add("LOWER(mitre_tactic) = LOWER(?)", query.MitreTactic)
+	}
+	if query.MitreTechniqueID != "" {
+		add("LOWER(mitre_technique_id) = LOWER(?)", query.MitreTechniqueID)
+	}
+	if query.MatchedKeyword != "" {
+		add("instr(LOWER(matched_keyword), LOWER(?)) > 0", query.MatchedKeyword)
+	}
+	if query.MinCount != nil {
+		add("aggregated_count >= ?", *query.MinCount)
+	}
+	if len(clauses) == 0 {
+		return "", nil
+	}
+	return " WHERE " + strings.Join(clauses, " AND "), args
 }
 
 // Count returns the number of aggregated alert rows.

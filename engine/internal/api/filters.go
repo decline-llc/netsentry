@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/decline-llc/netsentry/internal/alert"
 	"github.com/decline-llc/netsentry/pkg/model"
 )
 
@@ -83,6 +84,25 @@ func parseAlertFilterTime(value string) (time.Time, error) {
 		return time.Time{}, err
 	}
 	return parsed.UTC(), nil
+}
+
+func (filters alertFilters) toAlertQuery(p pagination) alert.Query {
+	return alert.Query{
+		RuleID:           filters.RuleID,
+		Severity:         filters.Severity,
+		SrcIP:            filters.SrcIP,
+		DstIP:            filters.DstIP,
+		Protocol:         filters.Protocol,
+		DstPort:          filters.DstPort,
+		Since:            filters.Since,
+		Until:            filters.Until,
+		MitreTactic:      filters.MitreTactic,
+		MitreTechniqueID: filters.MitreTechniqueID,
+		MatchedKeyword:   filters.MatchedKeyword,
+		MinCount:         filters.MinCount,
+		Limit:            p.PerPage,
+		Offset:           (p.Page - 1) * p.PerPage,
+	}
 }
 
 func validSeverity(severity model.Severity) bool {

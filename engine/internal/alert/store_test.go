@@ -107,6 +107,62 @@ func TestStoreKeepsAggregationKeysSeparate(t *testing.T) {
 	}
 }
 
+func TestStoreQueryFiltersCountsAndPagesAlerts(t *testing.T) {
+	ctx := context.Background()
+	store := openTestStore(t, 60*time.Second)
+	defer store.Close()
+
+	base := time.Date(2026, 7, 2, 12, 0, 0, 0, time.UTC)
+	matchFirst := makeAlert(base, "UNION SELECT")
+	matchSecond := makeAlert(base.Add(10*time.Second), "UNION SELECT")
+	otherRule := makeAlert(base.Add(2*time.Minute), "UNION SELECT")
+	otherRule.RuleID = "rule-2"
+	otherMITRE := makeAlert(base.Add(3*time.Minute), "scanner")
+	otherMITRE.MitreTactic = "Discovery"
+	otherMITRE.MitreTechniqueID = "T1046"
+	if err := store.WriteBatch(ctx, []*model.Alert{matchFirst, matchSecond, otherRule, otherMITRE}); err != nil {
+		t.Fatalf("write alerts: %v", err)
+	}
+
+	dstPort := uint16(80)
+	minCount := 2
+	since := base.Add(-time.Minute)
+	until := base.Add(time.Minute)
+	query := Query{
+		RuleID:           "rule-1",
+		Severity:         model.SeverityHigh,
+		SrcIP:            "10.0.0.1",
+		DstIP:            "10.0.0.2",
+		Protocol:         "tcp",
+		DstPort:          &dstPort,
+		Since:            &since,
+		Until:            &until,
+		MitreTactic:      "initial access",
+		MitreTechniqueID: "t1190",
+		MatchedKeyword:   "union",
+		MinCount:         &minCount,
+		Limit:            10,
+	}
+	alerts, total, err := store.Query(ctx, query)
+	if err != nil {
+		t.Fatalf("query alerts: %v", err)
+	}
+	if total != 1 || len(alerts) != 1 {
+		t.Fatalf("query returned total=%d len=%d, want 1/1", total, len(alerts))
+	}
+	if alerts[0].RuleID != "rule-1" || alerts[0].AggregatedCount != 2 {
+		t.Fatalf("unexpected matched alert: %+v", alerts[0])
+	}
+
+	alerts, total, err = store.Query(ctx, Query{Limit: 1, Offset: 1})
+	if err != nil {
+		t.Fatalf("page alerts: %v", err)
+	}
+	if total != 3 || len(alerts) != 1 {
+		t.Fatalf("page returned total=%d len=%d, want 3/1", total, len(alerts))
+	}
+}
+
 func TestStoreRejectsUnsupportedJournalMode(t *testing.T) {
 	ctx := context.Background()
 	store, err := Open(ctx, Options{

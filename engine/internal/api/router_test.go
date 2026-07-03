@@ -54,6 +54,24 @@ type fakeStoreWithPath struct {
 
 func (s *fakeStoreWithPath) Path() string { return s.path }
 
+type fakeQueryStore struct {
+	fakeStore
+	query       alert.Query
+	queryAlerts []*model.Alert
+	queryTotal  int
+	queryErr    error
+	called      bool
+}
+
+func (s *fakeQueryStore) Query(ctx context.Context, query alert.Query) ([]*model.Alert, int, error) {
+	s.called = true
+	s.query = query
+	if s.queryErr != nil {
+		return nil, 0, s.queryErr
+	}
+	return s.queryAlerts, s.queryTotal, nil
+}
+
 type fakeQueue struct{ depth int }
 
 func (q fakeQueue) QueueDepth() int { return q.depth }
@@ -395,6 +413,47 @@ func TestAlertsFilters(t *testing.T) {
 	}
 	if got.Pagination.Total != 1 {
 		t.Fatalf("total = %d, want 1", got.Pagination.Total)
+	}
+}
+
+func TestAlertsUsesStoreQueryWhenAvailable(t *testing.T) {
+	since := time.Date(2026, 7, 2, 11, 0, 0, 0, time.UTC)
+	store := &fakeQueryStore{
+		queryAlerts: []*model.Alert{{RuleID: "rule-1"}},
+		queryTotal:  12,
+	}
+	server := NewServer(store, fakeQueue{}, &fakeRules{}, stats.New())
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/alerts?page=2&per_page=5&severity=high&since=2026-07-02T11:00:00Z&matched_keyword=union&min_count=2", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	if !store.called {
+		t.Fatal("expected query-capable store to be used")
+	}
+	if store.query.Limit != 5 || store.query.Offset != 5 {
+		t.Fatalf("query pagination = limit %d offset %d, want 5/5", store.query.Limit, store.query.Offset)
+	}
+	if store.query.Severity != model.SeverityHigh || store.query.MatchedKeyword != "union" {
+		t.Fatalf("unexpected query filters: %+v", store.query)
+	}
+	if store.query.Since == nil || !store.query.Since.Equal(since) {
+		t.Fatalf("query since = %v, want %s", store.query.Since, since)
+	}
+	if store.query.MinCount == nil || *store.query.MinCount != 2 {
+		t.Fatalf("query min_count = %v, want 2", store.query.MinCount)
+	}
+	var got struct {
+		Data       []model.Alert `json:"data"`
+		Pagination pagination    `json:"pagination"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &got); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if len(got.Data) != 1 || got.Pagination.Total != 12 {
+		t.Fatalf("unexpected query response: %+v", got)
 	}
 }
 
