@@ -127,7 +127,7 @@ Planned modules:
 
 - `internal/receiver`: UDS listener, hello validation, heartbeat state. Implemented in the current build; broader Go engine lifecycle integration remains future work.
 - `internal/pipeline`: worker lifecycle and alert flow. Implemented as a single worker in the current build.
-- `internal/alert`: aggregation, SQLite store, SQL-backed alert filtering/pagination, TTL pruning, daily shard pathing, old shard cleanup, payload redaction, and file-backed suppressions. WAL replay remains future work.
+- `internal/alert`: aggregation, SQLite store, indexed SQL-backed alert filtering/pagination, TTL pruning, daily shard pathing, old shard cleanup, payload redaction, and file-backed suppressions. WAL replay remains future work.
 - `internal/api`: router, pagination request parsing, rule CRUD/reload, suppressions API, PSK auth for mutations, errors, health, audit middleware, and metrics.
 - `internal/stats`: counters and Prometheus text rendering for process, queue, rule, alert, worker, and capture heartbeat metrics.
 
@@ -197,7 +197,7 @@ v0.1.0 target:
 
 Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
 
-Alert storage tests cover SQLite aggregation windows, SQL-backed filtering/pagination, out-of-order writes, aggregation key separation, canceled write contexts, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup.
+Alert storage tests cover SQLite aggregation windows, query index creation, SQL-backed filtering/pagination, out-of-order writes, aggregation key separation, canceled write contexts, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup.
 
 Next layers:
 
