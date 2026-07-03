@@ -72,7 +72,7 @@ bundle first, then only pushes on version tags or an explicit manual workflow ru
 - Go rule engine using `atomic.Pointer[ruleState]` immutable snapshots.
 - Rule types: `payload_match`, `ip_blacklist`, `port_blacklist`.
 - A self-contained Aho-Corasick matcher.
-- Minimal Go UDS receiver, CIDR alert suppressor component, and SQLite alert store with UPSERT aggregation, startup TTL pruning, optional daily DB shard pathing/cleanup, cross-shard alert querying in daily-shard mode, and basic degraded health tracking after storage errors.
+- Minimal Go UDS receiver, CIDR alert suppressor component, and SQLite alert store with UPSERT aggregation, startup TTL pruning, optional daily DB shard pathing/cleanup, cross-shard alert querying/counting in daily-shard mode, and basic degraded health tracking after storage errors.
 - Minimal HTTP endpoints: `/api/health` with verbose component snapshot, paginated `/api/alerts` with exact-match, time range, MITRE, matched-keyword, and aggregate-count filters, `/api/metrics`, rule listing, rule create/update/delete, rule reload, file-backed suppression create/update/delete/reload, method-aware error envelopes, optional PSK Bearer auth for modifying endpoints, non-GET audit logs, optional localhost-only pprof, storage health gauges, and payload preview redaction before alert writes.
 - Seed rules in canonical wrapped JSON schema, with legacy schema compatibility retained in the loader.
 

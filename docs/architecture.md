@@ -127,7 +127,7 @@ Planned modules:
 
 - `internal/receiver`: UDS listener, hello validation, heartbeat state. Implemented in the current build; broader Go engine lifecycle integration remains future work.
 - `internal/pipeline`: worker lifecycle and alert flow. Implemented as a single worker in the current build.
-- `internal/alert`: aggregation, SQLite store, indexed SQL-backed alert filtering/pagination, daily-shard cross-file querying, TTL pruning, daily shard pathing, old shard cleanup, payload redaction, and file-backed suppressions. WAL replay remains future work.
+- `internal/alert`: aggregation, SQLite store, indexed SQL-backed alert filtering/pagination, daily-shard cross-file querying/counting, TTL pruning, daily shard pathing, old shard cleanup, payload redaction, and file-backed suppressions. WAL replay remains future work.
 - `internal/api`: router, pagination request parsing, rule CRUD/reload, suppressions API, PSK auth for mutations, errors, health, audit middleware, and metrics.
 - `internal/stats`: counters and Prometheus text rendering for process, queue, rule, alert, worker, and capture heartbeat metrics.
 
@@ -166,7 +166,7 @@ Current build:
 - UPSERT aggregation by `(rule_id, src_ip, dst_ip, dst_port, window_start)`.
 - Fixed aggregation window from `engine.alert_aggregation_window`.
 - Optional daily shard pathing with `engine.db_shard_daily`, which opens `engine.db_dir/netsentry-YYYY-MM-DD.db` at process start.
-- Cross-shard alert querying in daily-shard mode; time range filters narrow the shard files scanned before applying the regular SQL filters and API pagination across the merged result.
+- Cross-shard alert querying and alert counting in daily-shard mode; time range filters narrow the shard files scanned before applying the regular SQL filters and API pagination across the merged result.
 - Row-level TTL pruning in the opened database using `engine.alert_retention_days`.
 - Startup cleanup of old `netsentry-YYYY-MM-DD.db` daily shard files and their WAL/SHM sidecars when retention is enabled.
 - Basic storage health tracking marks the store degraded after SQLite write/query errors and exposes that state through verbose health and Prometheus gauges.
@@ -198,7 +198,7 @@ v0.1.0 target:
 
 Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
 
-Alert storage tests cover SQLite aggregation windows, query index creation, SQL-backed filtering/pagination, daily-shard cross-file querying, out-of-order writes, aggregation key separation, canceled write contexts, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup.
+Alert storage tests cover SQLite aggregation windows, query index creation, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, out-of-order writes, aggregation key separation, canceled write contexts, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup.
 
 Next layers:
 
