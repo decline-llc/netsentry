@@ -107,6 +107,44 @@ func TestStoreKeepsAggregationKeysSeparate(t *testing.T) {
 	}
 }
 
+func TestStoreCreatesAlertQueryIndexes(t *testing.T) {
+	ctx := context.Background()
+	store := openTestStore(t, 60*time.Second)
+	defer store.Close()
+
+	rows, err := store.db.QueryContext(ctx, "SELECT name FROM sqlite_master WHERE type = 'index' AND tbl_name = 'alerts'")
+	if err != nil {
+		t.Fatalf("list indexes: %v", err)
+	}
+	defer rows.Close()
+	indexes := map[string]bool{}
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			t.Fatalf("scan index name: %v", err)
+		}
+		indexes[name] = true
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatalf("iterate indexes: %v", err)
+	}
+	for _, want := range []string{
+		"idx_alerts_last_seen",
+		"idx_alerts_rule_window",
+		"idx_alerts_rule_last_seen",
+		"idx_alerts_severity_last_seen",
+		"idx_alerts_src_last_seen",
+		"idx_alerts_dst_last_seen",
+		"idx_alerts_protocol_port_last_seen",
+		"idx_alerts_mitre_technique_last_seen",
+		"idx_alerts_count_last_seen",
+	} {
+		if !indexes[want] {
+			t.Fatalf("expected alert query index %q, got %+v", want, indexes)
+		}
+	}
+}
+
 func TestStoreQueryFiltersCountsAndPagesAlerts(t *testing.T) {
 	ctx := context.Background()
 	store := openTestStore(t, 60*time.Second)

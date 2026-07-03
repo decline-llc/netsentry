@@ -217,6 +217,13 @@ CREATE TABLE IF NOT EXISTS alerts (
 
 CREATE INDEX IF NOT EXISTS idx_alerts_last_seen ON alerts(last_seen DESC);
 CREATE INDEX IF NOT EXISTS idx_alerts_rule_window ON alerts(rule_id, window_start);
+CREATE INDEX IF NOT EXISTS idx_alerts_rule_last_seen ON alerts(rule_id, last_seen DESC);
+CREATE INDEX IF NOT EXISTS idx_alerts_severity_last_seen ON alerts(severity, last_seen DESC);
+CREATE INDEX IF NOT EXISTS idx_alerts_src_last_seen ON alerts(src_ip, last_seen DESC);
+CREATE INDEX IF NOT EXISTS idx_alerts_dst_last_seen ON alerts(dst_ip, last_seen DESC);
+CREATE INDEX IF NOT EXISTS idx_alerts_protocol_port_last_seen ON alerts(protocol, dst_port, last_seen DESC);
+CREATE INDEX IF NOT EXISTS idx_alerts_mitre_technique_last_seen ON alerts(mitre_technique_id, last_seen DESC);
+CREATE INDEX IF NOT EXISTS idx_alerts_count_last_seen ON alerts(aggregated_count, last_seen DESC);
 `
 
 const upsertAlertSQL = `
