@@ -276,16 +276,18 @@ func (s *Server) handleMetrics(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not count alerts")
 		return
 	}
-	body := stats.RenderPrometheus(s.stats.Snapshot(), s.metricsGauges(count))
+	queueDepth := s.queue.QueueDepth()
+	s.stats.ObserveQueueDepth(queueDepth)
+	body := stats.RenderPrometheus(s.stats.Snapshot(), s.metricsGauges(count, queueDepth))
 	w.Header().Set("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte(body))
 }
 
-func (s *Server) metricsGauges(alertCount int) map[string]float64 {
+func (s *Server) metricsGauges(alertCount int, queueDepth int) map[string]float64 {
 	gauges := map[string]float64{
 		"netsentry_alerts_current":     float64(alertCount),
-		"netsentry_packet_queue_depth": float64(s.queue.QueueDepth()),
+		"netsentry_packet_queue_depth": float64(queueDepth),
 		"netsentry_rules_loaded":       float64(s.rules.RuleCount()),
 	}
 	if available, ok := s.storageAvailableBytes(); ok {

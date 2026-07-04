@@ -50,6 +50,7 @@ type Stats struct {
 	alertWriteCount   atomic.Uint64
 	alertWriteNS      atomic.Uint64
 	alertWriteBuckets [len(matchDurationBuckets)]atomic.Uint64
+	queueDepthHigh    atomic.Uint64
 
 	mu               sync.RWMutex
 	alertsBySeverity map[model.Severity]uint64
@@ -124,6 +125,19 @@ func (s *Stats) ObserveAlertWriteDuration(d time.Duration) {
 	observeDurationBucket(s.alertWriteBuckets[:], d)
 }
 
+func (s *Stats) ObserveQueueDepth(depth int) {
+	if s == nil || depth < 0 {
+		return
+	}
+	current := uint64(depth)
+	for {
+		previous := s.queueDepthHigh.Load()
+		if current <= previous || s.queueDepthHigh.CompareAndSwap(previous, current) {
+			return
+		}
+	}
+}
+
 func observeDurationBucket(buckets []atomic.Uint64, d time.Duration) {
 	seconds := d.Seconds()
 	for i, bucket := range matchDurationBuckets {
@@ -168,6 +182,7 @@ type Snapshot struct {
 	AlertWriteCount   uint64
 	AlertWriteNS      uint64
 	AlertWriteBuckets []HistogramBucket
+	QueueDepthHigh    uint64
 	AlertsBySeverity  map[model.Severity]uint64
 }
 
@@ -213,6 +228,7 @@ func (s *Stats) Snapshot() Snapshot {
 		AlertWriteCount:   s.alertWriteCount.Load(),
 		AlertWriteNS:      s.alertWriteNS.Load(),
 		AlertWriteBuckets: alertWriteBuckets,
+		QueueDepthHigh:    s.queueDepthHigh.Load(),
 		AlertsBySeverity:  bySeverity,
 	}
 }
@@ -234,6 +250,7 @@ func RenderPrometheus(snapshot Snapshot, gauges map[string]float64) string {
 	writeCounter(&b, "netsentry_alert_write_errors_total", "Alert write failures.", snapshot.AlertWriteErrors)
 	writeCounter(&b, "netsentry_alert_write_duration_seconds_total", "Total time spent writing alert batches.", float64(snapshot.AlertWriteNS)/float64(time.Second))
 	writeHistogram(&b, "netsentry_alert_write_duration_seconds", "Alert write duration distribution.", snapshot.AlertWriteBuckets, snapshot.AlertWriteCount, float64(snapshot.AlertWriteNS)/float64(time.Second))
+	writeGauge(&b, "netsentry_packet_queue_depth_high_water", float64(snapshot.QueueDepthHigh))
 
 	severities := make([]string, 0, len(snapshot.AlertsBySeverity))
 	for sev := range snapshot.AlertsBySeverity {
@@ -304,6 +321,8 @@ func gaugeHelp(name string) string {
 		return "Latest capture-reported UDS write error count."
 	case "netsentry_packet_queue_depth":
 		return "Current packet queue depth."
+	case "netsentry_packet_queue_depth_high_water":
+		return "Highest packet queue depth observed by metrics scrapes."
 	case "netsentry_rules_loaded":
 		return "Current number of loaded rules."
 	case "netsentry_storage_available_bytes":

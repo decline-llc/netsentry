@@ -913,7 +913,8 @@ func TestStoreErrorUsesErrorEnvelope(t *testing.T) {
 }
 
 func TestMetricsEndpoint(t *testing.T) {
-	server := NewServer(&fakeStore{alerts: []*model.Alert{{RuleID: "rule-1"}}}, fakeQueue{depth: 7}, &fakeRules{count: 3}, stats.New())
+	queue := &fakeQueue{depth: 7}
+	server := NewServer(&fakeStore{alerts: []*model.Alert{{RuleID: "rule-1"}}}, queue, &fakeRules{count: 3}, stats.New())
 	rec := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/api/metrics", nil)
 	server.Handler().ServeHTTP(rec, req)
@@ -925,13 +926,29 @@ func TestMetricsEndpoint(t *testing.T) {
 	for _, want := range []string{
 		"# HELP netsentry_alerts_current Current number of aggregated alerts in storage.",
 		"# HELP netsentry_packet_queue_depth Current packet queue depth.",
+		"# HELP netsentry_packet_queue_depth_high_water Highest packet queue depth observed by metrics scrapes.",
 		"# HELP netsentry_rules_loaded Current number of loaded rules.",
 		"netsentry_alerts_current 1",
 		"netsentry_packet_queue_depth 7",
+		"netsentry_packet_queue_depth_high_water 7",
 		"netsentry_rules_loaded 3",
 	} {
 		if !strings.Contains(body, want) {
 			t.Fatalf("metrics missing %q:\n%s", want, body)
+		}
+	}
+
+	queue.depth = 2
+	rec = httptest.NewRecorder()
+	req = httptest.NewRequest(http.MethodGet, "/api/metrics", nil)
+	server.Handler().ServeHTTP(rec, req)
+	body = rec.Body.String()
+	for _, want := range []string{
+		"netsentry_packet_queue_depth 2",
+		"netsentry_packet_queue_depth_high_water 7",
+	} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("metrics missing %q after lower queue depth:\n%s", want, body)
 		}
 	}
 }

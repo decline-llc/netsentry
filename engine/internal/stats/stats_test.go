@@ -32,6 +32,8 @@ func TestRenderPrometheusIncludesCountersLabelsAndGauges(t *testing.T) {
 	s.IncPacketReceived()
 	s.ObserveMatchDuration(250 * time.Millisecond)
 	s.ObserveAlertWriteDuration(750 * time.Millisecond)
+	s.ObserveQueueDepth(9)
+	s.ObserveQueueDepth(4)
 	s.ObserveAlerts([]*model.Alert{{Severity: model.SeverityCritical}})
 
 	body := RenderPrometheus(s.Snapshot(), map[string]float64{
@@ -60,6 +62,8 @@ func TestRenderPrometheusIncludesCountersLabelsAndGauges(t *testing.T) {
 		`netsentry_alert_write_duration_seconds_bucket{le="+Inf"} 1`,
 		"netsentry_alert_write_duration_seconds_sum 0.75",
 		"netsentry_alert_write_duration_seconds_count 1",
+		"# HELP netsentry_packet_queue_depth_high_water Highest packet queue depth observed by metrics scrapes.",
+		"netsentry_packet_queue_depth_high_water 9",
 		"# HELP netsentry_capture_connected Whether the capture heartbeat is currently fresh.",
 		"netsentry_capture_connected 1",
 		"# HELP netsentry_rules_loaded Current number of loaded rules.",

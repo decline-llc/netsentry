@@ -174,6 +174,8 @@ if metrics.get("netsentry_capture_uds_write_errors") != 0:
     errors.append(f"expected capture_uds_write_errors=0, got {metrics.get('netsentry_capture_uds_write_errors')!r}")
 if metrics.get("netsentry_alert_write_duration_seconds_count", 0) <= 0:
     errors.append("expected alert write duration histogram to record at least one observation")
+if "netsentry_packet_queue_depth_high_water" not in metrics:
+    errors.append("expected packet queue depth high-water metric to be present")
 
 if errors:
     for err in errors:
