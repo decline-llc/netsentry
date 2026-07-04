@@ -48,9 +48,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Receiver shutdown closes single and multiple active Unix socket connections and removes the socket path.
 - Worker panic recovery no longer terminates the worker loop after a single bad packet.
 - Alert aggregation preserves earliest `first_seen`, latest `last_seen`, and latest payload/match fields when older events arrive after newer events in the same aggregation window.
+- Daily-shard alert storage writes cross-day alerts to `netsentry-YYYY-MM-DD.db` files based on each alert timestamp during a running process.
 
 ### Known Gaps
-- Runtime cross-day database rotation is not implemented.
 - WAL JSONL replay and automatic disk-full recovery are not implemented.
 - End-to-end pressure coverage currently includes repeat-pcap runs up to 60,000 packets locally, but realistic pcap corpora are still pending.
 - Longer C fuzz runs with broader seed corpora are still pending.

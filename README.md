@@ -82,7 +82,7 @@ bundle first, then only pushes on version tags or an explicit manual workflow ru
 
 These are v0.1.0 goals, not current behavior:
 
-- Runtime cross-day DB rotation, WAL replay, and automatic disk-full recovery.
+- WAL replay and automatic disk-full recovery.
 - Full Prometheus metric coverage beyond the current process, queue, rule/write latency, alert, storage, worker, and capture heartbeat metrics.
 - Remaining large-corpus query tuning.
 - C-side cJSON serializer and longer fuzz runs with broader seed corpora.

@@ -202,7 +202,7 @@ Reloads rules from `engine.rules_seed_file` and atomically swaps the active rule
 Current limitations:
 
 - Alert pagination, the stable list envelope, exact-match filters, time range filters, MITRE filters, matched-keyword substring filtering, and minimum aggregate-count filtering exist. The SQLite-backed store applies those filters and pagination in SQL, with indexes for common exact/range filters; matched-keyword substring filtering remains a regular SQL substring predicate.
-- Alert storage is SQLite-backed with startup TTL pruning and old daily shard file cleanup. When `engine.db_shard_daily` is enabled, alert queries scan matching `netsentry-YYYY-MM-DD.db` shards and apply the same filters, ordering, and pagination across shards; health and metrics alert counts also sum matching shard files. Runtime cross-day rotation is not implemented yet.
+- Alert storage is SQLite-backed with startup TTL pruning and old daily shard file cleanup. When `engine.db_shard_daily` is enabled, alert writes use each alert timestamp to select `netsentry-YYYY-MM-DD.db`, alert queries scan matching shards and apply the same filters, ordering, and pagination across shards, and health and metrics alert counts also sum matching shard files.
 - Validation, unsupported method, and internal API errors use the unified error envelope.
 - Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk.
 - Optional PSK Bearer authentication protects modifying rule and suppression endpoints when `engine.api_auth_enabled` is true.

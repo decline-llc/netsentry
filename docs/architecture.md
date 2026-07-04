@@ -127,7 +127,7 @@ Planned modules:
 
 - `internal/receiver`: UDS listener, hello validation, heartbeat state. Implemented in the current build; broader Go engine lifecycle integration remains future work.
 - `internal/pipeline`: worker lifecycle and alert flow. Implemented as a single worker in the current build.
-- `internal/alert`: aggregation, SQLite store, indexed SQL-backed alert filtering/pagination, daily-shard cross-file querying/counting, TTL pruning, daily shard pathing, old shard cleanup, payload redaction, and file-backed suppressions. WAL replay remains future work.
+- `internal/alert`: aggregation, SQLite store, indexed SQL-backed alert filtering/pagination, daily-shard timestamp-based writes, cross-file querying/counting, TTL pruning, old shard cleanup, payload redaction, and file-backed suppressions. WAL replay remains future work.
 - `internal/api`: router, pagination request parsing, rule CRUD/reload, suppressions API, PSK auth for mutations, errors, health, audit middleware, and metrics.
 - `internal/stats`: counters and Prometheus text rendering for process, queue, rule, alert, worker, and capture heartbeat metrics.
 
@@ -165,7 +165,7 @@ Current build:
 - SQLite using `modernc.org/sqlite`.
 - UPSERT aggregation by `(rule_id, src_ip, dst_ip, dst_port, window_start)`.
 - Fixed aggregation window from `engine.alert_aggregation_window`.
-- Optional daily shard pathing with `engine.db_shard_daily`, which opens `engine.db_dir/netsentry-YYYY-MM-DD.db` at process start.
+- Optional daily shard pathing with `engine.db_shard_daily`, which writes each alert to `engine.db_dir/netsentry-YYYY-MM-DD.db` based on the alert timestamp.
 - Cross-shard alert querying and alert counting in daily-shard mode; time range filters narrow the shard files scanned before applying the regular SQL filters and API pagination across the merged result.
 - Row-level TTL pruning in the opened database using `engine.alert_retention_days`.
 - Startup cleanup of old `netsentry-YYYY-MM-DD.db` daily shard files and their WAL/SHM sidecars when retention is enabled.
@@ -173,7 +173,6 @@ Current build:
 
 Remaining v0.1.0 storage work:
 
-- Runtime cross-day DB rotation.
 - WAL replay, if the write-ahead JSONL path is kept.
 - Automatic disk-full recovery and a fuller emergency-mode policy.
 
