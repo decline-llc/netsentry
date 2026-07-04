@@ -246,6 +246,29 @@ func TestHealthVerboseReportsDegradedStorage(t *testing.T) {
 	}
 }
 
+func TestHealthVerboseIncludesStorageAvailableBytes(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "netsentry.db")
+	server := NewServer(&fakeStoreWithPath{path: path}, fakeQueue{}, &fakeRules{}, stats.New())
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/health?verbose=true", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	var got struct {
+		Storage struct {
+			AvailableBytes uint64 `json:"available_bytes"`
+		} `json:"storage"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &got); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if got.Storage.AvailableBytes == 0 {
+		t.Fatalf("expected storage available bytes, body = %s", rec.Body.String())
+	}
+}
+
 func TestReadOnlyEndpointsRejectNonGET(t *testing.T) {
 	server := NewServer(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New())
 	for _, path := range []string{"/api/health", "/api/metrics", "/api/alerts"} {

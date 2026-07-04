@@ -148,10 +148,13 @@ if missing:
     errors.append(f"missing expected rule ids: {sorted(missing)}")
 
 engine = health.get("engine", {})
+storage = health.get("storage", {})
 throughput = health.get("throughput", {})
 capture = health.get("capture", {})
 if engine.get("rules_loaded") != 8:
     errors.append(f"expected 8 loaded rules, got {engine.get('rules_loaded')!r}")
+if storage.get("available_bytes", 0) <= 0:
+    errors.append(f"expected storage available_bytes > 0, got {storage.get('available_bytes')!r}")
 if throughput.get("packets_received") != 6:
     errors.append(f"expected 6 packets_received, got {throughput.get('packets_received')!r}")
 if throughput.get("packets_processed") != 6:

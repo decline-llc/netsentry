@@ -164,10 +164,11 @@ type engineHealth struct {
 }
 
 type storageHealth struct {
-	Status      string `json:"status"`
-	Alerts      int    `json:"alerts"`
-	LastError   string `json:"last_error,omitempty"`
-	LastErrorAt string `json:"last_error_at,omitempty"`
+	Status         string  `json:"status"`
+	Alerts         int     `json:"alerts"`
+	AvailableBytes *uint64 `json:"available_bytes,omitempty"`
+	LastError      string  `json:"last_error,omitempty"`
+	LastErrorAt    string  `json:"last_error_at,omitempty"`
 }
 
 type throughputHealth struct {
@@ -206,6 +207,9 @@ func (s *Server) storageHealth(alertCount int) storageHealth {
 	out := storageHealth{
 		Status: "ok",
 		Alerts: alertCount,
+	}
+	if available, ok := s.storageAvailableBytes(); ok {
+		out.AvailableBytes = &available
 	}
 	provider, ok := s.store.(StorageHealthProvider)
 	if !ok {
@@ -291,7 +295,7 @@ func (s *Server) metricsGauges(alertCount int, queueDepth int) map[string]float6
 		"netsentry_rules_loaded":       float64(s.rules.RuleCount()),
 	}
 	if available, ok := s.storageAvailableBytes(); ok {
-		gauges["netsentry_storage_available_bytes"] = available
+		gauges["netsentry_storage_available_bytes"] = float64(available)
 	}
 	if healthy, ok := s.storageHealthyGauge(); ok {
 		gauges["netsentry_storage_healthy"] = healthy
@@ -325,7 +329,7 @@ func (s *Server) storageHealthyGauge() (float64, bool) {
 	return 0, true
 }
 
-func (s *Server) storageAvailableBytes() (float64, bool) {
+func (s *Server) storageAvailableBytes() (uint64, bool) {
 	provider, ok := s.store.(StoragePathProvider)
 	if !ok {
 		return 0, false
@@ -338,7 +342,7 @@ func (s *Server) storageAvailableBytes() (float64, bool) {
 	if err := syscall.Statfs(filepath.Dir(path), &stat); err != nil {
 		return 0, false
 	}
-	return float64(stat.Bavail) * float64(stat.Bsize), true
+	return stat.Bavail * uint64(stat.Bsize), true
 }
 
 type suppressionListResponse struct {
