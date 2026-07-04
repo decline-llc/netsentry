@@ -83,7 +83,7 @@ bundle first, then only pushes on version tags or an explicit manual workflow ru
 These are v0.1.0 goals, not current behavior:
 
 - WAL replay and automatic disk-full recovery.
-- Full Prometheus metric coverage beyond the current process, queue, rule/write latency, alert, storage, worker, and capture heartbeat metrics.
+- Full Prometheus metric coverage beyond the current process, current/high-water queue, rule/write latency, alert, storage, worker, and capture heartbeat metrics.
 - Remaining large-corpus query tuning.
 - C-side cJSON serializer and longer fuzz runs with broader seed corpora.
 - Published registry image for a named release.

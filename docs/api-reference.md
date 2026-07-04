@@ -104,7 +104,7 @@ Query parameters:
 
 ### `GET /api/metrics`
 
-Returns Prometheus text format with process counters, packet queue depth, loaded rules, alert counts, storage availability and health gauges, worker counters, rule match latency buckets, alert write latency buckets, and the latest capture heartbeat state when available.
+Returns Prometheus text format with process counters, current and high-water packet queue depth, loaded rules, alert counts, storage availability and health gauges, worker counters, rule match latency buckets, alert write latency buckets, and the latest capture heartbeat state when available.
 
 ### `GET /api/rules`
 
@@ -249,7 +249,7 @@ Planned endpoints:
 | `GET /api/health` | partial | Minimal and verbose component snapshot responses exist; deeper dependency checks pending. |
 | `GET /api/health?verbose=true` | partial | Capture heartbeat freshness, queue depth, rule count, storage status, and throughput counters exist. |
 | `GET /api/alerts` | partial | SQLite-backed paginated list with exact-match, time range, MITRE, matched-keyword, and aggregate-count filters exists; daily-shard mode queries across matching shard files. |
-| `GET /api/metrics` | partial | Prometheus text output exists for process counters, rule match and alert write latency buckets, queue/rule/alert/storage gauges, worker counters, and capture heartbeat gauges. |
+| `GET /api/metrics` | partial | Prometheus text output exists for process counters, rule match and alert write latency buckets, current/high-water queue depth, rule/alert/storage gauges, worker counters, and capture heartbeat gauges. |
 | `GET /api/rules` | partial | Current rule snapshot listing exists. |
 | `POST /api/rules` | partial | Creates and persists one rule; optional PSK auth exists. |
 | `PUT /api/rules/{id}` | partial | Replaces and persists one rule; optional PSK auth exists. |
