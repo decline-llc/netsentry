@@ -19,7 +19,7 @@ Returns a minimal liveness response by default.
 }
 ```
 
-With `verbose=true`, returns capture heartbeat status, engine queue/rule counts, storage status, and throughput counters. Capture status is `unknown` before the first heartbeat, `ok` while the latest heartbeat is within `engine.health_freshness_limit_seconds`, and `stale` after that limit. Storage status is `ok` by default and becomes `degraded` after SQLite write/query errors until a later successful write or full alert list query clears it.
+With `verbose=true`, returns capture heartbeat status, engine queue/rule counts, storage status and available filesystem bytes when the store path is known, and throughput counters. Capture status is `unknown` before the first heartbeat, `ok` while the latest heartbeat is within `engine.health_freshness_limit_seconds`, and `stale` after that limit. Storage status is `ok` by default and becomes `degraded` after SQLite write/query errors until a later successful write or full alert list query clears it.
 
 ```json
 {
@@ -38,7 +38,8 @@ With `verbose=true`, returns capture heartbeat status, engine queue/rule counts,
   },
   "storage": {
     "status": "ok",
-    "alerts": 5
+    "alerts": 5,
+    "available_bytes": 123456789
   },
   "throughput": {
     "frames_total": 12,
@@ -246,8 +247,8 @@ Planned endpoints:
 
 | Endpoint | Status | Notes |
 | --- | --- | --- |
-| `GET /api/health` | partial | Minimal and verbose component snapshot responses exist; deeper dependency checks pending. |
-| `GET /api/health?verbose=true` | partial | Capture heartbeat freshness, queue depth, rule count, storage status, and throughput counters exist. |
+| `GET /api/health` | partial | Minimal and verbose component snapshot responses exist. |
+| `GET /api/health?verbose=true` | partial | Capture heartbeat freshness, queue depth, rule count, storage status, storage available bytes, and throughput counters exist. |
 | `GET /api/alerts` | partial | SQLite-backed paginated list with exact-match, time range, MITRE, matched-keyword, and aggregate-count filters exists; daily-shard mode queries across matching shard files. |
 | `GET /api/metrics` | partial | Prometheus text output exists for process counters, rule match and alert write latency buckets, current/high-water queue depth, rule/alert/storage gauges, worker counters, and capture heartbeat gauges. |
 | `GET /api/rules` | partial | Current rule snapshot listing exists. |
