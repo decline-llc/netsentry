@@ -314,6 +314,51 @@ func TestStoreResolvesDailyShardPath(t *testing.T) {
 	}
 }
 
+func TestStoreRotatesDailyShardWritesAcrossAlertDates(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	firstDay := time.Date(2026, 6, 27, 23, 59, 0, 0, time.UTC)
+	secondDay := time.Date(2026, 6, 28, 0, 1, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, firstDay)
+	defer store.Close()
+
+	if err := store.WriteBatch(ctx, []*model.Alert{
+		makeAlert(firstDay, "first-day"),
+		makeAlert(secondDay, "second-day"),
+	}); err != nil {
+		t.Fatalf("write cross-day alerts: %v", err)
+	}
+
+	for _, date := range []string{"2026-06-27", "2026-06-28"} {
+		path := filepath.Join(dir, "netsentry-"+date+".db")
+		if !fileExists(path) {
+			t.Fatalf("expected daily shard %s to exist", path)
+		}
+	}
+	if store.Path() != filepath.Join(dir, "netsentry-2026-06-27.db") {
+		t.Fatalf("store path changed after rotation: %q", store.Path())
+	}
+
+	alerts, total, err := store.Query(ctx, Query{Limit: 10})
+	if err != nil {
+		t.Fatalf("query rotated daily shards: %v", err)
+	}
+	if total != 2 || len(alerts) != 2 {
+		t.Fatalf("query returned total=%d len=%d, want 2/2", total, len(alerts))
+	}
+	if alerts[0].MatchedKeyword != "second-day" || alerts[1].MatchedKeyword != "first-day" {
+		t.Fatalf("alerts not ordered across rotated shards: %+v", alerts)
+	}
+
+	count, err := store.Count(ctx)
+	if err != nil {
+		t.Fatalf("count rotated daily shards: %v", err)
+	}
+	if count != 2 {
+		t.Fatalf("count = %d, want 2", count)
+	}
+}
+
 func TestStoreQueriesAcrossDailyShards(t *testing.T) {
 	ctx := context.Background()
 	dir := t.TempDir()

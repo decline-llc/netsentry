@@ -35,6 +35,8 @@ type Store struct {
 	path              string
 	dir               string
 	dailyShard        bool
+	journalMode       string
+	busyTimeoutMS     int
 	aggregationWindow time.Duration
 	retentionDays     int
 	now               func() time.Time
@@ -95,6 +97,8 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 		path:              dbPath,
 		dir:               defaultDBDir(opts.Dir),
 		dailyShard:        opts.DailyShard,
+		journalMode:       opts.JournalMode,
+		busyTimeoutMS:     opts.BusyTimeoutMS,
 		aggregationWindow: opts.AggregationWindow,
 		retentionDays:     opts.RetentionDays,
 		now:               clock(opts.Now),
@@ -195,6 +199,31 @@ func (s *Store) init(ctx context.Context, opts Options) error {
 	return nil
 }
 
+func (s *Store) openShard(ctx context.Context, path string) (*sql.DB, error) {
+	if err := os.MkdirAll(filepath.Dir(path), 0o750); err != nil {
+		return nil, fmt.Errorf("create sqlite alert shard dir: %w", err)
+	}
+	db, err := sql.Open("sqlite", path)
+	if err != nil {
+		return nil, fmt.Errorf("open sqlite alert shard: %w", err)
+	}
+	db.SetMaxOpenConns(1)
+	opts := Options{
+		JournalMode:   s.journalMode,
+		BusyTimeoutMS: s.busyTimeoutMS,
+	}
+	shard := &Store{db: db}
+	if err := shard.init(ctx, opts); err != nil {
+		_ = db.Close()
+		return nil, err
+	}
+	return db, nil
+}
+
+func (s *Store) shardPathFor(ts time.Time) string {
+	return filepath.Join(s.dir, fmt.Sprintf("netsentry-%s.db", ts.UTC().Format("2006-01-02")))
+}
+
 const schemaSQL = `
 CREATE TABLE IF NOT EXISTS alerts (
     id TEXT PRIMARY KEY,
@@ -267,7 +296,59 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 	if len(alerts) == 0 {
 		return nil
 	}
-	tx, err := s.db.BeginTx(ctx, nil)
+	now := s.now()
+	if !s.dailyShard {
+		if err := s.writeBatchToDB(ctx, s.db, alerts, now); err != nil {
+			return err
+		}
+		s.markHealthy()
+		return nil
+	}
+
+	byPath := map[string][]*model.Alert{}
+	for _, alert := range alerts {
+		if alert == nil {
+			continue
+		}
+		ts := alert.Timestamp
+		if ts.IsZero() {
+			ts = now
+		}
+		path := s.shardPathFor(ts)
+		byPath[path] = append(byPath[path], alert)
+	}
+	for path, shardAlerts := range byPath {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		db := s.db
+		closeDB := false
+		if path != s.path {
+			var err error
+			db, err = s.openShard(ctx, path)
+			if err != nil {
+				s.markDegraded(err)
+				return fmt.Errorf("open alert shard %s: %w", path, err)
+			}
+			closeDB = true
+		}
+		err := s.writeBatchToDB(ctx, db, shardAlerts, now)
+		if closeDB {
+			if closeErr := db.Close(); err == nil && closeErr != nil {
+				err = fmt.Errorf("close alert shard %s: %w", path, closeErr)
+			}
+		}
+		if err != nil {
+			s.markDegraded(err)
+			return fmt.Errorf("write alert shard %s: %w", path, err)
+		}
+	}
+	s.markHealthy()
+	return nil
+}
+
+func (s *Store) writeBatchToDB(ctx context.Context, db *sql.DB, alerts []*model.Alert, now time.Time) error {
+	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
 		s.markDegraded(err)
 		return fmt.Errorf("begin alert transaction: %w", err)
@@ -280,7 +361,6 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 	}
 	defer stmt.Close()
 
-	now := time.Now().UTC()
 	for _, alert := range alerts {
 		if alert == nil {
 			continue
@@ -317,7 +397,6 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 		s.markDegraded(err)
 		return fmt.Errorf("commit alert transaction: %w", err)
 	}
-	s.markHealthy()
 	return nil
 }
 
