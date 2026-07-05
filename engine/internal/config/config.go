@@ -29,6 +29,7 @@ type EngineConfig struct {
 	DBShardDaily                bool     `yaml:"db_shard_daily"`
 	DBJournalMode               string   `yaml:"db_journal_mode"`
 	DBBusyTimeout               int      `yaml:"db_busy_timeout"`
+	AlertRecoveryLogPath        string   `yaml:"alert_recovery_log_path"`
 	RulesSeedFile               string   `yaml:"rules_seed_file"`
 	SuppressionsFile            string   `yaml:"suppressions_file"`
 	APIPort                     int      `yaml:"api_port"`
@@ -115,6 +116,7 @@ func defaults() *Config {
 			DBShardDaily:                false,
 			DBJournalMode:               "WAL",
 			DBBusyTimeout:               5000,
+			AlertRecoveryLogPath:        "",
 			RulesSeedFile:               "configs/rules.json",
 			SuppressionsFile:            "configs/suppressions.json",
 			APIPort:                     8080,

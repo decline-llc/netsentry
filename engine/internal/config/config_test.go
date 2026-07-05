@@ -20,6 +20,9 @@ func TestLoadRepositoryConfigFile(t *testing.T) {
 	if cfg.Engine.SuppressionsFile == "" {
 		t.Fatal("expected engine.suppressions_file to be configured")
 	}
+	if cfg.Engine.AlertRecoveryLogPath != "" {
+		t.Fatalf("repository config should use default recovery log path, got %q", cfg.Engine.AlertRecoveryLogPath)
+	}
 	if cfg.Engine.PprofEnabled {
 		t.Fatal("repository config should not enable pprof by default")
 	}

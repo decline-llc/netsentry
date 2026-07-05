@@ -201,6 +201,131 @@ func TestStoreQueryFiltersCountsAndPagesAlerts(t *testing.T) {
 	}
 }
 
+func TestStoreReplaysRecoveryLogIdempotently(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	dbPath := filepath.Join(dir, "alerts.db")
+	recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+	now := time.Date(2026, 7, 4, 12, 0, 0, 0, time.UTC)
+	logged := normalizeAlerts([]*model.Alert{makeAlert(now, "replayed")}, now, time.Minute)
+
+	logOnly := &Store{recoveryLogPath: recoveryLogPath}
+	if err := logOnly.appendRecoveryLog(logged); err != nil {
+		t.Fatalf("append recovery log: %v", err)
+	}
+
+	store, err := Open(ctx, Options{
+		Path:              dbPath,
+		RecoveryLogPath:   recoveryLogPath,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now: func() time.Time {
+			return now
+		},
+	})
+	if err != nil {
+		t.Fatalf("open store with recovery log: %v", err)
+	}
+	listed, err := store.List(ctx)
+	if err != nil {
+		t.Fatalf("list replayed alerts: %v", err)
+	}
+	if len(listed) != 1 || listed[0].MatchedKeyword != "replayed" || listed[0].AggregatedCount != 1 {
+		t.Fatalf("unexpected replayed alerts: %+v", listed)
+	}
+	if info, err := os.Stat(recoveryLogPath); err != nil || info.Size() != 0 {
+		t.Fatalf("recovery log should be truncated after replay, info=%+v err=%v", info, err)
+	}
+	if err := store.Close(); err != nil {
+		t.Fatalf("close store: %v", err)
+	}
+
+	if err := logOnly.appendRecoveryLog(logged); err != nil {
+		t.Fatalf("append duplicate recovery log: %v", err)
+	}
+	store, err = Open(ctx, Options{
+		Path:              dbPath,
+		RecoveryLogPath:   recoveryLogPath,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now: func() time.Time {
+			return now
+		},
+	})
+	if err != nil {
+		t.Fatalf("reopen store with duplicate recovery log: %v", err)
+	}
+	defer store.Close()
+	listed, err = store.List(ctx)
+	if err != nil {
+		t.Fatalf("list after duplicate replay: %v", err)
+	}
+	if len(listed) != 1 || listed[0].AggregatedCount != 1 {
+		t.Fatalf("duplicate replay should not increment aggregate: %+v", listed)
+	}
+}
+
+func TestStoreWriteBatchPersistsExistingRecoveryLogBeforeTruncate(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+	now := time.Date(2026, 7, 4, 12, 0, 0, 0, time.UTC)
+	oldAlert := makeAlert(now, "old-pending")
+	oldLogged := normalizeAlerts([]*model.Alert{oldAlert}, now, time.Minute)
+
+	store, err := Open(ctx, Options{
+		Path:              filepath.Join(dir, "alerts.db"),
+		RecoveryLogPath:   recoveryLogPath,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now: func() time.Time {
+			return now
+		},
+	})
+	if err != nil {
+		t.Fatalf("open store: %v", err)
+	}
+	defer store.Close()
+
+	if err := store.appendRecoveryLog(oldLogged); err != nil {
+		t.Fatalf("append old pending recovery log: %v", err)
+	}
+	if err := store.WriteBatch(ctx, []*model.Alert{makeAlert(now.Add(10*time.Second), "new-current")}); err != nil {
+		t.Fatalf("write current alert: %v", err)
+	}
+	listed, err := store.List(ctx)
+	if err != nil {
+		t.Fatalf("list alerts: %v", err)
+	}
+	if len(listed) != 1 || listed[0].AggregatedCount != 2 || listed[0].MatchedKeyword != "new-current" {
+		t.Fatalf("expected old pending and new current alerts to persist before truncate: %+v", listed)
+	}
+}
+
+func TestStoreWritesDistinctEventsInSameAggregationWindow(t *testing.T) {
+	ctx := context.Background()
+	store := openTestStore(t, 60*time.Second)
+	defer store.Close()
+
+	base := time.Date(2026, 7, 4, 12, 0, 0, 0, time.UTC)
+	if err := store.WriteBatch(ctx, []*model.Alert{
+		makeAlert(base, "first"),
+		makeAlert(base.Add(10*time.Second), "second"),
+	}); err != nil {
+		t.Fatalf("write alerts: %v", err)
+	}
+	listed, err := store.List(ctx)
+	if err != nil {
+		t.Fatalf("list alerts: %v", err)
+	}
+	if len(listed) != 1 || listed[0].AggregatedCount != 2 {
+		t.Fatalf("same-window distinct events should aggregate to count 2: %+v", listed)
+	}
+}
+
 func TestStoreRejectsUnsupportedJournalMode(t *testing.T) {
 	ctx := context.Background()
 	store, err := Open(ctx, Options{

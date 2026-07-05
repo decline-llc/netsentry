@@ -1,8 +1,12 @@
 package alert
 
 import (
+	"bufio"
 	"context"
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -26,6 +30,7 @@ type Options struct {
 	BusyTimeoutMS     int
 	AggregationWindow time.Duration
 	RetentionDays     int
+	RecoveryLogPath   string
 	Now               func() time.Time
 }
 
@@ -39,6 +44,7 @@ type Store struct {
 	busyTimeoutMS     int
 	aggregationWindow time.Duration
 	retentionDays     int
+	recoveryLogPath   string
 	now               func() time.Time
 	healthMu          sync.RWMutex
 	health            StorageHealth
@@ -101,10 +107,15 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 		busyTimeoutMS:     opts.BusyTimeoutMS,
 		aggregationWindow: opts.AggregationWindow,
 		retentionDays:     opts.RetentionDays,
+		recoveryLogPath:   resolveRecoveryLogPath(opts, dbPath),
 		now:               clock(opts.Now),
 		health:            StorageHealth{Status: "ok"},
 	}
 	if err := store.init(ctx, opts); err != nil {
+		_ = db.Close()
+		return nil, err
+	}
+	if err := store.ReplayRecoveryLog(ctx); err != nil {
 		_ = db.Close()
 		return nil, err
 	}
@@ -132,6 +143,16 @@ func resolveDBPath(opts Options) string {
 		now = opts.Now().UTC()
 	}
 	return filepath.Join(defaultDBDir(opts.Dir), fmt.Sprintf("netsentry-%s.db", now.Format("2006-01-02")))
+}
+
+func resolveRecoveryLogPath(opts Options, dbPath string) string {
+	if opts.RecoveryLogPath != "" {
+		return opts.RecoveryLogPath
+	}
+	if opts.DailyShard {
+		return filepath.Join(defaultDBDir(opts.Dir), "netsentry-alerts-recovery.jsonl")
+	}
+	return dbPath + ".alerts.jsonl"
 }
 
 func defaultDBDir(dir string) string {
@@ -249,6 +270,11 @@ CREATE TABLE IF NOT EXISTS alerts (
     UNIQUE(rule_id, src_ip, dst_ip, dst_port, window_start)
 );
 
+CREATE TABLE IF NOT EXISTS alert_events (
+    event_id TEXT PRIMARY KEY,
+    created_at TEXT NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_alerts_last_seen ON alerts(last_seen DESC);
 CREATE INDEX IF NOT EXISTS idx_alerts_rule_window ON alerts(rule_id, window_start);
 CREATE INDEX IF NOT EXISTS idx_alerts_rule_last_seen ON alerts(rule_id, last_seen DESC);
@@ -288,6 +314,10 @@ ON CONFLICT(rule_id, src_ip, dst_ip, dst_port, window_start) DO UPDATE SET
     updated_at = excluded.updated_at;
 `
 
+const insertAlertEventSQL = `
+INSERT OR IGNORE INTO alert_events (event_id, created_at) VALUES (?, ?)
+`
+
 // WriteBatch inserts alerts and aggregates repeats in the configured window.
 func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 	if err := ctx.Err(); err != nil {
@@ -297,8 +327,25 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 		return nil
 	}
 	now := s.now()
+	normalized := normalizeAlerts(alerts, now, s.aggregationWindow)
+	if len(normalized) == 0 {
+		return nil
+	}
+	if err := s.appendRecoveryLog(normalized); err != nil {
+		s.markDegraded(err)
+		return err
+	}
+	pending, err := s.readRecoveryLog()
+	if err != nil {
+		s.markDegraded(err)
+		return err
+	}
 	if !s.dailyShard {
-		if err := s.writeBatchToDB(ctx, s.db, alerts, now); err != nil {
+		if err := s.writeBatchToDB(ctx, s.db, pending, now); err != nil {
+			return err
+		}
+		if err := s.truncateRecoveryLog(); err != nil {
+			s.markDegraded(err)
 			return err
 		}
 		s.markHealthy()
@@ -306,15 +353,8 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 	}
 
 	byPath := map[string][]*model.Alert{}
-	for _, alert := range alerts {
-		if alert == nil {
-			continue
-		}
-		ts := alert.Timestamp
-		if ts.IsZero() {
-			ts = now
-		}
-		path := s.shardPathFor(ts)
+	for _, alert := range pending {
+		path := s.shardPathFor(alert.Timestamp)
 		byPath[path] = append(byPath[path], alert)
 	}
 	for path, shardAlerts := range byPath {
@@ -343,6 +383,10 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 			return fmt.Errorf("write alert shard %s: %w", path, err)
 		}
 	}
+	if err := s.truncateRecoveryLog(); err != nil {
+		s.markDegraded(err)
+		return err
+	}
 	s.markHealthy()
 	return nil
 }
@@ -360,12 +404,34 @@ func (s *Store) writeBatchToDB(ctx context.Context, db *sql.DB, alerts []*model.
 		return fmt.Errorf("prepare alert upsert: %w", err)
 	}
 	defer stmt.Close()
+	eventStmt, err := tx.PrepareContext(ctx, insertAlertEventSQL)
+	if err != nil {
+		_ = tx.Rollback()
+		s.markDegraded(err)
+		return fmt.Errorf("prepare alert event insert: %w", err)
+	}
+	defer eventStmt.Close()
 
 	for _, alert := range alerts {
 		if alert == nil {
 			continue
 		}
 		normalized := normalizeAlert(alert, now, s.aggregationWindow)
+		result, err := eventStmt.ExecContext(ctx, normalized.EventID, formatTime(now))
+		if err != nil {
+			_ = tx.Rollback()
+			s.markDegraded(err)
+			return fmt.Errorf("insert alert event %s: %w", normalized.EventID, err)
+		}
+		inserted, err := result.RowsAffected()
+		if err != nil {
+			_ = tx.Rollback()
+			s.markDegraded(err)
+			return fmt.Errorf("check alert event insert %s: %w", normalized.EventID, err)
+		}
+		if inserted == 0 {
+			continue
+		}
 		if _, err := stmt.ExecContext(ctx,
 			normalized.ID,
 			normalized.EventID,
@@ -400,6 +466,18 @@ func (s *Store) writeBatchToDB(ctx context.Context, db *sql.DB, alerts []*model.
 	return nil
 }
 
+func normalizeAlerts(alerts []*model.Alert, now time.Time, window time.Duration) []*model.Alert {
+	normalized := make([]*model.Alert, 0, len(alerts))
+	for _, alert := range alerts {
+		if alert == nil {
+			continue
+		}
+		next := normalizeAlert(alert, now, window)
+		normalized = append(normalized, &next)
+	}
+	return normalized
+}
+
 func normalizeAlert(alert *model.Alert, now time.Time, window time.Duration) model.Alert {
 	out := *alert
 	if out.Timestamp.IsZero() {
@@ -411,8 +489,151 @@ func normalizeAlert(alert *model.Alert, now time.Time, window time.Duration) mod
 	out.LastSeen = out.Timestamp
 	out.AggregatedCount = 1
 	out.ID = fmt.Sprintf("%s-%s-%s-%d-%d", out.RuleID, out.SrcIP, out.DstIP, out.DstPort, out.WindowStart.Unix())
-	out.EventID = out.ID
+	if strings.TrimSpace(out.EventID) == "" {
+		out.EventID = alertEventID(out)
+	}
 	return out
+}
+
+func alertEventID(alert model.Alert) string {
+	sum := sha256.Sum256([]byte(fmt.Sprintf("%s\x00%s\x00%s\x00%d\x00%s\x00%s\x00%s\x00%d",
+		alert.RuleID,
+		alert.SrcIP,
+		alert.DstIP,
+		alert.DstPort,
+		alert.Protocol,
+		alert.MatchedKeyword,
+		alert.Timestamp.Format(time.RFC3339Nano),
+		alert.Timestamp.UnixNano(),
+	)))
+	return "evt_" + hex.EncodeToString(sum[:16])
+}
+
+func (s *Store) appendRecoveryLog(alerts []*model.Alert) error {
+	if s.recoveryLogPath == "" || len(alerts) == 0 {
+		return nil
+	}
+	if err := os.MkdirAll(filepath.Dir(s.recoveryLogPath), 0o750); err != nil {
+		return fmt.Errorf("create alert recovery log dir: %w", err)
+	}
+	file, err := os.OpenFile(s.recoveryLogPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o600)
+	if err != nil {
+		return fmt.Errorf("open alert recovery log: %w", err)
+	}
+	enc := json.NewEncoder(file)
+	for _, alert := range alerts {
+		if err := enc.Encode(alert); err != nil {
+			_ = file.Close()
+			return fmt.Errorf("write alert recovery log: %w", err)
+		}
+	}
+	if err := file.Sync(); err != nil {
+		_ = file.Close()
+		return fmt.Errorf("sync alert recovery log: %w", err)
+	}
+	if err := file.Close(); err != nil {
+		return fmt.Errorf("close alert recovery log: %w", err)
+	}
+	return nil
+}
+
+func (s *Store) readRecoveryLog() ([]*model.Alert, error) {
+	if s.recoveryLogPath == "" {
+		return nil, nil
+	}
+	file, err := os.Open(s.recoveryLogPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("open alert recovery log: %w", err)
+	}
+	defer file.Close()
+
+	var alerts []*model.Alert
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		var alert model.Alert
+		if err := json.Unmarshal(scanner.Bytes(), &alert); err != nil {
+			return nil, fmt.Errorf("decode alert recovery log: %w", err)
+		}
+		alerts = append(alerts, &alert)
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, fmt.Errorf("read alert recovery log: %w", err)
+	}
+	return alerts, nil
+}
+
+// ReplayRecoveryLog restores alert writes that were durably logged before a
+// previous process exited. Existing event IDs are skipped, so replay is safe to
+// repeat after SQLite committed but the recovery log was not truncated.
+func (s *Store) ReplayRecoveryLog(ctx context.Context) error {
+	alerts, err := s.readRecoveryLog()
+	if err != nil {
+		return err
+	}
+	if len(alerts) == 0 {
+		return s.truncateRecoveryLog()
+	}
+	now := s.now()
+	if !s.dailyShard {
+		if err := s.writeBatchToDB(ctx, s.db, alerts, now); err != nil {
+			return err
+		}
+		return s.truncateRecoveryLog()
+	}
+	byPath := map[string][]*model.Alert{}
+	for _, alert := range alerts {
+		if alert == nil {
+			continue
+		}
+		ts := alert.Timestamp
+		if ts.IsZero() {
+			ts = now
+		}
+		path := s.shardPathFor(ts)
+		byPath[path] = append(byPath[path], alert)
+	}
+	for path, shardAlerts := range byPath {
+		db := s.db
+		closeDB := false
+		if path != s.path {
+			var err error
+			db, err = s.openShard(ctx, path)
+			if err != nil {
+				return fmt.Errorf("open alert shard %s for recovery replay: %w", path, err)
+			}
+			closeDB = true
+		}
+		err := s.writeBatchToDB(ctx, db, shardAlerts, now)
+		if closeDB {
+			if closeErr := db.Close(); err == nil && closeErr != nil {
+				err = fmt.Errorf("close alert shard %s after recovery replay: %w", path, closeErr)
+			}
+		}
+		if err != nil {
+			return fmt.Errorf("replay alert shard %s: %w", path, err)
+		}
+	}
+	return s.truncateRecoveryLog()
+}
+
+func (s *Store) truncateRecoveryLog() error {
+	if s.recoveryLogPath == "" {
+		return nil
+	}
+	if err := os.MkdirAll(filepath.Dir(s.recoveryLogPath), 0o750); err != nil {
+		return fmt.Errorf("create alert recovery log dir: %w", err)
+	}
+	file, err := os.OpenFile(s.recoveryLogPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o600)
+	if err != nil {
+		return fmt.Errorf("truncate alert recovery log: %w", err)
+	}
+	if err := file.Close(); err != nil {
+		return fmt.Errorf("close truncated alert recovery log: %w", err)
+	}
+	return nil
 }
 
 // List returns alerts ordered by most recent activity.

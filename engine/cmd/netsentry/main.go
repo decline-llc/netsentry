@@ -75,6 +75,7 @@ func main() {
 		BusyTimeoutMS:     cfg.Engine.DBBusyTimeout,
 		AggregationWindow: time.Duration(cfg.Engine.AlertAggregationWindow) * time.Second,
 		RetentionDays:     cfg.Engine.AlertRetentionDays,
+		RecoveryLogPath:   cfg.Engine.AlertRecoveryLogPath,
 	})
 	if err != nil {
 		logger.Fatal("open alert store", zap.Error(err))
