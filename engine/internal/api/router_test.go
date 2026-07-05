@@ -246,6 +246,31 @@ func TestHealthVerboseReportsDegradedStorage(t *testing.T) {
 	}
 }
 
+func TestHealthVerboseReportsEmergencyStorage(t *testing.T) {
+	store := &fakeStore{
+		alerts: []*model.Alert{{RuleID: "rule-1"}},
+		health: alert.StorageHealth{
+			Status:      "emergency",
+			LastError:   "database or disk is full",
+			LastErrorAt: time.Date(2026, 7, 5, 12, 0, 0, 0, time.UTC),
+		},
+	}
+	server := NewServer(store, fakeQueue{}, &fakeRules{}, stats.New())
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/health?verbose=true", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	body := rec.Body.String()
+	for _, want := range []string{`"status":"degraded"`, `"storage":{"status":"emergency"`, `"last_error":"database or disk is full"`} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("response missing %q: %s", want, body)
+		}
+	}
+}
+
 func TestHealthVerboseIncludesStorageAvailableBytes(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "netsentry.db")
 	server := NewServer(&fakeStoreWithPath{path: path}, fakeQueue{}, &fakeRules{}, stats.New())

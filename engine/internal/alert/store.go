@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -14,12 +15,15 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	_ "modernc.org/sqlite"
 
 	"github.com/decline-llc/netsentry/pkg/model"
 )
+
+var ErrStorageEmergency = errors.New("alert storage is in emergency mode; clear disk/storage fault and restart NetSentry")
 
 // Options controls the SQLite alert store.
 type Options struct {
@@ -182,6 +186,9 @@ func (s *Store) Health() StorageHealth {
 func (s *Store) markHealthy() {
 	s.healthMu.Lock()
 	defer s.healthMu.Unlock()
+	if s.health.Status == "emergency" {
+		return
+	}
 	s.health = StorageHealth{Status: "ok"}
 }
 
@@ -196,6 +203,71 @@ func (s *Store) markDegraded(err error) {
 		LastError:   err.Error(),
 		LastErrorAt: s.now(),
 	}
+}
+
+func (s *Store) markStorageError(err error) {
+	if err == nil {
+		return
+	}
+	if isEmergencyStorageError(err) {
+		s.markEmergency(err)
+		return
+	}
+	s.markDegraded(err)
+}
+
+func (s *Store) markEmergency(err error) {
+	if err == nil {
+		return
+	}
+	s.healthMu.Lock()
+	defer s.healthMu.Unlock()
+	s.health = StorageHealth{
+		Status:      "emergency",
+		LastError:   err.Error(),
+		LastErrorAt: s.now(),
+	}
+}
+
+func (s *Store) emergencyErr() error {
+	s.healthMu.RLock()
+	defer s.healthMu.RUnlock()
+	if s.health.Status != "emergency" {
+		return nil
+	}
+	if s.health.LastError == "" {
+		return ErrStorageEmergency
+	}
+	return fmt.Errorf("%w: %s", ErrStorageEmergency, s.health.LastError)
+}
+
+func isEmergencyStorageError(err error) bool {
+	for _, target := range []error{
+		syscall.ENOSPC,
+		syscall.EDQUOT,
+		syscall.EROFS,
+		syscall.EIO,
+	} {
+		if errors.Is(err, target) {
+			return true
+		}
+	}
+	msg := strings.ToLower(err.Error())
+	for _, marker := range []string{
+		"sql logic error: database or disk is full",
+		"database or disk is full",
+		"sqlite_full",
+		"readonly database",
+		"attempt to write a readonly database",
+		"read-only file system",
+		"disk i/o error",
+		"sqlite_ioerr",
+	} {
+		if strings.Contains(msg, marker) {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *Store) init(ctx context.Context, opts Options) error {
@@ -332,12 +404,15 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 		return nil
 	}
 	if err := s.appendRecoveryLog(normalized); err != nil {
-		s.markDegraded(err)
+		s.markStorageError(err)
 		return err
 	}
 	pending, err := s.readRecoveryLog()
 	if err != nil {
-		s.markDegraded(err)
+		s.markStorageError(err)
+		return err
+	}
+	if err := s.emergencyErr(); err != nil {
 		return err
 	}
 	if !s.dailyShard {
@@ -345,7 +420,7 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 			return err
 		}
 		if err := s.truncateRecoveryLog(); err != nil {
-			s.markDegraded(err)
+			s.markStorageError(err)
 			return err
 		}
 		s.markHealthy()
@@ -367,7 +442,7 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 			var err error
 			db, err = s.openShard(ctx, path)
 			if err != nil {
-				s.markDegraded(err)
+				s.markStorageError(err)
 				return fmt.Errorf("open alert shard %s: %w", path, err)
 			}
 			closeDB = true
@@ -379,12 +454,12 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 			}
 		}
 		if err != nil {
-			s.markDegraded(err)
+			s.markStorageError(err)
 			return fmt.Errorf("write alert shard %s: %w", path, err)
 		}
 	}
 	if err := s.truncateRecoveryLog(); err != nil {
-		s.markDegraded(err)
+		s.markStorageError(err)
 		return err
 	}
 	s.markHealthy()
@@ -394,20 +469,20 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 func (s *Store) writeBatchToDB(ctx context.Context, db *sql.DB, alerts []*model.Alert, now time.Time) error {
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
-		s.markDegraded(err)
+		s.markStorageError(err)
 		return fmt.Errorf("begin alert transaction: %w", err)
 	}
 	stmt, err := tx.PrepareContext(ctx, upsertAlertSQL)
 	if err != nil {
 		_ = tx.Rollback()
-		s.markDegraded(err)
+		s.markStorageError(err)
 		return fmt.Errorf("prepare alert upsert: %w", err)
 	}
 	defer stmt.Close()
 	eventStmt, err := tx.PrepareContext(ctx, insertAlertEventSQL)
 	if err != nil {
 		_ = tx.Rollback()
-		s.markDegraded(err)
+		s.markStorageError(err)
 		return fmt.Errorf("prepare alert event insert: %w", err)
 	}
 	defer eventStmt.Close()
@@ -420,13 +495,13 @@ func (s *Store) writeBatchToDB(ctx context.Context, db *sql.DB, alerts []*model.
 		result, err := eventStmt.ExecContext(ctx, normalized.EventID, formatTime(now))
 		if err != nil {
 			_ = tx.Rollback()
-			s.markDegraded(err)
+			s.markStorageError(err)
 			return fmt.Errorf("insert alert event %s: %w", normalized.EventID, err)
 		}
 		inserted, err := result.RowsAffected()
 		if err != nil {
 			_ = tx.Rollback()
-			s.markDegraded(err)
+			s.markStorageError(err)
 			return fmt.Errorf("check alert event insert %s: %w", normalized.EventID, err)
 		}
 		if inserted == 0 {
@@ -455,12 +530,12 @@ func (s *Store) writeBatchToDB(ctx context.Context, db *sql.DB, alerts []*model.
 			formatTime(now),
 		); err != nil {
 			_ = tx.Rollback()
-			s.markDegraded(err)
+			s.markStorageError(err)
 			return fmt.Errorf("upsert alert %s: %w", normalized.RuleID, err)
 		}
 	}
 	if err := tx.Commit(); err != nil {
-		s.markDegraded(err)
+		s.markStorageError(err)
 		return fmt.Errorf("commit alert transaction: %w", err)
 	}
 	return nil
@@ -647,7 +722,7 @@ FROM alerts
 ORDER BY last_seen DESC, id ASC
 LIMIT 1000`)
 	if err != nil {
-		s.markDegraded(err)
+		s.markStorageError(err)
 		return nil, fmt.Errorf("list alerts: %w", err)
 	}
 	defer rows.Close()
@@ -661,7 +736,7 @@ LIMIT 1000`)
 		alerts = append(alerts, alert)
 	}
 	if err := rows.Err(); err != nil {
-		s.markDegraded(err)
+		s.markStorageError(err)
 		return nil, fmt.Errorf("iterate alerts: %w", err)
 	}
 	s.markHealthy()
@@ -682,7 +757,7 @@ func (s *Store) Query(ctx context.Context, query Query) ([]*model.Alert, int, er
 	}
 	alerts, total, err := queryAlertsDB(ctx, s.db, query)
 	if err != nil {
-		s.markDegraded(err)
+		s.markStorageError(err)
 		return nil, 0, err
 	}
 	s.markHealthy()
@@ -734,7 +809,7 @@ LIMIT ? OFFSET ?`, listArgs...)
 func (s *Store) queryDailyShards(ctx context.Context, query Query) ([]*model.Alert, int, error) {
 	paths, err := s.alertShardPaths(ctx, query)
 	if err != nil {
-		s.markDegraded(err)
+		s.markStorageError(err)
 		return nil, 0, err
 	}
 
@@ -757,7 +832,7 @@ func (s *Store) queryDailyShards(ctx context.Context, query Query) ([]*model.Ale
 		} else {
 			db, openErr := sql.Open("sqlite", path)
 			if openErr != nil {
-				s.markDegraded(openErr)
+				s.markStorageError(openErr)
 				return nil, 0, fmt.Errorf("open alert shard %s: %w", path, openErr)
 			}
 			db.SetMaxOpenConns(1)
@@ -768,7 +843,7 @@ func (s *Store) queryDailyShards(ctx context.Context, query Query) ([]*model.Ale
 			}
 		}
 		if err != nil {
-			s.markDegraded(err)
+			s.markStorageError(err)
 			return nil, 0, fmt.Errorf("query alert shard %s: %w", path, err)
 		}
 		total += count
@@ -908,7 +983,7 @@ func (s *Store) Count(ctx context.Context) (int, error) {
 	if !s.dailyShard {
 		count, err := countAlertsDB(ctx, s.db)
 		if err != nil {
-			s.markDegraded(err)
+			s.markStorageError(err)
 			return 0, err
 		}
 		return count, nil
@@ -916,7 +991,7 @@ func (s *Store) Count(ctx context.Context) (int, error) {
 
 	paths, err := s.alertShardPaths(ctx, Query{})
 	if err != nil {
-		s.markDegraded(err)
+		s.markStorageError(err)
 		return 0, err
 	}
 	total := 0
@@ -940,7 +1015,7 @@ func (s *Store) Count(ctx context.Context) (int, error) {
 			}
 		}
 		if err != nil {
-			s.markDegraded(err)
+			s.markStorageError(err)
 			return 0, fmt.Errorf("count alert shard %s: %w", path, err)
 		}
 		total += count

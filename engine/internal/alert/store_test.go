@@ -2,8 +2,10 @@ package alert
 
 import (
 	"context"
+	"errors"
 	"os"
 	"path/filepath"
+	"syscall"
 	"testing"
 	"time"
 
@@ -380,6 +382,91 @@ func TestStoreHealthMarksDegradedAndRecovers(t *testing.T) {
 	health = store.Health()
 	if health.Status != "ok" || health.LastError != "" || !health.LastErrorAt.IsZero() {
 		t.Fatalf("unexpected recovered health: %+v", health)
+	}
+}
+
+func TestStoreClassifiesEmergencyStorageErrors(t *testing.T) {
+	for _, err := range []error{
+		syscall.ENOSPC,
+		syscall.EDQUOT,
+		syscall.EROFS,
+		syscall.EIO,
+		errors.New("constraint failed: SQLITE_FULL: database or disk is full"),
+		errors.New("attempt to write a readonly database"),
+		errors.New("disk I/O error"),
+	} {
+		if !isEmergencyStorageError(err) {
+			t.Fatalf("expected emergency classification for %v", err)
+		}
+	}
+	if isEmergencyStorageError(os.ErrPermission) {
+		t.Fatal("plain permission errors should stay degraded, not emergency")
+	}
+}
+
+func TestStoreEmergencyModePersistsRecoveryLogUntilRestart(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	dbPath := filepath.Join(dir, "alerts.db")
+	recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+	now := time.Date(2026, 7, 5, 10, 0, 0, 0, time.UTC)
+	store, err := Open(ctx, Options{
+		Path:              dbPath,
+		RecoveryLogPath:   recoveryLogPath,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now: func() time.Time {
+			return now
+		},
+	})
+	if err != nil {
+		t.Fatalf("open store: %v", err)
+	}
+
+	store.markStorageError(syscall.ENOSPC)
+	if _, err := store.List(ctx); err != nil {
+		t.Fatalf("list alerts while emergency: %v", err)
+	}
+	health := store.Health()
+	if health.Status != "emergency" || health.LastError == "" || health.LastErrorAt.IsZero() {
+		t.Fatalf("expected emergency health to persist after successful read: %+v", health)
+	}
+	if err := store.db.Close(); err != nil {
+		t.Fatalf("close db before emergency write: %v", err)
+	}
+
+	err = store.WriteBatch(ctx, []*model.Alert{makeAlert(now, "pending-emergency")})
+	if !errors.Is(err, ErrStorageEmergency) {
+		t.Fatalf("write in emergency error = %v, want ErrStorageEmergency", err)
+	}
+	if info, err := os.Stat(recoveryLogPath); err != nil || info.Size() == 0 {
+		t.Fatalf("expected pending alert in recovery log, info=%+v err=%v", info, err)
+	}
+
+	reopened, err := Open(ctx, Options{
+		Path:              dbPath,
+		RecoveryLogPath:   recoveryLogPath,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now: func() time.Time {
+			return now
+		},
+	})
+	if err != nil {
+		t.Fatalf("reopen store: %v", err)
+	}
+	defer reopened.Close()
+	listed, err := reopened.List(ctx)
+	if err != nil {
+		t.Fatalf("list replayed alerts: %v", err)
+	}
+	if len(listed) != 1 || listed[0].MatchedKeyword != "pending-emergency" {
+		t.Fatalf("expected recovery replay after restart, got %+v", listed)
+	}
+	if info, err := os.Stat(recoveryLogPath); err != nil || info.Size() != 0 {
+		t.Fatalf("recovery log should be truncated after restart replay, info=%+v err=%v", info, err)
 	}
 }
 
