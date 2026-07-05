@@ -19,7 +19,7 @@ Returns a minimal liveness response by default.
 }
 ```
 
-With `verbose=true`, returns capture heartbeat status, engine queue/rule counts, storage status and available filesystem bytes when the store path is known, and throughput counters. Capture status is `unknown` before the first heartbeat, `ok` while the latest heartbeat is within `engine.health_freshness_limit_seconds`, and `stale` after that limit. Storage status is `ok` by default and becomes `degraded` after SQLite write/query errors until a later successful write or full alert list query clears it.
+With `verbose=true`, returns capture heartbeat status, engine queue/rule counts, storage status and available filesystem bytes when the store path is known, and throughput counters. Capture status is `unknown` before the first heartbeat, `ok` while the latest heartbeat is within `engine.health_freshness_limit_seconds`, and `stale` after that limit. Storage status is `ok` by default, becomes `degraded` after ordinary SQLite write/query errors until a later successful write or full alert list query clears it, and becomes `emergency` for disk-full, quota, read-only filesystem, or disk I/O failures. Emergency mode is intentionally sticky until restart after operator cleanup.
 
 ```json
 {
@@ -203,7 +203,7 @@ Reloads rules from `engine.rules_seed_file` and atomically swaps the active rule
 Current limitations:
 
 - Alert pagination, the stable list envelope, exact-match filters, time range filters, MITRE filters, matched-keyword substring filtering, and minimum aggregate-count filtering exist. The SQLite-backed store applies those filters and pagination in SQL, with indexes for common exact/range filters; matched-keyword substring filtering remains a regular SQL substring predicate.
-- Alert storage is SQLite-backed with JSONL recovery-log replay, startup TTL pruning, and old daily shard file cleanup. When `engine.db_shard_daily` is enabled, alert writes use each alert timestamp to select `netsentry-YYYY-MM-DD.db`, alert queries scan matching shards and apply the same filters, ordering, and pagination across shards, and health and metrics alert counts also sum matching shard files.
+- Alert storage is SQLite-backed with JSONL recovery-log replay, startup TTL pruning, old daily shard file cleanup, and sticky emergency mode for disk-full/read-only/I/O failures. When `engine.db_shard_daily` is enabled, alert writes use each alert timestamp to select `netsentry-YYYY-MM-DD.db`, alert queries scan matching shards and apply the same filters, ordering, and pagination across shards, and health and metrics alert counts also sum matching shard files.
 - Validation, unsupported method, and internal API errors use the unified error envelope.
 - Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk.
 - Optional PSK Bearer authentication protects modifying rule and suppression endpoints when `engine.api_auth_enabled` is true.
@@ -248,7 +248,7 @@ Planned endpoints:
 | Endpoint | Status | Notes |
 | --- | --- | --- |
 | `GET /api/health` | partial | Minimal and verbose component snapshot responses exist. |
-| `GET /api/health?verbose=true` | partial | Capture heartbeat freshness, queue depth, rule count, storage status, storage available bytes, and throughput counters exist. |
+| `GET /api/health?verbose=true` | partial | Capture heartbeat freshness, queue depth, rule count, storage status including emergency mode, storage available bytes, and throughput counters exist. |
 | `GET /api/alerts` | partial | SQLite-backed paginated list with exact-match, time range, MITRE, matched-keyword, and aggregate-count filters exists; daily-shard mode queries across matching shard files. |
 | `GET /api/metrics` | partial | Prometheus text output exists for process counters, rule match and alert write latency buckets, current/high-water queue depth, rule/alert/storage gauges, worker counters, and capture heartbeat gauges. |
 | `GET /api/rules` | partial | Current rule snapshot listing exists. |

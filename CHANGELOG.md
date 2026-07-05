@@ -21,7 +21,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Alert queries support SQLite-backed exact-match filters, RFC3339 time ranges, MITRE tactic/technique filters, matched-keyword substring filtering, minimum aggregate-count filtering, pagination, daily-shard cross-file querying/counting, and indexes for common exact/range filters.
 - Unified API error envelope, pagination envelope, request IDs, method-aware 405 responses, optional PSK Bearer auth, non-GET audit logs, and localhost-only pprof.
 - Prometheus text metrics for current packet, alert, current/high-water queue depth, rule latency, alert write latency, storage, worker, and capture heartbeat counters, with HELP text for exported gauges.
-- Basic alert storage health tracking after SQLite write/query errors, surfaced through verbose health with storage available bytes and `netsentry_storage_healthy`.
+- Alert storage health tracking after SQLite write/query errors, including sticky emergency mode for disk-full, quota, read-only filesystem, and disk I/O failures, surfaced through verbose health with storage available bytes and `netsentry_storage_healthy`.
 - Suppression rules can load from `engine.suppressions_file`; suppression create, update, delete, and reload operations persist or reload that file before updating the active filter.
 - Deterministic synthetic pcap generator with a Python stdlib fallback when Scapy is unavailable.
 - Non-interactive end-to-end smoke test via `make e2e-smoke`, including capture heartbeat metrics assertions.
@@ -30,7 +30,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Deterministic AddressSanitizer fuzz smoke for the C frame parser via `make fuzz-parser`.
 - Broader deterministic C parser fuzz seeds cover TCP, UDP, VLAN, Q-in-Q, IPv4 fragments, short frames, and malformed TCP data offsets; `make fuzz-parser-long` runs a longer local ASan pass.
 - Receiver lifecycle tests for multiple active UDS connections during context cancellation, with goleak coverage for the receiver package.
-- SQLite aggregation tests now cover recovery-log replay idempotency, query index creation, SQL-backed filtering/pagination, out-of-order alert writes, rule/source/destination/port aggregation key separation, canceled write contexts, and unsupported journal mode validation.
+- SQLite aggregation tests now cover recovery-log replay idempotency, query index creation, SQL-backed filtering/pagination, out-of-order alert writes, rule/source/destination/port aggregation key separation, canceled write contexts, emergency mode restart replay, and unsupported journal mode validation.
 - API tests cover health and metrics alert counts backed by a real daily-shard SQLite store.
 - Full C capture AddressSanitizer build target via `make build-asan`.
 - Local release archive packaging via `make dist`, including SHA-256 checksum generation.
@@ -50,9 +50,10 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Worker panic recovery no longer terminates the worker loop after a single bad packet.
 - Alert aggregation preserves earliest `first_seen`, latest `last_seen`, and latest payload/match fields when older events arrive after newer events in the same aggregation window.
 - Daily-shard alert storage writes cross-day alerts to `netsentry-YYYY-MM-DD.db` files based on each alert timestamp during a running process.
+- Disk-full/read-only/I/O storage failures now enter sticky emergency mode, stop retrying SQLite writes in the current process after recovery logging when possible, and replay pending recovery-log alerts after operator cleanup and restart.
 
 ### Known Gaps
-- Automatic disk-full recovery is not implemented.
+- Automatic disk cleanup or restart-free recovery after storage emergency mode is not implemented.
 - End-to-end pressure coverage currently includes repeat-pcap runs up to 60,000 packets locally, but realistic pcap corpora are still pending.
 - Sustained external C fuzz campaigns are still pending.
 
