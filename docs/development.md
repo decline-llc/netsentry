@@ -248,7 +248,7 @@ This runs shell syntax checks, `make test`, `make e2e-smoke`, `make dist`, relea
 SKIP_DOCKER=1 make rc-check
 ```
 
-The `e2e-smoke` step uses a temporary config, Unix socket, API port, and SQLite database, then asserts that the synthetic pcap produces 6 processed packets, 5 alerts, 8 loaded rules, and capture heartbeat metrics.
+The `e2e-smoke` step uses a temporary config, Unix socket, API port, and SQLite database, then asserts that the synthetic pcap produces 6 processed packets, 5 alerts, 8 loaded rules, capture heartbeat metrics, and rule/write latency histogram observations.
 
 To create a local release archive:
 

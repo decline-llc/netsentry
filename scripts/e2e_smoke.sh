@@ -175,6 +175,8 @@ if metrics.get("netsentry_capture_parse_errors") != 0:
     errors.append(f"expected capture_parse_errors=0, got {metrics.get('netsentry_capture_parse_errors')!r}")
 if metrics.get("netsentry_capture_uds_write_errors") != 0:
     errors.append(f"expected capture_uds_write_errors=0, got {metrics.get('netsentry_capture_uds_write_errors')!r}")
+if metrics.get("netsentry_rule_match_duration_seconds_count", 0) <= 0:
+    errors.append("expected rule match duration histogram to record at least one observation")
 if metrics.get("netsentry_alert_write_duration_seconds_count", 0) <= 0:
     errors.append("expected alert write duration histogram to record at least one observation")
 if "netsentry_packet_queue_depth_high_water" not in metrics:
