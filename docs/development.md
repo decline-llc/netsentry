@@ -95,6 +95,7 @@ engine:
   db_path: "data/netsentry.db"
   db_journal_mode: "WAL"
   db_busy_timeout: 5000
+  alert_recovery_log_path: ""
   rules_seed_file: "configs/rules.json"
   suppressions_file: "configs/suppressions.json"
   api_port: 8080

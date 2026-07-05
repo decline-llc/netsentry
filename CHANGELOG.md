@@ -15,7 +15,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Lock-free rule engine using immutable `atomic.Pointer[ruleState]` snapshots.
 - Pure Go Aho-Corasick matcher for `payload_match` rules.
 - Rule types for `payload_match`, `ip_blacklist`, and `port_blacklist`, including protocol, port, direction, offset, depth, case-insensitive matching, exact IP, and CIDR support.
-- SQLite-backed alert store with UPSERT aggregation, startup TTL pruning, optional daily shard pathing, cross-shard alert querying/counting in daily-shard mode, and old daily shard file cleanup.
+- SQLite-backed alert store with UPSERT aggregation, JSONL recovery-log replay, startup TTL pruning, optional daily shard pathing, cross-shard alert querying/counting in daily-shard mode, and old daily shard file cleanup.
 - Payload preview redaction before alert writes when `engine.redact_sensitive_fields` is enabled.
 - REST API for health, alerts, metrics, rules CRUD/reload, and file-backed suppressions.
 - Alert queries support SQLite-backed exact-match filters, RFC3339 time ranges, MITRE tactic/technique filters, matched-keyword substring filtering, minimum aggregate-count filtering, pagination, daily-shard cross-file querying/counting, and indexes for common exact/range filters.
@@ -29,7 +29,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Pcap sanitization helper via `make sanitize-pcap INPUT=... OUTPUT=...`.
 - Deterministic AddressSanitizer fuzz smoke for the C frame parser via `make fuzz-parser`.
 - Receiver lifecycle tests for multiple active UDS connections during context cancellation, with goleak coverage for the receiver package.
-- SQLite aggregation tests now cover query index creation, SQL-backed filtering/pagination, out-of-order alert writes, rule/source/destination/port aggregation key separation, canceled write contexts, and unsupported journal mode validation.
+- SQLite aggregation tests now cover recovery-log replay idempotency, query index creation, SQL-backed filtering/pagination, out-of-order alert writes, rule/source/destination/port aggregation key separation, canceled write contexts, and unsupported journal mode validation.
 - API tests cover health and metrics alert counts backed by a real daily-shard SQLite store.
 - Full C capture AddressSanitizer build target via `make build-asan`.
 - Local release archive packaging via `make dist`, including SHA-256 checksum generation.
@@ -51,7 +51,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Daily-shard alert storage writes cross-day alerts to `netsentry-YYYY-MM-DD.db` files based on each alert timestamp during a running process.
 
 ### Known Gaps
-- WAL JSONL replay and automatic disk-full recovery are not implemented.
+- Automatic disk-full recovery is not implemented.
 - End-to-end pressure coverage currently includes repeat-pcap runs up to 60,000 packets locally, but realistic pcap corpora are still pending.
 - Longer C fuzz runs with broader seed corpora are still pending.
 

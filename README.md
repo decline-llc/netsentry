@@ -72,7 +72,7 @@ bundle first, then only pushes on version tags or an explicit manual workflow ru
 - Go rule engine using `atomic.Pointer[ruleState]` immutable snapshots.
 - Rule types: `payload_match`, `ip_blacklist`, `port_blacklist`.
 - A self-contained Aho-Corasick matcher.
-- Minimal Go UDS receiver, CIDR alert suppressor component, and SQLite alert store with UPSERT aggregation, startup TTL pruning, optional daily DB shard pathing/cleanup, cross-shard alert querying/counting in daily-shard mode, and basic degraded health tracking after storage errors.
+- Minimal Go UDS receiver, CIDR alert suppressor component, and SQLite alert store with UPSERT aggregation, JSONL recovery-log replay, startup TTL pruning, optional daily DB shard pathing/cleanup, cross-shard alert querying/counting in daily-shard mode, and basic degraded health tracking after storage errors.
 - Minimal HTTP endpoints: `/api/health` with verbose component snapshot including storage status and available bytes, paginated `/api/alerts` with exact-match, time range, MITRE, matched-keyword, and aggregate-count filters, `/api/metrics`, rule listing, rule create/update/delete, rule reload, file-backed suppression create/update/delete/reload, method-aware error envelopes, optional PSK Bearer auth for modifying endpoints, non-GET audit logs, optional localhost-only pprof, storage health gauges, and payload preview redaction before alert writes.
 - Seed rules in canonical wrapped JSON schema, with legacy schema compatibility retained in the loader.
 
@@ -82,7 +82,7 @@ bundle first, then only pushes on version tags or an explicit manual workflow ru
 
 These are v0.1.0 goals, not current behavior:
 
-- WAL replay and automatic disk-full recovery.
+- Automatic disk-full recovery.
 - Full Prometheus metric coverage beyond the current process, current/high-water queue, rule/write latency, alert, storage, worker, and capture heartbeat metrics.
 - Remaining large-corpus query tuning.
 - C-side cJSON serializer and longer fuzz runs with broader seed corpora.

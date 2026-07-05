@@ -127,7 +127,7 @@ Planned modules:
 
 - `internal/receiver`: UDS listener, hello validation, heartbeat state. Implemented in the current build; broader Go engine lifecycle integration remains future work.
 - `internal/pipeline`: worker lifecycle and alert flow. Implemented as a single worker in the current build.
-- `internal/alert`: aggregation, SQLite store, indexed SQL-backed alert filtering/pagination, daily-shard timestamp-based writes, cross-file querying/counting, TTL pruning, old shard cleanup, payload redaction, and file-backed suppressions. WAL replay remains future work.
+- `internal/alert`: aggregation, SQLite store, JSONL recovery-log replay, indexed SQL-backed alert filtering/pagination, daily-shard timestamp-based writes, cross-file querying/counting, TTL pruning, old shard cleanup, payload redaction, and file-backed suppressions.
 - `internal/api`: router, pagination request parsing, rule CRUD/reload, suppressions API, PSK auth for mutations, errors, health, audit middleware, and metrics.
 - `internal/stats`: counters and Prometheus text rendering for process, queue, rule, alert, worker, and capture heartbeat metrics.
 
@@ -173,7 +173,6 @@ Current build:
 
 Remaining v0.1.0 storage work:
 
-- WAL replay, if the write-ahead JSONL path is kept.
 - Automatic disk-full recovery and a fuller emergency-mode policy.
 
 All SQL values must use placeholders. Do not format user-controlled values into SQL strings.
@@ -182,7 +181,7 @@ All SQL values must use placeholders. Do not format user-controlled values into 
 
 ## 9. Observability Target
 
-Current build: zap startup and match logs, verbose health with storage status and available bytes, Prometheus metrics for process/current and high-water queue depth/rule latency/alert write latency/alert/storage/worker/capture heartbeat state, structured audit logs for non-GET API requests, optional localhost-only pprof, and configurable payload preview redaction before alert writes.
+Current build: zap startup and match logs, verbose health with storage status and available bytes, Prometheus metrics for process/current and high-water queue depth/rule latency/alert write latency/alert/storage/worker/capture heartbeat state, structured audit logs for non-GET API requests, optional localhost-only pprof, SQLite JSONL recovery-log replay, and configurable payload preview redaction before alert writes.
 
 v0.1.0 target:
 
@@ -197,7 +196,7 @@ v0.1.0 target:
 
 Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
 
-Alert storage tests cover SQLite aggregation windows, query index creation, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, out-of-order writes, aggregation key separation, canceled write contexts, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics counts backed by a real daily-shard SQLite store.
+Alert storage tests cover SQLite aggregation windows, JSONL recovery-log replay idempotency, query index creation, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, out-of-order writes, aggregation key separation, canceled write contexts, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics counts backed by a real daily-shard SQLite store.
 
 Next layers:
 
