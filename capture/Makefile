@@ -54,8 +54,9 @@ FUZZ_PARSER_SRCS   := tests/fuzz_parser.c \
                       src/parser_registry.c \
                       src/passthrough_parser.c
 FUZZ_ITERATIONS ?= 5000
+FUZZ_LONG_ITERATIONS ?= 100000
 
-.PHONY: all build-asan test asan-test bench fuzz-parser clean
+.PHONY: all build-asan test asan-test bench fuzz-parser fuzz-parser-long clean
 
 all: $(TARGET)
 
@@ -107,6 +108,9 @@ bench: $(BENCH_TARGETS)
 
 fuzz-parser: $(FUZZ_PARSER_TARGET)
 	ASAN_OPTIONS=detect_leaks=0 FUZZ_ITERATIONS=$(FUZZ_ITERATIONS) $(FUZZ_PARSER_TARGET)
+
+fuzz-parser-long: $(FUZZ_PARSER_TARGET)
+	ASAN_OPTIONS=detect_leaks=0 FUZZ_ITERATIONS=$(FUZZ_LONG_ITERATIONS) $(FUZZ_PARSER_TARGET)
 
 clean:
 	rm -f $(OBJS) $(TARGET) $(ASAN_TARGET) $(TEST_TARGETS) $(BENCH_TARGETS) $(FUZZ_PARSER_TARGET)

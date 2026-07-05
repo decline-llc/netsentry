@@ -8,6 +8,13 @@
 #include "parser.h"
 
 #define MAX_FUZZ_FRAME 2048
+#define MAX_SEEDS 8
+
+typedef struct {
+    const char *name;
+    size_t len;
+    uint8_t data[MAX_FUZZ_FRAME];
+} FuzzSeed;
 
 static void init_registry_once(void) {
     static int initialized = 0;
@@ -65,44 +72,133 @@ static void put_u16(uint8_t *p, uint16_t v) {
     p[1] = (uint8_t)(v & 0xff);
 }
 
-static size_t seed_tcp_frame(uint8_t *buf, size_t cap) {
-    const uint8_t payload[] = "GET / HTTP/1.1\r\n\r\n";
+static void put_ipv4_addrs(uint8_t *ip) {
+    ip[12] = 10; ip[15] = 1;
+    ip[16] = 10; ip[19] = 2;
+}
+
+static size_t seed_tcp_frame(uint8_t *buf, size_t cap, uint16_t ether_type, size_t l2_extra) {
+    const uint8_t payload[] = "GET / HTTP/1.1\r\nHost: fuzz\r\n\r\n";
     size_t payload_len = sizeof(payload) - 1;
-    size_t frame_len = 14 + 20 + 20 + payload_len;
+    size_t frame_len = 14 + l2_extra + 20 + 20 + payload_len;
+    if (cap < frame_len) return 0;
+
+    memset(buf, 0, frame_len);
+    put_u16(buf + 12, ether_type);
+    if (l2_extra == 4) {
+        put_u16(buf + 14, 100);
+        put_u16(buf + 16, 0x0800);
+    } else if (l2_extra == 8) {
+        put_u16(buf + 14, 100);
+        put_u16(buf + 16, 0x8100);
+        put_u16(buf + 18, 200);
+        put_u16(buf + 20, 0x0800);
+    }
+
+    uint8_t *ip = buf + 14 + l2_extra;
+    ip[0] = 0x45;
+    put_u16(ip + 2, (uint16_t)(20 + 20 + payload_len));
+    ip[8] = 64;
+    ip[9] = IPPROTO_TCP;
+    put_ipv4_addrs(ip);
+
+    uint8_t *tcp = ip + 20;
+    put_u16(tcp, 12345);
+    put_u16(tcp + 2, 80);
+    tcp[12] = 0x50;
+    tcp[13] = 0x18;
+    memcpy(tcp + 20, payload, payload_len);
+    return frame_len;
+}
+
+static size_t seed_udp_frame(uint8_t *buf, size_t cap) {
+    const uint8_t payload[] = "dns-fuzz";
+    size_t payload_len = sizeof(payload) - 1;
+    size_t frame_len = 14 + 20 + 8 + payload_len;
     if (cap < frame_len) return 0;
 
     memset(buf, 0, frame_len);
     put_u16(buf + 12, 0x0800);
-    buf[14] = 0x45;
-    put_u16(buf + 16, (uint16_t)(20 + 20 + payload_len));
-    buf[22] = 64;
-    buf[23] = IPPROTO_TCP;
-    buf[26] = 10; buf[29] = 1;
-    buf[30] = 10; buf[33] = 2;
-    put_u16(buf + 34, 12345);
-    put_u16(buf + 36, 80);
-    buf[46] = 0x50;
-    buf[47] = 0x18;
-    memcpy(buf + 54, payload, payload_len);
+    uint8_t *ip = buf + 14;
+    ip[0] = 0x45;
+    put_u16(ip + 2, (uint16_t)(20 + 8 + payload_len));
+    ip[8] = 64;
+    ip[9] = IPPROTO_UDP;
+    put_ipv4_addrs(ip);
+
+    uint8_t *udp = ip + 20;
+    put_u16(udp, 5353);
+    put_u16(udp + 2, 53);
+    put_u16(udp + 4, (uint16_t)(8 + payload_len));
+    memcpy(udp + 8, payload, payload_len);
     return frame_len;
 }
 
+static size_t seed_fragment_frame(uint8_t *buf, size_t cap) {
+    size_t len = seed_udp_frame(buf, cap);
+    if (len == 0) return 0;
+    uint8_t *ip = buf + 14;
+    put_u16(ip + 6, 0x2001);
+    return len;
+}
+
+static size_t seed_bad_tcp_offset_frame(uint8_t *buf, size_t cap) {
+    size_t len = seed_tcp_frame(buf, cap, 0x0800, 0);
+    if (len == 0) return 0;
+    uint8_t *tcp = buf + 14 + 20;
+    tcp[12] = 0xf0;
+    return len;
+}
+
+static size_t build_seeds(FuzzSeed *seeds, size_t cap) {
+    if (cap < MAX_SEEDS) return 0;
+
+    seeds[0].name = "tcp";
+    seeds[0].len = seed_tcp_frame(seeds[0].data, sizeof(seeds[0].data), 0x0800, 0);
+    seeds[1].name = "udp";
+    seeds[1].len = seed_udp_frame(seeds[1].data, sizeof(seeds[1].data));
+    seeds[2].name = "vlan-tcp";
+    seeds[2].len = seed_tcp_frame(seeds[2].data, sizeof(seeds[2].data), 0x8100, 4);
+    seeds[3].name = "qinq-tcp";
+    seeds[3].len = seed_tcp_frame(seeds[3].data, sizeof(seeds[3].data), 0x88a8, 8);
+    seeds[4].name = "fragment";
+    seeds[4].len = seed_fragment_frame(seeds[4].data, sizeof(seeds[4].data));
+    seeds[5].name = "bad-tcp-offset";
+    seeds[5].len = seed_bad_tcp_offset_frame(seeds[5].data, sizeof(seeds[5].data));
+    seeds[6].name = "short-ethernet";
+    seeds[6].len = 13;
+    memset(seeds[6].data, 0xa5, seeds[6].len);
+    seeds[7].name = "empty";
+    seeds[7].len = 0;
+
+    return MAX_SEEDS;
+}
+
 static void run_mutation_rounds(uint32_t iterations) {
-    uint8_t seed[MAX_FUZZ_FRAME];
+    FuzzSeed seeds[MAX_SEEDS];
     uint8_t frame[MAX_FUZZ_FRAME];
-    size_t seed_len = seed_tcp_frame(seed, sizeof(seed));
+    size_t seed_count = build_seeds(seeds, MAX_SEEDS);
     uint32_t rng = 0xC0FFEEu;
 
-    if (seed_len == 0) abort();
-    LLVMFuzzerTestOneInput(seed, seed_len);
+    if (seed_count == 0) abort();
+    for (size_t i = 0; i < seed_count; i++) {
+        LLVMFuzzerTestOneInput(seeds[i].data, seeds[i].len);
+    }
 
     for (uint32_t i = 0; i < iterations; i++) {
-        size_t len = xorshift32(&rng) % sizeof(frame);
-        if ((i % 3) == 0) {
-            memcpy(frame, seed, seed_len);
-            len = seed_len;
+        FuzzSeed *seed = &seeds[xorshift32(&rng) % seed_count];
+        size_t len = seed->len;
+        memset(frame, 0, sizeof(frame));
+
+        if ((i % 4) == 0 && len > 0) {
+            memcpy(frame, seed->data, len);
+        } else if ((i % 4) == 1) {
+            len = xorshift32(&rng) % sizeof(frame);
         } else {
-            memset(frame, 0, sizeof(frame));
+            size_t copy_len = len;
+            if (copy_len > sizeof(frame)) copy_len = sizeof(frame);
+            memcpy(frame, seed->data, copy_len);
+            len = xorshift32(&rng) % (copy_len + 1);
         }
 
         uint32_t mutations = 1 + (xorshift32(&rng) % 32);
