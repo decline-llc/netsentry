@@ -28,6 +28,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Repeat-pcap end-to-end throughput smoke test via `make e2e-pressure`.
 - Pcap sanitization helper via `make sanitize-pcap INPUT=... OUTPUT=...`.
 - Deterministic AddressSanitizer fuzz smoke for the C frame parser via `make fuzz-parser`.
+- Broader deterministic C parser fuzz seeds cover TCP, UDP, VLAN, Q-in-Q, IPv4 fragments, short frames, and malformed TCP data offsets; `make fuzz-parser-long` runs a longer local ASan pass.
 - Receiver lifecycle tests for multiple active UDS connections during context cancellation, with goleak coverage for the receiver package.
 - SQLite aggregation tests now cover recovery-log replay idempotency, query index creation, SQL-backed filtering/pagination, out-of-order alert writes, rule/source/destination/port aggregation key separation, canceled write contexts, and unsupported journal mode validation.
 - API tests cover health and metrics alert counts backed by a real daily-shard SQLite store.
@@ -53,7 +54,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ### Known Gaps
 - Automatic disk-full recovery is not implemented.
 - End-to-end pressure coverage currently includes repeat-pcap runs up to 60,000 packets locally, but realistic pcap corpora are still pending.
-- Longer C fuzz runs with broader seed corpora are still pending.
+- Sustained external C fuzz campaigns are still pending.
 
 ---
 

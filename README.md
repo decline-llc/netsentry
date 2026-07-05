@@ -38,6 +38,14 @@ make e2e-pressure
 PRESSURE_REPEATS=10000 make e2e-pressure
 ```
 
+For a C parser fuzz smoke:
+
+```bash
+make fuzz-parser
+# Longer local pass:
+FUZZ_LONG_ITERATIONS=1000000 make fuzz-parser-long
+```
+
 To create a local binary release archive:
 
 ```bash
@@ -85,7 +93,7 @@ These are v0.1.0 goals, not current behavior:
 - Automatic disk-full recovery.
 - Full Prometheus metric coverage beyond the current process, current/high-water queue, rule/write latency, alert, storage, worker, and capture heartbeat metrics.
 - Remaining large-corpus query tuning.
-- C-side cJSON serializer and longer fuzz runs with broader seed corpora.
+- C-side cJSON serializer and sustained external fuzz campaigns.
 - Published registry image for a named release.
 
 ---

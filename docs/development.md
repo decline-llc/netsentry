@@ -31,6 +31,7 @@ make build-asan    # compile C capture with AddressSanitizer
 make test          # C parser/UDS tests + Go race tests
 make bench         # C parser/UDS microbenchmarks + Go benchmarks
 make fuzz-parser   # deterministic ASan fuzz smoke for the C frame parser
+make fuzz-parser-long # longer deterministic ASan fuzz pass for the C frame parser
 make e2e-smoke     # deterministic pcap -> SQLite -> API smoke test
 make e2e-pressure  # repeat-pcap end-to-end throughput smoke test
 make sanitize-pcap # sanitize an Ethernet pcap before sharing it
@@ -222,6 +223,16 @@ make e2e-pressure
 # Optional larger run:
 PRESSURE_REPEATS=10000 make e2e-pressure
 ```
+
+For C parser hardening work, run the deterministic ASan fuzz smoke:
+
+```bash
+make fuzz-parser
+# Longer local pass:
+FUZZ_LONG_ITERATIONS=1000000 make fuzz-parser-long
+```
+
+The harness starts from built-in Ethernet/IP/TCP/UDP, VLAN, Q-in-Q, fragment, short-frame, and malformed TCP-offset seeds, then applies deterministic mutations.
 
 The current benchmark scope, local baseline, and pressure smoke behavior are documented in `docs/performance.md`.
 
