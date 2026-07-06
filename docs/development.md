@@ -295,14 +295,17 @@ make sanitize-pcap INPUT=/path/to/input.pcap OUTPUT=/tmp/sanitized.pcap
 
 The sanitizer preserves pcap timestamps, packet framing, Ethernet/VLAN/IPv4/TCP/UDP structure, ports, and lengths. It replaces MAC addresses, maps IPv4 addresses into the `198.18.0.0/15` benchmark range, overwrites TCP/UDP payload bytes, and zeroes unsupported captured frames.
 
-Planned tests:
+Current validation baseline:
 
-- More C parser unit tests for malformed input.
-- Broader UDS sender tests for edge-case write failures.
-- Longer C parser fuzz runs against a broader corpus.
-- Broader full-engine lifecycle tests across receiver, worker, HTTP, and storage shutdown.
-- Broader SQLite disk and corruption failure-mode tests for alert storage changes.
-- Full graceful shutdown tests.
+- C parser and UDS sender unit tests cover malformed frames, VLAN/Q-in-Q, IPv4 fragments, TCP offset errors, reconnect behavior, and write-error accounting.
+- Go unit and integration tests cover receiver lifecycle, worker panic isolation, rule semantics, API validation, SQLite aggregation, daily shards, recovery-log replay, and storage degraded/emergency behavior.
+- Release-candidate checks run dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
+
+Remaining test gaps:
+
+- Sustained external C fuzz campaigns against a larger corpus.
+- Realistic pcap corpora for throughput and query tuning beyond repeat-pcap smoke runs.
+- Broader SQLite corruption/fault-injection scenarios beyond the current disk-full, read-only, I/O, recovery replay, and emergency-mode tests.
 
 ---
 

@@ -198,11 +198,9 @@ Current build has Go tests for rule matching/Aho-Corasick including payload prot
 
 Alert storage tests cover SQLite aggregation windows, JSONL recovery-log replay idempotency, query index creation, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics counts backed by a real daily-shard SQLite store.
 
-Next layers:
+Remaining validation gaps:
 
-- Broader C parser tests for additional malformed frames.
-- Broader reconnect integration tests against the Go engine lifecycle.
-- Longer ASan/fuzz runs with broader parser corpora.
-- Broader full-engine lifecycle tests across receiver, worker, HTTP, and storage shutdown behavior.
-- End-to-end quickstart regression.
-- Race tests for rule reload and matching.
+- Sustained external C fuzz campaigns with larger parser corpora.
+- Realistic pcap corpora for throughput, query tuning, and alert-volume behavior beyond synthetic repeat-pcap smoke runs.
+- Broader SQLite corruption and fault-injection scenarios beyond current disk-full, read-only, I/O, recovery replay, and emergency-mode tests.
+- Additional full-engine shutdown drills that combine receiver, worker, HTTP, and storage teardown under active load.

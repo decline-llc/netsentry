@@ -45,6 +45,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Public documentation now separates implemented behavior from planned v0.1.0 goals.
 - Quickstart clears the demo SQLite database before running so repeated runs keep returning the deterministic seed-alert set.
 - Makefile Go targets now default `GOCACHE` to `/tmp/netsentry-go-cache`, while still allowing `GOCACHE=...` overrides, so build, test, lint, and benchmark targets work when the home-directory Go cache is read-only.
+- Development and architecture testing notes now separate the current validation baseline from remaining test gaps.
 
 ### Fixed
 - C parser and UDS sender edge cases are covered by unit tests, ASan tests, and microbenchmarks.
