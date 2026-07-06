@@ -12,7 +12,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build build-asan test test-coverage asan-test bench fuzz-parser fuzz-parser-long e2e-smoke e2e-pressure sanitize-pcap dist docker-build rc-check lint clean quickstart help
+.PHONY: all build-c build-go build build-asan test test-coverage deps-check asan-test bench fuzz-parser fuzz-parser-long e2e-smoke e2e-pressure sanitize-pcap dist docker-build rc-check lint clean quickstart help
 
 all: build
 
@@ -46,6 +46,11 @@ test-coverage:
 	@mkdir -p $(GOCACHE)
 	cd $(GO_MODULE) && GOCACHE=$(GOCACHE) GOPROXY=$(GOPROXY) $(GO) test -count=1 -covermode=atomic -coverprofile=$(COVERPROFILE) ./...
 	cd $(GO_MODULE) && $(GO) tool cover -func=$(COVERPROFILE) | tail -n 1
+
+## deps-check — verify Go module dependency cache integrity
+deps-check:
+	@mkdir -p $(GOCACHE)
+	cd $(GO_MODULE) && GOCACHE=$(GOCACHE) GOPROXY=$(GOPROXY) $(GO) mod verify
 
 ## asan-test — run C parser tests with AddressSanitizer
 asan-test:

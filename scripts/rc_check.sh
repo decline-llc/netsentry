@@ -34,6 +34,9 @@ bash -n scripts/e2e_pressure.sh
 bash -n scripts/package_release.sh
 bash -n scripts/rc_check.sh
 
+echo "[rc-check] make deps-check"
+make deps-check
+
 echo "[rc-check] make test"
 make test
 
