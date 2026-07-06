@@ -37,6 +37,9 @@ bash -n scripts/rc_check.sh
 echo "[rc-check] make test"
 make test
 
+echo "[rc-check] make test-coverage"
+make test-coverage
+
 echo "[rc-check] make fuzz-parser"
 make fuzz-parser
 
