@@ -37,6 +37,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Local Docker image build via `make docker-build`.
 - Release-candidate verification bundle via `make rc-check`, including fuzz smoke, release archive, Docker image content, and runtime health smoke checks.
 - GitHub Actions workflows for release-candidate checks and GHCR Docker image publishing.
+- Native coverage snapshot target via `make test-coverage`, running C tests and a Go coverage summary without external tooling.
 
 ### Changed
 - Public rule samples now use the canonical wrapped schema while the loader remains backward compatible with legacy rule files.

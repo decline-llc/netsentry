@@ -33,6 +33,7 @@ make build-go      # compile Go engine
 make build         # build both binaries
 make build-asan    # compile C capture with AddressSanitizer
 make test          # C parser/UDS tests + Go race tests
+make test-coverage # C tests + Go coverage summary
 make bench         # C parser/UDS microbenchmarks + Go benchmarks
 make fuzz-parser   # deterministic ASan fuzz smoke for the C frame parser
 make fuzz-parser-long # longer deterministic ASan fuzz pass for the C frame parser
@@ -273,6 +274,17 @@ DOCKER="sudo docker" make docker-build
 ```
 
 The image contains both `netsentry-engine` and `netsentry-capture`. The default entrypoint starts the engine with `configs/config.yaml`; use `docker run --entrypoint netsentry-capture ...` when you need to run the capture binary from the same image.
+
+For a local coverage snapshot:
+
+```bash
+make test-coverage
+COVERPROFILE=/tmp/custom-netsentry-coverage.out make test-coverage
+```
+
+The target runs the existing C tests, then writes a Go coverage profile to
+`/tmp/netsentry-coverage.out` by default and prints the total Go coverage line.
+It does not enforce a threshold yet.
 
 To sanitize an Ethernet pcap before sharing it for tests:
 

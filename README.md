@@ -30,6 +30,12 @@ For a non-interactive release smoke check, run:
 make e2e-smoke
 ```
 
+For a local coverage snapshot, run:
+
+```bash
+make test-coverage
+```
+
 For a local end-to-end throughput smoke check, run:
 
 ```bash
