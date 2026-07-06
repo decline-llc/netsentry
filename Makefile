@@ -3,6 +3,7 @@
 SHELL      := /bin/bash
 GO         := go
 GOPROXY    ?= https://goproxy.cn,direct
+GOCACHE    ?= /tmp/netsentry-go-cache
 GO_MODULE  := ./engine
 BIN_DIR    := bin
 BENCH_ITERATIONS ?= 100000
@@ -21,7 +22,8 @@ build-c:
 ## build-go  — compile the Go engine binary
 build-go:
 	@mkdir -p $(BIN_DIR)
-	cd $(GO_MODULE) && GOPROXY=$(GOPROXY) $(GO) build -o ../$(BIN_DIR)/netsentry-engine \
+	@mkdir -p $(GOCACHE)
+	cd $(GO_MODULE) && GOCACHE=$(GOCACHE) GOPROXY=$(GOPROXY) $(GO) build -o ../$(BIN_DIR)/netsentry-engine \
 	    ./cmd/netsentry
 
 ## build     — compile both C and Go binaries
@@ -34,7 +36,8 @@ build-asan:
 ## test      — run C parser tests and Go unit tests with race detector
 test:
 	$(MAKE) -C capture test
-	cd $(GO_MODULE) && GOPROXY=$(GOPROXY) $(GO) test -race -count=1 ./...
+	@mkdir -p $(GOCACHE)
+	cd $(GO_MODULE) && GOCACHE=$(GOCACHE) GOPROXY=$(GOPROXY) $(GO) test -race -count=1 ./...
 
 ## asan-test — run C parser tests with AddressSanitizer
 asan-test:
@@ -43,7 +46,8 @@ asan-test:
 ## bench     — run C parser microbenchmarks and Go benchmarks
 bench:
 	$(MAKE) -C capture bench BENCH_ITERATIONS=$(BENCH_ITERATIONS)
-	cd $(GO_MODULE) && GOPROXY=$(GOPROXY) $(GO) test -bench=. -benchtime=10s -benchmem ./...
+	@mkdir -p $(GOCACHE)
+	cd $(GO_MODULE) && GOCACHE=$(GOCACHE) GOPROXY=$(GOPROXY) $(GO) test -bench=. -benchtime=10s -benchmem ./...
 
 ## fuzz-parser — run deterministic ASan fuzz smoke for the C frame parser
 fuzz-parser:
@@ -82,9 +86,10 @@ rc-check:
 
 ## lint      — run go vet and staticcheck (if installed)
 lint:
-	cd $(GO_MODULE) && $(GO) vet ./...
+	@mkdir -p $(GOCACHE)
+	cd $(GO_MODULE) && GOCACHE=$(GOCACHE) $(GO) vet ./...
 	@command -v staticcheck >/dev/null 2>&1 && \
-	    cd $(GO_MODULE) && staticcheck ./... || \
+	    cd $(GO_MODULE) && GOCACHE=$(GOCACHE) staticcheck ./... || \
 	    echo "[lint] staticcheck not found, skipping"
 
 ## clean     — remove compiled binaries and object files

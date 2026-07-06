@@ -17,6 +17,10 @@ Optional:
 - Scapy, used by `scripts/gen_test_pcap.py` when installed. The script has a stdlib fallback.
 - `staticcheck`, used by `make lint` when installed.
 
+The root Makefile defaults Go build cache writes to `/tmp/netsentry-go-cache`
+so the standard targets work in restricted home-directory environments. Override
+it with `GOCACHE=/path/to/cache` when you want to use a different cache.
+
 ---
 
 ## 2. Current Build Targets
@@ -240,6 +244,7 @@ For release-candidate checks, run:
 
 ```bash
 make rc-check
+DOCKER="sudo docker" make rc-check
 ```
 
 This runs shell syntax checks, `make test`, `make e2e-smoke`, `make dist`, release archive checksum/content smoke checks, `make docker-build`, a minimal Docker image content smoke check, and a Docker runtime `/api/health` smoke check. If Docker is unavailable in the current environment, use:

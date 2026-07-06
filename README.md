@@ -68,6 +68,10 @@ make docker-build
 DOCKER="sudo docker" make docker-build
 ```
 
+The Makefile writes Go build cache data to `/tmp/netsentry-go-cache` by default
+so build, test, lint, and benchmark targets work in environments where the home
+directory cache is read-only. Set `GOCACHE=/path/to/cache` to override it.
+
 The repository also includes GitHub Actions workflows for release-candidate checks
 and GHCR image publishing. Docker publishing runs the same `make rc-check`
 bundle first, then only pushes on version tags or an explicit manual workflow run.
