@@ -34,6 +34,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - API tests cover health and metrics alert counts backed by a real daily-shard SQLite store.
 - Full C capture AddressSanitizer build target via `make build-asan`.
 - Local release archive packaging via `make dist`, including SHA-256 checksum generation.
+- Generated release archive notes document package contents, quick verification, v0.1.0 boundaries, release-candidate evidence, and packaged documentation references.
 - Local Docker image build via `make docker-build`.
 - Release-candidate verification bundle via `make rc-check`, including documentation consistency, dependency verification, coverage snapshot, fuzz smoke, release archive, Docker image content, and runtime health smoke checks.
 - GitHub Actions workflows for release-candidate checks and GHCR Docker image publishing.

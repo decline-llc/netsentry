@@ -35,20 +35,49 @@ cp "${ROOT_DIR}/SECURITY.md" "${STAGE_DIR}/${PACKAGE_NAME}/"
 cat >"${STAGE_DIR}/${PACKAGE_NAME}/RELEASE_NOTES.md" <<EOF_NOTES
 # NetSentry ${VERSION}
 
-This archive contains a development snapshot of NetSentry:
+This archive contains a development snapshot of NetSentry v0.1.0.
+
+## Package Contents
 
 - bin/netsentry-capture
 - bin/netsentry-engine
 - configs/
 - docs/
+- README.md
+- CHANGELOG.md
+- SECURITY.md
 
-Quick verification after extracting:
+## Quick Verification
+
+After extracting the archive, start the engine with the packaged sample config:
 
 \`\`\`bash
 ./bin/netsentry-engine -config configs/config.yaml
 \`\`\`
 
-For the full repository smoke test, use \`make e2e-smoke\` from a source checkout.
+In a source checkout, the deterministic end-to-end smoke test remains:
+
+\`\`\`bash
+make e2e-smoke
+\`\`\`
+
+## v0.1.0 Boundaries
+
+- Offline pcap analysis is the primary path.
+- Supported packet parsing covers Ethernet, VLAN/Q-in-Q, IPv4, TCP, and UDP passthrough.
+- Detection rules cover payload, IP blacklist, and port blacklist matching.
+- TCP stream reassembly, IP fragment reassembly, TLS decryption, IPv6, and full application-layer parsing are outside this snapshot.
+
+## Release-Candidate Evidence
+
+The source repository release-candidate bundle is \`make rc-check\`. It covers documentation consistency, dependency verification, C/Go tests, coverage snapshot, deterministic parser fuzz smoke, e2e smoke, archive checksum/content checks, Docker image content smoke, and Docker runtime health smoke.
+
+## References
+
+- README.md for quickstart and current behavior.
+- docs/development.md for local build and validation commands.
+- docs/api-reference.md for API behavior.
+- CHANGELOG.md for current gaps and release history.
 EOF_NOTES
 
 tar -C "${STAGE_DIR}" -czf "${DIST_DIR}/${PACKAGE_NAME}.tar.gz" "${PACKAGE_NAME}"

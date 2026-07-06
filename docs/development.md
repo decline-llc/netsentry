@@ -265,7 +265,7 @@ make dist
 VERSION=0.1.0-rc1 make dist
 ```
 
-The archive and SHA-256 checksum are written to `dist/`. Generated release archives are ignored by Git.
+The archive and SHA-256 checksum are written to `dist/`. Generated release archives are ignored by Git. The archive includes generated `RELEASE_NOTES.md` with package contents, quick verification, v0.1.0 boundaries, release-candidate evidence, and links to packaged docs.
 
 To build the local Docker image:
 
