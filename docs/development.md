@@ -37,6 +37,7 @@ make test-coverage # C tests + Go coverage summary
 make deps-check    # verify Go module dependency cache integrity
 make docs-check    # scan public docs for retired stale wording
 make shell-check   # run shell script syntax checks
+make python-check  # run Python script syntax checks
 make bench         # C parser/UDS microbenchmarks + Go benchmarks
 make fuzz-parser   # deterministic ASan fuzz smoke for the C frame parser
 make fuzz-parser-long # longer deterministic ASan fuzz pass for the C frame parser
@@ -251,7 +252,7 @@ make rc-check
 DOCKER="sudo docker" make rc-check
 ```
 
-This runs `make shell-check`, `make docs-check`, `make deps-check`, `make test`, `make test-coverage`, `make fuzz-parser`, `make e2e-smoke`, `make dist`, release archive checksum/content smoke checks, `make docker-build`, a minimal Docker image content smoke check, and a Docker runtime `/api/health` smoke check. If Docker is unavailable in the current environment, use:
+This runs `make shell-check`, `make docs-check`, `make python-check`, `make deps-check`, `make test`, `make test-coverage`, `make fuzz-parser`, `make e2e-smoke`, `make dist`, release archive checksum/content smoke checks, `make docker-build`, a minimal Docker image content smoke check, and a Docker runtime `/api/health` smoke check. If Docker is unavailable in the current environment, use:
 
 ```bash
 SKIP_DOCKER=1 make rc-check
