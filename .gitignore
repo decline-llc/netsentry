@@ -91,3 +91,4 @@ data/*.jsonl
 # Local dev memory (not for repo)
 DEVLOG.md
 .qoder/
+.codex/
