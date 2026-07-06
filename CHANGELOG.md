@@ -41,6 +41,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Native coverage snapshot target via `make test-coverage`, running C tests and a Go coverage summary without external tooling.
 - Native dependency integrity check via `make deps-check`, using `go mod verify`.
 - Native documentation consistency check via `make docs-check`, scanning public docs for retired stale wording.
+- Native shell syntax check via `make shell-check`, reused by release-candidate checks.
 
 ### Changed
 - Public rule samples now use the canonical wrapped schema while the loader remains backward compatible with legacy rule files.

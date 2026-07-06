@@ -66,9 +66,10 @@ make rc-check
 DOCKER="sudo docker" make rc-check
 ```
 
-The release-candidate bundle includes documentation consistency checks,
-dependency verification, tests, a coverage snapshot, fuzz smoke, e2e smoke,
-release archive checks, Docker image smoke, and Docker runtime health smoke.
+The release-candidate bundle includes shell syntax checks, documentation
+consistency checks, dependency verification, tests, a coverage snapshot, fuzz
+smoke, e2e smoke, release archive checks, Docker image smoke, and Docker runtime
+health smoke.
 
 To build the local Docker image:
 

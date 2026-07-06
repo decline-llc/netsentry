@@ -29,11 +29,7 @@ trap cleanup EXIT
 cd "${ROOT_DIR}"
 
 echo "[rc-check] shell syntax"
-bash -n scripts/e2e_smoke.sh
-bash -n scripts/e2e_pressure.sh
-bash -n scripts/docs_check.sh
-bash -n scripts/package_release.sh
-bash -n scripts/rc_check.sh
+make shell-check
 
 echo "[rc-check] make docs-check"
 make docs-check

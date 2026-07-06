@@ -12,7 +12,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build build-asan test test-coverage deps-check docs-check asan-test bench fuzz-parser fuzz-parser-long e2e-smoke e2e-pressure sanitize-pcap dist docker-build rc-check lint clean quickstart help
+.PHONY: all build-c build-go build build-asan test test-coverage deps-check docs-check shell-check asan-test bench fuzz-parser fuzz-parser-long e2e-smoke e2e-pressure sanitize-pcap dist docker-build rc-check lint clean quickstart help
 
 all: build
 
@@ -55,6 +55,14 @@ deps-check:
 ## docs-check — scan public docs for retired stale wording
 docs-check:
 	@bash scripts/docs_check.sh
+
+## shell-check — run shell script syntax checks
+shell-check:
+	@bash -n scripts/e2e_smoke.sh
+	@bash -n scripts/e2e_pressure.sh
+	@bash -n scripts/docs_check.sh
+	@bash -n scripts/package_release.sh
+	@bash -n scripts/rc_check.sh
 
 ## asan-test — run C parser tests with AddressSanitizer
 asan-test:
