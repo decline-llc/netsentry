@@ -105,7 +105,7 @@ Query parameters:
 
 ### `GET /api/metrics`
 
-Returns Prometheus text format with process counters, current and high-water packet queue depth, loaded rules, alert counts, storage availability and health gauges, worker counters, rule match latency buckets, alert write latency buckets, and the latest capture heartbeat state when available.
+Returns Prometheus text format with process counters, process-lifetime packet and alert rate gauges, current and high-water packet queue depth, loaded rules, alert counts, storage availability and health gauges, worker counters, rule match latency buckets, alert write latency buckets, and the latest capture heartbeat state when available. The `netsentry_packets_processed_per_second` and `netsentry_alerts_generated_per_second` gauges are process-lifetime averages derived from local counters, not sliding-window throughput guarantees.
 
 ### `GET /api/rules`
 
@@ -250,7 +250,7 @@ Planned endpoints:
 | `GET /api/health` | partial | Minimal and verbose component snapshot responses exist. |
 | `GET /api/health?verbose=true` | partial | Capture heartbeat freshness, queue depth, rule count, storage status including emergency mode, storage available bytes, and throughput counters exist. |
 | `GET /api/alerts` | partial | SQLite-backed paginated list with exact-match, time range, MITRE, matched-keyword, and aggregate-count filters exists; daily-shard mode queries across matching shard files. |
-| `GET /api/metrics` | partial | Prometheus text output exists for process counters, rule match and alert write latency buckets, current/high-water queue depth, rule/alert/storage gauges, worker counters, and capture heartbeat gauges. |
+| `GET /api/metrics` | partial | Prometheus text output exists for process counters, process-lifetime packet and alert rate gauges, rule match and alert write latency buckets, current/high-water queue depth, rule/alert/storage gauges, worker counters, and capture heartbeat gauges. |
 | `GET /api/rules` | partial | Current rule snapshot listing exists. |
 | `POST /api/rules` | partial | Creates and persists one rule; optional PSK auth exists. |
 | `PUT /api/rules/{id}` | partial | Replaces and persists one rule; optional PSK auth exists. |

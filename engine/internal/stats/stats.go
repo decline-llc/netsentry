@@ -36,6 +36,8 @@ var matchDurationBuckets = [...]float64{
 
 // Stats holds process-local counters exported through /api/metrics.
 type Stats struct {
+	startedAt time.Time
+
 	framesTotal       atomic.Uint64
 	controlFrames     atomic.Uint64
 	packetsReceived   atomic.Uint64
@@ -58,7 +60,10 @@ type Stats struct {
 
 // New creates a Stats instance with stable severity labels preinitialized.
 func New() *Stats {
-	s := &Stats{alertsBySeverity: make(map[model.Severity]uint64)}
+	s := &Stats{
+		startedAt:        time.Now().UTC(),
+		alertsBySeverity: make(map[model.Severity]uint64),
+	}
 	for _, sev := range defaultSeverities {
 		s.alertsBySeverity[sev] = 0
 	}
@@ -168,6 +173,8 @@ func (s *Stats) ObserveAlerts(alerts []*model.Alert) {
 
 // Snapshot is a point-in-time view of exported counters.
 type Snapshot struct {
+	StartedAt time.Time
+
 	FramesTotal       uint64
 	ControlFrames     uint64
 	PacketsReceived   uint64
@@ -214,6 +221,7 @@ func (s *Stats) Snapshot() Snapshot {
 		})
 	}
 	return Snapshot{
+		StartedAt:         s.startedAt,
 		FramesTotal:       s.framesTotal.Load(),
 		ControlFrames:     s.controlFrames.Load(),
 		PacketsReceived:   s.packetsReceived.Load(),
@@ -305,6 +313,8 @@ func gaugeHelp(name string) string {
 	switch name {
 	case "netsentry_alerts_current":
 		return "Current number of aggregated alerts in storage."
+	case "netsentry_alerts_generated_per_second":
+		return "Process-lifetime average alerts generated per second."
 	case "netsentry_capture_avg_json_serialize_seconds":
 		return "Latest capture-reported average JSON serialization time."
 	case "netsentry_capture_connected":
@@ -323,6 +333,10 @@ func gaugeHelp(name string) string {
 		return "Current packet queue depth."
 	case "netsentry_packet_queue_depth_high_water":
 		return "Highest packet queue depth observed by metrics scrapes."
+	case "netsentry_packets_processed_per_second":
+		return "Process-lifetime average packets processed per second."
+	case "netsentry_process_uptime_seconds":
+		return "Seconds since this NetSentry engine process started."
 	case "netsentry_rules_loaded":
 		return "Current number of loaded rules."
 	case "netsentry_storage_available_bytes":

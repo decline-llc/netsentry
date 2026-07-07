@@ -114,7 +114,7 @@ Remaining blockers before tagging v0.1.0:
 - Rule types: `payload_match`, `ip_blacklist`, `port_blacklist`.
 - A self-contained Aho-Corasick matcher.
 - Minimal Go UDS receiver, CIDR alert suppressor component, and SQLite alert store with UPSERT aggregation, JSONL recovery-log replay, startup TTL pruning, optional daily DB shard pathing/cleanup, cross-shard alert querying/counting in daily-shard mode, and degraded/emergency health tracking after storage errors.
-- Minimal HTTP endpoints: `/api/health` with verbose component snapshot including storage status and available bytes, paginated `/api/alerts` with exact-match, time range, MITRE, matched-keyword, and aggregate-count filters, `/api/metrics`, rule listing, rule create/update/delete, rule reload, file-backed suppression create/update/delete/reload, method-aware error envelopes, optional PSK Bearer auth for modifying endpoints, non-GET audit logs, optional localhost-only pprof, storage health gauges, and payload preview redaction before alert writes.
+- Minimal HTTP endpoints: `/api/health` with verbose component snapshot including storage status and available bytes, paginated `/api/alerts` with exact-match, time range, MITRE, matched-keyword, and aggregate-count filters, `/api/metrics` with process-lifetime packet/alert rate gauges, rule listing, rule create/update/delete, rule reload, file-backed suppression create/update/delete/reload, method-aware error envelopes, optional PSK Bearer auth for modifying endpoints, non-GET audit logs, optional localhost-only pprof, storage health gauges, and payload preview redaction before alert writes.
 - Seed rules in canonical wrapped JSON schema, with legacy schema compatibility retained in the loader.
 - C-side JSON line formatting remains a bounded handwritten formatter for v0.1.0. It is covered by escaping, truncation, Base64 payload, UDS sender, microbenchmark, fuzz-smoke, and e2e heartbeat checks; a cJSON migration is not required unless later fuzzing exposes a concrete parser or formatting defect.
 
@@ -125,7 +125,7 @@ Remaining blockers before tagging v0.1.0:
 These are v0.1.0 goals, not current behavior:
 
 - Automatic disk cleanup or restart-free recovery after disk-full emergency mode.
-- Full Prometheus metric coverage beyond the current process, current/high-water queue, rule/write latency, alert, storage, worker, and capture heartbeat metrics.
+- Full Prometheus metric coverage beyond the current process, process-lifetime packet/alert rates, current/high-water queue, rule/write latency, alert, storage, worker, and capture heartbeat metrics.
 - Remaining large-corpus query tuning.
 - Sustained external C fuzz campaigns against larger parser and formatter corpora.
 - Published registry image for a named release.

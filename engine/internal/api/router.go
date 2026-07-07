@@ -282,17 +282,30 @@ func (s *Server) handleMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 	queueDepth := s.queue.QueueDepth()
 	s.stats.ObserveQueueDepth(queueDepth)
-	body := stats.RenderPrometheus(s.stats.Snapshot(), s.metricsGauges(count, queueDepth))
+	snapshot := s.stats.Snapshot()
+	body := stats.RenderPrometheus(snapshot, s.metricsGauges(snapshot, count, queueDepth))
 	w.Header().Set("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write([]byte(body))
 }
 
-func (s *Server) metricsGauges(alertCount int, queueDepth int) map[string]float64 {
+func (s *Server) metricsGauges(snapshot stats.Snapshot, alertCount int, queueDepth int) map[string]float64 {
 	gauges := map[string]float64{
 		"netsentry_alerts_current":     float64(alertCount),
 		"netsentry_packet_queue_depth": float64(queueDepth),
 		"netsentry_rules_loaded":       float64(s.rules.RuleCount()),
+	}
+	uptime := time.Since(snapshot.StartedAt).Seconds()
+	if snapshot.StartedAt.IsZero() || uptime < 0 {
+		uptime = 0
+	}
+	gauges["netsentry_process_uptime_seconds"] = uptime
+	if uptime > 0 {
+		gauges["netsentry_packets_processed_per_second"] = float64(snapshot.PacketsProcessed) / uptime
+		gauges["netsentry_alerts_generated_per_second"] = float64(snapshot.AlertsGenerated) / uptime
+	} else {
+		gauges["netsentry_packets_processed_per_second"] = 0
+		gauges["netsentry_alerts_generated_per_second"] = 0
 	}
 	if available, ok := s.storageAvailableBytes(); ok {
 		gauges["netsentry_storage_available_bytes"] = float64(available)

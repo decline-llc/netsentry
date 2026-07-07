@@ -20,7 +20,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - REST API for health, alerts, metrics, rules CRUD/reload, and file-backed suppressions.
 - Alert queries support SQLite-backed exact-match filters, RFC3339 time ranges, MITRE tactic/technique filters, matched-keyword substring filtering, minimum aggregate-count filtering, pagination, daily-shard cross-file querying/counting, and indexes for common exact/range filters.
 - Unified API error envelope, pagination envelope, request IDs, method-aware 405 responses, optional PSK Bearer auth, non-GET audit logs, and localhost-only pprof.
-- Prometheus text metrics for current packet, alert, current/high-water queue depth, rule latency, alert write latency, storage, worker, and capture heartbeat counters, with HELP text for exported gauges.
+- Prometheus text metrics for current packet, process-lifetime packet/alert rates, alert, current/high-water queue depth, rule latency, alert write latency, storage, worker, and capture heartbeat counters, with HELP text for exported gauges.
 - Alert storage health tracking after SQLite write/query errors, including sticky emergency mode for disk-full, quota, read-only filesystem, and disk I/O failures, surfaced through verbose health with storage available bytes and `netsentry_storage_healthy`.
 - Suppression rules can load from `engine.suppressions_file`; suppression create, update, delete, and reload operations persist or reload that file before updating the active filter.
 - Deterministic synthetic pcap generator with a Python stdlib fallback when Scapy is unavailable.

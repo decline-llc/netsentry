@@ -181,11 +181,11 @@ All SQL values must use placeholders. Do not format user-controlled values into 
 
 ## 9. Observability Target
 
-Current build: zap startup and match logs, verbose health with storage status and available bytes, Prometheus metrics for process/current and high-water queue depth/rule latency/alert write latency/alert/storage/worker/capture heartbeat state, structured audit logs for non-GET API requests, optional localhost-only pprof, SQLite JSONL recovery-log replay, and configurable payload preview redaction before alert writes.
+Current build: zap startup and match logs, verbose health with storage status and available bytes, Prometheus metrics for process/current and high-water queue depth/process-lifetime packet and alert rates/rule latency/alert write latency/alert/storage/worker/capture heartbeat state, structured audit logs for non-GET API requests, optional localhost-only pprof, SQLite JSONL recovery-log replay, and configurable payload preview redaction before alert writes.
 
 v0.1.0 target:
 
-- `/api/metrics` Prometheus endpoint with process counters, rule match and alert write latency buckets, current/high-water queue depth, rule/alert/storage gauges, worker counters, and capture heartbeat gauges.
+- `/api/metrics` Prometheus endpoint with process counters, process-lifetime packet and alert rate gauges, rule match and alert write latency buckets, current/high-water queue depth, rule/alert/storage gauges, worker counters, and capture heartbeat gauges.
 - `/api/health?verbose=true` with capture heartbeat freshness, engine queue/rule counts, storage status and available bytes, and throughput counters.
 - Structured JSON logs.
 - Localhost-only pprof server.

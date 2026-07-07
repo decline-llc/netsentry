@@ -24,6 +24,12 @@ func TestSnapshotPreinitializesSeverityLabels(t *testing.T) {
 	if snapshot.AlertsBySeverity[model.SeverityHigh] != 1 {
 		t.Fatalf("high severity count = %d, want 1", snapshot.AlertsBySeverity[model.SeverityHigh])
 	}
+	if snapshot.StartedAt.IsZero() {
+		t.Fatal("snapshot started_at is zero")
+	}
+	if time.Since(snapshot.StartedAt) < 0 {
+		t.Fatalf("snapshot started_at is in the future: %s", snapshot.StartedAt)
+	}
 }
 
 func TestRenderPrometheusIncludesCountersLabelsAndGauges(t *testing.T) {
@@ -37,9 +43,12 @@ func TestRenderPrometheusIncludesCountersLabelsAndGauges(t *testing.T) {
 	s.ObserveAlerts([]*model.Alert{{Severity: model.SeverityCritical}})
 
 	body := RenderPrometheus(s.Snapshot(), map[string]float64{
-		"netsentry_capture_connected":       1,
-		"netsentry_rules_loaded":            3,
-		"netsentry_storage_available_bytes": 1024,
+		"netsentry_alerts_generated_per_second":  0,
+		"netsentry_capture_connected":            1,
+		"netsentry_packets_processed_per_second": 0,
+		"netsentry_process_uptime_seconds":       3,
+		"netsentry_rules_loaded":                 3,
+		"netsentry_storage_available_bytes":      1024,
 	})
 	for _, want := range []string{
 		"# TYPE netsentry_frames_total counter",
@@ -62,10 +71,16 @@ func TestRenderPrometheusIncludesCountersLabelsAndGauges(t *testing.T) {
 		`netsentry_alert_write_duration_seconds_bucket{le="+Inf"} 1`,
 		"netsentry_alert_write_duration_seconds_sum 0.75",
 		"netsentry_alert_write_duration_seconds_count 1",
+		"# HELP netsentry_alerts_generated_per_second Process-lifetime average alerts generated per second.",
+		"netsentry_alerts_generated_per_second 0",
 		"# HELP netsentry_packet_queue_depth_high_water Highest packet queue depth observed by metrics scrapes.",
 		"netsentry_packet_queue_depth_high_water 9",
 		"# HELP netsentry_capture_connected Whether the capture heartbeat is currently fresh.",
 		"netsentry_capture_connected 1",
+		"# HELP netsentry_packets_processed_per_second Process-lifetime average packets processed per second.",
+		"netsentry_packets_processed_per_second 0",
+		"# HELP netsentry_process_uptime_seconds Seconds since this NetSentry engine process started.",
+		"netsentry_process_uptime_seconds ",
 		"# HELP netsentry_rules_loaded Current number of loaded rules.",
 		"netsentry_rules_loaded 3",
 		"# HELP netsentry_storage_available_bytes Available bytes on the alert storage filesystem.",

@@ -962,7 +962,11 @@ func TestStoreErrorUsesErrorEnvelope(t *testing.T) {
 
 func TestMetricsEndpoint(t *testing.T) {
 	queue := &fakeQueue{depth: 7}
-	server := NewServer(&fakeStore{alerts: []*model.Alert{{RuleID: "rule-1"}}}, queue, &fakeRules{count: 3}, stats.New())
+	metrics := stats.New()
+	metrics.IncPacketProcessed()
+	metrics.IncPacketProcessed()
+	metrics.ObserveAlerts([]*model.Alert{{RuleID: "rule-1", Severity: model.SeverityHigh}})
+	server := NewServer(&fakeStore{alerts: []*model.Alert{{RuleID: "rule-1"}}}, queue, &fakeRules{count: 3}, metrics)
 	rec := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/api/metrics", nil)
 	server.Handler().ServeHTTP(rec, req)
@@ -975,10 +979,16 @@ func TestMetricsEndpoint(t *testing.T) {
 		"# HELP netsentry_alerts_current Current number of aggregated alerts in storage.",
 		"# HELP netsentry_packet_queue_depth Current packet queue depth.",
 		"# HELP netsentry_packet_queue_depth_high_water Highest packet queue depth observed by metrics scrapes.",
+		"# HELP netsentry_packets_processed_per_second Process-lifetime average packets processed per second.",
+		"# HELP netsentry_alerts_generated_per_second Process-lifetime average alerts generated per second.",
+		"# HELP netsentry_process_uptime_seconds Seconds since this NetSentry engine process started.",
 		"# HELP netsentry_rules_loaded Current number of loaded rules.",
 		"netsentry_alerts_current 1",
 		"netsentry_packet_queue_depth 7",
 		"netsentry_packet_queue_depth_high_water 7",
+		"netsentry_packets_processed_per_second ",
+		"netsentry_alerts_generated_per_second ",
+		"netsentry_process_uptime_seconds ",
 		"netsentry_rules_loaded 3",
 	} {
 		if !strings.Contains(body, want) {

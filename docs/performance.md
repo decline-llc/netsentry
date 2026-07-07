@@ -120,4 +120,4 @@ For v0.1.0, the remaining performance question is end-to-end throughput under mo
 - SQLite aggregation rate
 - total pcap-to-alert runtime
 
-It now exposes worker match latency and alert write latency histograms plus current and high-water packet queue depth through `/api/metrics`, but it does not yet exercise realistic pcap corpora. Until those exist, the honest target remains functional correctness plus measured local benchmarks, not a published production PPS guarantee.
+It now exposes worker match latency and alert write latency histograms, current and high-water packet queue depth, and process-lifetime packet/alert rate gauges through `/api/metrics`, but it does not yet exercise realistic pcap corpora. Until those exist, the honest target remains functional correctness plus measured local benchmarks, not a published production PPS guarantee.
