@@ -24,7 +24,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Alert storage health tracking after SQLite write/query errors, including sticky emergency mode for disk-full, quota, read-only filesystem, and disk I/O failures, surfaced through verbose health with storage available bytes and `netsentry_storage_healthy`.
 - Suppression rules can load from `engine.suppressions_file`; suppression create, update, delete, and reload operations persist or reload that file before updating the active filter.
 - Deterministic synthetic pcap generator with a Python stdlib fallback when Scapy is unavailable.
-- Non-interactive end-to-end smoke test via `make e2e-smoke`, including capture heartbeat metrics assertions.
+- Non-interactive end-to-end smoke test via `make e2e-smoke`, including capture heartbeat and process rate metrics assertions.
 - Repeat-pcap end-to-end throughput smoke test via `make e2e-pressure`.
 - Pcap sanitization helper via `make sanitize-pcap INPUT=... OUTPUT=...`.
 - Deterministic AddressSanitizer fuzz smoke for the C frame parser via `make fuzz-parser`.

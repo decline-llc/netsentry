@@ -181,6 +181,12 @@ if metrics.get("netsentry_alert_write_duration_seconds_count", 0) <= 0:
     errors.append("expected alert write duration histogram to record at least one observation")
 if "netsentry_packet_queue_depth_high_water" not in metrics:
     errors.append("expected packet queue depth high-water metric to be present")
+if metrics.get("netsentry_process_uptime_seconds", 0) <= 0:
+    errors.append("expected process uptime metric to be positive")
+if metrics.get("netsentry_packets_processed_per_second", 0) <= 0:
+    errors.append("expected packets processed per second metric to be positive")
+if metrics.get("netsentry_alerts_generated_per_second", 0) <= 0:
+    errors.append("expected alerts generated per second metric to be positive")
 
 if errors:
     for err in errors:

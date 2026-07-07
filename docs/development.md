@@ -261,7 +261,7 @@ This runs `make shell-check`, `make docs-check`, `make python-check`, `make conf
 SKIP_DOCKER=1 make rc-check
 ```
 
-The `e2e-smoke` step uses a temporary config, Unix socket, API port, and SQLite database, then asserts that the synthetic pcap produces 6 processed packets, 5 alerts, 8 loaded rules, capture heartbeat metrics, and rule/write latency histogram observations.
+The `e2e-smoke` step uses a temporary config, Unix socket, API port, and SQLite database, then asserts that the synthetic pcap produces 6 processed packets, 5 alerts, 8 loaded rules, capture heartbeat metrics, process-lifetime packet/alert rate metrics, and rule/write latency histogram observations.
 
 To create a local release archive:
 
