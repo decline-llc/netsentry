@@ -1,6 +1,7 @@
 package alert
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
@@ -130,6 +131,30 @@ func TestLoadAndSaveSuppressionsFile(t *testing.T) {
 	}
 	if !strings.Contains(string(raw), `"suppressions"`) {
 		t.Fatalf("expected canonical wrapper, got %s", string(raw))
+	}
+}
+
+func TestRepositorySuppressionsFileUsesCanonicalWrappedSchema(t *testing.T) {
+	path := filepath.Join("..", "..", "..", "configs", "suppressions.json")
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var wrapped struct {
+		Suppressions []Suppression `json:"suppressions"`
+	}
+	if err := json.Unmarshal(raw, &wrapped); err != nil {
+		t.Fatalf("decode repository suppressions: %v", err)
+	}
+	if wrapped.Suppressions == nil {
+		t.Fatal("repository suppressions file must use canonical suppressions wrapper")
+	}
+	loaded, err := LoadSuppressionsFromFile(path)
+	if err != nil {
+		t.Fatalf("load repository suppressions: %v", err)
+	}
+	if _, err := NewSuppressionManager(loaded); err != nil {
+		t.Fatalf("compile repository suppressions: %v", err)
 	}
 }
 

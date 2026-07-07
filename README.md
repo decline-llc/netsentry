@@ -67,9 +67,9 @@ DOCKER="sudo docker" make rc-check
 ```
 
 The release-candidate bundle includes shell and Python syntax checks,
-documentation consistency checks, dependency verification, tests, a coverage
-snapshot, fuzz smoke, e2e smoke, release archive checks, Docker image smoke, and
-Docker runtime health smoke.
+configuration sample validation, documentation consistency checks, dependency
+verification, tests, a coverage snapshot, fuzz smoke, e2e smoke, release archive
+checks, Docker image smoke, and Docker runtime health smoke.
 
 To build the local Docker image:
 

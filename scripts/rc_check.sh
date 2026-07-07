@@ -37,6 +37,9 @@ make docs-check
 echo "[rc-check] make python-check"
 make python-check
 
+echo "[rc-check] make config-check"
+make config-check
+
 echo "[rc-check] make deps-check"
 make deps-check
 

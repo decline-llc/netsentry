@@ -12,7 +12,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build build-asan test test-coverage deps-check docs-check shell-check python-check asan-test bench fuzz-parser fuzz-parser-long e2e-smoke e2e-pressure sanitize-pcap dist docker-build rc-check lint clean quickstart help
+.PHONY: all build-c build-go build build-asan test test-coverage deps-check docs-check shell-check python-check config-check asan-test bench fuzz-parser fuzz-parser-long e2e-smoke e2e-pressure sanitize-pcap dist docker-build rc-check lint clean quickstart help
 
 all: build
 
@@ -67,6 +67,13 @@ shell-check:
 ## python-check — run Python script syntax checks
 python-check:
 	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("scripts/gen_test_pcap.py", "scripts/sanitize_pcap.py"))]'
+
+## config-check — validate repository config, rule, and suppression files
+config-check:
+	@mkdir -p $(GOCACHE)
+	cd $(GO_MODULE) && GOCACHE=$(GOCACHE) GOPROXY=$(GOPROXY) $(GO) test -count=1 \
+	    ./internal/config ./internal/rule ./internal/alert \
+	    -run 'TestLoadRepositoryConfigFile|TestRepositoryRuleFilesUseCanonicalWrappedSchema|TestRepositorySuppressionsFileUsesCanonicalWrappedSchema'
 
 ## asan-test — run C parser tests with AddressSanitizer
 asan-test:

@@ -38,6 +38,7 @@ make deps-check    # verify Go module dependency cache integrity
 make docs-check    # scan public docs for retired stale wording
 make shell-check   # run shell script syntax checks
 make python-check  # run Python script syntax checks
+make config-check  # validate repository config, rule, and suppression files
 make bench         # C parser/UDS microbenchmarks + Go benchmarks
 make fuzz-parser   # deterministic ASan fuzz smoke for the C frame parser
 make fuzz-parser-long # longer deterministic ASan fuzz pass for the C frame parser
@@ -252,7 +253,7 @@ make rc-check
 DOCKER="sudo docker" make rc-check
 ```
 
-This runs `make shell-check`, `make docs-check`, `make python-check`, `make deps-check`, `make test`, `make test-coverage`, `make fuzz-parser`, `make e2e-smoke`, `make dist`, release archive checksum/content smoke checks, `make docker-build`, a minimal Docker image content smoke check, and a Docker runtime `/api/health` smoke check. If Docker is unavailable in the current environment, use:
+This runs `make shell-check`, `make docs-check`, `make python-check`, `make config-check`, `make deps-check`, `make test`, `make test-coverage`, `make fuzz-parser`, `make e2e-smoke`, `make dist`, release archive checksum/content smoke checks, `make docker-build`, a minimal Docker image content smoke check, and a Docker runtime `/api/health` smoke check. If Docker is unavailable in the current environment, use:
 
 ```bash
 SKIP_DOCKER=1 make rc-check
@@ -302,7 +303,7 @@ Current validation baseline:
 
 - C parser and UDS sender unit tests cover malformed frames, VLAN/Q-in-Q, IPv4 fragments, TCP offset errors, reconnect behavior, and write-error accounting.
 - Go unit and integration tests cover receiver lifecycle, worker panic isolation, rule semantics, API validation, SQLite aggregation, daily shards, recovery-log replay, and storage degraded/emergency behavior.
-- Release-candidate checks run dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
+- Release-candidate checks run syntax checks, repository configuration validation, dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 
 Remaining test gaps:
 

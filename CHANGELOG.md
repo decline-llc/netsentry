@@ -43,6 +43,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Native documentation consistency check via `make docs-check`, scanning public docs for retired stale wording.
 - Native shell syntax check via `make shell-check`, reused by release-candidate checks.
 - Native Python syntax check via `make python-check`, reused by release-candidate checks.
+- Native repository configuration check via `make config-check`, validating checked-in config, rules, and suppressions through current Go parsers.
 
 ### Changed
 - Public rule samples now use the canonical wrapped schema while the loader remains backward compatible with legacy rule files.
