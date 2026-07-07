@@ -140,9 +140,9 @@ Target behavior:
 - Packet channel sends should block rather than silently drop.
 - Blocking sends must also listen to `ctx.Done()` so shutdown cannot leak goroutines.
 - C reconnect uses exponential backoff, can bound initial offline connection attempts, and counts write errors/dropped frames while disconnected.
-- Full graceful shutdown drains packet and alert buffers with explicit timeouts.
+- Engine shutdown waits for the UDS receiver accept loop/connection handlers and the single pipeline worker before the alert store is closed.
 
-The current development build has basic signal handling and HTTP shutdown, but not the full v0.1.0 drain sequence.
+The current development build has signal-aware HTTP shutdown plus explicit receiver/worker teardown ordering. Remaining shutdown validation should focus on active-load drills that combine receiver, worker, HTTP, and storage teardown.
 
 ---
 
@@ -194,7 +194,7 @@ v0.1.0 target:
 
 ## 10. Testing Target
 
-Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
+Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, engine worker shutdown orchestration, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
 
 Alert storage tests cover SQLite aggregation windows, JSONL recovery-log replay idempotency, query index creation, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics counts backed by a real daily-shard SQLite store.
 

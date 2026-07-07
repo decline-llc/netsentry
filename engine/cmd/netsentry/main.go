@@ -19,6 +19,7 @@ import (
 	"github.com/decline-llc/netsentry/internal/rule"
 	nssignal "github.com/decline-llc/netsentry/internal/signal"
 	"github.com/decline-llc/netsentry/internal/stats"
+	"github.com/decline-llc/netsentry/pkg/model"
 )
 
 func main() {
@@ -110,7 +111,7 @@ func main() {
 	if cfg.Engine.RedactSensitiveFields {
 		worker.SetRedactor(alert.RedactSensitivePayloads)
 	}
-	go worker.Run(ctx, recv.Packets())
+	workerDone := startPipelineWorker(ctx, worker, recv.Packets())
 	startHTTPServer(ctx, cfg.Engine, store, recv, ruleEngine, metrics, suppressions, logger)
 	startPprofServer(ctx, cfg.Engine, logger)
 
@@ -118,7 +119,20 @@ func main() {
 		zap.String("uds", cfg.Engine.UDSSocketPath),
 		zap.Int("api_port", cfg.Engine.APIPort))
 	<-ctx.Done()
-	logger.Info("shutdown signal received, exiting")
+	logger.Info("shutdown signal received, stopping receiver")
+	recv.Stop()
+	recv.Wait()
+	<-workerDone
+	logger.Info("shutdown complete")
+}
+
+func startPipelineWorker(ctx context.Context, worker *pipeline.Worker, packets <-chan *model.PacketInfo) <-chan struct{} {
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		worker.Run(ctx, packets)
+	}()
+	return done
 }
 
 func startHTTPServer(ctx context.Context, engineCfg config.EngineConfig, store *alert.Store, recv *receiver.Receiver, ruleEngine *rule.Engine, metrics *stats.Stats, suppressions *alert.SuppressionManager, logger *zap.Logger) {

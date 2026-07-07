@@ -54,11 +54,13 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Development and architecture testing notes now separate the current validation baseline from remaining test gaps.
 - C-side JSON line formatting is documented as a bounded handwritten v0.1.0 implementation, so cJSON migration is no longer listed as required release-candidate work.
 - Repeat-pcap pressure smoke can now tune the post-capture drain wait with `PRESSURE_WAIT_ATTEMPTS`, making larger local validation runs less prone to false failures while the worker and SQLite aggregation catch up.
+- Engine shutdown now stops and waits for the UDS receiver and waits for the pipeline worker before returning from `main`, so deferred alert store close happens after worker teardown.
 
 ### Fixed
 - C parser and UDS sender edge cases are covered by unit tests, ASan tests, and microbenchmarks.
 - UDS reconnect behavior is tested across listener restart and receiver reconnection paths.
 - Receiver shutdown closes single and multiple active Unix socket connections and removes the socket path.
+- Engine worker shutdown orchestration is covered by a focused `cmd/netsentry` test.
 - Worker panic recovery no longer terminates the worker loop after a single bad packet.
 - Alert aggregation preserves earliest `first_seen`, latest `last_seen`, and latest payload/match fields when older events arrive after newer events in the same aggregation window.
 - Daily-shard alert storage writes cross-day alerts to `netsentry-YYYY-MM-DD.db` files based on each alert timestamp during a running process.
