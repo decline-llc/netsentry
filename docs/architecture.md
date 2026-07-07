@@ -198,9 +198,11 @@ Current build has Go tests for rule matching/Aho-Corasick including payload prot
 
 Alert storage tests cover SQLite aggregation windows, JSONL recovery-log replay idempotency, query index creation, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics counts backed by a real daily-shard SQLite store.
 
+The v0.1.0 IPC serializer decision is to retain the current bounded handwritten C JSON formatter instead of adding cJSON. The formatter is narrow, fails closed on buffer exhaustion, Base64-encodes payload previews, and is already exercised through unit tests, microbenchmarks, deterministic fuzz smoke, and e2e heartbeat assertions. Replacing it remains a future option only if sustained fuzzing or production evidence shows a concrete defect.
+
 Remaining validation gaps:
 
-- Sustained external C fuzz campaigns with larger parser corpora.
+- Sustained external C fuzz campaigns with larger parser and formatter corpora.
 - Realistic pcap corpora for throughput, query tuning, and alert-volume behavior beyond synthetic repeat-pcap smoke runs.
 - Broader SQLite corruption and fault-injection scenarios beyond current disk-full, read-only, I/O, recovery replay, and emergency-mode tests.
 - Additional full-engine shutdown drills that combine receiver, worker, HTTP, and storage teardown under active load.

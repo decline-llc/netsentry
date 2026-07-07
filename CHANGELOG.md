@@ -51,6 +51,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Quickstart clears the demo SQLite database before running so repeated runs keep returning the deterministic seed-alert set.
 - Makefile Go targets now default `GOCACHE` to `/tmp/netsentry-go-cache`, while still allowing `GOCACHE=...` overrides, so build, test, lint, and benchmark targets work when the home-directory Go cache is read-only.
 - Development and architecture testing notes now separate the current validation baseline from remaining test gaps.
+- C-side JSON line formatting is documented as a bounded handwritten v0.1.0 implementation, so cJSON migration is no longer listed as required release-candidate work.
 
 ### Fixed
 - C parser and UDS sender edge cases are covered by unit tests, ASan tests, and microbenchmarks.
@@ -64,7 +65,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ### Known Gaps
 - Automatic disk cleanup or restart-free recovery after storage emergency mode is not implemented.
 - End-to-end pressure coverage currently includes repeat-pcap runs up to 60,000 packets locally, but realistic pcap corpora are still pending.
-- Sustained external C fuzz campaigns are still pending.
+- Sustained external C fuzz campaigns against larger parser and formatter corpora are still pending.
 
 ---
 
