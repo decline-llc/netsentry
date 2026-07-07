@@ -307,6 +307,22 @@ Current validation baseline:
 
 The C-side JSON line formatter is intentionally kept as a bounded handwritten v0.1.0 implementation. It avoids a new C dependency, rejects truncation, escapes JSON strings, Base64-encodes packet payload previews, and is covered by the UDS sender tests and current smoke checks. A cJSON migration should be reopened only with a concrete defect or fuzzing result.
 
+Release readiness for v0.1.0:
+
+Ready:
+
+- `make rc-check` includes syntax checks, config validation, dependency verification, tests, coverage, deterministic fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
+- GitHub Actions CI and GHCR publishing workflows are checked in.
+- `make dist` produces a local release archive, checksum, and generated release notes.
+- `make docker-build` builds the local runtime image.
+
+Remaining release blockers:
+
+- Final full `DOCKER="sudo docker" make rc-check` must pass on the exact release candidate.
+- Sustained external C fuzz evidence must be recorded for larger parser and formatter corpora.
+- Realistic pcap corpus pressure/query evidence must be recorded separately from repeat-pcap smoke results.
+- A version tag must drive the named GitHub Release and named registry image publication.
+
 Remaining test gaps:
 
 - Sustained external C fuzz campaigns against larger parser and formatter corpora.
