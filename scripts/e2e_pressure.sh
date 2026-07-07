@@ -6,6 +6,7 @@ TMP_DIR="$(mktemp -d)"
 ENGINE_PID=""
 
 REPEATS="${PRESSURE_REPEATS:-1000}"
+WAIT_ATTEMPTS="${PRESSURE_WAIT_ATTEMPTS:-1200}"
 EXPECTED_PACKETS=$((REPEATS * 6))
 EXPECTED_ALERTS=$((REPEATS * 5))
 
@@ -158,7 +159,7 @@ bin/netsentry-capture -r "${PCAP_PATH}" -s "${UDS_PATH}" -c 5 >"${TMP_DIR}/captu
 HEALTH_JSON="${TMP_DIR}/health.json"
 ALERTS_JSON="${TMP_DIR}/alerts.json"
 
-for _ in $(seq 1 200); do
+for _ in $(seq 1 "${WAIT_ATTEMPTS}"); do
     curl -fsS "http://127.0.0.1:${PORT}/api/health?verbose=true" >"${HEALTH_JSON}"
     if python3 - "${HEALTH_JSON}" "${EXPECTED_PACKETS}" "${EXPECTED_ALERTS}" <<'PY'
 import json

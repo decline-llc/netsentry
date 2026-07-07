@@ -232,6 +232,8 @@ For changes that may affect the full offline pipeline, also run:
 make e2e-pressure
 # Optional larger run:
 PRESSURE_REPEATS=10000 make e2e-pressure
+# Optional longer post-capture drain wait for larger local runs:
+PRESSURE_REPEATS=10000 PRESSURE_WAIT_ATTEMPTS=1200 make e2e-pressure
 ```
 
 For C parser hardening work, run the deterministic ASan fuzz smoke:

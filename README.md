@@ -42,6 +42,8 @@ For a local end-to-end throughput smoke check, run:
 make e2e-pressure
 # Optional larger run:
 PRESSURE_REPEATS=10000 make e2e-pressure
+# Optional longer post-capture drain wait:
+PRESSURE_REPEATS=10000 PRESSURE_WAIT_ATTEMPTS=1200 make e2e-pressure
 ```
 
 For a C parser fuzz smoke:

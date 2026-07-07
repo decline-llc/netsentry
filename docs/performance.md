@@ -44,6 +44,13 @@ The default run repeats the six-packet synthetic pcap pattern 1000 times, for 60
 PRESSURE_REPEATS=10000 make e2e-pressure
 ```
 
+Larger local runs may need extra time for the worker and SQLite aggregation to
+drain after capture exits. Tune the post-capture wait loop with:
+
+```bash
+PRESSURE_REPEATS=10000 PRESSURE_WAIT_ATTEMPTS=1200 make e2e-pressure
+```
+
 The script reports elapsed time, packet throughput, alert throughput, and verifies:
 
 - expected packets received and processed
@@ -96,6 +103,7 @@ Local pressure-smoke samples for the current machine and configuration:
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 2026-06-29 | 1000 | 6000 | 5000 | 5 | 4.582 s | 1309 pps | 1091 alerts/sec |
 | 2026-06-30 | 10000 | 60000 | 50000 | 5 | 42.788 s | 1402 pps | 1169 alerts/sec |
+| 2026-07-06 | 10000 | 60000 | 50000 | 5 | 108.615 s | 552 pps | 460 alerts/sec |
 
 ---
 

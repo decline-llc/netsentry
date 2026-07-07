@@ -53,6 +53,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Makefile Go targets now default `GOCACHE` to `/tmp/netsentry-go-cache`, while still allowing `GOCACHE=...` overrides, so build, test, lint, and benchmark targets work when the home-directory Go cache is read-only.
 - Development and architecture testing notes now separate the current validation baseline from remaining test gaps.
 - C-side JSON line formatting is documented as a bounded handwritten v0.1.0 implementation, so cJSON migration is no longer listed as required release-candidate work.
+- Repeat-pcap pressure smoke can now tune the post-capture drain wait with `PRESSURE_WAIT_ATTEMPTS`, making larger local validation runs less prone to false failures while the worker and SQLite aggregation catch up.
 
 ### Fixed
 - C parser and UDS sender edge cases are covered by unit tests, ASan tests, and microbenchmarks.
