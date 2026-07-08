@@ -38,6 +38,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Generated release archive notes document package contents, quick verification, v0.1.0 boundaries, release-candidate evidence, and packaged documentation references.
 - Local Docker image build via `make docker-build`.
 - Release-candidate verification bundle via `make rc-check`, including documentation consistency, dependency verification, coverage snapshot, fuzz smoke, release archive, Docker image content, and runtime health smoke checks.
+- Latest local full sudo Docker release-candidate validation passed on 2026-07-08.
 - GitHub Actions workflows for release-candidate checks and GHCR Docker image publishing.
 - Native coverage snapshot target via `make test-coverage`, running C tests and a Go coverage summary without external tooling.
 - Native dependency integrity check via `make deps-check`, using `go mod verify`.

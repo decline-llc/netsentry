@@ -333,10 +333,10 @@ Ready:
 - GitHub Actions CI and GHCR publishing workflows are checked in.
 - `make dist` produces a local release archive, checksum, and generated release notes.
 - `make docker-build` builds the local runtime image.
+- Latest local full sudo Docker RC validation passed on 2026-07-08, covering the complete `make rc-check` bundle including Docker build, image content smoke, and runtime `/api/health` smoke.
 
 Remaining release blockers:
 
-- Final full `DOCKER="sudo docker" make rc-check` must pass on the exact release candidate.
 - Sustained external C fuzz evidence must be recorded for larger parser and formatter corpora.
 - Realistic pcap corpus pressure/query evidence must be recorded with `make e2e-corpus-pressure`, separately from repeat-pcap smoke results.
 - A version tag must drive the named GitHub Release and named registry image publication.

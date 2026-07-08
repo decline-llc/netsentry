@@ -107,10 +107,10 @@ Ready gates:
 - GitHub Actions CI reuses the release-candidate bundle.
 - GHCR publishing workflow is present for version tags or explicit manual publishing.
 - Release archive generation includes binaries, configs, docs, checksum, and generated release notes.
+- Latest local full sudo Docker RC validation: passed on 2026-07-08, covering the complete `make rc-check` bundle including Docker build, image content smoke, and runtime `/api/health` smoke.
 
 Remaining blockers before tagging v0.1.0:
 
-- Run and record a final full `DOCKER="sudo docker" make rc-check` on the release candidate.
 - Record sustained external C fuzz evidence against larger parser and formatter corpora.
 - Run and record realistic pcap corpus pressure/query evidence with `PCAP_CORPUS=/path/to/sanitized-pcaps make e2e-corpus-pressure`, separate from synthetic repeat-pcap smoke runs.
 - Create the named GitHub Release and publish the named registry image from a version tag.
