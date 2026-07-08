@@ -3,7 +3,7 @@
   "timestamp": "20260708-051113",
   "branch": "main",
   "risk_level": "medium",
-  "current_checkpoint": "implementation complete; partial validation only, commit/push requested before full quality gates",
+  "current_checkpoint": "implementation complete; local commits created, push blocked by missing Git transport support",
   "completed_steps": [
     "Created task plan docs/plans/task-20260708-050129.md",
     "Added .github/workflows/release.yml for tag-driven GitHub Release publication",
@@ -13,7 +13,8 @@
     "Recorded build/tooling blocker in docs/errors/build-fail-20260708-050602.log",
     "Reconciled release-readiness and development-guide wording so publication status matches the checked-in workflow state",
     "Prepared one atomic commit for the release workflow and documentation updates",
-    "Pushed the release workflow/documentation commit after documenting incomplete quality gates"
+    "Created local commits for the release workflow/documentation changes",
+    "Recorded the Git transport blocker in docs/errors/git-push-fail-20260708-052525.log"
   ],
   "pending_steps": [
     "Install or expose make in the execution environment",
@@ -25,12 +26,14 @@
     "Run make lint",
     "Review remote policy mismatch if still relevant",
     "Re-run the full mandated quality gates in a provisioned environment",
+    "Push the local commits to origin/main from a host with working Git transport helpers",
     "Verify the tag-driven GitHub Release workflow on the first real version tag"
   ],
   "blockers": [
     "Ubuntu Core 24 host has no apt-get",
     "Current execution environment returns Permission denied for sudo and snap invocations",
-    "Without make and go the mandated quality gates cannot complete"
+    "Without make and go the mandated quality gates cannot complete",
+    "Current Git environment lacks git-remote-https and denies executing ssh"
   ],
-  "next_action": "Use an environment with make and go installed to complete the remaining quality gates and confirm the workflow on a real release tag"
+  "next_action": "Use an environment with working Git transport helpers plus make/go installed to push the local commits, complete the remaining quality gates, and confirm the workflow on a real release tag"
 }
