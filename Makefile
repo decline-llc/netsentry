@@ -12,7 +12,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build build-asan test test-coverage deps-check docs-check shell-check python-check config-check asan-test bench fuzz-parser fuzz-parser-long e2e-smoke e2e-pressure sanitize-pcap dist docker-build rc-check lint clean quickstart help
+.PHONY: all build-c build-go build build-asan test test-coverage deps-check docs-check shell-check python-check config-check asan-test bench fuzz-parser fuzz-parser-long e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap dist docker-build rc-check lint clean quickstart help
 
 all: build
 
@@ -60,6 +60,7 @@ docs-check:
 shell-check:
 	@bash -n scripts/e2e_smoke.sh
 	@bash -n scripts/e2e_pressure.sh
+	@bash -n scripts/e2e_corpus_pressure.sh
 	@bash -n scripts/docs_check.sh
 	@bash -n scripts/package_release.sh
 	@bash -n scripts/rc_check.sh
@@ -100,6 +101,12 @@ e2e-smoke: build
 ## e2e-pressure — run repeat-pcap end-to-end throughput smoke test
 e2e-pressure: build
 	@bash scripts/e2e_pressure.sh
+
+## e2e-corpus-pressure — run local pcap corpus pressure evidence: PCAP_CORPUS=/path make e2e-corpus-pressure
+e2e-corpus-pressure:
+	@test -n "$(PCAP_CORPUS)" || { echo "PCAP_CORPUS is required"; exit 2; }
+	$(MAKE) build
+	@bash scripts/e2e_corpus_pressure.sh
 
 ## sanitize-pcap — write a sanitized pcap: make sanitize-pcap INPUT=in.pcap OUTPUT=out.pcap
 sanitize-pcap:

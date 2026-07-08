@@ -92,3 +92,6 @@ data/*.jsonl
 DEVLOG.md
 .qoder/
 .codex/
+
+# Local release evidence may include private corpus paths or operator notes
+docs/evidence/local/

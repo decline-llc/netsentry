@@ -44,6 +44,7 @@ make fuzz-parser   # deterministic ASan fuzz smoke for the C frame parser
 make fuzz-parser-long # longer deterministic ASan fuzz pass for the C frame parser
 make e2e-smoke     # deterministic pcap -> SQLite -> API smoke test
 make e2e-pressure  # repeat-pcap end-to-end throughput smoke test
+make e2e-corpus-pressure # local sanitized pcap corpus pressure evidence
 make sanitize-pcap # sanitize an Ethernet pcap before sharing it
 make dist          # build a local release archive under dist/
 make docker-build  # build a local Docker image
@@ -157,6 +158,7 @@ configs/
 scripts/
   e2e_smoke.sh
   e2e_pressure.sh
+  e2e_corpus_pressure.sh
   gen_test_pcap.py
   package_release.sh
   rc_check.sh
@@ -235,6 +237,20 @@ PRESSURE_REPEATS=10000 make e2e-pressure
 # Optional longer post-capture drain wait for larger local runs:
 PRESSURE_REPEATS=10000 PRESSURE_WAIT_ATTEMPTS=1200 make e2e-pressure
 ```
+
+For release-candidate evidence against local sanitized traffic samples, run:
+
+```bash
+PCAP_CORPUS=/path/to/sanitized-pcaps make e2e-corpus-pressure
+# Optional output directory:
+PCAP_CORPUS=/path/to/sanitized-pcaps CORPUS_OUTPUT_DIR=/tmp/netsentry-corpus-evidence make e2e-corpus-pressure
+```
+
+`PCAP_CORPUS` may point to a single `.pcap`/`.pcapng` file or a directory. The
+script starts the engine once, runs the capture binary over each file, waits for
+the pipeline to drain, then writes JSON and Markdown evidence. The default output
+directory is `docs/evidence/local/`, which is ignored because corpus paths and
+operator notes can be sensitive. Sanitize pcaps before sharing them.
 
 For C parser hardening work, run the deterministic ASan fuzz smoke:
 
@@ -322,7 +338,7 @@ Remaining release blockers:
 
 - Final full `DOCKER="sudo docker" make rc-check` must pass on the exact release candidate.
 - Sustained external C fuzz evidence must be recorded for larger parser and formatter corpora.
-- Realistic pcap corpus pressure/query evidence must be recorded separately from repeat-pcap smoke results.
+- Realistic pcap corpus pressure/query evidence must be recorded with `make e2e-corpus-pressure`, separately from repeat-pcap smoke results.
 - A version tag must drive the named GitHub Release and named registry image publication.
 
 Remaining test gaps:

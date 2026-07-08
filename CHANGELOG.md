@@ -26,6 +26,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Deterministic synthetic pcap generator with a Python stdlib fallback when Scapy is unavailable.
 - Non-interactive end-to-end smoke test via `make e2e-smoke`, including capture heartbeat and process rate metrics assertions.
 - Repeat-pcap end-to-end throughput smoke test via `make e2e-pressure`.
+- Local sanitized pcap corpus pressure evidence via `make e2e-corpus-pressure`, with ignored JSON/Markdown evidence output.
 - Pcap sanitization helper via `make sanitize-pcap INPUT=... OUTPUT=...`.
 - Deterministic AddressSanitizer fuzz smoke for the C frame parser via `make fuzz-parser`.
 - Broader deterministic C parser fuzz seeds cover TCP, UDP, VLAN, Q-in-Q, IPv4 fragments, short frames, and malformed TCP data offsets; `make fuzz-parser-long` runs a longer local ASan pass.
@@ -68,7 +69,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 
 ### Known Gaps
 - Automatic disk cleanup or restart-free recovery after storage emergency mode is not implemented.
-- End-to-end pressure coverage currently includes repeat-pcap runs up to 60,000 packets locally, but realistic pcap corpora are still pending.
+- End-to-end pressure coverage currently includes repeat-pcap runs up to 60,000 packets locally; realistic pcap corpora can now be recorded with `make e2e-corpus-pressure` but release evidence is still pending.
 - Sustained external C fuzz campaigns against larger parser and formatter corpora are still pending.
 
 ---

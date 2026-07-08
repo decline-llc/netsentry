@@ -13,6 +13,7 @@ The current benchmark target measures the parts that already have stable standal
 - C Unix Domain Socket line write microbenchmark against a local drain listener.
 - Go package benchmark command execution with `go test -bench=.`, although the current Go packages do not yet expose `Benchmark*` functions.
 - A repeat-pcap end-to-end pressure smoke test across C capture, UDS, Go receiver, rule matching, SQLite aggregation, and API health/alerts checks.
+- An optional local corpus pressure evidence script for sanitized `.pcap` and `.pcapng` files supplied by the operator.
 
 The repeat-pcap pressure smoke is intended to catch obvious pipeline regressions and provide a local baseline. It is not a production traffic model and does not replace a broader benchmark corpus.
 
@@ -58,6 +59,17 @@ The script reports elapsed time, packet throughput, alert throughput, and verifi
 - zero decode and alert write errors
 - five SQLite aggregated alert rows
 - aggregated alert counts equal the raw alert total
+
+For local sanitized corpus evidence:
+
+```bash
+PCAP_CORPUS=/path/to/sanitized-pcaps make e2e-corpus-pressure
+```
+
+`PCAP_CORPUS` may be a single pcap file or a directory containing `.pcap` and
+`.pcapng` files. The script writes JSON and Markdown summaries under
+`docs/evidence/local/` by default. That directory is ignored because private
+traffic filenames, paths, and operator notes may be sensitive.
 
 ---
 
@@ -120,4 +132,8 @@ For v0.1.0, the remaining performance question is end-to-end throughput under mo
 - SQLite aggregation rate
 - total pcap-to-alert runtime
 
-It now exposes worker match latency and alert write latency histograms, current and high-water packet queue depth, and process-lifetime packet/alert rate gauges through `/api/metrics`, but it does not yet exercise realistic pcap corpora. Until those exist, the honest target remains functional correctness plus measured local benchmarks, not a published production PPS guarantee.
+It now exposes worker match latency and alert write latency histograms, current and high-water packet queue depth, and process-lifetime packet/alert rate gauges through `/api/metrics`, but the current recorded baseline still does not include realistic pcap corpora. Until those results are recorded, the honest target remains functional correctness plus measured local benchmarks, not a published production PPS guarantee.
+
+`make e2e-corpus-pressure` provides the release-candidate evidence path for those
+realistic corpora once sanitized samples are available. Corpus results should be
+interpreted as local evidence for the specific sample set, rule set, and machine.

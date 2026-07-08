@@ -46,6 +46,16 @@ PRESSURE_REPEATS=10000 make e2e-pressure
 PRESSURE_REPEATS=10000 PRESSURE_WAIT_ATTEMPTS=1200 make e2e-pressure
 ```
 
+For local release evidence against a sanitized pcap corpus, run:
+
+```bash
+PCAP_CORPUS=/path/to/sanitized-pcaps make e2e-corpus-pressure
+```
+
+The corpus script accepts either a single `.pcap`/`.pcapng` file or a directory.
+It writes local-only JSON and Markdown evidence under `docs/evidence/local/` by
+default; do not commit private pcaps or sensitive corpus paths.
+
 For a C parser fuzz smoke:
 
 ```bash
@@ -102,7 +112,7 @@ Remaining blockers before tagging v0.1.0:
 
 - Run and record a final full `DOCKER="sudo docker" make rc-check` on the release candidate.
 - Record sustained external C fuzz evidence against larger parser and formatter corpora.
-- Record realistic pcap corpus pressure/query evidence, separate from synthetic repeat-pcap smoke runs.
+- Run and record realistic pcap corpus pressure/query evidence with `PCAP_CORPUS=/path/to/sanitized-pcaps make e2e-corpus-pressure`, separate from synthetic repeat-pcap smoke runs.
 - Create the named GitHub Release and publish the named registry image from a version tag.
 
 ---
@@ -117,6 +127,7 @@ Remaining blockers before tagging v0.1.0:
 - Minimal HTTP endpoints: `/api/health` with verbose component snapshot including storage status and available bytes, paginated `/api/alerts` with exact-match, time range, MITRE, matched-keyword, and aggregate-count filters, `/api/metrics` with process-lifetime packet/alert rate gauges, rule listing, rule create/update/delete, rule reload, file-backed suppression create/update/delete/reload, method-aware error envelopes, optional PSK Bearer auth for modifying endpoints, non-GET audit logs, optional localhost-only pprof, storage health gauges, and payload preview redaction before alert writes.
 - Seed rules in canonical wrapped JSON schema, with legacy schema compatibility retained in the loader.
 - C-side JSON line formatting remains a bounded handwritten formatter for v0.1.0. It is covered by escaping, truncation, Base64 payload, UDS sender, microbenchmark, fuzz-smoke, and e2e heartbeat checks; a cJSON migration is not required unless later fuzzing exposes a concrete parser or formatting defect.
+- Local sanitized pcap corpus pressure evidence can be generated with `make e2e-corpus-pressure`; evidence output is ignored by default to avoid committing private corpus paths.
 
 ---
 
