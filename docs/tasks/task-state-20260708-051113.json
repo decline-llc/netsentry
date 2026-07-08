@@ -1,0 +1,36 @@
+{
+  "task": "tag-driven GitHub Release publication and release-gate completion",
+  "timestamp": "20260708-051113",
+  "branch": "main",
+  "risk_level": "medium",
+  "current_checkpoint": "implementation complete; partial validation only, commit/push requested before full quality gates",
+  "completed_steps": [
+    "Created task plan docs/plans/task-20260708-050129.md",
+    "Added .github/workflows/release.yml for tag-driven GitHub Release publication",
+    "Added make release-artifacts helper",
+    "Updated README, development, release-readiness, and changelog docs",
+    "Ran bash syntax checks, docs check, Python syntax check, and git diff --check",
+    "Recorded build/tooling blocker in docs/errors/build-fail-20260708-050602.log",
+    "Reconciled release-readiness and development-guide wording so publication status matches the checked-in workflow state",
+    "Prepared one atomic commit for the release workflow and documentation updates",
+    "Pushed the release workflow/documentation commit after documenting incomplete quality gates"
+  ],
+  "pending_steps": [
+    "Install or expose make in the execution environment",
+    "Install or expose go in the execution environment",
+    "Run make shell-check",
+    "Run make docs-check",
+    "Run make python-check",
+    "Run make deps-check",
+    "Run make lint",
+    "Review remote policy mismatch if still relevant",
+    "Re-run the full mandated quality gates in a provisioned environment",
+    "Verify the tag-driven GitHub Release workflow on the first real version tag"
+  ],
+  "blockers": [
+    "Ubuntu Core 24 host has no apt-get",
+    "Current execution environment returns Permission denied for sudo and snap invocations",
+    "Without make and go the mandated quality gates cannot complete"
+  ],
+  "next_action": "Use an environment with make and go installed to complete the remaining quality gates and confirm the workflow on a real release tag"
+}

@@ -8,8 +8,10 @@ Ready:
 
 - Native Makefile release-candidate bundle is wired through `make rc-check`.
 - GitHub Actions release-candidate checks are present.
+- GitHub Release publication workflow is present for version tags and uploads the packaged tarball plus checksum.
 - GHCR publishing workflow is present for version tags or explicit manual publishing.
 - Local release archive packaging is available through `make dist`.
+- Local `make release-artifacts VERSION=0.1.0` validates release-version format before building publishable archive assets.
 - Local Docker image build is available through `make docker-build`.
 - Latest local full sudo Docker RC validation passed on 2026-07-08, including Docker build, image content smoke, and runtime `/api/health` smoke.
 
@@ -17,7 +19,7 @@ Blocked before tagging v0.1.0:
 
 - Sustained external C fuzz evidence must be recorded and reviewed.
 - Realistic sanitized pcap corpus pressure/query evidence must be recorded and reviewed.
-- A version tag must drive the named GitHub Release and named registry image publication.
+- A passing release commit must be pushed and tagged so the checked-in GitHub Release and GHCR workflows can publish the named assets.
 
 ## Evidence Commands
 
@@ -50,7 +52,15 @@ Create local release artifacts:
 
 ```bash
 VERSION=0.1.0 make dist
+make release-artifacts VERSION=0.1.0
 IMAGE=netsentry:0.1.0 DOCKER="sudo docker" make docker-build
+```
+
+Publish the release from a passing tag:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
 ```
 
 ## Evidence Handling
@@ -70,7 +80,7 @@ IMAGE=netsentry:0.1.0 DOCKER="sudo docker" make docker-build
 - No local-only evidence, private corpus paths, credentials, or generated release archives are staged.
 - The release commit is pushed only to the approved `decline-llc/netsentry` remote.
 - Version tag `v0.1.0` is created from a passing commit.
-- GitHub Release and named registry image are created from the tag.
+- The checked-in GitHub Release and named registry image workflows complete successfully from the tag.
 
 ## Rollback Notes
 

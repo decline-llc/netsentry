@@ -12,7 +12,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build build-asan test test-coverage deps-check docs-check shell-check python-check config-check asan-test bench fuzz-parser fuzz-parser-long fuzz-sustained e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap dist docker-build rc-check lint clean quickstart help
+.PHONY: all build-c build-go build build-asan test test-coverage deps-check docs-check shell-check python-check config-check asan-test bench fuzz-parser fuzz-parser-long fuzz-sustained e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap dist release-artifacts docker-build rc-check lint clean quickstart help
 
 all: build
 
@@ -122,6 +122,11 @@ sanitize-pcap:
 ## dist      — build a local release archive under dist/
 dist: build
 	@bash scripts/package_release.sh $(VERSION)
+
+## release-artifacts — validate a SemVer VERSION and build release archive assets
+release-artifacts:
+	@[[ "$(VERSION)" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$$ ]] || { echo "VERSION must be SemVer without leading v"; exit 1; }
+	$(MAKE) dist VERSION="$(VERSION)"
 
 ## docker-build — build a local Docker image
 docker-build:

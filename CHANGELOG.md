@@ -49,10 +49,12 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Native repository configuration check via `make config-check`, validating checked-in config, rules, and suppressions through current Go parsers.
 - Public v0.1.0 release readiness checklist separating wired release gates from remaining blockers.
 - Public release-readiness evidence index documenting v0.1.0 gates, evidence commands, local-only evidence handling, and final tag/publish checklist.
+- Tag-driven GitHub Release publication workflow that reruns `make rc-check` and uploads the `make dist` tarball plus checksum.
 
 ### Changed
 - Public rule samples now use the canonical wrapped schema while the loader remains backward compatible with legacy rule files.
 - Public documentation now separates implemented behavior from planned v0.1.0 goals.
+- Release documentation now distinguishes checked-in publication workflows from the final act of pushing a passing release tag.
 - Quickstart clears the demo SQLite database before running so repeated runs keep returning the deterministic seed-alert set.
 - Makefile Go targets now default `GOCACHE` to `/tmp/netsentry-go-cache`, while still allowing `GOCACHE=...` overrides, so build, test, lint, and benchmark targets work when the home-directory Go cache is read-only.
 - Development and architecture testing notes now separate the current validation baseline from remaining test gaps.

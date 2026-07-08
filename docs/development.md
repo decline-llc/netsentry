@@ -56,7 +56,7 @@ make asan-test     # C parser tests under AddressSanitizer
 make clean
 ```
 
-Local Docker image builds are available through `make docker-build` and are covered by `make rc-check`. GitHub Actions workflows are present for release-candidate checks and GHCR image publishing; the publish workflow runs `make rc-check` before building the registry image, then only pushes on version tags or explicit manual approval.
+Local Docker image builds are available through `make docker-build` and are covered by `make rc-check`. GitHub Actions workflows are present for release-candidate checks, tag-driven GitHub Release publication, and GHCR image publishing; both publication workflows rerun `make rc-check` before publishing named assets.
 
 ---
 
@@ -294,9 +294,12 @@ To create a local release archive:
 ```bash
 make dist
 VERSION=0.1.0-rc1 make dist
+make release-artifacts VERSION=0.1.0
 ```
 
 The archive and SHA-256 checksum are written to `dist/`. Generated release archives are ignored by Git. The archive includes generated `RELEASE_NOTES.md` with package contents, quick verification, v0.1.0 boundaries, release-candidate evidence, and links to packaged docs.
+`make release-artifacts` is the stricter release helper: it requires a SemVer
+`VERSION` without the leading `v`, then delegates to `make dist`.
 
 To build the local Docker image:
 
@@ -343,8 +346,9 @@ in `docs/release-readiness.md`.
 Ready:
 
 - `make rc-check` includes syntax checks, config validation, dependency verification, tests, coverage, deterministic fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
-- GitHub Actions CI and GHCR publishing workflows are checked in.
+- GitHub Actions CI, tag-driven GitHub Release publication, and GHCR publishing workflows are checked in.
 - `make dist` produces a local release archive, checksum, and generated release notes.
+- `make release-artifacts VERSION=0.1.0` validates release-version format before building publishable archive assets.
 - `make docker-build` builds the local runtime image.
 - Latest local full sudo Docker RC validation passed on 2026-07-08, covering the complete `make rc-check` bundle including Docker build, image content smoke, and runtime `/api/health` smoke.
 
@@ -352,7 +356,7 @@ Remaining release blockers:
 
 - Sustained external C fuzz evidence must be recorded with `make fuzz-sustained` and reviewed before release.
 - Realistic pcap corpus pressure/query evidence must be recorded with `make e2e-corpus-pressure`, separately from repeat-pcap smoke results.
-- A version tag must drive the named GitHub Release and named registry image publication.
+- A passing release commit must be pushed and tagged so the checked-in GitHub Release and GHCR workflows can publish the named assets.
 
 Remaining test gaps:
 

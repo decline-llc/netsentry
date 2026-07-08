@@ -1,0 +1,117 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish GitHub Release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: engine/go.mod
+          cache-dependency-path: engine/go.sum
+
+      - name: Install native dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential gcc make libpcap-dev python3 curl
+
+      - name: Derive release metadata
+        id: meta
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          RELEASE_VERSION="${RELEASE_TAG#v}"
+          [[ "${RELEASE_TAG}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]] || {
+            echo "unsupported release tag: ${RELEASE_TAG}" >&2
+            exit 1
+          }
+          case "$(uname -m)" in
+            x86_64) RELEASE_ARCH="amd64" ;;
+            aarch64|arm64) RELEASE_ARCH="arm64" ;;
+            *) RELEASE_ARCH="$(uname -m)" ;;
+          esac
+          {
+            echo "release_tag=${RELEASE_TAG}"
+            echo "release_version=${RELEASE_VERSION}"
+            echo "release_os=$(uname -s | tr '[:upper:]' '[:lower:]')"
+            echo "release_arch=${RELEASE_ARCH}"
+          } >>"${GITHUB_OUTPUT}"
+
+      - name: Run release-candidate checks
+        env:
+          DOCKER: docker
+          IMAGE: netsentry:release-${{ github.run_id }}
+          VERSION: ${{ steps.meta.outputs.release_version }}
+        run: make rc-check
+
+      - name: Build release artifacts
+        env:
+          VERSION: ${{ steps.meta.outputs.release_version }}
+        run: make release-artifacts VERSION="${VERSION}"
+
+      - name: Write release notes
+        id: notes
+        env:
+          RELEASE_TAG: ${{ steps.meta.outputs.release_tag }}
+          RELEASE_VERSION: ${{ steps.meta.outputs.release_version }}
+          RELEASE_OS: ${{ steps.meta.outputs.release_os }}
+          RELEASE_ARCH: ${{ steps.meta.outputs.release_arch }}
+        run: |
+          set -euo pipefail
+          PACKAGE_NAME="netsentry-${RELEASE_VERSION}-${RELEASE_OS}-${RELEASE_ARCH}"
+          ARCHIVE_PATH="dist/${PACKAGE_NAME}.tar.gz"
+          CHECKSUM_PATH="dist/${PACKAGE_NAME}.tar.gz.sha256"
+          NOTES_FILE="$(mktemp)"
+
+          [[ -f "${ARCHIVE_PATH}" ]] || {
+            echo "missing release archive: ${ARCHIVE_PATH}" >&2
+            exit 1
+          }
+          [[ -f "${CHECKSUM_PATH}" ]] || {
+            echo "missing release checksum: ${CHECKSUM_PATH}" >&2
+            exit 1
+          }
+
+          cat >"${NOTES_FILE}" <<EOF
+# NetSentry ${RELEASE_TAG}
+
+Automated GitHub Release for ${RELEASE_TAG}.
+
+Included assets:
+- ${PACKAGE_NAME}.tar.gz
+- ${PACKAGE_NAME}.tar.gz.sha256
+
+Validation:
+- GitHub Actions reran \`make rc-check\` before publishing these assets.
+
+References:
+- \`CHANGELOG.md\`
+- \`docs/release-readiness.md\`
+          EOF
+          echo "notes_file=${NOTES_FILE}" >>"${GITHUB_OUTPUT}"
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.release_tag }}
+          name: NetSentry ${{ steps.meta.outputs.release_tag }}
+          body_path: ${{ steps.notes.outputs.notes_file }}
+          files: |
+            dist/netsentry-${{ steps.meta.outputs.release_version }}-${{ steps.meta.outputs.release_os }}-${{ steps.meta.outputs.release_arch }}.tar.gz
+            dist/netsentry-${{ steps.meta.outputs.release_version }}-${{ steps.meta.outputs.release_os }}-${{ steps.meta.outputs.release_arch }}.tar.gz.sha256
+          fail_on_unmatched_files: true

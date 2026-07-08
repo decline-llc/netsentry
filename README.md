@@ -76,6 +76,7 @@ To create a local binary release archive:
 
 ```bash
 make dist
+make release-artifacts VERSION=0.1.0
 ```
 
 For a local release-candidate verification bundle:
@@ -104,8 +105,10 @@ so build, test, lint, and benchmark targets work in environments where the home
 directory cache is read-only. Set `GOCACHE=/path/to/cache` to override it.
 
 The repository also includes GitHub Actions workflows for release-candidate checks
-and GHCR image publishing. Docker publishing runs the same `make rc-check`
-bundle first, then only pushes on version tags or an explicit manual workflow run.
+and tag-driven GitHub Release/GHCR publishing. Both publication workflows rerun
+the same `make rc-check` bundle first; the GitHub Release workflow uploads the
+`make dist` tarball and checksum for version tags, while Docker publishing only
+pushes on version tags or an explicit manual workflow run.
 
 ### v0.1.0 Release Readiness
 
@@ -116,6 +119,7 @@ Ready gates:
 
 - Local source build, tests, coverage snapshot, deterministic fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke are wired into `make rc-check`.
 - GitHub Actions CI reuses the release-candidate bundle.
+- GitHub Release workflow is present for version tags and publishes the `make dist` tarball plus checksum.
 - GHCR publishing workflow is present for version tags or explicit manual publishing.
 - Release archive generation includes binaries, configs, docs, checksum, and generated release notes.
 - Latest local full sudo Docker RC validation: passed on 2026-07-08, covering the complete `make rc-check` bundle including Docker build, image content smoke, and runtime `/api/health` smoke.
@@ -124,7 +128,7 @@ Remaining blockers before tagging v0.1.0:
 
 - Record sustained external C fuzz evidence against larger parser and formatter corpora.
 - Run and record realistic pcap corpus pressure/query evidence with `PCAP_CORPUS=/path/to/sanitized-pcaps make e2e-corpus-pressure`, separate from synthetic repeat-pcap smoke runs.
-- Create the named GitHub Release and publish the named registry image from a version tag.
+- Push a passing release commit, then create the version tag so the checked-in GitHub Release and GHCR workflows publish the named assets.
 
 ---
 
