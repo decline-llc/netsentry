@@ -42,6 +42,7 @@ make config-check  # validate repository config, rule, and suppression files
 make bench         # C parser/UDS microbenchmarks + Go benchmarks
 make fuzz-parser   # deterministic ASan fuzz smoke for the C frame parser
 make fuzz-parser-long # longer deterministic ASan fuzz pass for the C frame parser
+make fuzz-sustained # sustained ASan parser fuzz evidence
 make e2e-smoke     # deterministic pcap -> SQLite -> API smoke test
 make e2e-pressure  # repeat-pcap end-to-end throughput smoke test
 make e2e-corpus-pressure # local sanitized pcap corpus pressure evidence
@@ -159,6 +160,7 @@ scripts/
   e2e_smoke.sh
   e2e_pressure.sh
   e2e_corpus_pressure.sh
+  fuzz_sustained.sh
   gen_test_pcap.py
   package_release.sh
   rc_check.sh
@@ -258,9 +260,17 @@ For C parser hardening work, run the deterministic ASan fuzz smoke:
 make fuzz-parser
 # Longer local pass:
 FUZZ_LONG_ITERATIONS=1000000 make fuzz-parser-long
+# Evidence-producing sustained run:
+make fuzz-sustained
+# Optional external corpus replay:
+FUZZ_CORPUS=/path/to/local-corpus make fuzz-sustained
 ```
 
 The harness starts from built-in Ethernet/IP/TCP/UDP, VLAN, Q-in-Q, fragment, short-frame, and malformed TCP-offset seeds, then applies deterministic mutations.
+`make fuzz-sustained` records JSON and Markdown evidence under
+`docs/evidence/local/` by default. That directory is ignored because external
+corpus paths may be sensitive. Use `FUZZ_SUSTAINED_ITERATIONS` and
+`FUZZ_OUTPUT_DIR` to tune duration and output location.
 
 The current benchmark scope, local baseline, and pressure smoke behavior are documented in `docs/performance.md`.
 
@@ -337,13 +347,13 @@ Ready:
 
 Remaining release blockers:
 
-- Sustained external C fuzz evidence must be recorded for larger parser and formatter corpora.
+- Sustained external C fuzz evidence must be recorded with `make fuzz-sustained` and reviewed before release.
 - Realistic pcap corpus pressure/query evidence must be recorded with `make e2e-corpus-pressure`, separately from repeat-pcap smoke results.
 - A version tag must drive the named GitHub Release and named registry image publication.
 
 Remaining test gaps:
 
-- Sustained external C fuzz campaigns against larger parser and formatter corpora.
+- Sustained external C fuzz campaign results from larger parser and formatter corpora.
 - Realistic pcap corpora for throughput and query tuning beyond repeat-pcap smoke runs.
 - Broader SQLite corruption/fault-injection scenarios beyond the current disk-full, read-only, I/O, recovery replay, and emergency-mode tests.
 - Active-load full-engine shutdown drills that combine receiver, worker, HTTP, and storage teardown.

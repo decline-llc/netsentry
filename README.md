@@ -62,7 +62,15 @@ For a C parser fuzz smoke:
 make fuzz-parser
 # Longer local pass:
 FUZZ_LONG_ITERATIONS=1000000 make fuzz-parser-long
+# Evidence-producing sustained run:
+make fuzz-sustained
+# Optional external corpus replay:
+FUZZ_CORPUS=/path/to/local-corpus make fuzz-sustained
 ```
+
+`make fuzz-sustained` writes local-only JSON and Markdown evidence under
+`docs/evidence/local/` by default. Keep external corpus files local unless they
+have been reviewed for sharing.
 
 To create a local binary release archive:
 
@@ -128,6 +136,7 @@ Remaining blockers before tagging v0.1.0:
 - Seed rules in canonical wrapped JSON schema, with legacy schema compatibility retained in the loader.
 - C-side JSON line formatting remains a bounded handwritten formatter for v0.1.0. It is covered by escaping, truncation, Base64 payload, UDS sender, microbenchmark, fuzz-smoke, and e2e heartbeat checks; a cJSON migration is not required unless later fuzzing exposes a concrete parser or formatting defect.
 - Local sanitized pcap corpus pressure evidence can be generated with `make e2e-corpus-pressure`; evidence output is ignored by default to avoid committing private corpus paths.
+- Sustained C parser fuzz evidence can be generated with `make fuzz-sustained`; external corpus paths and evidence output stay local by default.
 
 ---
 
@@ -138,7 +147,7 @@ These are v0.1.0 goals, not current behavior:
 - Automatic disk cleanup or restart-free recovery after disk-full emergency mode.
 - Full Prometheus metric coverage beyond the current process, process-lifetime packet/alert rates, current/high-water queue, rule/write latency, alert, storage, worker, and capture heartbeat metrics.
 - Remaining large-corpus query tuning.
-- Sustained external C fuzz campaigns against larger parser and formatter corpora.
+- Sustained external C fuzz evidence is still pending; `make fuzz-sustained` now provides the local evidence entrypoint.
 - Published registry image for a named release.
 
 ---

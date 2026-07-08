@@ -12,7 +12,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build build-asan test test-coverage deps-check docs-check shell-check python-check config-check asan-test bench fuzz-parser fuzz-parser-long e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap dist docker-build rc-check lint clean quickstart help
+.PHONY: all build-c build-go build build-asan test test-coverage deps-check docs-check shell-check python-check config-check asan-test bench fuzz-parser fuzz-parser-long fuzz-sustained e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap dist docker-build rc-check lint clean quickstart help
 
 all: build
 
@@ -61,6 +61,7 @@ shell-check:
 	@bash -n scripts/e2e_smoke.sh
 	@bash -n scripts/e2e_pressure.sh
 	@bash -n scripts/e2e_corpus_pressure.sh
+	@bash -n scripts/fuzz_sustained.sh
 	@bash -n scripts/docs_check.sh
 	@bash -n scripts/package_release.sh
 	@bash -n scripts/rc_check.sh
@@ -93,6 +94,10 @@ fuzz-parser:
 ## fuzz-parser-long — run a longer deterministic ASan fuzz pass for the C frame parser
 fuzz-parser-long:
 	$(MAKE) -C capture fuzz-parser-long
+
+## fuzz-sustained — run sustained ASan parser fuzz evidence; optional FUZZ_CORPUS=/path
+fuzz-sustained:
+	@bash scripts/fuzz_sustained.sh
 
 ## e2e-smoke — run deterministic pcap -> UDS -> engine -> SQLite -> API smoke test
 e2e-smoke: build
