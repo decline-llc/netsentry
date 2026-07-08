@@ -109,6 +109,9 @@ bundle first, then only pushes on version tags or an explicit manual workflow ru
 
 ### v0.1.0 Release Readiness
 
+Canonical release gate status and evidence commands are tracked in
+`docs/release-readiness.md`.
+
 Ready gates:
 
 - Local source build, tests, coverage snapshot, deterministic fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke are wired into `make rc-check`.

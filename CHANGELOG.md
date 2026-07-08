@@ -48,6 +48,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Native Python syntax check via `make python-check`, reused by release-candidate checks.
 - Native repository configuration check via `make config-check`, validating checked-in config, rules, and suppressions through current Go parsers.
 - Public v0.1.0 release readiness checklist separating wired release gates from remaining blockers.
+- Public release-readiness evidence index documenting v0.1.0 gates, evidence commands, local-only evidence handling, and final tag/publish checklist.
 
 ### Changed
 - Public rule samples now use the canonical wrapped schema while the loader remains backward compatible with legacy rule files.

@@ -337,6 +337,9 @@ The C-side JSON line formatter is intentionally kept as a bounded handwritten v0
 
 Release readiness for v0.1.0:
 
+The canonical release gate checklist and evidence handling notes are maintained
+in `docs/release-readiness.md`.
+
 Ready:
 
 - `make rc-check` includes syntax checks, config validation, dependency verification, tests, coverage, deterministic fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
