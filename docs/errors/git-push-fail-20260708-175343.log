@@ -1,0 +1,54 @@
+# Git Push Failure Log
+
+## Metadata
+
+- Timestamp: 20260708-175343
+- Branch: main
+- Local Commit: current local `HEAD` for `docs: reconcile release readiness blockers`
+- Target Remote: `origin`
+- Final Status: blocked by missing HTTPS write credentials in the current environment
+
+## Error Output
+
+```text
+git remote set-url --push origin https://github.com/decline-llc/netsentry.git
+git push origin main
+fatal: unable to access 'https://github.com/decline-llc/netsentry.git/': Failed to connect to github.com port 443 after 21029 ms: Couldn't connect to server
+
+GIT_TERMINAL_PROMPT=0 git push origin main
+fatal: could not read Username for 'https://github.com': terminal prompts disabled
+```
+
+## Connectivity Check
+
+```text
+git ls-remote --heads origin main
+5156fe634f89dbbceaa47ad5aee89bd7dc568ab8	refs/heads/main
+```
+
+## Root Cause Analysis
+
+- The approved HTTPS remote is reachable for read-only Git operations.
+- The current environment does not expose non-interactive GitHub write credentials for HTTPS push.
+- `gh` is not available as an authenticated fallback in this environment.
+- The push failed before any remote update; `origin/main` remains at `5156fe6`.
+
+## Superseded Status
+
+- After the user pointed out the persisted SSH requirement, `origin` was restored to `git@github.com:decline-llc/netsentry.git`.
+- `ssh -T git@github.com` authenticated successfully as `decline-llc`.
+- This log remains as the record of the incorrect HTTPS push attempt, not as the final transport state.
+
+## Remaining Risk
+
+- The local `docs: reconcile release readiness blockers` commit remains local until the corrected SSH push completes.
+- The documentation correction is validated locally but not yet visible on GitHub.
+- Version tag `v0.1.0` must not be created until the documentation commit is pushed and the remaining evidence gates pass.
+
+## Next Action
+
+- Push through the restored SSH remote:
+
+```bash
+git push origin main
+```

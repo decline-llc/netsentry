@@ -19,7 +19,7 @@ Blocked before tagging v0.1.0:
 
 - Sustained external C fuzz evidence must be recorded and reviewed.
 - Realistic sanitized pcap corpus pressure/query evidence must be recorded and reviewed.
-- A passing release commit must be pushed and tagged so the checked-in GitHub Release and GHCR workflows can publish the named assets.
+- Version tag `v0.1.0` must be created from the pushed passing release commit, then the checked-in GitHub Release and GHCR workflows must publish the named assets successfully.
 
 ## Evidence Commands
 

@@ -128,7 +128,7 @@ Remaining blockers before tagging v0.1.0:
 
 - Record sustained external C fuzz evidence against larger parser and formatter corpora.
 - Run and record realistic pcap corpus pressure/query evidence with `PCAP_CORPUS=/path/to/sanitized-pcaps make e2e-corpus-pressure`, separate from synthetic repeat-pcap smoke runs.
-- Push a passing release commit, then create the version tag so the checked-in GitHub Release and GHCR workflows publish the named assets.
+- Create version tag `v0.1.0` from the pushed passing release commit, then verify the checked-in GitHub Release and GHCR workflows publish the named assets successfully.
 
 ---
 
