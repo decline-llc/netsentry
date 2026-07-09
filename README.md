@@ -54,7 +54,9 @@ PCAP_CORPUS=/path/to/sanitized-pcaps make e2e-corpus-pressure
 
 The corpus script accepts either a single `.pcap`/`.pcapng` file or a directory.
 It writes local-only JSON and Markdown evidence under `docs/evidence/local/` by
-default; do not commit private pcaps or sensitive corpus paths.
+default and redacts corpus paths unless `NETSENTRY_EVIDENCE_INCLUDE_PATHS=1` is
+set for private local debugging. Do not commit private pcaps or sensitive corpus
+paths.
 
 For a C parser fuzz smoke:
 
@@ -69,8 +71,9 @@ FUZZ_CORPUS=/path/to/local-corpus make fuzz-sustained
 ```
 
 `make fuzz-sustained` writes local-only JSON and Markdown evidence under
-`docs/evidence/local/` by default. Keep external corpus files local unless they
-have been reviewed for sharing.
+`docs/evidence/local/` by default and redacts corpus paths unless
+`NETSENTRY_EVIDENCE_INCLUDE_PATHS=1` is set for private local debugging. Keep
+external corpus files local unless they have been reviewed for sharing.
 
 To create a local binary release archive:
 
@@ -142,8 +145,8 @@ Remaining blockers before tagging v0.1.0:
 - Minimal HTTP endpoints: `/api/health` with verbose component snapshot including storage status and available bytes, paginated `/api/alerts` with exact-match, time range, MITRE, matched-keyword, and aggregate-count filters, `/api/metrics` with process-lifetime packet/alert rate gauges, rule listing, rule create/update/delete, rule reload, file-backed suppression create/update/delete/reload, method-aware error envelopes, optional PSK Bearer auth for modifying endpoints, non-GET audit logs, optional localhost-only pprof, storage health gauges, and payload preview redaction before alert writes.
 - Seed rules in canonical wrapped JSON schema, with legacy schema compatibility retained in the loader.
 - C-side JSON line formatting remains a bounded handwritten formatter for v0.1.0. It is covered by escaping, truncation, Base64 payload, UDS sender, microbenchmark, fuzz-smoke, and e2e heartbeat checks; a cJSON migration is not required unless later fuzzing exposes a concrete parser or formatting defect.
-- Local sanitized pcap corpus pressure evidence can be generated with `make e2e-corpus-pressure`; evidence output is ignored by default to avoid committing private corpus paths.
-- Sustained C parser fuzz evidence can be generated with `make fuzz-sustained`; external corpus paths and evidence output stay local by default.
+- Local sanitized pcap corpus pressure evidence can be generated with `make e2e-corpus-pressure`; evidence output is ignored and corpus paths are redacted by default.
+- Sustained C parser fuzz evidence can be generated with `make fuzz-sustained`; external corpus paths are redacted in generated summaries unless explicitly enabled for private debugging.
 
 ---
 

@@ -8,6 +8,7 @@ SUMMARY_JSON="${OUTPUT_DIR}/fuzz-sustained-${RUN_ID}.json"
 SUMMARY_MD="${OUTPUT_DIR}/fuzz-sustained-${RUN_ID}.md"
 ITERATIONS="${FUZZ_SUSTAINED_ITERATIONS:-1000000}"
 CORPUS="${FUZZ_CORPUS:-}"
+INCLUDE_PATHS="${NETSENTRY_EVIDENCE_INCLUDE_PATHS:-0}"
 LOG_FILE="$(mktemp /tmp/netsentry-fuzz-sustained.XXXXXX.log)"
 
 cleanup() {
@@ -24,9 +25,12 @@ Optional:
   FUZZ_SUSTAINED_ITERATIONS=1000000
   FUZZ_CORPUS=/path/to/external-corpus-file-or-directory
   FUZZ_OUTPUT_DIR=/path/to/evidence
+  NETSENTRY_EVIDENCE_INCLUDE_PATHS=1
 
 The corpus must stay local unless it has been reviewed for sharing. Evidence is
-written as JSON and Markdown; default output under docs/evidence/local/ is ignored.
+written as JSON and Markdown; default output under docs/evidence/local/ is
+ignored. Corpus paths are redacted by default; set
+NETSENTRY_EVIDENCE_INCLUDE_PATHS=1 only for private local debugging evidence.
 EOF_USAGE
 }
 
@@ -91,7 +95,7 @@ PY
 )"
 END_EPOCH="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-python3 - "${SUMMARY_JSON}" "${SUMMARY_MD}" "${LOG_FILE}" "${RUN_ID}" "${START_EPOCH}" "${END_EPOCH}" "${START_NS}" "${END_NS}" "${ITERATIONS}" "${MUTATION_STATUS}" "${CORPUS_STATUS}" "${CORPUS:-}" "${#CORPUS_FILES[@]}" <<'PY'
+python3 - "${SUMMARY_JSON}" "${SUMMARY_MD}" "${LOG_FILE}" "${RUN_ID}" "${START_EPOCH}" "${END_EPOCH}" "${START_NS}" "${END_NS}" "${ITERATIONS}" "${MUTATION_STATUS}" "${CORPUS_STATUS}" "${CORPUS:-}" "${#CORPUS_FILES[@]}" "${INCLUDE_PATHS}" <<'PY'
 import json
 import os
 import platform
@@ -111,7 +115,8 @@ import sys
     corpus_status,
     corpus,
     corpus_count,
-) = sys.argv[1:14]
+    include_paths,
+) = sys.argv[1:15]
 
 start_ns = int(start_ns)
 end_ns = int(end_ns)
@@ -120,9 +125,14 @@ mutation_status = int(mutation_status)
 corpus_status = int(corpus_status)
 corpus_count = int(corpus_count)
 elapsed = max((end_ns - start_ns) / 1_000_000_000, 0.000001)
+include_paths = include_paths == "1"
+corpus_abs = os.path.abspath(corpus) if corpus else ""
+corpus_label = corpus_abs if include_paths and corpus_abs else ("redacted" if corpus_abs else "")
 
 with open(log_path, "r", encoding="utf-8", errors="replace") as f:
     log_tail = f.readlines()[-40:]
+if corpus_abs and not include_paths:
+    log_tail = [line.replace(corpus_abs, "<redacted-corpus>") for line in log_tail]
 
 ok = mutation_status == 0 and corpus_status == 0
 summary = {
@@ -133,8 +143,9 @@ summary = {
     "elapsed_seconds": elapsed,
     "iterations": iterations,
     "mutation_status": mutation_status,
-    "corpus": os.path.abspath(corpus) if corpus else "",
+    "corpus": corpus_label,
     "corpus_files": corpus_count,
+    "corpus_path_redacted": bool(corpus_abs and not include_paths),
     "corpus_status": corpus_status,
     "environment": {
         "platform": platform.platform(),
@@ -157,6 +168,7 @@ with open(summary_md, "w", encoding="utf-8") as f:
     f.write(f"- Deterministic iterations: {iterations}\n")
     f.write(f"- Mutation status: {mutation_status}\n")
     f.write(f"- Corpus: `{summary['corpus']}`\n" if summary["corpus"] else "- Corpus: not provided\n")
+    f.write(f"- Corpus path redacted: {str(summary['corpus_path_redacted']).lower()}\n")
     f.write(f"- Corpus files: {corpus_count}\n")
     f.write(f"- Corpus status: {corpus_status}\n\n")
     f.write("## Log Tail\n\n")
@@ -167,6 +179,7 @@ with open(summary_md, "w", encoding="utf-8") as f:
     f.write("```\n\n")
     f.write("## Notes\n\n")
     f.write("- Evidence files are local-only by default because corpus paths may be sensitive.\n")
+    f.write("- Corpus paths are redacted unless NETSENTRY_EVIDENCE_INCLUDE_PATHS=1 is set.\n")
     f.write("- This target exercises the existing ASan C parser fuzz harness.\n")
     f.write("- External corpus quality and duration must be reviewed before treating the result as release evidence.\n")
 

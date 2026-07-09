@@ -66,6 +66,7 @@ git push origin v0.1.0
 ## Evidence Handling
 
 - `docs/evidence/local/` is ignored by Git and is the default location for local JSON and Markdown evidence.
+- Fuzz and corpus evidence summaries redact corpus paths by default; set `NETSENTRY_EVIDENCE_INCLUDE_PATHS=1` only for private local debugging evidence that will not be committed.
 - Do not commit raw private pcaps, external fuzz corpora, private corpus paths, local operator names, credentials, or environment-specific secrets.
 - If evidence must be shared publicly, sanitize the pcap first with `make sanitize-pcap` and review the generated evidence text before committing.
 - Record only summarized pass/fail status, run date, command shape, and non-sensitive metrics in public docs.

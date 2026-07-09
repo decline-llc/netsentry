@@ -252,7 +252,9 @@ PCAP_CORPUS=/path/to/sanitized-pcaps CORPUS_OUTPUT_DIR=/tmp/netsentry-corpus-evi
 script starts the engine once, runs the capture binary over each file, waits for
 the pipeline to drain, then writes JSON and Markdown evidence. The default output
 directory is `docs/evidence/local/`, which is ignored because corpus paths and
-operator notes can be sensitive. Sanitize pcaps before sharing them.
+operator notes can be sensitive. Corpus paths are redacted by default; set
+`NETSENTRY_EVIDENCE_INCLUDE_PATHS=1` only for private local debugging evidence.
+Sanitize pcaps before sharing them.
 
 For C parser hardening work, run the deterministic ASan fuzz smoke:
 
@@ -269,8 +271,10 @@ FUZZ_CORPUS=/path/to/local-corpus make fuzz-sustained
 The harness starts from built-in Ethernet/IP/TCP/UDP, VLAN, Q-in-Q, fragment, short-frame, and malformed TCP-offset seeds, then applies deterministic mutations.
 `make fuzz-sustained` records JSON and Markdown evidence under
 `docs/evidence/local/` by default. That directory is ignored because external
-corpus paths may be sensitive. Use `FUZZ_SUSTAINED_ITERATIONS` and
-`FUZZ_OUTPUT_DIR` to tune duration and output location.
+corpus paths may be sensitive. Corpus paths are redacted by default; set
+`NETSENTRY_EVIDENCE_INCLUDE_PATHS=1` only for private local debugging evidence.
+Use `FUZZ_SUSTAINED_ITERATIONS` and `FUZZ_OUTPUT_DIR` to tune duration and output
+location.
 
 The current benchmark scope, local baseline, and pressure smoke behavior are documented in `docs/performance.md`.
 

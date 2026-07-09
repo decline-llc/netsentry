@@ -11,6 +11,7 @@ OUTPUT_DIR="${CORPUS_OUTPUT_DIR:-${ROOT_DIR}/docs/evidence/local}"
 RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)"
 SUMMARY_JSON="${OUTPUT_DIR}/corpus-pressure-${RUN_ID}.json"
 SUMMARY_MD="${OUTPUT_DIR}/corpus-pressure-${RUN_ID}.md"
+INCLUDE_PATHS="${NETSENTRY_EVIDENCE_INCLUDE_PATHS:-0}"
 
 cleanup() {
     if [[ -n "${ENGINE_PID}" ]] && kill -0 "${ENGINE_PID}" 2>/dev/null; then
@@ -29,9 +30,12 @@ Usage:
 Optional:
   CORPUS_OUTPUT_DIR=/path/to/evidence
   CORPUS_WAIT_ATTEMPTS=1200
+  NETSENTRY_EVIDENCE_INCLUDE_PATHS=1
 
 The corpus must stay local and sanitized before sharing. The script writes
-JSON and Markdown evidence summaries; it does not commit pcap files.
+JSON and Markdown evidence summaries; it does not commit pcap files. Corpus
+paths are redacted by default; set NETSENTRY_EVIDENCE_INCLUDE_PATHS=1 only for
+private local debugging evidence.
 EOF_USAGE
 }
 
@@ -189,13 +193,14 @@ print(time.monotonic_ns())
 PY
 )"
     curl -fsS "http://127.0.0.1:${PORT}/api/health?verbose=true" >"${after_json}"
-    python3 - "${pcap}" "${before_json}" "${after_json}" "${file_start_ns}" "${file_end_ns}" >>"${RUN_JSONL}" <<'PY'
+    python3 - "${pcap}" "${before_json}" "${after_json}" "${file_start_ns}" "${file_end_ns}" "${INCLUDE_PATHS}" >>"${RUN_JSONL}" <<'PY'
 import json
 import os
 import sys
 
 pcap, before_path, after_path = sys.argv[1], sys.argv[2], sys.argv[3]
 start_ns, end_ns = int(sys.argv[4]), int(sys.argv[5])
+include_paths = sys.argv[6] == "1"
 
 with open(before_path, "r", encoding="utf-8") as f:
     before = json.load(f)
@@ -212,7 +217,8 @@ elapsed = max((end_ns - start_ns) / 1_000_000_000, 0.000001)
 
 print(json.dumps({
     "pcap_name": os.path.basename(pcap),
-    "pcap_path": os.path.abspath(pcap),
+    "pcap_path": os.path.abspath(pcap) if include_paths else "redacted",
+    "pcap_path_redacted": not include_paths,
     "capture_sent": sent,
     "capture_dropped": int(heartbeat.get("dropped", 0) or 0),
     "capture_parse_errors": int(heartbeat.get("parse_errors", 0) or 0),
@@ -237,7 +243,7 @@ curl -fsS "http://127.0.0.1:${PORT}/api/health?verbose=true" >"${HEALTH_JSON}"
 curl -fsS "http://127.0.0.1:${PORT}/api/alerts?per_page=100" >"${ALERTS_JSON}"
 curl -fsS "http://127.0.0.1:${PORT}/api/metrics" >"${METRICS_TXT}"
 
-python3 - "${RUN_JSONL}" "${HEALTH_JSON}" "${ALERTS_JSON}" "${METRICS_TXT}" "${SUMMARY_JSON}" "${SUMMARY_MD}" "${RUN_ID}" "${PCAP_CORPUS}" "${START_NS}" "${END_NS}" <<'PY'
+python3 - "${RUN_JSONL}" "${HEALTH_JSON}" "${ALERTS_JSON}" "${METRICS_TXT}" "${SUMMARY_JSON}" "${SUMMARY_MD}" "${RUN_ID}" "${PCAP_CORPUS}" "${START_NS}" "${END_NS}" "${INCLUDE_PATHS}" <<'PY'
 import json
 import os
 import platform
@@ -246,6 +252,7 @@ import sys
 runs_path, health_path, alerts_path, metrics_path = sys.argv[1:5]
 summary_json, summary_md, run_id, corpus = sys.argv[5:9]
 start_ns, end_ns = int(sys.argv[9]), int(sys.argv[10])
+include_paths = sys.argv[11] == "1"
 
 with open(runs_path, "r", encoding="utf-8") as f:
     runs = [json.loads(line) for line in f if line.strip()]
@@ -263,10 +270,13 @@ total_sent = sum(item["capture_sent"] for item in runs)
 total_parse_errors = sum(item["capture_parse_errors"] for item in runs)
 total_dropped = sum(item["capture_dropped"] for item in runs)
 total_write_errors = sum(item["capture_uds_write_errors"] for item in runs)
+corpus_abs = os.path.abspath(corpus)
+corpus_label = corpus_abs if include_paths else "redacted"
 
 summary = {
     "run_id": run_id,
-    "corpus": os.path.abspath(corpus),
+    "corpus": corpus_label,
+    "corpus_path_redacted": not include_paths,
     "pcap_files": len(runs),
     "elapsed_seconds": elapsed,
     "capture_sent": total_sent,
@@ -293,7 +303,8 @@ with open(summary_json, "w", encoding="utf-8") as f:
 with open(summary_md, "w", encoding="utf-8") as f:
     f.write(f"# Corpus Pressure Evidence: {run_id}\n\n")
     f.write("## Summary\n\n")
-    f.write(f"- Corpus: `{os.path.abspath(corpus)}`\n")
+    f.write(f"- Corpus: `{corpus_label}`\n")
+    f.write(f"- Corpus path redacted: {str(not include_paths).lower()}\n")
     f.write(f"- Pcap files: {len(runs)}\n")
     f.write(f"- Elapsed seconds: {elapsed:.3f}\n")
     f.write(f"- Capture sent: {total_sent}\n")
@@ -316,6 +327,7 @@ with open(summary_md, "w", encoding="utf-8") as f:
         )
     f.write("\n## Notes\n\n")
     f.write("- Evidence files are local-only by default because corpus paths and operator notes may be sensitive.\n")
+    f.write("- Corpus paths are redacted unless NETSENTRY_EVIDENCE_INCLUDE_PATHS=1 is set.\n")
     f.write("- These measurements are local release evidence, not a production throughput guarantee.\n")
     f.write("- Sanitize pcaps before sharing them outside the operator environment.\n")
 
