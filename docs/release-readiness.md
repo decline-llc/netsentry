@@ -14,6 +14,7 @@ Ready:
 - Local `make release-artifacts VERSION=0.1.0` validates release-version format before building publishable archive assets.
 - Local Docker image build is available through `make docker-build`.
 - Latest local full sudo Docker RC validation passed on 2026-07-08, including Docker build, image content smoke, and runtime `/api/health` smoke.
+- Latest local non-Docker RC validation passed on 2026-07-10 with `SKIP_DOCKER=1 make rc-check`, covering syntax, docs, Python, config, dependencies, C/Go tests, race tests, coverage 74.2%, ASan fuzz smoke, e2e smoke, dist archive smoke, and release notes smoke.
 
 Blocked before tagging v0.1.0:
 

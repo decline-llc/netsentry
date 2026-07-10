@@ -126,6 +126,7 @@ Ready gates:
 - GHCR publishing workflow is present for version tags or explicit manual publishing.
 - Release archive generation includes binaries, configs, docs, checksum, and generated release notes.
 - Latest local full sudo Docker RC validation: passed on 2026-07-08, covering the complete `make rc-check` bundle including Docker build, image content smoke, and runtime `/api/health` smoke.
+- Latest local non-Docker RC validation: passed on 2026-07-10 with `SKIP_DOCKER=1 make rc-check`, covering syntax, docs, Python, config, dependencies, C/Go tests, race tests, coverage 74.2%, ASan fuzz smoke, e2e smoke, dist archive smoke, and release notes smoke.
 
 Remaining blockers before tagging v0.1.0:
 
