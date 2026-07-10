@@ -13,7 +13,7 @@ Ready:
 - Local release archive packaging is available through `make dist`.
 - Local `make release-artifacts VERSION=0.1.0` validates release-version format before building publishable archive assets.
 - Local Docker image build is available through `make docker-build`.
-- The local `origin` fetch and push URLs were normalized to the approved HTTPS URL on 2026-07-10.
+- The local `origin` fetch and push URLs use the project SSH standard `git@github.com:decline-llc/netsentry.git`.
 - Latest local full sudo Docker RC validation passed on 2026-07-08, including Docker build, image content smoke, and runtime `/api/health` smoke.
 - Latest local non-Docker RC validation passed on 2026-07-10 with `SKIP_DOCKER=1 make rc-check`, covering syntax, docs, Python, config, dependencies, C/Go tests, race tests, coverage 74.2%, ASan fuzz smoke, e2e smoke, dist archive smoke, and release notes smoke.
 - Synthetic extended validation passed on 2026-07-10: `PRESSURE_REPEATS=10000 PRESSURE_WAIT_ATTEMPTS=1200 make e2e-pressure` processed 60,000 packets, generated 50,000 alerts, and returned 5 aggregated rows in 214.956 seconds. This is repeat-pcap synthetic evidence only.
