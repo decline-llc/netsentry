@@ -13,8 +13,11 @@ Ready:
 - Local release archive packaging is available through `make dist`.
 - Local `make release-artifacts VERSION=0.1.0` validates release-version format before building publishable archive assets.
 - Local Docker image build is available through `make docker-build`.
+- The local `origin` fetch and push URLs were normalized to the approved HTTPS URL on 2026-07-10.
 - Latest local full sudo Docker RC validation passed on 2026-07-08, including Docker build, image content smoke, and runtime `/api/health` smoke.
 - Latest local non-Docker RC validation passed on 2026-07-10 with `SKIP_DOCKER=1 make rc-check`, covering syntax, docs, Python, config, dependencies, C/Go tests, race tests, coverage 74.2%, ASan fuzz smoke, e2e smoke, dist archive smoke, and release notes smoke.
+- Synthetic extended validation passed on 2026-07-10: `PRESSURE_REPEATS=10000 PRESSURE_WAIT_ATTEMPTS=1200 make e2e-pressure` processed 60,000 packets, generated 50,000 alerts, and returned 5 aggregated rows in 214.956 seconds. This is repeat-pcap synthetic evidence only.
+- Synthetic deterministic ASan parser fuzz passed on 2026-07-10: `FUZZ_SUSTAINED_ITERATIONS=1000000 make fuzz-sustained` completed 1,000,000 iterations with zero corpus files and no reported crash. This is no-corpus synthetic evidence only.
 
 Blocked before tagging v0.1.0:
 
@@ -49,6 +52,17 @@ Run realistic pcap corpus pressure evidence:
 PCAP_CORPUS=/path/to/sanitized-pcaps make e2e-corpus-pressure
 ```
 
+Synthetic extended validation (auxiliary only; not a release-gate substitute):
+
+```bash
+PRESSURE_REPEATS=10000 PRESSURE_WAIT_ATTEMPTS=1200 make e2e-pressure
+FUZZ_SUSTAINED_ITERATIONS=1000000 make fuzz-sustained
+```
+
+The 2026-07-10 pressure run used the repository's generated six-packet repeat
+pcap. The fuzz run used no external corpus. Both results are useful regression
+signals, but neither closes the external fuzz or realistic sanitized pcap gates.
+
 Create local release artifacts:
 
 ```bash
@@ -77,6 +91,7 @@ git push origin v0.1.0
 
 - `make rc-check` passes locally.
 - Sudo Docker RC validation passes where Docker is part of the release gate.
+- Synthetic extended pressure and no-corpus ASan fuzz checks pass as auxiliary regression signals.
 - Sustained external fuzz run records zero crashes for the approved campaign window.
 - Realistic sanitized pcap corpus run records packet, alert, and query evidence.
 - README, changelog, API docs, and development docs match the final behavior.
