@@ -3,7 +3,7 @@
   "timestamp": "20260708-051113",
   "branch": "main",
   "risk_level": "medium",
-  "current_checkpoint": "release workflow/documentation commits pushed, public evidence template added, and non-Docker RC refreshed; remaining pre-tag blockers are external fuzz evidence, realistic sanitized pcap corpus evidence, and tag-driven publication verification",
+  "current_checkpoint": "release workflow/documentation commits pushed, public evidence template added, non-Docker RC refreshed, and release evidence preconditions checked; remaining pre-tag blockers are external fuzz evidence, realistic sanitized pcap corpus evidence, and tag-driven publication verification",
   "completed_steps": [
     "Created task plan docs/plans/task-20260708-050129.md",
     "Added .github/workflows/release.yml for tag-driven GitHub Release publication",
@@ -22,13 +22,17 @@
     "Pushed the validated release workflow/documentation commits to origin/main",
     "Confirmed on 2026-07-10 that main and origin/main are synchronized",
     "Added committed public release evidence guidance and template for sanitized v0.1.0 evidence records",
-    "Ran SKIP_DOCKER=1 make rc-check on 2026-07-10 successfully, covering syntax, docs, Python, config, dependencies, C/Go tests, race tests, coverage 74.2%, ASan fuzz smoke, e2e smoke, dist archive smoke, and release notes smoke"
+    "Ran SKIP_DOCKER=1 make rc-check on 2026-07-10 successfully, covering syntax, docs, Python, config, dependencies, C/Go tests, race tests, coverage 74.2%, ASan fuzz smoke, e2e smoke, dist archive smoke, and release notes smoke",
+    "Checked release evidence preconditions on 2026-07-10 and found no workspace-visible operator-supplied external fuzz corpus or sanitized .pcap/.pcapng corpus inputs"
   ],
   "pending_steps": [
     "Record and review sustained external C fuzz evidence",
     "Record and review realistic sanitized pcap corpus pressure/query evidence",
     "Verify the tag-driven GitHub Release workflow on the first real version tag"
   ],
-  "blockers": [],
-  "next_action": "Collect the remaining release evidence, then create and push the v0.1.0 tag from a passing commit and verify the tag-driven GitHub Release and GHCR workflows"
+  "blockers": [
+    "Operator-supplied external fuzz corpus is not available in the workspace",
+    "Operator-supplied realistic sanitized pcap corpus is not available in the workspace"
+  ],
+  "next_action": "Provide local external fuzz corpus and sanitized pcap corpus paths, run FUZZ_CORPUS=/path/to/local-corpus make fuzz-sustained and PCAP_CORPUS=/path/to/sanitized-pcaps make e2e-corpus-pressure, review sanitized evidence, then create and push the v0.1.0 tag from a passing commit and verify the tag-driven GitHub Release and GHCR workflows"
 }
