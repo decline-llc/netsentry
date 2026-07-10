@@ -3,7 +3,7 @@
   "timestamp": "20260708-051113",
   "branch": "main",
   "risk_level": "medium",
-  "current_checkpoint": "release workflow/documentation commits pushed; remaining pre-tag blockers are external fuzz evidence, realistic sanitized pcap corpus evidence, and tag-driven publication verification",
+  "current_checkpoint": "release workflow/documentation commits pushed and public evidence template added; remaining pre-tag blockers are external fuzz evidence, realistic sanitized pcap corpus evidence, and tag-driven publication verification",
   "completed_steps": [
     "Created task plan docs/plans/task-20260708-050129.md",
     "Added .github/workflows/release.yml for tag-driven GitHub Release publication",
@@ -20,7 +20,8 @@
     "Ran make shell-check, docs-check, python-check, deps-check, config-check, lint, and git diff --check successfully",
     "Ran DOCKER=\"sudo docker\" make rc-check successfully, including C/Go tests, Go race tests, coverage 74.2%, ASan fuzz smoke, e2e smoke, dist archive smoke, sudo Docker build, image content smoke, and runtime health smoke",
     "Pushed the validated release workflow/documentation commits to origin/main",
-    "Confirmed on 2026-07-10 that main and origin/main are synchronized"
+    "Confirmed on 2026-07-10 that main and origin/main are synchronized",
+    "Added committed public release evidence guidance and template for sanitized v0.1.0 evidence records"
   ],
   "pending_steps": [
     "Record and review sustained external C fuzz evidence",
