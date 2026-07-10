@@ -360,7 +360,7 @@ Remaining release blockers:
 
 - Sustained external C fuzz evidence must be recorded with `make fuzz-sustained` and reviewed before release.
 - Realistic pcap corpus pressure/query evidence must be recorded with `make e2e-corpus-pressure`, separately from repeat-pcap smoke results.
-- A passing release commit must be pushed and tagged so the checked-in GitHub Release and GHCR workflows can publish the named assets.
+- Version tag `v0.1.0` must be created from the pushed passing release commit, then the checked-in GitHub Release and GHCR workflows must publish the named assets successfully.
 
 Remaining test gaps:
 

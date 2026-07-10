@@ -3,7 +3,7 @@
   "timestamp": "20260708-051113",
   "branch": "main",
   "risk_level": "medium",
-  "current_checkpoint": "implementation complete; full local RC passed with sudo Docker; push pending final git transport verification",
+  "current_checkpoint": "release workflow/documentation commits pushed; remaining pre-tag blockers are external fuzz evidence, realistic sanitized pcap corpus evidence, and tag-driven publication verification",
   "completed_steps": [
     "Created task plan docs/plans/task-20260708-050129.md",
     "Added .github/workflows/release.yml for tag-driven GitHub Release publication",
@@ -18,12 +18,15 @@
     "Rechecked the environment and confirmed make, go, git, and docker are available",
     "Fetched origin successfully and confirmed origin/main has no new commits ahead of HEAD",
     "Ran make shell-check, docs-check, python-check, deps-check, config-check, lint, and git diff --check successfully",
-    "Ran DOCKER=\"sudo docker\" make rc-check successfully, including C/Go tests, Go race tests, coverage 74.2%, ASan fuzz smoke, e2e smoke, dist archive smoke, sudo Docker build, image content smoke, and runtime health smoke"
+    "Ran DOCKER=\"sudo docker\" make rc-check successfully, including C/Go tests, Go race tests, coverage 74.2%, ASan fuzz smoke, e2e smoke, dist archive smoke, sudo Docker build, image content smoke, and runtime health smoke",
+    "Pushed the validated release workflow/documentation commits to origin/main",
+    "Confirmed on 2026-07-10 that main and origin/main are synchronized"
   ],
   "pending_steps": [
-    "Push the local commits to origin/main",
+    "Record and review sustained external C fuzz evidence",
+    "Record and review realistic sanitized pcap corpus pressure/query evidence",
     "Verify the tag-driven GitHub Release workflow on the first real version tag"
   ],
   "blockers": [],
-  "next_action": "Push the validated local commits to origin/main, then verify the tag-driven GitHub Release workflow on the first real version tag"
+  "next_action": "Collect the remaining release evidence, then create and push the v0.1.0 tag from a passing commit and verify the tag-driven GitHub Release and GHCR workflows"
 }
