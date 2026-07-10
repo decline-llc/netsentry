@@ -133,6 +133,10 @@ Remaining blockers before tagging v0.1.0:
 - Run and record realistic pcap corpus pressure/query evidence with `PCAP_CORPUS=/path/to/sanitized-pcaps make e2e-corpus-pressure`, separate from synthetic repeat-pcap smoke runs.
 - Create version tag `v0.1.0` from the pushed passing release commit, then verify the checked-in GitHub Release and GHCR workflows publish the named assets successfully.
 
+Use `docs/evidence/release-evidence-template.md` for the sanitized public
+release evidence record. Keep generated local evidence under
+`docs/evidence/local/` out of Git.
+
 ---
 
 ## Implemented Today

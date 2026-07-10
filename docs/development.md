@@ -362,6 +362,10 @@ Remaining release blockers:
 - Realistic pcap corpus pressure/query evidence must be recorded with `make e2e-corpus-pressure`, separately from repeat-pcap smoke results.
 - Version tag `v0.1.0` must be created from the pushed passing release commit, then the checked-in GitHub Release and GHCR workflows must publish the named assets successfully.
 
+Use `docs/evidence/release-evidence-template.md` for the sanitized public
+release evidence record. Keep generated local evidence under
+`docs/evidence/local/` out of Git.
+
 Remaining test gaps:
 
 - Sustained external C fuzz campaign results from larger parser and formatter corpora.
