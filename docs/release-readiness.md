@@ -42,6 +42,15 @@ Generate the built-in sanitized simulation corpus:
 make gen-sanitized-corpus CORPUS_DIR=/tmp/netsentry-sanitized-corpus
 ```
 
+For larger synthetic pressure input, generate differentiated sets outside Git:
+
+```bash
+make gen-sanitized-corpus CORPUS_DIR=/tmp/netsentry-synthetic-100 CORPUS_SETS=100
+```
+
+The generated corpus is explicitly synthetic and cannot close the realistic
+production-derived traffic gate without an approved exception.
+
 Use an external or generated corpus for pressure evidence only after the
 traffic-pressure gate is approved for the current iteration:
 

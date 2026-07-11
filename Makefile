@@ -70,9 +70,9 @@ shell-check:
 python-check:
 	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("scripts/gen_test_pcap.py", "scripts/gen_sanitized_corpus.py", "scripts/sanitize_pcap.py", "scripts/release_gate.py"))]'
 
-## gen-sanitized-corpus — generate deterministic sanitized pcap corpus outside the repository
+## gen-sanitized-corpus — generate deterministic synthetic pcap corpus outside the repository
 gen-sanitized-corpus:
-	@python3 scripts/gen_sanitized_corpus.py --output-dir "$(if $(CORPUS_DIR),$(CORPUS_DIR),/tmp/netsentry-sanitized-corpus)"
+	@python3 scripts/gen_sanitized_corpus.py --output-dir "$(if $(CORPUS_DIR),$(CORPUS_DIR),/tmp/netsentry-sanitized-corpus)" --sets "$(if $(CORPUS_SETS),$(CORPUS_SETS),1)"
 
 ## config-check — validate repository config, rule, and suppression files
 config-check:

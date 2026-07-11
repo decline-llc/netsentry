@@ -341,12 +341,15 @@ make gen-sanitized-corpus
 make gen-sanitized-corpus CORPUS_DIR=/tmp/netsentry-sanitized-corpus
 ```
 
-The generator writes `payload-rules.pcap`, `protocol-mix.pcap`,
-`background-traffic.pcap`, matching `.pcapng` files, and `MANIFEST.json`. The files contain only fixed
+The generator writes `payload-rules`, `protocol-mix`, and `background-traffic`
+pcap/pcapng pairs per requested set, plus `MANIFEST.json`. For example,
+`make gen-sanitized-corpus CORPUS_DIR=/tmp/netsentry-synthetic-100
+CORPUS_SETS=100` emits 600 differentiated files. Each set contains only fixed
 RFC 5737 documentation addresses, fixed local MAC addresses, deterministic
-timestamps, and synthetic payloads. Repeated runs are byte-identical. Keep
-the output outside the repository unless a reviewed public evidence package
-explicitly requires it.
+timestamps, synthetic payloads, and a unique synthetic marker. Repeated runs
+are byte-identical. Keep the output outside the repository unless a reviewed
+public evidence package explicitly requires it; synthetic output never replaces
+external fuzz or realistic production traffic evidence.
 
 The sanitizer preserves pcap timestamps, packet framing, Ethernet/VLAN/IPv4/TCP/UDP structure, ports, and lengths. It replaces MAC addresses, maps IPv4 addresses into the `198.18.0.0/15` benchmark range, overwrites TCP/UDP payload bytes, and zeroes unsupported captured frames.
 
