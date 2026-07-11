@@ -110,6 +110,16 @@ configuration sample validation, documentation consistency checks, dependency
 verification, tests, a coverage snapshot, fuzz smoke, e2e smoke, release archive
 checks, Docker image smoke, and Docker runtime health smoke.
 
+Before a version-tag release, validate the reviewed public fuzz and sanitized
+pcap evidence record:
+
+```bash
+make release-gate
+```
+
+The gate reads `docs/evidence/release-v0.1.0.md` and fails closed when the
+record is missing, pending, incomplete, or contains private-material findings.
+
 To build the local Docker image:
 
 ```bash
@@ -124,7 +134,7 @@ directory cache is read-only. Set `GOCACHE=/path/to/cache` to override it.
 
 The repository also includes GitHub Actions workflows for release-candidate checks
 and tag-driven GitHub Release/GHCR publishing. Both publication workflows rerun
-the same `make rc-check` bundle first; the GitHub Release workflow uploads the
+`make rc-check` and `make release-gate` before publishing; the GitHub Release workflow uploads the
 `make dist` tarball and checksum for version tags, while Docker publishing only
 pushes on version tags or an explicit manual workflow run.
 
@@ -136,6 +146,7 @@ Canonical release gate status and evidence commands are tracked in
 Ready gates:
 
 - Local source build, tests, coverage snapshot, deterministic fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke are wired into `make rc-check`.
+- Reviewed external fuzz and realistic sanitized pcap/query evidence are enforced separately by `make release-gate` before tag-driven publication.
 - GitHub Actions CI reuses the release-candidate bundle.
 - GitHub Release workflow is present for version tags and publishes the `make dist` tarball plus checksum.
 - GHCR publishing workflow is present for version tags or explicit manual publishing.

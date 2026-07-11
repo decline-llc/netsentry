@@ -50,13 +50,14 @@ make sanitize-pcap # sanitize an Ethernet pcap before sharing it
 make dist          # build a local release archive under dist/
 make docker-build  # build a local Docker image
 make rc-check      # release-candidate verification bundle
+make release-gate  # reviewed external fuzz/pcap evidence gate
 make lint          # go vet + optional staticcheck
 make quickstart    # build, generate pcap, run engine/capture, print alerts
 make asan-test     # C parser tests under AddressSanitizer
 make clean
 ```
 
-Local Docker image builds are available through `make docker-build` and are covered by `make rc-check`. GitHub Actions workflows are present for release-candidate checks, tag-driven GitHub Release publication, and GHCR image publishing; both publication workflows rerun `make rc-check` before publishing named assets.
+Local Docker image builds are available through `make docker-build` and are covered by `make rc-check`. GitHub Actions workflows are present for release-candidate checks, tag-driven GitHub Release publication, and GHCR image publishing; both publication workflows rerun `make rc-check` and `make release-gate` before publishing named assets.
 
 ---
 

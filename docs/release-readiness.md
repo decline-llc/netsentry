@@ -20,12 +20,19 @@ Ready:
 - Synthetic deterministic ASan parser fuzz passed on 2026-07-10: `FUZZ_SUSTAINED_ITERATIONS=1000000 make fuzz-sustained` completed 1,000,000 iterations with zero corpus files and no reported crash. This is no-corpus synthetic evidence only.
 - Standardized sanitized synthetic corpus generation is available through `make gen-sanitized-corpus`; it writes three deterministic Ethernet pcaps, three matching pcapng files, and a manifest outside the repository by default.
 - Approved local fuzz evidence passed on 2026-07-11: `FUZZ_CORPUS=/tmp/netsentry-fuzz-pcap-inputs make fuzz-sustained` completed 1,000,000 ASan mutation iterations plus 6 pcap/pcapng inputs with zero reported crashes. The corpus path is redacted in local evidence. This is approved local synthetic evidence, not external-corpus release evidence.
+- The tag publication workflows now run `make release-gate` after `make rc-check` and before building release assets or logging in to GHCR.
 
 Blocked before tagging v0.1.0:
 
 - Sustained external C fuzz evidence must be recorded and reviewed.
 - Realistic sanitized pcap corpus pressure/query evidence must be recorded and reviewed.
 - Version tag `v0.1.0` must be created from the pushed passing release commit, then the checked-in GitHub Release and GHCR workflows must publish the named assets successfully.
+
+The release gate reads `docs/evidence/release-v0.1.0.md` and fails closed
+unless the reviewed public record has an approved final decision, at least
+1,000,000 fuzz iterations with zero crashes and no ASan findings, passed
+realistic sanitized pcap and query evidence, and all sensitive-information
+review fields set to `no`. It does not create or approve evidence.
 
 ## Evidence Commands
 
@@ -46,6 +53,12 @@ Run the standard local release-candidate bundle:
 
 ```bash
 make rc-check
+```
+
+Validate the reviewed evidence before a release workflow:
+
+```bash
+make release-gate
 ```
 
 When Docker requires elevated privileges, pass Docker through sudo:
@@ -116,6 +129,7 @@ fuzz runs remain auxiliary regression evidence.
 ## Release Checklist
 
 - `make rc-check` passes locally.
+- `make release-gate` passes against the reviewed public evidence record.
 - Sudo Docker RC validation passes where Docker is part of the release gate.
 - Synthetic extended pressure and no-corpus ASan fuzz checks pass as auxiliary regression signals.
 - Sustained external fuzz run records zero crashes for the approved campaign window.

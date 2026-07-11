@@ -12,7 +12,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build build-asan test test-coverage deps-check docs-check shell-check python-check config-check asan-test bench fuzz-parser fuzz-parser-long fuzz-sustained gen-sanitized-corpus e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap dist release-artifacts docker-build rc-check lint clean quickstart help
+.PHONY: all build-c build-go build build-asan test test-coverage deps-check docs-check shell-check python-check config-check asan-test bench fuzz-parser fuzz-parser-long fuzz-sustained gen-sanitized-corpus e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap dist release-artifacts docker-build release-gate rc-check lint clean quickstart help
 
 all: build
 
@@ -68,7 +68,7 @@ shell-check:
 
 ## python-check — run Python script syntax checks
 python-check:
-	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("scripts/gen_test_pcap.py", "scripts/gen_sanitized_corpus.py", "scripts/sanitize_pcap.py"))]'
+	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("scripts/gen_test_pcap.py", "scripts/gen_sanitized_corpus.py", "scripts/sanitize_pcap.py", "scripts/release_gate.py"))]'
 
 ## gen-sanitized-corpus — generate deterministic sanitized pcap corpus outside the repository
 gen-sanitized-corpus:
@@ -131,6 +131,10 @@ dist: build
 release-artifacts:
 	@[[ "$(VERSION)" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$$ ]] || { echo "VERSION must be SemVer without leading v"; exit 1; }
 	$(MAKE) dist VERSION="$(VERSION)"
+
+## release-gate — require reviewed public fuzz and pcap evidence before release
+release-gate:
+	@python3 scripts/release_gate.py --evidence "$(if $(RELEASE_EVIDENCE),$(RELEASE_EVIDENCE),docs/evidence/release-v0.1.0.md)"
 
 ## docker-build — build a local Docker image
 docker-build:

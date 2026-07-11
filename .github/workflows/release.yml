@@ -59,6 +59,11 @@ jobs:
           VERSION: ${{ steps.meta.outputs.release_version }}
         run: make rc-check
 
+      - name: Enforce reviewed release evidence gate
+        env:
+          RELEASE_EVIDENCE: docs/evidence/release-v0.1.0.md
+        run: make release-gate
+
       - name: Build release artifacts
         env:
           VERSION: ${{ steps.meta.outputs.release_version }}
