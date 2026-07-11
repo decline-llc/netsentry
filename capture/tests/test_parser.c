@@ -91,6 +91,23 @@ static void test_short_frame_rejected(void) {
     CHECK(parse_frame(frame, sizeof(frame), 1, 2, &info) == -1);
 }
 
+static void test_null_arguments_rejected(void) {
+    uint8_t frame[64] = {0};
+    PacketInfo info;
+    CHECK(parse_frame(NULL, sizeof(frame), 1, 2, &info) == -1);
+    CHECK(parse_frame(frame, sizeof(frame), 1, 2, NULL) == -1);
+}
+
+static void test_non_ipv4_version_rejected(void) {
+    uint8_t frame[64];
+    size_t off = write_eth(frame, 0x0800);
+    off += write_ipv4(frame + off, IPPROTO_TCP, 0, 0);
+    frame[14] = 0x65;
+
+    PacketInfo info;
+    CHECK(parse_frame(frame, (uint32_t)off, 1, 0, &info) == -1);
+}
+
 static void test_tcp_frame_parsed(void) {
     uint8_t frame[256];
     const uint8_t payload[] = "GET / HTTP/1.1\r\n\r\n";
@@ -198,6 +215,8 @@ int main(void) {
     parser_registry_register(IPPROTO_UDP, 0, passthrough_parser, "passthrough_udp");
 
     test_short_frame_rejected();
+    test_null_arguments_rejected();
+    test_non_ipv4_version_rejected();
     test_tcp_frame_parsed();
     test_udp_frame_parsed();
     test_vlan_and_qinq_offsets();

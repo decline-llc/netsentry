@@ -105,7 +105,7 @@ capture:
 engine:
   uds_socket_path: "${UDS_PATH}"
   channel_buffer_size: 20000
-  worker_count: 1
+  worker_count: 2
   db_dir: "${TMP_DIR}"
   db_path: "${DB_PATH}"
   db_shard_daily: false
@@ -113,6 +113,7 @@ engine:
   db_busy_timeout: 5000
   rules_seed_file: "${ROOT_DIR}/configs/rules.json"
   suppressions_file: "${ROOT_DIR}/configs/suppressions.json"
+  api_listen_host: "127.0.0.1"
   api_port: ${PORT}
   cors_allowed_origins: ["http://localhost:3000"]
   alert_aggregation_window: 60

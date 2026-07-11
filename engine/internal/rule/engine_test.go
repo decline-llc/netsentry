@@ -257,6 +257,61 @@ func TestPayloadRuleRejectsInvalidConfig(t *testing.T) {
 	}
 }
 
+func TestReloadRejectsInvalidRuleSetAndRetainsState(t *testing.T) {
+	e := NewEngine()
+	valid := makePayloadRule("valid", "needle", false)
+	if err := e.Reload([]*model.Rule{valid}); err != nil {
+		t.Fatal(err)
+	}
+
+	tests := []struct {
+		name  string
+		rules []*model.Rule
+	}{
+		{name: "nil rule", rules: []*model.Rule{nil}},
+		{name: "duplicate id", rules: []*model.Rule{valid, makePayloadRule("valid", "other", false)}},
+		{name: "empty keywords", rules: []*model.Rule{makePayloadRuleWithConfig("empty", model.PayloadMatchConfig{})}},
+		{name: "unsupported type", rules: []*model.Rule{{ID: "bad", Name: "bad", Type: model.RuleTypeFrequencyThreshold, Severity: model.SeverityHigh, Enabled: true, Config: json.RawMessage(`{}`)}}},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if err := e.Reload(test.rules); err == nil {
+				t.Fatal("expected validation error")
+			}
+			if e.RuleCount() != 1 || e.Rules()[0].ID != "valid" {
+				t.Fatalf("failed reload replaced active state: %+v", e.Rules())
+			}
+		})
+	}
+}
+
+func TestReloadValidatesCanonicalMITREMapping(t *testing.T) {
+	e := NewEngine()
+	mismatch := makePayloadRule("mismatch", "needle", false)
+	mismatch.MITRETechs[0].Tactic = "Execution"
+	if err := e.Reload([]*model.Rule{mismatch}); err == nil {
+		t.Fatal("expected mismatched MITRE tactic to be rejected")
+	}
+
+	multiple := makePayloadRule("multiple", "needle", false)
+	multiple.MITRETechs = append(multiple.MITRETechs, model.MITRETechnique{
+		Tactic: "Reconnaissance", TechniqueID: "T1595", TechniqueName: "Active Scanning",
+	})
+	if err := e.Reload([]*model.Rule{multiple}); err == nil {
+		t.Fatal("expected multiple MITRE mappings to be rejected by v0.1 schema")
+	}
+}
+
+func TestMatchNilPacketReturnsNoAlerts(t *testing.T) {
+	e := NewEngine()
+	if err := e.Reload([]*model.Rule{makePayloadRule("r1", "needle", false)}); err != nil {
+		t.Fatal(err)
+	}
+	if alerts := e.Match(nil); len(alerts) != 0 {
+		t.Fatalf("expected no alerts, got %+v", alerts)
+	}
+}
+
 func makeIPRuleWithConfig(id string, cfg model.IPBlacklistConfig) *model.Rule {
 	raw, _ := json.Marshal(cfg)
 	return &model.Rule{

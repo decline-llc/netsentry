@@ -26,6 +26,33 @@ func TestLoadRepositoryConfigFile(t *testing.T) {
 	if cfg.Engine.PprofEnabled {
 		t.Fatal("repository config should not enable pprof by default")
 	}
+	if cfg.Engine.APIListenHost != "127.0.0.1" {
+		t.Fatalf("repository API must default to loopback, got %q", cfg.Engine.APIListenHost)
+	}
+}
+
+func TestValidateRequiresAuthForNonLoopbackAPI(t *testing.T) {
+	cfg := defaults()
+	cfg.Engine.APIListenHost = "0.0.0.0"
+	if err := validate(cfg); err == nil || !strings.Contains(err.Error(), "api_auth_enabled") {
+		t.Fatalf("expected non-loopback auth validation error, got %v", err)
+	}
+
+	cfg.Engine.APIAuthEnabled = true
+	cfg.Engine.APIAuthToken = "test-only-token"
+	if err := validate(cfg); err != nil {
+		t.Fatalf("authenticated non-loopback API should validate: %v", err)
+	}
+}
+
+func TestValidateRejectsInvalidAPIPort(t *testing.T) {
+	for _, port := range []int{0, -1, 65536} {
+		cfg := defaults()
+		cfg.Engine.APIPort = port
+		if err := validate(cfg); err == nil || !strings.Contains(err.Error(), "api_port") {
+			t.Fatalf("api_port=%d: expected validation error, got %v", port, err)
+		}
+	}
 }
 
 func TestValidateAllowsLoopbackPprofAddress(t *testing.T) {

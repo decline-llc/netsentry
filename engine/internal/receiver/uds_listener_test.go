@@ -3,6 +3,8 @@ package receiver
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"io"
 	"net"
 	"os"
 	"path/filepath"
@@ -11,6 +13,9 @@ import (
 
 	"go.uber.org/goleak"
 	"go.uber.org/zap"
+
+	"github.com/decline-llc/netsentry/internal/stats"
+	"github.com/decline-llc/netsentry/pkg/model"
 )
 
 func TestMain(m *testing.M) {
@@ -54,6 +59,34 @@ func TestHandleLineBadJSON(t *testing.T) {
 	r := New(Config{BufferSize: 1}, zap.NewNop())
 	if err := r.handleLine(context.Background(), []byte(`{"timestamp_sec"`)); err == nil {
 		t.Fatal("expected bad JSON error")
+	}
+}
+
+func TestHandleLineRejectsInvalidPacketContract(t *testing.T) {
+	metrics := stats.New()
+	r := New(Config{BufferSize: 1, Stats: metrics}, zap.NewNop())
+	tests := []string{
+		`{"timestamp_sec":1,"timestamp_usec":1000000,"src_ip":"10.0.0.1","dst_ip":"10.0.0.2","protocol":6,"payload_len":0,"payload_preview":""}`,
+		`{"timestamp_sec":1,"timestamp_usec":0,"src_ip":"invalid","dst_ip":"10.0.0.2","protocol":6,"payload_len":0,"payload_preview":""}`,
+		`{"timestamp_sec":1,"timestamp_usec":0,"src_ip":"10.0.0.1","dst_ip":"10.0.0.2","protocol":6,"payload_len":4,"payload_preview":"bad!"}`,
+		`{"timestamp_sec":1,"timestamp_usec":0,"src_ip":"10.0.0.1","dst_ip":"10.0.0.2","protocol":6,"payload_len":3,"payload_preview":"dGVzdA=="}`,
+	}
+	for _, line := range tests {
+		if err := r.handleLine(context.Background(), []byte(line)); err == nil {
+			t.Fatalf("expected invalid packet frame to be rejected: %s", line)
+		}
+	}
+	if got := metrics.Snapshot().DecodeErrors; got != uint64(len(tests)) {
+		t.Fatalf("decode errors = %d, want %d", got, len(tests))
+	}
+}
+
+func TestWaitForPacketReturnsEOFForClosedChannel(t *testing.T) {
+	packets := make(chan *model.PacketInfo)
+	close(packets)
+	pkt, err := WaitForPacket(context.Background(), packets)
+	if pkt != nil || !errors.Is(err, io.EOF) {
+		t.Fatalf("packet=%+v err=%v, want nil/io.EOF", pkt, err)
 	}
 }
 
