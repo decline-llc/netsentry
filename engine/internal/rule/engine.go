@@ -93,6 +93,9 @@ func (e *Engine) Rules() []*model.Rule {
 
 // Match runs all enabled rules against pkt and returns triggered alerts.
 func (e *Engine) Match(pkt *model.PacketInfo) []*model.Alert {
+	if pkt == nil {
+		return nil
+	}
 	s := e.state.Load()
 	if s == nil || len(s.allByPriority) == 0 {
 		return nil
@@ -160,6 +163,9 @@ func cloneRule(r *model.Rule) *model.Rule {
 }
 
 func buildState(rules []*model.Rule) (*ruleState, error) {
+	if err := validateRuleSet(rules); err != nil {
+		return nil, err
+	}
 	s := &ruleState{
 		payloadRules: make(map[string]compiledPayloadRule),
 		ipRules:      make(map[string]compiledIPRule),
