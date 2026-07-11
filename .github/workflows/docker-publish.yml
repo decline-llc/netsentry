@@ -71,6 +71,7 @@ jobs:
           images: ghcr.io/${{ github.repository_owner }}/netsentry
           tags: |
             type=ref,event=tag
+            type=semver,pattern={{version}},enable=${{ startsWith(github.ref_name, 'v') }}
             type=raw,value=${{ inputs.image_tag }},enable=${{ github.event_name == 'workflow_dispatch' && inputs.image_tag != '' }}
             type=raw,value=manual-${{ github.run_number }},enable=${{ github.event_name == 'workflow_dispatch' && inputs.image_tag == '' }}
 
@@ -81,3 +82,15 @@ jobs:
           push: ${{ github.event_name == 'push' || inputs.push_image }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Verify published image
+        if: github.event_name == 'push' || inputs.push_image
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+          IMAGE="ghcr.io/${{ github.repository_owner }}/netsentry"
+          docker buildx imagetools inspect "${IMAGE}:${IMAGE_TAG}"
+          if [[ "${GITHUB_REF_TYPE}" == "tag" && "${IMAGE_TAG}" == v* ]]; then
+            docker buildx imagetools inspect "${IMAGE}:${IMAGE_TAG#v}"
+          fi
