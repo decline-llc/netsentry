@@ -1,0 +1,42 @@
+{
+  "task": "release-evidence-prerequisite-audit",
+  "timestamp": "2026-07-10T20:42:58-07:00",
+  "branch": "main",
+  "risk_level": "Low",
+  "current_checkpoint": "7-atomic-commit",
+  "completed": [
+    "Verified ~/NetSentry and .git",
+    "Verified clean main branch and approved SSH origin",
+    "Confirmed v0.1.0 tag is not present",
+    "Inventoried repository and /tmp corpus candidates",
+    "Classified available /tmp pcap and pcapng inputs as generated synthetic corpus, not external release evidence"
+  ],
+  "in_progress": [
+    "Run applicable documentation, dependency, smoke, whitespace, and secret/path checks"
+  ],
+  "todo": [
+    "Obtain operator-supplied external fuzz corpus and review sustained fuzz evidence",
+    "Obtain operator-supplied realistic sanitized pcap corpus and review pressure/query evidence",
+    "Create and publish v0.1.0 tag only after all pre-tag gates pass"
+  ],
+  "modified_files": [
+    "docs/plans/task-20260711-034258.md",
+    "docs/tasks/task-state-20260711-034258.json"
+  ],
+  "pending_validation": [
+    "make docs-check",
+    "make deps-check",
+    "make e2e-smoke",
+    "git diff --check",
+    "secret/path review",
+    "SSH commit and push record"
+  ],
+  "pending_commits": [],
+  "remaining_risks": [
+    "Synthetic corpus cannot substitute for external fuzz evidence",
+    "Realistic traffic pressure/query evidence remains unavailable",
+    "Tag-driven GitHub Release and GHCR publication are intentionally not verified",
+    "GitHub CLI is not authenticated, so no pull request can be created by the yeet workflow"
+  ],
+  "resume_instructions": "Re-run repository and secret checks, then provide reviewed operator-supplied corpus paths. Run the existing FUZZ_CORPUS and PCAP_CORPUS Makefile commands only after confirming the inputs are permitted and sanitized. Do not create v0.1.0 tag before both evidence gates are reviewed."
+}
