@@ -91,3 +91,31 @@ git log -1 --oneline
 ```
 
 知识库检查重点是：每篇笔记有 YAML/关联/代码路径；MOC 可达；增量记录的 SHA 存在于 Git；项目源码目录未出现知识库文件；`_待整理` 草稿已定期合并到稳定笔记。
+
+## 9. GitHub Actions 自动同步
+
+`.github/workflows/knowledge-sync.yml` 在每次 push 到 `main` 时运行 `scripts/sync_knowledge.py`。脚本不依赖 LLM 或第三方 Python 包，而是从 Git range、当前 config、seed rules 和受影响模块提取：数据流图、信任边界不变量、规则/MITRE 快照、验证要求和人工复核问题。相同 after SHA 重跑会覆盖同名 note 并去重 MOC link，因此是幂等的。
+
+workflow 始终上传 30 天保留的 `netsentry-knowledge-<sha>` artifact，作为可审查 fallback。要自动写入独立知识仓库，配置：
+
+- Repository variable `NETSENTRY_KNOWLEDGE_REPO=owner/repository`；
+- 可选 variable `NETSENTRY_KNOWLEDGE_BRANCH`，默认 `main`；
+- Secret `KNOWLEDGE_SYNC_TOKEN`，只授予目标知识仓库 contents write。
+
+当前桌面 Vault 不是 Git 仓库，GitHub hosted runner 无法直接访问它。若要直接写本地 Obsidian Vault，部署带 `self-hosted, linux, netsentry-knowledge` labels 的 runner，并配置：
+
+- `NETSENTRY_KNOWLEDGE_SELF_HOSTED=true`；
+- `NETSENTRY_VAULT_PATH` 为 runner 上的 Vault 路径。
+
+本地预览/验证：
+
+```bash
+make knowledge-check
+python3 scripts/sync_knowledge.py \
+  --repo . \
+  --vault ../NetSentry-Knowledge \
+  --before HEAD^ \
+  --after HEAD
+```
+
+自动 note 是确定性草稿：它可以陈述从代码直接抽取的不变量，但不能推断业务意图或 ATT&CK 置信度变化。此类结论必须在 `_待整理` 复核，再合并到稳定架构/模块/技术点笔记。
