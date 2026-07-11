@@ -3,7 +3,7 @@
   "timestamp": "2026-07-10T20:03:16-07:00",
   "branch": "main",
   "risk_level": "High",
-  "current_checkpoint": "3-approved-fuzz-evidence",
+  "current_checkpoint": "5-fuzz-evidence-collected",
   "administrator_approval": {
     "status": "approved",
     "scope": "C fuzz evidence only; traffic pressure remains deferred",
@@ -23,7 +23,7 @@
     ,"Passed python-check, docs-check, shell-check, deps-check, go vet, coverage 74.2%, and e2e smoke"
   ],
   "in_progress": [
-    "Run approved C fuzz evidence collection"
+    "Review and persist approved fuzz evidence"
   ],
   "todo": [
     "Add Makefile generation target",
@@ -40,9 +40,8 @@
     "docs/tasks/task-state-20260711-030316.json"
   ],
   "pending_validation": [
-    "make fuzz-sustained",
-    "make fuzz-sustained after approval",
-    "fuzz evidence review"
+    "update release-readiness evidence record",
+    "make docs-check after evidence update"
   ],
   "pending_commits": [],
   "commit_list": [
@@ -50,6 +49,16 @@
     "b5329ad test: support sanitized pcapng corpus generation"
   ],
   "push_status": "success: origin/main at b5329ad",
+  "evidence": {
+    "fuzz_command": "FUZZ_CORPUS=/tmp/netsentry-fuzz-pcap-inputs make fuzz-sustained",
+    "fuzz_status": "pass",
+    "iterations": 1000000,
+    "corpus_files": 6,
+    "corpus_path_redacted": true,
+    "evidence_json": "docs/evidence/local/fuzz-sustained-20260711T031826Z.json",
+    "evidence_markdown": "docs/evidence/local/fuzz-sustained-20260711T031826Z.md",
+    "traffic_pressure": "deferred"
+  },
   "remaining_risks": [
     "No administrator approval has been provided",
     "External sustained fuzz and realistic traffic pressure evidence remain open",
