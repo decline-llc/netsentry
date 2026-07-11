@@ -1,0 +1,56 @@
+{
+  "task": "enforce-reviewed-release-evidence-gate",
+  "timestamp": "2026-07-10T20:52:22-07:00",
+  "branch": "main",
+  "risk_level": "Medium",
+  "current_checkpoint": "11-completion-report",
+  "completed": [
+    "Inspected existing rc-check, release workflows, public evidence template, and release blockers",
+    "Created a native release-gate plan",
+    "Added strict standard-library release evidence validator",
+    "Added Makefile release-gate target",
+    "Enforced release-gate before GitHub Release artifact build and GHCR login/publication",
+    "Updated README, development, and release-readiness documentation",
+    "Verified failing and passing evidence fixtures in the TEST project copy",
+    "Passed shell-check, python-check, docs-check, deps-check, and e2e-smoke",
+    "Pushed commit 2e924bb to origin/main"
+  ],
+  "in_progress": [],
+  "todo": [
+    "Obtain and review operator-supplied external fuzz evidence",
+    "Obtain and review realistic sanitized pcap pressure/query evidence",
+    "Commit docs/evidence/release-v0.1.0.md only after review",
+    "Create v0.1.0 tag and verify GitHub Release/GHCR workflows only after release-gate passes"
+  ],
+  "modified_files": [
+    "scripts/release_gate.py",
+    "Makefile",
+    ".github/workflows/release.yml",
+    ".github/workflows/docker-publish.yml",
+    "README.md",
+    "docs/development.md",
+    "docs/release-readiness.md",
+    "docs/plans/task-20260711-035222.md",
+    "docs/tasks/task-state-20260711-035222.json"
+  ],
+  "validation": {
+    "release_gate_missing_evidence": "fail as expected",
+    "release_gate_failing_fixture": "fail as expected",
+    "release_gate_approved_fixture": "pass",
+    "shell_check": "pass",
+    "python_check": "pass",
+    "docs_check": "pass",
+    "deps_check": "pass",
+    "e2e_smoke": "pass: 6 packets, 5 alerts, 8 rules",
+    "git_diff_check": "pass",
+    "secret_path_review": "pass"
+  },
+  "pending_validation": [],
+  "pending_commits": [],
+  "remaining_risks": [
+    "The public reviewed evidence record does not yet exist",
+    "External fuzz and realistic sanitized pcap evidence remain release blockers",
+    "v0.1.0 tag and publication workflows have intentionally not run"
+  ],
+  "resume_instructions": "Task complete. Supply a reviewed docs/evidence/release-v0.1.0.md record, run make release-gate and make rc-check, then follow the documented tag workflow. Never commit raw corpus, local evidence, private paths, or credentials."
+}
