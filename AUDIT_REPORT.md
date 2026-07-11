@@ -200,3 +200,57 @@ Canonical 参考：
 - GitHub hosted runner 无法访问桌面上的 sibling Obsidian Vault，且当前 Vault 不是 Git 仓库。阶段 6 将提供可复用的知识提取脚本、workflow artifact 和可选独立 knowledge repository 同步；要真正跨机器自动追加，需要配置目标知识仓库与 token，或部署带 `NetSentry-Knowledge` 标签的 self-hosted runner。
 - 外部 pcap 即使来自开源仓库也可能包含历史真实地址/内容；本轮仅选小型测试 fixture，记录上游许可证、固定 commit 与 SHA-256，不把 corpus 提交到 NetSentry 源码仓库。
 
+## 9. 三个月技术路线图（至 v0.3.0）
+
+路线周期为 2026-07-11 至 2026-10-10。每个版本都以可测量的门禁为完成条件，不能用“代码已合并”替代运行证据。
+
+### 第 1 月：v0.1.1 安全与可重复性（2026-07-11—2026-08-10）
+
+目标：把本次审计加固稳定为 patch release，偿还安全默认值、测试来源和 CI 供应链债务。
+
+| 交付 | 技术债/新能力 | 验收指标 |
+|---|---|---|
+| API/IPC hardening | loopback 默认、非 loopback 强制 auth、HTTP timeout/header/body 上限、64 KiB UDS frame contract | 安全单测、race、E2E 全通过；远程无 auth 配置启动失败 |
+| Rule/MITRE validation | 拒绝 nil/重复/空 rule；canonical ATT&CK tuple；v0.1 单映射显式约束 | seed 与 example 100% 通过；错误 fixture 全部 fail-closed；失败 reload 保留旧 snapshot |
+| External fixture governance | PcapPlusPlus/Zeek 固定 revision、license、SHA-256、离仓存储 | `manage_pcaps.py verify` 9/9；integration 处理 6 个 Ethernet capture 并拒绝 1 个 SLL DLT |
+| CI dependency policy | `govulncheck`、Go patch version policy、Actions 固定 commit SHA、artifact retention | PR/main 门禁可重复；可达漏洞为 0；依赖/Action 更新有审计 diff |
+| Production-derived evidence | 获得许可、脱敏、人工复核的 pcap 证据 | provenance、sanitization report、packet count、hash 全部记录；原始数据不入 Git |
+
+退出门禁：`make test-unit test-integration test-e2e`、至少 10,000 次 repeat pressure、`govulncheck`、非 Docker RC 全通过；v0.1.1 只从通过 commit 建 tag。
+
+### 第 2 月：v0.2.0 协议与运行模型（2026-08-11—2026-09-10）
+
+目标：让配置、协议边界和并发模型从“单机开发可用”升级为“边缘部署可预测”。
+
+| 交付 | 技术债/新能力 | 验收指标 |
+|---|---|---|
+| 统一配置契约 | C capture 与 Go engine 共享生成后的 schema/常量；删除或接线 reserved 字段；YAML unknown field 拒绝 | 所有公开字段有消费方和测试；无静默忽略配置 |
+| DLT/pcapng 策略 | 显式支持 Ethernet pcap/pcapng 多接口选择；其他 DLT 给出稳定错误码 | Wireshark/PcapPlusPlus/Zeek corpus 合同测试；错误不得退化为大量 parse error |
+| IPv6 基础解析 | Ethernet + VLAN 后支持 IPv6、TCP/UDP 基本 header 与扩展 header 上限 | IPv4 行为不回归；IPv6 good/malformed corpus + ASan fuzz 通过 |
+| UDS 并发治理 | 最大连接数、握手状态机、idle/read deadline、同 session 序列检查 | 同 UID 连接洪泛测试资源有界；shutdown 无 goroutine 泄漏 |
+| 可观测性与配置接线 | worker count、aggregation max、logging level/output、C heartbeat interval 全部生效 | 每项配置均有 contract test；health 暴露 effective config 摘要（不含 secret） |
+| 性能预算 | 固化 packet/s、p95 match/write latency、RSS、queue/drop 指标 | 标准 10k packet corpus：0 decode/write error；相对 v0.1.1 pps 不下降 >10%，RSS 不增长 >20% |
+
+退出门禁：IPv4/IPv6 parser fuzz 每类至少 1,000,000 mutation；2/4/8 worker 压力矩阵；SQLite recovery 故障注入；跨平台 amd64/arm64 build。
+
+### 第 3 月：v0.3.0 流重组与 ATT&CK 证据模型（2026-09-11—2026-10-10）
+
+目标：减少最关键的分片/分段绕过，并把 MITRE 映射从单字符串提升为可审计证据模型。
+
+| 交付 | 技术债/新能力 | 验收指标 |
+|---|---|---|
+| 有界 IP fragment reassembly | 以 flow/id 建表，限制 fragment 数、字节、存活时间和全局内存 | overlapping/tiny/timeout/teardrop corpus 不崩溃；内存上限可配置且有压力证据 |
+| 有界 TCP stream reassembly | 双向 flow key、sequence window、乱序/重传处理、idle eviction | 跨 segment seed attack 可检出；乱序/重传不重复放大告警；flow 洪泛资源有界 |
+| 多 MITRE schema | Alert/SQLite/API 保存 technique 数组、confidence、evidence basis、catalog version | 无 `[0]` 截断；旧数据库可迁移/回滚；API filter 对多值有测试 |
+| Versioned ATT&CK catalog | 从固定 MITRE STIX release 生成最小 catalog，并记录上游 hash/version | catalog 更新可复现；未知/撤销 technique fail-closed 或显式 migration warning |
+| Detection quality harness | positive/negative/encoded/split corpus，按 rule 计算 precision proxy 与 recall | 每条 seed rule 有正负样本；已知绕过转为自动 regression；误报变化有审计记录 |
+| Matcher/IPC 优化 | 评估稀疏 trie、批量 frame、zero-copy/低分配 decode，仅保留有证据的优化 | 与 v0.2.0 同 corpus 对比：p95 不退化；优化必须附 benchmark 和 memory profile |
+
+v0.3.0 发布门禁：schema migration/recovery 演练、24 小时 sustained fuzz、至少一个经授权 realistic corpus、Docker/裸机 E2E、知识库与中英文文档同步、无 Critical/High 未处置审计项。
+
+### 持续治理
+
+- 每两周复核一次 P0/P1 清单、依赖漏洞、ATT&CK catalog 版本和 corpus provenance。
+- 每个性能优化必须同时提供基准、资源上限和退化阈值；不接受只报告平均值。
+- 每个新协议 parser 必须同时提供 malformed unit、ASan fuzz seed、外部 fixture 和明确 DLT/长度边界。
+- 每次 main push 生成知识增量；自动生成内容进入可追溯草稿，架构/规则/MITRE 结论再合并到稳定知识点。

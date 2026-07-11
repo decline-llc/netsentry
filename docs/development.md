@@ -112,6 +112,7 @@ engine:
   alert_recovery_log_path: ""
   rules_seed_file: "configs/rules.json"
   suppressions_file: "configs/suppressions.json"
+  api_listen_host: "127.0.0.1"
   api_port: 8080
   api_auth_enabled: false
   api_auth_token: "${NETSENTRY_API_TOKEN:}"
@@ -125,7 +126,7 @@ logging:
   engine_log: "logs/engine.log"
 ```
 
-Environment expansion supports `${ENV_VAR}` and `${ENV_VAR:default}`. At the moment, missing required variables expand to an empty string; validation only rejects an empty API token when `engine.api_auth_enabled` is true.
+Environment expansion supports `${ENV_VAR}` and `${ENV_VAR:default}`. Missing variables expand to their configured default. Validation rejects invalid API ports, worker/channel ranges, empty tokens when authentication is enabled, and any non-loopback API listener without authentication.
 
 ---
 
@@ -191,7 +192,7 @@ Empty future directories may exist locally; treat only directories with tracked 
 }
 ```
 
-The loader still accepts legacy top-level arrays and legacy `payload_match`, `ip_blacklist`, and MITRE scalar fields while old files are migrated.
+The loader still accepts legacy top-level arrays and legacy `payload_match`, `ip_blacklist`, and MITRE scalar fields while old files are migrated. Reload rejects null or duplicate rules, empty enabled match sets, unsupported types/severities, and non-canonical MITRE tuples. The v0.1 alert schema permits at most one MITRE technique per rule.
 
 `configs/suppressions.json` uses the canonical wrapped schema:
 
@@ -357,8 +358,10 @@ The sanitizer preserves pcap timestamps, packet framing, Ethernet/VLAN/IPv4/TCP/
 
 Current validation baseline:
 
-- C parser and UDS sender unit tests cover malformed frames, VLAN/Q-in-Q, IPv4 fragments, TCP offset errors, reconnect behavior, and write-error accounting.
-- Go unit and integration tests cover receiver lifecycle, engine worker shutdown orchestration, worker panic isolation, rule semantics, API validation, SQLite aggregation, daily shards, recovery-log replay, and storage degraded/emergency behavior.
+- `make test-unit` runs C/Go unit and race tests followed serially by C ASan tests.
+- `make test-integration` verifies the pinned PcapPlusPlus/Zeek fixture manifest, processes supported external pcaps, and checks invalid CLI/non-Ethernet rejection.
+- `make test-e2e` covers pcap -> UDS -> worker pool -> SQLite -> API; `make test-stress` runs configurable repeat-pcap pressure.
+- Go tests cover receiver frame validation/lifecycle, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation, daily shards, recovery-log replay, and storage degraded/emergency behavior.
 - Release-candidate checks run syntax checks, repository configuration validation, dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 
 The C-side JSON line formatter is intentionally kept as a bounded handwritten v0.1.0 implementation. It avoids a new C dependency, rejects truncation, escapes JSON strings, Base64-encodes packet payload previews, and is covered by the UDS sender tests and current smoke checks. A cJSON migration should be reopened only with a concrete defect or fuzzing result.
@@ -379,9 +382,9 @@ Ready:
 - Latest local full sudo Docker RC validation passed on 2026-07-08, covering the complete `make rc-check` bundle including Docker build, image content smoke, and runtime `/api/health` smoke.
 - Latest local non-Docker RC validation passed on 2026-07-10 with `SKIP_DOCKER=1 make rc-check`, covering syntax, docs, Python, config, dependencies, C/Go tests, race tests, coverage 74.2%, ASan fuzz smoke, e2e smoke, dist archive smoke, and release notes smoke.
 
-Remaining release step:
+Release result:
 
-- Version tag `v0.1.0` must be created from the pushed passing release commit, then the checked-in GitHub Release and GHCR workflows must publish the named assets successfully.
+- The signed `v0.1.0` tag, GitHub Release assets, tag-triggered Docker workflow, and public `ghcr.io/decline-llc/netsentry:v0.1.0` manifest were verified on 2026-07-11. The version-scoped pcap exception does not carry into v0.1.1.
 
 Exception record:
 
