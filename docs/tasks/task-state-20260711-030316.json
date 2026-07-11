@@ -3,13 +3,13 @@
   "timestamp": "2026-07-10T20:03:16-07:00",
   "branch": "main",
   "risk_level": "High",
-  "current_checkpoint": "2-awaiting-administrator-approval",
+  "current_checkpoint": "3-approved-fuzz-evidence",
   "administrator_approval": {
-    "status": "pending",
+    "status": "approved",
     "scope": "C fuzz evidence only; traffic pressure remains deferred",
-    "approver": null,
-    "approved_at": null,
-    "expiry": null
+    "approver": "user (explicit approval in conversation)",
+    "approved_at": "2026-07-11T03:17:08Z",
+    "expiry": "single fuzz evidence collection iteration; no v0.1.0 tag"
   },
   "completed": [
     "Read .codex/system_prompt.md",
@@ -23,13 +23,13 @@
     ,"Passed python-check, docs-check, shell-check, deps-check, go vet, coverage 74.2%, and e2e smoke"
   ],
   "in_progress": [
-    "Obtain administrator approval before fuzz evidence"
+    "Run approved C fuzz evidence collection"
   ],
   "todo": [
     "Add Makefile generation target",
     "Update public and knowledge documentation",
     "Generate and validate temporary corpus",
-    "Obtain administrator approval before fuzz evidence",
+    "Administrator approval recorded",
     "Run fuzz evidence after approval",
     "Keep traffic pressure gate deferred",
     "Run regression gates",
@@ -40,7 +40,7 @@
     "docs/tasks/task-state-20260711-030316.json"
   ],
   "pending_validation": [
-    "administrator approval record",
+    "make fuzz-sustained",
     "make fuzz-sustained after approval",
     "fuzz evidence review"
   ],
