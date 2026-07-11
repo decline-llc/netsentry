@@ -3,7 +3,7 @@
   "timestamp": "2026-07-11T04:48:44Z",
   "branch": "main",
   "risk_level": "High",
-  "current_checkpoint": "7-atomic-commit",
+  "current_checkpoint": "8-push-and-signature-gate",
   "approval": {
     "approver": "user (explicit approval in conversation)",
     "approve_utc": "2026-07-11T04:49:51Z",
@@ -17,11 +17,10 @@
     "make release-gate passed",
     "SKIP_DOCKER=1 make rc-check passed with coverage 74.2%",
     "Passed shell-check, python-check, docs-check, deps-check, and e2e-smoke",
-    "Confirmed no GPG secret signing key is configured"
+    "Confirmed no GPG secret signing key is configured",
+    "Committed and pushed 3aacf9b to origin/main"
   ],
-  "in_progress": [
-    "Commit and push the approved exception/evidence release closure"
-  ],
+  "in_progress": [],
   "todo": [
     "Configure or provide an approved GPG signing key",
     "Create and verify signed v0.1.0 tag from the validated pushed commit",
@@ -58,6 +57,7 @@
     "GHCR workflow"
   ],
   "pending_commits": [],
+  "push_status": "success: origin/main at 3aacf9b",
   "remaining_risks": [
     "No signing key is available in the current environment",
     "Tag-triggered external publication is not yet verified",
