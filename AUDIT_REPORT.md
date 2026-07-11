@@ -172,14 +172,14 @@ Canonical 参考：
 
 ### P0：本轮必须完成
 
-- [ ] 默认 API 改为 loopback，非 loopback 强制认证。
-- [ ] HTTP server 增加完整 timeout/header/body 上限和严格 JSON 文档校验。
-- [ ] 规则集合与 MITRE canonical 校验，拒绝 silent truncation/duplicate/nil/empty enabled rule。
-- [ ] C 严格解析 `-c`、校验 Ethernet DLT、修正 signal flag、补 defensive parser tests。
-- [ ] 让 `worker_count` 生效并补并发 shutdown/race 测试。
-- [ ] 建立外部 pcap asset manifest、checksum、license/source 管理脚本。
-- [ ] 增加 unit、integration、E2E、stress 入口并纳入可重复验证。
-- [ ] 中英文 README 同步、知识库实质性笔记、main push 知识同步 workflow。
+- [x] 默认 API 改为 loopback，非 loopback 强制认证。
+- [x] HTTP server 增加完整 timeout/header/body 上限和严格 JSON 文档校验。
+- [x] 规则集合与 MITRE canonical 校验，拒绝 silent truncation/duplicate/nil/empty enabled rule。
+- [x] C 严格解析 `-c`、校验 Ethernet DLT、修正 signal flag、补 defensive parser tests。
+- [x] 让 `worker_count` 生效并补并发 shutdown/race 测试。
+- [x] 建立外部 pcap asset manifest、checksum、license/source 管理脚本。
+- [x] 增加 unit、integration、E2E、stress 入口并纳入可重复验证。
+- [x] 中英文 README 同步、知识库实质性笔记、main push 知识同步 workflow。
 
 ### P1：v0.2.x
 
@@ -254,3 +254,56 @@ v0.3.0 发布门禁：schema migration/recovery 演练、24 小时 sustained fuz
 - 每个性能优化必须同时提供基准、资源上限和退化阈值；不接受只报告平均值。
 - 每个新协议 parser 必须同时提供 malformed unit、ASan fuzz seed、外部 fixture 和明确 DLT/长度边界。
 - 每次 main push 生成知识增量；自动生成内容进入可追溯草稿，架构/规则/MITRE 结论再合并到稳定知识点。
+
+## 10. 本轮完成记录
+
+### 代码与提交
+
+| Commit | 主题 |
+|---|---|
+| `f669d30` | 全面架构/安全/MITRE/性能审计初稿 |
+| `e9b054e` | C capture、UDS receiver、HTTP API、worker/store 安全边界加固 |
+| `b1ad176` | 规则集合 fail-closed 校验与 MITRE canonical 映射修正 |
+| `68db59e` | 外部 corpus integration 与 unit/E2E/stress 四层入口 |
+| `b4cc65a` | 中英文 README、行为文档与 v0.3.0 三个月路线图 |
+| `988f31d` | 确定性知识抽取脚本、测试与 main-push GitHub Action |
+
+### 最终验证（2026-07-11）
+
+| 验证 | 结果 |
+|---|---:|
+| `SKIP_DOCKER=1 make rc-check` | PASS |
+| Go race tests | PASS，全部 package |
+| Go coverage | **75.4%**（基线 74.2%） |
+| C ASan unit / 5,000 iteration fuzz smoke | PASS |
+| Deterministic E2E | PASS：6 packets / 5 alerts / 8 rules |
+| External corpus integration | PASS：9/9 manifest assets；6 Ethernet files / 27 packets；1 SLL negative fixture 正确拒绝 |
+| Worker-pool pressure | PASS：1,200 packets / 1,000 raw alerts / 5 aggregated rows / 0 decode/write error；约 462 pps |
+| `govulncheck ./...` | PASS：0 个可达漏洞；1 个 required-module 漏洞不可达 |
+| Knowledge extractor unittest/idempotency | PASS |
+| Workflow YAML + actionlint | PASS；Actions 使用 commit SHA 固定 |
+| `git diff --check` / docs / shell / Python / config / deps | PASS |
+
+Docker 最终复跑未执行：当前用户对 Docker daemon 无访问权限（`docker info` 返回失败），且审批策略不允许交互式 sudo。Dockerfile 的改动仅把 `README.en.md` 与 `AUDIT_REPORT.md` 加入镜像；release package content 已在非 Docker RC 中验证。2026-07-08 的既有 full Docker RC 仍是运行镜像基线，但不能替代本分支合并前的远端 Docker CI。
+
+### 外部 TestAssets
+
+源码同级 `NetSentry_TestAssets` 现有：
+
+- 7 个 pcap/pcapng fixture（PcapPlusPlus revision `631ba9f...`、Zeek revision `798f92b...`）；
+- 2 个上游 license 文件；
+- `manifest.json`：URL、immutable revision、upstream path、purpose、bytes、SHA-256、license；
+- `manage_pcaps.py fetch|verify|list`：临时文件下载、size/hash 校验后原子替换；
+- 明确禁止将 fixture replay 到网络或混入 NetSentry 源码 Git。
+
+### 知识库与自动化
+
+Vault 已更新稳定知识点：
+
+- `01-项目核心架构/系统架构与数据流.md`：审计后信任边界 Mermaid 图与 fail-closed 层次；
+- `02-功能模块拆解/Go Engine规则引擎.md`：验证→编译→原子发布、两阶段匹配、worker 并发不变量；
+- `03-技术栈知识点/MITRE ATT&CK映射验证与证据语义.md`：新建 canonical tuple、证据强度、单映射限制与 v0.3 schema；
+- `06-测试与发布规范/测试矩阵与发布门禁.md`：外部 fixture 与四层测试证据；
+- MOC 已加入新技术点和本轮 CI 知识 note。
+
+GitHub hosted runner 无法直接访问当前非 Git 的桌面 Vault。workflow 已实现三个闭环路径：始终生成 30 天 artifact；配置 `NETSENTRY_KNOWLEDGE_REPO` + 最小权限 token 时自动 push 独立知识仓库；配置带 `netsentry-knowledge` label 的 self-hosted runner 时直接追加本地 Vault。未配置外部仓库或 runner 时，artifact fallback 可用，但“跨机器写入当前桌面 Vault”仍属于外部基础设施待办，而不是代码缺陷。
