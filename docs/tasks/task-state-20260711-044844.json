@@ -3,7 +3,7 @@
   "timestamp": "2026-07-11T04:48:44Z",
   "branch": "main",
   "risk_level": "High",
-  "current_checkpoint": "8-push-and-signature-gate",
+  "current_checkpoint": "8-push-and-workflow-verification",
   "approval": {
     "approver": "user (explicit approval in conversation)",
     "approve_utc": "2026-07-11T04:49:51Z",
@@ -18,14 +18,14 @@
     "SKIP_DOCKER=1 make rc-check passed with coverage 74.2%",
     "Passed shell-check, python-check, docs-check, deps-check, and e2e-smoke",
     "Confirmed no GPG secret signing key is configured",
-    "Committed and pushed 3aacf9b to origin/main"
+    "Committed and pushed 3aacf9b to origin/main",
+    "Created and verified SSH-signed annotated v0.1.0 tag targeting 32aafaf",
+    "Pushed v0.1.0 tag over SSH",
+    "Confirmed public GitHub Release page with two assets"
   ],
   "in_progress": [],
   "todo": [
-    "Configure or provide an approved GPG signing key",
-    "Create and verify signed v0.1.0 tag from the validated pushed commit",
-    "Push v0.1.0 tag over SSH",
-    "Verify GitHub Release and GHCR workflow results",
+    "Verify GHCR workflow/image with authenticated GitHub Actions or registry access",
     "Update tag publication fields in docs/evidence/release-v0.1.0.md",
     "Collect real production-derived pcap corpus before v0.1.1"
   ],
@@ -48,20 +48,19 @@
     "docs_check": "pass",
     "deps_check": "pass",
     "e2e_smoke": "pass: 6 packets, 5 alerts, 8 rules",
-    "tag_signature": "blocked: no GPG secret signing key configured"
+    "tag_signature": "pass: SSH-signed annotated tag verified",
+    "tag_push": "pass: origin contains v0.1.0",
+    "github_release": "pass: public page shows v0.1.0 and two assets",
+    "ghcr": "unverified: anonymous manifest denied; public package view reports zero packages"
   },
   "pending_validation": [
-    "signed tag verification",
-    "remote tag push",
-    "GitHub Release workflow",
-    "GHCR workflow"
+    "authenticated GHCR workflow/image verification"
   ],
   "pending_commits": [],
   "push_status": "success: origin/main at 3aacf9b",
   "remaining_risks": [
-    "No signing key is available in the current environment",
-    "Tag-triggered external publication is not yet verified",
+    "GHCR publication cannot be confirmed without authenticated external access",
     "v0.1.1 must collect real production-derived pcap evidence"
   ],
-  "resume_instructions": "Configure an approved GPG signing key without committing private material. Re-run repository, secret, release-gate, and rc-check validations, create an annotated signed v0.1.0 tag from the validated commit, verify the signature, push the tag over SSH, and then record GitHub Release/GHCR workflow results. Do not create an unsigned replacement tag."
+  "resume_instructions": "Use authenticated gh or registry access to inspect the tag-triggered Docker Publish run and verify ghcr.io/decline-llc/netsentry:0.1.0. Do not recreate or overwrite the already-pushed tag. If the workflow failed, follow owner-approved remediation without force-moving v0.1.0."
 }

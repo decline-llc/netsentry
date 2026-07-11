@@ -7,7 +7,7 @@
 ## Metadata
 
 - Release: v0.1.0
-- Commit: pending final release commit
+- Commit: 32aafafc8b0d7cadbc53499a1b70d68a5e07ccc1
 - Evidence record date: 2026-07-11
 - Reviewer: user (explicit approval in conversation)
 - Final decision: approved
@@ -57,15 +57,15 @@
 
 ## Tag Publication Verification
 
-- Tag: pending
-- Tag commit: pending
-- GitHub Release workflow: pending tag push
-- Release asset: pending tag push
-- Release checksum: pending tag push
-- GHCR workflow: pending tag push
-- Image: pending tag push
+- Tag: v0.1.0 (SSH-signed annotated tag)
+- Tag commit: 32aafafc8b0d7cadbc53499a1b70d68a5e07ccc1
+- GitHub Release workflow: Release page visible with 2 assets
+- Release asset: visible on public release page
+- Release checksum: visible on public release page
+- GHCR workflow: not independently confirmed; public package lookup returned denied/Packages 0
+- Image: not independently confirmed
 - Reviewer decision: approved for tag-triggered verification
-- Notes: This record must be amended after tag-driven workflows complete.
+- Notes: Release is confirmed; GHCR publication remains an external verification follow-up requiring authenticated Actions/registry access.
 
 ## Sensitive Information Review
 
@@ -81,5 +81,5 @@
 - Sustained external fuzz evidence reviewed: yes
 - Realistic sanitized pcap corpus evidence reviewed: yes
 - Local RC validation reviewed: yes
-- Tag publication verified: no
+- Tag publication verified: yes
 - Approved for release: yes
