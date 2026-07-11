@@ -48,7 +48,13 @@ Vault 使用标准 Markdown、YAML frontmatter、`[[笔记名]]` 链接和标签
 chmod +x /home/virtual-machine/NetSentry/.git/hooks/post-push
 ```
 
-Git push 会把 ref 的 old/new SHA 传给钩子。钩子为每个新增 commit 提取 message、changed files 和 diff stat，在 `04-开发迭代记录` 写专属笔记，在 `_待整理` 写变更草稿，并依据路径映射更新受影响核心笔记的 `最后更新时间` 与 `版本标记`。失败只输出警告并以成功退出，避免知识同步故障阻断代码推送；日志带 `[netsentry-knowledge]` 前缀。
+Git push 会把 ref 的 old/new SHA 传给钩子。仅对项目 SSH remote `git@github.com:decline-llc/netsentry.git` 执行同步。钩子会：
+
+- 从当前 Git 对象库重建 `04-开发迭代记录/全量提交索引.md`，为每个提交记录 hash、日期、作者、提交说明、变更文件范围、测试/证据关联和知识链接；因此不会因人工遗漏造成历史索引缺口。
+- 为本次 push range 生成 `04-开发迭代记录/*自动知识同步.md` 和 `_待整理/*自动同步草稿.md`，自动提取任务状态中的 fuzz 审批、ASan 迭代/输入数/脱敏路径、标准化 pcap/pcapng 样本清单和流量压测 deferred 状态。
+- 扫描本次提交的技术文档/脚本/Makefile，维护 MOC 的自动同步入口区，使用稳定映射避免入口孤立；相关模块笔记的更新时间和版本标记同步刷新。
+
+同步是幂等的：重复回放同一个 range 会覆盖同名迭代笔记、重建全量索引和替换 MOC 自动区，不追加重复提交行。失败只输出警告并以成功退出，避免知识同步故障阻断代码推送；日志带 `[netsentry-knowledge]` 前缀。
 
 非 push 场景手动同步：
 
@@ -63,7 +69,7 @@ NETSENTRY_SYNC_RANGE="$(git -C /home/virtual-machine/NetSentry rev-parse HEAD~1)
 NETSENTRY_SYNC_RANGE="oldsha..newsha" /home/virtual-machine/NetSentry/.git/hooks/post-push sync
 ```
 
-钩子不会自动执行 Obsidian CLI、网络请求或修改源码；它只读 Git 并写 Vault。增量笔记是事实记录，语义整理由维护者在 `_待整理` 中完成。
+钩子不会自动执行 Obsidian CLI、网络请求或修改源码；它只读 Git/项目文档并写 Vault。写入的 Markdown 可由 Obsidian 自动发现，增量草稿仍由维护者在 `_待整理` 中完成语义复核。
 
 ## 6. 版本一致性
 
