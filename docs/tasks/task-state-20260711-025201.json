@@ -1,0 +1,53 @@
+{
+  "task": "knowledge-governance-closure",
+  "timestamp": "2026-07-10T19:52:01-07:00",
+  "branch": "main",
+  "risk_level": "Medium",
+  "current_checkpoint": "7-atomic-commit",
+  "completed": [
+    "Read .codex/system_prompt.md",
+    "Confirmed repository and SSH origin",
+    "Read define-goal skill",
+    "Defined measurable goal",
+    "Inspected current vault, policy, hook and worktree"
+  ],
+  "in_progress": [
+    "Review staged scope and create atomic docs commit"
+  ],
+  "todo": [
+    "Secret scan",
+    "Run applicable Makefile and Go validation",
+    "Review diff and stage only task files",
+    "Create one atomic docs commit",
+    "Push to origin/main",
+    "Record final commit and push status"
+  ],
+  "modified_files": [
+    "docs/knowledge-management.md",
+    "docs/plans/task-20260711-025201.md",
+    "docs/tasks/task-state-20260711-025201.json"
+  ],
+  "pending_validation": [
+    "git diff --check",
+    "bash -n .git/hooks/post-push",
+    "vault YAML/link audit",
+    "make docs-check",
+    "make shell-check",
+    "make deps-check",
+    "make test-coverage",
+    "make e2e-smoke",
+    "go test ./...",
+    "make lint",
+    "staged git diff --check",
+    "staged secret scan"
+  ],
+  "pending_commits": [
+    "docs: 完善知识管理治理闭环"
+  ],
+  "remaining_risks": [
+    "External vault is not versioned by the project repository",
+    "External fuzz and realistic pcap corpus evidence remain v0.1.0 release blockers",
+    "No runtime behavior is changed by this task"
+  ],
+  "resume_instructions": "Read this state and docs/plans/task-20260711-025201.md, rerun repository and secret checks, then continue at the current checkpoint. Do not touch core protocol, database schema or API contract without human confirmation."
+}
