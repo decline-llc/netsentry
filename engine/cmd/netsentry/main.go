@@ -4,9 +4,11 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"net"
 	"net/http"
 	"net/http/pprof"
 	"os"
+	"strconv"
 	"time"
 
 	"go.uber.org/zap"
@@ -111,7 +113,7 @@ func main() {
 	if cfg.Engine.RedactSensitiveFields {
 		worker.SetRedactor(alert.RedactSensitivePayloads)
 	}
-	workerDone := startPipelineWorker(ctx, worker, recv.Packets())
+	workerDone := startPipelineWorkers(ctx, worker, recv.Packets(), cfg.Engine.WorkerCount)
 	startHTTPServer(ctx, cfg.Engine, store, recv, ruleEngine, metrics, suppressions, logger)
 	startPprofServer(ctx, cfg.Engine, logger)
 
@@ -127,21 +129,57 @@ func main() {
 }
 
 func startPipelineWorker(ctx context.Context, worker *pipeline.Worker, packets <-chan *model.PacketInfo) <-chan struct{} {
+	return startPipelineWorkers(ctx, worker, packets, 1)
+}
+
+func startPipelineWorkers(ctx context.Context, worker *pipeline.Worker, packets <-chan *model.PacketInfo, count int) <-chan struct{} {
+	if count < 1 {
+		count = 1
+	}
 	done := make(chan struct{})
+	workersDone := make(chan struct{}, count)
+	for range count {
+		go func() {
+			defer func() { workersDone <- struct{}{} }()
+			worker.Run(ctx, packets)
+		}()
+	}
 	go func() {
 		defer close(done)
-		worker.Run(ctx, packets)
+		for range count {
+			<-workersDone
+		}
 	}()
 	return done
 }
 
 func startHTTPServer(ctx context.Context, engineCfg config.EngineConfig, store *alert.Store, recv *receiver.Receiver, ruleEngine *rule.Engine, metrics *stats.Stats, suppressions *alert.SuppressionManager, logger *zap.Logger) {
+	srv := newHTTPServer(engineCfg, store, recv, ruleEngine, metrics, suppressions, logger)
+	go func() {
+		<-ctx.Done()
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+		_ = srv.Shutdown(shutdownCtx)
+	}()
+	go func() {
+		logger.Info("http api started", zap.String("address", srv.Addr))
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logger.Error("http api failed", zap.Error(err))
+		}
+	}()
+}
+
+func newHTTPServer(engineCfg config.EngineConfig, store *alert.Store, recv *receiver.Receiver, ruleEngine *rule.Engine, metrics *stats.Stats, suppressions *alert.SuppressionManager, logger *zap.Logger) *http.Server {
 	port := engineCfg.APIPort
 	if port == 0 {
 		port = 8080
 	}
-	srv := &http.Server{
-		Addr: fmt.Sprintf(":%d", port),
+	host := engineCfg.APIListenHost
+	if host == "" {
+		host = "127.0.0.1"
+	}
+	return &http.Server{
+		Addr: net.JoinHostPort(host, strconv.Itoa(port)),
 		Handler: api.NewServerWithOptions(store, recv, ruleEngine, metrics, api.Options{
 			RulesSeedFile:        engineCfg.RulesSeedFile,
 			AuthEnabled:          engineCfg.APIAuthEnabled,
@@ -151,19 +189,11 @@ func startHTTPServer(ctx context.Context, engineCfg config.EngineConfig, store *
 			AuditLogger:          logger,
 		}).Handler(),
 		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      30 * time.Second,
+		IdleTimeout:       60 * time.Second,
+		MaxHeaderBytes:    16 << 10,
 	}
-	go func() {
-		<-ctx.Done()
-		shutdownCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-		defer cancel()
-		_ = srv.Shutdown(shutdownCtx)
-	}()
-	go func() {
-		logger.Info("http api started", zap.Int("port", port))
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logger.Fatal("http api failed", zap.Error(err))
-		}
-	}()
 }
 
 func startPprofServer(ctx context.Context, engineCfg config.EngineConfig, logger *zap.Logger) {
@@ -191,7 +221,7 @@ func startPprofServer(ctx context.Context, engineCfg config.EngineConfig, logger
 	go func() {
 		logger.Info("pprof server started", zap.String("addr", engineCfg.PprofAddr))
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logger.Fatal("pprof server failed", zap.Error(err))
+			logger.Error("pprof server failed", zap.Error(err))
 		}
 	}()
 }

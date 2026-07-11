@@ -32,6 +32,7 @@ type EngineConfig struct {
 	AlertRecoveryLogPath        string   `yaml:"alert_recovery_log_path"`
 	RulesSeedFile               string   `yaml:"rules_seed_file"`
 	SuppressionsFile            string   `yaml:"suppressions_file"`
+	APIListenHost               string   `yaml:"api_listen_host"`
 	APIPort                     int      `yaml:"api_port"`
 	CORSAllowedOrigins          []string `yaml:"cors_allowed_origins"`
 	AlertAggregationWindow      int      `yaml:"alert_aggregation_window"`
@@ -119,6 +120,7 @@ func defaults() *Config {
 			AlertRecoveryLogPath:        "",
 			RulesSeedFile:               "configs/rules.json",
 			SuppressionsFile:            "configs/suppressions.json",
+			APIListenHost:               "127.0.0.1",
 			APIPort:                     8080,
 			CORSAllowedOrigins:          []string{"http://localhost:3000"},
 			AlertAggregationWindow:      60,
@@ -140,6 +142,20 @@ func defaults() *Config {
 
 func validate(cfg *Config) error {
 	var errs []string
+	if cfg.Engine.ChannelBufferSize < 1 || cfg.Engine.ChannelBufferSize > 1_000_000 {
+		errs = append(errs, "engine.channel_buffer_size must be between 1 and 1000000")
+	}
+	if cfg.Engine.WorkerCount < 1 || cfg.Engine.WorkerCount > 64 {
+		errs = append(errs, "engine.worker_count must be between 1 and 64")
+	}
+	if cfg.Engine.APIPort < 1 || cfg.Engine.APIPort > 65535 {
+		errs = append(errs, "engine.api_port must be between 1 and 65535")
+	}
+	if strings.TrimSpace(cfg.Engine.APIListenHost) == "" {
+		errs = append(errs, "engine.api_listen_host must be set")
+	} else if !isLoopbackHost(cfg.Engine.APIListenHost) && !cfg.Engine.APIAuthEnabled {
+		errs = append(errs, "engine.api_auth_enabled must be true when api_listen_host is not loopback")
+	}
 	if cfg.Engine.APIAuthEnabled && strings.TrimSpace(cfg.Engine.APIAuthToken) == "" {
 		errs = append(errs, "engine.api_auth_token must be set when api_auth_enabled is true")
 	}
@@ -152,17 +168,19 @@ func validate(cfg *Config) error {
 	return nil
 }
 
+func isLoopbackHost(host string) bool {
+	host = strings.TrimSpace(host)
+	if strings.EqualFold(host, "localhost") {
+		return true
+	}
+	ip, err := netip.ParseAddr(host)
+	return err == nil && ip.IsLoopback()
+}
+
 func isLoopbackListenAddr(addr string) bool {
 	host, _, err := net.SplitHostPort(strings.TrimSpace(addr))
 	if err != nil || strings.TrimSpace(host) == "" {
 		return false
 	}
-	if strings.EqualFold(host, "localhost") {
-		return true
-	}
-	ip, err := netip.ParseAddr(host)
-	if err != nil {
-		return false
-	}
-	return ip.IsLoopback()
+	return isLoopbackHost(host)
 }

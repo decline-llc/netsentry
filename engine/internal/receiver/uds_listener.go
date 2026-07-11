@@ -3,9 +3,11 @@ package receiver
 import (
 	"bufio"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net"
 	"os"
 	"strconv"
@@ -19,6 +21,11 @@ import (
 )
 
 const defaultUDSPath = "/tmp/netsentry.sock"
+
+const (
+	maxUDSFrameBytes      = 64 << 10
+	maxPacketPayloadBytes = 4096
+)
 
 // Config controls the Unix socket receiver.
 type Config struct {
@@ -141,13 +148,14 @@ func (r *Receiver) handleConn(ctx context.Context, conn net.Conn) {
 		}
 	}()
 	scanner := bufio.NewScanner(conn)
-	scanner.Buffer(make([]byte, 0, 64*1024), 1024*1024)
+	scanner.Buffer(make([]byte, 0, 16*1024), maxUDSFrameBytes)
 	for scanner.Scan() {
 		if err := r.handleLine(ctx, scanner.Bytes()); err != nil {
 			r.logger.Warn("handle uds frame", zap.Error(err))
 		}
 	}
 	if err := scanner.Err(); err != nil {
+		r.stats.IncDecodeError()
 		r.logger.Warn("read uds connection", zap.Error(err))
 	}
 }
@@ -195,6 +203,10 @@ func (r *Receiver) handleLine(ctx context.Context, line []byte) error {
 			r.stats.IncDecodeError()
 			return fmt.Errorf("decode packet frame: %w", err)
 		}
+		if err := validatePacketFrame(&pkt); err != nil {
+			r.stats.IncDecodeError()
+			return err
+		}
 		select {
 		case r.packets <- &pkt:
 			r.stats.IncPacketReceived()
@@ -206,6 +218,29 @@ func (r *Receiver) handleLine(ctx context.Context, line []byte) error {
 		r.stats.IncDecodeError()
 		return fmt.Errorf("unknown control frame type %q", meta.Type)
 	}
+}
+
+func validatePacketFrame(pkt *model.PacketInfo) error {
+	if pkt == nil {
+		return fmt.Errorf("invalid packet frame: null packet")
+	}
+	if pkt.TimestampUsec < 0 || pkt.TimestampUsec >= 1_000_000 {
+		return fmt.Errorf("invalid packet frame: timestamp_usec out of range")
+	}
+	if net.ParseIP(pkt.SrcIP) == nil || net.ParseIP(pkt.DstIP) == nil {
+		return fmt.Errorf("invalid packet frame: source and destination IPs are required")
+	}
+	if pkt.PayloadLen > maxPacketPayloadBytes {
+		return fmt.Errorf("invalid packet frame: payload_len exceeds %d", maxPacketPayloadBytes)
+	}
+	decoded, err := base64.StdEncoding.DecodeString(pkt.PayloadPreview)
+	if err != nil {
+		return fmt.Errorf("invalid packet frame: payload_preview is not base64: %w", err)
+	}
+	if len(decoded) != int(pkt.PayloadLen) {
+		return fmt.Errorf("invalid packet frame: payload_len does not match payload_preview")
+	}
+	return nil
 }
 
 // ParseSocketMode converts config values such as "0600" into a file mode.
@@ -223,7 +258,10 @@ func ParseSocketMode(mode string) os.FileMode {
 // WaitForPacket is a small helper for tests and integration callers.
 func WaitForPacket(ctx context.Context, packets <-chan *model.PacketInfo) (*model.PacketInfo, error) {
 	select {
-	case pkt := <-packets:
+	case pkt, ok := <-packets:
+		if !ok {
+			return nil, io.EOF
+		}
 		return pkt, nil
 	case <-ctx.Done():
 		return nil, ctx.Err()

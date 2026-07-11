@@ -27,9 +27,10 @@
 #define NS_VERSION          "0.1.0"
 #define NS_HEARTBEAT_SEC    5
 #define NS_DEFAULT_UDS      "/tmp/netsentry.sock"
+#define NS_MAX_CONNECT_RETRIES 1000
 
 /* ---- globals ---------------------------------------------------------- */
-static volatile int g_running = 1;
+static volatile sig_atomic_t g_running = 1;
 
 static uint64_t g_sent         = 0;
 static uint64_t g_dropped      = 0;
@@ -48,6 +49,21 @@ static void sig_handler(int sig) {
 static void gen_session_id(char *out) {
     unsigned int seed = (unsigned int)time(NULL) ^ (unsigned int)getpid();
     snprintf(out, NS_SESSION_ID_LEN, "%08x", seed);
+}
+
+static int parse_connect_retries(const char *value, int *result) {
+    char *end = NULL;
+    unsigned long parsed;
+
+    if (!value || value[0] == '\0' || !result) return -1;
+    errno = 0;
+    parsed = strtoul(value, &end, 10);
+    if (errno == ERANGE || end == value || *end != '\0' ||
+        parsed > NS_MAX_CONNECT_RETRIES) {
+        return -1;
+    }
+    *result = (int)parsed;
+    return 0;
 }
 
 /* ---- pcap callback ---------------------------------------------------- */
@@ -92,7 +108,14 @@ int main(int argc, char *argv[]) {
         case 'r': pcap_file = optarg; break;
         case 'i': iface     = optarg; break;
         case 's': uds_path  = optarg; break;
-        case 'c': connect_retries = atoi(optarg); break;
+        case 'c':
+            if (parse_connect_retries(optarg, &connect_retries) != 0) {
+                fprintf(stderr,
+                        "[capture] connect_retries must be an integer from 0 to %d\n",
+                        NS_MAX_CONNECT_RETRIES);
+                return 2;
+            }
+            break;
         default:
             fprintf(stderr, "Usage: %s [-r pcap] [-i iface] [-s uds_path] [-c connect_retries]\n",
                     argv[0]);
@@ -129,6 +152,7 @@ int main(int argc, char *argv[]) {
     gethostname(hostname, sizeof(hostname) - 1);
     if (uds_send_hello(g_session_id, NS_VERSION, getpid(), hostname) != UDS_OK) {
         fprintf(stderr, "[capture] failed to send hello frame\n");
+        uds_close();
         return 1;
     }
 
@@ -142,14 +166,33 @@ int main(int argc, char *argv[]) {
     }
     if (!handle) {
         fprintf(stderr, "[capture] pcap open failed: %s\n", errbuf);
+        uds_close();
         return 1;
+    }
+
+    int datalink = pcap_datalink(handle);
+    if (datalink != DLT_EN10MB) {
+        const char *datalink_name = pcap_datalink_val_to_name(datalink);
+        if (!datalink_name) datalink_name = "unknown";
+        fprintf(stderr,
+                "[capture] unsupported pcap data link type %d (%s); Ethernet is required\n",
+                datalink, datalink_name);
+        pcap_close(handle);
+        uds_close();
+        return 2;
     }
 
     /* Only capture IP packets */
     struct bpf_program fp;
     if (pcap_compile(handle, &fp, "ip", 0, PCAP_NETMASK_UNKNOWN) == 0) {
-        pcap_setfilter(handle, &fp);
+        if (pcap_setfilter(handle, &fp) != 0) {
+            fprintf(stderr, "[capture] warning: pcap filter install failed: %s\n",
+                    pcap_geterr(handle));
+        }
         pcap_freecode(&fp);
+    } else {
+        fprintf(stderr, "[capture] warning: pcap filter compile failed: %s\n",
+                pcap_geterr(handle));
     }
 
     fprintf(stderr, "[capture] starting capture (source=%s)\n",

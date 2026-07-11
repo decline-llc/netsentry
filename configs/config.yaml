@@ -21,6 +21,7 @@ engine:
   alert_recovery_log_path: ""
   rules_seed_file: "configs/rules.json"
   suppressions_file: "configs/suppressions.json"
+  api_listen_host: "127.0.0.1"
   api_port: 8080
   cors_allowed_origins: ["http://localhost:3000"]
   alert_aggregation_window: 60
