@@ -255,7 +255,9 @@ the pipeline to drain, then writes JSON and Markdown evidence. The default outpu
 directory is `docs/evidence/local/`, which is ignored because corpus paths and
 operator notes can be sensitive. Corpus paths are redacted by default; set
 `NETSENTRY_EVIDENCE_INCLUDE_PATHS=1` only for private local debugging evidence.
-Sanitize pcaps before sharing them.
+The summaries include packet/alert counts and rates, alert match rate, sampled
+peak engine RSS, engine error-log line count, API health, metrics, and an alerts
+query snapshot. Sanitize pcaps before sharing them.
 
 For C parser hardening work, run the deterministic ASan fuzz smoke:
 

@@ -4,6 +4,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TMP_DIR="$(mktemp -d)"
 ENGINE_PID=""
+MAX_RSS_KB=0
 
 PCAP_CORPUS="${PCAP_CORPUS:-}"
 WAIT_ATTEMPTS="${CORPUS_WAIT_ATTEMPTS:-1200}"
@@ -21,6 +22,16 @@ cleanup() {
     rm -rf "${TMP_DIR}"
 }
 trap cleanup EXIT
+
+sample_engine_memory() {
+    if [[ -r "/proc/${ENGINE_PID}/status" ]]; then
+        local rss
+        rss="$(awk '/^VmRSS:/ {print $2}' "/proc/${ENGINE_PID}/status")"
+        if [[ "${rss:-0}" =~ ^[0-9]+$ ]] && (( rss > MAX_RSS_KB )); then
+            MAX_RSS_KB="${rss}"
+        fi
+    fi
+}
 
 usage() {
     cat >&2 <<'EOF_USAGE'
@@ -138,6 +149,7 @@ for _ in $(seq 1 50); do
 done
 
 curl -fsS "http://127.0.0.1:${PORT}/api/health" >/dev/null
+sample_engine_memory
 
 START_NS="$(python3 - <<'PY'
 import time
@@ -193,6 +205,7 @@ print(time.monotonic_ns())
 PY
 )"
     curl -fsS "http://127.0.0.1:${PORT}/api/health?verbose=true" >"${after_json}"
+    sample_engine_memory
     python3 - "${pcap}" "${before_json}" "${after_json}" "${file_start_ns}" "${file_end_ns}" "${INCLUDE_PATHS}" >>"${RUN_JSONL}" <<'PY'
 import json
 import os
@@ -242,8 +255,13 @@ PY
 curl -fsS "http://127.0.0.1:${PORT}/api/health?verbose=true" >"${HEALTH_JSON}"
 curl -fsS "http://127.0.0.1:${PORT}/api/alerts?per_page=100" >"${ALERTS_JSON}"
 curl -fsS "http://127.0.0.1:${PORT}/api/metrics" >"${METRICS_TXT}"
+sample_engine_memory
+ENGINE_ERROR_LINES=0
+if [[ -f "${TMP_DIR}/engine.log" ]]; then
+    ENGINE_ERROR_LINES="$(grep -Eic 'error|panic|fatal' "${TMP_DIR}/engine.log" || true)"
+fi
 
-python3 - "${RUN_JSONL}" "${HEALTH_JSON}" "${ALERTS_JSON}" "${METRICS_TXT}" "${SUMMARY_JSON}" "${SUMMARY_MD}" "${RUN_ID}" "${PCAP_CORPUS}" "${START_NS}" "${END_NS}" "${INCLUDE_PATHS}" <<'PY'
+python3 - "${RUN_JSONL}" "${HEALTH_JSON}" "${ALERTS_JSON}" "${METRICS_TXT}" "${SUMMARY_JSON}" "${SUMMARY_MD}" "${RUN_ID}" "${PCAP_CORPUS}" "${START_NS}" "${END_NS}" "${INCLUDE_PATHS}" "${MAX_RSS_KB}" "${ENGINE_ERROR_LINES}" <<'PY'
 import json
 import os
 import platform
@@ -253,6 +271,8 @@ runs_path, health_path, alerts_path, metrics_path = sys.argv[1:5]
 summary_json, summary_md, run_id, corpus = sys.argv[5:9]
 start_ns, end_ns = int(sys.argv[9]), int(sys.argv[10])
 include_paths = sys.argv[11] == "1"
+max_rss_kb = int(sys.argv[12])
+engine_error_lines = int(sys.argv[13])
 
 with open(runs_path, "r", encoding="utf-8") as f:
     runs = [json.loads(line) for line in f if line.strip()]
@@ -287,7 +307,11 @@ summary = {
     "capture_uds_write_errors": total_write_errors,
     "packets_per_second": total_processed / elapsed,
     "alerts_per_second": total_alerts / elapsed,
+    "alert_match_rate": total_alerts / total_processed if total_processed else 0,
+    "engine_peak_rss_kb_sampled": max_rss_kb,
+    "engine_error_log_lines": engine_error_lines,
     "aggregated_alert_rows": alerts.get("pagination", {}).get("total"),
+    "query_snapshot": alerts,
     "health": health,
     "runs": runs,
     "environment": {
@@ -313,6 +337,9 @@ with open(summary_md, "w", encoding="utf-8") as f:
     f.write(f"- Aggregated alert rows: {alerts.get('pagination', {}).get('total')}\n")
     f.write(f"- Packet rate: {total_processed / elapsed:.0f} pps\n")
     f.write(f"- Alert rate: {total_alerts / elapsed:.0f} alerts/sec\n")
+    f.write(f"- Alert match rate: {total_alerts / total_processed:.4f}\n" if total_processed else "- Alert match rate: 0\n")
+    f.write(f"- Engine peak RSS sampled: {max_rss_kb} KiB\n")
+    f.write(f"- Engine error log lines: {engine_error_lines}\n")
     f.write(f"- Capture parse errors: {total_parse_errors}\n")
     f.write(f"- Capture dropped: {total_dropped}\n")
     f.write(f"- Capture UDS write errors: {total_write_errors}\n\n")
