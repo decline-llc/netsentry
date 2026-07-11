@@ -46,9 +46,10 @@
   ],
   "pending_commits": [],
   "commit_list": [
-    "e325573 test: add sanitized synthetic corpus generator"
+    "e325573 test: add sanitized synthetic corpus generator",
+    "b5329ad test: support sanitized pcapng corpus generation"
   ],
-  "push_status": "success: origin/main at e325573",
+  "push_status": "success: origin/main at b5329ad",
   "remaining_risks": [
     "No administrator approval has been provided",
     "External sustained fuzz and realistic traffic pressure evidence remain open",
