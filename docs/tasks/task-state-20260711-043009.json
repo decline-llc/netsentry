@@ -1,0 +1,65 @@
+{
+  "task": "batch-synthetic-corpus-pressure-evidence",
+  "timestamp": "2026-07-10T21:30:09-07:00",
+  "branch": "main",
+  "risk_level": "Medium",
+  "current_checkpoint": "11-completion-report",
+  "completed": [
+    "Extended the standard-library corpus generator with deterministic --sets batch generation",
+    "Added CORPUS_SETS Makefile input",
+    "Validated 2-set repeat generation with identical manifests and hashes",
+    "Generated and audited 100 synthetic sets: 600 files, 300 pcap and 300 pcapng",
+    "Ran TEST make e2e-corpus-pressure successfully twice",
+    "Captured throughput, latency, alert match rate, sampled RSS, engine error count, metrics, and query snapshot",
+    "Passed TEST shell-check, python-check, docs-check, deps-check, and e2e-smoke",
+    "Confirmed release-gate remains blocked without approved evidence or exception",
+    "Pushed commits 9c9bb46 and 3debf02 to origin/main"
+  ],
+  "in_progress": [],
+  "todo": [
+    "Obtain or approve the evidence source for a release exception",
+    "If approved, record the exception with approver, scope, expiry, and synthetic-evidence limitation",
+    "Create reviewed docs/evidence/release-v0.1.0.md only after the approval decision",
+    "Run make release-gate and full pre-release checks after approval",
+    "Create and push v0.1.0 tag only after all gates pass"
+  ],
+  "modified_files": [
+    "scripts/gen_sanitized_corpus.py",
+    "Makefile",
+    "scripts/e2e_corpus_pressure.sh",
+    "README.md",
+    "docs/development.md",
+    "docs/release-readiness.md",
+    "docs/plans/task-20260711-043009.md",
+    "docs/tasks/task-state-20260711-043009.json"
+  ],
+  "evidence": {
+    "classification": "synthetic auxiliary evidence only",
+    "corpus_sets": 100,
+    "corpus_files": 600,
+    "pcap_files": 300,
+    "pcapng_files": 300,
+    "packets_processed": 2200,
+    "alerts_generated": 2400,
+    "elapsed_seconds_first_run": 226.798,
+    "elapsed_seconds_enhanced_run": 231.957,
+    "packets_per_second": 9.484506343714807,
+    "alerts_per_second": 10.346734193143426,
+    "alert_match_rate": 1.0909090909090908,
+    "engine_peak_rss_kb_sampled": 29856,
+    "engine_error_log_lines": 0,
+    "parse_errors": 0,
+    "dropped_packets": 0,
+    "uds_write_errors": 0,
+    "evidence_record": "TEST workspace local corpus-pressure JSON (untracked)",
+    "release_gate": "blocked: no reviewed public evidence or approved permanent exception"
+  },
+  "pending_validation": [],
+  "pending_commits": [],
+  "remaining_risks": [
+    "Synthetic evidence is not internal production-derived traffic evidence",
+    "Permanent exception approval is not present",
+    "v0.1.0 release tag and publication remain blocked"
+  ],
+  "resume_instructions": "Obtain the explicit administrator decision. If exception is approved, record its approver, scope, expiry, and limitation that the evidence is synthetic; then prepare the reviewed public evidence record and rerun release-gate. Do not create v0.1.0 tag before approval and gate success."
+}
