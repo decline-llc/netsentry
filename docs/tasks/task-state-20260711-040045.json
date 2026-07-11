@@ -1,0 +1,49 @@
+{
+  "task": "verify-release-corpus-prerequisites",
+  "timestamp": "2026-07-10T21:00:45-07:00",
+  "branch": "main",
+  "risk_level": "High",
+  "current_checkpoint": "6-failure-handling",
+  "completed": [
+    "Verified clean main branch and approved SSH origin",
+    "Confirmed v0.1.0 tag is absent",
+    "Inspected repository, TEST, and temporary corpus locations",
+    "Found no operator-supplied production-derived pcap/pcapng corpus",
+    "Verified available manifests identify deterministic synthetic payloads and RFC 5737 documentation addresses",
+    "Verified duplicate synthetic copies have identical SHA-256 values",
+    "Confirmed make release-gate fails because the reviewed public evidence record is absent"
+  ],
+  "in_progress": [],
+  "todo": [
+    "Obtain operator-supplied large-scale production-derived corpus after sanitization and provenance review",
+    "Generate and review corpus manifest with file count, packet count, SHA-256, sanitization result, and source approval",
+    "Run PCAP_CORPUS=/approved/path make e2e-corpus-pressure",
+    "Create reviewed docs/evidence/release-v0.1.0.md only from approved evidence",
+    "Run make release-gate and the full pre-release validation suite",
+    "Create and push v0.1.0 tag only after all gates pass"
+  ],
+  "modified_files": [
+    "docs/plans/task-20260711-040045.md",
+    "docs/tasks/task-state-20260711-040045.json"
+  ],
+  "evidence": {
+    "available_classification": "synthetic deterministic corpus only",
+    "manifest_claims": [
+      "sanitized=true",
+      "deterministic=true",
+      "synthetic strings; no credentials or external paths",
+      "RFC 5737 documentation IPv4 ranges only"
+    ],
+    "duplicate_hashes_verified": true,
+    "release_gate": "blocked: docs/evidence/release-v0.1.0.md not found"
+  },
+  "pending_validation": [],
+  "pending_commits": [],
+  "remaining_risks": [
+    "No production-derived corpus is available in the approved workspace",
+    "Synthetic e2e evidence cannot close the realistic traffic release gate",
+    "Permanent exception has not been explicitly approved",
+    "v0.1.0 publication remains blocked"
+  ],
+  "resume_instructions": "Provide a reviewed production-derived sanitized pcap/pcapng corpus and its approved path, provenance, sanitization report, manifest, packet count, and SHA-256 list. Then run make e2e-corpus-pressure with that path, review the generated local JSON/Markdown, create the public evidence record, and rerun make release-gate. Do not use the synthetic /tmp corpus as release evidence and do not create v0.1.0 tag."
+}
