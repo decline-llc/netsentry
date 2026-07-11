@@ -18,7 +18,7 @@ Ready:
 - Latest local non-Docker RC validation passed on 2026-07-10 with `SKIP_DOCKER=1 make rc-check`, covering syntax, docs, Python, config, dependencies, C/Go tests, race tests, coverage 74.2%, ASan fuzz smoke, e2e smoke, dist archive smoke, and release notes smoke.
 - Synthetic extended validation passed on 2026-07-10: `PRESSURE_REPEATS=10000 PRESSURE_WAIT_ATTEMPTS=1200 make e2e-pressure` processed 60,000 packets, generated 50,000 alerts, and returned 5 aggregated rows in 214.956 seconds. This is repeat-pcap synthetic evidence only.
 - Synthetic deterministic ASan parser fuzz passed on 2026-07-10: `FUZZ_SUSTAINED_ITERATIONS=1000000 make fuzz-sustained` completed 1,000,000 iterations with zero corpus files and no reported crash. This is no-corpus synthetic evidence only.
-- Standardized sanitized synthetic corpus generation is available through `make gen-sanitized-corpus`; it writes three deterministic Ethernet pcaps and a manifest outside the repository by default.
+- Standardized sanitized synthetic corpus generation is available through `make gen-sanitized-corpus`; it writes three deterministic Ethernet pcaps, three matching pcapng files, and a manifest outside the repository by default.
 
 Blocked before tagging v0.1.0:
 

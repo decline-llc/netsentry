@@ -341,7 +341,7 @@ make gen-sanitized-corpus CORPUS_DIR=/tmp/netsentry-sanitized-corpus
 ```
 
 The generator writes `payload-rules.pcap`, `protocol-mix.pcap`,
-`background-traffic.pcap`, and `MANIFEST.json`. The files contain only fixed
+`background-traffic.pcap`, matching `.pcapng` files, and `MANIFEST.json`. The files contain only fixed
 RFC 5737 documentation addresses, fixed local MAC addresses, deterministic
 timestamps, and synthetic payloads. Repeated runs are byte-identical. Keep
 the output outside the repository unless a reviewed public evidence package

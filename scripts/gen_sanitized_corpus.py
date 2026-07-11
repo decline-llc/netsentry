@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate deterministic, sanitized Ethernet pcap samples for local evidence.
+"""Generate deterministic, sanitized Ethernet pcap/pcapng samples for local evidence.
 
 The output contains only documentation/private RFC 5737 addresses, fixed
 locally-administered MAC addresses, deterministic timestamps, and synthetic
@@ -93,6 +93,28 @@ def write_pcap(path, frames):
             output.write(frame)
 
 
+def write_pcapng(path, frames):
+    """Write a little-endian pcapng file with one Ethernet interface."""
+    with path.open("wb") as output:
+        # Section Header Block: type, total length, BOM, version, section length, total length.
+        output.write(struct.pack("<II IHH q I", 0x0A0D0D0A, 28, 0x1A2B3C4D, 1, 0, -1, 28))
+        # Interface Description Block: Ethernet link type and standard snaplen.
+        output.write(struct.pack("<IIHHII", 1, 20, LINKTYPE_ETHERNET, 0, 65535, 20))
+        for index, frame in enumerate(frames):
+            timestamp = (BASE_TIMESTAMP + index) * 1_000_000
+            timestamp_high = timestamp >> 32
+            timestamp_low = timestamp & 0xFFFFFFFF
+            padding = b"\x00" * ((4 - (len(frame) % 4)) % 4)
+            total_length = 32 + len(frame) + len(padding)
+            output.write(struct.pack(
+                "<IIIIIII", 6, total_length, 0, timestamp_high,
+                timestamp_low, len(frame), len(frame),
+            ))
+            output.write(frame)
+            output.write(padding)
+            output.write(struct.pack("<I", total_length))
+
+
 def sha256(path):
     digest = hashlib.sha256()
     with path.open("rb") as source:
@@ -112,7 +134,7 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
 
     manifest = {
-        "format": "pcap",
+        "formats": ["pcap", "pcapng"],
         "linktype": "ethernet",
         "deterministic": True,
         "sanitized": True,
@@ -121,14 +143,16 @@ def main():
         "samples": [],
     }
     for name, frames in packet_sets().items():
-        path = output_dir / name
-        write_pcap(path, frames)
-        manifest["samples"].append({
-            "file": name,
-            "packets": len(frames),
-            "sha256": sha256(path),
-            "bytes": path.stat().st_size,
-        })
+        for suffix, writer in ((".pcap", write_pcap), (".pcapng", write_pcapng)):
+            path = output_dir / (Path(name).stem + suffix)
+            writer(path, frames)
+            manifest["samples"].append({
+                "file": path.name,
+                "format": suffix[1:],
+                "packets": len(frames),
+                "sha256": sha256(path),
+                "bytes": path.stat().st_size,
+            })
 
     manifest_path = output_dir / "MANIFEST.json"
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")

@@ -16,8 +16,9 @@
     "Verified clean main branch and SSH origin",
     "Defined measurable corpus and gate objective",
     "Inspected existing quickstart generator, sanitizer, corpus pressure runner and release gates"
-    ,"Added deterministic stdlib-only sanitized corpus generator and Makefile target"
-    ,"Generated and hash-compared two copies of a three-file corpus"
+    ,"Added deterministic stdlib-only sanitized pcap/pcapng corpus generator and Makefile target"
+    ,"Generated and hash-compared two copies of a six-file corpus"
+    ,"Validated pcap and pcapng headers plus manifest metadata"
     ,"Updated README, development, release-readiness and Obsidian notes"
     ,"Passed python-check, docs-check, shell-check, deps-check, go vet, coverage 74.2%, and e2e smoke"
   ],
