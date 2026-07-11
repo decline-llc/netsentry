@@ -332,6 +332,21 @@ To sanitize an Ethernet pcap before sharing it for tests:
 make sanitize-pcap INPUT=/path/to/input.pcap OUTPUT=/tmp/sanitized.pcap
 ```
 
+To create a standard repository-provided synthetic corpus without any
+third-party packet library:
+
+```bash
+make gen-sanitized-corpus
+make gen-sanitized-corpus CORPUS_DIR=/tmp/netsentry-sanitized-corpus
+```
+
+The generator writes `payload-rules.pcap`, `protocol-mix.pcap`,
+`background-traffic.pcap`, and `MANIFEST.json`. The files contain only fixed
+RFC 5737 documentation addresses, fixed local MAC addresses, deterministic
+timestamps, and synthetic payloads. Repeated runs are byte-identical. Keep
+the output outside the repository unless a reviewed public evidence package
+explicitly requires it.
+
 The sanitizer preserves pcap timestamps, packet framing, Ethernet/VLAN/IPv4/TCP/UDP structure, ports, and lengths. It replaces MAC addresses, maps IPv4 addresses into the `198.18.0.0/15` benchmark range, overwrites TCP/UDP payload bytes, and zeroes unsupported captured frames.
 
 Current validation baseline:
@@ -362,6 +377,17 @@ Remaining release blockers:
 - Sustained external C fuzz evidence must be recorded with `make fuzz-sustained` and reviewed before release.
 - Realistic pcap corpus pressure/query evidence must be recorded with `make e2e-corpus-pressure`, separately from repeat-pcap smoke results.
 - Version tag `v0.1.0` must be created from the pushed passing release commit, then the checked-in GitHub Release and GHCR workflows must publish the named assets successfully.
+
+Temporary approval path:
+
+- An administrator may approve a time-bounded exception to collect C fuzz
+  evidence first while explicitly leaving realistic traffic pressure/query
+  evidence deferred.
+- The approval must record approver, UTC time, scope, expiry/iteration, and
+  evidence path in the active task plan before `make fuzz-sustained` is used
+  as an accepted release-candidate gate.
+- Synthetic corpus generation and synthetic fuzz runs remain regression
+  signals; they cannot be relabeled as external evidence.
 
 Use `docs/evidence/release-evidence-template.md` for the sanitized public
 release evidence record. Keep generated local evidence under

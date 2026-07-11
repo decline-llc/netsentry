@@ -18,6 +18,7 @@ Ready:
 - Latest local non-Docker RC validation passed on 2026-07-10 with `SKIP_DOCKER=1 make rc-check`, covering syntax, docs, Python, config, dependencies, C/Go tests, race tests, coverage 74.2%, ASan fuzz smoke, e2e smoke, dist archive smoke, and release notes smoke.
 - Synthetic extended validation passed on 2026-07-10: `PRESSURE_REPEATS=10000 PRESSURE_WAIT_ATTEMPTS=1200 make e2e-pressure` processed 60,000 packets, generated 50,000 alerts, and returned 5 aggregated rows in 214.956 seconds. This is repeat-pcap synthetic evidence only.
 - Synthetic deterministic ASan parser fuzz passed on 2026-07-10: `FUZZ_SUSTAINED_ITERATIONS=1000000 make fuzz-sustained` completed 1,000,000 iterations with zero corpus files and no reported crash. This is no-corpus synthetic evidence only.
+- Standardized sanitized synthetic corpus generation is available through `make gen-sanitized-corpus`; it writes three deterministic Ethernet pcaps and a manifest outside the repository by default.
 
 Blocked before tagging v0.1.0:
 
@@ -26,6 +27,19 @@ Blocked before tagging v0.1.0:
 - Version tag `v0.1.0` must be created from the pushed passing release commit, then the checked-in GitHub Release and GHCR workflows must publish the named assets successfully.
 
 ## Evidence Commands
+
+Generate the built-in sanitized simulation corpus:
+
+```bash
+make gen-sanitized-corpus CORPUS_DIR=/tmp/netsentry-sanitized-corpus
+```
+
+Use an external or generated corpus for pressure evidence only after the
+traffic-pressure gate is approved for the current iteration:
+
+```bash
+PCAP_CORPUS=/tmp/netsentry-sanitized-corpus make e2e-corpus-pressure
+```
 
 Run the standard local release-candidate bundle:
 
@@ -86,6 +100,17 @@ git push origin v0.1.0
 - Do not commit raw private pcaps, external fuzz corpora, private corpus paths, local operator names, credentials, or environment-specific secrets.
 - If evidence must be shared publicly, sanitize the pcap first with `make sanitize-pcap` and review the generated evidence text before committing.
 - Record only summarized pass/fail status, run date, command shape, and non-sensitive metrics in public docs.
+
+## Temporary Fuzz-Only Gate Exception
+
+The default release gate requires both sustained external C fuzz evidence and
+realistic pcap pressure/query evidence. A project administrator may create a
+temporary exception to collect fuzz evidence first. The exception must be
+recorded in the active `docs/plans/task-*.md` and `docs/tasks/task-state-*.json`
+with approver, UTC approval time, exact scope, expiry/iteration, and evidence
+location. The exception may defer traffic pressure, but it must not mark that
+gate passed or permit `v0.1.0` tagging. Synthetic generated pcaps and no-corpus
+fuzz runs remain auxiliary regression evidence.
 
 ## Release Checklist
 

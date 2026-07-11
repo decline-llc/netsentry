@@ -1,0 +1,55 @@
+{
+  "task": "sanitized-synthetic-corpus-and-fuzz-gate",
+  "timestamp": "2026-07-10T20:03:16-07:00",
+  "branch": "main",
+  "risk_level": "High",
+  "current_checkpoint": "5-validation-before-approval",
+  "administrator_approval": {
+    "status": "pending",
+    "scope": "C fuzz evidence only; traffic pressure remains deferred",
+    "approver": null,
+    "approved_at": null,
+    "expiry": null
+  },
+  "completed": [
+    "Read .codex/system_prompt.md",
+    "Verified clean main branch and SSH origin",
+    "Defined measurable corpus and gate objective",
+    "Inspected existing quickstart generator, sanitizer, corpus pressure runner and release gates"
+    ,"Added deterministic stdlib-only sanitized corpus generator and Makefile target"
+    ,"Generated and hash-compared two copies of a three-file corpus"
+    ,"Updated README, development, release-readiness and Obsidian notes"
+    ,"Passed python-check, docs-check, shell-check, deps-check, go vet, coverage 74.2%, and e2e smoke"
+  ],
+  "in_progress": [
+    "Obtain administrator approval before fuzz evidence"
+  ],
+  "todo": [
+    "Add Makefile generation target",
+    "Update public and knowledge documentation",
+    "Generate and validate temporary corpus",
+    "Obtain administrator approval before fuzz evidence",
+    "Run fuzz evidence after approval",
+    "Keep traffic pressure gate deferred",
+    "Run regression gates",
+    "Commit and push atomically"
+  ],
+  "modified_files": [
+    "docs/plans/task-20260711-030316.md",
+    "docs/tasks/task-state-20260711-030316.json"
+  ],
+  "pending_validation": [
+    "administrator approval record",
+    "make fuzz-sustained after approval",
+    "fuzz evidence review"
+  ],
+  "pending_commits": [
+    "test: add sanitized synthetic corpus generator"
+  ],
+  "remaining_risks": [
+    "No administrator approval has been provided",
+    "External sustained fuzz and realistic traffic pressure evidence remain open",
+    "Synthetic corpus cannot substitute for external corpus evidence"
+  ],
+  "resume_instructions": "Read this state and docs/plans/task-20260711-030316.md. Implement and validate the generator first. Do not run or record a temporary gate exception until administrator approval fields are populated. Do not create v0.1.0 tag."
+}

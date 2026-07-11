@@ -12,7 +12,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build build-asan test test-coverage deps-check docs-check shell-check python-check config-check asan-test bench fuzz-parser fuzz-parser-long fuzz-sustained e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap dist release-artifacts docker-build rc-check lint clean quickstart help
+.PHONY: all build-c build-go build build-asan test test-coverage deps-check docs-check shell-check python-check config-check asan-test bench fuzz-parser fuzz-parser-long fuzz-sustained gen-sanitized-corpus e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap dist release-artifacts docker-build rc-check lint clean quickstart help
 
 all: build
 
@@ -68,7 +68,11 @@ shell-check:
 
 ## python-check — run Python script syntax checks
 python-check:
-	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("scripts/gen_test_pcap.py", "scripts/sanitize_pcap.py"))]'
+	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("scripts/gen_test_pcap.py", "scripts/gen_sanitized_corpus.py", "scripts/sanitize_pcap.py"))]'
+
+## gen-sanitized-corpus — generate deterministic sanitized pcap corpus outside the repository
+gen-sanitized-corpus:
+	@python3 scripts/gen_sanitized_corpus.py --output-dir "$(if $(CORPUS_DIR),$(CORPUS_DIR),/tmp/netsentry-sanitized-corpus)"
 
 ## config-check — validate repository config, rule, and suppression files
 config-check:

@@ -82,6 +82,21 @@ make dist
 make release-artifacts VERSION=0.1.0
 ```
 
+To generate the repository's deterministic, sanitized synthetic pcap corpus:
+
+```bash
+make gen-sanitized-corpus
+# Custom storage path:
+make gen-sanitized-corpus CORPUS_DIR=/tmp/netsentry-sanitized-corpus
+```
+
+The generator writes three Ethernet `.pcap` files and `MANIFEST.json` using
+only Python's standard library. It uses RFC 5737 documentation addresses,
+fixed local MAC addresses, fixed timestamps, and synthetic payloads. The
+default output is under `/tmp`; do not commit generated binaries. This corpus
+is suitable for reproducible local checks, but does not replace approved
+external fuzz or realistic traffic evidence.
+
 For a local release-candidate verification bundle:
 
 ```bash
