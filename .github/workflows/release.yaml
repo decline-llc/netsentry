@@ -93,20 +93,20 @@ jobs:
           }
 
           cat >"${NOTES_FILE}" <<EOF
-# NetSentry ${RELEASE_TAG}
+          # NetSentry ${RELEASE_TAG}
 
-Automated GitHub Release for ${RELEASE_TAG}.
+          Automated GitHub Release for ${RELEASE_TAG}.
 
-Included assets:
-- ${PACKAGE_NAME}.tar.gz
-- ${PACKAGE_NAME}.tar.gz.sha256
+          Included assets:
+          - ${PACKAGE_NAME}.tar.gz
+          - ${PACKAGE_NAME}.tar.gz.sha256
 
-Validation:
-- GitHub Actions reran \`make rc-check\` before publishing these assets.
+          Validation:
+          - GitHub Actions reran \`make rc-check\` before publishing these assets.
 
-References:
-- \`CHANGELOG.md\`
-- \`docs/release-readiness.md\`
+          References:
+          - \`CHANGELOG.md\`
+          - \`docs/release-readiness.md\`
           EOF
           echo "notes_file=${NOTES_FILE}" >>"${GITHUB_OUTPUT}"
 
