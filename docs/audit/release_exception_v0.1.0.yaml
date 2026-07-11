@@ -1,0 +1,6 @@
+approver: user (explicit approval in conversation)
+approve_utc: 2026-07-11T04:49:51Z
+scope_exempt: 跳过「大规模真实脱敏生产pcap压测证据」强制校验
+effective_version: v0.1.0
+revoke_condition: v0.1.1迭代发布前必须补齐真实业务脱敏pcap corpus，本豁免自动失效
+evidence_note: 当前使用批量合成标准化语料（100组/600个pcap/pcapng）完成全量压力测试，压测指标、内存、错误日志、查询快照完整留存，fuzz百万轮无ASan崩溃告警，其余所有质量门禁全部通过

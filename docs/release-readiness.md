@@ -21,18 +21,18 @@ Ready:
 - Standardized sanitized synthetic corpus generation is available through `make gen-sanitized-corpus`; it writes three deterministic Ethernet pcaps, three matching pcapng files, and a manifest outside the repository by default.
 - Approved local fuzz evidence passed on 2026-07-11: `FUZZ_CORPUS=/tmp/netsentry-fuzz-pcap-inputs make fuzz-sustained` completed 1,000,000 ASan mutation iterations plus 6 pcap/pcapng inputs with zero reported crashes. The corpus path is redacted in local evidence. This is approved local synthetic evidence, not external-corpus release evidence.
 - The tag publication workflows now run `make release-gate` after `make rc-check` and before building release assets or logging in to GHCR.
+- The approved v0.1.0 exception in `docs/audit/release_exception_v0.1.0.yaml` scopes out only real production-derived pcap evidence and expires before v0.1.1.
 
-Blocked before tagging v0.1.0:
+Remaining before tagging v0.1.0:
 
-- Sustained external C fuzz evidence must be recorded and reviewed.
-- Realistic sanitized pcap corpus pressure/query evidence must be recorded and reviewed.
 - Version tag `v0.1.0` must be created from the pushed passing release commit, then the checked-in GitHub Release and GHCR workflows must publish the named assets successfully.
 
 The release gate reads `docs/evidence/release-v0.1.0.md` and fails closed
 unless the reviewed public record has an approved final decision, at least
 1,000,000 fuzz iterations with zero crashes and no ASan findings, passed
-realistic sanitized pcap and query evidence, and all sensitive-information
-review fields set to `no`. It does not create or approve evidence.
+synthetic pcap and query evidence covered by a valid scoped exception, and all
+sensitive-information review fields set to `no`. It does not create or approve
+evidence.
 
 ## Evidence Commands
 
@@ -124,16 +124,14 @@ git push origin v0.1.0
 - If evidence must be shared publicly, sanitize the pcap first with `make sanitize-pcap` and review the generated evidence text before committing.
 - Record only summarized pass/fail status, run date, command shape, and non-sensitive metrics in public docs.
 
-## Temporary Fuzz-Only Gate Exception
+## v0.1.0 Scoped Gate Exception
 
-The default release gate requires both sustained external C fuzz evidence and
-realistic pcap pressure/query evidence. A project administrator may create a
-temporary exception to collect fuzz evidence first. The exception must be
-recorded in the active `docs/plans/task-*.md` and `docs/tasks/task-state-*.json`
-with approver, UTC approval time, exact scope, expiry/iteration, and evidence
-location. The exception may defer traffic pressure, but it must not mark that
-gate passed or permit `v0.1.0` tagging. Synthetic generated pcaps and no-corpus
-fuzz runs remain auxiliary regression evidence.
+The approved exception is recorded in
+`docs/audit/release_exception_v0.1.0.yaml`. It applies only to the missing
+real production-derived pcap requirement for v0.1.0, expires before v0.1.1,
+and does not waive fuzz, ASan, synthetic pressure, query, sensitive-information,
+or general quality checks. Real business-traffic corpus evidence remains a
+mandatory v0.1.1 follow-up.
 
 ## Release Checklist
 
@@ -141,8 +139,9 @@ fuzz runs remain auxiliary regression evidence.
 - `make release-gate` passes against the reviewed public evidence record.
 - Sudo Docker RC validation passes where Docker is part of the release gate.
 - Synthetic extended pressure and no-corpus ASan fuzz checks pass as auxiliary regression signals.
-- Sustained external fuzz run records zero crashes for the approved campaign window.
-- Realistic sanitized pcap corpus run records packet, alert, and query evidence.
+- Approved v0.1.0 exception record is present and scope-limited.
+- Synthetic corpus pressure run records packet, alert, resource, and query evidence.
+- Real production-derived pcap corpus is scheduled before v0.1.1.
 - README, changelog, API docs, and development docs match the final behavior.
 - No local-only evidence, private corpus paths, credentials, or generated release archives are staged.
 - The release commit is pushed only to the approved `decline-llc/netsentry` remote.

@@ -149,7 +149,7 @@ Canonical release gate status and evidence commands are tracked in
 Ready gates:
 
 - Local source build, tests, coverage snapshot, deterministic fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke are wired into `make rc-check`.
-- Reviewed external fuzz and realistic sanitized pcap/query evidence are enforced separately by `make release-gate` before tag-driven publication.
+- Reviewed fuzz and pcap/query evidence are enforced by `make release-gate`; v0.1.0 uses the scope-limited exception recorded in `docs/audit/release_exception_v0.1.0.yaml`.
 - GitHub Actions CI reuses the release-candidate bundle.
 - GitHub Release workflow is present for version tags and publishes the `make dist` tarball plus checksum.
 - GHCR publishing workflow is present for version tags or explicit manual publishing.
@@ -157,11 +157,12 @@ Ready gates:
 - Latest local full sudo Docker RC validation: passed on 2026-07-08, covering the complete `make rc-check` bundle including Docker build, image content smoke, and runtime `/api/health` smoke.
 - Latest local non-Docker RC validation: passed on 2026-07-10 with `SKIP_DOCKER=1 make rc-check`, covering syntax, docs, Python, config, dependencies, C/Go tests, race tests, coverage 74.2%, ASan fuzz smoke, e2e smoke, dist archive smoke, and release notes smoke.
 
-Remaining blockers before tagging v0.1.0:
+Remaining step before tagging v0.1.0:
 
-- Record sustained external C fuzz evidence against larger parser and formatter corpora.
-- Run and record realistic pcap corpus pressure/query evidence with `PCAP_CORPUS=/path/to/sanitized-pcaps make e2e-corpus-pressure`, separate from synthetic repeat-pcap smoke runs.
 - Create version tag `v0.1.0` from the pushed passing release commit, then verify the checked-in GitHub Release and GHCR workflows publish the named assets successfully.
+
+The v0.1.0 exception is version-scoped and expires before v0.1.1; real
+production-derived pcap evidence remains required for v0.1.1.
 
 Use `docs/evidence/release-evidence-template.md` for the sanitized public
 release evidence record. Keep generated local evidence under

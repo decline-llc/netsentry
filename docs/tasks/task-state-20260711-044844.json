@@ -1,0 +1,67 @@
+{
+  "task": "approved-v0.1.0-release-exception",
+  "timestamp": "2026-07-11T04:48:44Z",
+  "branch": "main",
+  "risk_level": "High",
+  "current_checkpoint": "7-atomic-commit",
+  "approval": {
+    "approver": "user (explicit approval in conversation)",
+    "approve_utc": "2026-07-11T04:49:51Z",
+    "scope": "v0.1.0 only; skip real production-derived pcap evidence requirement",
+    "expiry": "before v0.1.1"
+  },
+  "completed": [
+    "Created and validated docs/audit/release_exception_v0.1.0.yaml",
+    "Updated release_gate.py to parse and validate the scoped exception",
+    "Created exception-backed public release evidence record",
+    "make release-gate passed",
+    "SKIP_DOCKER=1 make rc-check passed with coverage 74.2%",
+    "Passed shell-check, python-check, docs-check, deps-check, and e2e-smoke",
+    "Confirmed no GPG secret signing key is configured"
+  ],
+  "in_progress": [
+    "Commit and push the approved exception/evidence release closure"
+  ],
+  "todo": [
+    "Configure or provide an approved GPG signing key",
+    "Create and verify signed v0.1.0 tag from the validated pushed commit",
+    "Push v0.1.0 tag over SSH",
+    "Verify GitHub Release and GHCR workflow results",
+    "Update tag publication fields in docs/evidence/release-v0.1.0.md",
+    "Collect real production-derived pcap corpus before v0.1.1"
+  ],
+  "modified_files": [
+    "scripts/release_gate.py",
+    "docs/audit/release_exception_v0.1.0.yaml",
+    "docs/evidence/release-v0.1.0.md",
+    "docs/release-readiness.md",
+    "README.md",
+    "docs/development.md",
+    "docs/plans/task-20260711-044844.md",
+    "docs/tasks/task-state-20260711-044844.json"
+  ],
+  "validation": {
+    "release_gate": "pass",
+    "rc_check_without_docker": "pass",
+    "coverage": "74.2%",
+    "shell_check": "pass",
+    "python_check": "pass",
+    "docs_check": "pass",
+    "deps_check": "pass",
+    "e2e_smoke": "pass: 6 packets, 5 alerts, 8 rules",
+    "tag_signature": "blocked: no GPG secret signing key configured"
+  },
+  "pending_validation": [
+    "signed tag verification",
+    "remote tag push",
+    "GitHub Release workflow",
+    "GHCR workflow"
+  ],
+  "pending_commits": [],
+  "remaining_risks": [
+    "No signing key is available in the current environment",
+    "Tag-triggered external publication is not yet verified",
+    "v0.1.1 must collect real production-derived pcap evidence"
+  ],
+  "resume_instructions": "Configure an approved GPG signing key without committing private material. Re-run repository, secret, release-gate, and rc-check validations, create an annotated signed v0.1.0 tag from the validated commit, verify the signature, push the tag over SSH, and then record GitHub Release/GHCR workflow results. Do not create an unsigned replacement tag."
+}

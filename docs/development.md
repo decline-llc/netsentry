@@ -372,28 +372,23 @@ Ready:
 
 - `make rc-check` includes syntax checks, config validation, dependency verification, tests, coverage, deterministic fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 - GitHub Actions CI, tag-driven GitHub Release publication, and GHCR publishing workflows are checked in.
+- The v0.1.0 release gate has a reviewed, version-scoped exception for real production-derived pcap evidence; it expires before v0.1.1.
 - `make dist` produces a local release archive, checksum, and generated release notes.
 - `make release-artifacts VERSION=0.1.0` validates release-version format before building publishable archive assets.
 - `make docker-build` builds the local runtime image.
 - Latest local full sudo Docker RC validation passed on 2026-07-08, covering the complete `make rc-check` bundle including Docker build, image content smoke, and runtime `/api/health` smoke.
 - Latest local non-Docker RC validation passed on 2026-07-10 with `SKIP_DOCKER=1 make rc-check`, covering syntax, docs, Python, config, dependencies, C/Go tests, race tests, coverage 74.2%, ASan fuzz smoke, e2e smoke, dist archive smoke, and release notes smoke.
 
-Remaining release blockers:
+Remaining release step:
 
-- Sustained external C fuzz evidence must be recorded with `make fuzz-sustained` and reviewed before release.
-- Realistic pcap corpus pressure/query evidence must be recorded with `make e2e-corpus-pressure`, separately from repeat-pcap smoke results.
 - Version tag `v0.1.0` must be created from the pushed passing release commit, then the checked-in GitHub Release and GHCR workflows must publish the named assets successfully.
 
-Temporary approval path:
+Exception record:
 
-- An administrator may approve a time-bounded exception to collect C fuzz
-  evidence first while explicitly leaving realistic traffic pressure/query
-  evidence deferred.
-- The approval must record approver, UTC time, scope, expiry/iteration, and
-  evidence path in the active task plan before `make fuzz-sustained` is used
-  as an accepted release-candidate gate.
-- Synthetic corpus generation and synthetic fuzz runs remain regression
-  signals; they cannot be relabeled as external evidence.
+- `docs/audit/release_exception_v0.1.0.yaml` records the explicit v0.1.0
+  exception. It skips only the real production-derived pcap requirement;
+  synthetic evidence remains explicitly synthetic and real business-traffic
+  evidence is required before v0.1.1.
 
 Use `docs/evidence/release-evidence-template.md` for the sanitized public
 release evidence record. Keep generated local evidence under
