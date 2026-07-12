@@ -265,3 +265,65 @@ class FailureRecoveryTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PreExistingVaultTest(unittest.TestCase):
+    """Sync into a Vault that already has notes from previous sessions."""
+
+    def test_sync_into_populated_vault_preserves_existing_notes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            repo = root / "repo"
+            vault = root / "vault"
+            repo.mkdir()
+
+            # Pre-populate Vault with an existing note that mimics a prior sync
+            existing_iter = (
+                vault / "04-开发迭代记录" / "2026-01-01-deadbeef01-自动知识同步.md"
+            )
+            existing_iter.parent.mkdir(parents=True, exist_ok=True)
+            existing_iter.write_text(
+                "---\n分类: 开发迭代记录\n---\n\n# 历史同步记录\n\n旧提交\n", encoding="utf-8"
+            )
+            existing_moc = vault / "00-MOC" / "NetSentry知识总览.md"
+            existing_moc.parent.mkdir(parents=True, exist_ok=True)
+            existing_moc.write_text(
+                "<!-- netsentry-auto-sync:start -->\n- old entry\n<!-- netsentry-auto-sync:end -->\n\n# Rest of MOC\n",
+                encoding="utf-8",
+            )
+
+            # Create repo and sync
+            _git(repo, "init", "--quiet")
+            _commit(repo, "README.md", "# Project\n", "docs: initial")
+            before = _rev(repo, "HEAD")
+            _commit(repo, "CHANGELOG.md", "# Log\n", "docs: changelog")
+            after = _rev(repo, "HEAD")
+
+            _sync(POST_PUSH, vault, repo, f"{before}..{after}")
+
+            # Old note must survive
+            self.assertTrue(existing_iter.exists(), "pre-existing iteration note preserved")
+            # MOC must still have rest of content outside sync block
+            moc_text = existing_moc.read_text(encoding="utf-8")
+            self.assertIn("Rest of MOC", moc_text, "non-sync MOC sections preserved")
+            # Sync block was updated
+            self.assertIn("auto-sync:start", moc_text)
+
+    def test_empty_vault_full_sync_rebuilds_everything(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            repo = root / "repo"
+            vault = root / "vault"
+            repo.mkdir()
+            vault.mkdir(parents=True, exist_ok=True)
+
+            _git(repo, "init", "--quiet")
+            _commit(repo, "a.txt", "a\n", "one")
+            sha = _rev(repo, "HEAD")
+
+            # Full sync from empty vault
+            _sync(POST_PUSH, vault, repo, f"{sha}..{sha}", expect_ok=False)
+            # Empty range — no notes expected, but no crash
+            index = vault / "04-开发迭代记录" / "全量提交索引.md"
+            notes = list((vault / "04-开发迭代记录").glob("*-自动知识同步.md"))
+            self.assertEqual(len(notes), 0, "empty range produces no notes")
