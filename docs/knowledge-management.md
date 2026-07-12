@@ -10,7 +10,7 @@ updated: 2026-07-11
 
 NetSentry 知识库是源码、设计决策、测试证据和 Git 演进的本地可检索镜像，固定为 `/home/virtual-machine/Desktop/NetSentry-Knowledge`。代码与配置是行为权威，Vault 是解释和索引权威；发生冲突时，以当前代码、测试和 `git show` 为准并修正笔记。
 
-Vault 保持本地、非 Git，不配置远端知识仓库、GitHub artifact、GitHub secret 或 self-hosted runner。项目仓库只保存本规范和确定性抽取/测试脚本；本机 `.git/hooks/post-push` 被 Git 忽略但负责 push 后写 Vault。
+Vault 保持本地、非 Git，不配置远端知识仓库、GitHub artifact、GitHub secret 或 self-hosted runner。项目仓库只保存本规范和确定性抽取/测试脚本；本机 `.git/hooks/post-push` 被 Git 忽略，作为 push 成功后显式调用的同步 helper。
 
 ## 2. Obsidian 与目录
 
@@ -36,15 +36,17 @@ obsidian /home/virtual-machine/Desktop/NetSentry-Knowledge
 
 自动增量记录只证明“哪些代码发生变化”，不能替代架构、规则引擎或 MITRE 证据语义。每次开发单元必须把可复用结论合并进相关稳定笔记。
 
-## 4. 本地 push 同步
+## 4. 本地 push-success 同步
 
-安装或修复 hook 权限：
+Git 原生没有客户端 `post-push` 生命周期钩子，因此普通 `git push` 不会自动运行 `.git/hooks/post-push`。该文件保留历史名称，但语义是“确认远端 push 成功后显式调用的 helper”，避免在远端失败时提前写入错误知识。
+
+安装或修复 helper 权限：
 
 ```bash
 chmod +x /home/virtual-machine/Desktop/NetSentry/.git/hooks/post-push
 ```
 
-对 `origin` 的正常 push 会触发本机 hook。它按 pushed commit range 重建全量提交索引，生成本次增量笔记和 `_待整理` 草稿，并维护 MOC 自动入口。同步应幂等，重复处理同一 range 不产生重复提交行。
+`$netsentry-next` 在 push 前记录远端 old SHA，push 成功并核验 new SHA 后显式执行 helper。它按 `old..new` 重建全量提交索引，生成本次增量笔记和 `_待整理` 草稿，并维护 MOC 自动入口。同步应幂等，重复处理同一 range 不产生重复提交行。
 
 手动恢复任意范围：
 
@@ -63,7 +65,7 @@ python3 scripts/sync_knowledge.py \
   --after newsha
 ```
 
-hook 故障不能回滚已经成功的 Git push，因此 `$netsentry-next` 必须检查 note、MOC 和 SHA；缺失时立即按确切 range 手动恢复并记录原因。
+helper 故障不能回滚已经成功的 Git push，因此 `$netsentry-next` 必须检查 note、MOC 和 SHA；缺失时立即按确切 range 重放并记录原因。用户绕过 `$netsentry-next` 直接运行 `git push` 时，也必须手动执行上述命令。
 
 ## 5. 验证与维护
 

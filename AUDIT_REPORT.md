@@ -179,7 +179,7 @@ Canonical 参考：
 - [x] 让 `worker_count` 生效并补并发 shutdown/race 测试。
 - [x] 建立外部 pcap asset manifest、checksum、license/source 管理脚本。
 - [x] 增加 unit、integration、E2E、stress 入口并纳入可重复验证。
-- [x] 中英文 README 同步、知识库实质性笔记、本机 post-push 精确范围同步。
+- [x] 中英文 README 同步、知识库实质性笔记、push 成功后显式精确范围同步。
 
 ### P1：v0.2.x
 
@@ -197,7 +197,7 @@ Canonical 参考：
 
 ## 8. 无法在本地直接闭环的事项
 
-- 知识库按维护者决策固定为本机 sibling Vault，不上传远端，也不依赖 GitHub artifact、独立知识仓库或 self-hosted runner。跨机器执行不会自动获得该 Vault；本机开发通过 post-push hook 和确定性抽取脚本闭环。
+- 知识库按维护者决策固定为本机 sibling Vault，不上传远端，也不依赖 GitHub artifact、独立知识仓库或 self-hosted runner。Git 无原生客户端 post-push hook；跨机器执行不会自动获得该 Vault，本机由 `$netsentry-next` 在 push 成功后显式调用精确范围 helper 闭环。
 - 外部 pcap 即使来自开源仓库也可能包含历史真实地址/内容；本轮仅选小型测试 fixture，记录上游许可证、固定 commit 与 SHA-256，不把 corpus 提交到 NetSentry 源码仓库。
 
 ## 9. 三个月技术路线图（至 v0.3.0）
@@ -253,7 +253,7 @@ v0.3.0 发布门禁：schema migration/recovery 演练、24 小时 sustained fuz
 - 每两周复核一次 P0/P1 清单、依赖漏洞、ATT&CK catalog 版本和 corpus provenance。
 - 每个性能优化必须同时提供基准、资源上限和退化阈值；不接受只报告平均值。
 - 每个新协议 parser 必须同时提供 malformed unit、ASan fuzz seed、外部 fixture 和明确 DLT/长度边界。
-- 每次本机 Git push 生成知识增量；自动生成内容进入可追溯草稿，架构/规则/MITRE 结论再合并到本地稳定知识点。
+- 每次本机 Git push 成功并核验远端 SHA 后显式生成知识增量；自动内容进入可追溯草稿，架构/规则/MITRE 结论再合并到本地稳定知识点。
 
 ## 10. 本轮完成记录
 
@@ -307,4 +307,4 @@ Vault 已更新稳定知识点：
 - `06-测试与发布规范/测试矩阵与发布门禁.md`：外部 fixture 与四层测试证据；
 - MOC 已加入新技术点和本轮 CI 知识 note。
 
-维护者选择本地-only 知识模型：桌面 Vault 不建 Git 远端，不配置 GitHub secret 或 self-hosted runner。确定性抽取器保留用于本地验证；每次 Git push 由 `.git/hooks/post-push` 写入准确范围，再由 `$netsentry-next` 将实质性结论合并到稳定知识点并核验 MOC。原先的云端 workflow 方案已撤销，避免产生一个无法直接更新当前 Vault 的第二事实源。
+维护者选择本地-only 知识模型：桌面 Vault 不建 Git 远端，不配置 GitHub secret 或 self-hosted runner。确定性抽取器保留用于本地验证。由于 Git 没有原生客户端 `post-push` hook，`$netsentry-next` 在 push 成功后显式执行 `.git/hooks/post-push sync`（历史文件名）写入准确范围，再将实质性结论合并到稳定知识点并核验 MOC。原先云端 workflow 已撤销，避免产生无法直接更新当前 Vault 的第二事实源。
