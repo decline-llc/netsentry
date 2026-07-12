@@ -8,12 +8,30 @@ import unittest
 
 class KnowledgeSyncTest(unittest.TestCase):
     def test_generates_idempotent_note_and_moc_link(self):
-        repo = pathlib.Path(__file__).resolve().parents[1]
-        script = repo / "scripts" / "sync_knowledge.py"
-        after = subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD"], text=True).strip()
-        before = subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD^"], text=True).strip()
+        source_repo = pathlib.Path(__file__).resolve().parents[1]
+        script = source_repo / "scripts" / "sync_knowledge.py"
         with tempfile.TemporaryDirectory() as directory:
-            vault = pathlib.Path(directory)
+            root = pathlib.Path(directory)
+            repo = root / "repo"
+            vault = root / "vault"
+            repo.mkdir()
+            subprocess.run(["git", "-C", str(repo), "init", "--quiet"], check=True)
+
+            (repo / "README.md").write_text("# fixture\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "README.md"], check=True)
+            self.commit(repo, "fixture: initialize repository")
+            before = self.rev_parse(repo, "HEAD")
+
+            (repo / "configs").mkdir()
+            (repo / "configs" / "config.yaml").write_text(
+                'api_listen_host: "127.0.0.1"\napi_port: 8080\napi_auth_enabled: false\n',
+                encoding="utf-8",
+            )
+            (repo / "configs" / "rules.json").write_text('{"rules": []}\n', encoding="utf-8")
+            subprocess.run(["git", "-C", str(repo), "add", "configs"], check=True)
+            self.commit(repo, "fixture: add configuration")
+            after = self.rev_parse(repo, "HEAD")
+
             command = [
                 "python3", str(script), "--repo", str(repo), "--vault", str(vault),
                 "--before", before, "--after", after,
@@ -31,6 +49,25 @@ class KnowledgeSyncTest(unittest.TestCase):
             moc = (vault / "00-MOC" / "NetSentry知识总览.md").read_text(encoding="utf-8")
             self.assertEqual(moc.count("<!-- netsentry-ci-knowledge:start -->"), 1)
             self.assertEqual(moc.count("CI知识同步]]"), 1)
+
+    @staticmethod
+    def commit(repo, subject):
+        subprocess.run(
+            [
+                "git", "-C", str(repo),
+                "-c", "user.name=NetSentry Test",
+                "-c", "user.email=netsentry-test@example.invalid",
+                "-c", "commit.gpgsign=false",
+                "commit", "--quiet", "-m", subject,
+            ],
+            check=True,
+        )
+
+    @staticmethod
+    def rev_parse(repo, revision):
+        return subprocess.check_output(
+            ["git", "-C", str(repo), "rev-parse", revision], text=True
+        ).strip()
 
 
 if __name__ == "__main__":
