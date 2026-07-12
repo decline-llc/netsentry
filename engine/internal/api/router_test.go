@@ -825,6 +825,46 @@ func TestRuleMutationAcceptsBearerToken(t *testing.T) {
 	}
 }
 
+func TestRuleMutationRejectsOversizedBody(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "rules.json")
+	if err := os.WriteFile(path, []byte(`{"rules":[]}`), 0o600); err != nil {
+		t.Fatalf("write rules seed: %v", err)
+	}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{RulesSeedFile: path})
+	body := `{"id":"rule-new","name":"` + strings.Repeat("x", maxMutationBodyBytes) + `"}`
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/rules", strings.NewReader(body))
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusRequestEntityTooLarge {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), `"code":"REQUEST_TOO_LARGE"`) {
+		t.Fatalf("unexpected body: %s", rec.Body.String())
+	}
+}
+
+func TestRuleMutationRejectsTrailingJSONDocument(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "rules.json")
+	if err := os.WriteFile(path, []byte(`{"rules":[]}`), 0o600); err != nil {
+		t.Fatalf("write rules seed: %v", err)
+	}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{RulesSeedFile: path})
+	body := `{"id":"rule-new","name":"New","type":"payload_match","severity":"high","enabled":true,"config":{"keywords":["needle"]}} {}`
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/rules", strings.NewReader(body))
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), "exactly one JSON document") {
+		t.Fatalf("unexpected body: %s", rec.Body.String())
+	}
+}
+
 func TestRulesReloadFromSeedFile(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "rules.json")

@@ -1,280 +1,151 @@
 # NetSentry
 
-> **Status**: v0.1.0 development / pre-alpha
+[English](README.en.md)
 
-NetSentry is a lightweight C/Go network intrusion detection and pcap forensics engine. The current repository is a working development build: it can compile the C capture binary and Go engine, generate a synthetic pcap, pass packets over a Unix Domain Socket, match seed rules, persist aggregated alerts in SQLite, and expose them over a minimal HTTP API.
+> 状态：v0.1.0 已发布；当前审查分支包含发布后的安全加固与测试扩展。
 
-The project goal remains a small, honest IDS for offline pcap analysis and edge deployments. It is not intended to replace Suricata or Zeek for 10 Gbps production IDS workloads.
+NetSentry 是一个轻量级 C/Go 网络入侵检测与 pcap 取证引擎。C 进程负责 libpcap 离线读取或实时抓包、Ethernet/VLAN/IPv4/TCP/UDP 解析和有界 JSONL 序列化；Go 进程通过 Unix Socket 接收数据，执行规则匹配、告警抑制与脱敏，将聚合告警写入 SQLite，并提供 HTTP API 与 Prometheus 指标。
 
----
+项目面向离线 pcap、实验室取证和资源受限边缘部署，不以替代 Suricata/Zeek 的 10 Gbps 生产能力为目标。
 
-## Current Working Path
+## 快速开始
 
-```bash
-make quickstart
-```
-
-This currently does the following:
-
-1. Builds `bin/netsentry-capture` and `bin/netsentry-engine`.
-2. Generates `/tmp/netsentry_test.pcap` using Scapy when available, or a Python stdlib fallback.
-3. Starts the Go engine on `:8080` and `/tmp/netsentry.sock`.
-4. Runs the C capture binary against the sample pcap.
-5. Prints alerts from `GET /api/alerts`.
-
-Expected result in the current seed setup: `5` alerts from SQL injection, Log4Shell, reverse shell, shell command injection, and scanner user-agent rules.
-
-For a non-interactive release smoke check, run:
-
-```bash
-make e2e-smoke
-```
-
-For a local coverage snapshot, run:
-
-```bash
-make test-coverage
-```
-
-For a local end-to-end throughput smoke check, run:
-
-```bash
-make e2e-pressure
-# Optional larger run:
-PRESSURE_REPEATS=10000 make e2e-pressure
-# Optional longer post-capture drain wait:
-PRESSURE_REPEATS=10000 PRESSURE_WAIT_ATTEMPTS=1200 make e2e-pressure
-```
-
-For local release evidence against a sanitized pcap corpus, run:
-
-```bash
-PCAP_CORPUS=/path/to/sanitized-pcaps make e2e-corpus-pressure
-```
-
-The corpus script accepts either a single `.pcap`/`.pcapng` file or a directory.
-It writes local-only JSON and Markdown evidence under `docs/evidence/local/` by
-default and redacts corpus paths unless `NETSENTRY_EVIDENCE_INCLUDE_PATHS=1` is
-set for private local debugging. Do not commit private pcaps or sensitive corpus
-paths.
-
-For a C parser fuzz smoke:
-
-```bash
-make fuzz-parser
-# Longer local pass:
-FUZZ_LONG_ITERATIONS=1000000 make fuzz-parser-long
-# Evidence-producing sustained run:
-make fuzz-sustained
-# Optional external corpus replay:
-FUZZ_CORPUS=/path/to/local-corpus make fuzz-sustained
-```
-
-`make fuzz-sustained` writes local-only JSON and Markdown evidence under
-`docs/evidence/local/` by default and redacts corpus paths unless
-`NETSENTRY_EVIDENCE_INCLUDE_PATHS=1` is set for private local debugging. Keep
-external corpus files local unless they have been reviewed for sharing.
-
-To create a local binary release archive:
-
-```bash
-make dist
-make release-artifacts VERSION=0.1.0
-```
-
-To generate the repository's deterministic, sanitized synthetic pcap corpus:
-
-```bash
-make gen-sanitized-corpus
-# Custom storage path:
-make gen-sanitized-corpus CORPUS_DIR=/tmp/netsentry-sanitized-corpus
-# Batch synthetic corpus (100 sets = 600 differentiated files):
-make gen-sanitized-corpus CORPUS_DIR=/tmp/netsentry-synthetic-100 CORPUS_SETS=100
-```
-
-The generator writes three Ethernet `.pcap`, three `.pcapng` files per set, and
-`MANIFEST.json` using only Python's standard library. Each set has deterministic
-synthetic markers and distinct hashes. It uses RFC 5737 documentation
-addresses, fixed local MAC addresses, fixed timestamps, and synthetic payloads.
-The default output is under `/tmp`; do not commit generated binaries. This
-corpus is suitable for reproducible local pressure checks, but does not replace
-approved external fuzz or realistic traffic evidence.
-
-For a local release-candidate verification bundle:
-
-```bash
-make rc-check
-# If your Docker daemon requires elevated privileges:
-DOCKER="sudo docker" make rc-check
-```
-
-The release-candidate bundle includes shell and Python syntax checks,
-configuration sample validation, documentation consistency checks, dependency
-verification, tests, a coverage snapshot, fuzz smoke, e2e smoke, release archive
-checks, Docker image smoke, and Docker runtime health smoke.
-
-Before a version-tag release, validate the reviewed public fuzz and sanitized
-pcap evidence record:
-
-```bash
-make release-gate
-```
-
-The gate reads `docs/evidence/release-v0.1.0.md` and fails closed when the
-record is missing, pending, incomplete, or contains private-material findings.
-
-To build the local Docker image:
-
-```bash
-make docker-build
-# If your Docker daemon requires elevated privileges:
-DOCKER="sudo docker" make docker-build
-```
-
-The Makefile writes Go build cache data to `/tmp/netsentry-go-cache` by default
-so build, test, lint, and benchmark targets work in environments where the home
-directory cache is read-only. Set `GOCACHE=/path/to/cache` to override it.
-
-The repository also includes GitHub Actions workflows for release-candidate checks
-and tag-driven GitHub Release/GHCR publishing. Both publication workflows rerun
-`make rc-check` and `make release-gate` before publishing; the GitHub Release workflow uploads the
-`make dist` tarball and checksum for version tags, while Docker publishing only
-pushes on version tags or an explicit manual workflow run.
-
-### v0.1.0 Release Readiness
-
-Canonical release gate status and evidence commands are tracked in
-`docs/release-readiness.md`.
-
-Ready gates:
-
-- Local source build, tests, coverage snapshot, deterministic fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke are wired into `make rc-check`.
-- Reviewed fuzz and pcap/query evidence are enforced by `make release-gate`; v0.1.0 uses the scope-limited exception recorded in `docs/audit/release_exception_v0.1.0.yaml`.
-- GitHub Actions CI reuses the release-candidate bundle.
-- GitHub Release workflow is present for version tags and publishes the `make dist` tarball plus checksum.
-- GHCR publishing workflow is present for version tags or explicit manual publishing.
-- Release archive generation includes binaries, configs, docs, checksum, and generated release notes.
-- Latest local full sudo Docker RC validation: passed on 2026-07-08, covering the complete `make rc-check` bundle including Docker build, image content smoke, and runtime `/api/health` smoke.
-- Latest local non-Docker RC validation: passed on 2026-07-10 with `SKIP_DOCKER=1 make rc-check`, covering syntax, docs, Python, config, dependencies, C/Go tests, race tests, coverage 74.2%, ASan fuzz smoke, e2e smoke, dist archive smoke, and release notes smoke.
-
-Remaining step before tagging v0.1.0:
-
-- Create version tag `v0.1.0` from the pushed passing release commit, then verify the checked-in GitHub Release and GHCR workflows publish the named assets successfully.
-
-The v0.1.0 exception is version-scoped and expires before v0.1.1; real
-production-derived pcap evidence remains required for v0.1.1.
-
-Use `docs/evidence/release-evidence-template.md` for the sanitized public
-release evidence record. Keep generated local evidence under
-`docs/evidence/local/` out of Git.
-
----
-
-## Implemented Today
-
-- C capture skeleton with offline pcap reading, Ethernet/VLAN/IPv4/TCP/UDP parsing, Base64 payload preview, JSON line frames, hello and heartbeat frames.
-- Go rule engine using `atomic.Pointer[ruleState]` immutable snapshots.
-- Rule types: `payload_match`, `ip_blacklist`, `port_blacklist`.
-- A self-contained Aho-Corasick matcher.
-- Minimal Go UDS receiver, CIDR alert suppressor component, and SQLite alert store with UPSERT aggregation, JSONL recovery-log replay, startup TTL pruning, optional daily DB shard pathing/cleanup, cross-shard alert querying/counting in daily-shard mode, and degraded/emergency health tracking after storage errors.
-- Minimal HTTP endpoints: `/api/health` with verbose component snapshot including storage status and available bytes, paginated `/api/alerts` with exact-match, time range, MITRE, matched-keyword, and aggregate-count filters, `/api/metrics` with process-lifetime packet/alert rate gauges, rule listing, rule create/update/delete, rule reload, file-backed suppression create/update/delete/reload, method-aware error envelopes, optional PSK Bearer auth for modifying endpoints, non-GET audit logs, optional localhost-only pprof, storage health gauges, and payload preview redaction before alert writes.
-- Seed rules in canonical wrapped JSON schema, with legacy schema compatibility retained in the loader.
-- C-side JSON line formatting remains a bounded handwritten formatter for v0.1.0. It is covered by escaping, truncation, Base64 payload, UDS sender, microbenchmark, fuzz-smoke, and e2e heartbeat checks; a cJSON migration is not required unless later fuzzing exposes a concrete parser or formatting defect.
-- Local sanitized pcap corpus pressure evidence can be generated with `make e2e-corpus-pressure`; evidence output is ignored and corpus paths are redacted by default.
-- Sustained C parser fuzz evidence can be generated with `make fuzz-sustained`; external corpus paths are redacted in generated summaries unless explicitly enabled for private debugging.
-
----
-
-## Not Implemented Yet
-
-These are v0.1.0 goals, not current behavior:
-
-- Automatic disk cleanup or restart-free recovery after disk-full emergency mode.
-- Full Prometheus metric coverage beyond the current process, process-lifetime packet/alert rates, current/high-water queue, rule/write latency, alert, storage, worker, and capture heartbeat metrics.
-- Remaining large-corpus query tuning.
-- Sustained external C fuzz evidence is still pending; `make fuzz-sustained` now provides the local evidence entrypoint.
-- Published registry image for a named release.
-
----
-
-## Build From Source
-
-Prerequisites: Go 1.21+, GCC 9+, libpcap development headers, make, Python 3.
+Ubuntu 依赖：Go 1.22+、GCC、make、libpcap 开发包、Python 3、curl。
 
 ```bash
 sudo apt install -y build-essential gcc make libpcap-dev golang-go python3 curl
 make quickstart
 ```
 
-Scapy is optional for quickstart; `scripts/gen_test_pcap.py` has a stdlib fallback.
+`make quickstart` 会构建 `bin/netsentry-capture` 与 `bin/netsentry-engine`，生成 `/tmp/netsentry_test.pcap`，启动 loopback API 与 `/tmp/netsentry.sock`，分析样本并打印告警。默认样本应产生 5 条告警。
 
----
-
-## API In This Build
+常用 API：
 
 ```bash
-curl http://localhost:8080/api/health
-curl "http://localhost:8080/api/alerts?severity=high&page=1&per_page=20" | python3 -m json.tool
+curl http://127.0.0.1:8080/api/health
+curl "http://127.0.0.1:8080/api/alerts?severity=high&page=1&per_page=20" \
+  | python3 -m json.tool
+curl http://127.0.0.1:8080/api/metrics
 ```
 
-Current alert responses use the stable list envelope:
+## 架构
 
-```json
-{
-  "data": [ ... ],
-  "pagination": {
-    "page": 1,
-    "per_page": 20,
-    "total": 5
-  }
-}
+```mermaid
+flowchart LR
+    P[pcap / 网卡] --> C[C capture]
+    C -->|JSONL + Base64 / UDS 0600| R[Go receiver]
+    R --> Q[有界队列]
+    Q --> W[Worker pool]
+    W --> E[AC 候选 + 逐规则复核]
+    E --> S[抑制与脱敏]
+    S --> D[(SQLite / recovery JSONL)]
+    D --> A[HTTP API / metrics]
 ```
 
-Supported filters are documented in `docs/api-reference.md`.
+核心设计：
 
-Performance microbenchmark scope, local baseline, and the repeat-pcap end-to-end pressure smoke are documented in `docs/performance.md`.
+- C parser 对每个 header offset 做 capture-length 边界检查，只接受 Ethernet DLT。
+- UDS frame 最大 64 KiB；payload preview 必须为 Base64，解码长度必须与 `payload_len` 一致。
+- 规则 reload 先构建完整不可变 `ruleState`，再通过 `atomic.Pointer` 一次替换。
+- payload 规则先用 Aho-Corasick 生成候选，再复核大小写、协议、端口、方向、offset/depth。
+- SQLite 以固定时间窗聚合告警；recovery JSONL 与串行写临界区避免并发 worker 破坏恢复语义。
 
----
+## 安全默认值
 
-## Detection Boundaries
+HTTP API 默认只监听 `127.0.0.1:8080`。若配置为非 loopback 地址，启动校验会要求同时启用非空 Bearer token：
 
-| Item | v0.1.0 boundary |
-| --- | --- |
-| Primary mode | Offline pcap analysis |
-| Protocols | Ethernet/VLAN/Q-in-Q, IPv4, TCP, UDP passthrough |
-| Rule types | `payload_match`, `ip_blacklist`, `port_blacklist` |
-| Not supported | IPv6, TLS decryption, TCP stream reassembly, IP fragment reassembly |
-| Known bypasses | Split TCP segments, URL/Unicode encoding, SQL comment insertion |
+```yaml
+engine:
+  api_listen_host: "127.0.0.1"
+  api_port: 8080
+  api_auth_enabled: false
+  api_auth_token: "${NETSENTRY_API_TOKEN:}"
+```
 
-Payload matching runs on per-packet cleartext payload only. If an attack string is split across TCP segments, NetSentry v0.1.0 will miss it.
+对外部署时将 `api_listen_host` 改为明确地址、设置 `NETSENTRY_API_TOKEN`、启用认证，并置于 TLS 反向代理或受控网络之后。HTTP server 设置 read/header/write/idle timeout、16 KiB header 上限；规则与 suppression mutation body 最大 1 MiB，且只能包含一个 JSON 文档。pprof 默认关闭并强制 loopback。
 
----
+## 检测与 MITRE ATT&CK
 
-## Project Layout
+支持 `payload_match`、`ip_blacklist`、`port_blacklist`。规则文件使用 `{"rules": [...]}` schema；loader 仍兼容旧数组格式。
+
+v0.1 告警 schema 每条规则最多保存一个 MITRE technique。加载时会校验 technique ID、tactic、name 的 canonical tuple，避免拼写错误和静默截断。当前 seed 映射包括 T1190、T1059.004、T1071、T1595。网络 signature 只表示与 technique 一致的指标，不证明攻击已成功。
+
+当前边界：
+
+| 项目 | v0.1 边界 |
+|---|---|
+| 主要模式 | 离线 pcap；live capture 为实验能力 |
+| 协议 | Ethernet/VLAN/QinQ、IPv4、TCP/UDP 单包 |
+| 不支持 | IPv6、TLS 解密、IP/TCP 重组、应用层规范化 |
+| 已知绕过 | 跨 TCP segment、编码/Unicode、SQL comment 插入 |
+
+## 测试矩阵
+
+```bash
+# A. 单元、race 与 C ASan（串行，避免共享 bin/ 的 clean/build 冲突）
+make test-unit
+
+# B. 外部 corpus 集成测试
+make test-integration
+
+# C. pcap -> UDS -> engine -> SQLite -> API 端到端测试
+make test-e2e
+
+# D. 可调端到端压力测试
+make test-stress
+make test-stress STRESS_REPEATS=10000
+```
+
+外部 fixture 位于源码同级 `../NetSentry_TestAssets/`，不进入本仓库 Git。它们来自固定 revision 的 PcapPlusPlus 与 Zeek，`manifest.json` 保存来源、用途、字节数、SHA-256 与许可证，管理命令为：
+
+```bash
+../NetSentry_TestAssets/manage_pcaps.py fetch
+../NetSentry_TestAssets/manage_pcaps.py verify
+```
+
+其他门禁：
+
+```bash
+make test-coverage
+make fuzz-parser
+FUZZ_LONG_ITERATIONS=1000000 make fuzz-parser-long
+make fuzz-sustained
+PCAP_CORPUS=/path/to/reviewed-corpus make e2e-corpus-pressure
+make rc-check
+```
+
+外部/生产 pcap 可能包含敏感内容。不得提交原始 corpus、私有路径或 `docs/evidence/local/`；分享前先运行 `make sanitize-pcap INPUT=in.pcap OUTPUT=out.pcap`，再人工复核。
+
+## 构建与发布
+
+```bash
+make build
+make dist
+make release-artifacts VERSION=0.1.1
+make docker-build
+make release-gate
+```
+
+GitHub Actions 在 main push/PR 执行 RC 检查，version tag 工作流发布 GitHub Release 与 GHCR。v0.1.0 的签名 tag、Release 和 `ghcr.io/decline-llc/netsentry:v0.1.0` 已于 2026-07-11 验证；详细证据见 `docs/evidence/release-v0.1.0.md`。v0.1.1 仍要求经审查的 production-derived sanitized pcap 证据。
+
+## 项目结构
 
 ```text
-capture/    C capture and packet parsing code
-engine/     Go engine, rule matcher, models, minimal API
-configs/    Runtime config, seed rules, and seed suppressions
-docs/       Architecture, API, and development notes
-scripts/    Quickstart pcap generator, e2e checks, release packaging, pcap sanitizer
+capture/    C 抓包、协议解析、UDS sender、单测/benchmark/fuzz
+engine/     Go receiver、规则、pipeline、SQLite、API、指标
+configs/    运行配置、seed rules、suppressions
+docs/       架构、API、开发、发布与审计文档
+scripts/    E2E、压力、corpus、fuzz、打包与知识同步工具
 ```
 
----
+## 路线图
 
-## Development Roadmap
+三个月路线图与完整审计清单见 [AUDIT_REPORT.md](AUDIT_REPORT.md)：
 
-The local authority for future work is `First/NETSENTRY_MASTER_PLAN.md`, which is intentionally ignored by Git and not pushed. Public docs summarize the same direction:
+- v0.1.1：安全默认值、外部 fixture、CI 依赖/知识门禁。
+- v0.2.0：统一配置契约、IPv6/pcapng DLT 策略、UDS 并发上限、性能预算。
+- v0.3.0：IP/TCP 重组、多 MITRE 映射与置信度、可版本化 ATT&CK catalog。
 
-- W2/W3: C parser tests, serializer hardening, heartbeat and reconnect behavior.
-- W4/W5: modular Go receiver and pipeline worker.
-- W6: rule semantics and Prometheus metrics.
-- W7: SQLite alert aggregation and storage.
-- W8/W9: full API contract, health, auth, audit, pprof.
-- W10-W12: integration tests, graceful shutdown, pressure tests, release prep.
+## 许可证
 
----
-
-## License
-
-MIT. See [LICENSE](LICENSE).
+MIT，见 [LICENSE](LICENSE)。

@@ -6,7 +6,7 @@
 
 ## Implemented Today
 
-Base URL: `http://localhost:8080`
+Default base URL: `http://127.0.0.1:8080`. `engine.api_listen_host` defaults to loopback; a non-loopback value is rejected unless Bearer authentication is enabled with a non-empty token.
 
 ### `GET /api/health`
 
@@ -182,6 +182,8 @@ Reloads suppressions from `engine.suppressions_file` and atomically swaps the ac
 
 Creates a rule, writes the canonical wrapped rules file, reloads the saved file, and atomically swaps the active rule snapshot. The request body is a single rule object using the schema below. Duplicate IDs return `RULE_ALREADY_EXISTS`.
 
+Rule and suppression mutation bodies are limited to 1 MiB, reject unknown fields, and must contain exactly one JSON document.
+
 ### `PUT /api/rules/{id}`
 
 Replaces an existing rule, persists the full rules file, reloads it, and atomically swaps the active snapshot. If the body includes `id`, it must match the path ID.
@@ -207,6 +209,7 @@ Current limitations:
 - Validation, unsupported method, and internal API errors use the unified error envelope.
 - Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk.
 - Optional PSK Bearer authentication protects modifying rule and suppression endpoints when `engine.api_auth_enabled` is true.
+- The HTTP listener has explicit read/header/write/idle timeouts, a 16 KiB header limit, and loopback-only defaults.
 - Non-GET API requests emit structured zap audit logs with request ID, method, path, status, authorization outcome, target, remote address, and duration.
 - Optional pprof runs on a separate localhost-only server when `engine.pprof_enabled` is true.
 - Suppressions load from `engine.suppressions_file` at startup; create, update, delete, and reload operations persist or reload that file before swapping the active in-memory filter.
@@ -261,6 +264,8 @@ Planned endpoints:
 | `GET /debug/pprof/*` | partial | Optional separate localhost-only server when `engine.pprof_enabled` is true; not public API. |
 
 Authentication: modifying rule and suppression endpoints require `Authorization: Bearer <token>` when `engine.api_auth_enabled` is true. The token is configured with `engine.api_auth_token`.
+
+MITRE mapping: the v0.1 alert schema stores at most one technique per rule. Rule reload validates supported technique ID/tactic/name tuples against the versioned in-code catalog and rejects multiple mappings instead of silently dropping them.
 
 ---
 

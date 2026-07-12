@@ -25,7 +25,7 @@ pcap file
   -> C capture (libpcap, frame parsing, Base64 payload preview)
   -> UDS JSON lines (hello, heartbeat, packet frames)
   -> Go receiver packet channel
-  -> single pipeline worker
+  -> configurable pipeline worker pool
   -> atomic.Pointer rule engine
   -> SQLite alert store with UPSERT aggregation
   -> GET /api/alerts
@@ -37,7 +37,7 @@ Current implementation notes:
 - `capture/src/eth_parser.c` handles Ethernet, VLAN/Q-in-Q, IPv4, TCP, and UDP with bounds checks.
 - `capture/src/uds_sender.c` formats JSON frames with explicit string escaping, Base64 payload preview encoding, full-line UDS writes, write-error counters, and bounded initial reconnect support.
 - `engine/internal/receiver` owns the UDS listener, hello/heartbeat state, and context-aware packet channel.
-- `engine/internal/pipeline` owns the single worker that consumes packets, calls the rule engine, timestamps alerts, and writes them through an `AlertWriter`.
+- `engine/internal/pipeline` is driven by a configurable worker pool that consumes the shared bounded channel, calls the thread-safe rule engine, timestamps alerts, and writes through an `AlertWriter`. SQLite/recovery writes are serialized inside the store.
 - `engine/internal/alert` owns the SQLite alert store, aggregation, and SQL-backed alert querying; `engine/internal/api` owns the minimal HTTP router, pagination, request validation, and error envelopes.
 - `engine/internal/rule` already uses immutable rule snapshots via `atomic.Pointer[ruleState]`.
 
@@ -45,7 +45,7 @@ Current implementation notes:
 
 ## 3. IPC Contract
 
-C sends one JSON object per line. String fields are escaped before serialization; `payload_preview` is Base64.
+C sends one JSON object per line. String fields are escaped before serialization; `payload_preview` is Base64. The Go receiver caps a frame at 64 KiB and verifies IP fields, timestamp microseconds, Base64 validity, the 4096-byte payload ceiling, and decoded-length consistency.
 
 Control frames:
 
@@ -126,7 +126,7 @@ C capture
 Planned modules:
 
 - `internal/receiver`: UDS listener, hello validation, heartbeat state. Implemented in the current build; broader Go engine lifecycle integration remains future work.
-- `internal/pipeline`: worker lifecycle and alert flow. Implemented as a single worker in the current build.
+- `internal/pipeline`: configurable worker-pool lifecycle and alert flow. Matching can run concurrently while the store serializes recovery-log/SQLite write critical sections.
 - `internal/alert`: aggregation, SQLite store, JSONL recovery-log replay, indexed SQL-backed alert filtering/pagination, daily-shard timestamp-based writes, cross-file querying/counting, TTL pruning, old shard cleanup, payload redaction, and file-backed suppressions.
 - `internal/api`: router, pagination request parsing, rule CRUD/reload, suppressions API, PSK auth for mutations, errors, health, audit middleware, and metrics.
 - `internal/stats`: counters and Prometheus text rendering for process, queue, rule, alert, worker, and capture heartbeat metrics.
@@ -140,7 +140,7 @@ Target behavior:
 - Packet channel sends should block rather than silently drop.
 - Blocking sends must also listen to `ctx.Done()` so shutdown cannot leak goroutines.
 - C reconnect uses exponential backoff, can bound initial offline connection attempts, and counts write errors/dropped frames while disconnected.
-- Engine shutdown waits for the UDS receiver accept loop/connection handlers and the single pipeline worker before the alert store is closed.
+- Engine shutdown waits for the UDS receiver accept loop/connection handlers and every pipeline worker before the alert store is closed.
 
 The current development build has signal-aware HTTP shutdown plus explicit receiver/worker teardown ordering. Remaining shutdown validation should focus on active-load drills that combine receiver, worker, HTTP, and storage teardown.
 

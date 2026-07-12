@@ -23,9 +23,10 @@ Ready:
 - The tag publication workflows now run `make release-gate` after `make rc-check` and before building release assets or logging in to GHCR.
 - The approved v0.1.0 exception in `docs/audit/release_exception_v0.1.0.yaml` scopes out only real production-derived pcap evidence and expires before v0.1.1.
 
-Remaining before tagging v0.1.0:
+v0.1.0 publication result:
 
-- Version tag `v0.1.0` must be created from the pushed passing release commit, then the checked-in GitHub Release and GHCR workflows must publish the named assets successfully.
+- The signed `v0.1.0` tag, GitHub Release assets, tag-triggered Docker workflow, and public `ghcr.io/decline-llc/netsentry:v0.1.0` manifest were verified on 2026-07-11. Do not recreate or move the immutable tag.
+- The version-scoped exception does not apply to v0.1.1; reviewed production-derived sanitized pcap evidence remains mandatory for the next patch release.
 
 The release gate reads `docs/evidence/release-v0.1.0.md` and fails closed
 unless the reviewed public record has an approved final decision, at least

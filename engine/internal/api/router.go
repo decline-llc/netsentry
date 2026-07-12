@@ -4,7 +4,9 @@ import (
 	"context"
 	"crypto/subtle"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -18,6 +20,8 @@ import (
 	"github.com/decline-llc/netsentry/pkg/model"
 	"go.uber.org/zap"
 )
+
+const maxMutationBodyBytes = 1 << 20
 
 type AlertStore interface {
 	List(ctx context.Context) ([]*model.Alert, error)
@@ -382,9 +386,9 @@ func (s *Server) handleSuppressions(w http.ResponseWriter, r *http.Request) {
 			writeError(w, r, http.StatusConflict, "SUPPRESSIONS_UNAVAILABLE", "Suppressions manager is not configured")
 			return
 		}
-		suppression, err := decodeSuppression(r)
+		suppression, err := decodeSuppression(w, r)
 		if err != nil {
-			writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid suppression request", err.Error())
+			writeDecodeError(w, r, "Invalid suppression request", err)
 			return
 		}
 		if err := s.opts.Suppressions.Add(*suppression); err != nil {
@@ -433,9 +437,9 @@ func (s *Server) handleSuppressionUpdate(w http.ResponseWriter, r *http.Request,
 		writeError(w, r, http.StatusConflict, "SUPPRESSIONS_UNAVAILABLE", "Suppressions manager is not configured")
 		return
 	}
-	suppression, err := decodeSuppression(r)
+	suppression, err := decodeSuppression(w, r)
 	if err != nil {
-		writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid suppression request", err.Error())
+		writeDecodeError(w, r, "Invalid suppression request", err)
 		return
 	}
 	if suppression.ID != "" && suppression.ID != id {
@@ -496,12 +500,9 @@ func (s *Server) writeSuppressionMutationError(w http.ResponseWriter, r *http.Re
 	}
 }
 
-func decodeSuppression(r *http.Request) (*alert.Suppression, error) {
-	defer r.Body.Close()
-	dec := json.NewDecoder(r.Body)
-	dec.DisallowUnknownFields()
+func decodeSuppression(w http.ResponseWriter, r *http.Request) (*alert.Suppression, error) {
 	var suppression alert.Suppression
-	if err := dec.Decode(&suppression); err != nil {
+	if err := decodeJSONDocument(w, r, &suppression); err != nil {
 		return nil, err
 	}
 	return &suppression, nil
@@ -605,9 +606,9 @@ func (s *Server) handleRuleCreate(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, http.StatusConflict, "RULES_WRITE_UNAVAILABLE", "Rules seed file is not configured")
 		return
 	}
-	newRule, err := decodeRule(r)
+	newRule, err := decodeRule(w, r)
 	if err != nil {
-		writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid rule request", err.Error())
+		writeDecodeError(w, r, "Invalid rule request", err)
 		return
 	}
 	if err := validateRuleBasics(newRule); err != nil {
@@ -632,9 +633,9 @@ func (s *Server) handleRuleUpdate(w http.ResponseWriter, r *http.Request, id str
 		writeError(w, r, http.StatusConflict, "RULES_WRITE_UNAVAILABLE", "Rules seed file is not configured")
 		return
 	}
-	updated, err := decodeRule(r)
+	updated, err := decodeRule(w, r)
 	if err != nil {
-		writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid rule request", err.Error())
+		writeDecodeError(w, r, "Invalid rule request", err)
 		return
 	}
 	if updated.ID == "" {
@@ -681,15 +682,38 @@ func (s *Server) handleRuleDelete(w http.ResponseWriter, r *http.Request, id str
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func decodeRule(r *http.Request) (*model.Rule, error) {
-	defer r.Body.Close()
-	dec := json.NewDecoder(r.Body)
-	dec.DisallowUnknownFields()
+func decodeRule(w http.ResponseWriter, r *http.Request) (*model.Rule, error) {
 	var rule model.Rule
-	if err := dec.Decode(&rule); err != nil {
+	if err := decodeJSONDocument(w, r, &rule); err != nil {
 		return nil, err
 	}
 	return &rule, nil
+}
+
+func decodeJSONDocument(w http.ResponseWriter, r *http.Request, dst any) error {
+	defer r.Body.Close()
+	r.Body = http.MaxBytesReader(w, r.Body, maxMutationBodyBytes)
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+	if err := dec.Decode(dst); err != nil {
+		return err
+	}
+	if err := dec.Decode(&struct{}{}); !errors.Is(err, io.EOF) {
+		if err == nil {
+			return fmt.Errorf("request body must contain exactly one JSON document")
+		}
+		return fmt.Errorf("invalid trailing JSON data: %w", err)
+	}
+	return nil
+}
+
+func writeDecodeError(w http.ResponseWriter, r *http.Request, message string, err error) {
+	var tooLarge *http.MaxBytesError
+	if errors.As(err, &tooLarge) {
+		writeError(w, r, http.StatusRequestEntityTooLarge, "REQUEST_TOO_LARGE", "Request body exceeds 1 MiB limit")
+		return
+	}
+	writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", message, err.Error())
 }
 
 func validateRuleBasics(r *model.Rule) error {

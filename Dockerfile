@@ -42,7 +42,7 @@ COPY --from=build /src/bin/netsentry-capture /usr/local/bin/netsentry-capture
 COPY --from=build /src/bin/netsentry-engine /usr/local/bin/netsentry-engine
 COPY configs ./configs
 COPY docs ./docs
-COPY README.md LICENSE CHANGELOG.md SECURITY.md ./
+COPY README.md README.en.md AUDIT_REPORT.md LICENSE CHANGELOG.md SECURITY.md ./
 
 RUN mkdir -p data logs && chmod 0750 data logs
 

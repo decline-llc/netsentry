@@ -28,6 +28,8 @@ cp "${ROOT_DIR}/bin/netsentry-engine" "${STAGE_DIR}/${PACKAGE_NAME}/bin/"
 cp -R "${ROOT_DIR}/configs" "${STAGE_DIR}/${PACKAGE_NAME}/"
 cp -R "${ROOT_DIR}/docs" "${STAGE_DIR}/${PACKAGE_NAME}/"
 cp "${ROOT_DIR}/README.md" "${STAGE_DIR}/${PACKAGE_NAME}/"
+cp "${ROOT_DIR}/README.en.md" "${STAGE_DIR}/${PACKAGE_NAME}/"
+cp "${ROOT_DIR}/AUDIT_REPORT.md" "${STAGE_DIR}/${PACKAGE_NAME}/"
 cp "${ROOT_DIR}/LICENSE" "${STAGE_DIR}/${PACKAGE_NAME}/"
 cp "${ROOT_DIR}/CHANGELOG.md" "${STAGE_DIR}/${PACKAGE_NAME}/"
 cp "${ROOT_DIR}/SECURITY.md" "${STAGE_DIR}/${PACKAGE_NAME}/"
@@ -44,6 +46,8 @@ This archive contains a development snapshot of NetSentry v0.1.0.
 - configs/
 - docs/
 - README.md
+- README.en.md
+- AUDIT_REPORT.md
 - CHANGELOG.md
 - SECURITY.md
 
@@ -74,7 +78,8 @@ The source repository release-candidate bundle is \`make rc-check\`. It covers d
 
 ## References
 
-- README.md for quickstart and current behavior.
+- README.md / README.en.md for bilingual quickstart and current behavior.
+- AUDIT_REPORT.md for the prioritized audit and three-month roadmap.
 - docs/development.md for local build and validation commands.
 - docs/api-reference.md for API behavior.
 - CHANGELOG.md for current gaps and release history.

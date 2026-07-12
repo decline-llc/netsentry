@@ -50,6 +50,7 @@ static void append_tcp_flag(char *dst, size_t dst_len, const char *flag) {
 static int parse_ipv4(const uint8_t *ip_start, uint32_t avail,
                       PacketInfo *info) {
     if (avail < 20) return -1;   /* minimum IPv4 header */
+    if ((ip_start[0] >> 4) != 4) return -1;
 
     uint8_t  ihl      = (ip_start[0] & 0x0F) * 4;
     if (ihl < 20 || ihl > avail) return -1;
@@ -114,6 +115,7 @@ static int parse_ipv4(const uint8_t *ip_start, uint32_t avail,
 int parse_frame(const uint8_t *pkt, uint32_t pkt_len,
                 int64_t ts_sec, int32_t ts_usec,
                 PacketInfo *info) {
+    if (!pkt || !info) return -1;
     memset(info, 0, sizeof(*info));
     info->timestamp_sec  = ts_sec;
     info->timestamp_usec = ts_usec;

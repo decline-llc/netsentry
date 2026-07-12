@@ -37,6 +37,9 @@ make docs-check
 echo "[rc-check] make python-check"
 make python-check
 
+echo "[rc-check] make knowledge-check"
+make knowledge-check
+
 echo "[rc-check] make config-check"
 make config-check
 
@@ -71,6 +74,7 @@ tar -tzf "${ARCHIVE_PATH}" \
     "${PACKAGE_NAME}/configs/suppressions.json" \
     "${PACKAGE_NAME}/docs/development.md" \
     "${PACKAGE_NAME}/README.md" \
+    "${PACKAGE_NAME}/README.en.md" \
     "${PACKAGE_NAME}/CHANGELOG.md" \
     "${PACKAGE_NAME}/RELEASE_NOTES.md" >/dev/null
 

@@ -50,6 +50,7 @@ type Store struct {
 	retentionDays     int
 	recoveryLogPath   string
 	now               func() time.Time
+	writeMu           sync.Mutex
 	healthMu          sync.RWMutex
 	health            StorageHealth
 }
@@ -392,6 +393,8 @@ INSERT OR IGNORE INTO alert_events (event_id, created_at) VALUES (?, ?)
 
 // WriteBatch inserts alerts and aggregates repeats in the configured window.
 func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
+	s.writeMu.Lock()
+	defer s.writeMu.Unlock()
 	if err := ctx.Err(); err != nil {
 		return err
 	}
