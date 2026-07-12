@@ -79,3 +79,76 @@ git log -1 --oneline
 ```
 
 维护时检查：YAML 完整、MOC 可达、双向链接、commit SHA 存在、路径为 repo-relative、自动草稿已复核、稳定笔记包含实质性知识。发布记录必须区分实现、合成测试、本地证据和仍阻塞事项，不得把 synthetic pressure 或无语料 fuzz 宣传成真实流量证据。
+
+## 7. 本地 Vault 恢复手册
+
+### 7.1 索引损坏或丢失
+
+全量提交索引（`04-开发迭代记录/全量提交索引.md`）由 push-success helper 每次重建。如果文件损坏或被误删：
+
+```bash
+NETSENTRY_SYNC_RANGE="$(git -C /home/virtual-machine/Desktop/NetSentry rev-list --max-parents=0 HEAD | tail -n1)..HEAD" \
+  /home/virtual-machine/Desktop/NetSentry/.git/hooks/post-push sync
+```
+
+使用项目首个 commit 到当前 HEAD 的范围即可重建完整索引。
+
+### 7.2 从空 Vault 重建
+
+如果 Vault 目录丢失：
+
+```bash
+mkdir -p /home/virtual-machine/Desktop/NetSentry-Knowledge
+NETSENTRY_FULL_SYNC=1 \
+  NETSENTRY_VAULT=/home/virtual-machine/Desktop/NetSentry-Knowledge \
+  /home/virtual-machine/Desktop/NetSentry/.git/hooks/post-push sync
+```
+
+`NETSENTRY_FULL_SYNC=1` 触发从 root commit 开始的完整同步。
+
+### 7.3 失败 range 重试
+
+如果同步因临时问题中断（Python 异常、磁盘满、权限错误），修复问题后用相同 range 重新执行即可。helper 是幂等的：重复同步同一 range 不会产生重复的提交索引行，迭代笔记和草稿会被覆盖为相同内容。
+
+确认上一次成功的远端 SHA：
+
+```bash
+git -C /home/virtual-machine/Desktop/NetSentry log --oneline -3 origin/main
+```
+
+然后用失败时的 range 或上次成功后的新 range 重新执行。
+
+### 7.4 手动核验 MOC 可达性
+
+同步后检查 MOC 入口的 wiki 链接是否指向存在的笔记：
+
+```bash
+cd /home/virtual-machine/Desktop/NetSentry-Knowledge
+grep -oP '\[\[.*?\]\]' 00-MOC/NetSentry知识总览.md | while read link; do
+  note="${link#\[\[}"
+  note="${note%\]\]}"
+  ls "$note.md" >/dev/null 2>&1 || echo "BROKEN: $link"
+done
+```
+
+### 7.5 知识内容安全检查
+
+确保 Vault 不包含凭据、token、sudo 密码或私有 pcap 路径：
+
+```bash
+cd /home/virtual-machine/Desktop/NetSentry-Knowledge
+rg -li "ghp_\|sk-\|password\|sudo\|PRIVATE KEY\|secret\|token" | grep -v "_待整理"
+```
+
+匹配到的文件应手动审核；`_待整理` 目录下的草稿可安全删除。
+
+### 7.6 helper 自身验证
+
+Push-success helper 的完整测试套件：
+
+```bash
+cd /home/virtual-machine/Desktop/NetSentry
+python3 -m unittest scripts.test_post_push_sync
+```
+
+8+ 个独立 Git fixture 测试（10 个测试方法），覆盖精确范围、幂等、非祖先、空范围、MOC 可达、失败恢复、凭据泄漏和路径泄漏。
