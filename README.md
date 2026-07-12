@@ -96,7 +96,7 @@ make test-stress
 make test-stress STRESS_REPEATS=10000
 ```
 
-外部 fixture 位于源码同级 `../NetSentry_TestAssets/`，不进入本仓库 Git。它们来自固定 revision 的 PcapPlusPlus 与 Zeek，`manifest.json` 保存来源、用途、字节数、SHA-256 与许可证，管理命令为：
+外部 fixture 字节位于源码同级 `../NetSentry_TestAssets/`，不进入本仓库 Git。仓库内的 `testdata/external-pcaps/manifest.json` 锁定来源 revision、用途、字节数、SHA-256 与许可证；CI 只下载到临时目录校验 9/9 后删除。日常本地管理命令为：
 
 ```bash
 ../NetSentry_TestAssets/manage_pcaps.py fetch
@@ -106,6 +106,9 @@ make test-stress STRESS_REPEATS=10000
 其他门禁：
 
 ```bash
+(cd engine && go install golang.org/x/vuln/cmd/govulncheck@v1.6.0)
+(cd engine && go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12)
+SUPPLY_CHAIN_FETCH_ASSETS=1 make supply-chain-check
 make test-coverage
 make fuzz-parser
 FUZZ_LONG_ITERATIONS=1000000 make fuzz-parser-long
@@ -113,6 +116,8 @@ make fuzz-sustained
 PCAP_CORPUS=/path/to/reviewed-corpus make e2e-corpus-pressure
 make rc-check
 ```
+
+CI/Release/Docker workflow 的第三方 Action 均固定到 `.github/supply-chain-lock.json` 中审核过的完整 commit SHA；`engine/go.mod` 保留 `go 1.22.2` 语言基线并固定 CI toolchain `go1.25.12`。更新流程见 [docs/supply-chain.md](docs/supply-chain.md)。
 
 外部/生产 pcap 可能包含敏感内容。不得提交原始 corpus、私有路径或 `docs/evidence/local/`；分享前先运行 `make sanitize-pcap INPUT=in.pcap OUTPUT=out.pcap`，再人工复核。
 

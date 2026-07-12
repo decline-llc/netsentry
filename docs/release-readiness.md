@@ -22,6 +22,7 @@ Ready:
 - Approved local fuzz evidence passed on 2026-07-11: `FUZZ_CORPUS=/tmp/netsentry-fuzz-pcap-inputs make fuzz-sustained` completed 1,000,000 ASan mutation iterations plus 6 pcap/pcapng inputs with zero reported crashes. The corpus path is redacted in local evidence. This is approved local synthetic evidence, not external-corpus release evidence.
 - The tag publication workflows now run `make release-gate` after `make rc-check` and before building release assets or logging in to GHCR.
 - The approved v0.1.0 exception in `docs/audit/release_exception_v0.1.0.yaml` scopes out only real production-derived pcap evidence and expires before v0.1.1.
+- The 2026-07-12 supply-chain gate pins the Go CI toolchain to `go1.25.12`, pins every third-party Action to a reviewed full commit SHA, validates all workflows with `actionlint v1.7.12`, scans reachable Go code with `govulncheck v1.6.0`, and fetches/verifies all 9 locked external fixture/license files only in an ephemeral directory.
 
 v0.1.0 publication result:
 
@@ -63,6 +64,14 @@ Run the standard local release-candidate bundle:
 
 ```bash
 make rc-check
+```
+
+Run the pinned CI supply-chain gate, including remote external-asset integrity:
+
+```bash
+(cd engine && go install golang.org/x/vuln/cmd/govulncheck@v1.6.0)
+(cd engine && go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12)
+SUPPLY_CHAIN_FETCH_ASSETS=1 make supply-chain-check
 ```
 
 Validate the reviewed evidence before a release workflow:
@@ -137,6 +146,7 @@ mandatory v0.1.1 follow-up.
 ## Release Checklist
 
 - `make rc-check` passes locally.
+- `SUPPLY_CHAIN_FETCH_ASSETS=1 make supply-chain-check` passes with immutable Action refs, the locked Go toolchain, zero reachable vulnerabilities, and 9/9 external hashes.
 - `make release-gate` passes against the reviewed public evidence record.
 - Sudo Docker RC validation passes where Docker is part of the release gate.
 - Synthetic extended pressure and no-corpus ASan fuzz checks pass as auxiliary regression signals.

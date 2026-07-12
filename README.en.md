@@ -96,7 +96,7 @@ make test-stress
 make test-stress STRESS_REPEATS=10000
 ```
 
-External fixtures live beside the source tree in `../NetSentry_TestAssets/` and are not committed to this repository. They come from pinned PcapPlusPlus and Zeek revisions. `manifest.json` records provenance, purpose, byte size, SHA-256, and license:
+External fixture bytes live beside the source tree in `../NetSentry_TestAssets/` and are not committed to this repository. The tracked `testdata/external-pcaps/manifest.json` locks source revisions, purpose, byte size, SHA-256, and licenses. CI downloads all nine entries into an ephemeral directory, verifies them, and deletes them. Local management commands are:
 
 ```bash
 ../NetSentry_TestAssets/manage_pcaps.py fetch
@@ -106,6 +106,9 @@ External fixtures live beside the source tree in `../NetSentry_TestAssets/` and 
 Additional gates:
 
 ```bash
+(cd engine && go install golang.org/x/vuln/cmd/govulncheck@v1.6.0)
+(cd engine && go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12)
+SUPPLY_CHAIN_FETCH_ASSETS=1 make supply-chain-check
 make test-coverage
 make fuzz-parser
 FUZZ_LONG_ITERATIONS=1000000 make fuzz-parser-long
@@ -113,6 +116,8 @@ make fuzz-sustained
 PCAP_CORPUS=/path/to/reviewed-corpus make e2e-corpus-pressure
 make rc-check
 ```
+
+Every third-party Action in the CI, Release, and Docker workflows is pinned to a reviewed full commit SHA in `.github/supply-chain-lock.json`. `engine/go.mod` retains the `go 1.22.2` language baseline and pins the CI toolchain to `go1.25.12`. See [docs/supply-chain.md](docs/supply-chain.md) for the update procedure.
 
 External and production pcaps may contain sensitive data. Never commit raw corpora, private paths, or `docs/evidence/local/`. Before sharing, run `make sanitize-pcap INPUT=in.pcap OUTPUT=out.pcap` and manually review the result.
 

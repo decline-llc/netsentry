@@ -186,7 +186,7 @@ Canonical 参考：
 - [ ] 限制 UDS 并发连接并将 frame contract 常量在 C/Go 间生成或共享。
 - [ ] 接线或删除 reserved config，加入严格 YAML unknown-field 检查。
 - [ ] 将 C capture 配置与 Go engine 配置统一为明确的启动契约。
-- [ ] 在 CI 增加 `govulncheck`、外部 corpus checksum 校验、GitHub Actions SHA pinning。
+- [x] 在 CI 增加 `govulncheck`、外部 corpus checksum 校验、GitHub Actions SHA pinning。
 - [ ] 加入 IPv6、pcapng 多接口/DLT 处理策略与 TCP stream reassembly 设计。
 
 ### P2：v0.3.0
@@ -284,6 +284,15 @@ v0.3.0 发布门禁：schema migration/recovery 演练、24 小时 sustained fuz
 | Workflow YAML + actionlint | PASS；全量 Actions SHA pinning 留在 R1-01 供应链单元 |
 | `git diff --check` / docs / shell / Python / config / deps | PASS |
 | Docker build / image content / runtime health / GHCR review image | PASS；在干净 commit worktree 运行，SHA 标签与远端 digest 记录于本地状态和 Vault |
+
+### R1-01：CI 供应链门禁（2026-07-12）
+
+- CI、Release、Docker Publish 中 11 个第三方 Action 引用全部固定到 7 个审核过的完整 commit SHA，并以相邻版本注释保留可读审计线索；`actionlint v1.7.12` 对三份 workflow 全量通过。
+- `engine/go.mod` 保留 `go 1.22.2` 语言基线，并将执行 toolchain 固定为仍受支持的 n-1 补丁版本 `go1.25.12`；CI 安装固定版本 `govulncheck v1.6.0`，扫描结果为 0 个可达漏洞（required module 中 1 个已知漏洞不可达）。
+- 源码库只跟踪外部测试资产 manifest，不跟踪 pcap/license 字节。CI 在临时目录获取固定 revision 的 9 个文件，逐一验证 byte count 与 SHA-256 后自动删除；本机 sibling TestAssets 的 integration 复验为 9/9、6 个受支持 capture 共 27 packets、1 个 SLL DLT 正确拒绝。
+- `.github/supply-chain-lock.json` 统一记录 Go、工具、Action 和外部资产入口；`scripts/check_supply_chain.py` 对 mutable Action ref、lock/workflow 漂移、非 Node 24 runtime、Go toolchain 漂移、未固定 URL/revision、license 缺失和 checksum 漂移均 fail closed。
+
+验证结果：`SUPPLY_CHAIN_FETCH_ASSETS=1 make supply-chain-check`、`SKIP_DOCKER=1 make rc-check`、外部 corpus integration、`git diff --check` 全部通过；将 checkout 临时改回 mutable `@v7` 的负向测试以 exit 1 正确拒绝；Go 总语句覆盖率为 **75.3%**。
 
 Docker 最终复跑已由本机 sudo Docker 在隔离的干净 worktree 完成：镜像成功构建，两个二进制与配置内容检查通过，容器内 `/api/health` 通过，并以 commit-addressable 审查标签推送 GHCR。正式版本标签、`latest`、Git tag 和 Release 不属于本轮授权范围。
 
