@@ -2,6 +2,8 @@
 
 SHELL      := /bin/bash
 GO         := go
+GOVULNCHECK ?= govulncheck
+ACTIONLINT  ?= actionlint
 GOPROXY    ?= https://goproxy.cn,direct
 GOCACHE    ?= /tmp/netsentry-go-cache
 GO_MODULE  := ./engine
@@ -12,7 +14,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build build-asan test test-unit test-integration test-e2e test-stress test-coverage deps-check docs-check shell-check python-check knowledge-check config-check asan-test bench fuzz-parser fuzz-parser-long fuzz-sustained gen-sanitized-corpus e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap dist release-artifacts docker-build release-gate rc-check lint clean quickstart help
+.PHONY: all build-c build-go build build-asan test test-unit test-integration test-e2e test-stress test-coverage deps-check supply-chain-check workflow-check docs-check shell-check python-check knowledge-check config-check asan-test bench fuzz-parser fuzz-parser-long fuzz-sustained gen-sanitized-corpus e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap dist release-artifacts docker-build release-gate rc-check lint clean quickstart help
 
 all: build
 
@@ -66,6 +68,18 @@ deps-check:
 	@mkdir -p $(GOCACHE)
 	cd $(GO_MODULE) && GOCACHE=$(GOCACHE) GOPROXY=$(GOPROXY) $(GO) mod verify
 
+## workflow-check — validate GitHub Actions syntax with the pinned actionlint tool
+workflow-check:
+	@command -v $(ACTIONLINT) >/dev/null 2>&1 || { echo "$(ACTIONLINT) not found; install the version in .github/supply-chain-lock.json"; exit 1; }
+	@$(ACTIONLINT) .github/workflows/ci.yml .github/workflows/release.yaml .github/workflows/docker-publish.yml
+
+## supply-chain-check — validate immutable Actions, Go policy, external locks, and reachable vulnerabilities
+supply-chain-check: workflow-check
+	@command -v $(GOVULNCHECK) >/dev/null 2>&1 || { echo "$(GOVULNCHECK) not found; install the version in .github/supply-chain-lock.json"; exit 1; }
+	@python3 scripts/check_supply_chain.py $(if $(filter 1,$(SUPPLY_CHAIN_FETCH_ASSETS)),--fetch-assets,)
+	@mkdir -p $(GOCACHE)
+	cd $(GO_MODULE) && GOCACHE=$(GOCACHE) GOPROXY=$(GOPROXY) $(GOVULNCHECK) ./...
+
 ## docs-check — scan public docs for retired stale wording
 docs-check:
 	@bash scripts/docs_check.sh
@@ -83,7 +97,7 @@ shell-check:
 
 ## python-check — run Python script syntax checks
 python-check:
-	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("scripts/gen_test_pcap.py", "scripts/gen_sanitized_corpus.py", "scripts/sanitize_pcap.py", "scripts/release_gate.py", "scripts/sync_knowledge.py", "scripts/test_sync_knowledge.py"))]'
+	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("scripts/check_supply_chain.py", "scripts/gen_test_pcap.py", "scripts/gen_sanitized_corpus.py", "scripts/sanitize_pcap.py", "scripts/release_gate.py", "scripts/sync_knowledge.py", "scripts/test_sync_knowledge.py"))]'
 
 ## knowledge-check — test deterministic, idempotent Obsidian knowledge extraction
 knowledge-check:

@@ -17,6 +17,15 @@ Optional:
 - Scapy, used by `scripts/gen_test_pcap.py` when installed. The script has a stdlib fallback.
 - `staticcheck`, used by `make lint` when installed.
 
+Pinned supply-chain tools used by CI:
+
+```bash
+(cd engine && go install golang.org/x/vuln/cmd/govulncheck@v1.6.0)
+(cd engine && go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12)
+```
+
+The exact tool versions, upstream commits, Go toolchain, and Action commits are recorded in `.github/supply-chain-lock.json`.
+
 The root Makefile defaults Go build cache writes to `/tmp/netsentry-go-cache`
 so the standard targets work in restricted home-directory environments. Override
 it with `GOCACHE=/path/to/cache` when you want to use a different cache.
@@ -35,6 +44,8 @@ make build-asan    # compile C capture with AddressSanitizer
 make test          # C parser/UDS tests + Go race tests
 make test-coverage # C tests + Go coverage summary
 make deps-check    # verify Go module dependency cache integrity
+make workflow-check # validate GitHub Actions syntax and expressions
+make supply-chain-check # validate immutable CI/toolchain/fixture locks and reachable vulnerabilities
 make docs-check    # scan public docs for retired stale wording
 make shell-check   # run shell script syntax checks
 make python-check  # run Python script syntax checks
@@ -58,6 +69,8 @@ make clean
 ```
 
 Local Docker image builds are available through `make docker-build` and are covered by `make rc-check`. GitHub Actions workflows are present for release-candidate checks, tag-driven GitHub Release publication, and GHCR image publishing; both publication workflows rerun `make rc-check` and `make release-gate` before publishing named assets.
+
+CI runs `SUPPLY_CHAIN_FETCH_ASSETS=1 make supply-chain-check` before `make rc-check`. The supply-chain gate verifies full Action SHAs, the exact Go patch toolchain, pinned tool install commands, `actionlint`, `govulncheck`, and all nine external fixture/license hashes without retaining fixture bytes in Git or the runner workspace.
 
 ---
 
