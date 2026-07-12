@@ -1,8 +1,8 @@
 # NetSentry 全面审计与整改报告
 
-> 审计日期：2026-07-11  
-> 审计基线：`608e7f3`（`main`）  
-> 范围：C capture、Go engine、Unix Socket IPC、SQLite、HTTP API、规则与 MITRE ATT&CK 映射、测试/发布流水线、Obsidian 知识治理  
+> 审计日期：2026-07-11
+> 审计基线：`608e7f3`（`main`）
+> 范围：C capture、Go engine、Unix Socket IPC、SQLite、HTTP API、规则与 MITRE ATT&CK 映射、测试/发布流水线、Obsidian 知识治理
 > 状态：整改执行中；本文件在后续阶段持续追加验证结果与路线图。
 
 ## 1. 执行摘要
@@ -179,7 +179,7 @@ Canonical 参考：
 - [x] 让 `worker_count` 生效并补并发 shutdown/race 测试。
 - [x] 建立外部 pcap asset manifest、checksum、license/source 管理脚本。
 - [x] 增加 unit、integration、E2E、stress 入口并纳入可重复验证。
-- [x] 中英文 README 同步、知识库实质性笔记、main push 知识同步 workflow。
+- [x] 中英文 README 同步、知识库实质性笔记、本机 post-push 精确范围同步。
 
 ### P1：v0.2.x
 
@@ -197,7 +197,7 @@ Canonical 参考：
 
 ## 8. 无法在本地直接闭环的事项
 
-- GitHub hosted runner 无法访问桌面上的 sibling Obsidian Vault，且当前 Vault 不是 Git 仓库。阶段 6 将提供可复用的知识提取脚本、workflow artifact 和可选独立 knowledge repository 同步；要真正跨机器自动追加，需要配置目标知识仓库与 token，或部署带 `NetSentry-Knowledge` 标签的 self-hosted runner。
+- 知识库按维护者决策固定为本机 sibling Vault，不上传远端，也不依赖 GitHub artifact、独立知识仓库或 self-hosted runner。跨机器执行不会自动获得该 Vault；本机开发通过 post-push hook 和确定性抽取脚本闭环。
 - 外部 pcap 即使来自开源仓库也可能包含历史真实地址/内容；本轮仅选小型测试 fixture，记录上游许可证、固定 commit 与 SHA-256，不把 corpus 提交到 NetSentry 源码仓库。
 
 ## 9. 三个月技术路线图（至 v0.3.0）
@@ -253,7 +253,7 @@ v0.3.0 发布门禁：schema migration/recovery 演练、24 小时 sustained fuz
 - 每两周复核一次 P0/P1 清单、依赖漏洞、ATT&CK catalog 版本和 corpus provenance。
 - 每个性能优化必须同时提供基准、资源上限和退化阈值；不接受只报告平均值。
 - 每个新协议 parser 必须同时提供 malformed unit、ASan fuzz seed、外部 fixture 和明确 DLT/长度边界。
-- 每次 main push 生成知识增量；自动生成内容进入可追溯草稿，架构/规则/MITRE 结论再合并到稳定知识点。
+- 每次本机 Git push 生成知识增量；自动生成内容进入可追溯草稿，架构/规则/MITRE 结论再合并到本地稳定知识点。
 
 ## 10. 本轮完成记录
 
@@ -281,10 +281,11 @@ v0.3.0 发布门禁：schema migration/recovery 演练、24 小时 sustained fuz
 | Worker-pool pressure | PASS：1,200 packets / 1,000 raw alerts / 5 aggregated rows / 0 decode/write error；约 462 pps |
 | `govulncheck ./...` | PASS：0 个可达漏洞；1 个 required-module 漏洞不可达 |
 | Knowledge extractor unittest/idempotency | PASS |
-| Workflow YAML + actionlint | PASS；Actions 使用 commit SHA 固定 |
+| Workflow YAML + actionlint | PASS；全量 Actions SHA pinning 留在 R1-01 供应链单元 |
 | `git diff --check` / docs / shell / Python / config / deps | PASS |
+| Docker build / image content / runtime health / GHCR review image | PASS；在干净 commit worktree 运行，SHA 标签与远端 digest 记录于本地状态和 Vault |
 
-Docker 最终复跑未执行：当前用户对 Docker daemon 无访问权限（`docker info` 返回失败），且审批策略不允许交互式 sudo。Dockerfile 的改动仅把 `README.en.md` 与 `AUDIT_REPORT.md` 加入镜像；release package content 已在非 Docker RC 中验证。2026-07-08 的既有 full Docker RC 仍是运行镜像基线，但不能替代本分支合并前的远端 Docker CI。
+Docker 最终复跑已由本机 sudo Docker 在隔离的干净 worktree 完成：镜像成功构建，两个二进制与配置内容检查通过，容器内 `/api/health` 通过，并以 commit-addressable 审查标签推送 GHCR。正式版本标签、`latest`、Git tag 和 Release 不属于本轮授权范围。
 
 ### 外部 TestAssets
 
@@ -306,4 +307,4 @@ Vault 已更新稳定知识点：
 - `06-测试与发布规范/测试矩阵与发布门禁.md`：外部 fixture 与四层测试证据；
 - MOC 已加入新技术点和本轮 CI 知识 note。
 
-GitHub hosted runner 无法直接访问当前非 Git 的桌面 Vault。workflow 已实现三个闭环路径：始终生成 30 天 artifact；配置 `NETSENTRY_KNOWLEDGE_REPO` + 最小权限 token 时自动 push 独立知识仓库；配置带 `netsentry-knowledge` label 的 self-hosted runner 时直接追加本地 Vault。未配置外部仓库或 runner 时，artifact fallback 可用，但“跨机器写入当前桌面 Vault”仍属于外部基础设施待办，而不是代码缺陷。
+维护者选择本地-only 知识模型：桌面 Vault 不建 Git 远端，不配置 GitHub secret 或 self-hosted runner。确定性抽取器保留用于本地验证；每次 Git push 由 `.git/hooks/post-push` 写入准确范围，再由 `$netsentry-next` 将实质性结论合并到稳定知识点并核验 MOC。原先的云端 workflow 方案已撤销，避免产生一个无法直接更新当前 Vault 的第二事实源。
