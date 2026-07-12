@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-11",
+  "policy": {
+    "inert_test_data_only": true,
+    "execute_or_replay_on_network": false,
+    "repository_location": "fixture bytes stay outside the NetSentry source tree",
+    "integrity": "sha256"
+  },
+  "sources": {
+    "PcapPlusPlus": {
+      "repository": "https://github.com/seladb/PcapPlusPlus",
+      "revision": "631ba9f342d2b70e90c414a33137256920c47e0e",
+      "license": "Unlicense",
+      "license_file": "licenses/PcapPlusPlus-LICENSE",
+      "license_url": "https://raw.githubusercontent.com/seladb/PcapPlusPlus/631ba9f342d2b70e90c414a33137256920c47e0e/LICENSE"
+    },
+    "Zeek": {
+      "repository": "https://github.com/zeek/zeek",
+      "revision": "798f92bbab69991be48dd59462a8b344ae8b0329",
+      "license": "BSD-3-Clause-style; see COPYING",
+      "license_file": "licenses/Zeek-COPYING",
+      "license_url": "https://raw.githubusercontent.com/zeek/zeek/798f92bbab69991be48dd59462a8b344ae8b0329/COPYING"
+    }
+  },
+  "files": [
+    {
+      "path": "pcaps/pcpp-http.pcap",
+      "source": "PcapPlusPlus",
+      "upstream_path": "Examples/Tutorials/Tutorial-PacketParsing/1_http_packet.pcap",
+      "url": "https://raw.githubusercontent.com/seladb/PcapPlusPlus/631ba9f342d2b70e90c414a33137256920c47e0e/Examples/Tutorials/Tutorial-PacketParsing/1_http_packet.pcap",
+      "sha256": "0771d47c38af0dd17a5cc9d5390262553103b673480e452c29e7bae78ded7134",
+      "bytes": 483,
+      "purpose": "small Ethernet/IPv4/TCP/HTTP parser fixture"
+    },
+    {
+      "path": "pcaps/pcpp-ipv4-frag.pcap",
+      "source": "PcapPlusPlus",
+      "upstream_path": "Tests/Packet++Test/PacketExamples/IPv4Frag.pcap",
+      "url": "https://raw.githubusercontent.com/seladb/PcapPlusPlus/631ba9f342d2b70e90c414a33137256920c47e0e/Tests/Packet%2B%2BTest/PacketExamples/IPv4Frag.pcap",
+      "sha256": "fe23cb9ed1a79dce0de0b3149eae3662c39cdc1b53b8ae9ac0a811ccf6223b32",
+      "bytes": 4234,
+      "purpose": "IPv4 fragmentation boundary fixture"
+    },
+    {
+      "path": "pcaps/pcpp-dns.pcap",
+      "source": "PcapPlusPlus",
+      "upstream_path": "Tests/Packet++Test/PacketExamples/Dns.pcap",
+      "url": "https://raw.githubusercontent.com/seladb/PcapPlusPlus/631ba9f342d2b70e90c414a33137256920c47e0e/Tests/Packet%2B%2BTest/PacketExamples/Dns.pcap",
+      "sha256": "d880a5004b5a85fed8d5f8fab9d9c1fe8f3fcbab282c29dfcfc8c171e9a536ec",
+      "bytes": 801,
+      "purpose": "Ethernet/IPv4/UDP/DNS fixture"
+    },
+    {
+      "path": "pcaps/pcpp-qinq.pcapng",
+      "source": "PcapPlusPlus",
+      "upstream_path": "Tests/Packet++Test/PacketExamples/QinQ_802.1_AD.pcapng",
+      "url": "https://raw.githubusercontent.com/seladb/PcapPlusPlus/631ba9f342d2b70e90c414a33137256920c47e0e/Tests/Packet%2B%2BTest/PacketExamples/QinQ_802.1_AD.pcapng",
+      "sha256": "b02ac43c87ce21a338b333c1b30e1aa51b34e3e16f4a8cbe0fc5f59f0a215080",
+      "bytes": 1812,
+      "purpose": "pcapng and IEEE 802.1ad QinQ fixture"
+    },
+    {
+      "path": "pcaps/pcpp-linux-sll.pcap",
+      "source": "PcapPlusPlus",
+      "upstream_path": "Tests/Packet++Test/PacketExamples/SllPacket.pcap",
+      "url": "https://raw.githubusercontent.com/seladb/PcapPlusPlus/631ba9f342d2b70e90c414a33137256920c47e0e/Tests/Packet%2B%2BTest/PacketExamples/SllPacket.pcap",
+      "sha256": "fc989d949ed20a8cf85f1f11a4b070b29a68ab4957b026f71ad5964f929a0670",
+      "bytes": 168,
+      "purpose": "negative fixture: Linux cooked DLT must be rejected explicitly"
+    },
+    {
+      "path": "pcaps/zeek-quickstart.pcap",
+      "source": "Zeek",
+      "upstream_path": "doc/traces/quickstart.pcap",
+      "url": "https://raw.githubusercontent.com/zeek/zeek/798f92bbab69991be48dd59462a8b344ae8b0329/doc/traces/quickstart.pcap",
+      "sha256": "090244c27e3c2ab6f4d9f63a11076ae9bd887ee67b28bfd9d1e62293065318a8",
+      "bytes": 2394,
+      "purpose": "independent NSM project Ethernet traffic fixture"
+    },
+    {
+      "path": "pcaps/zeek-ipv4-tcp-good-checksum.pcap",
+      "source": "Zeek",
+      "upstream_path": "testing/btest/Traces/chksums/ip4-tcp-good-chksum.pcap",
+      "url": "https://raw.githubusercontent.com/zeek/zeek/798f92bbab69991be48dd59462a8b344ae8b0329/testing/btest/Traces/chksums/ip4-tcp-good-chksum.pcap",
+      "sha256": "647b7bdda3474c5bf224d4c040131e6cf45252b8ef0d94c81f4c11ac138b8d61",
+      "bytes": 94,
+      "purpose": "minimal independent IPv4/TCP boundary fixture"
+    },
+    {
+      "path": "licenses/PcapPlusPlus-LICENSE",
+      "source": "PcapPlusPlus",
+      "upstream_path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/seladb/PcapPlusPlus/631ba9f342d2b70e90c414a33137256920c47e0e/LICENSE",
+      "sha256": "88d9b4eb60579c191ec391ca04c16130572d7eedc4a86daa58bf28c6e14c9bcd",
+      "bytes": 1210,
+      "purpose": "upstream license record"
+    },
+    {
+      "path": "licenses/Zeek-COPYING",
+      "source": "Zeek",
+      "upstream_path": "COPYING",
+      "url": "https://raw.githubusercontent.com/zeek/zeek/798f92bbab69991be48dd59462a8b344ae8b0329/COPYING",
+      "sha256": "1f984adb6b5cd93d5035c2a87c2df5f38922649fbea90c7bd79ff321d17333aa",
+      "bytes": 1838,
+      "purpose": "upstream license record"
+    }
+  ]
+}
