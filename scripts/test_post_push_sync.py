@@ -11,6 +11,10 @@ import shutil
 import subprocess
 import tempfile
 import unittest
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[0]))
+from fixtures.post_push_fixture import build_fixture_repo
 
 
 POST_PUSH = pathlib.Path(__file__).resolve().parents[1] / ".git" / "hooks" / "post-push"
@@ -189,7 +193,11 @@ class MOCReachabilityTest(unittest.TestCase):
 
 class NegativeSecretsTest(unittest.TestCase):
 
-    SECRET_LIKE = ["password", "sudo", "token", "ghp_", "sk-", "PRIVATE KEY", "secret", "credential"]
+    SECRET_LIKE = [
+        "password", "sudo", "token", "ghp_", "sk-", "PRIVATE KEY",
+        "secret", "credential", "BEGIN RSA", "BEGIN OPENSSH",
+        "private_key", "passwd",
+    ]
 
     def test_vault_output_contains_no_credential_like_strings(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -234,6 +242,32 @@ class NegativeSecretsTest(unittest.TestCase):
                                  f"Vault file {md_file} leaked absolute repo path")
 
 
+    def test_private_paths_not_leaked_in_synthetic_output(self):
+        """Sync helper must not invent private paths in its synthetic metadata."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            repo = root / "repo"
+            vault = root / "vault"
+            repo.mkdir()
+            _git(repo, "init", "--quiet")
+            # Safe commit messages — no private paths
+            _commit(repo, "README.md", "# Proj\n", "docs: project readme")
+            before = _rev(repo, "HEAD")
+            _commit(repo, "src/main.go", "package main\n", "feat: main package")
+            after = _rev(repo, "HEAD")
+            _sync(POST_PUSH, vault, repo, f"{before}..{after}")
+            # The repo temp path must not leak
+            repo_str = str(repo.resolve())
+            for md_file in vault.rglob("*.md"):
+                content = md_file.read_text(encoding="utf-8")
+                self.assertNotIn(repo_str, content,
+                                 "Vault synthetic output leaked repo path")
+                # Private path patterns that sync helper must never generate
+                for bad in ["/home/", "/Users/", "/tmp/private"]:
+                    self.assertNotIn(bad, content,
+                                     "Vault synthetic output invented private path")
+
+
 class FailureRecoveryTest(unittest.TestCase):
     def test_sync_after_interrupted_sync_produces_valid_output(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -261,6 +295,86 @@ class FailureRecoveryTest(unittest.TestCase):
 
             _sync(POST_PUSH, vault, repo, f"{before}..{after}")
             self.assertGreater(index.stat().st_size, 0, "re-sync must rebuild empty index")
+
+
+class FixtureRepoTest(unittest.TestCase):
+    """Tests that use a persistent, pre-built fixture repo with known history."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls._fixture_dir = tempfile.TemporaryDirectory()
+        cls.fixture = build_fixture_repo(pathlib.Path(cls._fixture_dir.name) / "repo")
+        cls.repo = cls.fixture["repo"]
+        cls.root_sha = cls.fixture["root_sha"]
+        cls.head_sha = cls.fixture["head_sha"]
+        cls.all_shas = cls.fixture["shas"]
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._fixture_dir.cleanup()
+
+    def test_full_sync_indexes_all_commits(self):
+        with tempfile.TemporaryDirectory() as vault_dir:
+            vault = pathlib.Path(vault_dir)
+            _sync(POST_PUSH, vault, self.repo,
+                  f"{self.root_sha}..{self.head_sha}")
+
+            index = vault / "04-开发迭代记录" / "全量提交索引.md"
+            self.assertTrue(index.exists(), "index must be created")
+            index_text = index.read_text(encoding="utf-8")
+
+            # Verify each commit appears in the index
+            for sha in self.all_shas:
+                self.assertIn(sha[:10], index_text,
+                              "index missing commit {}".format(sha[:10]))
+
+    def test_exact_range_matches_expected_commits(self):
+        with tempfile.TemporaryDirectory() as vault_dir:
+            vault = pathlib.Path(vault_dir)
+            # Use a sub-range: from 3rd commit to HEAD
+            mid_sha = self.all_shas[5]  # 3rd from root
+            _sync(POST_PUSH, vault, self.repo,
+                  f"{mid_sha}..{self.head_sha}")
+
+            notes = sorted((vault / "04-开发迭代记录").glob("*-自动知识同步.md"))
+            self.assertGreaterEqual(len(notes), 1)
+            text = notes[0].read_text(encoding="utf-8")
+            # HEAD and the intermediate commits after mid_sha must appear
+            self.assertIn(self.head_sha[:10], text)
+            # mid_sha's commit and earlier must not appear
+            self.assertNotIn(self.root_sha[:10], text)
+
+    def test_fixture_repo_idempotent_across_runs(self):
+        with tempfile.TemporaryDirectory() as vault_dir:
+            vault = pathlib.Path(vault_dir)
+            _sync(POST_PUSH, vault, self.repo,
+                  f"{self.root_sha}..{self.head_sha}")
+            first_lines = _index_lines(vault)
+            _sync(POST_PUSH, vault, self.repo,
+                  f"{self.root_sha}..{self.head_sha}")
+            second_lines = _index_lines(vault)
+            self.assertEqual(first_lines, second_lines,
+                             "fixture repo sync must be idempotent")
+
+    def test_fixture_moc_has_valid_links(self):
+        with tempfile.TemporaryDirectory() as vault_dir:
+            vault = pathlib.Path(vault_dir)
+            _sync(POST_PUSH, vault, self.repo,
+                  f"{self.root_sha}..{self.head_sha}")
+
+            moc = vault / "00-MOC" / "NetSentry知识总览.md"
+            self.assertTrue(moc.exists())
+            content = moc.read_text(encoding="utf-8")
+            self.assertIn("[[", content, "MOC must contain wikilinks")
+            self.assertIn("auto-sync:start", content)
+
+    def test_fixture_empty_range_produces_no_notes(self):
+        with tempfile.TemporaryDirectory() as vault_dir:
+            vault = pathlib.Path(vault_dir)
+            _sync(POST_PUSH, vault, self.repo,
+                  f"{self.head_sha}..{self.head_sha}")
+            notes = list((vault / "04-开发迭代记录").glob("*-自动知识同步.md"))
+            self.assertEqual(len(notes), 0)
 
 
 if __name__ == "__main__":
