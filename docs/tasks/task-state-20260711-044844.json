@@ -3,7 +3,7 @@
   "timestamp": "2026-07-11T04:48:44Z",
   "branch": "main",
   "risk_level": "High",
-  "current_checkpoint": "8-push-and-workflow-verification",
+  "current_checkpoint": "complete-awaiting-owner-approval",
   "approval": {
     "approver": "user (explicit approval in conversation)",
     "approve_utc": "2026-07-11T04:49:51Z",
@@ -21,12 +21,12 @@
     "Committed and pushed 3aacf9b to origin/main",
     "Created and verified SSH-signed annotated v0.1.0 tag targeting 32aafaf",
     "Pushed v0.1.0 tag over SSH",
-    "Confirmed public GitHub Release page with two assets"
+    "Confirmed public GitHub Release page with two assets",
+    "Authenticated GitHub Actions verification: Docker Publish run 29140426396 succeeded for tag v0.1.0 at commit 32aafaf",
+    "Authenticated GHCR package verification: public ghcr.io/decline-llc/netsentry:v0.1.0 OCI index is available at sha256:efd9975e52a54e41d1293d157c9d170f1af7aa499439dd76a5c317f72d133052"
   ],
   "in_progress": [],
   "todo": [
-    "Verify GHCR workflow/image with authenticated GitHub Actions or registry access",
-    "Update tag publication fields in docs/evidence/release-v0.1.0.md",
     "Collect real production-derived pcap corpus before v0.1.1"
   ],
   "modified_files": [
@@ -51,16 +51,14 @@
     "tag_signature": "pass: SSH-signed annotated tag verified",
     "tag_push": "pass: origin contains v0.1.0",
     "github_release": "pass: public page shows v0.1.0 and two assets",
-    "ghcr": "unverified: anonymous manifest denied; public package view reports zero packages"
+    "ghcr": "pass: authenticated GitHub API confirms public container package; tag-triggered run 29140426396 succeeded for 32aafaf; public registry v0.1.0 OCI index digest sha256:efd9975e52a54e41d1293d157c9d170f1af7aa499439dd76a5c317f72d133052 verified"
   },
-  "pending_validation": [
-    "authenticated GHCR workflow/image verification"
-  ],
+  "pending_validation": [],
   "pending_commits": [],
   "push_status": "success: origin/main at 3aacf9b",
   "remaining_risks": [
-    "GHCR publication cannot be confirmed without authenticated external access",
-    "v0.1.1 must collect real production-derived pcap evidence"
+    "v0.1.1 must collect real production-derived pcap evidence",
+    "The distinct 0.1.0 GHCR tag was published by a later manual workflow from commit 938c31a and must not be substituted for the v0.1.0 tag evidence"
   ],
-  "resume_instructions": "Use authenticated gh or registry access to inspect the tag-triggered Docker Publish run and verify ghcr.io/decline-llc/netsentry:0.1.0. Do not recreate or overwrite the already-pushed tag. If the workflow failed, follow owner-approved remediation without force-moving v0.1.0."
+  "resume_instructions": "GHCR verification is complete. Do not recreate, overwrite, or force-move the v0.1.0 tag. Before v0.1.1, collect and review real production-derived sanitized pcap evidence; keep v0.1.0 and 0.1.0 GHCR tags distinguished by their recorded source workflows."
 }

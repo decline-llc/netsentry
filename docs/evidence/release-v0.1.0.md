@@ -62,10 +62,14 @@
 - GitHub Release workflow: Release page visible with 2 assets
 - Release asset: visible on public release page
 - Release checksum: visible on public release page
-- GHCR workflow: not independently confirmed; public package lookup returned denied/Packages 0
-- Image: not independently confirmed
-- Reviewer decision: approved for tag-triggered verification
-- Notes: Release is confirmed; GHCR publication remains an external verification follow-up requiring authenticated Actions/registry access.
+- GHCR tag-triggered workflow: [run 29140426396](https://github.com/decline-llc/netsentry/actions/runs/29140426396), `push` event, completed successfully at 2026-07-11T05:01:22Z
+- GHCR workflow commit: 32aafafc8b0d7cadbc53499a1b70d68a5e07ccc1 (matches the signed release tag)
+- GHCR workflow job: `Build and publish image` completed successfully, including GHCR login and image build/push
+- Image: `ghcr.io/decline-llc/netsentry:v0.1.0`, public OCI index digest `sha256:efd9975e52a54e41d1293d157c9d170f1af7aa499439dd76a5c317f72d133052`
+- Image platform: `linux/amd64`; the public OCI index also includes an attestation manifest
+- Package: public `decline-llc/netsentry` GHCR container package, authenticated GitHub API verified
+- Reviewer decision: verified with authenticated Actions/package metadata and public registry manifest inspection
+- Notes: A later successful manual run, [29145146270](https://github.com/decline-llc/netsentry/actions/runs/29145146270), published a distinct `0.1.0` tag from commit `938c31a`; it is not used as evidence for the immutable `v0.1.0` release tag.
 
 ## Sensitive Information Review
 
