@@ -1,6 +1,7 @@
 package config
 
 import (
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -28,6 +29,46 @@ func TestLoadRepositoryConfigFile(t *testing.T) {
 	}
 	if cfg.Engine.APIListenHost != "127.0.0.1" {
 		t.Fatalf("repository API must default to loopback, got %q", cfg.Engine.APIListenHost)
+	}
+}
+
+func TestLoadRejectsUnknownFields(t *testing.T) {
+	tests := []struct {
+		name     string
+		contents string
+		field    string
+	}{
+		{
+			name:     "top level",
+			contents: "unexpected: true\n",
+			field:    "unexpected",
+		},
+		{
+			name: "nested engine",
+			contents: `engine:
+  worker_count: 2
+  worker_cout: 4
+`,
+			field: "worker_cout",
+		},
+		{
+			name:     "multiple documents",
+			contents: "{}\n---\n{}\n",
+			field:    "multiple YAML documents",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "config.yaml")
+			if err := os.WriteFile(path, []byte(tt.contents), 0o600); err != nil {
+				t.Fatal(err)
+			}
+			_, err := Load(path)
+			if err == nil || !strings.Contains(err.Error(), tt.field) {
+				t.Fatalf("expected unknown field %q error, got %v", tt.field, err)
+			}
+		})
 	}
 }
 

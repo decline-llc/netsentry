@@ -1,7 +1,9 @@
 package config
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"net"
 	"net/netip"
 	"os"
@@ -88,7 +90,15 @@ func Load(path string) (*Config, error) {
 	expanded := expandConfigStrings(raw)
 
 	cfg := defaults()
-	if err := yaml.Unmarshal(expanded, cfg); err != nil {
+	decoder := yaml.NewDecoder(bytes.NewReader(expanded))
+	decoder.KnownFields(true)
+	if err := decoder.Decode(cfg); err != nil {
+		return nil, fmt.Errorf("parse config %s: %w", path, err)
+	}
+	if err := decoder.Decode(&struct{}{}); err != io.EOF {
+		if err == nil {
+			return nil, fmt.Errorf("parse config %s: multiple YAML documents are not supported", path)
+		}
 		return nil, fmt.Errorf("parse config %s: %w", path, err)
 	}
 	cfg.Path = path

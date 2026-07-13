@@ -1,0 +1,24 @@
+{
+  "task": "reject-unknown-yaml-configuration-fields",
+  "timestamp": "2026-07-13T08:59:24Z",
+  "branch": "main",
+  "risk_level": "Medium",
+  "current_checkpoint": "complete",
+  "completed": [
+    "Replaced permissive YAML unmarshal with strict known-field decoding",
+    "Rejected multiple YAML documents after the first document",
+    "Added top-level, nested unknown-field, and multiple-document tests",
+    "Confirmed repository config, rule, and suppression files remain valid",
+    "Passed focused config tests, config-check, docs-check, and deps-check",
+    "Passed full C and Go race test suite",
+    "Passed final sensitive-information review"
+  ],
+  "in_progress": [],
+  "todo": [],
+  "pending_validation": [],
+  "pending_commits": [],
+  "remaining_risks": [
+    "Previously ignored misspelled or unsupported YAML fields will now prevent startup by design"
+  ],
+  "resume_instructions": "Strict decoding is validated. Do not broaden configuration semantics in this increment; commit, push, and synchronize only the listed implementation, test, documentation, plan, and state files."
+}
