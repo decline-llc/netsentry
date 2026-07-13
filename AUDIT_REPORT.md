@@ -317,3 +317,17 @@ Vault 已更新稳定知识点：
 - MOC 已加入新技术点和本轮 CI 知识 note。
 
 维护者选择本地-only 知识模型：桌面 Vault 不建 Git 远端，不配置 GitHub secret 或 self-hosted runner。确定性抽取器保留用于本地验证。由于 Git 没有原生客户端 `post-push` hook，`$netsentry-next` 在 push 成功后显式执行 `.git/hooks/post-push sync`（历史文件名）写入准确范围，再将实质性结论合并到稳定知识点并核验 MOC。原先云端 workflow 已撤销，避免产生无法直接更新当前 Vault 的第二事实源。
+
+### R1-03：外部 fixture 治理完善 — post-push 知识同步（2026-07-12）
+
+本轮按持久化状态的 R1-03 范围执行，终止 R1-02 遗留工作并将 post-push 同步测试体系从临时目录提升为确定性 fixture repository。
+
+- **测试扩展**：`scripts/test_post_push_sync.py` 从 11 个测试增至 16 个。新增 `FixtureRepoTest`（5 个测试）使用 `scripts/fixtures/post_push_fixture.py` 生成的确定性 8-commit Git fixture，覆盖全量索引一致性、精确子范围、幂等性、MOC 可达和空范围行为。SECRET_LIKE 模式扩展至覆盖 SSH 私钥标记（`BEGIN RSA`、`BEGIN OPENSSH`）。新增 `test_private_paths_not_leaked_in_synthetic_output` 验证 helper 不虚构 `/home/`、`/Users/` 或 `/tmp/private` 路径。
+- **Fixture 构建器**：`scripts/fixtures/post_push_fixture.py` 通过固定 `GIT_AUTHOR_DATE`/`GIT_COMMITTER_DATE` 生成可复现 SHA 的 8-commit 仓库，提交间引入 README、Makefile、Go 源码、配置文件、规则 JSON、变更日志和测试文件，形成可溯源历史模型。
+- **Makefile 门禁**：`knowledge-check` 目标从仅运行 `test_sync_knowledge.py`（1 个测试）升级为同时运行 `test_post_push_sync.py`（16 个测试），累计 33 个测试方法。两个测试文件及其 fixture 依赖也接入 `python-check` 语法校验。
+- **Vault 稳定笔记**：新建 `06-测试与发布规范/本地Vault恢复手册.md`，覆盖索引损坏修复、空 Vault 重建、失败 range 重试、MOC 可达性核验、安全内容检查和 helper 自测六个场景，并更新 MOC 入口使其可发现。
+- **非 Docker RC**：`SKIP_DOCKER=1 make rc-check` 全通过：Go race 测试、75.3% 覆盖率、C ASan 5,000 iterations、E2E 6 packets/5 alerts/8 rules、dist/checksum/release notes 检查。
+
+交付提交（main）：
+- `e519abe` test: expand post-push sync fixture and negative secrets coverage
+- `b87d4ea` build: wire post-push sync tests into Makefile checks
