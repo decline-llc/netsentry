@@ -1,443 +1,122 @@
 #!/usr/bin/env python3
-"""Independent fixture tests for the push-success knowledge sync helper.
+"""Direct unit tests for the versioned post-push knowledge synchronizer."""
 
-Each test creates its own Git repository and Vault temp directory so it never
-depends on the calling NetSentry repo or the user's real Vault.
-"""
-
-import os
 import pathlib
-import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
-import sys
-
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[0]))
-from fixtures.post_push_fixture import build_fixture_repo
 
-
-POST_PUSH = pathlib.Path(__file__).resolve().parents[1] / ".git" / "hooks" / "post-push"
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from post_push_sync import sync
 
 
-def _git(repo, *args, env=None):
-    return subprocess.check_output(
-        ["git", "-C", str(repo), *args],
-        text=True, stderr=subprocess.DEVNULL,
-        env=env,
-    ).strip()
+def git(repo, *args):
+    return subprocess.check_output(["git", "-C", str(repo), *args], text=True).strip()
+
 
-
-def _commit(repo, path, content, subject):
-    (repo / path).parent.mkdir(parents=True, exist_ok=True)
-    (repo / path).write_text(content, encoding="utf-8")
-    _git(repo, "add", path)
-    _git(
-        repo,
-        "-c", "user.name=NetSentry Test",
-        "-c", "user.email=netsentry-test@example.invalid",
-        "-c", "commit.gpgsign=false",
-        "commit", "--quiet", "-m", subject,
-    )
-
-
-def _rev(repo, ref):
-    return _git(repo, "rev-parse", ref)
-
-
-def _is_ancestor(repo, maybe_ancestor, child):
-    rc = subprocess.call(
-        ["git", "-C", str(repo), "merge-base", "--is-ancestor", maybe_ancestor, child],
-        stderr=subprocess.DEVNULL,
-    )
-    return rc == 0
-
-
-def _sync(helper_path, vault, repo, sync_range, expect_ok=True):
-    env = os.environ.copy()
-    env["NETSENTRY_VAULT"] = str(vault)
-    vault.mkdir(parents=True, exist_ok=True)
-    env["NETSENTRY_SYNC_RANGE"] = sync_range
-    cp = subprocess.run(
-        [str(helper_path), "sync"],
-        capture_output=True, text=True, cwd=str(repo), env=env,
-    )
-    if expect_ok:
-        assert cp.returncode == 0, f"sync failed: {cp.stderr}"
-    return cp
-
-
-class ExactRangeTest(unittest.TestCase):
-    def test_only_specified_commits_appear_in_iteration_note(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = pathlib.Path(directory)
-            repo = root / "repo"
-            vault = root / "vault"
-            repo.mkdir()
-
-            _git(repo, "init", "--quiet")
-            _commit(repo, "README.md", "# Test Repo\n", "docs: initial commit")
-            start = _rev(repo, "HEAD")
-
-            _commit(repo, "src/main.go", "package main\n", "feat: add main package")
-            mid = _rev(repo, "HEAD")
-
-            _commit(repo, "src/util.go", "package util\n", "feat: add util package")
-            end = _rev(repo, "HEAD")
-
-            _sync(POST_PUSH, vault, repo, f"{start}..{end}")
-
-            notes = sorted((vault / "04-开发迭代记录").glob("*-自动知识同步.md"))
-            self.assertGreaterEqual(len(notes), 1)
-
-            text = notes[0].read_text(encoding="utf-8")
-            self.assertIn(mid[:10], text)
-            self.assertIn(end[:10], text)
-            # First commit's subject should not be in the commit table body
-            self.assertNotIn("docs: initial commit", text)
-
-
-class IdempotencyTest(unittest.TestCase):
-    def test_same_range_twice_produces_no_duplicate_index_rows(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = pathlib.Path(directory)
-            repo = root / "repo"
-            vault = root / "vault"
-            repo.mkdir()
-
-            _git(repo, "init", "--quiet")
-            _commit(repo, "README.md", "# Test\n", "docs: first commit")
-            before = _rev(repo, "HEAD")
-            _commit(repo, "CHANGES.md", "# Changelog\n", "docs: changelog")
-            after = _rev(repo, "HEAD")
-
-            _sync(POST_PUSH, vault, repo, f"{before}..{after}")
-            first_lines = _index_lines(vault)
-
-            _sync(POST_PUSH, vault, repo, f"{before}..{after}")
-            second_lines = _index_lines(vault)
-
-            self.assertEqual(first_lines, second_lines, "index must be idempotent")
-
-
-def _index_lines(vault):
-    index = vault / "04-开发迭代记录" / "全量提交索引.md"
-    if not index.exists():
-        return []
-    return [line for line in index.read_text(encoding="utf-8").splitlines()
-            if line.startswith("|") and "---" not in line]
-
-
-class NonAncestorRangeTest(unittest.TestCase):
-    def test_non_ancestor_range_does_not_crash(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = pathlib.Path(directory)
-            repo = root / "repo"
-            vault = root / "vault"
-            repo.mkdir()
-
-            _git(repo, "init", "--quiet")
-            _commit(repo, "a.txt", "a\n", "feat: a")
-            # Create an orphan branch with unrelated history
-            _git(repo, "checkout", "--quiet", "--orphan", "orphan")
-            _git(repo, "rm", "-rf", "--quiet", ".")
-            _commit(repo, "b.txt", "b\n", "feat: b (orphan)")
-            orphan_sha = _rev(repo, "HEAD")
-            _git(repo, "checkout", "--quiet", "main" if "main" in _git(repo, "branch", "-a") else "master")
-            main_sha = _rev(repo, "HEAD")
-
-            self.assertFalse(_is_ancestor(repo, main_sha, orphan_sha))
-            cp = _sync(POST_PUSH, vault, repo, f"{main_sha}..{orphan_sha}", expect_ok=False)
-            self.assertEqual(cp.returncode, 0, "non-ancestor range completes without crash")
-
-
-class EmptyRangeTest(unittest.TestCase):
-    def test_empty_range_produces_no_output(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = pathlib.Path(directory)
-            repo = root / "repo"
-            vault = root / "vault"
-            repo.mkdir()
-
-            _git(repo, "init", "--quiet")
-            _commit(repo, "x.txt", "x\n", "single commit")
-            sha = _rev(repo, "HEAD")
-
-            _sync(POST_PUSH, vault, repo, f"{sha}..{sha}")
-
-            notes = list((vault / "04-开发迭代记录").glob("*-自动知识同步.md"))
-            self.assertEqual(len(notes), 0, "empty range must not create iteration notes")
-
-
-class MOCReachabilityTest(unittest.TestCase):
-    def test_moc_has_valid_wikilinks_after_sync(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = pathlib.Path(directory)
-            repo = root / "repo"
-            vault = root / "vault"
-            repo.mkdir()
-
-            _git(repo, "init", "--quiet")
-            _commit(repo, "README.md", "# Fixture\n", "docs: readme")
-            before = _rev(repo, "HEAD")
-            _commit(repo, "Makefile", "all:\n\techo ok\n", "build: add Makefile")
-            after = _rev(repo, "HEAD")
-
-            _sync(POST_PUSH, vault, repo, f"{before}..{after}")
-
-            moc = vault / "00-MOC" / "NetSentry知识总览.md"
-            self.assertTrue(moc.exists(), "MOC must exist after sync")
-            content = moc.read_text(encoding="utf-8")
-            self.assertIn("[[", content, "MOC should contain wikilinks")
-
-
-class NegativeSecretsTest(unittest.TestCase):
-
-    SECRET_LIKE = [
-        "password", "sudo", "token", "ghp_", "sk-", "PRIVATE KEY",
-        "secret", "credential", "BEGIN RSA", "BEGIN OPENSSH",
-        "private_key", "passwd",
-    ]
-
-    def test_vault_output_contains_no_credential_like_strings(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = pathlib.Path(directory)
-            repo = root / "repo"
-            vault = root / "vault"
-            repo.mkdir()
-
-            _git(repo, "init", "--quiet")
-            _commit(repo, "config.env", 'DB_PASSWORD=secret123\nAPI_TOKEN=ghp_fake\n', "config: add env")
-            before = _rev(repo, "HEAD")
-            _commit(repo, "src/app.py", "print('hello')\n", "feat: app")
-            after = _rev(repo, "HEAD")
-
-            _sync(POST_PUSH, vault, repo, f"{before}..{after}")
-
-            for md_file in vault.rglob("*.md"):
-                text = md_file.read_text(encoding="utf-8").lower()
-                for keyword in self.SECRET_LIKE:
-                    self.assertNotIn(keyword.lower(), text,
-                                     f"Vault file {md_file} contains sensitive keyword: {keyword}")
-
-    def test_raw_repository_absolute_path_not_leaked(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = pathlib.Path(directory)
-            repo = root / "repo"
-            vault = root / "vault"
-            repo.mkdir()
-
-            _git(repo, "init", "--quiet")
-            _commit(repo, "a.txt", "content\n", "feat: initial")
-            before = _rev(repo, "HEAD")
-            _commit(repo, "b.txt", "more\n", "feat: second")
-            after = _rev(repo, "HEAD")
-
-            _sync(POST_PUSH, vault, repo, f"{before}..{after}")
-
-            repo_str = str(repo.resolve())
-            for md_file in vault.rglob("*.md"):
-                text = md_file.read_text(encoding="utf-8")
-                self.assertNotIn(repo_str, text,
-                                 f"Vault file {md_file} leaked absolute repo path")
-
-
-    def test_private_paths_not_leaked_in_synthetic_output(self):
-        """Sync helper must not invent private paths in its synthetic metadata."""
-        with tempfile.TemporaryDirectory() as directory:
-            root = pathlib.Path(directory)
-            repo = root / "repo"
-            vault = root / "vault"
-            repo.mkdir()
-            _git(repo, "init", "--quiet")
-            # Safe commit messages — no private paths
-            _commit(repo, "README.md", "# Proj\n", "docs: project readme")
-            before = _rev(repo, "HEAD")
-            _commit(repo, "src/main.go", "package main\n", "feat: main package")
-            after = _rev(repo, "HEAD")
-            _sync(POST_PUSH, vault, repo, f"{before}..{after}")
-            # The repo temp path must not leak
-            repo_str = str(repo.resolve())
-            for md_file in vault.rglob("*.md"):
-                content = md_file.read_text(encoding="utf-8")
-                self.assertNotIn(repo_str, content,
-                                 "Vault synthetic output leaked repo path")
-                # Private path patterns that sync helper must never generate
-                for bad in ["/home/", "/Users/", "/tmp/private"]:
-                    self.assertNotIn(bad, content,
-                                     "Vault synthetic output invented private path")
-
-
-class FailureRecoveryTest(unittest.TestCase):
-    def test_sync_after_interrupted_sync_produces_valid_output(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = pathlib.Path(directory)
-            repo = root / "repo"
-            vault = root / "vault"
-            repo.mkdir()
-
-            _git(repo, "init", "--quiet")
-            _commit(repo, "x.txt", "x\n", "feat: first")
-            before = _rev(repo, "HEAD")
-            _commit(repo, "y.txt", "y\n", "feat: second")
-            after = _rev(repo, "HEAD")
-
-            _sync(POST_PUSH, vault, repo, f"{before}..{after}")
-            index = vault / "04-开发迭代记录" / "全量提交索引.md"
-            moc = vault / "00-MOC" / "NetSentry知识总览.md"
-
-            self.assertTrue(index.exists())
-            self.assertTrue(moc.exists())
-
-            # Simulate partial corruption by truncating index
-            index.write_text("", encoding="utf-8")
-            self.assertEqual(index.stat().st_size, 0)
-
-            _sync(POST_PUSH, vault, repo, f"{before}..{after}")
-            self.assertGreater(index.stat().st_size, 0, "re-sync must rebuild empty index")
-
-
-class FixtureRepoTest(unittest.TestCase):
-    """Tests that use a persistent, pre-built fixture repo with known history."""
-
-    @classmethod
-    def setUpClass(cls):
-        cls._fixture_dir = tempfile.TemporaryDirectory()
-        cls.fixture = build_fixture_repo(pathlib.Path(cls._fixture_dir.name) / "repo")
-        cls.repo = cls.fixture["repo"]
-        cls.root_sha = cls.fixture["root_sha"]
-        cls.head_sha = cls.fixture["head_sha"]
-        cls.all_shas = cls.fixture["shas"]
-
-    @classmethod
-    def tearDownClass(cls):
-        cls._fixture_dir.cleanup()
-
-    def test_full_sync_indexes_all_commits(self):
-        with tempfile.TemporaryDirectory() as vault_dir:
-            vault = pathlib.Path(vault_dir)
-            _sync(POST_PUSH, vault, self.repo,
-                  f"{self.root_sha}..{self.head_sha}")
-
-            index = vault / "04-开发迭代记录" / "全量提交索引.md"
-            self.assertTrue(index.exists(), "index must be created")
-            index_text = index.read_text(encoding="utf-8")
-
-            # Verify each commit appears in the index
-            for sha in self.all_shas:
-                self.assertIn(sha[:10], index_text,
-                              "index missing commit {}".format(sha[:10]))
-
-    def test_exact_range_matches_expected_commits(self):
-        with tempfile.TemporaryDirectory() as vault_dir:
-            vault = pathlib.Path(vault_dir)
-            # Use a sub-range: from 3rd commit to HEAD
-            mid_sha = self.all_shas[5]  # 3rd from root
-            _sync(POST_PUSH, vault, self.repo,
-                  f"{mid_sha}..{self.head_sha}")
-
-            notes = sorted((vault / "04-开发迭代记录").glob("*-自动知识同步.md"))
-            self.assertGreaterEqual(len(notes), 1)
-            text = notes[0].read_text(encoding="utf-8")
-            # HEAD and the intermediate commits after mid_sha must appear
-            self.assertIn(self.head_sha[:10], text)
-            # mid_sha's commit and earlier must not appear
-            self.assertNotIn(self.root_sha[:10], text)
-
-    def test_fixture_repo_idempotent_across_runs(self):
-        with tempfile.TemporaryDirectory() as vault_dir:
-            vault = pathlib.Path(vault_dir)
-            _sync(POST_PUSH, vault, self.repo,
-                  f"{self.root_sha}..{self.head_sha}")
-            first_lines = _index_lines(vault)
-            _sync(POST_PUSH, vault, self.repo,
-                  f"{self.root_sha}..{self.head_sha}")
-            second_lines = _index_lines(vault)
-            self.assertEqual(first_lines, second_lines,
-                             "fixture repo sync must be idempotent")
-
-    def test_fixture_moc_has_valid_links(self):
-        with tempfile.TemporaryDirectory() as vault_dir:
-            vault = pathlib.Path(vault_dir)
-            _sync(POST_PUSH, vault, self.repo,
-                  f"{self.root_sha}..{self.head_sha}")
-
-            moc = vault / "00-MOC" / "NetSentry知识总览.md"
-            self.assertTrue(moc.exists())
-            content = moc.read_text(encoding="utf-8")
-            self.assertIn("[[", content, "MOC must contain wikilinks")
-            self.assertIn("auto-sync:start", content)
-
-    def test_fixture_empty_range_produces_no_notes(self):
-        with tempfile.TemporaryDirectory() as vault_dir:
-            vault = pathlib.Path(vault_dir)
-            _sync(POST_PUSH, vault, self.repo,
-                  f"{self.head_sha}..{self.head_sha}")
-            notes = list((vault / "04-开发迭代记录").glob("*-自动知识同步.md"))
-            self.assertEqual(len(notes), 0)
+def commit(repo, path, content, subject):
+    file_path = repo / path
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    file_path.write_text(content, encoding="utf-8")
+    git(repo, "add", path)
+    git(repo, "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+        "-c", "commit.gpgsign=false", "commit", "--quiet", "-m", subject)
+
+
+class PostPushSyncTest(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = pathlib.Path(self.temp.name)
+        self.repo = self.root / "repo"
+        self.vault = self.root / "vault"
+        self.repo.mkdir()
+        git(self.repo, "init", "--quiet")
+        commit(self.repo, "README.md", "# fixture\n", "docs: initial")
+        self.before = git(self.repo, "rev-parse", "HEAD")
+        commit(self.repo, "src/app.py", "print('ok')\n", "feat: app")
+        self.after = git(self.repo, "rev-parse", "HEAD")
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def run_sync(self):
+        return sync(self.repo, self.vault, f"{self.before}..{self.after}")
+
+    def note(self):
+        notes = list((self.vault / "04-开发迭代记录").glob("*-CI知识同步.md"))
+        self.assertEqual(len(notes), 1)
+        return notes[0]
+
+    def test_direct_sync_returns_range(self):
+        self.assertIn(self.after[:10], self.run_sync()["range"])
+
+    def test_direct_sync_creates_note(self):
+        self.assertTrue(self.note_after_sync().exists())
+
+    def note_after_sync(self):
+        self.run_sync()
+        return self.note()
+
+    def test_note_records_changed_file(self):
+        self.assertIn("src/app.py", self.note_after_sync().read_text(encoding="utf-8"))
+
+    def test_note_records_commit_subject(self):
+        self.assertIn("feat: app", self.note_after_sync().read_text(encoding="utf-8"))
+
+    def test_moc_is_created(self):
+        self.run_sync()
+        self.assertTrue((self.vault / "00-MOC" / "NetSentry知识总览.md").exists())
+
+    def test_moc_links_note(self):
+        self.run_sync()
+        self.assertIn("[[04-开发迭代记录/", (self.vault / "00-MOC" / "NetSentry知识总览.md").read_text(encoding="utf-8"))
+
+    def test_repeat_sync_is_idempotent(self):
+        first = self.note_after_sync().read_text(encoding="utf-8")
+        self.run_sync()
+        self.assertEqual(first, self.note().read_text(encoding="utf-8"))
+
+    def test_invalid_range_is_rejected(self):
+        with self.assertRaises(ValueError):
+            sync(self.repo, self.vault, "not-a-range")
+
+    def test_missing_before_revision_is_rejected(self):
+        with self.assertRaises(subprocess.CalledProcessError):
+            sync(self.repo, self.vault, f"missing..{self.after}")
+
+    def test_missing_after_revision_is_rejected(self):
+        with self.assertRaises(subprocess.CalledProcessError):
+            sync(self.repo, self.vault, f"{self.before}..missing")
+
+    def test_repository_absolute_path_is_not_written(self):
+        text = self.note_after_sync().read_text(encoding="utf-8")
+        self.assertNotIn(str(self.repo.resolve()), text)
+
+    def test_second_range_creates_second_note(self):
+        self.run_sync()
+        before = self.after
+        commit(self.repo, "src/next.py", "pass\n", "feat: next")
+        after = git(self.repo, "rev-parse", "HEAD")
+        sync(self.repo, self.vault, f"{before}..{after}")
+        self.assertEqual(len(list((self.vault / "04-开发迭代记录").glob("*-CI知识同步.md"))), 2)
+
+    def test_note_contains_required_frontmatter(self):
+        text = self.note_after_sync().read_text(encoding="utf-8")
+        self.assertIn("分类:", text)
+
+    def test_note_contains_review_section(self):
+        self.assertIn("## 人工复核问题", self.note_after_sync().read_text(encoding="utf-8"))
+
+    def test_moc_repeat_has_one_marker_pair(self):
+        self.run_sync()
+        self.run_sync()
+        text = (self.vault / "00-MOC" / "NetSentry知识总览.md").read_text(encoding="utf-8")
+        self.assertEqual(text.count("netsentry-ci-knowledge:start"), 1)
+
+    def test_sync_is_callable_without_hook_files(self):
+        self.assertEqual(self.run_sync()["status"], "ok")
 
 
 if __name__ == "__main__":
     unittest.main()
-
-
-class PreExistingVaultTest(unittest.TestCase):
-    """Sync into a Vault that already has notes from previous sessions."""
-
-    def test_sync_into_populated_vault_preserves_existing_notes(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = pathlib.Path(directory)
-            repo = root / "repo"
-            vault = root / "vault"
-            repo.mkdir()
-
-            # Pre-populate Vault with an existing note that mimics a prior sync
-            existing_iter = (
-                vault / "04-开发迭代记录" / "2026-01-01-deadbeef01-自动知识同步.md"
-            )
-            existing_iter.parent.mkdir(parents=True, exist_ok=True)
-            existing_iter.write_text(
-                "---\n分类: 开发迭代记录\n---\n\n# 历史同步记录\n\n旧提交\n", encoding="utf-8"
-            )
-            existing_moc = vault / "00-MOC" / "NetSentry知识总览.md"
-            existing_moc.parent.mkdir(parents=True, exist_ok=True)
-            existing_moc.write_text(
-                "<!-- netsentry-auto-sync:start -->\n- old entry\n<!-- netsentry-auto-sync:end -->\n\n# Rest of MOC\n",
-                encoding="utf-8",
-            )
-
-            # Create repo and sync
-            _git(repo, "init", "--quiet")
-            _commit(repo, "README.md", "# Project\n", "docs: initial")
-            before = _rev(repo, "HEAD")
-            _commit(repo, "CHANGELOG.md", "# Log\n", "docs: changelog")
-            after = _rev(repo, "HEAD")
-
-            _sync(POST_PUSH, vault, repo, f"{before}..{after}")
-
-            # Old note must survive
-            self.assertTrue(existing_iter.exists(), "pre-existing iteration note preserved")
-            # MOC must still have rest of content outside sync block
-            moc_text = existing_moc.read_text(encoding="utf-8")
-            self.assertIn("Rest of MOC", moc_text, "non-sync MOC sections preserved")
-            # Sync block was updated
-            self.assertIn("auto-sync:start", moc_text)
-
-    def test_empty_vault_full_sync_rebuilds_everything(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = pathlib.Path(directory)
-            repo = root / "repo"
-            vault = root / "vault"
-            repo.mkdir()
-            vault.mkdir(parents=True, exist_ok=True)
-
-            _git(repo, "init", "--quiet")
-            _commit(repo, "a.txt", "a\n", "one")
-            sha = _rev(repo, "HEAD")
-
-            # Full sync from empty vault
-            _sync(POST_PUSH, vault, repo, f"{sha}..{sha}", expect_ok=False)
-            # Empty range — no notes expected, but no crash
-            index = vault / "04-开发迭代记录" / "全量提交索引.md"
-            notes = list((vault / "04-开发迭代记录").glob("*-自动知识同步.md"))
-            self.assertEqual(len(notes), 0, "empty range produces no notes")

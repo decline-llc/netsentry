@@ -97,7 +97,7 @@ shell-check:
 
 ## python-check — run Python script syntax checks
 python-check:
-	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("scripts/check_supply_chain.py", "scripts/gen_test_pcap.py", "scripts/gen_sanitized_corpus.py", "scripts/sanitize_pcap.py", "scripts/release_gate.py", "scripts/sync_knowledge.py", "scripts/test_sync_knowledge.py", "scripts/test_post_push_sync.py", "scripts/fixtures/__init__.py", "scripts/fixtures/post_push_fixture.py"))]'
+	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("scripts/check_supply_chain.py", "scripts/gen_test_pcap.py", "scripts/gen_sanitized_corpus.py", "scripts/sanitize_pcap.py", "scripts/release_gate.py", "scripts/sync_knowledge.py", "scripts/post_push_sync.py", "scripts/test_sync_knowledge.py", "scripts/test_post_push_sync.py", "scripts/fixtures/__init__.py", "scripts/fixtures/post_push_fixture.py"))]'
 
 ## knowledge-check — test deterministic, idempotent Obsidian knowledge extraction
 knowledge-check:

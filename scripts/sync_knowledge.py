@@ -204,6 +204,25 @@ def update_moc(vault: pathlib.Path, relative_note: str, after: str, subject: str
     moc.write_text(text, encoding="utf-8")
 
 
+def sync_range(repo: pathlib.Path, vault: pathlib.Path, before: str, after: str) -> dict[str, object]:
+    """Synchronize one Git range without requiring a Git hook or subprocess."""
+    repo = repo.resolve()
+    vault = vault.resolve()
+    before, after = resolve_range(repo, before, after)
+    files = changed_files(repo, before, after)
+    relative, note, subject = render_note(repo, files, before, after)
+    note_path = vault / relative
+    note_path.parent.mkdir(parents=True, exist_ok=True)
+    note_path.write_text(note, encoding="utf-8")
+    update_moc(vault, relative, after, subject)
+    return {
+        "status": "ok",
+        "range": f"{before}..{after}",
+        "note": relative,
+        "changed_files": len(files),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=pathlib.Path, default=pathlib.Path(__file__).resolve().parents[1])
@@ -212,16 +231,8 @@ def main() -> int:
     parser.add_argument("--after", default="HEAD")
     args = parser.parse_args()
 
-    repo = args.repo.resolve()
-    vault = args.vault.resolve()
-    before, after = resolve_range(repo, args.before, args.after)
-    files = changed_files(repo, before, after)
-    relative, note, subject = render_note(repo, files, before, after)
-    note_path = vault / relative
-    note_path.parent.mkdir(parents=True, exist_ok=True)
-    note_path.write_text(note, encoding="utf-8")
-    update_moc(vault, relative, after, subject)
-    print(json.dumps({"status": "ok", "range": f"{before}..{after}", "note": relative, "changed_files": len(files)}, ensure_ascii=False))
+    result = sync_range(args.repo, args.vault, args.before, args.after)
+    print(json.dumps(result, ensure_ascii=False))
     return 0
 
 

@@ -46,7 +46,7 @@ Git 原生没有客户端 `post-push` 生命周期钩子，因此普通 `git pus
 chmod +x /home/virtual-machine/Desktop/NetSentry/.git/hooks/post-push
 ```
 
-`$netsentry-next` 在 push 前记录远端 old SHA，push 成功并核验 new SHA 后显式执行 helper。它按 `old..new` 重建全量提交索引，生成本次增量笔记和 `_待整理` 草稿，并维护 MOC 自动入口。同步应幂等，重复处理同一 range 不产生重复提交行。
+`$netsentry-next` 在 push 前记录远端 old SHA，push 成功并核验 new SHA 后显式执行 helper。该本地 hook 只转发给版本化的 `scripts/post_push_sync.py` / `scripts.sync_knowledge` API；测试直接调用该 API，绝不依赖 `.git/hooks`。同步应幂等，重复处理同一 range 不产生重复笔记或 MOC 条目。
 
 手动恢复任意范围：
 

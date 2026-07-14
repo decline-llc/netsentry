@@ -1,0 +1,23 @@
+{
+  "task": "decouple-knowledge-sync-tests-from-git-hooks",
+  "timestamp": "2026-07-14T07:45:34Z",
+  "branch": "main",
+  "risk_level": "Medium",
+  "current_checkpoint": "complete",
+  "completed": [
+    "Confirmed test_post_push_sync.py invoked the untracked local hook through subprocess",
+    "Added a versioned direct Python sync API and changed tests to invoke it directly",
+    "Reduced the local post-push hook to a thin versioned-entrypoint wrapper",
+    "Passed focused direct synchronizer tests",
+    "Verified the executable local hook delegates an exact range to the versioned entrypoint",
+    "Passed Python, knowledge, documentation, and diff validation"
+  ],
+  "in_progress": [],
+  "todo": [],
+  "pending_validation": [],
+  "pending_commits": [],
+  "remaining_risks": [
+    "The local hook is ignored by Git; its wrapper must remain compatible with the versioned Python entrypoint"
+  ],
+  "resume_instructions": "R90-03a is complete. Do not add hook provisioning to CI or reintroduce hook-file dependencies in tests. R90-04 remains blocked pending authorized sanitized production-derived traffic evidence."
+}
