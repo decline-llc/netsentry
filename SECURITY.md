@@ -10,8 +10,7 @@
 
 **Please do not file public GitHub issues for security vulnerabilities.**
 
-Email: **security@decline-llc.example** (replace with real address before
-going public)
+Email: **abcdefg.llc@outlook.com**
 
 Include in your report:
 - A description of the vulnerability and its potential impact
