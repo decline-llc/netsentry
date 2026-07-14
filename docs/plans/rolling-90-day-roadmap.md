@@ -14,7 +14,7 @@
 | ID | Window | Status | Increment | Dependencies | Acceptance criteria |
 |---|---|---|---|---|---|
 | R90-01 | Jul 14–24 | Complete | Rebuild rolling roadmap capability and initial plan. | None | `netsentry-roadmap` is discoverable; `$netsentry-next` loads this roadmap and ends after one eligible increment; roadmap records windows, dependencies, validation, and acceptance criteria. |
-| R90-02 | Jul 25–Aug 7 | Ready after R90-01 | Add Git lifecycle decision policy and task-state reconciliation. | R90-01 | A NetSentry increment is committed/pushed only when complete; remote SHA/Vault sync are verified; stale resume instructions are removed after delivery. |
+| R90-02 | Jul 14 | Complete early | Add Git lifecycle decision policy and task-state reconciliation. | R90-01 | Every repository change must pass local `make knowledge-check` before commit; a failure blocks delivery until its roadmap/state/evidence cause is reconciled and the check is rerun successfully. |
 | R90-03 | Aug 8–21 | Pending | Add roadmap self-check and deviation-reporting workflow. | R90-02 | Each checkpoint compares actual work to the roadmap and records blockers, re-prioritization, dates, and the next ready increment. |
 | R90-04 | Aug 22–Sep 11 | Blocked | Obtain and review sanitized production-derived pcap evidence for v0.1.1, then run corpus-pressure validation. | Approved sanitized traffic source and privacy review | Evidence is path-redacted, explicitly production-derived and sanitized, and passes the documented corpus-pressure/release-evidence requirements. |
 | R90-05 | Sep 12–Oct 2 | Pending | Prepare v0.1.1 release readiness from validated evidence. | R90-04; passing code quality gates | `make rc-check`, supply-chain, and release gates pass; public docs/evidence identify no unresolved release blocker. |
@@ -26,4 +26,4 @@
 
 ## Current Checkpoint
 
-R90-01 was delivered and verified at `427944efa34507ac5c6a124ec8377b15932d6f19` on `origin/main`; its Vault range was synchronized. R90-02 is the next ready increment. No product-release task is authorized merely by its scheduled window.
+R90-02 was completed early in response to the knowledge-check request; the reported discrepancies did not reproduce locally (`make knowledge-check`: 33 tests passed). R90-03 remains pending until its scheduled window or a user-directed priority change. No product-release task is authorized merely by its scheduled window.
