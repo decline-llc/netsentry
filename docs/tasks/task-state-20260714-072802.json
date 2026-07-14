@@ -9,7 +9,8 @@
     "Initialized the discoverable netsentry-roadmap skill",
     "Added the repository-backed rolling plan with dependency, acceptance, and blocked-evidence rules",
     "Connected the $netsentry-next workflow to one-increment roadmap execution",
-    "Validated the new skill and repository documentation"
+    "Validated the new skill and repository documentation",
+    "Verified roadmap delivery commit 427944efa34507ac5c6a124ec8377b15932d6f19 on origin/main and synchronized its exact Vault range"
   ],
   "in_progress": [],
   "todo": [],
@@ -18,5 +19,5 @@
   "remaining_risks": [
     "The capability runs only when invoked and cannot autonomously execute while no session is active"
   ],
-  "resume_instructions": "R90-01 is complete. Verify its containing delivery through Git and the remote ref; do not repeat its commit, push, or Vault synchronization. R90-02 is the next dependency-ready increment on the next $netsentry-next trigger."
+  "resume_instructions": "R90-01 is delivered. Do not repeat its commit, push, or Vault synchronization. R90-02 is the next dependency-ready increment on the next $netsentry-next trigger."
 }

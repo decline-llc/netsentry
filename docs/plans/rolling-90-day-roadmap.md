@@ -26,4 +26,4 @@
 
 ## Current Checkpoint
 
-R90-01 is complete pending its normal atomic delivery verification. R90-02 is the next ready increment. No product-release task is authorized merely by its scheduled window.
+R90-01 was delivered and verified at `427944efa34507ac5c6a124ec8377b15932d6f19` on `origin/main`; its Vault range was synchronized. R90-02 is the next ready increment. No product-release task is authorized merely by its scheduled window.
