@@ -1,0 +1,32 @@
+{
+  "task": "remove-unconsumed-yaml-configuration-fields",
+  "timestamp": "2026-07-14T01:15:31Z",
+  "branch": "main",
+  "risk_level": "Medium",
+  "current_checkpoint": "complete",
+  "completed": [
+    "Inventoried every YAML field and its runtime consumer",
+    "Confirmed capture configuration is not read by the standalone C binary",
+    "Identified unused CORS, aggregation cap, logging level, and logging file fields"
+  ],
+  "in_progress": [],
+  "todo": [],
+  "pending_validation": [],
+  "pending_commits": [],
+  "remaining_risks": [
+    "Existing YAML files containing removed reserved fields will fail closed by design",
+    "C capture and Go engine remain separate processes with explicit CLI-to-UDS coordination rather than a shared YAML parser"
+  ],
+  "validation": {
+    "focused_config_tests": "pass",
+    "config_check": "pass",
+    "docs_check": "pass",
+    "shell_check": "pass",
+    "deps_check": "pass",
+    "e2e_smoke": "pass: 6 packets, 5 alerts, 8 rules",
+    "full_c_and_go_race_tests": "pass",
+    "git_diff_check": "pass",
+    "sensitive_information_review": "pass"
+  },
+  "resume_instructions": "The YAML contract cleanup is validated. Commit, push, and synchronize only the listed implementation, test, documentation, plan, and state files."
+}

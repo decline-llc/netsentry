@@ -8,54 +8,42 @@ import (
 	"net/netip"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"gopkg.in/yaml.v3"
 )
 
-type CaptureConfig struct {
-	Mode              string `yaml:"mode"`
-	OfflineFile       string `yaml:"offline_file"`
-	PayloadPreviewLen int    `yaml:"payload_preview_len"`
-	UDSSocketPath     string `yaml:"uds_socket_path"`
-	UDSSocketMode     string `yaml:"uds_socket_mode"`
-	HeartbeatInterval int    `yaml:"heartbeat_interval"`
-}
-
 type EngineConfig struct {
-	UDSSocketPath               string   `yaml:"uds_socket_path"`
-	ChannelBufferSize           int      `yaml:"channel_buffer_size"`
-	WorkerCount                 int      `yaml:"worker_count"`
-	DBDir                       string   `yaml:"db_dir"`
-	DBPath                      string   `yaml:"db_path"`
-	DBShardDaily                bool     `yaml:"db_shard_daily"`
-	DBJournalMode               string   `yaml:"db_journal_mode"`
-	DBBusyTimeout               int      `yaml:"db_busy_timeout"`
-	AlertRecoveryLogPath        string   `yaml:"alert_recovery_log_path"`
-	RulesSeedFile               string   `yaml:"rules_seed_file"`
-	SuppressionsFile            string   `yaml:"suppressions_file"`
-	APIListenHost               string   `yaml:"api_listen_host"`
-	APIPort                     int      `yaml:"api_port"`
-	CORSAllowedOrigins          []string `yaml:"cors_allowed_origins"`
-	AlertAggregationWindow      int      `yaml:"alert_aggregation_window"`
-	AlertAggregationMaxCount    int      `yaml:"alert_aggregation_max_count"`
-	AlertRetentionDays          int      `yaml:"alert_retention_days"`
-	APIAuthToken                string   `yaml:"api_auth_token"`
-	APIAuthEnabled              bool     `yaml:"api_auth_enabled"`
-	RedactSensitiveFields       bool     `yaml:"redact_sensitive_fields"`
-	HealthFreshnessLimitSeconds int      `yaml:"health_freshness_limit_seconds"`
-	PprofEnabled                bool     `yaml:"pprof_enabled"`
-	PprofAddr                   string   `yaml:"pprof_addr"`
+	UDSSocketPath               string `yaml:"uds_socket_path"`
+	UDSSocketMode               string `yaml:"uds_socket_mode"`
+	ChannelBufferSize           int    `yaml:"channel_buffer_size"`
+	WorkerCount                 int    `yaml:"worker_count"`
+	DBDir                       string `yaml:"db_dir"`
+	DBPath                      string `yaml:"db_path"`
+	DBShardDaily                bool   `yaml:"db_shard_daily"`
+	DBJournalMode               string `yaml:"db_journal_mode"`
+	DBBusyTimeout               int    `yaml:"db_busy_timeout"`
+	AlertRecoveryLogPath        string `yaml:"alert_recovery_log_path"`
+	RulesSeedFile               string `yaml:"rules_seed_file"`
+	SuppressionsFile            string `yaml:"suppressions_file"`
+	APIListenHost               string `yaml:"api_listen_host"`
+	APIPort                     int    `yaml:"api_port"`
+	AlertAggregationWindow      int    `yaml:"alert_aggregation_window"`
+	AlertRetentionDays          int    `yaml:"alert_retention_days"`
+	APIAuthToken                string `yaml:"api_auth_token"`
+	APIAuthEnabled              bool   `yaml:"api_auth_enabled"`
+	RedactSensitiveFields       bool   `yaml:"redact_sensitive_fields"`
+	HealthFreshnessLimitSeconds int    `yaml:"health_freshness_limit_seconds"`
+	PprofEnabled                bool   `yaml:"pprof_enabled"`
+	PprofAddr                   string `yaml:"pprof_addr"`
 }
 
 type LoggingConfig struct {
-	Level     string `yaml:"level"`
-	Format    string `yaml:"format"`
-	EngineLog string `yaml:"engine_log"`
+	Format string `yaml:"format"`
 }
 
 type Config struct {
-	Capture CaptureConfig `yaml:"capture"`
 	Engine  EngineConfig  `yaml:"engine"`
 	Logging LoggingConfig `yaml:"logging"`
 
@@ -111,15 +99,9 @@ func Load(path string) (*Config, error) {
 
 func defaults() *Config {
 	return &Config{
-		Capture: CaptureConfig{
-			Mode:              "offline",
-			PayloadPreviewLen: 4096,
-			UDSSocketPath:     "/tmp/netsentry.sock",
-			UDSSocketMode:     "0600",
-			HeartbeatInterval: 5,
-		},
 		Engine: EngineConfig{
 			UDSSocketPath:               "/tmp/netsentry.sock",
+			UDSSocketMode:               "0600",
 			ChannelBufferSize:           10000,
 			WorkerCount:                 1,
 			DBDir:                       "data/",
@@ -132,9 +114,7 @@ func defaults() *Config {
 			SuppressionsFile:            "configs/suppressions.json",
 			APIListenHost:               "127.0.0.1",
 			APIPort:                     8080,
-			CORSAllowedOrigins:          []string{"http://localhost:3000"},
 			AlertAggregationWindow:      60,
-			AlertAggregationMaxCount:    100,
 			AlertRetentionDays:          7,
 			APIAuthEnabled:              false,
 			RedactSensitiveFields:       true,
@@ -143,15 +123,19 @@ func defaults() *Config {
 			PprofAddr:                   "127.0.0.1:6060",
 		},
 		Logging: LoggingConfig{
-			Level:     "info",
-			Format:    "json",
-			EngineLog: "logs/engine.log",
+			Format: "json",
 		},
 	}
 }
 
 func validate(cfg *Config) error {
 	var errs []string
+	if mode, err := strconv.ParseUint(cfg.Engine.UDSSocketMode, 8, 32); err != nil || mode == 0 || mode > 0o777 {
+		errs = append(errs, "engine.uds_socket_mode must be a non-zero octal permission mode no greater than 0777")
+	}
+	if cfg.Logging.Format != "json" && cfg.Logging.Format != "console" {
+		errs = append(errs, "logging.format must be json or console")
+	}
 	if cfg.Engine.ChannelBufferSize < 1 || cfg.Engine.ChannelBufferSize > 1_000_000 {
 		errs = append(errs, "engine.channel_buffer_size must be between 1 and 1000000")
 	}

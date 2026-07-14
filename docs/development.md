@@ -106,16 +106,9 @@ Result: generated 6 packets, processed them through C capture -> UDS -> Go engin
 `configs/config.yaml` now matches `engine/internal/config/config.go`:
 
 ```yaml
-capture:
-  mode: "offline"
-  offline_file: "/tmp/netsentry_test.pcap"
-  payload_preview_len: 4096
-  uds_socket_path: "/tmp/netsentry.sock"
-  uds_socket_mode: "0600"
-  heartbeat_interval: 5
-
 engine:
   uds_socket_path: "/tmp/netsentry.sock"
+  uds_socket_mode: "0600"
   channel_buffer_size: 10000
   worker_count: 1
   db_dir: "data"
@@ -134,12 +127,10 @@ engine:
   pprof_addr: "127.0.0.1:6060"
 
 logging:
-  level: "info"
   format: "json"
-  engine_log: "logs/engine.log"
 ```
 
-Environment expansion supports `${ENV_VAR}` and `${ENV_VAR:default}`. Missing variables expand to their configured default. The loader rejects unknown top-level and nested YAML fields, so configuration typos fail at startup instead of silently retaining defaults. Validation rejects invalid API ports, worker/channel ranges, empty tokens when authentication is enabled, and any non-loopback API listener without authentication.
+Environment expansion supports `${ENV_VAR}` and `${ENV_VAR:default}`. Missing variables expand to their configured default. The loader rejects unknown top-level and nested YAML fields, so configuration typos and retired reserved fields fail at startup instead of silently retaining defaults. Every accepted YAML field configures the Go engine; the standalone C capture binary is configured explicitly with `-r` or `-i`, `-s`, and `-c` command-line arguments. `engine.uds_socket_mode` must be a non-zero octal permission mode no greater than `0777`; `logging.format` is `json` or `console`. Validation also rejects invalid API ports, worker/channel ranges, empty tokens when authentication is enabled, and any non-loopback API listener without authentication.
 
 ---
 

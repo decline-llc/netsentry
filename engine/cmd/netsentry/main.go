@@ -87,7 +87,7 @@ func main() {
 
 	recv := receiver.New(receiver.Config{
 		Path:       cfg.Engine.UDSSocketPath,
-		SocketMode: receiver.ParseSocketMode(cfg.Capture.UDSSocketMode),
+		SocketMode: receiver.ParseSocketMode(cfg.Engine.UDSSocketMode),
 		BufferSize: cfg.Engine.ChannelBufferSize,
 		Stats:      metrics,
 	}, logger)

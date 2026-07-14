@@ -34,16 +34,9 @@ CONFIG_PATH="${TMP_DIR}/config.yaml"
 PCAP_PATH="${TMP_DIR}/pressure.pcap"
 
 cat >"${CONFIG_PATH}" <<EOF_CFG
-capture:
-  mode: "offline"
-  offline_file: "${PCAP_PATH}"
-  payload_preview_len: 4096
-  uds_socket_path: "${UDS_PATH}"
-  uds_socket_mode: "0600"
-  heartbeat_interval: 5
-
 engine:
   uds_socket_path: "${UDS_PATH}"
+  uds_socket_mode: "0600"
   channel_buffer_size: 20000
   worker_count: 4
   db_dir: "${TMP_DIR}"
@@ -54,9 +47,7 @@ engine:
   rules_seed_file: "${ROOT_DIR}/configs/rules.json"
   api_listen_host: "127.0.0.1"
   api_port: ${PORT}
-  cors_allowed_origins: ["http://localhost:3000"]
   alert_aggregation_window: 60
-  alert_aggregation_max_count: 100
   alert_retention_days: 7
   api_auth_enabled: false
   api_auth_token: ""
@@ -66,9 +57,7 @@ engine:
   pprof_addr: "127.0.0.1:6060"
 
 logging:
-  level: "warn"
   format: "json"
-  engine_log: "${TMP_DIR}/engine.log"
 EOF_CFG
 
 python3 - "${PCAP_PATH}" "${REPEATS}" <<'PY'

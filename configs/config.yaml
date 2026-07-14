@@ -1,16 +1,9 @@
 # NetSentry configuration — v0.1.0 development
 # Values support ${ENV_VAR} and ${ENV_VAR:default} substitution.
 
-capture:
-  mode: "offline"
-  offline_file: "/tmp/netsentry_test.pcap"
-  payload_preview_len: 4096
-  uds_socket_path: "/tmp/netsentry.sock"
-  uds_socket_mode: "0600"
-  heartbeat_interval: 5
-
 engine:
   uds_socket_path: "/tmp/netsentry.sock"
+  uds_socket_mode: "0600"
   channel_buffer_size: 10000
   worker_count: 1
   db_dir: "data"
@@ -23,9 +16,7 @@ engine:
   suppressions_file: "configs/suppressions.json"
   api_listen_host: "127.0.0.1"
   api_port: 8080
-  cors_allowed_origins: ["http://localhost:3000"]
   alert_aggregation_window: 60
-  alert_aggregation_max_count: 100
   alert_retention_days: 7
   api_auth_enabled: false
   api_auth_token: "${NETSENTRY_API_TOKEN:}"
@@ -35,6 +26,4 @@ engine:
   pprof_addr: "127.0.0.1:6060"
 
 logging:
-  level: "info"
   format: "json"
-  engine_log: "logs/engine.log"

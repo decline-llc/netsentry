@@ -120,13 +120,12 @@ flowchart LR
 - 影响：超长或控制字符 request ID 会降低日志/错误关联质量；Zap JSON 降低了直接日志注入影响。
 - 建议：限制字符集与长度，无效值生成服务端 ID。
 
-#### NS-CONFIG-001：多个配置项未接线或校验不足
+#### NS-CONFIG-001：YAML 配置合同（2026-07-14 已处理）
 
-- `capture.payload_preview_len`、`capture.heartbeat_interval` 由 YAML 声明，但独立 C binary 不读取 YAML。
-- `engine.alert_aggregation_max_count` 未传给 store。
-- `engine.cors_allowed_origins` 当前未实现；保持“无 CORS”在安全上是 fail-closed，但文档/配置造成预期偏差。
-- `logging.level`、`logging.engine_log` 未应用。
-- 建议：在 v0.2.0 统一配置契约，未实现字段要么接线、要么明确标为 reserved 并验证。
+- Go YAML 合同只保留有 runtime consumer 的 engine 与 logging 字段；严格解码拒绝已移除字段。
+- `engine.uds_socket_mode` 归属于实际创建并 chmod socket 的 Go receiver。
+- 独立 C capture 不读取 YAML，继续以 `-r`/`-i`、`-s`、`-c` CLI 参数配置。
+- 未实现的 CORS、aggregation cap、logging level/file 和 C capture YAML 字段已移除，而非作为无效 reserved 设置保留。
 
 #### NS-PERF-002：规则匹配和 capture 背压的扩展性边界
 

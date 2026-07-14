@@ -12,8 +12,8 @@ func TestLoadRepositoryConfigFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if cfg.Capture.UDSSocketPath == "" || cfg.Engine.UDSSocketPath == "" {
-		t.Fatalf("expected capture and engine UDS paths, got capture=%q engine=%q", cfg.Capture.UDSSocketPath, cfg.Engine.UDSSocketPath)
+	if cfg.Engine.UDSSocketPath == "" || cfg.Engine.UDSSocketMode != "0600" {
+		t.Fatalf("expected engine UDS path and mode, got path=%q mode=%q", cfg.Engine.UDSSocketPath, cfg.Engine.UDSSocketMode)
 	}
 	if cfg.Engine.RulesSeedFile == "" {
 		t.Fatal("expected engine.rules_seed_file to be configured")
@@ -50,6 +50,41 @@ func TestLoadRejectsUnknownFields(t *testing.T) {
   worker_cout: 4
 `,
 			field: "worker_cout",
+		},
+		{
+			name: "removed capture section",
+			contents: `capture:
+  heartbeat_interval: 5
+`,
+			field: "capture",
+		},
+		{
+			name: "removed engine cors setting",
+			contents: `engine:
+  cors_allowed_origins: ["http://localhost:3000"]
+`,
+			field: "cors_allowed_origins",
+		},
+		{
+			name: "removed engine aggregation cap",
+			contents: `engine:
+  alert_aggregation_max_count: 100
+`,
+			field: "alert_aggregation_max_count",
+		},
+		{
+			name: "removed logging level",
+			contents: `logging:
+  level: info
+`,
+			field: "level",
+		},
+		{
+			name: "removed logging file",
+			contents: `logging:
+  engine_log: logs/engine.log
+`,
+			field: "engine_log",
 		},
 		{
 			name:     "multiple documents",
@@ -93,6 +128,32 @@ func TestValidateRejectsInvalidAPIPort(t *testing.T) {
 		if err := validate(cfg); err == nil || !strings.Contains(err.Error(), "api_port") {
 			t.Fatalf("api_port=%d: expected validation error, got %v", port, err)
 		}
+	}
+}
+
+func TestValidateRejectsInvalidUDSSocketMode(t *testing.T) {
+	for _, mode := range []string{"", "invalid", "0000", "1000"} {
+		cfg := defaults()
+		cfg.Engine.UDSSocketMode = mode
+		if err := validate(cfg); err == nil || !strings.Contains(err.Error(), "engine.uds_socket_mode") {
+			t.Fatalf("uds_socket_mode=%q: expected validation error, got %v", mode, err)
+		}
+	}
+}
+
+func TestValidateLoggingFormat(t *testing.T) {
+	for _, format := range []string{"json", "console"} {
+		cfg := defaults()
+		cfg.Logging.Format = format
+		if err := validate(cfg); err != nil {
+			t.Fatalf("format=%q: expected valid format, got %v", format, err)
+		}
+	}
+
+	cfg := defaults()
+	cfg.Logging.Format = "pretty"
+	if err := validate(cfg); err == nil || !strings.Contains(err.Error(), "logging.format") {
+		t.Fatalf("expected logging format validation error, got %v", err)
 	}
 }
 
