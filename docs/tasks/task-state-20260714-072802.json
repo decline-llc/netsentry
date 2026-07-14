@@ -1,0 +1,22 @@
+{
+  "task": "rebuild-rolling-roadmap-capability",
+  "timestamp": "2026-07-14T07:28:02Z",
+  "branch": "main",
+  "risk_level": "Low",
+  "current_checkpoint": "complete",
+  "completed": [
+    "Approved the initial 90-day phases and delivery boundaries",
+    "Initialized the discoverable netsentry-roadmap skill",
+    "Added the repository-backed rolling plan with dependency, acceptance, and blocked-evidence rules",
+    "Connected the $netsentry-next workflow to one-increment roadmap execution",
+    "Validated the new skill and repository documentation"
+  ],
+  "in_progress": [],
+  "todo": [],
+  "pending_validation": [],
+  "pending_commits": [],
+  "remaining_risks": [
+    "The capability runs only when invoked and cannot autonomously execute while no session is active"
+  ],
+  "resume_instructions": "R90-01 is complete. Verify its containing delivery through Git and the remote ref; do not repeat its commit, push, or Vault synchronization. R90-02 is the next dependency-ready increment on the next $netsentry-next trigger."
+}
