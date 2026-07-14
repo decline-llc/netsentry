@@ -10,7 +10,8 @@
     "Reduced the local post-push hook to a thin versioned-entrypoint wrapper",
     "Passed focused direct synchronizer tests",
     "Verified the executable local hook delegates an exact range to the versioned entrypoint",
-    "Passed Python, knowledge, documentation, and diff validation"
+    "Passed Python, knowledge, documentation, and diff validation",
+    "Detected and fixed the missing full-index refresh in the thin-wrapper refactor"
   ],
   "in_progress": [],
   "todo": [],

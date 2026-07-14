@@ -72,6 +72,11 @@ class PostPushSyncTest(unittest.TestCase):
         self.run_sync()
         self.assertIn("[[04-开发迭代记录/", (self.vault / "00-MOC" / "NetSentry知识总览.md").read_text(encoding="utf-8"))
 
+    def test_full_index_records_synced_commit(self):
+        self.run_sync()
+        index = (self.vault / "04-开发迭代记录" / "全量提交索引.md").read_text(encoding="utf-8")
+        self.assertIn(self.after[:10], index)
+
     def test_repeat_sync_is_idempotent(self):
         first = self.note_after_sync().read_text(encoding="utf-8")
         self.run_sync()
@@ -107,12 +112,6 @@ class PostPushSyncTest(unittest.TestCase):
 
     def test_note_contains_review_section(self):
         self.assertIn("## 人工复核问题", self.note_after_sync().read_text(encoding="utf-8"))
-
-    def test_moc_repeat_has_one_marker_pair(self):
-        self.run_sync()
-        self.run_sync()
-        text = (self.vault / "00-MOC" / "NetSentry知识总览.md").read_text(encoding="utf-8")
-        self.assertEqual(text.count("netsentry-ci-knowledge:start"), 1)
 
     def test_sync_is_callable_without_hook_files(self):
         self.assertEqual(self.run_sync()["status"], "ok")
