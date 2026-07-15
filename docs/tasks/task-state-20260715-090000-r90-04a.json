@@ -14,9 +14,7 @@
     "Run the R90-04a non-evidence quality baseline and record only its verified results"
   ],
   "pending_validation": [],
-  "pending_commits": [
-    "Commit and push the R90-04a scheduling records after documentation and knowledge validation"
-  ],
+  "pending_commits": [],
   "remaining_risks": [
     "A passing quality baseline must not be represented as production-traffic evidence or v0.1.1 release approval"
   ],
