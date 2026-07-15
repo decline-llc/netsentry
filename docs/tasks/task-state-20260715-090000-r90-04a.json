@@ -4,19 +4,19 @@
   "branch": "main",
   "remote_baseline": "b3d143ba6ee714f5518f32684fd96b9ea0925a0a",
   "risk_level": "Medium",
-  "current_checkpoint": "scheduled",
+  "current_checkpoint": "complete",
   "completed": [
     "Recorded R90-04a as the next ready, evidence-independent increment by explicit user direction",
-    "Preserved R90-04 as blocked on privacy review and approved sanitized production-derived traffic artifacts"
+    "Preserved R90-04 as blocked on privacy review and approved sanitized production-derived traffic artifacts",
+    "Passed the pinned supply-chain baseline with 9/9 locked external-asset hashes and zero reachable Go vulnerabilities",
+    "Passed SKIP_DOCKER=1 make rc-check, including quality, test, fuzz, e2e-smoke, and distribution checks"
   ],
   "in_progress": [],
-  "todo": [
-    "Run the R90-04a non-evidence quality baseline and record only its verified results"
-  ],
+  "todo": [],
   "pending_validation": [],
   "pending_commits": [],
   "remaining_risks": [
     "A passing quality baseline must not be represented as production-traffic evidence or v0.1.1 release approval"
   ],
-  "resume_instructions": "R90-04a is the next ready increment. Do not start R90-04, run corpus-pressure validation, acquire traffic artifacts, or make a release claim until privacy review and approved sanitized production-derived traffic evidence are available."
+  "resume_instructions": "R90-04a is complete. Do not repeat its baseline as a substitute for release evidence. R90-04 remains blocked: do not run corpus-pressure validation, acquire traffic artifacts, or make a release claim until privacy review and approved sanitized production-derived traffic evidence are available."
 }
