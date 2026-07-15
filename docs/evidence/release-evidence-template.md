@@ -29,6 +29,14 @@
 - Status:
 - Iterations or duration:
 - Corpus description:
+- Evidence class:
+- Production-derived corpus:
+- Exception applied:
+- Exception increment:
+- Privacy review:
+- Provenance validation:
+- Sanitization review:
+- Sensitive metadata screening:
 - Corpus paths included: no
 - Corpus files:
 - Crashes:

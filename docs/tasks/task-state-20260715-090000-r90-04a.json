@@ -7,7 +7,7 @@
   "current_checkpoint": "complete",
   "completed": [
     "Recorded R90-04a as the next ready, evidence-independent increment by explicit user direction",
-    "Preserved R90-04 as blocked on privacy review and approved sanitized production-derived traffic artifacts",
+    "Recorded the R90-04-only exception for anonymized public real-traffic evidence with mandatory privacy, provenance, sanitization, and sensitive-metadata reviews",
     "Passed the pinned supply-chain baseline with 9/9 locked external-asset hashes and zero reachable Go vulnerabilities",
     "Passed SKIP_DOCKER=1 make rc-check, including quality, test, fuzz, e2e-smoke, and distribution checks"
   ],
@@ -16,7 +16,8 @@
   "pending_validation": [],
   "pending_commits": [],
   "remaining_risks": [
-    "A passing quality baseline must not be represented as production-traffic evidence or v0.1.1 release approval"
+    "An R90-04 public dataset must not be accepted without all four approved controls",
+    "Synthetic or generated traffic remains prohibited and the exception does not satisfy R90-05 or R90-06"
   ],
-  "resume_instructions": "R90-04a is complete. Do not repeat its baseline as a substitute for release evidence. R90-04 remains blocked: do not run corpus-pressure validation, acquire traffic artifacts, or make a release claim until privacy review and approved sanitized production-derived traffic evidence are available."
+  "resume_instructions": "R90-04a is complete. R90-04 is now the next ready increment under docs/audit/release_exception_r9004.yaml. Select only anonymized public real-traffic datasets; before corpus-pressure validation or official evidence use, record approved privacy review, provenance validation, sanitization review, and sensitive-metadata screening. Do not use synthetic/generated traffic or represent R90-04 as satisfying R90-05 or R90-06."
 }

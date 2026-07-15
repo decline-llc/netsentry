@@ -131,7 +131,7 @@ make docker-build
 make release-gate
 ```
 
-GitHub Actions 在 main push/PR 执行 RC 检查，version tag 工作流发布 GitHub Release 与 GHCR。v0.1.0 的签名 tag、Release 和 `ghcr.io/decline-llc/netsentry:v0.1.0` 已于 2026-07-11 验证；详细证据见 `docs/evidence/release-v0.1.0.md`。v0.1.1 仍要求经审查的 production-derived sanitized pcap 证据。
+GitHub Actions 在 main push/PR 执行 RC 检查，version tag 工作流发布 GitHub Release 与 GHCR。v0.1.0 的签名 tag、Release 和 `ghcr.io/decline-llc/netsentry:v0.1.0` 已于 2026-07-11 验证；详细证据见 `docs/evidence/release-v0.1.0.md`。仅 R90-04 可在经批准的隐私、来源、脱敏和敏感元数据审查后使用匿名公开真实流量 PCAP；合成/生成流量仍被禁止，后续增量仍保持 production-derived 要求。
 
 ## 项目结构
 

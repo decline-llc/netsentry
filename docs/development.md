@@ -379,7 +379,7 @@ Ready:
 
 - `make rc-check` includes syntax checks, config validation, dependency verification, tests, coverage, deterministic fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 - GitHub Actions CI, tag-driven GitHub Release publication, and GHCR publishing workflows are checked in.
-- The v0.1.0 release gate has a reviewed, version-scoped exception for real production-derived pcap evidence; it expires before v0.1.1.
+- The v0.1.0 release gate has a reviewed, version-scoped exception for real production-derived pcap evidence; it expires before v0.1.1. The separate R90-04 exception permits only anonymized public real-traffic PCAP evidence after approved privacy, provenance, sanitization, and sensitive-metadata reviews.
 - `make dist` produces a local release archive, checksum, and generated release notes.
 - `make release-artifacts VERSION=0.1.0` validates release-version format before building publishable archive assets.
 - `make docker-build` builds the local runtime image.
@@ -388,14 +388,15 @@ Ready:
 
 Release result:
 
-- The signed `v0.1.0` tag, GitHub Release assets, tag-triggered Docker workflow, and public `ghcr.io/decline-llc/netsentry:v0.1.0` manifest were verified on 2026-07-11. The version-scoped pcap exception does not carry into v0.1.1.
+- The signed `v0.1.0` tag, GitHub Release assets, tag-triggered Docker workflow, and public `ghcr.io/decline-llc/netsentry:v0.1.0` manifest were verified on 2026-07-11. The v0.1.0 exception does not carry into v0.1.1; R90-04 alone may use the separately approved anonymized public real-traffic alternative.
 
 Exception record:
 
 - `docs/audit/release_exception_v0.1.0.yaml` records the explicit v0.1.0
-  exception. It skips only the real production-derived pcap requirement;
-  synthetic evidence remains explicitly synthetic and real business-traffic
-  evidence is required before v0.1.1.
+  exception. `docs/audit/release_exception_r9004.yaml` separately permits
+  R90-04-only anonymized public real-traffic evidence after its required
+  reviews; synthetic/generated traffic is prohibited and later increments
+  still require production-derived evidence.
 
 Use `docs/evidence/release-evidence-template.md` for the sanitized public
 release evidence record. Keep generated local evidence under

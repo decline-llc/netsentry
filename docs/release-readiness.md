@@ -28,7 +28,7 @@ Ready:
 v0.1.0 publication result:
 
 - The signed `v0.1.0` tag, GitHub Release assets, tag-triggered Docker workflow, and public `ghcr.io/decline-llc/netsentry:v0.1.0` manifest were verified on 2026-07-11. Do not recreate or move the immutable tag.
-- The version-scoped exception does not apply to v0.1.1; reviewed production-derived sanitized pcap evidence remains mandatory for the next patch release.
+- The v0.1.0 exception does not apply to v0.1.1. Separately, the R90-04-only exception in `docs/audit/release_exception_r9004.yaml` permits anonymized public real-traffic PCAP evidence in place of internal production-derived PCAP evidence, but only after dedicated privacy, provenance, sanitization, and sensitive-metadata reviews. Synthetic/generated traffic remains prohibited; this does not waive R90-05, R90-06, or future production-derived-PCAP requirements.
 
 The release gate reads `docs/evidence/release-v0.1.0.md` and fails closed
 unless the reviewed public record has an approved final decision, at least
@@ -52,10 +52,12 @@ make gen-sanitized-corpus CORPUS_DIR=/tmp/netsentry-synthetic-100 CORPUS_SETS=10
 ```
 
 The generated corpus is explicitly synthetic and cannot close the realistic
-production-derived traffic gate without an approved exception.
+production-derived traffic gate. It is also prohibited under the R90-04 public-real-traffic exception.
 
-Use an external or generated corpus for pressure evidence only after the
-traffic-pressure gate is approved for the current iteration:
+Use a reviewed external corpus for R90-04 pressure evidence only after its
+privacy, provenance, sanitization, and sensitive-metadata controls are approved.
+Generated corpora remain synthetic auxiliary input and are prohibited under the
+R90-04 exception:
 
 ```bash
 PCAP_CORPUS=/tmp/netsentry-sanitized-corpus make e2e-corpus-pressure
@@ -143,6 +145,10 @@ real production-derived pcap requirement for v0.1.0, expires before v0.1.1,
 and does not waive fuzz, ASan, synthetic pressure, query, sensitive-information,
 or general quality checks. Real business-traffic corpus evidence remains a
 mandatory v0.1.1 follow-up.
+
+## R90-04 Scoped Public-Traffic Exception
+
+`docs/audit/release_exception_r9004.yaml` applies only to R90-04. It permits an anonymized public real-traffic dataset instead of internal production-derived PCAP evidence only when the public evidence record identifies `public-anonymized-real`, references the exception and R90-04, and records approved privacy review, provenance validation, sanitization review, and sensitive-metadata screening. It expires when R90-04 completes and does not alter any subsequent increment. Synthetic or generated traffic is prohibited.
 
 ## Release Checklist
 

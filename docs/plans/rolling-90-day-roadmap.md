@@ -18,13 +18,20 @@
 | R90-03 | Jul 14 | Complete early | Add remote-baseline roadmap self-check and deviation-reporting workflow. | R90-02 | After every push, fetch `origin/main`, require active state to match its SHA, then run `make knowledge-check`; any ref or validation drift blocks delivery until reconciled. |
 | R90-03a | Jul 14 | Complete early | Decouple post-push sync tests from local Git hooks. | R90-03 | Versioned Python sync APIs are tested directly; `.git/hooks/post-push` is only a thin local wrapper; `make knowledge-check` passes without hook files. |
 | R90-04a | Jul 15 | Complete | Revalidate the v0.1.1 code-quality baseline independently of production-traffic evidence. | R90-03a | Passed non-Docker RC and pinned supply-chain baselines are recorded; no release-ready or production-evidence claim is made. |
-| R90-04 | Aug 22–Sep 11 | Blocked | Obtain and review sanitized production-derived pcap evidence for v0.1.1, then run corpus-pressure validation. | Approved sanitized traffic source and privacy review | Evidence is path-redacted, explicitly production-derived and sanitized, and passes the documented corpus-pressure/release-evidence requirements. |
+| R90-04 | Jul 15–Sep 11 | Ready | Review approved anonymized public real-traffic PCAP evidence, then run corpus-pressure validation. | R90-04 scoped exception | Evidence is path-redacted, public and real (never synthetic), and passes dedicated privacy, provenance, sanitization, sensitive-metadata, corpus-pressure, and release-evidence requirements. |
 | R90-05 | Sep 12–Oct 2 | Pending | Prepare v0.1.1 release readiness from validated evidence. | R90-04; passing code quality gates | `make rc-check`, supply-chain, and release gates pass; public docs/evidence identify no unresolved release blocker. |
 | R90-06 | Oct 3–14 | Pending | Assemble a release decision package. | R90-05 | Version, commit, evidence, checksums, and intended publication decision are reconciled; do not tag or publish without explicit user authorization. |
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-05 → R90-06`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. Prioritize an active release blocker or a correctness/security regression over this order only when its task state documents the deviation. R90-04 remains blocked: this repository must not invent, fetch, or treat synthetic traffic as production-derived evidence.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-05 → R90-06`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The approved R90-04 exception permits only anonymized public real-traffic evidence after the required reviews; it does not satisfy R90-05 or R90-06 and does not permit synthetic or generated traffic. All other increments retain their production-derived PCAP requirements.
+
+## R90-04 Scoped Evidence Exception
+
+- **Authority and scope:** `docs/audit/release_exception_r9004.yaml` authorizes an R90-04-only alternative to internal production-derived PCAP evidence.
+- **Allowed evidence:** anonymized, publicly released, real network traffic only. Synthetic or generated traffic is permanently prohibited.
+- **Required controls:** approve dedicated privacy review, provenance validation, sanitization review, and sensitive-metadata screening before corpus-pressure validation or official-evidence use.
+- **Boundary:** this exception expires when R90-04 completes and does not amend R90-05, R90-06, or future increment requirements.
 
 ## R90-04a Definition
 
@@ -36,4 +43,4 @@
 
 ## Current Checkpoint
 
-R90-03a was completed early to remove CI coupling to unversioned hook files. On Jul 15, 2026, R90-04a was added, selected, and completed as the evidence-independent alternate: the non-Docker RC suite and pinned supply-chain baseline passed. Privacy review and traffic artifacts remain unavailable, so v0.1.1 evidence and release-preparation work remain blocked. The non-Docker baseline does not validate Docker and does not replace R90-04. No product-release task is authorized merely by its scheduled window.
+R90-03a was completed early to remove CI coupling to unversioned hook files. On Jul 15, 2026, R90-04a was added, selected, and completed as the evidence-independent alternate: the non-Docker RC suite and pinned supply-chain baseline passed. The R90-04 scoped exception is now approved, so R90-04 is ready to select an eligible public real-traffic dataset and complete its mandatory reviews. R90-05 and R90-06 remain pending until R90-04 has verified evidence; no product-release task is authorized merely by its scheduled window.
