@@ -1,0 +1,26 @@
+{
+  "task": "r90-04-public-real-traffic-corpus-evidence",
+  "timestamp": "2026-07-16T08:50:44Z",
+  "branch": "main",
+  "remote_baseline": "6803f063e101c0e733c99dc79b95f125851540f2",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated",
+  "completed": [
+    "Fetched origin/main and confirmed it matches local HEAD at 6803f063e101c0e733c99dc79b95f125851540f2",
+    "Selected MAWI samplepoint-B archive trace 200012281400 as a publicly released real-traffic source under the approved R90-04 exception"
+  ],
+  "in_progress": [],
+  "todo": [
+    "Commit, push, verify origin/main, synchronize the exact pushed range to the local Vault, then record delivery evidence"
+  ],
+  "pending_validation": [
+    "Focused sanitizer and release-gate tests",
+    "documentation, Python, knowledge, diff, and sensitive-information checks"
+  ],
+  "pending_commits": [],
+  "remaining_risks": [
+    "The exception permits only public anonymized real traffic and never synthetic/generated inputs",
+    "R90-04 evidence does not authorize release preparation, tagging, publication, or later-increment completion"
+  ],
+  "resume_instructions": "R90-04 validation is complete locally. Before delivery, run the recorded checks, commit only the intended paths, push, fetch and verify origin/main, and synchronize the exact range to the local Vault. Do not begin R90-05 before its Sep 12 window."
+}

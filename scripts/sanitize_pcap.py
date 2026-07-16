@@ -56,6 +56,10 @@ def sanitize_transport(frame, ip_offset, ihl, total_len, payload_byte):
     if proto == 6 and transport_len >= 20:
         data_offset = ((frame[transport_offset + 12] >> 4) & 0x0F) * 4
         if data_offset < 20 or data_offset > transport_len:
+            # The parser validates TCP's data offset.  Once the malformed
+            # transport bytes are removed, preserve the safe IPv4 envelope but
+            # mark it opaque so replay cannot present zeroed bytes as TCP.
+            frame[ip_offset + 9] = 0
             frame[transport_offset:ip_offset + total_len] = b"\x00" * transport_len
             return
         payload_offset = transport_offset + data_offset
@@ -67,6 +71,7 @@ def sanitize_transport(frame, ip_offset, ihl, total_len, payload_byte):
     if proto == 17 and transport_len >= 8:
         udp_len = struct.unpack("!H", frame[transport_offset + 4:transport_offset + 6])[0]
         if udp_len < 8 or udp_len > transport_len:
+            frame[ip_offset + 9] = 0
             frame[transport_offset:ip_offset + total_len] = b"\x00" * transport_len
             return
         payload_offset = transport_offset + 8

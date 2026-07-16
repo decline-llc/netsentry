@@ -24,6 +24,7 @@ Ready:
 - The approved v0.1.0 exception in `docs/audit/release_exception_v0.1.0.yaml` scopes out only real production-derived pcap evidence and expires before v0.1.1.
 - The 2026-07-12 supply-chain gate pins the Go CI toolchain to `go1.25.12`, pins every third-party Action to a reviewed full commit SHA, validates all workflows with `actionlint v1.7.12`, scans reachable Go code with `govulncheck v1.6.0`, and fetches/verifies all 9 locked external fixture/license files only in an ephemeral directory.
 - The v0.1.1 pre-evidence quality baseline passed on 2026-07-15: the pinned supply-chain check verified 9/9 locked external fixture/license hashes and found zero reachable Go vulnerabilities; `SKIP_DOCKER=1 make rc-check` passed with 75.4% Go coverage, parser fuzz, e2e smoke, and distribution checks. This is local, non-Docker validation only and does not provide production-derived traffic evidence or v0.1.1 release approval.
+- R90-04 public-real-traffic validation passed on 2026-07-16 using one locally re-sanitized MAWI samplepoint-B trace: 544,525 packets processed with zero capture parse errors, drops, UDS write errors, or engine error-log lines. The reviewed, path-redacted record is [`r90-04-public-traffic-20260716.md`](evidence/r90-04-public-traffic-20260716.md). It is approved for R90-04 only; it neither approves a release nor satisfies later production-derived requirements.
 
 v0.1.0 publication result:
 

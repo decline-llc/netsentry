@@ -31,3 +31,8 @@ Required review checks before committing a public evidence record:
   are not marked complete unless the corresponding local run was reviewed.
 - Confirm tag publication evidence is not marked complete before the `v0.1.0`
   tag workflows finish successfully.
+
+An R90-04 public-real-traffic validation record may also be committed here when
+the scoped exception is active. It must clearly state that it is not release
+approval, identify the exception and R90-04 boundary, record each required
+review, redact local paths, and never include a PCAP or packet content.
