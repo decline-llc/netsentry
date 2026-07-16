@@ -2,23 +2,32 @@
   "task": "global-roadmap-window-waiver",
   "timestamp": "2026-07-16T16:24:51Z",
   "branch": "main",
-  "remote_baseline": "f8d766e9dbadbb0433ad0dd31047ae04f0055950",
+  "remote_baseline": "b59fab3c1dfff1e886be9748cc3630c34fcbd199",
   "risk_level": "Low",
-  "current_checkpoint": "validated_for_delivery",
+  "current_checkpoint": "complete",
   "authorization": "The user cancelled all roadmap planning window restrictions.",
   "completed": [
     "Made roadmap dates informational rather than eligibility gates",
     "Preserved dependency, evidence, release, tag, and publication controls",
     "Reclassified R90-06 as ready because R90-05 is complete",
     "Reconciled the completed R90-05 resume guidance",
-    "Passed documentation, knowledge, JSON, diff, and sensitive-information checks"
+    "Passed documentation, knowledge, JSON, diff, and sensitive-information checks",
+    "Pushed b59fab3c1dfff1e886be9748cc3630c34fcbd199 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact Vault note, full index, and MOC"
   ],
   "in_progress": [],
-  "todo": [
-    "Commit, push, fetch-verify, and synchronize the exact range to the Vault"
-  ],
+  "todo": [],
+  "delivery": {
+    "commit": "b59fab3c1dfff1e886be9748cc3630c34fcbd199",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "f8d766e9dbadbb0433ad0dd31047ae04f0055950..b59fab3c1dfff1e886be9748cc3630c34fcbd199",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
   "remaining_risks": [
     "R90-06 readiness is not tag or publication authorization"
   ],
-  "resume_instructions": "Finish validation and delivery of the global roadmap window waiver. After delivery, R90-06 is the next ready increment, but no tag or publication action is authorized."
+  "resume_instructions": "The global roadmap window waiver is complete at b59fab3c1dfff1e886be9748cc3630c34fcbd199; do not repeat its validation, commit, push, or Vault synchronization. R90-06 is the next ready increment, but no tag or publication action is authorized."
 }
