@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "44efffca0979c31faf669db4c1d073613ada8f0e",
   "risk_level": "High",
-  "current_checkpoint": "candidate_commit",
+  "current_checkpoint": "decision_package",
   "completed": [
     "Selected R90-06 as the only dependency-ready roadmap increment",
     "Confirmed all roadmap window restrictions are waived",
@@ -17,18 +17,40 @@
     "Updated bilingual release documentation for the approved global PCAP waiver",
     "Passed workflow, documentation, Python, evidence, and release-gate checks",
     "Passed VERSION=0.1.1 make rc-check including Docker image and runtime health smoke with 75.4% Go statement coverage",
-    "Passed the pinned supply-chain audit with 9 of 9 fetched assets matching and zero reachable Go vulnerabilities"
+    "Passed the pinned supply-chain audit with 9 of 9 fetched assets matching and zero reachable Go vulnerabilities",
+    "Committed and pushed the exact candidate at ad8a443b5020037c235419f5696c60988d2bba99",
+    "Verified fetched origin/main matches the candidate and passed post-fetch knowledge validation",
+    "Synchronized and verified the candidate Vault iteration note, full commit index, and MOC link",
+    "Rebuilt the v0.1.1 linux/amd64 artifact from the exact candidate",
+    "Verified the 9561869-byte artifact SHA-256 aa88bb4b25e9bb2418e2762f788ebad0159753ebe16868b33ae9d0253b981967"
   ],
   "in_progress": [
-    "Commit, push, and fetch-verify the exact release candidate"
+    "Deliver the hold-state release decision package"
   ],
   "todo": [
-    "Build and checksum v0.1.1 artifacts from the exact candidate",
-    "Create and deliver the hold-state release decision package"
+    "Reconcile R90-06 completion after the decision package is pushed"
   ],
   "remaining_risks": [
     "No tag or publication action is authorized",
     "The release decision package must distinguish gate acceptance from publication authority"
   ],
-  "resume_instructions": "Complete exactly R90-06. Fix version-to-evidence binding, validate and push the candidate, build its local artifacts, record the checksum in a hold-state decision package, then reconcile delivery. Do not tag or publish."
+  "candidate": {
+    "version": "v0.1.1",
+    "commit": "ad8a443b5020037c235419f5696c60988d2bba99",
+    "origin_main_verified": true,
+    "artifact": "netsentry-0.1.1-linux-amd64.tar.gz",
+    "artifact_bytes": 9561869,
+    "artifact_sha256": "aa88bb4b25e9bb2418e2762f788ebad0159753ebe16868b33ae9d0253b981967",
+    "publication_decision": "hold",
+    "tag_created": false,
+    "published": false
+  },
+  "candidate_delivery": {
+    "remote_baseline": "44efffca0979c31faf669db4c1d073613ada8f0e",
+    "vault_range": "44efffca0979c31faf669db4c1d073613ada8f0e..ad8a443b5020037c235419f5696c60988d2bba99",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
+  "resume_instructions": "The exact v0.1.1 candidate is delivered at ad8a443b5020037c235419f5696c60988d2bba99 and its local artifact checksum is fixed. Deliver docs/evidence/release-decision-v0.1.1.md with publication held, then reconcile R90-06 completion. Do not create a tag or publish."
 }
