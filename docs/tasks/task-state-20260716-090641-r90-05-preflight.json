@@ -2,28 +2,26 @@
   "task": "r90-05-expired-exception-preflight",
   "timestamp": "2026-07-16T09:06:41Z",
   "branch": "main",
-  "remote_baseline": "673a5d580a08db44de76aa17ef6301e4e48f402a",
+  "remote_baseline": "64979f454cfee414cbb216368a8ee2fb34147e4d",
   "risk_level": "High",
-  "current_checkpoint": "planned",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and confirmed it matches local HEAD at 673a5d580a08db44de76aa17ef6301e4e48f402a",
-    "Confirmed the release gate accepts an otherwise-valid release record backed by the R90-04-only exception even though R90-04 is complete"
+    "Confirmed the release gate accepted an otherwise-valid release record backed by the R90-04-only exception even though R90-04 was complete",
+    "Recorded the R90-04 exception as expired at completion commit 009b2a03776987359661c4ab2776f5d04820db34",
+    "Made the release gate reject otherwise-valid R90-04-backed release approval while retaining field-level validation",
+    "Added direct regressions for release rejection and invalid expiry status, timestamp, and completion SHA",
+    "Passed focused release-gate tests, the historical v0.1.0 release gate, Python, documentation, knowledge, diff, and sensitive-information checks",
+    "Pushed feature commit 64979f454cfee414cbb216368a8ee2fb34147e4d and verified fetched origin/main and local HEAD at that SHA",
+    "Synchronized exact range 673a5d580a08db44de76aa17ef6301e4e48f402a..64979f454cfee414cbb216368a8ee2fb34147e4d to the local Vault and verified its iteration note, full index, and MOC link"
   ],
-  "in_progress": [
-    "Enforce the R90-04 exception expiry in the release gate and add direct regression coverage"
-  ],
-  "todo": [
-    "Run focused and repository validation",
-    "Commit, push, verify origin/main, and synchronize the exact range to the local Vault"
-  ],
-  "pending_validation": [
-    "Release-gate exception-isolation tests",
-    "Python, documentation, knowledge, diff, and sensitive-information checks"
-  ],
+  "in_progress": [],
+  "todo": [],
+  "pending_validation": [],
   "pending_commits": [],
   "remaining_risks": [
     "R90-05 must still wait for its 2026-09-12 window and production-derived evidence requirements",
     "No release, tag, or publication action is authorized"
   ],
-  "resume_instructions": "Complete only the expired R90-04 exception enforcement. Do not begin R90-05 release-readiness validation, tagging, or publication."
+  "resume_instructions": "R90-04b is complete and delivered at 64979f454cfee414cbb216368a8ee2fb34147e4d. Do not repeat its validation, commit, push, or Vault synchronization. R90-05 remains pending until its 2026-09-12 window; no release, tag, or publication action is authorized."
 }
