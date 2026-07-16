@@ -4,7 +4,9 @@ scope_exempt: R90-05 only: the reviewed synthetic pcap corpus may substitute the
 effective_increment: R90-05
 effective_version: v0.1.1
 revoke_condition: This exception expires when R90-05 is complete and does not apply to R90-06 or any later increment or release
-status: active
+status: expired
+expired_utc: 2026-07-16T16:19:54Z
+expired_commit: 6c3f9ef276c99c13aa9e985b8c849bb5f0791752
 synthetic_allowed: yes
 required_controls: explicit synthetic provenance, zero-production-data privacy review, exact packet count and SHA-256 integrity verification, corpus-pressure validation
 corpus_sha256: 509e940bc275d1972c09a4d9fd061e942516e22a0931d44eb9eb24deb7c66e68

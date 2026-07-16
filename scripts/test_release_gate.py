@@ -31,7 +31,9 @@ scope_exempt: R90-05 only: the reviewed synthetic pcap corpus may substitute the
 effective_increment: R90-05
 effective_version: v0.1.1
 revoke_condition: This exception expires when R90-05 is complete and does not apply to R90-06 or any later increment or release
-status: active
+status: expired
+expired_utc: 2026-07-16T16:19:54Z
+expired_commit: 6c3f9ef276c99c13aa9e985b8c849bb5f0791752
 synthetic_allowed: yes
 required_controls: explicit synthetic provenance, zero-production-data privacy review, exact packet count and SHA-256 integrity verification, corpus-pressure validation
 corpus_sha256: {digest}
@@ -281,8 +283,11 @@ class ReleaseGateTest(unittest.TestCase):
             errors,
         )
 
-    def test_r9005_synthetic_exception_passes_with_exact_corpus(self) -> None:
-        self.assertEqual([], self.validate_r9005())
+    def test_completed_r9005_exception_cannot_be_reused(self) -> None:
+        self.assertEqual(
+            [release_gate.R9005_RELEASE_REJECTION],
+            self.validate_r9005(),
+        )
 
     def test_r9005_exception_rejects_false_production_claim(self) -> None:
         errors = self.validate_r9005(**{"Production-derived corpus": "yes"})
@@ -316,11 +321,11 @@ class ReleaseGateTest(unittest.TestCase):
             errors,
         )
 
-    def test_r9005_exception_rejects_inactive_policy(self) -> None:
+    def test_r9005_exception_requires_expired_delivery_metadata(self) -> None:
         errors = self.validate_r9005(
-            exception_mutator=lambda text: text.replace("status: active", "status: expired")
+            exception_mutator=lambda text: text.replace("status: expired", "status: active")
         )
-        self.assertIn("R90-05 exception status must be active", errors)
+        self.assertIn("R90-05 exception status must be expired", errors)
 
     def test_r9004_public_real_evidence_cannot_approve_release(self) -> None:
         self.assertEqual(

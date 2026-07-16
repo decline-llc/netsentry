@@ -23,6 +23,7 @@ R9004_EXCEPTION_PATH = "docs/audit/release_exception_r9004.yaml"
 R9004_RELEASE_REJECTION = "R90-04 exception is expired and cannot approve a release"
 R9005_EXCEPTION = "release_exception_r9005.yaml"
 R9005_EXCEPTION_PATH = "docs/audit/release_exception_r9005.yaml"
+R9005_RELEASE_REJECTION = "R90-05 exception is expired and cannot approve another release gate"
 SENSITIVE_LABELS = (
     "Raw pcaps staged",
     "Fuzz corpus files staged",
@@ -124,8 +125,16 @@ def exception_metadata(path: Path) -> tuple[dict[str, str] | None, list[str]]:
         for term in ("r90-05", "synthetic", "pcap", "production-derived"):
             if term not in scope:
                 errors.append(f"R90-05 exception scope_exempt must include {term}")
-        if values.get("status", "").casefold() != "active":
-            errors.append("R90-05 exception status must be active")
+        if values.get("status", "").casefold() != "expired":
+            errors.append("R90-05 exception status must be expired")
+        try:
+            expired_at = datetime.fromisoformat(values.get("expired_utc", "").replace("Z", "+00:00"))
+            if expired_at.tzinfo is None or expired_at > datetime.now(timezone.utc):
+                errors.append("R90-05 exception expired_utc must be a past UTC timestamp")
+        except ValueError:
+            errors.append("R90-05 exception expired_utc must be ISO-8601 UTC")
+        if not re.fullmatch(r"[0-9a-f]{40}", values.get("expired_commit", "")):
+            errors.append("R90-05 exception expired_commit must be a full lowercase Git SHA")
         if values.get("synthetic_allowed", "").casefold() != "yes":
             errors.append("R90-05 exception synthetic_allowed must be yes")
         controls = values.get("required_controls", "").casefold()
@@ -293,6 +302,7 @@ def validate(
             if required(pcap, label, errors).casefold() != "approved":
                 errors.append(f"R90-04 exception pcap {label} must be approved")
     elif exception_active and exception["policy"] == "r90-05":
+        errors.append(R9005_RELEASE_REJECTION)
         if required(pcap, "Evidence class", errors).casefold() != "synthetic":
             errors.append("R90-05 exception pcap Evidence class must be synthetic")
         corpus_description = required(pcap, "Corpus description", errors).casefold()

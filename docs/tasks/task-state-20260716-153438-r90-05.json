@@ -2,10 +2,10 @@
   "task": "r90-05-v0.1.1-release-readiness",
   "timestamp": "2026-07-16T15:34:38Z",
   "branch": "main",
-  "remote_baseline": "c753c18bd8e4df5b86c014d3c003a22264b86fc8",
   "risk_level": "High",
-  "checkpoint_updated": "2026-07-16T16:18:10Z",
-  "current_checkpoint": "final_validation_and_delivery",
+  "checkpoint_updated": "2026-07-16T16:19:54Z",
+  "remote_baseline": "6c3f9ef276c99c13aa9e985b8c849bb5f0791752",
+  "current_checkpoint": "complete",
   "authorized_deviation": "The user waived R90-05's 2026-09-12 start date and separately approved the exact 7500-packet synthetic corpus under docs/audit/release_exception_r9005.yaml. The corpus remains explicitly non-production-derived and the exception expires before R90-06.",
   "completed": [
     "Fetched origin/main and confirmed it matches local HEAD at c753c18bd8e4df5b86c014d3c003a22264b86fc8",
@@ -31,20 +31,25 @@
     "Refreshed the pinned supply-chain gate with Go 1.25.12, 9/9 locked assets, and zero reachable vulnerabilities",
     "Added direct R90-05 exception regressions for exact integrity, false production claims, increment isolation, missing inputs, tampering, and inactive policy",
     "Created the sanitized public v0.1.1 evidence record with final release decision left pending",
-    "Confirmed a non-persisted approved decision view passes the exact exception-backed gate, while the tracked record fails only on the two pending final-decision fields"
-    ,"Received explicit v0.1.1 final release-gate acceptance approval, including commit, push, and Vault synchronization but excluding tag creation and publication"
+    "Confirmed a non-persisted approved decision view passes the exact exception-backed gate, while the tracked record fails only on the two pending final-decision fields",
+    "Received explicit v0.1.1 final release-gate acceptance approval, including commit, push, and Vault synchronization but excluding tag creation and publication",
+    "Passed the tracked R90-05 exception-backed release gate before expiring the exception at the verified delivery commit",
+    "Pushed 6c3f9ef276c99c13aa9e985b8c849bb5f0791752, verified fetched origin/main, passed post-fetch knowledge validation, and verified the Vault note, full index, and MOC",
+    "Expired the R90-05 exception and added a direct regression preventing reuse for another release gate"
   ],
-  "in_progress": [
-    "Run the approved exception-backed release gate and final delivery checks"
-  ],
-  "todo": [
-    "Commit, push, fetch-verify, and synchronize the exact pushed range to the Vault"
-  ],
-  "pending_validation": [
-    "R90-05 exception-backed v0.1.1 release gate",
-    "Final documentation, knowledge, diff, JSON, and sensitive-information checks after the decision"
-  ],
+  "in_progress": [],
+  "todo": [],
+  "pending_validation": [],
   "pending_commits": [],
+  "delivery": {
+    "commit": "6c3f9ef276c99c13aa9e985b8c849bb5f0791752",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "c753c18bd8e4df5b86c014d3c003a22264b86fc8..6c3f9ef276c99c13aa9e985b8c849bb5f0791752",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
   "remaining_risks": [
     "The synthetic exception cannot be reused for R90-06 or another release",
     "No tag or publication action is authorized"
@@ -59,5 +64,5 @@
     "sha256": "509e940bc275d1972c09a4d9fd061e942516e22a0931d44eb9eb24deb7c66e68",
     "expires_before": "R90-06"
   },
-  "resume_instructions": "The user explicitly approved v0.1.1 final release-gate acceptance and authorized commit, push, and Vault synchronization. Run the exact exception-backed gate with the private manifest and corpus, complete final checks, then commit, push, fetch-verify, and synchronize the exact range. Do not reuse the exception for R90-06, create a tag, or publish without separate authorization."
+  "resume_instructions": "R90-05 is complete at 6c3f9ef276c99c13aa9e985b8c849bb5f0791752; do not repeat its validation, commit, push, or Vault synchronization. The R90-05 exception is expired and cannot be reused. R90-06 remains pending until its 2026-10-03 window. Do not create a tag or publish without separate authorization."
 }

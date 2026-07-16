@@ -7,7 +7,7 @@
 ## Metadata
 
 - Release: v0.1.1
-- Commit: pending focused R90-05 delivery commit
+- Commit: `6c3f9ef276c99c13aa9e985b8c849bb5f0791752`
 - Evidence record date: 2026-07-16
 - Reviewer: user explicitly approved v0.1.1 final release-gate acceptance
 - Final decision: approved
