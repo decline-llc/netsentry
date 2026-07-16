@@ -25,6 +25,7 @@ Ready:
 - The 2026-07-12 supply-chain gate pins the Go CI toolchain to `go1.25.12`, pins every third-party Action to a reviewed full commit SHA, validates all workflows with `actionlint v1.7.12`, scans reachable Go code with `govulncheck v1.6.0`, and fetches/verifies all 9 locked external fixture/license files only in an ephemeral directory.
 - The v0.1.1 pre-evidence quality baseline passed on 2026-07-15: the pinned supply-chain check verified 9/9 locked external fixture/license hashes and found zero reachable Go vulnerabilities; `SKIP_DOCKER=1 make rc-check` passed with 75.4% Go coverage, parser fuzz, e2e smoke, and distribution checks. This is local, non-Docker validation only and does not provide production-derived traffic evidence or v0.1.1 release approval.
 - R90-04 public-real-traffic validation passed on 2026-07-16 using one locally re-sanitized MAWI samplepoint-B trace: 544,525 packets processed with zero capture parse errors, drops, UDS write errors, or engine error-log lines. The reviewed, path-redacted record is [`r90-04-public-traffic-20260716.md`](evidence/r90-04-public-traffic-20260716.md). It is approved for R90-04 only; it neither approves a release nor satisfies later production-derived requirements.
+- The user approved `docs/audit/release_exception_r9005.yaml` on 2026-07-16 for one exact 7,500-packet synthetic corpus. The exception pins SHA-256 `509e940bc275d1972c09a4d9fd061e942516e22a0931d44eb9eb24deb7c66e68`, requires explicit non-production labeling and exact integrity verification, applies only to R90-05, and expires before R90-06.
 
 v0.1.0 publication result:
 
@@ -84,11 +85,59 @@ Validate the reviewed evidence before a release workflow:
 make release-gate
 ```
 
+For v0.1.1 or later, require reviewed production-derived evidence without an
+exception:
+
+```bash
+RELEASE_EVIDENCE=docs/evidence/release-v0.1.1.md \
+  RELEASE_EXCEPTION=none \
+  PCAP_EVIDENCE_MANIFEST=docs/evidence/local/pcap-evidence/pcap-evidence-manifest.json \
+  PCAP_CORPUS=/approved/private/sanitized-corpus \
+  make release-gate
+```
+
+For the separately approved R90-05-only synthetic exception, supply the exact
+reviewed manifest and corpus while keeping their private paths outside public
+evidence:
+
+```bash
+RELEASE_EVIDENCE=docs/evidence/release-v0.1.1.md \
+  RELEASE_EXCEPTION=docs/audit/release_exception_r9005.yaml \
+  PCAP_EVIDENCE_MANIFEST=/approved/private/r90-05-corpus-manifest.json \
+  PCAP_CORPUS=/approved/private/r90-05-synthetic-corpus.pcapng \
+  make release-gate
+```
+
+Generate and validate the path-redacted evidence manifest before running that
+gate:
+
+```bash
+PCAP_CORPUS=/approved/private/sanitized-corpus \
+PCAP_METADATA=/approved/private/review-metadata.json \
+  make pcap-evidence
+
+PCAP_CORPUS=/approved/private/sanitized-corpus \
+PCAP_EVIDENCE_MANIFEST=docs/evidence/local/pcap-evidence/pcap-evidence-manifest.json \
+  make pcap-evidence-check
+```
+
+The generator computes inventory facts but cannot approve provenance, privacy,
+sanitization, or sensitive-metadata handling. Those decisions must be supplied
+by named reviewers. The release gate revalidates the approved manifest against
+the exact local corpus.
+
 When Docker requires elevated privileges, pass Docker through sudo:
 
 ```bash
 DOCKER="sudo docker" make rc-check
 ```
+
+For unattended validation, infrastructure operators may instead grant the
+runner access to an approved Docker daemon or configure rootless Docker. Docker
+group membership is effectively root-equivalent host access and must be an
+explicit operations decision followed by a fresh login session. Do not provide
+passwords, configure broad passwordless sudo, or make the Docker socket
+world-writable.
 
 Run sustained C parser fuzz evidence:
 
@@ -163,6 +212,15 @@ tag publication, or image publication.
 - `make release-gate` passes against a reviewed release record using only an
   exception valid for that release or production-derived PCAP evidence; the
   expired R90-04 record cannot satisfy this gate.
+- v0.1.1 production-derived evidence uses `RELEASE_EXCEPTION=none`; the gate
+  requires the `production-derived` evidence class, approved privacy,
+  provenance, sanitization, and sensitive-metadata reviews, and no exception
+  reference. It also requires an approved manifest and reparses the exact local
+  corpus to verify file names, packet counts, byte sizes, and SHA-256 values.
+- The R90-05 exception accepts only evidence class `synthetic`, requires
+  `Production-derived corpus: no`, pins the approved corpus SHA-256 and packet
+  count, and revalidates the exact local bytes. It cannot satisfy R90-06 or
+  another release.
 - Sudo Docker RC validation passes where Docker is part of the release gate.
 - Synthetic extended pressure and no-corpus ASan fuzz checks pass as auxiliary regression signals.
 - Approved v0.1.0 exception record is present and scope-limited.

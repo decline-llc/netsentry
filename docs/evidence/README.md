@@ -21,6 +21,66 @@ Recommended filename for a completed public record:
 docs/evidence/release-v0.1.0.md
 ```
 
+For v0.1.1, use `docs/evidence/release-v0.1.1.md` only after reviewed
+production-derived sanitized PCAP evidence exists. Validate it with
+`RELEASE_EXCEPTION=none`; neither historical exception is valid for v0.1.1.
+
+R90-05 has a later, separately approved exception in
+`docs/audit/release_exception_r9005.yaml`. It accepts only the exact synthetic
+corpus digest and packet count recorded there, requires the corpus to remain
+explicitly labeled non-production, and expires before R90-06. It does not alter
+the normal production-derived workflow below.
+
+## Production-Derived PCAP Evidence Workflow
+
+The repository provides a fact generator and integrity validator. Automation
+computes file names, byte sizes, packet counts, and SHA-256 values; it does not
+invent provenance, declare privacy compliance, or approve evidence.
+
+1. Copy `pcap-evidence-metadata-template.json` to a private local location.
+2. Replace every placeholder with reviewed provenance, sanitization,
+   sensitive-metadata, and review information. Keep raw paths and internal
+   identifiers outside Git.
+3. Generate the path-redacted local manifest and Markdown report:
+
+   ```bash
+   PCAP_CORPUS=/approved/private/sanitized-corpus \
+   PCAP_METADATA=/approved/private/review-metadata.json \
+     make pcap-evidence
+   ```
+
+4. After the named reviewers approve all four review areas and the final
+   approval object, regenerate and verify the exact local corpus:
+
+   ```bash
+   PCAP_CORPUS=/approved/private/sanitized-corpus \
+   PCAP_EVIDENCE_MANIFEST=docs/evidence/local/pcap-evidence/pcap-evidence-manifest.json \
+     make pcap-evidence-check
+   ```
+
+The default output is under ignored `docs/evidence/local/`. The manifest always
+redacts the corpus path and records each relative file name, byte size, packet
+count, and SHA-256. Validation reparses every pcap/pcapng and fails if the file
+set, format, count, size, hash, review status, or required review metadata
+differs.
+
+The machine-readable contract is
+`pcap-evidence-manifest.schema.json`. The versioned Python validator is the
+behavioral authority and does not require a third-party JSON Schema package.
+
+## Private GitHub Corpus Automation
+
+If organizational policy permits a private sanitized-corpus repository, keep
+the raw production capture in internal storage and publish only the separately
+approved sanitized copy. Use a pinned commit, least-privilege read token, and an
+ephemeral CI checkout. CI should run `pcap-evidence-check`, report only
+path-redacted summaries, and prohibit PCAP artifact uploads.
+
+Do not add the private corpus as a NetSentry submodule or commit a raw download
+URL, token, internal storage path, or production PCAP to this repository. A
+repository boundary does not itself make traffic safe; privacy and
+sanitization approval remain mandatory.
+
 Required review checks before committing a public evidence record:
 
 - Confirm corpus paths are redacted or omitted.
@@ -29,6 +89,8 @@ Required review checks before committing a public evidence record:
   are absent.
 - Confirm sustained external fuzz and realistic sanitized pcap corpus evidence
   are not marked complete unless the corresponding local run was reviewed.
+- Confirm the approved manifest was revalidated against the exact local corpus
+  after the final review change.
 - Confirm tag publication evidence is not marked complete before the `v0.1.0`
   tag workflows finish successfully.
 

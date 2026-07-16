@@ -1,0 +1,50 @@
+{
+  "provenance": {
+    "source_description": "Replace with the reviewed production-traffic source description",
+    "collection_node": "Replace with an approved non-sensitive node identifier",
+    "collection_start_utc": "2026-01-01T00:00:00Z",
+    "collection_end_utc": "2026-01-01T00:05:00Z",
+    "custodian_reference": "Replace with an internal review or custody reference"
+  },
+  "sanitization": {
+    "tool": "Replace with the sanitizer name and version",
+    "rules": [
+      "Replace with the exact address, payload, and metadata transformation rules"
+    ],
+    "raw_capture_storage": "internal-only"
+  },
+  "sensitive_metadata_handling": {
+    "removed_fields": [
+      "Replace with reviewed fields such as addresses, DNS names, SNI, URIs, and session identifiers"
+    ],
+    "residual_risk": "Replace with the reviewer-assessed residual risk"
+  },
+  "reviews": {
+    "provenance": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_utc": "",
+      "notes": "Replace with provenance review findings"
+    },
+    "privacy": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_utc": "",
+      "notes": "Replace with privacy review findings"
+    },
+    "sanitization": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_utc": "",
+      "notes": "Replace with sanitization review findings"
+    },
+    "sensitive_metadata": {
+      "status": "pending",
+      "reviewer": "",
+      "reviewed_utc": "",
+      "notes": "Replace with sensitive-metadata review findings"
+    }
+  },
+  "review_status": "pending",
+  "approval": null
+}

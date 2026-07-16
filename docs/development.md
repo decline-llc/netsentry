@@ -392,14 +392,24 @@ Ready:
 Release result:
 
 - The signed `v0.1.0` tag, GitHub Release assets, tag-triggered Docker workflow, and public `ghcr.io/decline-llc/netsentry:v0.1.0` manifest were verified on 2026-07-11. The v0.1.0 exception does not carry into v0.1.1; R90-04 alone may use the separately approved anonymized public real-traffic alternative.
+- v0.1.1 production-derived PCAP evidence uses `make pcap-evidence` and
+  `make pcap-evidence-check`. The generator records path-redacted inventory
+  facts; named reviewers must supply provenance, privacy, sanitization,
+  sensitive-metadata, and final approval decisions. The release gate reparses
+  and hashes the exact local corpus with `RELEASE_EXCEPTION=none`.
+- The separately approved R90-05 exception accepts only the exact synthetic
+  corpus digest and packet count in `docs/audit/release_exception_r9005.yaml`.
+  The evidence must remain labeled synthetic and non-production-derived, and
+  the exception expires before R90-06.
 
 Exception record:
 
 - `docs/audit/release_exception_v0.1.0.yaml` records the explicit v0.1.0
   exception. `docs/audit/release_exception_r9004.yaml` separately permits
   R90-04-only anonymized public real-traffic evidence after its required
-  reviews; synthetic/generated traffic is prohibited and later increments
-  still require production-derived evidence.
+  reviews. Synthetic/generated traffic is prohibited under that exception; the
+  separate R90-05 exception is digest-scoped and later increments still require
+  production-derived evidence.
 
 Use `docs/evidence/release-evidence-template.md` for the sanitized public
 release evidence record. Keep generated local evidence under

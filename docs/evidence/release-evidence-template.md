@@ -29,14 +29,6 @@
 - Status:
 - Iterations or duration:
 - Corpus description:
-- Evidence class:
-- Production-derived corpus:
-- Exception applied:
-- Exception increment:
-- Privacy review:
-- Provenance validation:
-- Sanitization review:
-- Sensitive metadata screening:
 - Corpus paths included: no
 - Corpus files:
 - Crashes:
@@ -50,6 +42,15 @@
 - Date:
 - Status:
 - Corpus description:
+- Evidence class:
+- Production-derived corpus:
+- Exception applied:
+- Exception increment:
+- Privacy review:
+- Provenance validation:
+- Sanitization review:
+- Sensitive metadata screening:
+- Evidence manifest: reviewed path-redacted manifest; local path omitted
 - Corpus paths included: no
 - Pcap files:
 - Packets processed:
@@ -59,6 +60,7 @@
 - UDS write errors:
 - Query evidence:
 - Reviewer decision:
+- Manifest integrity verified:
 - Notes:
 
 ## Tag Publication Verification

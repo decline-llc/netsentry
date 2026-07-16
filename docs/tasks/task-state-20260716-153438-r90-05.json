@@ -1,0 +1,63 @@
+{
+  "task": "r90-05-v0.1.1-release-readiness",
+  "timestamp": "2026-07-16T15:34:38Z",
+  "branch": "main",
+  "remote_baseline": "c753c18bd8e4df5b86c014d3c003a22264b86fc8",
+  "risk_level": "High",
+  "checkpoint_updated": "2026-07-16T16:18:10Z",
+  "current_checkpoint": "final_validation_and_delivery",
+  "authorized_deviation": "The user waived R90-05's 2026-09-12 start date and separately approved the exact 7500-packet synthetic corpus under docs/audit/release_exception_r9005.yaml. The corpus remains explicitly non-production-derived and the exception expires before R90-06.",
+  "completed": [
+    "Fetched origin/main and confirmed it matches local HEAD at c753c18bd8e4df5b86c014d3c003a22264b86fc8",
+    "Confirmed R90-04b verification and Vault evidence remain complete",
+    "Confirmed neither expired exception can satisfy R90-05",
+    "Found no approved production-derived corpus-pressure evidence in the authorized workspace",
+    "Added an exception-free production-derived release-gate path and direct regressions for every promised rejection condition",
+    "Passed 13 focused release-gate tests, Python, documentation, knowledge, and diff checks",
+    "Passed the pinned supply-chain gate with 9/9 locked external assets and zero reachable vulnerabilities",
+    "Passed VERSION=0.1.1 SKIP_DOCKER=1 make rc-check with 75.4% Go coverage, parser fuzz smoke, e2e smoke, and distribution checks",
+    "Confirmed the exception-free v0.1.1 release gate stops because no reviewed public evidence record exists",
+    "Recorded operator confirmation that the Docker environment is functional and retained full Docker RC as a final corpus-backed rerun",
+    "Added path-redacted pcap/pcapng evidence generation, JSON Schema, exact-corpus integrity validation, and Makefile entrypoints",
+    "Made the exception-free release gate require an approved manifest and revalidate file names, packet counts, byte sizes, and SHA-256 values against the exact local corpus",
+    "Added direct evidence and release-gate regressions for path redaction, packet counting, placeholder rejection, incomplete approval, tampering, and missing manifest or corpus",
+    "Documented private GitHub ephemeral-checkout and Docker authorization handoffs without changing external infrastructure or weakening permissions",
+    "Passed 24 evidence regressions, 33 knowledge tests, Python, documentation, JSON, diff, and path-redaction checks",
+    "Reran VERSION=0.1.1 SKIP_DOCKER=1 make rc-check successfully with the evidence regression suite included",
+    "Verified the approved synthetic corpus manifest against the exact 711108-byte pcapng, 7500 packets, and SHA-256 509e940bc275d1972c09a4d9fd061e942516e22a0931d44eb9eb24deb7c66e68",
+    "Recorded the R90-05-only digest-scoped synthetic corpus exception without relabeling the corpus as production-derived",
+    "Passed corpus pressure with 7500 processed packets, zero parse errors, zero drops, zero UDS write errors, and zero engine error-log lines",
+    "Passed the full VERSION=0.1.1 make rc-check including Docker build, image-content smoke, and runtime health smoke",
+    "Refreshed the pinned supply-chain gate with Go 1.25.12, 9/9 locked assets, and zero reachable vulnerabilities",
+    "Added direct R90-05 exception regressions for exact integrity, false production claims, increment isolation, missing inputs, tampering, and inactive policy",
+    "Created the sanitized public v0.1.1 evidence record with final release decision left pending",
+    "Confirmed a non-persisted approved decision view passes the exact exception-backed gate, while the tracked record fails only on the two pending final-decision fields"
+    ,"Received explicit v0.1.1 final release-gate acceptance approval, including commit, push, and Vault synchronization but excluding tag creation and publication"
+  ],
+  "in_progress": [
+    "Run the approved exception-backed release gate and final delivery checks"
+  ],
+  "todo": [
+    "Commit, push, fetch-verify, and synchronize the exact pushed range to the Vault"
+  ],
+  "pending_validation": [
+    "R90-05 exception-backed v0.1.1 release gate",
+    "Final documentation, knowledge, diff, JSON, and sensitive-information checks after the decision"
+  ],
+  "pending_commits": [],
+  "remaining_risks": [
+    "The synthetic exception cannot be reused for R90-06 or another release",
+    "No tag or publication action is authorized"
+  ],
+  "approved_exception": {
+    "path": "docs/audit/release_exception_r9005.yaml",
+    "effective_increment": "R90-05",
+    "evidence_class": "synthetic",
+    "production_derived": false,
+    "packet_count": 7500,
+    "file_size_bytes": 711108,
+    "sha256": "509e940bc275d1972c09a4d9fd061e942516e22a0931d44eb9eb24deb7c66e68",
+    "expires_before": "R90-06"
+  },
+  "resume_instructions": "The user explicitly approved v0.1.1 final release-gate acceptance and authorized commit, push, and Vault synchronization. Run the exact exception-backed gate with the private manifest and corpus, complete final checks, then commit, push, fetch-verify, and synchronize the exact range. Do not reuse the exception for R90-06, create a tag, or publish without separate authorization."
+}

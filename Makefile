@@ -14,7 +14,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build build-asan test test-unit test-integration test-e2e test-stress test-coverage deps-check supply-chain-check workflow-check docs-check shell-check python-check knowledge-check config-check asan-test bench fuzz-parser fuzz-parser-long fuzz-sustained gen-sanitized-corpus e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap dist release-artifacts docker-build release-gate rc-check lint clean quickstart help
+.PHONY: all build-c build-go build build-asan test test-unit test-integration test-e2e test-stress test-coverage deps-check supply-chain-check workflow-check docs-check shell-check python-check evidence-check knowledge-check config-check asan-test bench fuzz-parser fuzz-parser-long fuzz-sustained gen-sanitized-corpus e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap pcap-evidence pcap-evidence-check dist release-artifacts docker-build release-gate rc-check lint clean quickstart help
 
 all: build
 
@@ -97,7 +97,11 @@ shell-check:
 
 ## python-check — run Python script syntax checks
 python-check:
-	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("scripts/check_supply_chain.py", "scripts/gen_test_pcap.py", "scripts/gen_sanitized_corpus.py", "scripts/sanitize_pcap.py", "scripts/test_sanitize_pcap.py", "scripts/release_gate.py", "scripts/test_release_gate.py", "scripts/sync_knowledge.py", "scripts/post_push_sync.py", "scripts/test_sync_knowledge.py", "scripts/test_post_push_sync.py", "scripts/fixtures/__init__.py", "scripts/fixtures/post_push_fixture.py"))]'
+	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("scripts/check_supply_chain.py", "scripts/gen_test_pcap.py", "scripts/gen_sanitized_corpus.py", "scripts/sanitize_pcap.py", "scripts/test_sanitize_pcap.py", "scripts/pcap_evidence.py", "scripts/test_pcap_evidence.py", "scripts/release_gate.py", "scripts/test_release_gate.py", "scripts/sync_knowledge.py", "scripts/post_push_sync.py", "scripts/test_sync_knowledge.py", "scripts/test_post_push_sync.py", "scripts/fixtures/__init__.py", "scripts/fixtures/post_push_fixture.py"))]'
+
+## evidence-check — run sanitizer, PCAP evidence, and release-gate regressions
+evidence-check:
+	@python3 -m unittest scripts.test_sanitize_pcap scripts.test_pcap_evidence scripts.test_release_gate
 
 ## knowledge-check — test deterministic, idempotent Obsidian knowledge extraction
 knowledge-check:
@@ -156,6 +160,24 @@ sanitize-pcap:
 	@test -n "$(OUTPUT)" || { echo "OUTPUT is required"; exit 1; }
 	@python3 scripts/sanitize_pcap.py -i "$(INPUT)" -o "$(OUTPUT)"
 
+## pcap-evidence — generate path-redacted local manifest/report from reviewed metadata
+pcap-evidence:
+	@test -n "$(PCAP_CORPUS)" || { echo "PCAP_CORPUS is required"; exit 2; }
+	@test -n "$(PCAP_METADATA)" || { echo "PCAP_METADATA is required"; exit 2; }
+	@python3 scripts/pcap_evidence.py generate \
+	    --pcap "$(PCAP_CORPUS)" \
+	    --metadata "$(PCAP_METADATA)" \
+	    --output-dir "$(if $(PCAP_EVIDENCE_OUTPUT),$(PCAP_EVIDENCE_OUTPUT),docs/evidence/local/pcap-evidence)"
+
+## pcap-evidence-check — verify approved manifest against the exact local corpus
+pcap-evidence-check:
+	@test -n "$(PCAP_CORPUS)" || { echo "PCAP_CORPUS is required"; exit 2; }
+	@test -n "$(PCAP_EVIDENCE_MANIFEST)" || { echo "PCAP_EVIDENCE_MANIFEST is required"; exit 2; }
+	@python3 scripts/pcap_evidence.py validate \
+	    --manifest "$(PCAP_EVIDENCE_MANIFEST)" \
+	    --pcap "$(PCAP_CORPUS)" \
+	    --require-approved
+
 ## dist      — build a local release archive under dist/
 dist: build
 	@bash scripts/package_release.sh $(VERSION)
@@ -167,7 +189,7 @@ release-artifacts:
 
 ## release-gate — require reviewed public fuzz and pcap evidence before release
 release-gate:
-	@python3 scripts/release_gate.py --evidence "$(if $(RELEASE_EVIDENCE),$(RELEASE_EVIDENCE),docs/evidence/release-v0.1.0.md)" --exception "$(if $(RELEASE_EXCEPTION),$(RELEASE_EXCEPTION),docs/audit/release_exception_v0.1.0.yaml)"
+	@python3 scripts/release_gate.py --evidence "$(if $(RELEASE_EVIDENCE),$(RELEASE_EVIDENCE),docs/evidence/release-v0.1.0.md)" $(if $(filter none,$(RELEASE_EXCEPTION)),--no-exception,--exception "$(if $(RELEASE_EXCEPTION),$(RELEASE_EXCEPTION),docs/audit/release_exception_v0.1.0.yaml)") $(if $(PCAP_EVIDENCE_MANIFEST),--pcap-manifest "$(PCAP_EVIDENCE_MANIFEST)") $(if $(PCAP_CORPUS),--pcap-corpus "$(PCAP_CORPUS)")
 
 ## docker-build — build a local Docker image
 docker-build:

@@ -37,6 +37,9 @@ make docs-check
 echo "[rc-check] make python-check"
 make python-check
 
+echo "[rc-check] make evidence-check"
+make evidence-check
+
 echo "[rc-check] make knowledge-check"
 make knowledge-check
 
