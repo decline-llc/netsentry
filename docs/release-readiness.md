@@ -151,11 +151,18 @@ mandatory v0.1.1 follow-up.
 
 `docs/audit/release_exception_r9004.yaml` applies only to R90-04. It permits an anonymized public real-traffic dataset instead of internal production-derived PCAP evidence only when the public evidence record identifies `public-anonymized-real`, references the exception and R90-04, and records approved privacy review, provenance validation, sanitization review, and sensitive-metadata screening. It expires when R90-04 completes and does not alter any subsequent increment. Synthetic or generated traffic is prohibited.
 
+The exception is recorded as expired at R90-04 completion commit
+`009b2a03776987359661c4ab2776f5d04820db34`. The release gate rejects it even
+when every R90-04 review field is otherwise valid, preventing reuse for R90-05,
+tag publication, or image publication.
+
 ## Release Checklist
 
 - `make rc-check` passes locally.
 - `SUPPLY_CHAIN_FETCH_ASSETS=1 make supply-chain-check` passes with immutable Action refs, the locked Go toolchain, zero reachable vulnerabilities, and 9/9 external hashes.
-- `make release-gate` passes against the reviewed public evidence record.
+- `make release-gate` passes against a reviewed release record using only an
+  exception valid for that release or production-derived PCAP evidence; the
+  expired R90-04 record cannot satisfy this gate.
 - Sudo Docker RC validation passes where Docker is part of the release gate.
 - Synthetic extended pressure and no-corpus ASan fuzz checks pass as auxiliary regression signals.
 - Approved v0.1.0 exception record is present and scope-limited.

@@ -3,6 +3,9 @@ approve_utc: 2026-07-15T09:05:44Z
 scope_exempt: R90-04 only: public anonymized real pcap evidence may substitute internal production-derived pcap evidence
 effective_increment: R90-04
 revoke_condition: This exception expires when R90-04 is complete and does not apply to any later increment
+status: expired
+expired_utc: 2026-07-16T08:56:45Z
+expired_commit: 009b2a03776987359661c4ab2776f5d04820db34
 synthetic_prohibited: yes
 required_controls: dedicated privacy review, provenance validation, sanitization review, sensitive metadata screening
 evidence_note: Approved evidence must be anonymized public real network traffic; synthetic or generated traffic is prohibited

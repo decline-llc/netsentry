@@ -14,6 +14,7 @@ MIN_FUZZ_ITERATIONS = 1_000_000
 V010_EXCEPTION = "release_exception_v0.1.0.yaml"
 R9004_EXCEPTION = "release_exception_r9004.yaml"
 R9004_EXCEPTION_PATH = "docs/audit/release_exception_r9004.yaml"
+R9004_RELEASE_REJECTION = "R90-04 exception is expired and cannot approve a release"
 SENSITIVE_LABELS = (
     "Raw pcaps staged",
     "Fuzz corpus files staged",
@@ -87,6 +88,16 @@ def exception_metadata(path: Path) -> tuple[dict[str, str] | None, list[str]]:
                 errors.append(f"R90-04 exception required_controls must include {control}")
         if "R90-04" not in values.get("revoke_condition", ""):
             errors.append("R90-04 exception revoke_condition must end with R90-04")
+        if values.get("status", "").casefold() != "expired":
+            errors.append("R90-04 exception status must be expired")
+        try:
+            expired_at = datetime.fromisoformat(values.get("expired_utc", "").replace("Z", "+00:00"))
+            if expired_at.tzinfo is None or expired_at > datetime.now(timezone.utc):
+                errors.append("R90-04 exception expired_utc must be a past UTC timestamp")
+        except ValueError:
+            errors.append("R90-04 exception expired_utc must be ISO-8601 UTC")
+        if not re.fullmatch(r"[0-9a-f]{40}", values.get("expired_commit", "")):
+            errors.append("R90-04 exception expired_commit must be a full lowercase Git SHA")
         evidence_note = values.get("evidence_note", "").casefold()
         if (
             "public" not in evidence_note
@@ -170,6 +181,7 @@ def validate(path: Path, exception_path: Path) -> list[str]:
         if required(pcap, "Exception applied", errors) != "docs/audit/release_exception_v0.1.0.yaml":
             errors.append("pcap Exception applied must reference the approved v0.1.0 exception")
     elif exception_active and exception["policy"] == "r90-04":
+        errors.append(R9004_RELEASE_REJECTION)
         if required(pcap, "Evidence class", errors).casefold() != "public-anonymized-real":
             errors.append("R90-04 exception pcap Evidence class must be public-anonymized-real")
         corpus_description = required(pcap, "Corpus description", errors).casefold()

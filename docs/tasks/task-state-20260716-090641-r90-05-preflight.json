@@ -1,0 +1,29 @@
+{
+  "task": "r90-05-expired-exception-preflight",
+  "timestamp": "2026-07-16T09:06:41Z",
+  "branch": "main",
+  "remote_baseline": "673a5d580a08db44de76aa17ef6301e4e48f402a",
+  "risk_level": "High",
+  "current_checkpoint": "planned",
+  "completed": [
+    "Fetched origin/main and confirmed it matches local HEAD at 673a5d580a08db44de76aa17ef6301e4e48f402a",
+    "Confirmed the release gate accepts an otherwise-valid release record backed by the R90-04-only exception even though R90-04 is complete"
+  ],
+  "in_progress": [
+    "Enforce the R90-04 exception expiry in the release gate and add direct regression coverage"
+  ],
+  "todo": [
+    "Run focused and repository validation",
+    "Commit, push, verify origin/main, and synchronize the exact range to the local Vault"
+  ],
+  "pending_validation": [
+    "Release-gate exception-isolation tests",
+    "Python, documentation, knowledge, diff, and sensitive-information checks"
+  ],
+  "pending_commits": [],
+  "remaining_risks": [
+    "R90-05 must still wait for its 2026-09-12 window and production-derived evidence requirements",
+    "No release, tag, or publication action is authorized"
+  ],
+  "resume_instructions": "Complete only the expired R90-04 exception enforcement. Do not begin R90-05 release-readiness validation, tagging, or publication."
+}

@@ -380,6 +380,9 @@ Ready:
 - `make rc-check` includes syntax checks, config validation, dependency verification, tests, coverage, deterministic fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 - GitHub Actions CI, tag-driven GitHub Release publication, and GHCR publishing workflows are checked in.
 - The v0.1.0 release gate has a reviewed, version-scoped exception for real production-derived pcap evidence; it expires before v0.1.1. The separate R90-04 exception permits only anonymized public real-traffic PCAP evidence after approved privacy, provenance, sanitization, and sensitive-metadata reviews.
+- The R90-04 exception is now recorded as expired at its completion commit and
+  is rejected by `make release-gate`; it cannot authorize R90-05 or any tag or
+  image publication.
 - `make dist` produces a local release archive, checksum, and generated release notes.
 - `make release-artifacts VERSION=0.1.0` validates release-version format before building publishable archive assets.
 - `make docker-build` builds the local runtime image.

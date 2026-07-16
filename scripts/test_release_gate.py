@@ -15,6 +15,9 @@ approve_utc: 2026-07-15T09:05:44Z
 scope_exempt: R90-04 only: public anonymized real pcap evidence may substitute internal production-derived pcap evidence
 effective_increment: R90-04
 revoke_condition: This exception expires when R90-04 is complete and does not apply to any later increment
+status: expired
+expired_utc: 2026-07-16T08:56:45Z
+expired_commit: 009b2a03776987359661c4ab2776f5d04820db34
 synthetic_prohibited: yes
 required_controls: dedicated privacy review, provenance validation, sanitization review, sensitive metadata screening
 evidence_note: Approved evidence must be anonymized public real network traffic; synthetic or generated traffic is prohibited
@@ -69,17 +72,25 @@ def evidence(**overrides: str) -> str:
 
 
 class ReleaseGateTest(unittest.TestCase):
-    def validate_r9004(self, **overrides: str) -> list[str]:
+    def validate_r9004(
+        self,
+        *,
+        exception_text: str = R9004_EXCEPTION,
+        **overrides: str,
+    ) -> list[str]:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             exception = root / "release_exception_r9004.yaml"
             record = root / "evidence.md"
-            exception.write_text(R9004_EXCEPTION, encoding="utf-8")
+            exception.write_text(exception_text, encoding="utf-8")
             record.write_text(evidence(**overrides), encoding="utf-8")
             return release_gate.validate(record, exception)
 
-    def test_r9004_public_real_evidence_is_accepted(self) -> None:
-        self.assertEqual([], self.validate_r9004())
+    def test_r9004_public_real_evidence_cannot_approve_release(self) -> None:
+        self.assertEqual(
+            [release_gate.R9004_RELEASE_REJECTION],
+            self.validate_r9004(),
+        )
 
     def test_r9004_rejects_synthetic_evidence(self) -> None:
         errors = self.validate_r9004(**{"Evidence class": "synthetic"})
@@ -106,6 +117,34 @@ class ReleaseGateTest(unittest.TestCase):
             with self.subTest(label=label):
                 errors = self.validate_r9004(**{label: "pending"})
                 self.assertIn(f"R90-04 exception pcap {label} must be approved", errors)
+
+    def test_r9004_rejects_invalid_expiry_metadata(self) -> None:
+        cases = (
+            (
+                R9004_EXCEPTION.replace("status: expired", "status: active"),
+                "R90-04 exception status must be expired",
+            ),
+            (
+                R9004_EXCEPTION.replace(
+                    "expired_utc: 2026-07-16T08:56:45Z",
+                    "expired_utc: not-a-time",
+                ),
+                "R90-04 exception expired_utc must be ISO-8601 UTC",
+            ),
+            (
+                R9004_EXCEPTION.replace(
+                    "expired_commit: 009b2a03776987359661c4ab2776f5d04820db34",
+                    "expired_commit: 009b2a0",
+                ),
+                "R90-04 exception expired_commit must be a full lowercase Git SHA",
+            ),
+        )
+        for exception_text, expected in cases:
+            with self.subTest(expected=expected):
+                self.assertIn(
+                    expected,
+                    self.validate_r9004(exception_text=exception_text),
+                )
 
     def test_v010_exception_remains_valid(self) -> None:
         self.assertEqual(
