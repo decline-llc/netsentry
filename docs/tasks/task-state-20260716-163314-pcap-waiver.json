@@ -2,9 +2,9 @@
   "task": "global-pcap-release-gate-waiver",
   "timestamp": "2026-07-16T16:33:14Z",
   "branch": "main",
-  "remote_baseline": "c4b8c9032ab8ac7b0f2ae314a420e6a22211ce05",
+  "remote_baseline": "ec2605e3e8c99749933530d77ad1eb0200b8b47e",
   "risk_level": "High",
-  "current_checkpoint": "validated_for_delivery",
+  "current_checkpoint": "complete",
   "authorization": "The user cancelled all PCAP package restrictions.",
   "completed": [
     "Defined the waiver as removal of all PCAP release-gate evidence requirements",
@@ -18,15 +18,24 @@
     "Passed 16 evidence regressions including 8 direct non-PCAP release-gate tests",
     "Confirmed v0.1.0 and v0.1.1 release records pass with missing PCAP files, manifests, and exception paths",
     "Passed VERSION=0.1.1 make rc-check including Docker build and runtime health smoke with 75.4% Go coverage",
-    "Passed Python, documentation, knowledge, JSON, diff, and sensitive-information checks"
+    "Passed Python, documentation, knowledge, JSON, diff, and sensitive-information checks",
+    "Pushed ec2605e3e8c99749933530d77ad1eb0200b8b47e and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact Vault note, full index, and MOC"
   ],
   "in_progress": [],
-  "todo": [
-    "Commit, push, fetch-verify, and synchronize the Vault"
-  ],
+  "todo": [],
+  "delivery": {
+    "commit": "ec2605e3e8c99749933530d77ad1eb0200b8b47e",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "c4b8c9032ab8ac7b0f2ae314a420e6a22211ce05..ec2605e3e8c99749933530d77ad1eb0200b8b47e",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
   "remaining_risks": [
     "PCAP quality or representativeness can no longer block a release",
     "Tagging and publication remain separately unauthorized"
   ],
-  "resume_instructions": "Complete the global PCAP release-gate waiver without weakening fuzz, RC, supply-chain, final-decision, credential, or publication controls."
+  "resume_instructions": "The global PCAP release-gate waiver is complete at ec2605e3e8c99749933530d77ad1eb0200b8b47e; do not repeat its validation, commit, push, or Vault synchronization. R90-06 remains ready. Do not create a tag or publish without separate authorization."
 }
