@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "44efffca0979c31faf669db4c1d073613ada8f0e",
   "risk_level": "High",
-  "current_checkpoint": "decision_package",
+  "current_checkpoint": "complete",
   "completed": [
     "Selected R90-06 as the only dependency-ready roadmap increment",
     "Confirmed all roadmap window restrictions are waived",
@@ -22,14 +22,14 @@
     "Verified fetched origin/main matches the candidate and passed post-fetch knowledge validation",
     "Synchronized and verified the candidate Vault iteration note, full commit index, and MOC link",
     "Rebuilt the v0.1.1 linux/amd64 artifact from the exact candidate",
-    "Verified the 9561869-byte artifact SHA-256 aa88bb4b25e9bb2418e2762f788ebad0159753ebe16868b33ae9d0253b981967"
+    "Verified the 9561869-byte artifact SHA-256 aa88bb4b25e9bb2418e2762f788ebad0159753ebe16868b33ae9d0253b981967",
+    "Delivered the hold-state decision package at c70a48d6e1272b5d0f127b848b761376bb1924a3",
+    "Verified fetched origin/main matches the decision-package commit and passed post-fetch knowledge validation",
+    "Synchronized and verified the decision-package Vault iteration note, full commit index, and MOC link",
+    "Completed R90-06 without creating v0.1.1 or publishing a GitHub Release or GHCR image"
   ],
-  "in_progress": [
-    "Deliver the hold-state release decision package"
-  ],
-  "todo": [
-    "Reconcile R90-06 completion after the decision package is pushed"
-  ],
+  "in_progress": [],
+  "todo": [],
   "remaining_risks": [
     "No tag or publication action is authorized",
     "The release decision package must distinguish gate acceptance from publication authority"
@@ -52,5 +52,13 @@
     "vault_full_index_verified": true,
     "vault_moc_verified": true
   },
-  "resume_instructions": "The exact v0.1.1 candidate is delivered at ad8a443b5020037c235419f5696c60988d2bba99 and its local artifact checksum is fixed. Deliver docs/evidence/release-decision-v0.1.1.md with publication held, then reconcile R90-06 completion. Do not create a tag or publish."
+  "decision_package_delivery": {
+    "commit": "c70a48d6e1272b5d0f127b848b761376bb1924a3",
+    "origin_main_verified": true,
+    "vault_range": "ad8a443b5020037c235419f5696c60988d2bba99..c70a48d6e1272b5d0f127b848b761376bb1924a3",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
+  "resume_instructions": "R90-06 is complete. Do not repeat its candidate validation, artifact build, decision-package commit, push, or Vault synchronization. The rolling queue has no unfinished increment. Publication remains on hold: do not create v0.1.1 or publish GitHub Release/GHCR assets without explicit final publication authorization."
 }
