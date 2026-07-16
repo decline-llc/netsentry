@@ -131,7 +131,7 @@ make docker-build
 make release-gate
 ```
 
-GitHub Actions runs RC checks for main pushes and pull requests. Version-tag workflows publish GitHub Releases and GHCR images. The signed v0.1.0 tag, Release, and `ghcr.io/decline-llc/netsentry:v0.1.0` were verified on 2026-07-11; see `docs/evidence/release-v0.1.0.md`. Only R90-04 may use anonymized public real-traffic PCAPs after approved privacy, provenance, sanitization, and sensitive-metadata reviews; synthetic/generated traffic remains prohibited and later increments retain their production-derived requirement.
+GitHub Actions runs RC checks for main pushes and pull requests. Version-tag workflows publish GitHub Releases and GHCR images. The signed v0.1.0 tag, Release, and `ghcr.io/decline-llc/netsentry:v0.1.0` were verified on 2026-07-11; see `docs/evidence/release-v0.1.0.md`. Under the approved global waiver, the current release gate no longer requires PCAP evidence. PCAP tools remain available for optional diagnostics; raw corpora, private paths, and local review materials must not enter Git.
 
 ## Project layout
 

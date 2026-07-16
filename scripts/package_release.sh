@@ -37,7 +37,7 @@ cp "${ROOT_DIR}/SECURITY.md" "${STAGE_DIR}/${PACKAGE_NAME}/"
 cat >"${STAGE_DIR}/${PACKAGE_NAME}/RELEASE_NOTES.md" <<EOF_NOTES
 # NetSentry ${VERSION}
 
-This archive contains a development snapshot of NetSentry v0.1.0.
+This archive contains NetSentry ${VERSION}.
 
 ## Package Contents
 
@@ -65,7 +65,7 @@ In a source checkout, the deterministic end-to-end smoke test remains:
 make e2e-smoke
 \`\`\`
 
-## v0.1.0 Boundaries
+## Release Boundaries
 
 - Offline pcap analysis is the primary path.
 - Supported packet parsing covers Ethernet, VLAN/Q-in-Q, IPv4, TCP, and UDP passthrough.

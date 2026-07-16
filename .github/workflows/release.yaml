@@ -72,8 +72,13 @@ jobs:
 
       - name: Enforce reviewed release evidence gate
         env:
-          RELEASE_EVIDENCE: docs/evidence/release-v0.1.0.md
-        run: make release-gate
+          RELEASE_EVIDENCE: docs/evidence/release-${{ steps.meta.outputs.release_tag }}.md
+        run: |
+          test -f "${RELEASE_EVIDENCE}" || {
+            echo "missing reviewed release evidence: ${RELEASE_EVIDENCE}" >&2
+            exit 1
+          }
+          make release-gate
 
       - name: Build release artifacts
         env:

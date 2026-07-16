@@ -15,6 +15,11 @@ on:
         required: true
         default: false
         type: boolean
+      release_evidence:
+        description: "Reviewed release evidence path for a manual run"
+        required: false
+        default: "docs/evidence/release-v0.1.1.md"
+        type: string
 
 permissions:
   contents: read
@@ -55,16 +60,47 @@ jobs:
           SUPPLY_CHAIN_FETCH_ASSETS: "1"
         run: make supply-chain-check
 
+      - name: Resolve release metadata
+        id: release
+        env:
+          MANUAL_RELEASE_EVIDENCE: ${{ inputs.release_evidence }}
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            RELEASE_TAG="${GITHUB_REF_NAME}"
+            [[ "${RELEASE_TAG}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]] || {
+              echo "unsupported release tag: ${RELEASE_TAG}" >&2
+              exit 1
+            }
+            RELEASE_VERSION="${RELEASE_TAG#v}"
+            RELEASE_EVIDENCE="docs/evidence/release-${RELEASE_TAG}.md"
+          else
+            RELEASE_VERSION="0.1.1-publish.${GITHUB_RUN_NUMBER}"
+            RELEASE_EVIDENCE="${MANUAL_RELEASE_EVIDENCE}"
+          fi
+          [[ "${RELEASE_EVIDENCE}" =~ ^docs/evidence/release-v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?\.md$ ]] || {
+            echo "unsupported release evidence path: ${RELEASE_EVIDENCE}" >&2
+            exit 1
+          }
+          test -f "${RELEASE_EVIDENCE}" || {
+            echo "missing reviewed release evidence: ${RELEASE_EVIDENCE}" >&2
+            exit 1
+          }
+          {
+            echo "version=${RELEASE_VERSION}"
+            echo "evidence=${RELEASE_EVIDENCE}"
+          } >>"${GITHUB_OUTPUT}"
+
       - name: Run release-candidate checks
         env:
           DOCKER: docker
           IMAGE: netsentry:publish-${{ github.run_id }}
-          VERSION: 0.1.0-publish.${{ github.run_number }}
+          VERSION: ${{ steps.release.outputs.version }}
         run: make rc-check
 
       - name: Enforce reviewed release evidence gate
         env:
-          RELEASE_EVIDENCE: docs/evidence/release-v0.1.0.md
+          RELEASE_EVIDENCE: ${{ steps.release.outputs.evidence }}
         run: make release-gate
 
       - name: Log in to GHCR

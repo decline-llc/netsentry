@@ -82,9 +82,11 @@ tar -tzf "${ARCHIVE_PATH}" \
     "${PACKAGE_NAME}/RELEASE_NOTES.md" >/dev/null
 
 echo "[rc-check] release notes smoke"
+tar -xOf "${ARCHIVE_PATH}" "${PACKAGE_NAME}/RELEASE_NOTES.md" | grep -F "# NetSentry ${VERSION}" >/dev/null
+tar -xOf "${ARCHIVE_PATH}" "${PACKAGE_NAME}/RELEASE_NOTES.md" | grep -F "This archive contains NetSentry ${VERSION}." >/dev/null
 tar -xOf "${ARCHIVE_PATH}" "${PACKAGE_NAME}/RELEASE_NOTES.md" | grep -F "## Package Contents" >/dev/null
 tar -xOf "${ARCHIVE_PATH}" "${PACKAGE_NAME}/RELEASE_NOTES.md" | grep -F "## Quick Verification" >/dev/null
-tar -xOf "${ARCHIVE_PATH}" "${PACKAGE_NAME}/RELEASE_NOTES.md" | grep -F "## v0.1.0 Boundaries" >/dev/null
+tar -xOf "${ARCHIVE_PATH}" "${PACKAGE_NAME}/RELEASE_NOTES.md" | grep -F "## Release Boundaries" >/dev/null
 tar -xOf "${ARCHIVE_PATH}" "${PACKAGE_NAME}/RELEASE_NOTES.md" | grep -F "## Release-Candidate Evidence" >/dev/null
 tar -xOf "${ARCHIVE_PATH}" "${PACKAGE_NAME}/RELEASE_NOTES.md" | grep -F "make rc-check" >/dev/null
 
