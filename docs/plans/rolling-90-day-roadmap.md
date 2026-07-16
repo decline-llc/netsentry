@@ -4,7 +4,8 @@
 
 ## Status Rules
 
-- **Ready**: every dependency is complete and the earliest window has begun.
+- **Ready**: every dependency is complete. As of 2026-07-16, roadmap dates are
+  forecasting metadata only and never prevent work from starting.
 - **Blocked**: requires an explicitly recorded external input, authority, or unresolved validation result.
 - **Complete**: acceptance criteria and required evidence are verified, including commit/push/Vault evidence when a repository increment was delivered.
 - Complete only one ready increment per `$netsentry-next` trigger. Record deviations before reordering unfinished work.
@@ -21,7 +22,20 @@
 | R90-04 | Jul 15–Sep 11 | Complete | Review approved anonymized public real-traffic PCAP evidence, then run corpus-pressure validation. | R90-04 scoped exception | Path-redacted MAWI real-traffic evidence passed dedicated privacy, provenance, sanitization, sensitive-metadata, and corpus-pressure review; the exception expires for this increment. |
 | R90-04b | Jul 16 | Complete | Enforce the completed R90-04 exception boundary before R90-05. | R90-04 | The audit record is expired and the release gate directly rejects R90-04-backed release approval while preserving the historical v0.1.0 gate. |
 | R90-05 | Jul 16 | Complete early | Prepare v0.1.1 release readiness from validated evidence. | R90-04; passing code quality gates | `make rc-check`, supply-chain, and release gates pass; public docs/evidence identify no unresolved release blocker. |
-| R90-06 | Oct 3–14 | Pending | Assemble a release decision package. | R90-05 | Version, commit, evidence, checksums, and intended publication decision are reconciled; do not tag or publish without explicit user authorization. |
+| R90-06 | Window waived; forecast was Oct 3–14 | Ready | Assemble a release decision package. | R90-05 | Version, commit, evidence, checksums, and intended publication decision are reconciled; do not tag or publish without explicit user authorization. |
+
+## Global Schedule-Window Waiver
+
+- **Authorization:** On Jul 16, 2026, the user cancelled every roadmap planning
+  window restriction.
+- **Effect:** Earliest and latest dates remain visible only as historical
+  forecasts. Dependency-ready increments may start immediately, and passing a
+  forecast end date does not by itself block or defer work.
+- **Unchanged controls:** Dependencies, evidence requirements, acceptance
+  criteria, stop conditions, private-data boundaries, release decisions,
+  tagging, and publication authorization remain fully enforced.
+- **Current result:** R90-06 is ready because R90-05 is complete. This waiver
+  does not authorize creation of a tag or public release.
 
 ## Dependency and Priority Policy
 
@@ -77,4 +91,4 @@
 
 ## Current Checkpoint
 
-R90-03a was completed early to remove CI coupling to unversioned hook files. On Jul 15, 2026, R90-04a was added, selected, and completed as the evidence-independent alternate: the non-Docker RC suite and pinned supply-chain baseline passed. On Jul 16, R90-04 used MAWI samplepoint-B trace `200012281400` under the scoped exception: provenance, privacy, sanitization, and sensitive-metadata reviews were approved; corpus pressure processed 544,525 packets with zero parse errors, drops, and UDS write errors. Feature commit `009b2a03776987359661c4ab2776f5d04820db34` is verified on fetched `origin/main`, post-fetch knowledge validation passed, and the exact pushed range is present in the Vault iteration note, full index, and MOC. The public record is `docs/evidence/r90-04-public-traffic-20260716.md`; it is R90-04-only and does not grant release approval. R90-04b completed at `64979f454cfee414cbb216368a8ee2fb34147e4d`: the audit exception is explicitly expired, the release gate rejects its reuse, the historical v0.1.0 fixture remains valid, and fetched `origin/main` plus Vault evidence are verified. R90-05 completed early at `6c3f9ef276c99c13aa9e985b8c849bb5f0791752`: the exact 7,500-packet synthetic corpus was verified by SHA-256, corpus pressure passed without capture errors, the full Docker RC and pinned supply-chain gates passed, and the user explicitly approved final v0.1.1 release-gate acceptance. The pushed commit is verified on fetched `origin/main`; post-fetch knowledge validation and the exact Vault range are verified. The R90-05 exception is now expired and the release gate rejects reuse. Tag creation and publication remain unauthorized. R90-06 remains pending until its Oct 3 window.
+R90-03a was completed early to remove CI coupling to unversioned hook files. On Jul 15, 2026, R90-04a was added, selected, and completed as the evidence-independent alternate: the non-Docker RC suite and pinned supply-chain baseline passed. On Jul 16, R90-04 used MAWI samplepoint-B trace `200012281400` under the scoped exception: provenance, privacy, sanitization, and sensitive-metadata reviews were approved; corpus pressure processed 544,525 packets with zero parse errors, drops, and UDS write errors. Feature commit `009b2a03776987359661c4ab2776f5d04820db34` is verified on fetched `origin/main`, post-fetch knowledge validation passed, and the exact pushed range is present in the Vault iteration note, full index, and MOC. The public record is `docs/evidence/r90-04-public-traffic-20260716.md`; it is R90-04-only and does not grant release approval. R90-04b completed at `64979f454cfee414cbb216368a8ee2fb34147e4d`: the audit exception is explicitly expired, the release gate rejects its reuse, the historical v0.1.0 fixture remains valid, and fetched `origin/main` plus Vault evidence are verified. R90-05 completed early at `6c3f9ef276c99c13aa9e985b8c849bb5f0791752`: the exact 7,500-packet synthetic corpus was verified by SHA-256, corpus pressure passed without capture errors, the full Docker RC and pinned supply-chain gates passed, and the user explicitly approved final v0.1.1 release-gate acceptance. The pushed commit is verified on fetched `origin/main`; post-fetch knowledge validation and the exact Vault range are verified. The R90-05 exception is now expired and the release gate rejects reuse. On Jul 16, the user cancelled every remaining roadmap window restriction. R90-06 is therefore ready immediately because its dependency is complete, but tag creation and publication remain unauthorized.

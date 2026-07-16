@@ -1,0 +1,24 @@
+{
+  "task": "global-roadmap-window-waiver",
+  "timestamp": "2026-07-16T16:24:51Z",
+  "branch": "main",
+  "remote_baseline": "f8d766e9dbadbb0433ad0dd31047ae04f0055950",
+  "risk_level": "Low",
+  "current_checkpoint": "validated_for_delivery",
+  "authorization": "The user cancelled all roadmap planning window restrictions.",
+  "completed": [
+    "Made roadmap dates informational rather than eligibility gates",
+    "Preserved dependency, evidence, release, tag, and publication controls",
+    "Reclassified R90-06 as ready because R90-05 is complete",
+    "Reconciled the completed R90-05 resume guidance",
+    "Passed documentation, knowledge, JSON, diff, and sensitive-information checks"
+  ],
+  "in_progress": [],
+  "todo": [
+    "Commit, push, fetch-verify, and synchronize the exact range to the Vault"
+  ],
+  "remaining_risks": [
+    "R90-06 readiness is not tag or publication authorization"
+  ],
+  "resume_instructions": "Finish validation and delivery of the global roadmap window waiver. After delivery, R90-06 is the next ready increment, but no tag or publication action is authorized."
+}

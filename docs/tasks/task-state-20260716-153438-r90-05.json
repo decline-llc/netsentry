@@ -64,5 +64,5 @@
     "sha256": "509e940bc275d1972c09a4d9fd061e942516e22a0931d44eb9eb24deb7c66e68",
     "expires_before": "R90-06"
   },
-  "resume_instructions": "R90-05 is complete at 6c3f9ef276c99c13aa9e985b8c849bb5f0791752; do not repeat its validation, commit, push, or Vault synchronization. The R90-05 exception is expired and cannot be reused. R90-06 remains pending until its 2026-10-03 window. Do not create a tag or publish without separate authorization."
+  "resume_instructions": "R90-05 is complete at 6c3f9ef276c99c13aa9e985b8c849bb5f0791752; do not repeat its validation, commit, push, or Vault synchronization. The R90-05 exception is expired and cannot be reused. The user cancelled all roadmap window restrictions on 2026-07-16, so R90-06 is dependency-ready immediately. Do not create a tag or publish without separate authorization."
 }
