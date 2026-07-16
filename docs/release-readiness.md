@@ -27,18 +27,18 @@ Ready:
 - R90-04 public-real-traffic validation passed on 2026-07-16 using one locally re-sanitized MAWI samplepoint-B trace: 544,525 packets processed with zero capture parse errors, drops, UDS write errors, or engine error-log lines. The reviewed, path-redacted record is [`r90-04-public-traffic-20260716.md`](evidence/r90-04-public-traffic-20260716.md). It is approved for R90-04 only; it neither approves a release nor satisfies later production-derived requirements.
 - The user approved `docs/audit/release_exception_r9005.yaml` on 2026-07-16 for one exact 7,500-packet synthetic corpus. The exception pins SHA-256 `509e940bc275d1972c09a4d9fd061e942516e22a0931d44eb9eb24deb7c66e68`, requires explicit non-production labeling and exact integrity verification, applies only to R90-05, and expires before R90-06.
 - R90-05 final v0.1.1 release-gate acceptance passed on 2026-07-16 at commit `6c3f9ef276c99c13aa9e985b8c849bb5f0791752`. The exception is now expired and cannot be reused. This acceptance does not create a tag or authorize public release.
+- The global waiver in `docs/audit/pcap_release_gate_waiver.yaml` removes every PCAP evidence requirement from current and future release gates. PCAP tools remain optional diagnostics; raw PCAPs and private paths remain outside Git/Vault.
 
 v0.1.0 publication result:
 
 - The signed `v0.1.0` tag, GitHub Release assets, tag-triggered Docker workflow, and public `ghcr.io/decline-llc/netsentry:v0.1.0` manifest were verified on 2026-07-11. Do not recreate or move the immutable tag.
-- The v0.1.0 exception does not apply to v0.1.1. Separately, the R90-04-only exception in `docs/audit/release_exception_r9004.yaml` permits anonymized public real-traffic PCAP evidence in place of internal production-derived PCAP evidence, but only after dedicated privacy, provenance, sanitization, and sensitive-metadata reviews. Synthetic/generated traffic remains prohibited; this does not waive R90-05, R90-06, or future production-derived-PCAP requirements.
+- The v0.1.0, R90-04, and R90-05 PCAP exceptions are preserved as historical evidence. The later global PCAP waiver supersedes them for current and future release-gate decisions.
 
-The release gate reads `docs/evidence/release-v0.1.0.md` and fails closed
-unless the reviewed public record has an approved final decision, at least
-1,000,000 fuzz iterations with zero crashes and no ASan findings, passed
-synthetic pcap and query evidence covered by a valid scoped exception, and all
-sensitive-information review fields set to `no`. It does not create or approve
-evidence.
+The release gate reads the selected public evidence record and fails closed
+unless it has an approved final decision, at least 1,000,000 fuzz iterations
+with zero crashes and no ASan findings, approved fuzz review, required
+sensitive-information fields set to `no`, and final release acceptance. PCAP
+content and evidence are ignored. The gate does not create or approve evidence.
 
 ## Evidence Commands
 
@@ -54,13 +54,11 @@ For larger synthetic pressure input, generate differentiated sets outside Git:
 make gen-sanitized-corpus CORPUS_DIR=/tmp/netsentry-synthetic-100 CORPUS_SETS=100
 ```
 
-The generated corpus is explicitly synthetic and cannot close the realistic
-production-derived traffic gate. It is also prohibited under the R90-04 public-real-traffic exception.
+The generated corpus is explicitly synthetic. It may be used for optional
+diagnostics because PCAP evidence no longer affects release-gate acceptance.
 
-Use a reviewed external corpus for R90-04 pressure evidence only after its
-privacy, provenance, sanitization, and sensitive-metadata controls are approved.
-Generated corpora remain synthetic auxiliary input and are prohibited under the
-R90-04 exception:
+Historical R90-04 evidence required reviewed external traffic. Current corpus
+pressure runs are optional diagnostics:
 
 ```bash
 PCAP_CORPUS=/tmp/netsentry-sanitized-corpus make e2e-corpus-pressure
@@ -86,8 +84,7 @@ Validate the reviewed evidence before a release workflow:
 make release-gate
 ```
 
-For v0.1.1 or later, require reviewed production-derived evidence without an
-exception:
+PCAP arguments are optional compatibility inputs and do not affect the gate:
 
 ```bash
 RELEASE_EVIDENCE=docs/evidence/release-v0.1.1.md \
@@ -122,10 +119,8 @@ PCAP_EVIDENCE_MANIFEST=docs/evidence/local/pcap-evidence/pcap-evidence-manifest.
   make pcap-evidence-check
 ```
 
-The generator computes inventory facts but cannot approve provenance, privacy,
-sanitization, or sensitive-metadata handling. Those decisions must be supplied
-by named reviewers. The release gate revalidates the approved manifest against
-the exact local corpus.
+The generator and validator remain optional engineering diagnostics. Their
+results do not affect the release gate.
 
 When Docker requires elevated privileges, pass Docker through sudo:
 
@@ -153,7 +148,7 @@ Run realistic pcap corpus pressure evidence:
 PCAP_CORPUS=/path/to/sanitized-pcaps make e2e-corpus-pressure
 ```
 
-Synthetic extended validation (auxiliary only; not a release-gate substitute):
+Synthetic extended validation (optional diagnostics):
 
 ```bash
 PRESSURE_REPEATS=10000 PRESSURE_WAIT_ATTEMPTS=1200 make e2e-pressure
@@ -162,7 +157,7 @@ FUZZ_SUSTAINED_ITERATIONS=1000000 make fuzz-sustained
 
 The 2026-07-10 pressure run used the repository's generated six-packet repeat
 pcap. The fuzz run used no external corpus. Both results are useful regression
-signals, but neither closes the external fuzz or realistic sanitized pcap gates.
+signals, but PCAP pressure is not a release-gate requirement.
 
 Create local release artifacts:
 
@@ -210,23 +205,12 @@ tag publication, or image publication.
 
 - `make rc-check` passes locally.
 - `SUPPLY_CHAIN_FETCH_ASSETS=1 make supply-chain-check` passes with immutable Action refs, the locked Go toolchain, zero reachable vulnerabilities, and 9/9 external hashes.
-- `make release-gate` passes against a reviewed release record using only an
-  exception valid for that release or production-derived PCAP evidence; the
-  expired R90-04 record cannot satisfy this gate.
-- v0.1.1 production-derived evidence uses `RELEASE_EXCEPTION=none`; the gate
-  requires the `production-derived` evidence class, approved privacy,
-  provenance, sanitization, and sensitive-metadata reviews, and no exception
-  reference. It also requires an approved manifest and reparses the exact local
-  corpus to verify file names, packet counts, byte sizes, and SHA-256 values.
-- The R90-05 exception accepts only evidence class `synthetic`, requires
-  `Production-derived corpus: no`, pins the approved corpus SHA-256 and packet
-  count, and revalidates the exact local bytes. It cannot satisfy R90-06 or
-  another release.
+- `make release-gate` passes from the required non-PCAP evidence and final
+  decision. PCAP fields, files, manifests, reviews, and exceptions are ignored.
 - Sudo Docker RC validation passes where Docker is part of the release gate.
 - Synthetic extended pressure and no-corpus ASan fuzz checks pass as auxiliary regression signals.
 - Approved v0.1.0 exception record is present and scope-limited.
 - Synthetic corpus pressure run records packet, alert, resource, and query evidence.
-- Real production-derived pcap corpus is scheduled before v0.1.1.
 - README, changelog, API docs, and development docs match the final behavior.
 - No local-only evidence, private corpus paths, credentials, or generated release archives are staged.
 - The release commit is pushed only to the approved `decline-llc/netsentry` remote.

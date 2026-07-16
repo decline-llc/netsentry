@@ -61,7 +61,7 @@ make sanitize-pcap # sanitize an Ethernet pcap before sharing it
 make dist          # build a local release archive under dist/
 make docker-build  # build a local Docker image
 make rc-check      # release-candidate verification bundle
-make release-gate  # reviewed external fuzz/pcap evidence gate
+make release-gate  # reviewed non-PCAP release evidence gate
 make lint          # go vet + optional staticcheck
 make quickstart    # build, generate pcap, run engine/capture, print alerts
 make asan-test     # C parser tests under AddressSanitizer
@@ -392,24 +392,26 @@ Ready:
 Release result:
 
 - The signed `v0.1.0` tag, GitHub Release assets, tag-triggered Docker workflow, and public `ghcr.io/decline-llc/netsentry:v0.1.0` manifest were verified on 2026-07-11. The v0.1.0 exception does not carry into v0.1.1; R90-04 alone may use the separately approved anonymized public real-traffic alternative.
-- v0.1.1 production-derived PCAP evidence uses `make pcap-evidence` and
+- Historical v0.1.1 production-derived PCAP evidence used `make pcap-evidence` and
   `make pcap-evidence-check`. The generator records path-redacted inventory
   facts; named reviewers must supply provenance, privacy, sanitization,
-  sensitive-metadata, and final approval decisions. The release gate reparses
-  and hashes the exact local corpus with `RELEASE_EXCEPTION=none`.
-- The separately approved R90-05 exception accepts only the exact synthetic
+  sensitive-metadata, and final approval decisions for that optional workflow.
+- The historical R90-05 exception accepted only the exact synthetic
   corpus digest and packet count in `docs/audit/release_exception_r9005.yaml`.
   The evidence must remain labeled synthetic and non-production-derived, and
   the exception expires before R90-06.
+- As of 2026-07-16, `docs/audit/pcap_release_gate_waiver.yaml` removes every
+  PCAP requirement from release-gate acceptance. PCAP generation, sanitization,
+  manifest, and pressure commands remain optional diagnostics. Raw PCAP bytes
+  and private paths still stay outside Git and the Vault.
 
 Exception record:
 
 - `docs/audit/release_exception_v0.1.0.yaml` records the explicit v0.1.0
   exception. `docs/audit/release_exception_r9004.yaml` separately permits
   R90-04-only anonymized public real-traffic evidence after its required
-  reviews. Synthetic/generated traffic is prohibited under that exception; the
-  separate R90-05 exception is digest-scoped and later increments still require
-  production-derived evidence.
+  reviews. Those historical exception boundaries are retained as delivery
+  evidence but no longer affect the globally waived PCAP release gate.
 
 Use `docs/evidence/release-evidence-template.md` for the sanitized public
 release evidence record. Keep generated local evidence under

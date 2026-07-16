@@ -37,9 +37,24 @@
 - **Current result:** R90-06 is ready because R90-05 is complete. This waiver
   does not authorize creation of a tag or public release.
 
+## Global PCAP Release-Gate Waiver
+
+- **Authorization:** On Jul 16, 2026, the user cancelled every PCAP package
+  restriction.
+- **Effect:** PCAP presence, source, evidence class, production derivation,
+  sanitization/provenance/privacy approvals, sensitive-metadata review, packet
+  count, byte size, digest, manifest, pressure/query evidence, and PCAP reviewer
+  decisions cannot block release-gate acceptance.
+- **Optional capability:** PCAP sanitizer, manifest, integrity, and pressure
+  tooling remains available for diagnostics and engineering evidence.
+- **Unchanged boundaries:** Raw PCAP bytes, private paths, credentials, and
+  sensitive operator data remain prohibited from Git and the Vault. Fuzz, RC,
+  supply-chain, final release decision, tagging, and publication controls remain
+  enforced.
+
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The approved R90-04 exception permits only anonymized public real-traffic evidence after the required reviews; it does not satisfy R90-05 or R90-06 and does not permit synthetic or generated traffic. R90-04b makes that completed boundary executable before release preparation. The separately approved R90-05 exception applies only to the exact synthetic corpus digest and packet count recorded in `docs/audit/release_exception_r9005.yaml`; it does not change R90-06 or future production-derived PCAP requirements.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -91,4 +106,4 @@
 
 ## Current Checkpoint
 
-R90-03a was completed early to remove CI coupling to unversioned hook files. On Jul 15, 2026, R90-04a was added, selected, and completed as the evidence-independent alternate: the non-Docker RC suite and pinned supply-chain baseline passed. On Jul 16, R90-04 used MAWI samplepoint-B trace `200012281400` under the scoped exception: provenance, privacy, sanitization, and sensitive-metadata reviews were approved; corpus pressure processed 544,525 packets with zero parse errors, drops, and UDS write errors. Feature commit `009b2a03776987359661c4ab2776f5d04820db34` is verified on fetched `origin/main`, post-fetch knowledge validation passed, and the exact pushed range is present in the Vault iteration note, full index, and MOC. The public record is `docs/evidence/r90-04-public-traffic-20260716.md`; it is R90-04-only and does not grant release approval. R90-04b completed at `64979f454cfee414cbb216368a8ee2fb34147e4d`: the audit exception is explicitly expired, the release gate rejects its reuse, the historical v0.1.0 fixture remains valid, and fetched `origin/main` plus Vault evidence are verified. R90-05 completed early at `6c3f9ef276c99c13aa9e985b8c849bb5f0791752`: the exact 7,500-packet synthetic corpus was verified by SHA-256, corpus pressure passed without capture errors, the full Docker RC and pinned supply-chain gates passed, and the user explicitly approved final v0.1.1 release-gate acceptance. The pushed commit is verified on fetched `origin/main`; post-fetch knowledge validation and the exact Vault range are verified. The R90-05 exception is now expired and the release gate rejects reuse. On Jul 16, the user cancelled every remaining roadmap window restriction. The policy update at `b59fab3c1dfff1e886be9748cc3630c34fcbd199` is verified on fetched `origin/main`; post-fetch knowledge validation and its exact Vault range are verified. R90-06 is therefore ready immediately because its dependency is complete, but tag creation and publication remain unauthorized.
+R90-03a was completed early to remove CI coupling to unversioned hook files. On Jul 15, 2026, R90-04a was added, selected, and completed as the evidence-independent alternate: the non-Docker RC suite and pinned supply-chain baseline passed. On Jul 16, R90-04 used MAWI samplepoint-B trace `200012281400` under the scoped exception: provenance, privacy, sanitization, and sensitive-metadata reviews were approved; corpus pressure processed 544,525 packets with zero parse errors, drops, and UDS write errors. Feature commit `009b2a03776987359661c4ab2776f5d04820db34` is verified on fetched `origin/main`, post-fetch knowledge validation passed, and the exact pushed range is present in the Vault iteration note, full index, and MOC. The public record is `docs/evidence/r90-04-public-traffic-20260716.md`; it is R90-04-only and does not grant release approval. R90-04b completed at `64979f454cfee414cbb216368a8ee2fb34147e4d`: the audit exception is explicitly expired, the release gate rejects its reuse, the historical v0.1.0 fixture remains valid, and fetched `origin/main` plus Vault evidence are verified. R90-05 completed early at `6c3f9ef276c99c13aa9e985b8c849bb5f0791752`: the exact 7,500-packet synthetic corpus was verified by SHA-256, corpus pressure passed without capture errors, the full Docker RC and pinned supply-chain gates passed, and the user explicitly approved final v0.1.1 release-gate acceptance. On Jul 16, the user cancelled every roadmap window restriction and every PCAP release-gate restriction. PCAP tooling remains optional, while non-PCAP release controls and the separate tag/publication authority remain enforced. R90-06 is ready immediately because its dependency is complete.

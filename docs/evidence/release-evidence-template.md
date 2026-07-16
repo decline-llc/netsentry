@@ -1,9 +1,9 @@
 # Release Evidence: v0.1.0
 
 > Copy this template to `docs/evidence/release-v0.1.0.md` only after the
-> corresponding private local evidence has been reviewed and sanitized. Keep raw
-> pcaps, fuzz corpora, local evidence files, private paths, credentials, tokens,
-> and operator notes out of Git.
+> corresponding evidence has been reviewed. PCAP evidence is optional and does
+> not affect the release gate. Keep raw pcaps, fuzz corpora, local evidence
+> files, private paths, credentials, tokens, and operator notes out of Git.
 
 ## Metadata
 
@@ -36,21 +36,12 @@
 - Reviewer decision:
 - Notes:
 
-## Realistic Sanitized Pcap Corpus Evidence
+## Optional Pcap Diagnostic Evidence
 
 - Command shape:
 - Date:
 - Status:
 - Corpus description:
-- Evidence class:
-- Production-derived corpus:
-- Exception applied:
-- Exception increment:
-- Privacy review:
-- Provenance validation:
-- Sanitization review:
-- Sensitive metadata screening:
-- Evidence manifest: reviewed path-redacted manifest; local path omitted
 - Corpus paths included: no
 - Pcap files:
 - Packets processed:
@@ -60,7 +51,6 @@
 - UDS write errors:
 - Query evidence:
 - Reviewer decision:
-- Manifest integrity verified:
 - Notes:
 
 ## Tag Publication Verification
@@ -87,7 +77,6 @@
 ## Final Release Gate Decision
 
 - Sustained external fuzz evidence reviewed:
-- Realistic sanitized pcap corpus evidence reviewed:
 - Local RC validation reviewed:
 - Tag publication verified:
 - Approved for release:

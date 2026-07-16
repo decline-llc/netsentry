@@ -1,33 +1,17 @@
 #!/usr/bin/env python3
-"""Validate the reviewed public evidence required before a NetSentry release."""
+"""Validate the reviewed non-PCAP evidence required before a NetSentry release."""
 
 from __future__ import annotations
 
 import argparse
-from datetime import datetime, timezone
-import json
 import re
 import sys
 from pathlib import Path
 
-try:
-    from scripts import pcap_evidence
-except ImportError:
-    import pcap_evidence
-
 
 MIN_FUZZ_ITERATIONS = 1_000_000
-V010_EXCEPTION = "release_exception_v0.1.0.yaml"
-R9004_EXCEPTION = "release_exception_r9004.yaml"
-R9004_EXCEPTION_PATH = "docs/audit/release_exception_r9004.yaml"
-R9004_RELEASE_REJECTION = "R90-04 exception is expired and cannot approve a release"
-R9005_EXCEPTION = "release_exception_r9005.yaml"
-R9005_EXCEPTION_PATH = "docs/audit/release_exception_r9005.yaml"
-R9005_RELEASE_REJECTION = "R90-05 exception is expired and cannot approve another release gate"
 SENSITIVE_LABELS = (
-    "Raw pcaps staged",
     "Fuzz corpus files staged",
-    "Private corpus paths present",
     "Credentials or tokens present",
     "Local operator notes present",
     "Generated archives staged",
@@ -35,9 +19,8 @@ SENSITIVE_LABELS = (
 
 
 def sections(text: str) -> dict[str, dict[str, str]]:
-    result: dict[str, dict[str, str]] = {}
+    result: dict[str, dict[str, str]] = {"": {}}
     current = ""
-    result[current] = {}
     for line in text.splitlines():
         heading = re.match(r"^##\s+(.+?)\s*$", line)
         if heading:
@@ -50,169 +33,11 @@ def sections(text: str) -> dict[str, dict[str, str]]:
     return result
 
 
-def exception_metadata(path: Path) -> tuple[dict[str, str] | None, list[str]]:
-    errors: list[str] = []
-    if not path.is_file():
-        return None, [f"exception file not found: {path}"]
-    values: dict[str, str] = {}
-    for line in path.read_text(encoding="utf-8").splitlines():
-        field = re.match(r"^([a-z][a-z0-9_]*):\s*(.*?)\s*$", line)
-        if field:
-            values[field.group(1)] = field.group(2)
-    required_keys = ("approver", "approve_utc", "scope_exempt", "revoke_condition", "evidence_note")
-    for key in required_keys:
-        if not values.get(key):
-            errors.append(f"exception missing field: {key}")
-    if values.get("approver", "").casefold() in {"管理员账号", "admin", "administrator"}:
-        errors.append("exception approver must be a real approval identity")
-    try:
-        approved_at = datetime.fromisoformat(values.get("approve_utc", "").replace("Z", "+00:00"))
-        if approved_at.tzinfo is None or approved_at > datetime.now(timezone.utc):
-            errors.append("exception approve_utc must be a past UTC timestamp")
-    except ValueError:
-        errors.append("exception approve_utc must be ISO-8601 UTC")
-    if path.name == V010_EXCEPTION:
-        values["policy"] = "v0.1.0"
-        if values.get("effective_version") != "v0.1.0":
-            errors.append("exception effective_version must be v0.1.0")
-        if "真实" not in values.get("scope_exempt", "") or "pcap" not in values.get("scope_exempt", "").casefold():
-            errors.append("exception scope_exempt must be limited to real pcap evidence")
-        if "v0.1.1" not in values.get("revoke_condition", ""):
-            errors.append("exception revoke_condition must expire before v0.1.1")
-        evidence_note = values.get("evidence_note", "").casefold()
-        if not ("synthetic" in evidence_note or "合成" in evidence_note) or "600" not in values.get("evidence_note", ""):
-            errors.append("exception evidence_note must identify the synthetic 600-file evidence")
-    elif path.name == R9004_EXCEPTION:
-        values["policy"] = "r90-04"
-        if values.get("effective_increment") != "R90-04":
-            errors.append("R90-04 exception effective_increment must be R90-04")
-        scope = values.get("scope_exempt", "").casefold()
-        if "public" not in scope or "real" not in scope or "pcap" not in scope:
-            errors.append("R90-04 exception scope_exempt must be limited to public real pcap evidence")
-        if values.get("synthetic_prohibited", "").casefold() != "yes":
-            errors.append("R90-04 exception synthetic_prohibited must be yes")
-        controls = values.get("required_controls", "").casefold()
-        for control in ("privacy", "provenance", "sanitization", "metadata"):
-            if control not in controls:
-                errors.append(f"R90-04 exception required_controls must include {control}")
-        if "R90-04" not in values.get("revoke_condition", ""):
-            errors.append("R90-04 exception revoke_condition must end with R90-04")
-        if values.get("status", "").casefold() != "expired":
-            errors.append("R90-04 exception status must be expired")
-        try:
-            expired_at = datetime.fromisoformat(values.get("expired_utc", "").replace("Z", "+00:00"))
-            if expired_at.tzinfo is None or expired_at > datetime.now(timezone.utc):
-                errors.append("R90-04 exception expired_utc must be a past UTC timestamp")
-        except ValueError:
-            errors.append("R90-04 exception expired_utc must be ISO-8601 UTC")
-        if not re.fullmatch(r"[0-9a-f]{40}", values.get("expired_commit", "")):
-            errors.append("R90-04 exception expired_commit must be a full lowercase Git SHA")
-        evidence_note = values.get("evidence_note", "").casefold()
-        if (
-            "public" not in evidence_note
-            or "real" not in evidence_note
-            or "synthetic" not in evidence_note
-            or "prohibited" not in evidence_note
-        ):
-            errors.append("R90-04 exception evidence_note must describe public real traffic and prohibit synthetic traffic")
-    elif path.name == R9005_EXCEPTION:
-        values["policy"] = "r90-05"
-        if values.get("effective_increment") != "R90-05":
-            errors.append("R90-05 exception effective_increment must be R90-05")
-        if values.get("effective_version") != "v0.1.1":
-            errors.append("R90-05 exception effective_version must be v0.1.1")
-        scope = values.get("scope_exempt", "").casefold()
-        for term in ("r90-05", "synthetic", "pcap", "production-derived"):
-            if term not in scope:
-                errors.append(f"R90-05 exception scope_exempt must include {term}")
-        if values.get("status", "").casefold() != "expired":
-            errors.append("R90-05 exception status must be expired")
-        try:
-            expired_at = datetime.fromisoformat(values.get("expired_utc", "").replace("Z", "+00:00"))
-            if expired_at.tzinfo is None or expired_at > datetime.now(timezone.utc):
-                errors.append("R90-05 exception expired_utc must be a past UTC timestamp")
-        except ValueError:
-            errors.append("R90-05 exception expired_utc must be ISO-8601 UTC")
-        if not re.fullmatch(r"[0-9a-f]{40}", values.get("expired_commit", "")):
-            errors.append("R90-05 exception expired_commit must be a full lowercase Git SHA")
-        if values.get("synthetic_allowed", "").casefold() != "yes":
-            errors.append("R90-05 exception synthetic_allowed must be yes")
-        controls = values.get("required_controls", "").casefold()
-        for control in ("provenance", "privacy", "packet count", "sha-256", "corpus-pressure"):
-            if control not in controls:
-                errors.append(f"R90-05 exception required_controls must include {control}")
-        if "R90-05" not in values.get("revoke_condition", "") or "R90-06" not in values.get("revoke_condition", ""):
-            errors.append("R90-05 exception revoke_condition must expire before R90-06")
-        if not re.fullmatch(r"[0-9a-f]{64}", values.get("corpus_sha256", "")):
-            errors.append("R90-05 exception corpus_sha256 must be a lowercase SHA-256")
-        if not values.get("packet_count", "").isdigit() or int(values["packet_count"]) < 1:
-            errors.append("R90-05 exception packet_count must be a positive integer")
-        evidence_note = values.get("evidence_note", "").casefold()
-        for term in ("synthetic", "not production-derived", "r90-05"):
-            if term not in evidence_note:
-                errors.append(f"R90-05 exception evidence_note must include {term}")
-    else:
-        errors.append(f"unsupported exception file: {path.name}")
-    return values, errors
-
-
-def validate_r9005_manifest(
-    manifest_path: Path,
-    corpus_path: Path,
-    exception: dict[str, str],
-) -> list[str]:
-    errors: list[str] = []
-    try:
-        manifest = pcap_evidence.load_json(manifest_path)
-        pcap_evidence.reject_sensitive_text(manifest)
-        if manifest.get("task_id") != "task-20260716-153438-r90-05":
-            errors.append("R90-05 manifest task_id must identify the active task")
-        corpus_name = Path(str(manifest.get("corpus_path", ""))).name
-        if corpus_name != corpus_path.name:
-            errors.append("R90-05 manifest corpus filename must match the reviewed corpus")
-        if manifest.get("sha256") != exception.get("corpus_sha256"):
-            errors.append("R90-05 manifest SHA-256 must match the approved exception")
-        if manifest.get("packet_count") != int(exception.get("packet_count", "0")):
-            errors.append("R90-05 manifest packet count must match the approved exception")
-        provenance = str(manifest.get("provenance", "")).casefold()
-        if "synthetic" not in provenance or "not production-derived" not in provenance:
-            errors.append("R90-05 manifest provenance must declare synthetic, non-production evidence")
-        for field in (
-            "sanitization_description",
-            "sensitive_metadata_handling",
-            "privacy_compliance_statement",
-        ):
-            pcap_evidence.meaningful(manifest.get(field), f"R90-05 manifest {field}")
-        if manifest.get("review_approval_status") != "approved_exception":
-            errors.append("R90-05 manifest review_approval_status must be approved_exception")
-        if manifest.get("exemption_reference") != R9005_EXCEPTION_PATH:
-            errors.append("R90-05 manifest exemption_reference must identify the approved exception")
-
-        actual = pcap_evidence.inventory(corpus_path)
-        if len(actual) != 1:
-            errors.append("R90-05 exception corpus must contain exactly one pcap artifact")
-        else:
-            artifact = actual[0]
-            if manifest.get("sha256") != artifact["sha256"]:
-                errors.append("R90-05 corpus SHA-256 differs from the manifest")
-            if manifest.get("file_size_bytes") != artifact["bytes"]:
-                errors.append("R90-05 corpus byte size differs from the manifest")
-            if manifest.get("packet_count") != artifact["packet_count"]:
-                errors.append("R90-05 corpus packet count differs from the manifest")
-    except (OSError, json.JSONDecodeError, pcap_evidence.EvidenceError, ValueError) as exc:
-        errors.append(str(exc))
-    return errors
-
-
 def required(section: dict[str, str], label: str, errors: list[str]) -> str:
     value = section.get(label, "")
     if not value:
         errors.append(f"missing field: {label}")
     return value
-
-
-def approved(value: str) -> bool:
-    return value.casefold() in {"approved", "pass", "passed", "yes", "zero", "0", "no"}
 
 
 def positive_integer(value: str, label: str, errors: list[str]) -> int:
@@ -229,6 +54,8 @@ def validate(
     manifest_path: Path | None = None,
     corpus_path: Path | None = None,
 ) -> list[str]:
+    """Validate non-PCAP gates; PCAP compatibility arguments are ignored."""
+    del exception_path, manifest_path, corpus_path
     errors: list[str] = []
     if not path.is_file():
         return [f"evidence file not found: {path}"]
@@ -241,20 +68,18 @@ def validate(
     parsed = sections(text)
     metadata = parsed.get("Metadata", {})
     fuzz = parsed.get("Sustained External C Fuzz Evidence", {})
-    pcap = parsed.get("Realistic Sanitized Pcap Corpus Evidence", {})
     sensitive = parsed.get("Sensitive Information Review", {})
     final = parsed.get("Final Release Gate Decision", {})
-    exception, exception_errors = (
-        exception_metadata(exception_path) if exception_path is not None else (None, [])
-    )
-    errors.extend(exception_errors)
-    exception_active = exception is not None and not exception_errors
 
     if required(metadata, "Final decision", errors).casefold() != "approved":
         errors.append("Metadata/Final decision must be approved")
     if required(fuzz, "Status", errors).casefold() not in {"pass", "passed"}:
         errors.append("fuzz Status must be pass")
-    if positive_integer(required(fuzz, "Iterations or duration", errors), "fuzz iterations", errors) < MIN_FUZZ_ITERATIONS:
+    if positive_integer(
+        required(fuzz, "Iterations or duration", errors),
+        "fuzz iterations",
+        errors,
+    ) < MIN_FUZZ_ITERATIONS:
         errors.append(f"fuzz iterations must be at least {MIN_FUZZ_ITERATIONS}")
     if positive_integer(required(fuzz, "Crashes", errors), "fuzz crashes", errors) != 0:
         errors.append("fuzz Crashes must be 0")
@@ -263,131 +88,12 @@ def validate(
     if required(fuzz, "Reviewer decision", errors).casefold() != "approved":
         errors.append("fuzz Reviewer decision must be approved")
 
-    if required(pcap, "Status", errors).casefold() not in {"pass", "passed"}:
-        errors.append("pcap Status must be pass")
-    if positive_integer(required(pcap, "Pcap files", errors), "pcap files", errors) < 1:
-        errors.append("pcap Pcap files must be at least 1")
-    if positive_integer(required(pcap, "Packets processed", errors), "packets processed", errors) < 1:
-        errors.append("pcap Packets processed must be greater than 0")
-    if required(pcap, "Query evidence", errors).casefold() not in {"pass", "passed", "approved"}:
-        errors.append("pcap Query evidence must be pass/approved")
-    if required(pcap, "Reviewer decision", errors).casefold() != "approved":
-        errors.append("pcap Reviewer decision must be approved")
-    if exception_active and exception["policy"] == "v0.1.0":
-        if required(pcap, "Evidence class", errors).casefold() != "synthetic":
-            errors.append("exception-backed pcap Evidence class must be synthetic")
-        if required(pcap, "Production-derived corpus", errors).casefold() != "no":
-            errors.append("exception-backed pcap Production-derived corpus must be no")
-        if required(pcap, "Exception applied", errors) != "docs/audit/release_exception_v0.1.0.yaml":
-            errors.append("pcap Exception applied must reference the approved v0.1.0 exception")
-    elif exception_active and exception["policy"] == "r90-04":
-        errors.append(R9004_RELEASE_REJECTION)
-        if required(pcap, "Evidence class", errors).casefold() != "public-anonymized-real":
-            errors.append("R90-04 exception pcap Evidence class must be public-anonymized-real")
-        corpus_description = required(pcap, "Corpus description", errors).casefold()
-        if any(term in corpus_description for term in ("synthetic", "generated", "artificial")):
-            errors.append("R90-04 exception pcap Corpus description must not describe synthetic or generated traffic")
-        if required(pcap, "Production-derived corpus", errors).casefold() != "no":
-            errors.append("R90-04 exception pcap Production-derived corpus must be no")
-        if required(pcap, "Exception applied", errors) != R9004_EXCEPTION_PATH:
-            errors.append("R90-04 exception pcap Exception applied must reference the R90-04 exception")
-        if required(pcap, "Exception increment", errors) != "R90-04":
-            errors.append("R90-04 exception pcap Exception increment must be R90-04")
-        for label in (
-            "Privacy review",
-            "Provenance validation",
-            "Sanitization review",
-            "Sensitive metadata screening",
-        ):
-            if required(pcap, label, errors).casefold() != "approved":
-                errors.append(f"R90-04 exception pcap {label} must be approved")
-    elif exception_active and exception["policy"] == "r90-05":
-        errors.append(R9005_RELEASE_REJECTION)
-        if required(pcap, "Evidence class", errors).casefold() != "synthetic":
-            errors.append("R90-05 exception pcap Evidence class must be synthetic")
-        corpus_description = required(pcap, "Corpus description", errors).casefold()
-        if "synthetic" not in corpus_description or "production-derived" not in corpus_description:
-            errors.append("R90-05 exception Corpus description must disclose synthetic, non-production evidence")
-        if required(pcap, "Production-derived corpus", errors).casefold() != "no":
-            errors.append("R90-05 exception pcap Production-derived corpus must be no")
-        if required(pcap, "Exception applied", errors) != R9005_EXCEPTION_PATH:
-            errors.append("R90-05 exception pcap Exception applied must reference the R90-05 exception")
-        if required(pcap, "Exception increment", errors) != "R90-05":
-            errors.append("R90-05 exception pcap Exception increment must be R90-05")
-        for label in (
-            "Privacy review",
-            "Provenance validation",
-            "Sanitization review",
-            "Sensitive metadata screening",
-        ):
-            if required(pcap, label, errors).casefold() != "approved":
-                errors.append(f"R90-05 exception pcap {label} must be approved")
-        if manifest_path is None:
-            errors.append("R90-05 exception requires the approved synthetic manifest")
-        elif corpus_path is None:
-            errors.append("R90-05 exception requires the reviewed synthetic corpus for integrity verification")
-        else:
-            errors.extend(
-                f"R90-05 evidence manifest: {error}"
-                for error in validate_r9005_manifest(manifest_path, corpus_path, exception)
-            )
-    elif exception_path is None:
-        if required(pcap, "Evidence class", errors).casefold() != "production-derived":
-            errors.append("without an exception, pcap Evidence class must be production-derived")
-        corpus_description = required(pcap, "Corpus description", errors).casefold()
-        if any(term in corpus_description for term in ("synthetic", "generated", "public-anonymized")):
-            errors.append("production-derived pcap Corpus description must not describe substitute traffic")
-        if required(pcap, "Production-derived corpus", errors).casefold() != "yes":
-            errors.append("without an exception, pcap Production-derived corpus must be yes")
-        if required(pcap, "Exception applied", errors).casefold() not in {"no", "none"}:
-            errors.append("without an exception, pcap Exception applied must be none")
-        for label in (
-            "Privacy review",
-            "Provenance validation",
-            "Sanitization review",
-            "Sensitive metadata screening",
-        ):
-            if required(pcap, label, errors).casefold() != "approved":
-                errors.append(f"production-derived pcap {label} must be approved")
-        if manifest_path is None:
-            errors.append("production-derived release requires a PCAP evidence manifest")
-        elif corpus_path is None:
-            errors.append("production-derived release requires the reviewed PCAP corpus for integrity verification")
-        else:
-            try:
-                manifest = pcap_evidence.load_json(manifest_path)
-                manifest_errors = pcap_evidence.validate_manifest_data(
-                    manifest,
-                    corpus=corpus_path,
-                    require_approved=True,
-                )
-                errors.extend(f"PCAP evidence manifest: {error}" for error in manifest_errors)
-                if not manifest_errors:
-                    evidence_files = positive_integer(
-                        required(pcap, "Pcap files", errors),
-                        "pcap files",
-                        errors,
-                    )
-                    evidence_packets = positive_integer(
-                        required(pcap, "Packets processed", errors),
-                        "packets processed",
-                        errors,
-                    )
-                    if evidence_files != manifest["file_count"]:
-                        errors.append("pcap Pcap files must match the evidence manifest")
-                    if evidence_packets > manifest["packet_count"]:
-                        errors.append("pcap Packets processed cannot exceed the evidence manifest packet count")
-            except (OSError, json.JSONDecodeError, pcap_evidence.EvidenceError) as exc:
-                errors.append(f"PCAP evidence manifest: {exc}")
-
     for label in SENSITIVE_LABELS:
         if required(sensitive, label, errors).casefold() != "no":
             errors.append(f"Sensitive Information Review/{label} must be no")
 
     if required(final, "Sustained external fuzz evidence reviewed", errors).casefold() != "yes":
         errors.append("final fuzz review must be yes")
-    if required(final, "Realistic sanitized pcap corpus evidence reviewed", errors).casefold() != "yes":
-        errors.append("final pcap review must be yes")
     if required(final, "Approved for release", errors).casefold() != "yes":
         errors.append("Approved for release must be yes")
     return errors
@@ -400,19 +106,19 @@ def main() -> int:
     exception_group.add_argument(
         "--exception",
         default="docs/audit/release_exception_v0.1.0.yaml",
+        help="deprecated compatibility argument; ignored",
     )
     exception_group.add_argument(
         "--no-exception",
         action="store_true",
-        help="require reviewed production-derived evidence without an exception",
+        help="deprecated compatibility argument; ignored",
     )
-    parser.add_argument("--pcap-manifest", type=Path)
-    parser.add_argument("--pcap-corpus", type=Path)
+    parser.add_argument("--pcap-manifest", type=Path, help="optional diagnostic; ignored")
+    parser.add_argument("--pcap-corpus", type=Path, help="optional diagnostic; ignored")
     args = parser.parse_args()
-    exception_path = None if args.no_exception else Path(args.exception)
     errors = validate(
         Path(args.evidence),
-        exception_path,
+        None if args.no_exception else Path(args.exception),
         manifest_path=args.pcap_manifest,
         corpus_path=args.pcap_corpus,
     )
@@ -421,10 +127,7 @@ def main() -> int:
         for error in errors:
             print(f"[release-gate] - {error}", file=sys.stderr)
         return 1
-    if exception_path is None:
-        print(f"[release-gate] passed: production-derived evidence is complete ({args.evidence})")
-    else:
-        print(f"[release-gate] passed: reviewed evidence and scoped exception are complete ({args.evidence})")
+    print(f"[release-gate] passed: required non-PCAP evidence is complete ({args.evidence})")
     return 0
 
 

@@ -21,17 +21,21 @@ Recommended filename for a completed public record:
 docs/evidence/release-v0.1.0.md
 ```
 
-For v0.1.1, use `docs/evidence/release-v0.1.1.md` only after reviewed
-production-derived sanitized PCAP evidence exists. Validate it with
-`RELEASE_EXCEPTION=none`; neither historical exception is valid for v0.1.1.
+## Global PCAP Gate Waiver
 
-R90-05 has a later, separately approved exception in
-`docs/audit/release_exception_r9005.yaml`. It accepts only the exact synthetic
-corpus digest and packet count recorded there, requires the corpus to remain
-explicitly labeled non-production, and expires before R90-06. It does not alter
-the normal production-derived workflow below.
+The user cancelled every PCAP release-gate restriction on 2026-07-16. The gate
+ignores PCAP presence, source class, production derivation,
+sanitization/provenance/privacy review, packet counts, byte sizes, digests,
+manifests, pressure/query results, and reviewer decisions. The authoritative
+record is `docs/audit/pcap_release_gate_waiver.yaml`.
+
+PCAP tools and evidence remain optional diagnostics. This waiver does not
+permit raw PCAP bytes, private corpus paths, credentials, or sensitive operator
+data in Git or the Vault, and it does not authorize tagging or publication.
 
 ## Production-Derived PCAP Evidence Workflow
+
+This workflow is optional and is not a release-gate prerequisite.
 
 The repository provides a fact generator and integrity validator. Automation
 computes file names, byte sizes, packet counts, and SHA-256 values; it does not
@@ -79,7 +83,7 @@ path-redacted summaries, and prohibit PCAP artifact uploads.
 Do not add the private corpus as a NetSentry submodule or commit a raw download
 URL, token, internal storage path, or production PCAP to this repository. A
 repository boundary does not itself make traffic safe; privacy and
-sanitization approval remain mandatory.
+sanitization review remains an optional operational safeguard.
 
 Required review checks before committing a public evidence record:
 
@@ -87,14 +91,10 @@ Required review checks before committing a public evidence record:
 - Confirm pcaps and fuzz corpus files are not staged.
 - Confirm local-only operator notes, hostnames, credentials, tokens, and secrets
   are absent.
-- Confirm sustained external fuzz and realistic sanitized pcap corpus evidence
-  are not marked complete unless the corresponding local run was reviewed.
-- Confirm the approved manifest was revalidated against the exact local corpus
-  after the final review change.
+- If optional PCAP evidence is included, label its source and review status
+  accurately without implying that it affects the release gate.
 - Confirm tag publication evidence is not marked complete before the `v0.1.0`
   tag workflows finish successfully.
 
-An R90-04 public-real-traffic validation record may also be committed here when
-the scoped exception is active. It must clearly state that it is not release
-approval, identify the exception and R90-04 boundary, record each required
-review, redact local paths, and never include a PCAP or packet content.
+Historical R90-04 evidence remains immutable. New optional diagnostic records
+must redact local paths and never include a PCAP or packet content.

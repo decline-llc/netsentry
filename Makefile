@@ -187,7 +187,7 @@ release-artifacts:
 	@[[ "$(VERSION)" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$$ ]] || { echo "VERSION must be SemVer without leading v"; exit 1; }
 	$(MAKE) dist VERSION="$(VERSION)"
 
-## release-gate — require reviewed public fuzz and pcap evidence before release
+## release-gate — require reviewed non-PCAP release evidence
 release-gate:
 	@python3 scripts/release_gate.py --evidence "$(if $(RELEASE_EVIDENCE),$(RELEASE_EVIDENCE),docs/evidence/release-v0.1.0.md)" $(if $(filter none,$(RELEASE_EXCEPTION)),--no-exception,--exception "$(if $(RELEASE_EXCEPTION),$(RELEASE_EXCEPTION),docs/audit/release_exception_v0.1.0.yaml)") $(if $(PCAP_EVIDENCE_MANIFEST),--pcap-manifest "$(PCAP_EVIDENCE_MANIFEST)") $(if $(PCAP_CORPUS),--pcap-corpus "$(PCAP_CORPUS)")
 

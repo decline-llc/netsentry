@@ -1,0 +1,32 @@
+{
+  "task": "global-pcap-release-gate-waiver",
+  "timestamp": "2026-07-16T16:33:14Z",
+  "branch": "main",
+  "remote_baseline": "c4b8c9032ab8ac7b0f2ae314a420e6a22211ce05",
+  "risk_level": "High",
+  "current_checkpoint": "validated_for_delivery",
+  "authorization": "The user cancelled all PCAP package restrictions.",
+  "completed": [
+    "Defined the waiver as removal of all PCAP release-gate evidence requirements",
+    "Preserved the repository and Vault boundary against raw PCAP bytes, private paths, credentials, and sensitive operator data",
+    "Preserved non-PCAP release controls and separate tag/publication authority",
+    "Removed PCAP and exception enforcement from the release-gate implementation",
+    "Removed raw-PCAP-staged and private-corpus-path evidence fields from release-gate enforcement while retaining direct repository/Vault handling boundaries",
+    "Kept legacy exception, manifest, and corpus CLI arguments as ignored compatibility inputs",
+    "Added direct regressions for absent, failed, unreviewed, and missing PCAP inputs while retaining non-PCAP fail-closed checks",
+    "Updated roadmap, evidence, development, and release-readiness documentation",
+    "Passed 16 evidence regressions including 8 direct non-PCAP release-gate tests",
+    "Confirmed v0.1.0 and v0.1.1 release records pass with missing PCAP files, manifests, and exception paths",
+    "Passed VERSION=0.1.1 make rc-check including Docker build and runtime health smoke with 75.4% Go coverage",
+    "Passed Python, documentation, knowledge, JSON, diff, and sensitive-information checks"
+  ],
+  "in_progress": [],
+  "todo": [
+    "Commit, push, fetch-verify, and synchronize the Vault"
+  ],
+  "remaining_risks": [
+    "PCAP quality or representativeness can no longer block a release",
+    "Tagging and publication remain separately unauthorized"
+  ],
+  "resume_instructions": "Complete the global PCAP release-gate waiver without weakening fuzz, RC, supply-chain, final-decision, credential, or publication controls."
+}
