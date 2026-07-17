@@ -68,6 +68,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - UDS reconnect behavior is tested across listener restart and receiver reconnection paths.
 - Receiver shutdown closes single and multiple active Unix socket connections and removes the socket path.
 - Engine worker shutdown orchestration is covered by a focused `cmd/netsentry` test.
+- Engine startup now reports HTTP bind failures synchronously, and shutdown
+  waits for the receiver, pipeline workers, and HTTP API before SQLite closes;
+  an active-load integration regression covers the complete ordering.
 - Worker panic recovery no longer terminates the worker loop after a single bad packet.
 - Alert aggregation preserves earliest `first_seen`, latest `last_seen`, and latest payload/match fields when older events arrive after newer events in the same aggregation window.
 - Daily-shard alert storage writes cross-day alerts to `netsentry-YYYY-MM-DD.db` files based on each alert timestamp during a running process.

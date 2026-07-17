@@ -143,9 +143,15 @@ Target behavior:
   accepted clients are closed immediately, and disconnected handlers release
   their slot for capture reconnects.
 - C reconnect uses exponential backoff, can bound initial offline connection attempts, and counts write errors/dropped frames while disconnected.
-- Engine shutdown waits for the UDS receiver accept loop/connection handlers and every pipeline worker before the alert store is closed.
+- HTTP API bind failures are returned synchronously during startup. Engine
+  shutdown waits for the UDS receiver accept loop/connection handlers, every
+  pipeline worker, and graceful HTTP API shutdown before the alert store is
+  closed.
 
-The current development build has signal-aware HTTP shutdown plus explicit receiver/worker teardown ordering. Remaining shutdown validation should focus on active-load drills that combine receiver, worker, HTTP, and storage teardown.
+The active-load full-engine shutdown regression uses the real receiver,
+pipeline worker, HTTP API, and SQLite store. It persists one alert, cancels with
+a second match deliberately in flight, and verifies bounded teardown, listener
+closure, and zero writes after the store-close boundary.
 
 ---
 
@@ -208,4 +214,3 @@ Remaining validation gaps:
 - Sustained external C fuzz campaigns with larger parser and formatter corpora.
 - Realistic pcap corpora for throughput, query tuning, and alert-volume behavior beyond synthetic repeat-pcap smoke runs.
 - Broader SQLite corruption and fault-injection scenarios beyond current disk-full, read-only, I/O, recovery replay, and emergency-mode tests.
-- Additional full-engine shutdown drills that combine receiver, worker, HTTP, and storage teardown under active load.

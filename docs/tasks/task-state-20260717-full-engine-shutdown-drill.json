@@ -1,0 +1,29 @@
+{
+  "task": "r90-08-active-load-full-engine-shutdown-drill",
+  "timestamp": "2026-07-17T00:57:08-07:00",
+  "branch": "main",
+  "remote_baseline": "80b9bf84915de20d55d13c38ed019c09c1f896d7",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Verified clean local main matches fetched origin/main",
+    "Verified R90-07 delivery and resume guidance are reconciled",
+    "Selected R90-08 as the only dependency-ready roadmap increment",
+    "Identified that engine main waits for receiver and workers but not HTTP shutdown before deferred SQLite close",
+    "Made HTTP bind failures synchronous and exposed completed graceful shutdown through a done signal",
+    "Made engine teardown wait for receiver handlers, pipeline workers, and HTTP shutdown before deferred SQLite close",
+    "Added deterministic regressions for occupied-port startup, already-canceled HTTP startup, and active-load full-engine shutdown",
+    "Passed 25 consecutive focused race runs, the full native C and Go race suite, e2e smoke, documentation, knowledge, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Commit, push, fetch-verify, and synchronize the validated increment"
+  ],
+  "todo": [
+    "Reconcile roadmap and task state against the verified remote and Vault evidence"
+  ],
+  "remaining_risks": [
+    "The test must synchronize in-flight work without relying on timing sleeps",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Complete R90-08 only: make HTTP shutdown awaitable, prove full-engine teardown ordering with the planned real-component integration test, and deliver only after every validation result is unambiguous. Do not create v0.1.1 or publish artifacts."
+}

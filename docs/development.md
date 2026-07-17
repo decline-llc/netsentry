@@ -423,7 +423,11 @@ Remaining test gaps:
 - Sustained external C fuzz campaign results from larger parser and formatter corpora.
 - Realistic pcap corpora for throughput and query tuning beyond repeat-pcap smoke runs.
 - Broader SQLite corruption/fault-injection scenarios beyond the current disk-full, read-only, I/O, recovery replay, and emergency-mode tests.
-- Active-load full-engine shutdown drills that combine receiver, worker, HTTP, and storage teardown.
+
+The full-engine lifecycle regression now combines the real UDS receiver,
+pipeline worker, HTTP API, and SQLite store under active load. It verifies that
+shutdown waits for an in-flight match and closes receiver and API listeners
+before the store-close boundary.
 
 ---
 

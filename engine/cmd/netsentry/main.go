@@ -9,6 +9,7 @@ import (
 	"net/http/pprof"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"go.uber.org/zap"
@@ -115,7 +116,10 @@ func main() {
 		worker.SetRedactor(alert.RedactSensitivePayloads)
 	}
 	workerDone := startPipelineWorkers(ctx, worker, recv.Packets(), cfg.Engine.WorkerCount)
-	startHTTPServer(ctx, cfg.Engine, store, recv, ruleEngine, metrics, suppressions, logger)
+	httpDone, err := startHTTPServer(ctx, cfg.Engine, store, recv, ruleEngine, metrics, suppressions, logger)
+	if err != nil {
+		logger.Fatal("start http api", zap.Error(err))
+	}
 	startPprofServer(ctx, cfg.Engine, logger)
 
 	logger.Info("engine ready — waiting for shutdown signal (SIGINT/SIGTERM)",
@@ -123,10 +127,15 @@ func main() {
 		zap.Int("api_port", cfg.Engine.APIPort))
 	<-ctx.Done()
 	logger.Info("shutdown signal received, stopping receiver")
+	waitForEngineShutdown(recv, workerDone, httpDone)
+	logger.Info("shutdown complete")
+}
+
+func waitForEngineShutdown(recv *receiver.Receiver, workerDone, httpDone <-chan struct{}) {
 	recv.Stop()
 	recv.Wait()
 	<-workerDone
-	logger.Info("shutdown complete")
+	<-httpDone
 }
 
 func startPipelineWorker(ctx context.Context, worker *pipeline.Worker, packets <-chan *model.PacketInfo) <-chan struct{} {
@@ -154,20 +163,53 @@ func startPipelineWorkers(ctx context.Context, worker *pipeline.Worker, packets 
 	return done
 }
 
-func startHTTPServer(ctx context.Context, engineCfg config.EngineConfig, store *alert.Store, recv *receiver.Receiver, ruleEngine *rule.Engine, metrics *stats.Stats, suppressions *alert.SuppressionManager, logger *zap.Logger) {
+func startHTTPServer(ctx context.Context, engineCfg config.EngineConfig, store *alert.Store, recv *receiver.Receiver, ruleEngine *rule.Engine, metrics *stats.Stats, suppressions *alert.SuppressionManager, logger *zap.Logger) (<-chan struct{}, error) {
 	srv := newHTTPServer(engineCfg, store, recv, ruleEngine, metrics, suppressions, logger)
+	ln, err := net.Listen("tcp", srv.Addr)
+	if err != nil {
+		return nil, fmt.Errorf("listen on %s: %w", srv.Addr, err)
+	}
+	return serveHTTPServer(ctx, srv, ln, logger), nil
+}
+
+func serveHTTPServer(ctx context.Context, srv *http.Server, ln net.Listener, logger *zap.Logger) <-chan struct{} {
+	done := make(chan struct{})
+	serveDone := make(chan struct{})
+	trackedListener := &acceptTrackingListener{
+		Listener:  ln,
+		accepting: make(chan struct{}),
+	}
 	go func() {
+		defer close(done)
 		<-ctx.Done()
+		<-trackedListener.accepting
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
-		_ = srv.Shutdown(shutdownCtx)
+		if err := srv.Shutdown(shutdownCtx); err != nil {
+			logger.Warn("http api graceful shutdown failed", zap.Error(err))
+			_ = srv.Close()
+		}
+		<-serveDone
 	}()
 	go func() {
+		defer close(serveDone)
 		logger.Info("http api started", zap.String("address", srv.Addr))
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := srv.Serve(trackedListener); err != nil && err != http.ErrServerClosed {
 			logger.Error("http api failed", zap.Error(err))
 		}
 	}()
+	return done
+}
+
+type acceptTrackingListener struct {
+	net.Listener
+	accepting chan struct{}
+	once      sync.Once
+}
+
+func (l *acceptTrackingListener) Accept() (net.Conn, error) {
+	l.once.Do(func() { close(l.accepting) })
+	return l.Listener.Accept()
 }
 
 func newHTTPServer(engineCfg config.EngineConfig, store *alert.Store, recv *receiver.Receiver, ruleEngine *rule.Engine, metrics *stats.Stats, suppressions *alert.SuppressionManager, logger *zap.Logger) *http.Server {
