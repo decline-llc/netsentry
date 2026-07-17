@@ -218,6 +218,26 @@ The loader still accepts legacy top-level arrays and legacy `payload_match`, `ip
 
 The engine loads this file at startup. Suppression create, update, and delete requests persist the full file before swapping the active in-memory filter. `POST /api/suppressions/reload` reloads the file from disk and swaps the active filter after validation succeeds.
 
+### SQLite startup integrity and recovery
+
+An existing non-empty primary alerts database receives a read-only SQLite
+`PRAGMA quick_check` before journal-mode or schema initialization. Corrupt or
+truncated input fails startup with `ErrDatabaseIntegrity` and an explicit
+statement that the file was not modified. New paths and existing empty files
+continue through normal initialization.
+
+If the integrity preflight fails:
+
+1. Keep NetSentry stopped; do not delete or retry writes against the database.
+2. Preserve and copy the database plus matching `-wal`, `-shm`, and alert
+   recovery-log sidecars while the process is stopped.
+3. Run SQLite integrity/recovery tools against a copy, never the only original.
+4. Keep the original for rollback or forensic review, and configure a new or
+   operator-recovered database path only after the recovered copy is reviewed.
+
+NetSentry does not automatically repair, replace, quarantine, or delete a
+database that fails this check.
+
 ---
 
 ## 7. Testing
@@ -366,7 +386,7 @@ Current validation baseline:
 - `make test-unit` runs C/Go unit and race tests followed serially by C ASan tests.
 - `make test-integration` verifies the pinned PcapPlusPlus/Zeek fixture manifest, processes supported external pcaps, and checks invalid CLI/non-Ethernet rejection.
 - `make test-e2e` covers pcap -> UDS -> worker pool -> SQLite -> API; `make test-stress` runs configurable repeat-pcap pressure.
-- Go tests cover receiver frame validation/lifecycle, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation, daily shards, recovery-log replay, and storage degraded/emergency behavior.
+- Go tests cover receiver frame validation/lifecycle, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation, daily shards, recovery-log replay, corrupt/truncated startup preservation, and storage degraded/emergency behavior.
 - Release-candidate checks run syntax checks, repository configuration validation, dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 
 The C-side JSON line formatter is intentionally kept as a bounded handwritten v0.1.0 implementation. It avoids a new C dependency, rejects truncation, escapes JSON strings, Base64-encodes packet payload previews, and is covered by the UDS sender tests and current smoke checks. A cJSON migration should be reopened only with a concrete defect or fuzzing result.
@@ -422,7 +442,7 @@ Remaining test gaps:
 
 - Sustained external C fuzz campaign results from larger parser and formatter corpora.
 - Realistic pcap corpora for throughput and query tuning beyond repeat-pcap smoke runs.
-- Broader SQLite corruption/fault-injection scenarios beyond the current disk-full, read-only, I/O, recovery replay, and emergency-mode tests.
+- Additional SQLite corruption/fault-injection scenarios beyond the current startup integrity preflight, disk-full, read-only, I/O, recovery replay, and emergency-mode tests.
 
 The full-engine lifecycle regression now combines the real UDS receiver,
 pipeline worker, HTTP API, and SQLite store under active load. It verifies that

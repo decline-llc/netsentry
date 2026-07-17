@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -24,6 +25,10 @@ import (
 )
 
 var ErrStorageEmergency = errors.New("alert storage is in emergency mode; clear disk/storage fault and restart NetSentry")
+
+// ErrDatabaseIntegrity reports that an existing database failed the read-only
+// startup integrity preflight and was not opened for initialization.
+var ErrDatabaseIntegrity = errors.New("existing SQLite database failed integrity check; file was not modified")
 
 // Options controls the SQLite alert store.
 type Options struct {
@@ -96,6 +101,15 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 	if err := os.MkdirAll(filepath.Dir(dbPath), 0o750); err != nil {
 		return nil, fmt.Errorf("create sqlite alert dir: %w", err)
 	}
+	existingNonEmpty, err := existingNonEmptyDatabase(dbPath)
+	if err != nil {
+		return nil, err
+	}
+	if existingNonEmpty {
+		if err := validateExistingDatabase(ctx, dbPath); err != nil {
+			return nil, err
+		}
+	}
 
 	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
@@ -133,6 +147,58 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 		return nil, err
 	}
 	return store, nil
+}
+
+func existingNonEmptyDatabase(path string) (bool, error) {
+	info, err := os.Stat(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return false, nil
+	}
+	if err != nil {
+		return false, fmt.Errorf("inspect sqlite alerts database: %w", err)
+	}
+	return info.Mode().IsRegular() && info.Size() > 0, nil
+}
+
+func validateExistingDatabase(ctx context.Context, path string) error {
+	dsn := (&url.URL{Scheme: "file", Path: path, RawQuery: "mode=ro"}).String()
+	db, err := sql.Open("sqlite", dsn)
+	if err != nil {
+		return fmt.Errorf("%w: %v", ErrDatabaseIntegrity, err)
+	}
+	db.SetMaxOpenConns(1)
+	defer db.Close()
+
+	rows, err := db.QueryContext(ctx, "PRAGMA quick_check")
+	if err != nil {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		return fmt.Errorf("%w: %v", ErrDatabaseIntegrity, err)
+	}
+	defer rows.Close()
+
+	checked := false
+	for rows.Next() {
+		var result string
+		if err := rows.Scan(&result); err != nil {
+			return fmt.Errorf("%w: read quick_check result: %v", ErrDatabaseIntegrity, err)
+		}
+		checked = true
+		if !strings.EqualFold(strings.TrimSpace(result), "ok") {
+			return fmt.Errorf("%w: %s", ErrDatabaseIntegrity, strings.TrimSpace(result))
+		}
+	}
+	if err := rows.Err(); err != nil {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		return fmt.Errorf("%w: %v", ErrDatabaseIntegrity, err)
+	}
+	if !checked {
+		return fmt.Errorf("%w: quick_check returned no result", ErrDatabaseIntegrity)
+	}
+	return nil
 }
 
 func resolveDBPath(opts Options) string {

@@ -1,10 +1,12 @@
 package alert
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"testing"
 	"time"
@@ -339,6 +341,86 @@ func TestStoreRejectsUnsupportedJournalMode(t *testing.T) {
 	if err == nil {
 		store.Close()
 		t.Fatal("expected unsupported journal mode error")
+	}
+}
+
+func TestStoreRejectsCorruptExistingDatabaseWithoutModification(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	before := []byte("not a sqlite database\x00corrupt bytes")
+	if err := os.WriteFile(path, before, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	store, err := Open(context.Background(), Options{Path: path, JournalMode: "WAL"})
+	if store != nil {
+		_ = store.Close()
+		t.Fatal("corrupt existing database returned a usable store")
+	}
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+}
+
+func TestStoreRejectsTruncatedExistingDatabaseWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	store, err := Open(ctx, Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("create valid database: %v", err)
+	}
+	if err := store.WriteBatch(ctx, []*model.Alert{makeAlert(time.Now().UTC(), "before-truncate")}); err != nil {
+		t.Fatalf("seed valid database: %v", err)
+	}
+	if err := store.Close(); err != nil {
+		t.Fatalf("close valid database: %v", err)
+	}
+	valid, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(valid) < 1024 {
+		t.Fatalf("valid database unexpectedly small: %d bytes", len(valid))
+	}
+	before := append([]byte(nil), valid[:len(valid)/2]...)
+	if err := os.WriteFile(path, before, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	store, err = Open(ctx, Options{Path: path, JournalMode: "DELETE"})
+	if store != nil {
+		_ = store.Close()
+		t.Fatal("truncated existing database returned a usable store")
+	}
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+}
+
+func TestStoreInitializesExistingEmptyDatabase(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	if err := os.WriteFile(path, nil, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	store, err := Open(context.Background(), Options{Path: path, JournalMode: "WAL"})
+	if err != nil {
+		t.Fatalf("initialize existing empty database: %v", err)
+	}
+	defer store.Close()
+	if count, err := store.Count(context.Background()); err != nil || count != 0 {
+		t.Fatalf("new database count=%d err=%v, want 0/nil", count, err)
+	}
+}
+
+func assertIntegrityRejectionPreservesFile(t *testing.T, path string, before []byte, err error) {
+	t.Helper()
+	if !errors.Is(err, ErrDatabaseIntegrity) {
+		t.Fatalf("startup error = %v, want ErrDatabaseIntegrity", err)
+	}
+	if !strings.Contains(err.Error(), "file was not modified") {
+		t.Fatalf("startup error does not state preservation: %v", err)
+	}
+	after, readErr := os.ReadFile(path)
+	if readErr != nil {
+		t.Fatalf("read rejected database: %v", readErr)
+	}
+	if !bytes.Equal(after, before) {
+		t.Fatalf("rejected database changed: before=%d bytes after=%d bytes", len(before), len(after))
 	}
 }
 

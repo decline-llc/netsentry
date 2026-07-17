@@ -25,7 +25,7 @@
 | R90-06 | Window waived; forecast was Oct 3–14 | Complete under waiver | Assemble a release decision package. | R90-05 | Version, commit, evidence, checksums, and intended publication decision are reconciled; do not tag or publish without explicit user authorization. |
 | R90-07 | Jul 17–24 | Complete early | Bound concurrent Go UDS receiver connections. | R90-06 | A validated finite connection limit rejects excess clients, releases capacity after disconnect, and preserves reconnect/shutdown behavior. |
 | R90-08 | Jul 17–31 | Complete early | Add an active-load full-engine shutdown drill. | R90-07 | One integration test exercises receiver, worker, HTTP, and SQLite teardown with in-flight work and proves bounded clean shutdown without writes after store close. |
-| R90-09 | Jul 18–Aug 7 | Ready | Fail closed on corrupt SQLite startup state. | R90-08 | A deterministic regression proves corrupt or truncated SQLite input causes a clear startup error without overwriting the database, and recovery guidance preserves operator data. |
+| R90-09 | Jul 18–Aug 7 | In progress | Fail closed on corrupt SQLite startup state. | R90-08 | A deterministic regression proves corrupt or truncated SQLite input causes a clear startup error without overwriting the database, and recovery guidance preserves operator data. |
 
 ## R90-07 Definition
 
@@ -75,7 +75,7 @@
 - **Unchanged controls:** Dependencies, evidence requirements, acceptance
   criteria, stop conditions, private-data boundaries, release decisions,
   tagging, and publication authorization remain fully enforced.
-- **Current result:** R90-08 is complete and R90-09 is the next
+- **Current result:** R90-08 is complete and R90-09 is the active
   dependency-ready engineering increment. No tag or public release is
   authorized.
 

@@ -1,0 +1,32 @@
+{
+  "task": "r90-09-fail-closed-corrupt-sqlite-startup",
+  "timestamp": "2026-07-17T01:22:06-07:00",
+  "branch": "main",
+  "remote_baseline": "c049470a985300da1a4ee18c02043cff4c669e0e",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Verified clean local main matches fetched origin/main",
+    "Verified R90-08 delivery and resume guidance are reconciled",
+    "Selected R90-09 as the only dependency-ready roadmap increment",
+    "Confirmed existing startup has no explicit integrity preflight before journal and schema initialization",
+    "Added a mode=ro quick_check preflight before opening the writable SQLite handle",
+    "Added a stable ErrDatabaseIntegrity contract stating that the file was not modified",
+    "Added direct corrupt-byte and truncated-valid-database regressions with byte-for-byte preservation assertions",
+    "Verified existing empty database initialization and healthy recovery-log reopen behavior",
+    "Passed 20 consecutive focused race runs, the full native C and Go race suite, e2e smoke, documentation, knowledge, JSON, and diff checks",
+    "Documented copy-first operator recovery that preserves the database and sidecars"
+  ],
+  "in_progress": [
+    "Commit, push, fetch-verify, and synchronize the validated increment"
+  ],
+  "todo": [
+    "Reconcile roadmap and task state against the verified remote and Vault evidence"
+  ],
+  "remaining_risks": [
+    "The integrity check must not classify a new empty database as corrupt",
+    "The rejected file must remain byte-for-byte unchanged",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Complete R90-09 only: add the planned read-only existing-database integrity preflight, direct corrupt/truncated preservation regressions, and recovery guidance. Do not repair or delete databases automatically, create v0.1.1, or publish artifacts."
+}
