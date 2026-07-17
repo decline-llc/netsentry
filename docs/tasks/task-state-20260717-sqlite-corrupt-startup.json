@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "c049470a985300da1a4ee18c02043cff4c669e0e",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean local main matches fetched origin/main",
     "Verified R90-08 delivery and resume guidance are reconciled",
@@ -15,18 +15,25 @@
     "Added direct corrupt-byte and truncated-valid-database regressions with byte-for-byte preservation assertions",
     "Verified existing empty database initialization and healthy recovery-log reopen behavior",
     "Passed 20 consecutive focused race runs, the full native C and Go race suite, e2e smoke, documentation, knowledge, JSON, and diff checks",
-    "Documented copy-first operator recovery that preserves the database and sidecars"
+    "Documented copy-first operator recovery that preserves the database and sidecars",
+    "Pushed dee7c5f30f11082b76a6ba7f9d3cc6a41be349f4 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Commit, push, fetch-verify, and synchronize the validated increment"
-  ],
-  "todo": [
-    "Reconcile roadmap and task state against the verified remote and Vault evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
+  "delivery": {
+    "commit": "dee7c5f30f11082b76a6ba7f9d3cc6a41be349f4",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "c049470a985300da1a4ee18c02043cff4c669e0e..dee7c5f30f11082b76a6ba7f9d3cc6a41be349f4",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
   "remaining_risks": [
     "The integrity check must not classify a new empty database as corrupt",
     "The rejected file must remain byte-for-byte unchanged",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Complete R90-09 only: add the planned read-only existing-database integrity preflight, direct corrupt/truncated preservation regressions, and recovery guidance. Do not repair or delete databases automatically, create v0.1.1, or publish artifacts."
+  "resume_instructions": "R90-09 is complete at dee7c5f30f11082b76a6ba7f9d3cc6a41be349f4. Do not repeat its implementation, validation, push, or Vault synchronization. R90-10 is the next ready increment: apply the same read-only integrity preflight and byte-preservation contract before writing an existing non-current daily shard. Do not repair or delete shards automatically, create v0.1.1, or publish artifacts."
 }
