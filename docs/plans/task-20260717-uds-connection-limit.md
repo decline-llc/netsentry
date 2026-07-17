@@ -57,3 +57,15 @@ clients cannot cause unbounded connection-handler goroutine growth.
 
 Stop if validation is ambiguous, the limiter requires changing the frame
 protocol, or delivery would require tag/publication authority.
+
+## Completion
+
+- Feature commit: `bdca014a5ca3c775125b41d98faf15ffd1b1cf35`
+- Fetched `origin/main`: verified at the feature commit
+- Focused receiver test: passed 10 consecutive runs
+- Full native C/Go race suite: passed
+- Config, docs, knowledge, JSON, diff, and sensitive-information checks: passed
+- Vault range:
+  `f2c9dc20f894dd2f279d0a35b9015e484e1f8f51..bdca014a5ca3c775125b41d98faf15ffd1b1cf35`
+- Vault iteration note, full index, and MOC link: verified
+- Tag/publication actions: none

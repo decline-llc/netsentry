@@ -4,22 +4,33 @@
   "branch": "main",
   "remote_baseline": "f2c9dc20f894dd2f279d0a35b9015e484e1f8f51",
   "risk_level": "Medium",
-  "current_checkpoint": "implementation",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean local main matches fetched origin/main",
     "Verified R90-01 through R90-06 and their delivery evidence are complete",
-    "Selected the public v0.2 UDS concurrency bound as the highest-priority correctness increment"
+    "Selected the public v0.2 UDS concurrency bound as the highest-priority correctness increment",
+    "Added and validated engine.uds_max_connections with a default of 4 and an accepted range of 1 through 1024",
+    "Closed excess accepted clients without starting another connection handler",
+    "Verified capacity is reusable after a client disconnects",
+    "Passed the focused receiver test 10 consecutive times and passed the full C and Go race suite",
+    "Passed config, docs, knowledge, JSON, diff, and sensitive-information checks",
+    "Pushed bdca014a5ca3c775125b41d98faf15ffd1b1cf35 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Implement and validate the configurable UDS connection bound"
-  ],
-  "todo": [
-    "Run focused and proportional validation",
-    "Commit, push, fetch-verify, and synchronize the exact Vault range"
-  ],
+  "in_progress": [],
+  "todo": [],
+  "delivery": {
+    "commit": "bdca014a5ca3c775125b41d98faf15ffd1b1cf35",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "f2c9dc20f894dd2f279d0a35b9015e484e1f8f51..bdca014a5ca3c775125b41d98faf15ffd1b1cf35",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
   "remaining_risks": [
     "Capacity must be released reliably after disconnect",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Complete R90-07 only: implement the planned UDS connection cap, run its direct regressions and repository checks, then commit/push/synchronize only if every result is unambiguous. Do not create v0.1.1 or publish artifacts."
+  "resume_instructions": "R90-07 is complete at bdca014a5ca3c775125b41d98faf15ffd1b1cf35. Do not repeat its implementation, validation, push, or Vault synchronization. R90-08 is the next ready increment: add a deterministic active-load full-engine shutdown integration drill. Do not create v0.1.1 or publish artifacts."
 }
