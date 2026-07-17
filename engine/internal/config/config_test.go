@@ -12,8 +12,8 @@ func TestLoadRepositoryConfigFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if cfg.Engine.UDSSocketPath == "" || cfg.Engine.UDSSocketMode != "0600" {
-		t.Fatalf("expected engine UDS path and mode, got path=%q mode=%q", cfg.Engine.UDSSocketPath, cfg.Engine.UDSSocketMode)
+	if cfg.Engine.UDSSocketPath == "" || cfg.Engine.UDSSocketMode != "0600" || cfg.Engine.UDSMaxConnections != 4 {
+		t.Fatalf("expected engine UDS path, mode, and connection limit, got path=%q mode=%q max_connections=%d", cfg.Engine.UDSSocketPath, cfg.Engine.UDSSocketMode, cfg.Engine.UDSMaxConnections)
 	}
 	if cfg.Engine.RulesSeedFile == "" {
 		t.Fatal("expected engine.rules_seed_file to be configured")
@@ -137,6 +137,16 @@ func TestValidateRejectsInvalidUDSSocketMode(t *testing.T) {
 		cfg.Engine.UDSSocketMode = mode
 		if err := validate(cfg); err == nil || !strings.Contains(err.Error(), "engine.uds_socket_mode") {
 			t.Fatalf("uds_socket_mode=%q: expected validation error, got %v", mode, err)
+		}
+	}
+}
+
+func TestValidateRejectsInvalidUDSMaxConnections(t *testing.T) {
+	for _, limit := range []int{0, -1, 1025} {
+		cfg := defaults()
+		cfg.Engine.UDSMaxConnections = limit
+		if err := validate(cfg); err == nil || !strings.Contains(err.Error(), "engine.uds_max_connections") {
+			t.Fatalf("uds_max_connections=%d: expected validation error, got %v", limit, err)
 		}
 	}
 }

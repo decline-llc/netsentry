@@ -32,6 +32,7 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Broader deterministic C parser fuzz seeds cover TCP, UDP, VLAN, Q-in-Q, IPv4 fragments, short frames, and malformed TCP data offsets; `make fuzz-parser-long` runs a longer local ASan pass.
 - Sustained ASan C parser fuzz evidence entrypoint via `make fuzz-sustained`, with optional local corpus replay and ignored JSON/Markdown evidence output.
 - Receiver lifecycle tests for multiple active UDS connections during context cancellation, with goleak coverage for the receiver package.
+- Configurable concurrent UDS receiver connection cap with excess-client rejection and capacity-reuse coverage.
 - SQLite aggregation tests now cover recovery-log replay idempotency, query index creation, SQL-backed filtering/pagination, out-of-order alert writes, rule/source/destination/port aggregation key separation, canceled write contexts, emergency mode restart replay, and unsupported journal mode validation.
 - API tests cover health and metrics alert counts backed by a real daily-shard SQLite store.
 - Full C capture AddressSanitizer build target via `make build-asan`.

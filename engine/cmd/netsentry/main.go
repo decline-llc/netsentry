@@ -86,10 +86,11 @@ func main() {
 	defer store.Close() //nolint:errcheck
 
 	recv := receiver.New(receiver.Config{
-		Path:       cfg.Engine.UDSSocketPath,
-		SocketMode: receiver.ParseSocketMode(cfg.Engine.UDSSocketMode),
-		BufferSize: cfg.Engine.ChannelBufferSize,
-		Stats:      metrics,
+		Path:           cfg.Engine.UDSSocketPath,
+		SocketMode:     receiver.ParseSocketMode(cfg.Engine.UDSSocketMode),
+		MaxConnections: cfg.Engine.UDSMaxConnections,
+		BufferSize:     cfg.Engine.ChannelBufferSize,
+		Stats:          metrics,
 	}, logger)
 	if err := recv.Start(ctx); err != nil {
 		logger.Fatal("start uds receiver", zap.Error(err))

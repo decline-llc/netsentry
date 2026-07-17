@@ -109,6 +109,7 @@ Result: generated 6 packets, processed them through C capture -> UDS -> Go engin
 engine:
   uds_socket_path: "/tmp/netsentry.sock"
   uds_socket_mode: "0600"
+  uds_max_connections: 4
   channel_buffer_size: 10000
   worker_count: 1
   db_dir: "data"
@@ -130,7 +131,7 @@ logging:
   format: "json"
 ```
 
-Environment expansion supports `${ENV_VAR}` and `${ENV_VAR:default}`. Missing variables expand to their configured default. The loader rejects unknown top-level and nested YAML fields, so configuration typos and retired reserved fields fail at startup instead of silently retaining defaults. Every accepted YAML field configures the Go engine; the standalone C capture binary is configured explicitly with `-r` or `-i`, `-s`, and `-c` command-line arguments. `engine.uds_socket_mode` must be a non-zero octal permission mode no greater than `0777`; `logging.format` is `json` or `console`. Validation also rejects invalid API ports, worker/channel ranges, empty tokens when authentication is enabled, and any non-loopback API listener without authentication.
+Environment expansion supports `${ENV_VAR}` and `${ENV_VAR:default}`. Missing variables expand to their configured default. The loader rejects unknown top-level and nested YAML fields, so configuration typos and retired reserved fields fail at startup instead of silently retaining defaults. Every accepted YAML field configures the Go engine; the standalone C capture binary is configured explicitly with `-r` or `-i`, `-s`, and `-c` command-line arguments. `engine.uds_socket_mode` must be a non-zero octal permission mode no greater than `0777`, and `engine.uds_max_connections` must be between 1 and 1024. The receiver closes newly accepted excess connections while all handler slots are occupied and makes the slot available again when a client disconnects. `logging.format` is `json` or `console`. Validation also rejects invalid API ports, worker/channel ranges, empty tokens when authentication is enabled, and any non-loopback API listener without authentication.
 
 ---
 

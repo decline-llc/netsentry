@@ -139,6 +139,9 @@ Target behavior:
 
 - Packet channel sends should block rather than silently drop.
 - Blocking sends must also listen to `ctx.Done()` so shutdown cannot leak goroutines.
+- Concurrent UDS handlers are capped by `engine.uds_max_connections`; excess
+  accepted clients are closed immediately, and disconnected handlers release
+  their slot for capture reconnects.
 - C reconnect uses exponential backoff, can bound initial offline connection attempts, and counts write errors/dropped frames while disconnected.
 - Engine shutdown waits for the UDS receiver accept loop/connection handlers and every pipeline worker before the alert store is closed.
 

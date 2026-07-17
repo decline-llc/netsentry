@@ -148,7 +148,7 @@ scripts/    E2E、压力、corpus、fuzz、打包与知识同步工具
 三个月路线图与完整审计清单见 [AUDIT_REPORT.md](AUDIT_REPORT.md)：
 
 - v0.1.1：安全默认值、外部 fixture、CI 依赖/知识门禁。
-- v0.2.0：统一配置契约、IPv6/pcapng DLT 策略、UDS 并发上限、性能预算。
+- v0.2.0：统一配置契约、IPv6/pcapng DLT 策略、已落地的 UDS 并发上限、性能预算。
 - v0.3.0：IP/TCP 重组、多 MITRE 映射与置信度、可版本化 ATT&CK catalog。
 
 ## 许可证

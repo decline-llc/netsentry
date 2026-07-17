@@ -29,10 +29,11 @@ const (
 
 // Config controls the Unix socket receiver.
 type Config struct {
-	Path       string
-	SocketMode os.FileMode
-	BufferSize int
-	Stats      *stats.Stats
+	Path           string
+	SocketMode     os.FileMode
+	MaxConnections int
+	BufferSize     int
+	Stats          *stats.Stats
 }
 
 // Receiver owns a UDS listener and a context-aware packet channel.
@@ -56,6 +57,9 @@ func New(cfg Config, logger *zap.Logger) *Receiver {
 	}
 	if cfg.BufferSize <= 0 {
 		cfg.BufferSize = 1024
+	}
+	if cfg.MaxConnections <= 0 {
+		cfg.MaxConnections = 4
 	}
 	if logger == nil {
 		logger = zap.NewNop()
@@ -119,6 +123,7 @@ func (r *Receiver) Start(ctx context.Context) error {
 
 func (r *Receiver) acceptLoop(ctx context.Context, ln net.Listener) {
 	r.logger.Info("uds listener started", zap.String("path", r.cfg.Path))
+	connectionSlots := make(chan struct{}, r.cfg.MaxConnections)
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
@@ -128,11 +133,18 @@ func (r *Receiver) acceptLoop(ctx context.Context, ln net.Listener) {
 			r.logger.Warn("accept uds connection", zap.Error(err))
 			continue
 		}
-		r.wg.Add(1)
-		go func() {
-			defer r.wg.Done()
-			r.handleConn(ctx, conn)
-		}()
+		select {
+		case connectionSlots <- struct{}{}:
+			r.wg.Add(1)
+			go func() {
+				defer r.wg.Done()
+				defer func() { <-connectionSlots }()
+				r.handleConn(ctx, conn)
+			}()
+		default:
+			r.logger.Warn("reject uds connection: capacity exhausted", zap.Int("max_connections", r.cfg.MaxConnections))
+			_ = conn.Close()
+		}
 	}
 }
 

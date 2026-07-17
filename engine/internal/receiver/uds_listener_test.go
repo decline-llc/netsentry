@@ -222,6 +222,64 @@ func TestStartAcceptsReconnectOnSameUnixSocket(t *testing.T) {
 	}
 }
 
+func TestStartRejectsConnectionsAboveLimitAndReusesCapacity(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	r := New(Config{Path: path, MaxConnections: 1, BufferSize: 4}, zap.NewNop())
+	if err := r.Start(ctx); err != nil {
+		t.Fatalf("start receiver: %v", err)
+	}
+	defer func() {
+		cancel()
+		r.Wait()
+	}()
+
+	first, err := dialUnix(path)
+	if err != nil {
+		t.Fatalf("dial first receiver connection: %v", err)
+	}
+	if err := writeJSONFrame(first, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "first", PID: 1, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
+		t.Fatalf("write first hello: %v", err)
+	}
+	waitForSession(t, r, "first")
+
+	excess, err := dialUnix(path)
+	if err != nil {
+		t.Fatalf("dial excess receiver connection: %v", err)
+	}
+	if err := excess.SetReadDeadline(time.Now().Add(time.Second)); err != nil {
+		t.Fatalf("set excess connection deadline: %v", err)
+	}
+	if _, err := excess.Read(make([]byte, 1)); err == nil {
+		t.Fatal("excess receiver connection should be closed")
+	}
+	_ = excess.Close()
+
+	if err := first.Close(); err != nil {
+		t.Fatalf("close first receiver connection: %v", err)
+	}
+
+	var replacement net.Conn
+	accepted := false
+	deadline := time.Now().Add(time.Second)
+	for time.Now().Before(deadline) {
+		replacement, err = net.Dial("unix", path)
+		if err == nil {
+			if err = writeJSONFrame(replacement, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "replacement", PID: 2, Hostname: "host", MaxPayloadLen: 4096}); err == nil && waitForSessionWithin(r, "replacement", 50*time.Millisecond) {
+				accepted = true
+				break
+			}
+			_ = replacement.Close()
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	if !accepted {
+		t.Fatalf("replacement connection was not accepted after capacity release: %v", err)
+	}
+	defer replacement.Close()
+}
+
 func TestStartStopsActiveConnectionOnContextCancel(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -324,4 +382,23 @@ func dialUnix(path string) (net.Conn, error) {
 		time.Sleep(10 * time.Millisecond)
 	}
 	return nil, lastErr
+}
+
+func waitForSession(t *testing.T, r *Receiver, sessionID string) {
+	t.Helper()
+	if waitForSessionWithin(r, sessionID, time.Second) {
+		return
+	}
+	t.Fatalf("receiver session did not become %q: %+v", sessionID, r.State())
+}
+
+func waitForSessionWithin(r *Receiver, sessionID string, timeout time.Duration) bool {
+	deadline := time.Now().Add(timeout)
+	for time.Now().Before(deadline) {
+		if r.State().SessionID == sessionID {
+			return true
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	return false
 }
