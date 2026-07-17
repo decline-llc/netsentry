@@ -24,7 +24,8 @@
 | R90-05 | Jul 16 | Complete early | Prepare v0.1.1 release readiness from validated evidence. | R90-04; passing code quality gates | `make rc-check`, supply-chain, and release gates pass; public docs/evidence identify no unresolved release blocker. |
 | R90-06 | Window waived; forecast was Oct 3–14 | Complete under waiver | Assemble a release decision package. | R90-05 | Version, commit, evidence, checksums, and intended publication decision are reconciled; do not tag or publish without explicit user authorization. |
 | R90-07 | Jul 17–24 | Complete early | Bound concurrent Go UDS receiver connections. | R90-06 | A validated finite connection limit rejects excess clients, releases capacity after disconnect, and preserves reconnect/shutdown behavior. |
-| R90-08 | Jul 17–31 | In progress | Add an active-load full-engine shutdown drill. | R90-07 | One integration test exercises receiver, worker, HTTP, and SQLite teardown with in-flight work and proves bounded clean shutdown without writes after store close. |
+| R90-08 | Jul 17–31 | Complete early | Add an active-load full-engine shutdown drill. | R90-07 | One integration test exercises receiver, worker, HTTP, and SQLite teardown with in-flight work and proves bounded clean shutdown without writes after store close. |
+| R90-09 | Jul 18–Aug 7 | Ready | Fail closed on corrupt SQLite startup state. | R90-08 | A deterministic regression proves corrupt or truncated SQLite input causes a clear startup error without overwriting the database, and recovery guidance preserves operator data. |
 
 ## R90-07 Definition
 
@@ -52,6 +53,18 @@
   traffic, privileged external services, or a runtime architecture change
   broader than shutdown validation.
 
+## R90-09 Definition
+
+- **Goal:** close the first bounded SQLite corruption/fault-injection gap by
+  making corrupt startup behavior explicit and recoverable.
+- **Risk:** an attempted repair path could overwrite operator data or turn a
+  clear startup failure into silent data loss.
+- **Required validation:** direct corrupt and truncated database regressions,
+  focused alert-store tests, full native tests, documentation checks, and the
+  knowledge gate.
+- **Stop condition:** stop if safe completion requires automatic database
+  repair, deletion, access to operator data, or a broader storage redesign.
+
 ## Global Schedule-Window Waiver
 
 - **Authorization:** On Jul 16, 2026, the user cancelled every roadmap planning
@@ -62,7 +75,7 @@
 - **Unchanged controls:** Dependencies, evidence requirements, acceptance
   criteria, stop conditions, private-data boundaries, release decisions,
   tagging, and publication authorization remain fully enforced.
-- **Current result:** R90-07 is complete and R90-08 is the active
+- **Current result:** R90-08 is complete and R90-09 is the next
   dependency-ready engineering increment. No tag or public release is
   authorized.
 
@@ -83,7 +96,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -135,4 +148,4 @@
 
 ## Current Checkpoint
 
-R90-03a was completed early to remove CI coupling to unversioned hook files. On Jul 15, 2026, R90-04a was added, selected, and completed as the evidence-independent alternate: the non-Docker RC suite and pinned supply-chain baseline passed. On Jul 16, R90-04 used MAWI samplepoint-B trace `200012281400` under the scoped exception: provenance, privacy, sanitization, and sensitive-metadata reviews were approved; corpus pressure processed 544,525 packets with zero parse errors, drops, and UDS write errors. Feature commit `009b2a03776987359661c4ab2776f5d04820db34` is verified on fetched `origin/main`, post-fetch knowledge validation passed, and the exact pushed range is present in the Vault iteration note, full index, and MOC. The public record is `docs/evidence/r90-04-public-traffic-20260716.md`; it is R90-04-only and does not grant release approval. R90-04b completed at `64979f454cfee414cbb216368a8ee2fb34147e4d`: the audit exception is explicitly expired, the release gate rejects its reuse, the historical v0.1.0 fixture remains valid, and fetched `origin/main` plus Vault evidence are verified. R90-05 completed early at `6c3f9ef276c99c13aa9e985b8c849bb5f0791752`: the exact 7,500-packet synthetic corpus was verified by SHA-256, corpus pressure passed without capture errors, the full Docker RC and pinned supply-chain gates passed, and the user explicitly approved final v0.1.1 release-gate acceptance. On Jul 16, the user cancelled every roadmap window restriction and every PCAP release-gate restriction. The PCAP waiver delivery at `ec2605e3e8c99749933530d77ad1eb0200b8b47e` is verified on fetched `origin/main`; post-fetch knowledge validation and its exact Vault range are verified. PCAP tooling remains optional, while non-PCAP release controls and the separate tag/publication authority remain enforced. R90-06 completed under the window waiver: candidate `ad8a443b5020037c235419f5696c60988d2bba99` passed the full Docker RC, release gate, and pinned supply-chain audit; its local v0.1.1 linux/amd64 artifact is reconciled by SHA-256 in `docs/evidence/release-decision-v0.1.1.md`; and decision-package commit `c70a48d6e1272b5d0f127b848b761376bb1924a3` is verified on fetched `origin/main` and in the Vault. Publication remains on hold, `v0.1.1` was not created, and no GitHub Release or GHCR image was published. R90-07 completed early at `bdca014a5ca3c775125b41d98faf15ffd1b1cf35`: configuration rejects connection limits outside 1–1024, excess accepted clients are closed without starting handlers, disconnects release capacity for reconnects, the full race suite passed, fetched `origin/main` and post-fetch knowledge validation match, and the exact pushed range is verified in the Vault note, full index, and MOC. R90-08 is next; publication remains unauthorized.
+R90-03a was completed early to remove CI coupling to unversioned hook files. On Jul 15, 2026, R90-04a was added, selected, and completed as the evidence-independent alternate: the non-Docker RC suite and pinned supply-chain baseline passed. On Jul 16, R90-04 used MAWI samplepoint-B trace `200012281400` under the scoped exception: provenance, privacy, sanitization, and sensitive-metadata reviews were approved; corpus pressure processed 544,525 packets with zero parse errors, drops, and UDS write errors. Feature commit `009b2a03776987359661c4ab2776f5d04820db34` is verified on fetched `origin/main`, post-fetch knowledge validation passed, and the exact pushed range is present in the Vault iteration note, full index, and MOC. The public record is `docs/evidence/r90-04-public-traffic-20260716.md`; it is R90-04-only and does not grant release approval. R90-04b completed at `64979f454cfee414cbb216368a8ee2fb34147e4d`: the audit exception is explicitly expired, the release gate rejects its reuse, the historical v0.1.0 fixture remains valid, and fetched `origin/main` plus Vault evidence are verified. R90-05 completed early at `6c3f9ef276c99c13aa9e985b8c849bb5f0791752`: the exact 7,500-packet synthetic corpus was verified by SHA-256, corpus pressure passed without capture errors, the full Docker RC and pinned supply-chain gates passed, and the user explicitly approved final v0.1.1 release-gate acceptance. On Jul 16, the user cancelled every roadmap window restriction and every PCAP release-gate restriction. The PCAP waiver delivery at `ec2605e3e8c99749933530d77ad1eb0200b8b47e` is verified on fetched `origin/main`; post-fetch knowledge validation and its exact Vault range are verified. PCAP tooling remains optional, while non-PCAP release controls and the separate tag/publication authority remain enforced. R90-06 completed under the window waiver: candidate `ad8a443b5020037c235419f5696c60988d2bba99` passed the full Docker RC, release gate, and pinned supply-chain audit; its local v0.1.1 linux/amd64 artifact is reconciled by SHA-256 in `docs/evidence/release-decision-v0.1.1.md`; and decision-package commit `c70a48d6e1272b5d0f127b848b761376bb1924a3` is verified on fetched `origin/main` and in the Vault. Publication remains on hold, `v0.1.1` was not created, and no GitHub Release or GHCR image was published. R90-07 completed early at `bdca014a5ca3c775125b41d98faf15ffd1b1cf35`: configuration rejects connection limits outside 1–1024, excess accepted clients are closed without starting handlers, disconnects release capacity for reconnects, the full race suite passed, fetched `origin/main` and post-fetch knowledge validation match, and the exact pushed range is verified in the Vault note, full index, and MOC. R90-08 completed early at `9129d4ecf9df0da9601a027ec118af6f58b96e9a`: HTTP bind failures are synchronous, shutdown waits for receiver handlers, workers, and HTTP before SQLite closes, the active-load drill and immediate-cancel regression passed 25 focused race runs, the full native suite and E2E smoke passed, fetched `origin/main` and post-fetch knowledge validation match, and the exact pushed range is verified in the Vault note, full index, and MOC. R90-09 is next; publication remains unauthorized.

@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "80b9bf84915de20d55d13c38ed019c09c1f896d7",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean local main matches fetched origin/main",
     "Verified R90-07 delivery and resume guidance are reconciled",
@@ -13,17 +13,24 @@
     "Made HTTP bind failures synchronous and exposed completed graceful shutdown through a done signal",
     "Made engine teardown wait for receiver handlers, pipeline workers, and HTTP shutdown before deferred SQLite close",
     "Added deterministic regressions for occupied-port startup, already-canceled HTTP startup, and active-load full-engine shutdown",
-    "Passed 25 consecutive focused race runs, the full native C and Go race suite, e2e smoke, documentation, knowledge, JSON, and diff checks"
+    "Passed 25 consecutive focused race runs, the full native C and Go race suite, e2e smoke, documentation, knowledge, JSON, and diff checks",
+    "Pushed 9129d4ecf9df0da9601a027ec118af6f58b96e9a and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Commit, push, fetch-verify, and synchronize the validated increment"
-  ],
-  "todo": [
-    "Reconcile roadmap and task state against the verified remote and Vault evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
+  "delivery": {
+    "commit": "9129d4ecf9df0da9601a027ec118af6f58b96e9a",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "80b9bf84915de20d55d13c38ed019c09c1f896d7..9129d4ecf9df0da9601a027ec118af6f58b96e9a",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
   "remaining_risks": [
     "The test must synchronize in-flight work without relying on timing sleeps",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Complete R90-08 only: make HTTP shutdown awaitable, prove full-engine teardown ordering with the planned real-component integration test, and deliver only after every validation result is unambiguous. Do not create v0.1.1 or publish artifacts."
+  "resume_instructions": "R90-08 is complete at 9129d4ecf9df0da9601a027ec118af6f58b96e9a. Do not repeat its implementation, validation, push, or Vault synchronization. R90-09 is the next ready increment: add deterministic corrupt/truncated SQLite startup rejection coverage and data-preserving recovery guidance. Do not create v0.1.1 or publish artifacts."
 }
