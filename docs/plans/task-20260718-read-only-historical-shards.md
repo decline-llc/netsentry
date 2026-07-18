@@ -60,3 +60,16 @@ by a nominally read-only request.
 
 Stop if safe read-only access requires repair, snapshots, operator data, a
 broader storage/query redesign, or tag/publication authority.
+
+## Completion
+
+- Feature commit: `7e5c381880f21498d370789bb3db4c37a8e2254f`
+- Fetched `origin/main`: verified at the feature commit
+- Focused race validation: 20 consecutive passes
+- Full native C/Go race suite and `make e2e-smoke`: passed
+- Documentation, knowledge, JSON, diff, and sensitive-information checks:
+  passed
+- Vault range:
+  `37cfec7976f11b3366f226ef5b7ff762db89d5f8..7e5c381880f21498d370789bb3db4c37a8e2254f`
+- Vault iteration note, full index, and MOC link: verified
+- Tag/publication actions: none

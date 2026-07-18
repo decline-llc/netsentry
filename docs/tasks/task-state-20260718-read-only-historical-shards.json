@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "37cfec7976f11b3366f226ef5b7ff762db89d5f8",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean local main matches origin/main",
     "Verified R90-10 feature and delivery records are present in the Vault",
@@ -14,17 +14,25 @@
     "Added corrupt and truncated byte-preservation regressions for both query and count",
     "Verified healthy cross-shard semantics and active WAL visibility through a path requiring URL encoding",
     "Passed 20 consecutive focused race runs, the full native C and Go race suite, e2e smoke, documentation, knowledge, JSON, and diff checks",
-    "Documented the strict read-only historical-shard access boundary"
+    "Documented the strict read-only historical-shard access boundary",
+    "Pushed 7e5c381880f21498d370789bb3db4c37a8e2254f and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Commit, push, fetch-verify, and synchronize the validated increment",
-    "Reconcile roadmap and task state against verified remote and Vault evidence"
-  ],
+  "in_progress": [],
   "todo": [],
+  "delivery": {
+    "commit": "7e5c381880f21498d370789bb3db4c37a8e2254f",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "37cfec7976f11b3366f226ef5b7ff762db89d5f8..7e5c381880f21498d370789bb3db4c37a8e2254f",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
   "remaining_risks": [
     "Read-only DSNs must retain active WAL-backed shard visibility",
     "Rejected corrupt and truncated shards must remain byte-for-byte unchanged",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Complete R90-11 only: use URL-safe SQLite mode=ro handles for non-current daily-shard query and count, add corrupt/truncated preservation coverage for both operations, and verify active WAL-backed compatibility. Do not repair or delete shards, create v0.1.1, or publish artifacts."
+  "resume_instructions": "R90-11 is complete at 7e5c381880f21498d370789bb3db4c37a8e2254f. Do not repeat its implementation, validation, push, or Vault synchronization. R90-12 is the next ready increment: preserve corrupt and truncated JSONL recovery logs when startup replay rejects them, and prove valid logs truncate only after successful persistence. Do not repair or partially accept malformed logs, create v0.1.1, or publish artifacts."
 }
