@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "14b31698cf42209796f9e9334b983722288a98f4",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean local main matches origin/main",
     "Verified R90-09 delivery and resume guidance are reconciled",
@@ -14,17 +14,25 @@
     "Added separate corrupt-byte and truncated-valid-shard write regressions with byte preservation assertions",
     "Verified missing, empty, and healthy non-current shards remain writable",
     "Passed 20 consecutive focused race runs, the full native C and Go race suite, e2e smoke, documentation, knowledge, JSON, and diff checks",
-    "Documented the copy-first historical-shard recovery boundary"
+    "Documented the copy-first historical-shard recovery boundary",
+    "Pushed d08702d2c3a1e425c27b4bba5238039915603c97 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Commit, push, fetch-verify, and synchronize the validated increment",
-    "Reconcile roadmap and task state against verified remote and Vault evidence"
-  ],
+  "in_progress": [],
   "todo": [],
+  "delivery": {
+    "commit": "d08702d2c3a1e425c27b4bba5238039915603c97",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "14b31698cf42209796f9e9334b983722288a98f4..d08702d2c3a1e425c27b4bba5238039915603c97",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
   "remaining_risks": [
     "Writable shard initialization must not run before integrity validation",
     "Rejected shards must remain byte-for-byte unchanged",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Complete R90-10 only: preflight existing non-current daily shards through the read-only integrity check before writable open, add separate corrupt/truncated write-preservation regressions, and reconcile documentation. Do not repair or delete shards automatically, create v0.1.1, or publish artifacts."
+  "resume_instructions": "R90-10 is complete at d08702d2c3a1e425c27b4bba5238039915603c97. Do not repeat its implementation, validation, push, or Vault synchronization. R90-11 is the next ready increment: make non-current daily-shard query and count handles strictly read-only and prove corrupt/truncated inputs remain byte-for-byte unchanged. Do not repair or delete shards automatically, create v0.1.1, or publish artifacts."
 }
