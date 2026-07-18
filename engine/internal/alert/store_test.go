@@ -653,6 +653,98 @@ func TestStoreRotatesDailyShardWritesAcrossAlertDates(t *testing.T) {
 	}
 }
 
+func TestStoreRejectsCorruptHistoricalShardWriteWithoutModification(t *testing.T) {
+	dir := t.TempDir()
+	currentDay := time.Date(2026, 7, 18, 12, 0, 0, 0, time.UTC)
+	historicalDay := currentDay.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historicalDay.Format("2006-01-02")+".db")
+	before := []byte("not a sqlite shard\x00corrupt bytes")
+	if err := os.WriteFile(path, before, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	store := openDailyShardStoreAt(t, dir, currentDay)
+	defer store.Close()
+	err := store.WriteBatch(context.Background(), []*model.Alert{
+		makeAlert(historicalDay, "corrupt-historical-shard"),
+	})
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+}
+
+func TestStoreRejectsTruncatedHistoricalShardWriteWithoutModification(t *testing.T) {
+	dir := t.TempDir()
+	historicalDay := time.Date(2026, 7, 17, 12, 0, 0, 0, time.UTC)
+	seed := openDailyShardStoreAt(t, dir, historicalDay)
+	if err := seed.WriteBatch(context.Background(), []*model.Alert{
+		makeAlert(historicalDay, "before-truncate"),
+	}); err != nil {
+		t.Fatalf("seed historical shard: %v", err)
+	}
+	if err := seed.Close(); err != nil {
+		t.Fatalf("close historical shard: %v", err)
+	}
+
+	path := filepath.Join(dir, "netsentry-"+historicalDay.Format("2006-01-02")+".db")
+	valid, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(valid) < 1024 {
+		t.Fatalf("valid historical shard unexpectedly small: %d bytes", len(valid))
+	}
+	before := append([]byte(nil), valid[:len(valid)/2]...)
+	if err := os.WriteFile(path, before, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	currentDay := historicalDay.AddDate(0, 0, 1)
+	store := openDailyShardStoreAt(t, dir, currentDay)
+	defer store.Close()
+	err = store.WriteBatch(context.Background(), []*model.Alert{
+		makeAlert(historicalDay, "truncated-historical-shard"),
+	})
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+}
+
+func TestStoreWritesExistingValidHistoricalShards(t *testing.T) {
+	for _, test := range []struct {
+		name string
+		seed func(t *testing.T, dir string, day time.Time)
+	}{
+		{
+			name: "empty",
+			seed: func(t *testing.T, dir string, day time.Time) {
+				t.Helper()
+				path := filepath.Join(dir, "netsentry-"+day.Format("2006-01-02")+".db")
+				if err := os.WriteFile(path, nil, 0o600); err != nil {
+					t.Fatal(err)
+				}
+			},
+		},
+		{
+			name: "healthy",
+			seed: func(t *testing.T, dir string, day time.Time) {
+				t.Helper()
+				writeDailyShardAlert(t, dir, day, makeAlert(day, "existing-healthy"))
+			},
+		},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			dir := t.TempDir()
+			historicalDay := time.Date(2026, 7, 17, 12, 0, 0, 0, time.UTC)
+			test.seed(t, dir, historicalDay)
+
+			store := openDailyShardStoreAt(t, dir, historicalDay.AddDate(0, 0, 1))
+			defer store.Close()
+			if err := store.WriteBatch(context.Background(), []*model.Alert{
+				makeAlert(historicalDay.Add(time.Minute), "new-historical-write"),
+			}); err != nil {
+				t.Fatalf("write existing %s historical shard: %v", test.name, err)
+			}
+		})
+	}
+}
+
 func TestStoreQueriesAcrossDailyShards(t *testing.T) {
 	ctx := context.Background()
 	dir := t.TempDir()

@@ -1,0 +1,30 @@
+{
+  "task": "r90-10-preserve-corrupt-historical-daily-shards",
+  "timestamp": "2026-07-18T00:31:14-07:00",
+  "branch": "main",
+  "remote_baseline": "14b31698cf42209796f9e9334b983722288a98f4",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Verified clean local main matches origin/main",
+    "Verified R90-09 delivery and resume guidance are reconciled",
+    "Selected R90-10 as the only dependency-ready roadmap increment",
+    "Confirmed openShard initializes a writable handle without the R90-09 integrity preflight",
+    "Applied the read-only integrity preflight before writable historical-shard open",
+    "Added separate corrupt-byte and truncated-valid-shard write regressions with byte preservation assertions",
+    "Verified missing, empty, and healthy non-current shards remain writable",
+    "Passed 20 consecutive focused race runs, the full native C and Go race suite, e2e smoke, documentation, knowledge, JSON, and diff checks",
+    "Documented the copy-first historical-shard recovery boundary"
+  ],
+  "in_progress": [
+    "Commit, push, fetch-verify, and synchronize the validated increment",
+    "Reconcile roadmap and task state against verified remote and Vault evidence"
+  ],
+  "todo": [],
+  "remaining_risks": [
+    "Writable shard initialization must not run before integrity validation",
+    "Rejected shards must remain byte-for-byte unchanged",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Complete R90-10 only: preflight existing non-current daily shards through the read-only integrity check before writable open, add separate corrupt/truncated write-preservation regressions, and reconcile documentation. Do not repair or delete shards automatically, create v0.1.1, or publish artifacts."
+}

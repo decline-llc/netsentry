@@ -74,6 +74,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Worker panic recovery no longer terminates the worker loop after a single bad packet.
 - Alert aggregation preserves earliest `first_seen`, latest `last_seen`, and latest payload/match fields when older events arrive after newer events in the same aggregation window.
 - Daily-shard alert storage writes cross-day alerts to `netsentry-YYYY-MM-DD.db` files based on each alert timestamp during a running process.
+- Existing non-current daily shards now receive the same read-only integrity
+  preflight before a write; corrupt or truncated shards are rejected without
+  modifying their bytes.
 - Disk-full/read-only/I/O storage failures now enter sticky emergency mode, stop retrying SQLite writes in the current process after recovery logging when possible, and replay pending recovery-log alerts after operator cleanup and restart.
 - Existing non-empty SQLite databases now receive a read-only startup integrity
   preflight; corrupt or truncated files fail with a stable error and remain

@@ -26,8 +26,8 @@ import (
 
 var ErrStorageEmergency = errors.New("alert storage is in emergency mode; clear disk/storage fault and restart NetSentry")
 
-// ErrDatabaseIntegrity reports that an existing database failed the read-only
-// startup integrity preflight and was not opened for initialization.
+// ErrDatabaseIntegrity reports that an existing database failed a read-only
+// integrity preflight and was not opened for writable initialization.
 var ErrDatabaseIntegrity = errors.New("existing SQLite database failed integrity check; file was not modified")
 
 // Options controls the SQLite alert store.
@@ -362,6 +362,15 @@ func (s *Store) init(ctx context.Context, opts Options) error {
 func (s *Store) openShard(ctx context.Context, path string) (*sql.DB, error) {
 	if err := os.MkdirAll(filepath.Dir(path), 0o750); err != nil {
 		return nil, fmt.Errorf("create sqlite alert shard dir: %w", err)
+	}
+	existingNonEmpty, err := existingNonEmptyDatabase(path)
+	if err != nil {
+		return nil, err
+	}
+	if existingNonEmpty {
+		if err := validateExistingDatabase(ctx, path); err != nil {
+			return nil, err
+		}
 	}
 	db, err := sql.Open("sqlite", path)
 	if err != nil {
