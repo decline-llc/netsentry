@@ -245,6 +245,12 @@ truncated shard rejects the write with `ErrDatabaseIntegrity` and is left
 byte-for-byte unchanged. Preserve the shard and any sidecars, inspect only a
 copy, and restore or replace it through an operator-controlled recovery path.
 
+Historical-shard query and count paths are also non-mutating at the connection
+boundary: each non-current shard is opened through a URL-safe SQLite `mode=ro`
+handle, while the current shard continues to use the store-owned connection.
+Malformed historical input returns a read error without changing its bytes;
+healthy shards remain queryable while an active WAL writer is present.
+
 ---
 
 ## 7. Testing
@@ -393,7 +399,7 @@ Current validation baseline:
 - `make test-unit` runs C/Go unit and race tests followed serially by C ASan tests.
 - `make test-integration` verifies the pinned PcapPlusPlus/Zeek fixture manifest, processes supported external pcaps, and checks invalid CLI/non-Ethernet rejection.
 - `make test-e2e` covers pcap -> UDS -> worker pool -> SQLite -> API; `make test-stress` runs configurable repeat-pcap pressure.
-- Go tests cover receiver frame validation/lifecycle, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation, daily shards, recovery-log replay, corrupt/truncated startup and historical-shard write preservation, and storage degraded/emergency behavior.
+- Go tests cover receiver frame validation/lifecycle, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation, daily shards, recovery-log replay, corrupt/truncated startup and historical-shard read/write preservation, active WAL-backed read-only access, and storage degraded/emergency behavior.
 - Release-candidate checks run syntax checks, repository configuration validation, dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 
 The C-side JSON line formatter is intentionally kept as a bounded handwritten v0.1.0 implementation. It avoids a new C dependency, rejects truncation, escapes JSON strings, Base64-encodes packet payload previews, and is covered by the UDS sender tests and current smoke checks. A cJSON migration should be reopened only with a concrete defect or fuzzing result.

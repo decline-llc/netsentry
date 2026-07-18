@@ -27,7 +27,7 @@
 | R90-08 | Jul 17–31 | Complete early | Add an active-load full-engine shutdown drill. | R90-07 | One integration test exercises receiver, worker, HTTP, and SQLite teardown with in-flight work and proves bounded clean shutdown without writes after store close. |
 | R90-09 | Jul 18–Aug 7 | Complete early | Fail closed on corrupt SQLite startup state. | R90-08 | A deterministic regression proves corrupt or truncated SQLite input causes a clear startup error without overwriting the database, and recovery guidance preserves operator data. |
 | R90-10 | Jul 18–Aug 14 | Complete early | Preserve corrupt historical daily shards on write. | R90-09 | Opening an existing non-current daily shard for a write uses the same read-only integrity preflight; corrupt/truncated shards reject the write and remain byte-for-byte unchanged. |
-| R90-11 | Jul 18–Aug 21 | Ready | Make historical daily-shard reads strictly read-only. | R90-10 | Query and count open non-current shards with a read-only SQLite handle; corrupt/truncated inputs fail without changing shard bytes, while healthy cross-shard results remain unchanged. |
+| R90-11 | Jul 18–Aug 21 | In progress | Make historical daily-shard reads strictly read-only. | R90-10 | Query and count open non-current shards with a read-only SQLite handle; corrupt/truncated inputs fail without changing shard bytes, while healthy cross-shard results remain unchanged. |
 
 ## R90-07 Definition
 
@@ -102,7 +102,7 @@
 - **Unchanged controls:** Dependencies, evidence requirements, acceptance
   criteria, stop conditions, private-data boundaries, release decisions,
   tagging, and publication authorization remain fully enforced.
-- **Current result:** R90-10 is complete and R90-11 is the next
+- **Current result:** R90-10 is complete and R90-11 is the active
   dependency-ready engineering increment. No tag or public release is
   authorized.
 

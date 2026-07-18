@@ -77,6 +77,8 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Existing non-current daily shards now receive the same read-only integrity
   preflight before a write; corrupt or truncated shards are rejected without
   modifying their bytes.
+- Cross-shard query and count operations now open non-current daily shards with
+  URL-safe SQLite read-only handles, including active WAL-backed shards.
 - Disk-full/read-only/I/O storage failures now enter sticky emergency mode, stop retrying SQLite writes in the current process after recovery logging when possible, and replay pending recovery-log alerts after operator cleanup and restart.
 - Existing non-empty SQLite databases now receive a read-only startup integrity
   preflight; corrupt or truncated files fail with a stable error and remain

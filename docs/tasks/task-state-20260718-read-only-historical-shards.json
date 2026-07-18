@@ -1,0 +1,30 @@
+{
+  "task": "r90-11-read-only-historical-daily-shards",
+  "timestamp": "2026-07-18T00:44:00-07:00",
+  "branch": "main",
+  "remote_baseline": "37cfec7976f11b3366f226ef5b7ff762db89d5f8",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Verified clean local main matches origin/main",
+    "Verified R90-10 feature and delivery records are present in the Vault",
+    "Selected R90-11 as the only dependency-ready roadmap increment",
+    "Confirmed non-current query and count paths still use default writable SQLite handles",
+    "Centralized URL-safe SQLite mode=ro handle construction and reused it for integrity validation, historical query, and historical count",
+    "Added corrupt and truncated byte-preservation regressions for both query and count",
+    "Verified healthy cross-shard semantics and active WAL visibility through a path requiring URL encoding",
+    "Passed 20 consecutive focused race runs, the full native C and Go race suite, e2e smoke, documentation, knowledge, JSON, and diff checks",
+    "Documented the strict read-only historical-shard access boundary"
+  ],
+  "in_progress": [
+    "Commit, push, fetch-verify, and synchronize the validated increment",
+    "Reconcile roadmap and task state against verified remote and Vault evidence"
+  ],
+  "todo": [],
+  "remaining_risks": [
+    "Read-only DSNs must retain active WAL-backed shard visibility",
+    "Rejected corrupt and truncated shards must remain byte-for-byte unchanged",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Complete R90-11 only: use URL-safe SQLite mode=ro handles for non-current daily-shard query and count, add corrupt/truncated preservation coverage for both operations, and verify active WAL-backed compatibility. Do not repair or delete shards, create v0.1.1, or publish artifacts."
+}

@@ -161,12 +161,10 @@ func existingNonEmptyDatabase(path string) (bool, error) {
 }
 
 func validateExistingDatabase(ctx context.Context, path string) error {
-	dsn := (&url.URL{Scheme: "file", Path: path, RawQuery: "mode=ro"}).String()
-	db, err := sql.Open("sqlite", dsn)
+	db, err := openReadOnlyDatabase(path)
 	if err != nil {
 		return fmt.Errorf("%w: %v", ErrDatabaseIntegrity, err)
 	}
-	db.SetMaxOpenConns(1)
 	defer db.Close()
 
 	rows, err := db.QueryContext(ctx, "PRAGMA quick_check")
@@ -199,6 +197,16 @@ func validateExistingDatabase(ctx context.Context, path string) error {
 		return fmt.Errorf("%w: quick_check returned no result", ErrDatabaseIntegrity)
 	}
 	return nil
+}
+
+func openReadOnlyDatabase(path string) (*sql.DB, error) {
+	dsn := (&url.URL{Scheme: "file", Path: path, RawQuery: "mode=ro"}).String()
+	db, err := sql.Open("sqlite", dsn)
+	if err != nil {
+		return nil, err
+	}
+	db.SetMaxOpenConns(1)
+	return db, nil
 }
 
 func resolveDBPath(opts Options) string {
@@ -908,12 +916,11 @@ func (s *Store) queryDailyShards(ctx context.Context, query Query) ([]*model.Ale
 		if path == s.path {
 			alerts, count, err = queryAlertsDB(ctx, s.db, shardQuery)
 		} else {
-			db, openErr := sql.Open("sqlite", path)
+			db, openErr := openReadOnlyDatabase(path)
 			if openErr != nil {
 				s.markStorageError(openErr)
 				return nil, 0, fmt.Errorf("open alert shard %s: %w", path, openErr)
 			}
-			db.SetMaxOpenConns(1)
 			alerts, count, err = queryAlertsDB(ctx, db, shardQuery)
 			closeErr := db.Close()
 			if err == nil && closeErr != nil {
@@ -1082,9 +1089,8 @@ func (s *Store) Count(ctx context.Context) (int, error) {
 			count, err = countAlertsDB(ctx, s.db)
 		} else {
 			var db *sql.DB
-			db, err = sql.Open("sqlite", path)
+			db, err = openReadOnlyDatabase(path)
 			if err == nil {
-				db.SetMaxOpenConns(1)
 				count, err = countAlertsDB(ctx, db)
 				closeErr := db.Close()
 				if err == nil && closeErr != nil {

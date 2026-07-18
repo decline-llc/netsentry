@@ -415,6 +415,11 @@ func assertIntegrityRejectionPreservesFile(t *testing.T, path string, before []b
 	if !strings.Contains(err.Error(), "file was not modified") {
 		t.Fatalf("startup error does not state preservation: %v", err)
 	}
+	assertFileBytesUnchanged(t, path, before)
+}
+
+func assertFileBytesUnchanged(t *testing.T, path string, before []byte) {
+	t.Helper()
 	after, readErr := os.ReadFile(path)
 	if readErr != nil {
 		t.Fatalf("read rejected database: %v", readErr)
@@ -743,6 +748,104 @@ func TestStoreWritesExistingValidHistoricalShards(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestStoreMalformedHistoricalShardReadsPreserveFile(t *testing.T) {
+	operations := []struct {
+		name string
+		run  func(context.Context, *Store) error
+	}{
+		{
+			name: "query",
+			run: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+		{
+			name: "count",
+			run: func(ctx context.Context, store *Store) error {
+				_, err := store.Count(ctx)
+				return err
+			},
+		},
+	}
+	for _, fixture := range []string{"corrupt", "truncated"} {
+		for _, operation := range operations {
+			t.Run(fixture+"/"+operation.name, func(t *testing.T) {
+				dir, path, before, currentDay := malformedHistoricalShard(t, fixture)
+				store := openDailyShardStoreAt(t, dir, currentDay)
+				defer store.Close()
+
+				if err := operation.run(context.Background(), store); err == nil {
+					t.Fatalf("%s malformed historical shard unexpectedly passed %s", fixture, operation.name)
+				}
+				assertFileBytesUnchanged(t, path, before)
+			})
+		}
+	}
+}
+
+func TestStoreReadsActiveWALHistoricalShardReadOnly(t *testing.T) {
+	ctx := context.Background()
+	dir := filepath.Join(t.TempDir(), "daily shards")
+	historicalDay := time.Date(2026, 7, 17, 12, 0, 0, 0, time.UTC)
+	historical := openDailyShardStoreAt(t, dir, historicalDay)
+	defer historical.Close()
+	if err := historical.WriteBatch(ctx, []*model.Alert{
+		makeAlert(historicalDay, "active-wal-historical"),
+	}); err != nil {
+		t.Fatalf("write active WAL historical shard: %v", err)
+	}
+
+	current := openDailyShardStoreAt(t, dir, historicalDay.AddDate(0, 0, 1))
+	defer current.Close()
+	alerts, total, err := current.Query(ctx, Query{Limit: 10})
+	if err != nil {
+		t.Fatalf("query active WAL historical shard: %v", err)
+	}
+	if total != 1 || len(alerts) != 1 || alerts[0].MatchedKeyword != "active-wal-historical" {
+		t.Fatalf("unexpected active WAL query result: total=%d alerts=%+v", total, alerts)
+	}
+	if count, err := current.Count(ctx); err != nil || count != 1 {
+		t.Fatalf("active WAL count=%d err=%v, want 1/nil", count, err)
+	}
+}
+
+func malformedHistoricalShard(t *testing.T, kind string) (string, string, []byte, time.Time) {
+	t.Helper()
+	dir := t.TempDir()
+	historicalDay := time.Date(2026, 7, 17, 12, 0, 0, 0, time.UTC)
+	path := filepath.Join(dir, "netsentry-"+historicalDay.Format("2006-01-02")+".db")
+	var before []byte
+	switch kind {
+	case "corrupt":
+		before = []byte("not a sqlite shard\x00corrupt read fixture")
+	case "truncated":
+		seed := openDailyShardStoreAt(t, dir, historicalDay)
+		if err := seed.WriteBatch(context.Background(), []*model.Alert{
+			makeAlert(historicalDay, "before-read-truncate"),
+		}); err != nil {
+			t.Fatalf("seed historical read shard: %v", err)
+		}
+		if err := seed.Close(); err != nil {
+			t.Fatalf("close historical read shard: %v", err)
+		}
+		valid, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(valid) < 1024 {
+			t.Fatalf("valid historical read shard unexpectedly small: %d bytes", len(valid))
+		}
+		before = append([]byte(nil), valid[:len(valid)/2]...)
+	default:
+		t.Fatalf("unknown malformed shard fixture %q", kind)
+	}
+	if err := os.WriteFile(path, before, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	return dir, path, before, historicalDay.AddDate(0, 0, 1)
 }
 
 func TestStoreQueriesAcrossDailyShards(t *testing.T) {
