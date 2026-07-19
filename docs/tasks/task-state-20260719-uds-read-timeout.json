@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "679ec10a9bb3fddf30db6df831b7dba35ccaeefb",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main matches the remote baseline",
     "Verified R90-12 feature and delivery ranges are present in the Vault",
@@ -17,17 +17,25 @@
     "Added direct pre-first-frame expiry, deadline-refresh, idle-capacity-reuse, config-bound, reconnect, and cancellation coverage",
     "Verified idle expiry releases limiter capacity without incrementing decode-error metrics",
     "Passed 20 consecutive focused race runs, the full native C and Go race suite, e2e smoke, documentation, configuration, knowledge, JSON, and diff checks",
-    "Documented the bounded UDS read-idle lifecycle in public configuration and architecture guidance"
+    "Documented the bounded UDS read-idle lifecycle in public configuration and architecture guidance",
+    "Pushed 89919409d42c08a0bb0c9379f2cefb86bee5c0e4 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Commit, push, fetch-verify, and synchronize the validated increment",
-    "Reconcile roadmap and task state against verified remote and Vault evidence"
-  ],
+  "in_progress": [],
   "todo": [],
+  "delivery": {
+    "commit": "89919409d42c08a0bb0c9379f2cefb86bee5c0e4",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "679ec10a9bb3fddf30db6df831b7dba35ccaeefb..89919409d42c08a0bb0c9379f2cefb86bee5c0e4",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
   "remaining_risks": [
     "The timeout must refresh after every complete frame",
     "Idle expiry must release limiter capacity without inflating decode errors",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Complete R90-13 only: add a validated finite UDS read-idle timeout, refresh it after complete frames, and prove pre-frame expiry plus capacity reuse without decode-error inflation. Do not change the frame protocol, authentication, C capture behavior, create v0.1.1, or publish artifacts."
+  "resume_instructions": "R90-13 is complete at 89919409d42c08a0bb0c9379f2cefb86bee5c0e4. Do not repeat its implementation, validation, push, or Vault synchronization. R90-14 is the next ready increment: enforce a per-connection hello/session state machine while preserving valid reconnect and shutdown. Do not add peer authentication, create v0.1.1, or publish artifacts."
 }

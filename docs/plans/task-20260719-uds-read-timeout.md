@@ -68,3 +68,16 @@ slot indefinitely without delivering complete frames.
 
 Stop if safe completion requires a UDS protocol change, authentication or peer
 identity policy, C capture changes, operator data, or tag/publication authority.
+
+## Completion
+
+- Feature commit: `89919409d42c08a0bb0c9379f2cefb86bee5c0e4`
+- Fetched `origin/main`: verified at the feature commit
+- Focused race validation: 20 consecutive passes
+- Full native C/Go race suite and `make e2e-smoke`: passed
+- Documentation, configuration, knowledge, JSON, diff, and
+  sensitive-information checks: passed
+- Vault range:
+  `679ec10a9bb3fddf30db6df831b7dba35ccaeefb..89919409d42c08a0bb0c9379f2cefb86bee5c0e4`
+- Vault iteration note, full index, and MOC link: verified
+- Tag/publication actions: none
