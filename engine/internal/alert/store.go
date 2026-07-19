@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -25,6 +26,10 @@ import (
 )
 
 var ErrStorageEmergency = errors.New("alert storage is in emergency mode; clear disk/storage fault and restart NetSentry")
+
+// ErrRecoveryLogIntegrity reports that durable recovery input is malformed or
+// truncated and was left unchanged for operator-led recovery.
+var ErrRecoveryLogIntegrity = errors.New("alert recovery log failed integrity check; file was not modified")
 
 // ErrDatabaseIntegrity reports that an existing database failed a read-only
 // integrity preflight and was not opened for writable initialization.
@@ -710,18 +715,39 @@ func (s *Store) readRecoveryLog() ([]*model.Alert, error) {
 		return nil, fmt.Errorf("open alert recovery log: %w", err)
 	}
 	defer file.Close()
+	info, err := file.Stat()
+	if err != nil {
+		return nil, fmt.Errorf("inspect alert recovery log: %w", err)
+	}
+	if info.Size() > 0 {
+		if _, err := file.Seek(-1, io.SeekEnd); err != nil {
+			return nil, fmt.Errorf("inspect alert recovery log terminator: %w", err)
+		}
+		var last [1]byte
+		if _, err := file.Read(last[:]); err != nil {
+			return nil, fmt.Errorf("inspect alert recovery log terminator: %w", err)
+		}
+		if last[0] != '\n' {
+			return nil, fmt.Errorf("%w: truncated final JSONL record", ErrRecoveryLogIntegrity)
+		}
+		if _, err := file.Seek(0, io.SeekStart); err != nil {
+			return nil, fmt.Errorf("rewind alert recovery log: %w", err)
+		}
+	}
 
 	var alerts []*model.Alert
 	scanner := bufio.NewScanner(file)
+	record := 0
 	for scanner.Scan() {
+		record++
 		var alert model.Alert
 		if err := json.Unmarshal(scanner.Bytes(), &alert); err != nil {
-			return nil, fmt.Errorf("decode alert recovery log: %w", err)
+			return nil, fmt.Errorf("%w: decode record %d: %v", ErrRecoveryLogIntegrity, record, err)
 		}
 		alerts = append(alerts, &alert)
 	}
 	if err := scanner.Err(); err != nil {
-		return nil, fmt.Errorf("read alert recovery log: %w", err)
+		return nil, fmt.Errorf("%w: read records: %v", ErrRecoveryLogIntegrity, err)
 	}
 	return alerts, nil
 }

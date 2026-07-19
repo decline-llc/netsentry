@@ -28,7 +28,7 @@
 | R90-09 | Jul 18–Aug 7 | Complete early | Fail closed on corrupt SQLite startup state. | R90-08 | A deterministic regression proves corrupt or truncated SQLite input causes a clear startup error without overwriting the database, and recovery guidance preserves operator data. |
 | R90-10 | Jul 18–Aug 14 | Complete early | Preserve corrupt historical daily shards on write. | R90-09 | Opening an existing non-current daily shard for a write uses the same read-only integrity preflight; corrupt/truncated shards reject the write and remain byte-for-byte unchanged. |
 | R90-11 | Jul 18–Aug 21 | Complete early | Make historical daily-shard reads strictly read-only. | R90-10 | Query and count open non-current shards with a read-only SQLite handle; corrupt/truncated inputs fail without changing shard bytes, while healthy cross-shard results remain unchanged. |
-| R90-12 | Jul 18–Aug 28 | Ready | Preserve malformed recovery logs during startup replay. | R90-11 | Corrupt and truncated JSONL recovery logs fail startup with a clear error and remain byte-for-byte unchanged; valid logs still replay and truncate only after successful persistence. |
+| R90-12 | Jul 18–Aug 28 | In progress | Preserve malformed recovery logs during startup replay. | R90-11 | Corrupt and truncated JSONL recovery logs fail startup with a clear error and remain byte-for-byte unchanged; valid logs still replay and truncate only after successful persistence. |
 
 ## R90-07 Definition
 
@@ -116,9 +116,8 @@
 - **Unchanged controls:** Dependencies, evidence requirements, acceptance
   criteria, stop conditions, private-data boundaries, release decisions,
   tagging, and publication authorization remain fully enforced.
-- **Current result:** R90-11 is complete and R90-12 is the next
-  dependency-ready engineering increment. No tag or public release is
-  authorized.
+- **Current result:** R90-11 is complete and R90-12 is the active engineering
+  increment. No tag or public release is authorized.
 
 ## Global PCAP Release-Gate Waiver
 

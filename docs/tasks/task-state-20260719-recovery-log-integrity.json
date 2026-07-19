@@ -1,0 +1,30 @@
+{
+  "task": "r90-12-preserve-malformed-recovery-logs",
+  "timestamp": "2026-07-19T01:19:23-07:00",
+  "branch": "main",
+  "remote_baseline": "92e58e7df1b0cbbc533bc945dcc7c0c73d7e1c54",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main matches the remote baseline",
+    "Verified R90-11 feature and delivery records are present in the Vault",
+    "Selected R90-12 as the only dependency-ready roadmap increment",
+    "Confirmed malformed JSON already errors but an otherwise valid unterminated final JSONL record is accepted",
+    "Added ErrRecoveryLogIntegrity and rejected non-empty recovery logs without a final JSONL newline before scanning",
+    "Added direct malformed-suffix and truncated-final-record startup regressions with byte preservation and no-partial-prefix assertions",
+    "Proved valid recovery logs remain intact when SQLite persistence fails and retained successful idempotent replay/truncation coverage",
+    "Passed 20 consecutive focused race runs, the full native C and Go race suite, e2e smoke, documentation, knowledge, JSON, and diff checks",
+    "Documented newline-terminated recovery input and copy-first operator recovery guidance"
+  ],
+  "in_progress": [
+    "Commit, push, fetch-verify, and synchronize the validated increment",
+    "Reconcile roadmap and task state against verified remote and Vault evidence"
+  ],
+  "todo": [],
+  "remaining_risks": [
+    "Rejected recovery logs must remain byte-for-byte unchanged",
+    "A malformed suffix must not allow partial-prefix persistence",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Complete R90-12 only: reject malformed and unterminated JSONL recovery input before replay, prove byte preservation and no partial persistence, and retain valid replay/truncate semantics. Do not repair or partially accept malformed logs, create v0.1.1, or publish artifacts."
+}

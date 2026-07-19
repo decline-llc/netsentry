@@ -251,6 +251,14 @@ handle, while the current shard continues to use the store-owned connection.
 Malformed historical input returns a read error without changing its bytes;
 healthy shards remain queryable while an active WAL writer is present.
 
+Recovery-log replay requires newline-terminated JSONL records. NetSentry reads
+and validates the complete log before writing any recovered alert; malformed
+JSON or a missing final newline fails startup with `ErrRecoveryLogIntegrity`,
+leaves the log byte-for-byte unchanged, and does not persist a valid prefix.
+Preserve the rejected log, inspect only a copy, and repair or replace it only
+through an operator-controlled recovery path. A valid log is truncated only
+after every recovered alert is successfully persisted.
+
 ---
 
 ## 7. Testing

@@ -271,6 +271,129 @@ func TestStoreReplaysRecoveryLogIdempotently(t *testing.T) {
 	}
 }
 
+func TestStoreRejectsMalformedRecoveryLogWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	dbPath := filepath.Join(dir, "alerts.db")
+	recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+	now := time.Date(2026, 7, 19, 1, 0, 0, 0, time.UTC)
+	logOnly := &Store{recoveryLogPath: recoveryLogPath}
+	if err := logOnly.appendRecoveryLog(normalizeAlerts([]*model.Alert{
+		makeAlert(now, "valid-prefix"),
+	}, now, time.Minute)); err != nil {
+		t.Fatalf("append valid recovery record: %v", err)
+	}
+	file, err := os.OpenFile(recoveryLogPath, os.O_WRONLY|os.O_APPEND, 0o600)
+	if err != nil {
+		t.Fatalf("open recovery log for malformed suffix: %v", err)
+	}
+	if _, err := file.WriteString("{\"rule_id\":\n"); err != nil {
+		_ = file.Close()
+		t.Fatalf("append malformed recovery record: %v", err)
+	}
+	if err := file.Close(); err != nil {
+		t.Fatalf("close malformed recovery log: %v", err)
+	}
+	wantBytes, err := os.ReadFile(recoveryLogPath)
+	if err != nil {
+		t.Fatalf("read malformed recovery log before startup: %v", err)
+	}
+
+	store, err := Open(ctx, Options{
+		Path:              dbPath,
+		RecoveryLogPath:   recoveryLogPath,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now:               func() time.Time { return now },
+	})
+	if store != nil {
+		_ = store.Close()
+		t.Fatal("malformed recovery log returned a usable store")
+	}
+	if !errors.Is(err, ErrRecoveryLogIntegrity) {
+		t.Fatalf("startup error = %v, want ErrRecoveryLogIntegrity", err)
+	}
+	assertFileBytes(t, recoveryLogPath, wantBytes)
+	assertNoPersistedRecoveryPrefix(t, dbPath, filepath.Join(dir, "empty-recovery.jsonl"), now)
+}
+
+func TestStoreRejectsTruncatedRecoveryLogWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	dbPath := filepath.Join(dir, "alerts.db")
+	recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+	now := time.Date(2026, 7, 19, 1, 5, 0, 0, time.UTC)
+	logOnly := &Store{recoveryLogPath: recoveryLogPath}
+	if err := logOnly.appendRecoveryLog(normalizeAlerts([]*model.Alert{
+		makeAlert(now, "unterminated-final-record"),
+	}, now, time.Minute)); err != nil {
+		t.Fatalf("append recovery record: %v", err)
+	}
+	wantBytes, err := os.ReadFile(recoveryLogPath)
+	if err != nil {
+		t.Fatalf("read recovery log before truncation: %v", err)
+	}
+	wantBytes = bytes.TrimSuffix(wantBytes, []byte("\n"))
+	if err := os.WriteFile(recoveryLogPath, wantBytes, 0o600); err != nil {
+		t.Fatalf("write truncated recovery log: %v", err)
+	}
+
+	store, err := Open(ctx, Options{
+		Path:              dbPath,
+		RecoveryLogPath:   recoveryLogPath,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now:               func() time.Time { return now },
+	})
+	if store != nil {
+		_ = store.Close()
+		t.Fatal("truncated recovery log returned a usable store")
+	}
+	if !errors.Is(err, ErrRecoveryLogIntegrity) || !strings.Contains(err.Error(), "truncated final JSONL record") {
+		t.Fatalf("startup error = %v, want truncated ErrRecoveryLogIntegrity", err)
+	}
+	assertFileBytes(t, recoveryLogPath, wantBytes)
+	assertNoPersistedRecoveryPrefix(t, dbPath, filepath.Join(dir, "empty-recovery.jsonl"), now)
+}
+
+func TestStoreKeepsValidRecoveryLogWhenPersistenceFails(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+	now := time.Date(2026, 7, 19, 1, 10, 0, 0, time.UTC)
+	store, err := Open(ctx, Options{
+		Path:              filepath.Join(dir, "alerts.db"),
+		RecoveryLogPath:   recoveryLogPath,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now:               func() time.Time { return now },
+	})
+	if err != nil {
+		t.Fatalf("open store: %v", err)
+	}
+	if err := store.appendRecoveryLog(normalizeAlerts([]*model.Alert{
+		makeAlert(now, "pending-valid-record"),
+	}, now, time.Minute)); err != nil {
+		_ = store.Close()
+		t.Fatalf("append valid recovery record: %v", err)
+	}
+	wantBytes, err := os.ReadFile(recoveryLogPath)
+	if err != nil {
+		_ = store.Close()
+		t.Fatalf("read valid recovery log: %v", err)
+	}
+	if err := store.db.Close(); err != nil {
+		t.Fatalf("close database before replay: %v", err)
+	}
+	if err := store.ReplayRecoveryLog(ctx); err == nil {
+		t.Fatal("replay with closed database succeeded")
+	}
+	assertFileBytes(t, recoveryLogPath, wantBytes)
+}
+
 func TestStoreWriteBatchPersistsExistingRecoveryLogBeforeTruncate(t *testing.T) {
 	ctx := context.Background()
 	dir := t.TempDir()
@@ -1051,6 +1174,40 @@ func openTestStore(t *testing.T, window time.Duration) *Store {
 		t.Fatalf("open store: %v", err)
 	}
 	return store
+}
+
+func assertFileBytes(t *testing.T, path string, want []byte) {
+	t.Helper()
+	got, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read %s: %v", path, err)
+	}
+	if !bytes.Equal(got, want) {
+		t.Fatalf("%s changed: got %d bytes, want %d", path, len(got), len(want))
+	}
+}
+
+func assertNoPersistedRecoveryPrefix(t *testing.T, dbPath, recoveryLogPath string, now time.Time) {
+	t.Helper()
+	store, err := Open(context.Background(), Options{
+		Path:              dbPath,
+		RecoveryLogPath:   recoveryLogPath,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now:               func() time.Time { return now },
+	})
+	if err != nil {
+		t.Fatalf("reopen store to inspect partial replay: %v", err)
+	}
+	defer store.Close()
+	count, err := store.Count(context.Background())
+	if err != nil {
+		t.Fatalf("count alerts after rejected recovery log: %v", err)
+	}
+	if count != 0 {
+		t.Fatalf("rejected recovery log persisted %d alert rows", count)
+	}
 }
 
 func openDailyShardStoreAt(t *testing.T, dir string, now time.Time) *Store {

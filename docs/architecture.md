@@ -190,6 +190,10 @@ Current build:
   database must pass read-only SQLite `quick_check`. A failed check stops
   startup with `ErrDatabaseIntegrity`; NetSentry does not repair, truncate,
   rename, or overwrite the rejected file.
+- Recovery JSONL is fully validated before replay. Malformed JSON and a
+  non-empty final record without its terminating newline stop startup with
+  `ErrRecoveryLogIntegrity`; no valid prefix is persisted and the log remains
+  byte-for-byte unchanged. Valid logs are truncated only after SQLite commits.
 - Storage health tracking marks the store degraded after ordinary SQLite write/query errors and emergency after disk-full, quota, read-only filesystem, or disk I/O failures. Emergency mode stops retrying SQLite writes in the current process after the recovery log is updated when possible, and exposes that state through verbose health and Prometheus gauges.
 
 Remaining v0.1.0 storage work:
@@ -198,8 +202,9 @@ Remaining v0.1.0 storage work:
 
 All SQL values must use placeholders. Do not format user-controlled values into SQL strings.
 
-For a startup integrity failure, keep NetSentry stopped and preserve the
-database together with any `-wal`, `-shm`, and alert recovery-log sidecars.
+For a database or recovery-log startup integrity failure, keep NetSentry
+stopped and preserve the database together with any `-wal`, `-shm`, and alert
+recovery-log sidecars.
 Inspect a copy with SQLite recovery tooling, retain the original as evidence,
 and point NetSentry at a new or operator-recovered path only after review.
 
