@@ -64,3 +64,16 @@ persist a partial prefix or truncate the operator's only recovery artifact.
 Stop if safe completion requires automatic log repair, partial-record
 acceptance, operator data, a replay-format redesign, or tag/publication
 authority.
+
+## Completion
+
+- Feature commit: `4bc298b37b5da690b978a28acf6e4ece41956d41`
+- Fetched `origin/main`: verified at the feature commit
+- Focused race validation: 20 consecutive passes
+- Full native C/Go race suite and `make e2e-smoke`: passed
+- Documentation, knowledge, JSON, diff, and sensitive-information checks:
+  passed
+- Vault range:
+  `92e58e7df1b0cbbc533bc945dcc7c0c73d7e1c54..4bc298b37b5da690b978a28acf6e4ece41956d41`
+- Vault iteration note, full index, and MOC link: verified
+- Tag/publication actions: none
