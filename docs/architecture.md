@@ -142,6 +142,10 @@ Target behavior:
 - Concurrent UDS handlers are capped by `engine.uds_max_connections`; excess
   accepted clients are closed immediately, and disconnected handlers release
   their slot for capture reconnects.
+- Each accepted UDS connection receives the finite
+  `engine.uds_read_timeout_seconds` deadline before its first frame. Every
+  complete frame refreshes the deadline; idle expiry closes the handler and
+  releases its slot without counting a protocol decode failure.
 - C reconnect uses exponential backoff, can bound initial offline connection attempts, and counts write errors/dropped frames while disconnected.
 - HTTP API bind failures are returned synchronously during startup. Engine
   shutdown waits for the UDS receiver accept loop/connection handlers, every

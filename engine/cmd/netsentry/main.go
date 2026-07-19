@@ -90,6 +90,7 @@ func main() {
 		Path:           cfg.Engine.UDSSocketPath,
 		SocketMode:     receiver.ParseSocketMode(cfg.Engine.UDSSocketMode),
 		MaxConnections: cfg.Engine.UDSMaxConnections,
+		ReadTimeout:    time.Duration(cfg.Engine.UDSReadTimeoutSeconds) * time.Second,
 		BufferSize:     cfg.Engine.ChannelBufferSize,
 		Stats:          metrics,
 	}, logger)

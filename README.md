@@ -46,6 +46,7 @@ flowchart LR
 
 - C parser 对每个 header offset 做 capture-length 边界检查，只接受 Ethernet DLT。
 - UDS frame 最大 64 KiB；payload preview 必须为 Base64，解码长度必须与 `payload_len` 一致。
+- UDS 处理器数量有限；每个连接默认 30 秒读空闲超时，每个完整帧刷新截止时间。
 - 规则 reload 先构建完整不可变 `ruleState`，再通过 `atomic.Pointer` 一次替换。
 - payload 规则先用 Aho-Corasick 生成候选，再复核大小写、协议、端口、方向、offset/depth。
 - SQLite 以固定时间窗聚合告警；recovery JSONL 与串行写临界区避免并发 worker 破坏恢复语义。

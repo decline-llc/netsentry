@@ -29,6 +29,7 @@
 | R90-10 | Jul 18–Aug 14 | Complete early | Preserve corrupt historical daily shards on write. | R90-09 | Opening an existing non-current daily shard for a write uses the same read-only integrity preflight; corrupt/truncated shards reject the write and remain byte-for-byte unchanged. |
 | R90-11 | Jul 18–Aug 21 | Complete early | Make historical daily-shard reads strictly read-only. | R90-10 | Query and count open non-current shards with a read-only SQLite handle; corrupt/truncated inputs fail without changing shard bytes, while healthy cross-shard results remain unchanged. |
 | R90-12 | Jul 18–Aug 28 | Complete early | Preserve malformed recovery logs during startup replay. | R90-11 | Corrupt and truncated JSONL recovery logs fail startup with a clear error and remain byte-for-byte unchanged; valid logs still replay and truncate only after successful persistence. |
+| R90-13 | Jul 19–Sep 4 | In progress | Bound idle UDS receiver connections. | R90-12 | A validated finite per-connection read timeout applies before the first frame and refreshes after every complete frame; idle expiry releases handler capacity without inflating decode errors, while active traffic and shutdown remain compatible. |
 
 ## R90-07 Definition
 
@@ -106,6 +107,20 @@
 - **Stop condition:** stop if completion requires automatic recovery-log
   repair, partial-record acceptance, operator data, or a replay-format redesign.
 
+## R90-13 Definition
+
+- **Goal:** close the remaining handler-slot exhaustion path after R90-07 by
+  expiring connections that deliver no complete frame within a bounded period.
+- **Risk:** an overly short or unrefreshed deadline can disconnect healthy
+  capture sessions; timeout errors can be misclassified as malformed input.
+- **Required validation:** direct config-bound, pre-first-frame timeout,
+  per-frame refresh, idle-capacity-reuse, reconnect, and cancellation tests;
+  focused receiver/config race tests, full native tests, documentation/config
+  checks, E2E smoke, and the knowledge gate.
+- **Stop condition:** stop if completion requires a frame-protocol change, UDS
+  authentication/peer policy, C capture changes, operator data, or
+  tag/publication authority.
+
 ## Global Schedule-Window Waiver
 
 - **Authorization:** On Jul 16, 2026, the user cancelled every roadmap planning
@@ -116,9 +131,10 @@
 - **Unchanged controls:** Dependencies, evidence requirements, acceptance
   criteria, stop conditions, private-data boundaries, release decisions,
   tagging, and publication authorization remain fully enforced.
-- **Current result:** R90-12 is complete. No later engineering increment is
-  selected; the next `$netsentry-next` trigger must refresh the rolling queue
-  before implementation. No tag or public release is authorized.
+- **Current result:** The empty queue was refreshed on Jul 19 from verified
+  Git, task-state, audit, code/test, release-boundary, and Vault evidence.
+  R90-13 is the active engineering increment. No tag or public release is
+  authorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -137,7 +153,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 

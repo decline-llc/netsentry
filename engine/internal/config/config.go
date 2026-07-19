@@ -18,6 +18,7 @@ type EngineConfig struct {
 	UDSSocketPath               string `yaml:"uds_socket_path"`
 	UDSSocketMode               string `yaml:"uds_socket_mode"`
 	UDSMaxConnections           int    `yaml:"uds_max_connections"`
+	UDSReadTimeoutSeconds       int    `yaml:"uds_read_timeout_seconds"`
 	ChannelBufferSize           int    `yaml:"channel_buffer_size"`
 	WorkerCount                 int    `yaml:"worker_count"`
 	DBDir                       string `yaml:"db_dir"`
@@ -104,6 +105,7 @@ func defaults() *Config {
 			UDSSocketPath:               "/tmp/netsentry.sock",
 			UDSSocketMode:               "0600",
 			UDSMaxConnections:           4,
+			UDSReadTimeoutSeconds:       30,
 			ChannelBufferSize:           10000,
 			WorkerCount:                 1,
 			DBDir:                       "data/",
@@ -137,6 +139,9 @@ func validate(cfg *Config) error {
 	}
 	if cfg.Engine.UDSMaxConnections < 1 || cfg.Engine.UDSMaxConnections > 1024 {
 		errs = append(errs, "engine.uds_max_connections must be between 1 and 1024")
+	}
+	if cfg.Engine.UDSReadTimeoutSeconds < 1 || cfg.Engine.UDSReadTimeoutSeconds > 3600 {
+		errs = append(errs, "engine.uds_read_timeout_seconds must be between 1 and 3600")
 	}
 	if cfg.Logging.Format != "json" && cfg.Logging.Format != "console" {
 		errs = append(errs, "logging.format must be json or console")

@@ -32,6 +32,7 @@ type Config struct {
 	Path           string
 	SocketMode     os.FileMode
 	MaxConnections int
+	ReadTimeout    time.Duration
 	BufferSize     int
 	Stats          *stats.Stats
 }
@@ -60,6 +61,9 @@ func New(cfg Config, logger *zap.Logger) *Receiver {
 	}
 	if cfg.MaxConnections <= 0 {
 		cfg.MaxConnections = 4
+	}
+	if cfg.ReadTimeout <= 0 {
+		cfg.ReadTimeout = 30 * time.Second
 	}
 	if logger == nil {
 		logger = zap.NewNop()
@@ -159,17 +163,41 @@ func (r *Receiver) handleConn(ctx context.Context, conn net.Conn) {
 		case <-done:
 		}
 	}()
+	if err := conn.SetReadDeadline(time.Now().Add(r.cfg.ReadTimeout)); err != nil {
+		r.logger.Warn("set uds read deadline", zap.Error(err))
+		return
+	}
 	scanner := bufio.NewScanner(conn)
 	scanner.Buffer(make([]byte, 0, 16*1024), maxUDSFrameBytes)
 	for scanner.Scan() {
+		if isNetworkDeadline(scanner.Err()) {
+			r.logger.Debug("close idle uds connection", zap.Duration("read_timeout", r.cfg.ReadTimeout))
+			return
+		}
 		if err := r.handleLine(ctx, scanner.Bytes()); err != nil {
 			r.logger.Warn("handle uds frame", zap.Error(err))
 		}
+		if err := conn.SetReadDeadline(time.Now().Add(r.cfg.ReadTimeout)); err != nil {
+			r.logger.Warn("refresh uds read deadline", zap.Error(err))
+			return
+		}
 	}
 	if err := scanner.Err(); err != nil {
+		if isNetworkDeadline(err) {
+			r.logger.Debug("close idle uds connection", zap.Duration("read_timeout", r.cfg.ReadTimeout))
+			return
+		}
 		r.stats.IncDecodeError()
 		r.logger.Warn("read uds connection", zap.Error(err))
 	}
+}
+
+func isNetworkDeadline(err error) bool {
+	if err == nil {
+		return false
+	}
+	var netErr net.Error
+	return errors.Is(err, os.ErrDeadlineExceeded) || errors.As(err, &netErr) && netErr.Timeout()
 }
 
 func (r *Receiver) handleLine(ctx context.Context, line []byte) error {

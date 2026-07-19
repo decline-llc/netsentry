@@ -5,6 +5,7 @@ engine:
   uds_socket_path: "/tmp/netsentry.sock"
   uds_socket_mode: "0600"
   uds_max_connections: 4
+  uds_read_timeout_seconds: 30
   channel_buffer_size: 10000
   worker_count: 1
   db_dir: "data"

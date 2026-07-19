@@ -12,8 +12,8 @@ func TestLoadRepositoryConfigFile(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if cfg.Engine.UDSSocketPath == "" || cfg.Engine.UDSSocketMode != "0600" || cfg.Engine.UDSMaxConnections != 4 {
-		t.Fatalf("expected engine UDS path, mode, and connection limit, got path=%q mode=%q max_connections=%d", cfg.Engine.UDSSocketPath, cfg.Engine.UDSSocketMode, cfg.Engine.UDSMaxConnections)
+	if cfg.Engine.UDSSocketPath == "" || cfg.Engine.UDSSocketMode != "0600" || cfg.Engine.UDSMaxConnections != 4 || cfg.Engine.UDSReadTimeoutSeconds != 30 {
+		t.Fatalf("expected engine UDS defaults, got path=%q mode=%q max_connections=%d read_timeout_seconds=%d", cfg.Engine.UDSSocketPath, cfg.Engine.UDSSocketMode, cfg.Engine.UDSMaxConnections, cfg.Engine.UDSReadTimeoutSeconds)
 	}
 	if cfg.Engine.RulesSeedFile == "" {
 		t.Fatal("expected engine.rules_seed_file to be configured")
@@ -147,6 +147,26 @@ func TestValidateRejectsInvalidUDSMaxConnections(t *testing.T) {
 		cfg.Engine.UDSMaxConnections = limit
 		if err := validate(cfg); err == nil || !strings.Contains(err.Error(), "engine.uds_max_connections") {
 			t.Fatalf("uds_max_connections=%d: expected validation error, got %v", limit, err)
+		}
+	}
+}
+
+func TestValidateRejectsInvalidUDSReadTimeout(t *testing.T) {
+	for _, timeout := range []int{0, -1, 3601} {
+		cfg := defaults()
+		cfg.Engine.UDSReadTimeoutSeconds = timeout
+		if err := validate(cfg); err == nil || !strings.Contains(err.Error(), "engine.uds_read_timeout_seconds") {
+			t.Fatalf("uds_read_timeout_seconds=%d: expected validation error, got %v", timeout, err)
+		}
+	}
+}
+
+func TestValidateAcceptsUDSReadTimeoutBounds(t *testing.T) {
+	for _, timeout := range []int{1, 3600} {
+		cfg := defaults()
+		cfg.Engine.UDSReadTimeoutSeconds = timeout
+		if err := validate(cfg); err != nil {
+			t.Fatalf("uds_read_timeout_seconds=%d: expected valid boundary, got %v", timeout, err)
 		}
 	}
 }

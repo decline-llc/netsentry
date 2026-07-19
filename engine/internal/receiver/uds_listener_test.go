@@ -8,6 +8,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 	"time"
 
@@ -280,6 +281,111 @@ func TestStartRejectsConnectionsAboveLimitAndReusesCapacity(t *testing.T) {
 	defer replacement.Close()
 }
 
+func TestHandleConnTimesOutBeforeFirstCompleteFrame(t *testing.T) {
+	metrics := stats.New()
+	r := New(Config{ReadTimeout: 50 * time.Millisecond, BufferSize: 1, Stats: metrics}, zap.NewNop())
+	server, client := net.Pipe()
+	defer client.Close()
+	done := make(chan struct{})
+	go func() {
+		r.handleConn(context.Background(), server)
+		close(done)
+	}()
+
+	if _, err := client.Write([]byte("{")); err != nil {
+		t.Fatalf("write partial frame: %v", err)
+	}
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("partial frame did not expire before the first complete frame")
+	}
+	if got := metrics.Snapshot().DecodeErrors; got != 0 {
+		t.Fatalf("idle timeout incremented decode errors: %d", got)
+	}
+}
+
+func TestHandleConnRefreshesReadDeadlineAfterEachFrame(t *testing.T) {
+	metrics := stats.New()
+	r := New(Config{ReadTimeout: time.Second, BufferSize: 1, Stats: metrics}, zap.NewNop())
+	server, client := net.Pipe()
+	recorded := &readDeadlineRecordingConn{Conn: server}
+	done := make(chan struct{})
+	go func() {
+		r.handleConn(context.Background(), recorded)
+		close(done)
+	}()
+
+	if err := writeJSONFrame(client, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "deadline-refresh", PID: 1, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
+		t.Fatalf("write hello: %v", err)
+	}
+	if err := writeJSONFrame(client, map[string]any{"timestamp_sec": 1, "timestamp_usec": 2, "src_ip": "10.0.0.1", "dst_ip": "10.0.0.2", "src_port": 1, "dst_port": 80, "protocol": 6, "payload_len": 0, "is_fragment": false, "truncated": false}); err != nil {
+		t.Fatalf("write packet: %v", err)
+	}
+	if err := client.Close(); err != nil {
+		t.Fatalf("close client: %v", err)
+	}
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("connection handler did not exit after client close")
+	}
+	if got := recorded.readDeadlineCount(); got != 3 {
+		t.Fatalf("read deadline calls = %d, want initial plus one per complete frame", got)
+	}
+	if got := metrics.Snapshot().DecodeErrors; got != 0 {
+		t.Fatalf("valid frames incremented decode errors: %d", got)
+	}
+}
+
+func TestStartIdleTimeoutReleasesConnectionCapacity(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	metrics := stats.New()
+	r := New(Config{Path: path, MaxConnections: 1, ReadTimeout: 100 * time.Millisecond, BufferSize: 1, Stats: metrics}, zap.NewNop())
+	if err := r.Start(ctx); err != nil {
+		t.Fatalf("start receiver: %v", err)
+	}
+	defer func() {
+		cancel()
+		r.Wait()
+	}()
+
+	first, err := dialUnix(path)
+	if err != nil {
+		t.Fatalf("dial first connection: %v", err)
+	}
+	if err := writeJSONFrame(first, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "idle-first", PID: 1, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
+		t.Fatalf("write first hello: %v", err)
+	}
+	waitForSession(t, r, "idle-first")
+	if err := first.SetReadDeadline(time.Now().Add(time.Second)); err != nil {
+		t.Fatalf("set client read deadline: %v", err)
+	}
+	if _, err := first.Read(make([]byte, 1)); err == nil {
+		t.Fatal("idle connection remained open")
+	} else {
+		var netErr net.Error
+		if errors.As(err, &netErr) && netErr.Timeout() {
+			t.Fatal("client timed out before the receiver closed the idle connection")
+		}
+	}
+	_ = first.Close()
+
+	replacement, err := dialUnix(path)
+	if err != nil {
+		t.Fatalf("dial replacement connection: %v", err)
+	}
+	defer replacement.Close()
+	if err := writeJSONFrame(replacement, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "idle-replacement", PID: 2, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
+		t.Fatalf("write replacement hello: %v", err)
+	}
+	waitForSession(t, r, "idle-replacement")
+	if got := metrics.Snapshot().DecodeErrors; got != 0 {
+		t.Fatalf("idle expiry incremented decode errors: %d", got)
+	}
+}
+
 func TestStartStopsActiveConnectionOnContextCancel(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -360,6 +466,25 @@ func TestStartStopsMultipleActiveConnectionsOnContextCancel(t *testing.T) {
 		conn.Close()
 		t.Fatal("dial should fail after receiver shutdown")
 	}
+}
+
+type readDeadlineRecordingConn struct {
+	net.Conn
+	mu        sync.Mutex
+	deadlines []time.Time
+}
+
+func (c *readDeadlineRecordingConn) SetReadDeadline(deadline time.Time) error {
+	c.mu.Lock()
+	c.deadlines = append(c.deadlines, deadline)
+	c.mu.Unlock()
+	return c.Conn.SetReadDeadline(deadline)
+}
+
+func (c *readDeadlineRecordingConn) readDeadlineCount() int {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return len(c.deadlines)
 }
 
 func writeJSONFrame(conn net.Conn, frame any) error {

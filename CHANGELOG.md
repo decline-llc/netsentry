@@ -67,6 +67,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - C parser and UDS sender edge cases are covered by unit tests, ASan tests, and microbenchmarks.
 - UDS reconnect behavior is tested across listener restart and receiver reconnection paths.
 - Receiver shutdown closes single and multiple active Unix socket connections and removes the socket path.
+- UDS receiver connections now have a validated finite read-idle timeout that
+  refreshes after every complete frame and releases handler capacity on expiry
+  without inflating decode-error metrics.
 - Engine worker shutdown orchestration is covered by a focused `cmd/netsentry` test.
 - Engine startup now reports HTTP bind failures synchronously, and shutdown
   waits for the receiver, pipeline workers, and HTTP API before SQLite closes;

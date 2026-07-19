@@ -110,6 +110,7 @@ engine:
   uds_socket_path: "/tmp/netsentry.sock"
   uds_socket_mode: "0600"
   uds_max_connections: 4
+  uds_read_timeout_seconds: 30
   channel_buffer_size: 10000
   worker_count: 1
   db_dir: "data"
@@ -131,7 +132,7 @@ logging:
   format: "json"
 ```
 
-Environment expansion supports `${ENV_VAR}` and `${ENV_VAR:default}`. Missing variables expand to their configured default. The loader rejects unknown top-level and nested YAML fields, so configuration typos and retired reserved fields fail at startup instead of silently retaining defaults. Every accepted YAML field configures the Go engine; the standalone C capture binary is configured explicitly with `-r` or `-i`, `-s`, and `-c` command-line arguments. `engine.uds_socket_mode` must be a non-zero octal permission mode no greater than `0777`, and `engine.uds_max_connections` must be between 1 and 1024. The receiver closes newly accepted excess connections while all handler slots are occupied and makes the slot available again when a client disconnects. `logging.format` is `json` or `console`. Validation also rejects invalid API ports, worker/channel ranges, empty tokens when authentication is enabled, and any non-loopback API listener without authentication.
+Environment expansion supports `${ENV_VAR}` and `${ENV_VAR:default}`. Missing variables expand to their configured default. The loader rejects unknown top-level and nested YAML fields, so configuration typos and retired reserved fields fail at startup instead of silently retaining defaults. Every accepted YAML field configures the Go engine; the standalone C capture binary is configured explicitly with `-r` or `-i`, `-s`, and `-c` command-line arguments. `engine.uds_socket_mode` must be a non-zero octal permission mode no greater than `0777`, `engine.uds_max_connections` must be between 1 and 1024, and `engine.uds_read_timeout_seconds` must be between 1 and 3600. The receiver closes newly accepted excess connections while all handler slots are occupied, expires clients that deliver no complete frame within the configured interval, refreshes the deadline after each complete frame, and makes the slot available again after disconnect or expiry. Idle expiry is not counted as a frame decode error. `logging.format` is `json` or `console`. Validation also rejects invalid API ports, worker/channel ranges, empty tokens when authentication is enabled, and any non-loopback API listener without authentication.
 
 ---
 
@@ -407,7 +408,7 @@ Current validation baseline:
 - `make test-unit` runs C/Go unit and race tests followed serially by C ASan tests.
 - `make test-integration` verifies the pinned PcapPlusPlus/Zeek fixture manifest, processes supported external pcaps, and checks invalid CLI/non-Ethernet rejection.
 - `make test-e2e` covers pcap -> UDS -> worker pool -> SQLite -> API; `make test-stress` runs configurable repeat-pcap pressure.
-- Go tests cover receiver frame validation/lifecycle, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation, daily shards, recovery-log replay, corrupt/truncated startup and historical-shard read/write preservation, active WAL-backed read-only access, and storage degraded/emergency behavior.
+- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation, daily shards, recovery-log replay, corrupt/truncated startup and historical-shard read/write preservation, active WAL-backed read-only access, and storage degraded/emergency behavior.
 - Release-candidate checks run syntax checks, repository configuration validation, dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 
 The C-side JSON line formatter is intentionally kept as a bounded handwritten v0.1.0 implementation. It avoids a new C dependency, rejects truncation, escapes JSON strings, Base64-encodes packet payload previews, and is covered by the UDS sender tests and current smoke checks. A cJSON migration should be reopened only with a concrete defect or fuzzing result.

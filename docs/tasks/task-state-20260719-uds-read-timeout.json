@@ -1,0 +1,33 @@
+{
+  "task": "r90-13-bound-idle-uds-connections",
+  "timestamp": "2026-07-19T01:29:53-07:00",
+  "branch": "main",
+  "remote_baseline": "679ec10a9bb3fddf30db6df831b7dba35ccaeefb",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main matches the remote baseline",
+    "Verified R90-12 feature and delivery ranges are present in the Vault",
+    "Refreshed the empty rolling queue against current code, tests, audit priorities, and release boundaries",
+    "Selected R90-13 as the highest-priority safe security/correctness increment",
+    "Confirmed accepted UDS clients currently have no read deadline and can retain a bounded handler slot indefinitely",
+    "Added engine.uds_read_timeout_seconds with a default of 30 and an accepted range of 1 through 3600",
+    "Applied the read deadline before the first frame and refreshed it after every complete frame",
+    "Prevented a buffered partial frame from being processed when Scanner exposes it together with a terminal deadline error",
+    "Added direct pre-first-frame expiry, deadline-refresh, idle-capacity-reuse, config-bound, reconnect, and cancellation coverage",
+    "Verified idle expiry releases limiter capacity without incrementing decode-error metrics",
+    "Passed 20 consecutive focused race runs, the full native C and Go race suite, e2e smoke, documentation, configuration, knowledge, JSON, and diff checks",
+    "Documented the bounded UDS read-idle lifecycle in public configuration and architecture guidance"
+  ],
+  "in_progress": [
+    "Commit, push, fetch-verify, and synchronize the validated increment",
+    "Reconcile roadmap and task state against verified remote and Vault evidence"
+  ],
+  "todo": [],
+  "remaining_risks": [
+    "The timeout must refresh after every complete frame",
+    "Idle expiry must release limiter capacity without inflating decode errors",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Complete R90-13 only: add a validated finite UDS read-idle timeout, refresh it after complete frames, and prove pre-frame expiry plus capacity reuse without decode-error inflation. Do not change the frame protocol, authentication, C capture behavior, create v0.1.1, or publish artifacts."
+}
