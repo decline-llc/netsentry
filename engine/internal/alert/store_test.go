@@ -3,6 +3,7 @@ package alert
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"errors"
 	"os"
 	"path/filepath"
@@ -530,6 +531,166 @@ func TestStoreInitializesExistingEmptyDatabase(t *testing.T) {
 	}
 }
 
+func TestStoreRejectsUnrelatedSQLiteSchemaWithoutModification(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "schema fixtures")
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(dir, "operator data.db")
+	createSQLiteFixture(t, path, `CREATE TABLE operator_data (id INTEGER PRIMARY KEY, value TEXT)`)
+	before := readFileBytes(t, path)
+
+	store, err := Open(context.Background(), Options{Path: path, JournalMode: "WAL"})
+	if store != nil {
+		_ = store.Close()
+		t.Fatal("unrelated SQLite schema returned a usable store")
+	}
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+	if !strings.Contains(err.Error(), "required table alerts is missing") {
+		t.Fatalf("startup error = %v, want missing alerts table", err)
+	}
+}
+
+func TestStoreRejectsMissingRequiredColumnWithoutModification(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	createSQLiteFixture(t, path, schemaSQL, `ALTER TABLE alerts RENAME COLUMN dst_port TO legacy_port`)
+	before := readFileBytes(t, path)
+
+	store, err := Open(context.Background(), Options{Path: path, JournalMode: "WAL"})
+	if store != nil {
+		_ = store.Close()
+		t.Fatal("schema missing a required column returned a usable store")
+	}
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+	if !strings.Contains(err.Error(), "required column alerts.dst_port is missing") {
+		t.Fatalf("startup error = %v, want missing dst_port", err)
+	}
+}
+
+func TestStoreRejectsIncompatibleRequiredColumnWithoutModification(t *testing.T) {
+	tests := []struct {
+		name        string
+		old         string
+		replacement string
+		column      string
+	}{
+		{name: "type", old: "dst_port INTEGER NOT NULL", replacement: "dst_port TEXT NOT NULL", column: "dst_port"},
+		{name: "not null", old: "dst_port INTEGER NOT NULL", replacement: "dst_port INTEGER", column: "dst_port"},
+		{name: "primary key", old: "id TEXT PRIMARY KEY", replacement: "id TEXT NOT NULL", column: "id"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "alerts.db")
+			incompatible := strings.Replace(schemaSQL, tt.old, tt.replacement, 1)
+			createSQLiteFixture(t, path, incompatible)
+			before := readFileBytes(t, path)
+
+			store, err := Open(context.Background(), Options{Path: path, JournalMode: "WAL"})
+			if store != nil {
+				_ = store.Close()
+				t.Fatal("schema with an incompatible required column returned a usable store")
+			}
+			assertIntegrityRejectionPreservesFile(t, path, before, err)
+			if !strings.Contains(err.Error(), "required column alerts."+tt.column+" has an incompatible definition") {
+				t.Fatalf("startup error = %v, want incompatible %s", err, tt.column)
+			}
+		})
+	}
+}
+
+func TestStoreRejectsMissingAlertEventsTableWithoutModification(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	createSQLiteFixture(t, path, schemaSQL, `DROP TABLE alert_events`)
+	before := readFileBytes(t, path)
+
+	store, err := Open(context.Background(), Options{Path: path, JournalMode: "WAL"})
+	if store != nil {
+		_ = store.Close()
+		t.Fatal("schema missing alert_events returned a usable store")
+	}
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+	if !strings.Contains(err.Error(), "required table alert_events is missing") {
+		t.Fatalf("startup error = %v, want missing alert_events", err)
+	}
+}
+
+func TestStoreRejectsMissingAggregationConstraintWithoutModification(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	withoutAggregationKey := strings.Replace(schemaSQL,
+		"    updated_at TEXT NOT NULL,\n    UNIQUE(rule_id, src_ip, dst_ip, dst_port, window_start)",
+		"    updated_at TEXT NOT NULL", 1)
+	createSQLiteFixture(t, path, withoutAggregationKey)
+	before := readFileBytes(t, path)
+
+	store, err := Open(context.Background(), Options{Path: path, JournalMode: "WAL"})
+	if store != nil {
+		_ = store.Close()
+		t.Fatal("schema without aggregation uniqueness returned a usable store")
+	}
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+	if !strings.Contains(err.Error(), "aggregation uniqueness constraint is missing") {
+		t.Fatalf("startup error = %v, want missing aggregation constraint", err)
+	}
+}
+
+func TestStoreReopensCompatibleExistingDatabase(t *testing.T) {
+	ctx := context.Background()
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	store, err := Open(ctx, Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("create compatible database: %v", err)
+	}
+	if err := store.WriteBatch(ctx, []*model.Alert{makeAlert(time.Now().UTC(), "compatible")}); err != nil {
+		t.Fatalf("seed compatible database: %v", err)
+	}
+	if err := store.Close(); err != nil {
+		t.Fatalf("close compatible database: %v", err)
+	}
+
+	store, err = Open(ctx, Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("reopen compatible database: %v", err)
+	}
+	defer store.Close()
+	if count, err := store.Count(ctx); err != nil || count != 1 {
+		t.Fatalf("compatible database count=%d err=%v, want 1/nil", count, err)
+	}
+}
+
+func TestStoreRecreatesOptionalQueryIndexOnCompatibleDatabase(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	createSQLiteFixture(t, path, schemaSQL, `DROP INDEX idx_alerts_last_seen`)
+
+	store, err := Open(context.Background(), Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("reopen compatible database without optional index: %v", err)
+	}
+	defer store.Close()
+	var count int
+	if err := store.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type = 'index' AND name = 'idx_alerts_last_seen'`).Scan(&count); err != nil {
+		t.Fatalf("inspect recreated query index: %v", err)
+	}
+	if count != 1 {
+		t.Fatalf("recreated query index count = %d, want 1", count)
+	}
+}
+
+func TestStoreRejectsIncompatibleHistoricalShardWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	now := time.Date(2026, 7, 20, 12, 0, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	createSQLiteFixture(t, path, `CREATE TABLE operator_data (id INTEGER PRIMARY KEY)`)
+	before := readFileBytes(t, path)
+
+	err := store.WriteBatch(ctx, []*model.Alert{makeAlert(historical, "incompatible-historical-shard")})
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+}
+
 func assertIntegrityRejectionPreservesFile(t *testing.T, path string, before []byte, err error) {
 	t.Helper()
 	if !errors.Is(err, ErrDatabaseIntegrity) {
@@ -550,6 +711,32 @@ func assertFileBytesUnchanged(t *testing.T, path string, before []byte) {
 	if !bytes.Equal(after, before) {
 		t.Fatalf("rejected database changed: before=%d bytes after=%d bytes", len(before), len(after))
 	}
+}
+
+func createSQLiteFixture(t *testing.T, path string, statements ...string) {
+	t.Helper()
+	db, err := sql.Open("sqlite", path)
+	if err != nil {
+		t.Fatalf("open SQLite fixture: %v", err)
+	}
+	for _, statement := range statements {
+		if _, err := db.Exec(statement); err != nil {
+			_ = db.Close()
+			t.Fatalf("create SQLite fixture: %v", err)
+		}
+	}
+	if err := db.Close(); err != nil {
+		t.Fatalf("close SQLite fixture: %v", err)
+	}
+}
+
+func readFileBytes(t *testing.T, path string) []byte {
+	t.Helper()
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read %s: %v", path, err)
+	}
+	return data
 }
 
 func TestStoreWriteBatchHonorsCanceledContext(t *testing.T) {

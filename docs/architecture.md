@@ -180,9 +180,10 @@ Current build:
 - Fixed aggregation window from `engine.alert_aggregation_window`.
 - Optional daily shard pathing with `engine.db_shard_daily`, which writes each alert to `engine.db_dir/netsentry-YYYY-MM-DD.db` based on the alert timestamp.
 - Before opening an existing non-current daily shard for a write, the store
-  runs the same separate read-only `PRAGMA quick_check` used at primary
-  startup. A corrupt or truncated shard is not opened for journal/schema
-  initialization and remains byte-for-byte unchanged.
+  runs the same separate read-only integrity and required-schema preflight used
+  at primary startup. A corrupt, truncated, unrelated, or incompatible shard is
+  not opened for journal/schema initialization and remains byte-for-byte
+  unchanged.
 - Cross-shard alert querying and alert counting in daily-shard mode; time range filters narrow the shard files scanned before applying the regular SQL filters and API pagination across the merged result.
 - Cross-shard query and count operations reuse the current shard's owned
   connection and open every non-current shard with a URL-safe SQLite
@@ -191,9 +192,12 @@ Current build:
 - Row-level TTL pruning in the opened database using `engine.alert_retention_days`.
 - Startup cleanup of old `netsentry-YYYY-MM-DD.db` daily shard files and their WAL/SHM sidecars when retention is enabled.
 - Before journal or schema initialization, an existing non-empty primary
-  database must pass read-only SQLite `quick_check`. A failed check stops
-  startup with `ErrDatabaseIntegrity`; NetSentry does not repair, truncate,
-  rename, or overwrite the rejected file.
+  database must pass read-only SQLite `quick_check` plus required `alerts` and
+  `alert_events` table/column definitions and the aggregation uniqueness
+  contract. A failed check stops startup with `ErrDatabaseIntegrity`;
+  NetSentry does not repair, migrate, truncate, rename, or overwrite the
+  rejected file. Missing query indexes remain compatible and are created by
+  normal writable initialization after the preflight succeeds.
 - Recovery JSONL is read and structurally validated in full before replay.
   Malformed JSON and a non-empty final record without its terminating newline
   stop startup with `ErrRecoveryLogIntegrity`; no valid prefix is persisted and
@@ -232,7 +236,7 @@ v0.1.0 target:
 
 Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, engine worker shutdown orchestration, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
 
-Alert storage tests cover SQLite aggregation windows, JSONL recovery-log replay idempotency, query index creation, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, corrupt/truncated historical-shard read/write preservation, active WAL-backed read-only access, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics counts backed by a real daily-shard SQLite store.
+Alert storage tests cover SQLite aggregation windows, JSONL recovery-log replay idempotency, required-schema rejection with byte preservation, optional query-index recreation, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, corrupt/truncated/incompatible historical-shard read/write preservation, active WAL-backed read-only access, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics counts backed by a real daily-shard SQLite store.
 
 The v0.1.0 IPC serializer decision is to retain the current bounded handwritten C JSON formatter instead of adding cJSON. The formatter is narrow, fails closed on buffer exhaustion, Base64-encodes payload previews, and is already exercised through unit tests, microbenchmarks, deterministic fuzz smoke, and e2e heartbeat assertions. Replacing it remains a future option only if sustained fuzzing or production evidence shows a concrete defect.
 

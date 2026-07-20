@@ -89,6 +89,10 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Existing non-empty SQLite databases now receive a read-only startup integrity
   preflight; corrupt or truncated files fail with a stable error and remain
   byte-for-byte unchanged for operator-led recovery.
+- Existing primary databases and daily-shard write targets now also require the
+  NetSentry table, column, and aggregation-uniqueness schema contract during
+  that read-only preflight; unrelated or incompatible databases are rejected
+  without modifying their bytes.
 - Malformed or unterminated JSONL recovery logs now fail startup with a stable
   integrity error before partial replay; rejected logs remain byte-for-byte
   unchanged and valid logs truncate only after successful persistence.

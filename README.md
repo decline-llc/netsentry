@@ -51,6 +51,7 @@ flowchart LR
 - 规则 reload 先构建完整不可变 `ruleState`，再通过 `atomic.Pointer` 一次替换。
 - payload 规则先用 Aho-Corasick 生成候选，再复核大小写、协议、端口、方向、offset/depth。
 - SQLite 以固定时间窗聚合告警；recovery JSONL 与串行写临界区避免并发 worker 破坏恢复语义。
+- 现有 SQLite 文件在可写初始化前必须通过只读完整性与 NetSentry schema 检查；被拒绝的文件保持不变。
 
 ## 安全默认值
 

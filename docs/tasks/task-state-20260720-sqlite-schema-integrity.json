@@ -1,0 +1,29 @@
+{
+  "task": "r90-15-sqlite-schema-integrity",
+  "timestamp": "2026-07-20T05:00:50-07:00",
+  "branch": "main",
+  "remote_baseline": "d848aa3c4ff01101d076889ac2afd329a1b1a2c6",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main matches the remote baseline",
+    "Verified the R90-14 feature and delivery commits are present in the Vault full index and MOC",
+    "Selected R90-15 as the highest-priority dependency-ready increment",
+    "Confirmed quick_check accepts structurally valid unrelated SQLite databases before writable schema initialization",
+    "Defined the required read-only schema contract from the versioned alerts, alert_events, and aggregation UPSERT schema",
+    "Validated required tables, columns, types, non-null and primary-key roles, and aggregation uniqueness through the read-only handle",
+    "Added direct unrelated-schema, missing-table, missing-column, incompatible-definition, and missing-constraint rejection regressions with byte preservation",
+    "Added incompatible historical daily-shard preservation and compatible reopen, empty, missing, optional-index, healthy-shard, and encoded-path coverage",
+    "Passed 20 focused alert-store race runs, the full native suite, E2E smoke, documentation, knowledge, JSON, and diff checks"
+  ],
+  "in_progress": [],
+  "todo": [
+    "Commit and push the validated R90-15 increment, fetch-verify origin/main, synchronize the exact Vault range, and record delivery"
+  ],
+  "remaining_risks": [
+    "Schema validation must accept compatible current databases without relying on writable migration",
+    "Rejected primary and daily-shard databases must remain byte-for-byte unchanged",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-15 implementation and local validation are complete but not yet delivered. Commit only the intended increment, push without force, fetch-verify origin/main, run post-fetch knowledge validation, synchronize the exact Vault range, and record delivery. Do not add automatic migration or publish artifacts."
+}

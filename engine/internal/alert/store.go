@@ -32,7 +32,8 @@ var ErrStorageEmergency = errors.New("alert storage is in emergency mode; clear 
 var ErrRecoveryLogIntegrity = errors.New("alert recovery log failed integrity check; file was not modified")
 
 // ErrDatabaseIntegrity reports that an existing database failed a read-only
-// integrity preflight and was not opened for writable initialization.
+// integrity or required-schema preflight and was not opened for writable
+// initialization.
 var ErrDatabaseIntegrity = errors.New("existing SQLite database failed integrity check; file was not modified")
 
 // Options controls the SQLite alert store.
@@ -201,7 +202,191 @@ func validateExistingDatabase(ctx context.Context, path string) error {
 	if !checked {
 		return fmt.Errorf("%w: quick_check returned no result", ErrDatabaseIntegrity)
 	}
+	if err := rows.Close(); err != nil {
+		return fmt.Errorf("%w: close quick_check result: %v", ErrDatabaseIntegrity, err)
+	}
+	return validateRequiredSchema(ctx, db)
+}
+
+type requiredColumn struct {
+	name       string
+	typeName   string
+	notNull    bool
+	primaryKey int
+}
+
+var requiredSchema = map[string][]requiredColumn{
+	"alerts": {
+		{name: "id", typeName: "TEXT", primaryKey: 1},
+		{name: "event_id", typeName: "TEXT", notNull: true},
+		{name: "rule_id", typeName: "TEXT", notNull: true},
+		{name: "rule_name", typeName: "TEXT", notNull: true},
+		{name: "severity", typeName: "TEXT", notNull: true},
+		{name: "protocol", typeName: "TEXT", notNull: true},
+		{name: "src_ip", typeName: "TEXT", notNull: true},
+		{name: "dst_ip", typeName: "TEXT", notNull: true},
+		{name: "dst_port", typeName: "INTEGER", notNull: true},
+		{name: "mitre_tactic", typeName: "TEXT", notNull: true},
+		{name: "mitre_technique_id", typeName: "TEXT", notNull: true},
+		{name: "mitre_technique_name", typeName: "TEXT", notNull: true},
+		{name: "payload_preview", typeName: "TEXT", notNull: true},
+		{name: "matched_keyword", typeName: "TEXT", notNull: true},
+		{name: "aggregated_count", typeName: "INTEGER", notNull: true},
+		{name: "first_seen", typeName: "TEXT", notNull: true},
+		{name: "last_seen", typeName: "TEXT", notNull: true},
+		{name: "window_start", typeName: "TEXT", notNull: true},
+		{name: "created_at", typeName: "TEXT", notNull: true},
+		{name: "updated_at", typeName: "TEXT", notNull: true},
+	},
+	"alert_events": {
+		{name: "event_id", typeName: "TEXT", primaryKey: 1},
+		{name: "created_at", typeName: "TEXT", notNull: true},
+	},
+}
+
+var requiredAggregationKey = []string{"rule_id", "src_ip", "dst_ip", "dst_port", "window_start"}
+
+func validateRequiredSchema(ctx context.Context, db *sql.DB) error {
+	for _, table := range []string{"alerts", "alert_events"} {
+		if err := validateRequiredColumns(ctx, db, table, requiredSchema[table]); err != nil {
+			return err
+		}
+	}
+	return validateAggregationConstraint(ctx, db)
+}
+
+func validateRequiredColumns(ctx context.Context, db *sql.DB, table string, required []requiredColumn) error {
+	rows, err := db.QueryContext(ctx, "PRAGMA table_info("+quoteSQLiteIdentifier(table)+")")
+	if err != nil {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		return fmt.Errorf("%w: inspect required table %s: %v", ErrDatabaseIntegrity, table, err)
+	}
+	defer rows.Close()
+
+	actual := make(map[string]requiredColumn)
+	for rows.Next() {
+		var cid, notNull, primaryKey int
+		var name, typeName string
+		var defaultValue any
+		if err := rows.Scan(&cid, &name, &typeName, &notNull, &defaultValue, &primaryKey); err != nil {
+			return fmt.Errorf("%w: inspect required table %s: %v", ErrDatabaseIntegrity, table, err)
+		}
+		actual[name] = requiredColumn{
+			name:       name,
+			typeName:   strings.ToUpper(strings.TrimSpace(typeName)),
+			notNull:    notNull != 0,
+			primaryKey: primaryKey,
+		}
+	}
+	if err := rows.Err(); err != nil {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		return fmt.Errorf("%w: inspect required table %s: %v", ErrDatabaseIntegrity, table, err)
+	}
+	if len(actual) == 0 {
+		return fmt.Errorf("%w: incompatible schema: required table %s is missing", ErrDatabaseIntegrity, table)
+	}
+	for _, expected := range required {
+		got, ok := actual[expected.name]
+		if !ok {
+			return fmt.Errorf("%w: incompatible schema: required column %s.%s is missing", ErrDatabaseIntegrity, table, expected.name)
+		}
+		if got.typeName != expected.typeName || got.notNull != expected.notNull || got.primaryKey != expected.primaryKey {
+			return fmt.Errorf("%w: incompatible schema: required column %s.%s has an incompatible definition", ErrDatabaseIntegrity, table, expected.name)
+		}
+	}
 	return nil
+}
+
+func validateAggregationConstraint(ctx context.Context, db *sql.DB) error {
+	rows, err := db.QueryContext(ctx, "PRAGMA index_list(alerts)")
+	if err != nil {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		return fmt.Errorf("%w: inspect alerts indexes: %v", ErrDatabaseIntegrity, err)
+	}
+	var uniqueIndexes []string
+	for rows.Next() {
+		var seq, unique, partial int
+		var name, origin string
+		if err := rows.Scan(&seq, &name, &unique, &origin, &partial); err != nil {
+			_ = rows.Close()
+			return fmt.Errorf("%w: inspect alerts indexes: %v", ErrDatabaseIntegrity, err)
+		}
+		if unique != 0 && partial == 0 {
+			uniqueIndexes = append(uniqueIndexes, name)
+		}
+	}
+	if err := rows.Err(); err != nil {
+		_ = rows.Close()
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		return fmt.Errorf("%w: inspect alerts indexes: %v", ErrDatabaseIntegrity, err)
+	}
+	if err := rows.Close(); err != nil {
+		return fmt.Errorf("%w: inspect alerts indexes: %v", ErrDatabaseIntegrity, err)
+	}
+
+	for _, index := range uniqueIndexes {
+		columns, err := readIndexColumns(ctx, db, index)
+		if err != nil {
+			return err
+		}
+		if slicesEqual(columns, requiredAggregationKey) {
+			return nil
+		}
+	}
+	return fmt.Errorf("%w: incompatible schema: alerts aggregation uniqueness constraint is missing", ErrDatabaseIntegrity)
+}
+
+func readIndexColumns(ctx context.Context, db *sql.DB, index string) ([]string, error) {
+	rows, err := db.QueryContext(ctx, "PRAGMA index_info("+quoteSQLiteIdentifier(index)+")")
+	if err != nil {
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+		return nil, fmt.Errorf("%w: inspect alerts index: %v", ErrDatabaseIntegrity, err)
+	}
+	defer rows.Close()
+	var columns []string
+	for rows.Next() {
+		var seq, cid int
+		var name sql.NullString
+		if err := rows.Scan(&seq, &cid, &name); err != nil {
+			return nil, fmt.Errorf("%w: inspect alerts index: %v", ErrDatabaseIntegrity, err)
+		}
+		if name.Valid {
+			columns = append(columns, name.String)
+		}
+	}
+	if err := rows.Err(); err != nil {
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+		return nil, fmt.Errorf("%w: inspect alerts index: %v", ErrDatabaseIntegrity, err)
+	}
+	return columns, nil
+}
+
+func quoteSQLiteIdentifier(value string) string {
+	return `"` + strings.ReplaceAll(value, `"`, `""`) + `"`
+}
+
+func slicesEqual(left, right []string) bool {
+	if len(left) != len(right) {
+		return false
+	}
+	for i := range left {
+		if left[i] != right[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func openReadOnlyDatabase(path string) (*sql.DB, error) {

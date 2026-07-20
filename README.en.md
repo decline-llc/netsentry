@@ -51,6 +51,7 @@ Core design:
 - Rule reload builds a complete immutable `ruleState`, then swaps it once through `atomic.Pointer`.
 - Payload rules use Aho-Corasick for candidates, followed by case, protocol, port, direction, and offset/depth verification.
 - SQLite aggregates alerts in fixed windows. A recovery JSONL and serialized write critical section preserve recovery semantics with concurrent workers.
+- Existing SQLite files must pass read-only integrity and NetSentry schema checks before writable initialization; rejected files remain unchanged.
 
 ## Secure defaults
 

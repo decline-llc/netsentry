@@ -222,10 +222,14 @@ The engine loads this file at startup. Suppression create, update, and delete re
 ### SQLite startup integrity and recovery
 
 An existing non-empty primary alerts database receives a read-only SQLite
-`PRAGMA quick_check` before journal-mode or schema initialization. Corrupt or
-truncated input fails startup with `ErrDatabaseIntegrity` and an explicit
-statement that the file was not modified. New paths and existing empty files
-continue through normal initialization.
+`PRAGMA quick_check` and required-schema inspection before journal-mode or
+schema initialization. The schema check requires the current `alerts` and
+`alert_events` columns, types, primary-key/non-null roles, and aggregation
+uniqueness contract. Corrupt, truncated, unrelated, or incompatible input fails
+startup with `ErrDatabaseIntegrity` and an explicit statement that the file was
+not modified. Missing query indexes are compatible and can be created after a
+successful preflight. New paths and existing empty files continue through
+normal initialization.
 
 If the integrity preflight fails:
 
@@ -242,9 +246,10 @@ database that fails this check.
 The same preservation rule applies when a running daily-shard store receives
 an alert for an existing non-current shard. NetSentry checks that shard through
 a separate read-only handle before writable initialization; a corrupt or
-truncated shard rejects the write with `ErrDatabaseIntegrity` and is left
-byte-for-byte unchanged. Preserve the shard and any sidecars, inspect only a
-copy, and restore or replace it through an operator-controlled recovery path.
+truncated shard, or a structurally valid shard with an unrelated/incompatible
+schema, rejects the write with `ErrDatabaseIntegrity` and is left byte-for-byte
+unchanged. Preserve the shard and any sidecars, inspect only a copy, and restore
+or replace it through an operator-controlled recovery path.
 
 Historical-shard query and count paths are also non-mutating at the connection
 boundary: each non-current shard is opened through a URL-safe SQLite `mode=ro`
@@ -408,7 +413,7 @@ Current validation baseline:
 - `make test-unit` runs C/Go unit and race tests followed serially by C ASan tests.
 - `make test-integration` verifies the pinned PcapPlusPlus/Zeek fixture manifest, processes supported external pcaps, and checks invalid CLI/non-Ethernet rejection.
 - `make test-e2e` covers pcap -> UDS -> worker pool -> SQLite -> API; `make test-stress` runs configurable repeat-pcap pressure.
-- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation, daily shards, recovery-log replay, corrupt/truncated startup and historical-shard read/write preservation, active WAL-backed read-only access, and storage degraded/emergency behavior.
+- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation, daily shards, recovery-log replay, corrupt/truncated/incompatible-schema startup and historical-shard preservation, active WAL-backed read-only access, and storage degraded/emergency behavior.
 - Release-candidate checks run syntax checks, repository configuration validation, dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 
 The C-side JSON line formatter is intentionally kept as a bounded handwritten v0.1.0 implementation. It avoids a new C dependency, rejects truncation, escapes JSON strings, Base64-encodes packet payload previews, and is covered by the UDS sender tests and current smoke checks. A cJSON migration should be reopened only with a concrete defect or fuzzing result.
