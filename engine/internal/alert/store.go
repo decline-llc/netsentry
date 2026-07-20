@@ -929,12 +929,52 @@ func (s *Store) readRecoveryLog() ([]*model.Alert, error) {
 		if err := json.Unmarshal(scanner.Bytes(), &alert); err != nil {
 			return nil, fmt.Errorf("%w: decode record %d: %v", ErrRecoveryLogIntegrity, record, err)
 		}
+		if err := validateRecoveryAlert(alert); err != nil {
+			return nil, fmt.Errorf("%w: record %d: %v", ErrRecoveryLogIntegrity, record, err)
+		}
 		alerts = append(alerts, &alert)
 	}
 	if err := scanner.Err(); err != nil {
 		return nil, fmt.Errorf("%w: read records: %v", ErrRecoveryLogIntegrity, err)
 	}
 	return alerts, nil
+}
+
+func validateRecoveryAlert(alert model.Alert) error {
+	requiredStrings := []struct {
+		name  string
+		value string
+	}{
+		{name: "id", value: alert.ID},
+		{name: "event_id", value: alert.EventID},
+		{name: "rule_id", value: alert.RuleID},
+		{name: "src_ip", value: alert.SrcIP},
+		{name: "dst_ip", value: alert.DstIP},
+		{name: "protocol", value: alert.Protocol},
+	}
+	for _, field := range requiredStrings {
+		if strings.TrimSpace(field.value) == "" {
+			return fmt.Errorf("required field %s is empty", field.name)
+		}
+	}
+	requiredTimes := []struct {
+		name  string
+		value time.Time
+	}{
+		{name: "timestamp", value: alert.Timestamp},
+		{name: "first_seen", value: alert.FirstSeen},
+		{name: "last_seen", value: alert.LastSeen},
+		{name: "window_start", value: alert.WindowStart},
+	}
+	for _, field := range requiredTimes {
+		if field.value.IsZero() {
+			return fmt.Errorf("required field %s is zero", field.name)
+		}
+	}
+	if alert.AggregatedCount < 1 {
+		return errors.New("required field aggregated_count must be positive")
+	}
+	return nil
 }
 
 // ReplayRecoveryLog restores alert writes that were durably logged before a

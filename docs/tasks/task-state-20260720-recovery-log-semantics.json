@@ -1,0 +1,33 @@
+{
+  "task": "r90-16-recovery-log-semantics",
+  "timestamp": "2026-07-20T05:28:00-07:00",
+  "branch": "main",
+  "remote_baseline": "246ab7baf878d815608e407d148698c827c5a774",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main matches the remote baseline",
+    "Verified R90-15 feature and delivery records are present in the Vault",
+    "Selected R90-16 as the highest-priority dependency-ready increment",
+    "Derived the durable recovery-record contract from normalizeAlert and appendRecoveryLog",
+    "Validated identity, timestamp/window/count, and network fields before returning the complete replay set",
+    "Added direct null, empty-object, and every missing-required-field regression with record-numbered errors",
+    "Proved every semantic rejection preserves the complete log and persists no valid prefix",
+    "Retained valid replay, post-commit truncation, and duplicate event-ID idempotency behavior",
+    "Passed 20 uncached focused race runs, the full alert-store race package, full native tests, E2E smoke, documentation, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Run the pre-commit knowledge gate and sensitive-information review",
+    "Commit, push, fetch-verify, and synchronize the validated increment",
+    "Reconcile roadmap and task state against verified remote and Vault evidence"
+  ],
+  "todo": [
+    "Reconcile documentation, roadmap, and task state"
+  ],
+  "remaining_risks": [
+    "Rejected recovery logs must remain byte-for-byte unchanged",
+    "Semantic validation must occur before any valid prefix is persisted",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Complete R90-16 only: validate every decoded recovery record against the current normalized-writer contract before replay, preserve rejected bytes and prevent prefix persistence, retain valid replay/idempotency behavior, and do not repair logs or publish artifacts."
+}

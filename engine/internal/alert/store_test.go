@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"os"
 	"path/filepath"
@@ -357,6 +358,100 @@ func TestStoreRejectsTruncatedRecoveryLogWithoutModification(t *testing.T) {
 	}
 	assertFileBytes(t, recoveryLogPath, wantBytes)
 	assertNoPersistedRecoveryPrefix(t, dbPath, filepath.Join(dir, "empty-recovery.jsonl"), now)
+}
+
+func TestStoreRejectsSemanticallyInvalidRecoveryLogWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 20, 5, 30, 0, 0, time.UTC)
+	valid := normalizeAlert(makeAlert(now, "valid-prefix"), now, time.Minute)
+	validJSON, err := json.Marshal(valid)
+	if err != nil {
+		t.Fatalf("marshal valid recovery record: %v", err)
+	}
+
+	fieldCases := []string{
+		"id",
+		"event_id",
+		"rule_id",
+		"src_ip",
+		"dst_ip",
+		"protocol",
+		"timestamp",
+		"first_seen",
+		"last_seen",
+		"window_start",
+		"aggregated_count",
+	}
+	tests := []struct {
+		name      string
+		invalid   func(t *testing.T) []byte
+		condition string
+	}{
+		{
+			name:      "null",
+			invalid:   func(t *testing.T) []byte { return []byte("null") },
+			condition: "required field id is empty",
+		},
+		{
+			name:      "empty object",
+			invalid:   func(t *testing.T) []byte { return []byte("{}") },
+			condition: "required field id is empty",
+		},
+	}
+	for _, field := range fieldCases {
+		field := field
+		tests = append(tests, struct {
+			name      string
+			invalid   func(t *testing.T) []byte
+			condition string
+		}{
+			name: "missing " + field,
+			invalid: func(t *testing.T) []byte {
+				t.Helper()
+				var record map[string]any
+				if err := json.Unmarshal(validJSON, &record); err != nil {
+					t.Fatalf("decode valid recovery record: %v", err)
+				}
+				delete(record, field)
+				encoded, err := json.Marshal(record)
+				if err != nil {
+					t.Fatalf("marshal invalid recovery record: %v", err)
+				}
+				return encoded
+			},
+			condition: "required field " + field,
+		})
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			dir := t.TempDir()
+			dbPath := filepath.Join(dir, "alerts.db")
+			recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+			contents := append(append(append([]byte(nil), validJSON...), '\n'), test.invalid(t)...)
+			contents = append(contents, '\n')
+			if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+				t.Fatalf("write invalid recovery log: %v", err)
+			}
+
+			store, err := Open(context.Background(), Options{
+				Path:              dbPath,
+				RecoveryLogPath:   recoveryLogPath,
+				JournalMode:       "WAL",
+				BusyTimeoutMS:     1000,
+				AggregationWindow: time.Minute,
+				Now:               func() time.Time { return now },
+			})
+			if store != nil {
+				_ = store.Close()
+				t.Fatal("semantically invalid recovery log returned a usable store")
+			}
+			if !errors.Is(err, ErrRecoveryLogIntegrity) || !strings.Contains(err.Error(), "record 2") || !strings.Contains(err.Error(), test.condition) {
+				t.Fatalf("startup error = %v, want record 2 semantic ErrRecoveryLogIntegrity containing %q", err, test.condition)
+			}
+			assertFileBytes(t, recoveryLogPath, contents)
+			assertNoPersistedRecoveryPrefix(t, dbPath, filepath.Join(dir, "empty-recovery.jsonl"), now)
+		})
+	}
 }
 
 func TestStoreKeepsValidRecoveryLogWhenPersistenceFails(t *testing.T) {

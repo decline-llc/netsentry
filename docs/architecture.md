@@ -203,6 +203,10 @@ Current build:
   stop startup with `ErrRecoveryLogIntegrity`; no valid prefix is persisted and
   the log remains byte-for-byte unchanged. Valid logs are truncated only after
   SQLite commits.
+- Each decoded recovery record must also retain the identity, timestamp/window,
+  positive aggregate count, and network fields emitted by normalized alert
+  writes. A semantic failure reports the record and field through
+  `ErrRecoveryLogIntegrity` before any replay write begins.
 - Storage health tracking marks the store degraded after ordinary SQLite write/query errors and emergency after disk-full, quota, read-only filesystem, or disk I/O failures. Emergency mode stops retrying SQLite writes in the current process after the recovery log is updated when possible, and exposes that state through verbose health and Prometheus gauges.
 
 Remaining v0.1.0 storage work:
@@ -236,7 +240,7 @@ v0.1.0 target:
 
 Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, engine worker shutdown orchestration, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
 
-Alert storage tests cover SQLite aggregation windows, JSONL recovery-log replay idempotency, required-schema rejection with byte preservation, optional query-index recreation, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, corrupt/truncated/incompatible historical-shard read/write preservation, active WAL-backed read-only access, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics counts backed by a real daily-shard SQLite store.
+Alert storage tests cover SQLite aggregation windows, JSONL recovery-log replay idempotency and semantic validation with byte preservation, required-schema rejection with byte preservation, optional query-index recreation, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, corrupt/truncated/incompatible historical-shard read/write preservation, active WAL-backed read-only access, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics counts backed by a real daily-shard SQLite store.
 
 The v0.1.0 IPC serializer decision is to retain the current bounded handwritten C JSON formatter instead of adding cJSON. The formatter is narrow, fails closed on buffer exhaustion, Base64-encodes payload previews, and is already exercised through unit tests, microbenchmarks, deterministic fuzz smoke, and e2e heartbeat assertions. Replacing it remains a future option only if sustained fuzzing or production evidence shows a concrete defect.
 

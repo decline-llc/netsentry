@@ -96,6 +96,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Malformed or unterminated JSONL recovery logs now fail startup with a stable
   integrity error before partial replay; rejected logs remain byte-for-byte
   unchanged and valid logs truncate only after successful persistence.
+- Syntactically valid recovery records now must contain the durable normalized
+  alert identity, timestamps/window/count, and network tuple before replay;
+  semantic failures preserve the complete log without persisting a valid prefix.
 
 ### Known Gaps
 - Automatic disk cleanup or restart-free recovery after storage emergency mode is not implemented.

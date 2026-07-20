@@ -32,7 +32,7 @@
 | R90-13 | Jul 19–Sep 4 | Complete early | Bound idle UDS receiver connections. | R90-12 | A validated finite per-connection read timeout applies before the first frame and refreshes after every complete frame; idle expiry releases handler capacity without inflating decode errors, while active traffic and shutdown remain compatible. |
 | R90-14 | Jul 19–Sep 11 | Complete early | Enforce the per-connection UDS hello/session state machine. | R90-13 | Each connection requires exactly one valid hello before heartbeat or packet frames; heartbeat session IDs must match that hello; state violations close only the offending connection, increment decode errors once, and preserve valid reconnect/shutdown behavior. |
 | R90-15 | Jul 20–Sep 18 | Complete early | Reject incompatible existing SQLite schemas before writable initialization. | R90-14 | A structurally valid but non-NetSentry or incompatible existing database fails startup clearly and remains byte-for-byte unchanged; compatible existing, empty, and missing databases retain current behavior. |
-| R90-16 | Jul 20–Sep 25 | Ready | Reject semantically invalid recovery-log records before replay. | R90-15 | Newline-terminated, syntactically valid JSON records that cannot satisfy the durable normalized-alert contract fail startup clearly; the complete recovery log remains unchanged, no valid prefix is persisted, and valid replay behavior is preserved. |
+| R90-16 | Jul 20–Sep 25 | In progress | Reject semantically invalid recovery-log records before replay. | R90-15 | Newline-terminated, syntactically valid JSON records that cannot satisfy the durable normalized-alert contract fail startup clearly; the complete recovery log remains unchanged, no valid prefix is persisted, and valid replay behavior is preserved. |
 
 ## R90-07 Definition
 
@@ -210,7 +210,7 @@
   release is authorized. R90-15 completed early from the clean fetched
   `origin/main` baseline and verified R90-14 Vault evidence; its fetched remote,
   post-fetch knowledge gate, and exact Vault range are verified. R90-16 is the
-  next ready increment.
+  active increment.
 
 ## Global PCAP Release-Gate Waiver
 
