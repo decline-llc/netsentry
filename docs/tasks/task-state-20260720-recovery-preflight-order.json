@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "4e13a25882c386c82680cc3219f13926799e5d58",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main matches the remote baseline",
     "Verified R90-16 feature and delivery records are present in the Vault",
@@ -16,20 +16,25 @@
     "Proved malformed, truncated, and semantic-invalid input leaves a missing target database absent",
     "Proved malformed and semantic-invalid input preserves a compatible database byte-for-byte and does not recreate a missing optional index",
     "Retained valid missing/existing database replay, truncation, optional-index initialization, and event-ID idempotency",
-    "Passed 20 uncached focused race runs, the full alert-store race package, full native tests, E2E smoke, documentation, JSON, and diff checks"
+    "Passed 20 uncached focused race runs, the full alert-store race package, full native tests, E2E smoke, documentation, JSON, and diff checks",
+    "Pushed 9a13283c3124ca270f39ca9ec63573e94283438c and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Run the pre-commit knowledge gate and sensitive-information review",
-    "Commit, push, fetch-verify, and synchronize the validated increment",
-    "Reconcile roadmap and task state against verified remote and Vault evidence"
-  ],
-  "todo": [
-    "Reconcile documentation, roadmap, and task state"
-  ],
+  "in_progress": [],
+  "todo": [],
+  "delivery": {
+    "commit": "9a13283c3124ca270f39ca9ec63573e94283438c",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "4e13a25882c386c82680cc3219f13926799e5d58..9a13283c3124ca270f39ca9ec63573e94283438c",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
   "remaining_risks": [
     "Startup must replay the validated snapshot without a second read",
     "Rejected recovery input must not create or modify the target database",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Complete R90-17 only: validate recovery input before any writable SQLite initialization, prove missing/existing database preservation, retain valid replay semantics, and do not add cross-process locking, repair logs, or publish artifacts."
+  "resume_instructions": "R90-17 is complete at 9a13283c3124ca270f39ca9ec63573e94283438c. Do not repeat its implementation, validation, push, or Vault synchronization. No later engineering increment is selected; refresh the rolling roadmap on the next $netsentry-next trigger. Do not create v0.1.1 or publish artifacts."
 }

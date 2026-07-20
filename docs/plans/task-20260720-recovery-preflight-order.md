@@ -76,4 +76,10 @@ repair, a recovery-format change, operator data, or tag/publication authority.
   and remains event-ID idempotent.
 - Twenty uncached focused race runs, the full alert-store race package, full
   native C/Go race suite, E2E smoke, documentation, JSON, and diff checks passed.
-- Delivery verification is pending.
+- Feature commit: `9a13283c3124ca270f39ca9ec63573e94283438c`
+- Fetched `origin/main`: verified at the feature commit
+- Post-fetch knowledge validation: passed
+- Vault range:
+  `4e13a25882c386c82680cc3219f13926799e5d58..9a13283c3124ca270f39ca9ec63573e94283438c`
+- Vault iteration note, full index, and MOC link: verified
+- Tag/publication actions: none
