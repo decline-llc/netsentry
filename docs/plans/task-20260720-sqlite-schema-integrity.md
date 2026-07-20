@@ -78,4 +78,14 @@ operator data, or a broader storage redesign.
   preserve the rejected shard bytes.
 - Full native C and Go race tests, E2E smoke, documentation, knowledge, JSON,
   and diff checks passed.
-- Commit, remote verification, and Vault synchronization remain pending.
+- Delivery verification is recorded below.
+
+## Completion
+
+- Feature commit: `8e3c2b05f27a1035d0bf3bee3a5e762964d84865`
+- Fetched `origin/main`: verified at the feature commit
+- Post-fetch knowledge validation: passed
+- Vault range:
+  `d848aa3c4ff01101d076889ac2afd329a1b1a2c6..8e3c2b05f27a1035d0bf3bee3a5e762964d84865`
+- Vault iteration note, full index, and MOC link: verified
+- Tag/publication actions: none

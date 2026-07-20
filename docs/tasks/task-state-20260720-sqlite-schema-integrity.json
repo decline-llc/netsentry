@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "d848aa3c4ff01101d076889ac2afd329a1b1a2c6",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main matches the remote baseline",
     "Verified the R90-14 feature and delivery commits are present in the Vault full index and MOC",
@@ -14,16 +14,25 @@
     "Validated required tables, columns, types, non-null and primary-key roles, and aggregation uniqueness through the read-only handle",
     "Added direct unrelated-schema, missing-table, missing-column, incompatible-definition, and missing-constraint rejection regressions with byte preservation",
     "Added incompatible historical daily-shard preservation and compatible reopen, empty, missing, optional-index, healthy-shard, and encoded-path coverage",
-    "Passed 20 focused alert-store race runs, the full native suite, E2E smoke, documentation, knowledge, JSON, and diff checks"
+    "Passed 20 focused alert-store race runs, the full native suite, E2E smoke, documentation, knowledge, JSON, and diff checks",
+    "Pushed 8e3c2b05f27a1035d0bf3bee3a5e762964d84865 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact Vault note, full index, and MOC"
   ],
   "in_progress": [],
-  "todo": [
-    "Commit and push the validated R90-15 increment, fetch-verify origin/main, synchronize the exact Vault range, and record delivery"
-  ],
+  "todo": [],
+  "delivery": {
+    "commit": "8e3c2b05f27a1035d0bf3bee3a5e762964d84865",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "d848aa3c4ff01101d076889ac2afd329a1b1a2c6..8e3c2b05f27a1035d0bf3bee3a5e762964d84865",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
   "remaining_risks": [
     "Schema validation must accept compatible current databases without relying on writable migration",
     "Rejected primary and daily-shard databases must remain byte-for-byte unchanged",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "R90-15 implementation and local validation are complete but not yet delivered. Commit only the intended increment, push without force, fetch-verify origin/main, run post-fetch knowledge validation, synchronize the exact Vault range, and record delivery. Do not add automatic migration or publish artifacts."
+  "resume_instructions": "R90-15 is complete at 8e3c2b05f27a1035d0bf3bee3a5e762964d84865. Do not repeat its implementation, validation, push, or Vault synchronization. R90-16 is the next ready increment: reject semantically invalid recovery-log records before replay while preserving the complete log and valid replay behavior. Do not add automatic log repair or publish artifacts."
 }
