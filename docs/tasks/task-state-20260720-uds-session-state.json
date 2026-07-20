@@ -1,0 +1,35 @@
+{
+  "task": "r90-14-uds-session-state-machine",
+  "timestamp": "2026-07-20T04:38:43-07:00",
+  "branch": "main",
+  "remote_baseline": "7d33e142222d9541c6ec4535a02876a96df607c2",
+  "risk_level": "Medium",
+  "current_checkpoint": "blocked",
+  "completed": [
+    "Fetched origin/main and verified clean local main matches the remote baseline",
+    "Selected R90-14 as the highest-priority dependency-ready increment",
+    "Confirmed the initial C connection sends hello before packet and heartbeat traffic",
+    "Confirmed the UDS_ERR_PIPE reconnect path opens a replacement connection without resending hello",
+    "Recorded the compatibility impact and explicit unblock condition in the rolling roadmap"
+  ],
+  "in_progress": [],
+  "todo": [
+    "Obtain product authority to change the C reconnect lifecycle so every replacement connection sends hello before traffic, or approve another explicit compatibility contract",
+    "After unblocking, implement the receiver state machine and all direct rejection, reconnect, capacity, cancellation, E2E, and delivery validation"
+  ],
+  "blocker": {
+    "summary": "The checked-in C reconnect path does not satisfy hello-first ordering on replacement connections",
+    "evidence": [
+      "capture/src/main.c packet_handler calls uds_reconnect after UDS_ERR_PIPE without calling uds_send_hello",
+      "capture/src/uds_sender.c uds_reconnect only opens the replacement socket"
+    ],
+    "impact": "Receiver-only enforcement would close a valid checked-in capture reconnect on its next packet or heartbeat",
+    "unblock_condition": "Authorize the C reconnect-handshake change with direct C and E2E coverage, or define another explicit compatibility contract"
+  },
+  "remaining_risks": [
+    "Connection session state must remain local across concurrent clients",
+    "Every state violation must close only its connection and increment decode errors once",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-14 is blocked before implementation. Do not enforce hello-first receiver behavior until the reconnect compatibility decision is authorized. After authority is recorded, update the C reconnect path or the explicit compatibility contract, then complete the plan validation. Do not create v0.1.1 or publish artifacts."
+}
