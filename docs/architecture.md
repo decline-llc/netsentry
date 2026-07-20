@@ -207,6 +207,10 @@ Current build:
   positive aggregate count, and network fields emitted by normalized alert
   writes. A semantic failure reports the record and field through
   `ErrRecoveryLogIntegrity` before any replay write begins.
+- The complete recovery preflight runs before database-directory creation or
+  any writable SQLite open. Startup replays that validated in-memory snapshot
+  after initialization rather than rereading the file, so rejected input
+  cannot create a missing database or modify a compatible existing database.
 - Storage health tracking marks the store degraded after ordinary SQLite write/query errors and emergency after disk-full, quota, read-only filesystem, or disk I/O failures. Emergency mode stops retrying SQLite writes in the current process after the recovery log is updated when possible, and exposes that state through verbose health and Prometheus gauges.
 
 Remaining v0.1.0 storage work:

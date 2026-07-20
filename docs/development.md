@@ -266,6 +266,10 @@ Each decoded record must contain the durable identity (`id`, `event_id`, and
 (`src_ip`, `dst_ip`, and `protocol`) emitted by the normalized recovery writer.
 A missing or empty required field reports its record number and fails through
 the same preservation boundary before replay starts.
+This complete preflight occurs before database-directory creation and writable
+SQLite initialization. NetSentry replays the validated in-memory record set
+after initialization without a second read; invalid input therefore leaves a
+missing target database absent and a compatible existing database unchanged.
 Preserve the rejected log, inspect only a copy, and repair or replace it only
 through an operator-controlled recovery path. A valid log is truncated only
 after every recovered alert is successfully persisted.

@@ -317,6 +317,7 @@ func TestStoreRejectsMalformedRecoveryLogWithoutModification(t *testing.T) {
 		t.Fatalf("startup error = %v, want ErrRecoveryLogIntegrity", err)
 	}
 	assertFileBytes(t, recoveryLogPath, wantBytes)
+	assertFileDoesNotExist(t, dbPath)
 	assertNoPersistedRecoveryPrefix(t, dbPath, filepath.Join(dir, "empty-recovery.jsonl"), now)
 }
 
@@ -357,6 +358,7 @@ func TestStoreRejectsTruncatedRecoveryLogWithoutModification(t *testing.T) {
 		t.Fatalf("startup error = %v, want truncated ErrRecoveryLogIntegrity", err)
 	}
 	assertFileBytes(t, recoveryLogPath, wantBytes)
+	assertFileDoesNotExist(t, dbPath)
 	assertNoPersistedRecoveryPrefix(t, dbPath, filepath.Join(dir, "empty-recovery.jsonl"), now)
 }
 
@@ -449,8 +451,90 @@ func TestStoreRejectsSemanticallyInvalidRecoveryLogWithoutModification(t *testin
 				t.Fatalf("startup error = %v, want record 2 semantic ErrRecoveryLogIntegrity containing %q", err, test.condition)
 			}
 			assertFileBytes(t, recoveryLogPath, contents)
+			assertFileDoesNotExist(t, dbPath)
 			assertNoPersistedRecoveryPrefix(t, dbPath, filepath.Join(dir, "empty-recovery.jsonl"), now)
 		})
+	}
+}
+
+func TestStoreRecoveryPreflightPreservesCompatibleDatabase(t *testing.T) {
+	tests := []struct {
+		name     string
+		contents []byte
+	}{
+		{name: "malformed", contents: []byte("{\"rule_id\":\n")},
+		{name: "semantic", contents: []byte("{}\n")},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			dir := t.TempDir()
+			dbPath := filepath.Join(dir, "alerts.db")
+			recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+			createSQLiteFixture(t, dbPath, schemaSQL, `DROP INDEX idx_alerts_last_seen`)
+			beforeDB := readFileBytes(t, dbPath)
+			if err := os.WriteFile(recoveryLogPath, test.contents, 0o600); err != nil {
+				t.Fatalf("write invalid recovery log: %v", err)
+			}
+
+			store, err := Open(context.Background(), Options{
+				Path:            dbPath,
+				RecoveryLogPath: recoveryLogPath,
+				JournalMode:     "WAL",
+			})
+			if store != nil {
+				_ = store.Close()
+				t.Fatal("invalid recovery log returned a usable store")
+			}
+			if !errors.Is(err, ErrRecoveryLogIntegrity) {
+				t.Fatalf("startup error = %v, want ErrRecoveryLogIntegrity", err)
+			}
+			assertFileBytes(t, recoveryLogPath, test.contents)
+			assertFileBytes(t, dbPath, beforeDB)
+			assertSQLiteIndexMissing(t, dbPath, "idx_alerts_last_seen")
+		})
+	}
+}
+
+func TestStoreRecoveryPreflightReplaysIntoCompatibleDatabase(t *testing.T) {
+	dir := t.TempDir()
+	dbPath := filepath.Join(dir, "alerts.db")
+	recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+	createSQLiteFixture(t, dbPath, schemaSQL, `DROP INDEX idx_alerts_last_seen`)
+	now := time.Date(2026, 7, 20, 5, 35, 0, 0, time.UTC)
+	logOnly := &Store{recoveryLogPath: recoveryLogPath}
+	if err := logOnly.appendRecoveryLog(normalizeAlerts([]*model.Alert{
+		makeAlert(now, "valid-existing-database"),
+	}, now, time.Minute)); err != nil {
+		t.Fatalf("append valid recovery record: %v", err)
+	}
+
+	store, err := Open(context.Background(), Options{
+		Path:              dbPath,
+		RecoveryLogPath:   recoveryLogPath,
+		JournalMode:       "WAL",
+		AggregationWindow: time.Minute,
+		Now:               func() time.Time { return now },
+	})
+	if err != nil {
+		t.Fatalf("open compatible database with valid recovery input: %v", err)
+	}
+	defer store.Close()
+	alerts, err := store.List(context.Background())
+	if err != nil {
+		t.Fatalf("list replayed alerts: %v", err)
+	}
+	if len(alerts) != 1 || alerts[0].MatchedKeyword != "valid-existing-database" {
+		t.Fatalf("unexpected replayed alerts: %+v", alerts)
+	}
+	if info, err := os.Stat(recoveryLogPath); err != nil || info.Size() != 0 {
+		t.Fatalf("recovery log should be truncated after replay, info=%+v err=%v", info, err)
+	}
+	var indexCount int
+	if err := store.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type = 'index' AND name = 'idx_alerts_last_seen'`).Scan(&indexCount); err != nil {
+		t.Fatalf("inspect recreated optional index: %v", err)
+	}
+	if indexCount != 1 {
+		t.Fatalf("optional index count = %d, want 1 after valid initialization", indexCount)
 	}
 }
 
@@ -1466,6 +1550,29 @@ func assertFileBytes(t *testing.T, path string, want []byte) {
 	}
 	if !bytes.Equal(got, want) {
 		t.Fatalf("%s changed: got %d bytes, want %d", path, len(got), len(want))
+	}
+}
+
+func assertFileDoesNotExist(t *testing.T, path string) {
+	t.Helper()
+	if _, err := os.Stat(path); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("%s exists after rejected recovery preflight, stat error=%v", path, err)
+	}
+}
+
+func assertSQLiteIndexMissing(t *testing.T, path, index string) {
+	t.Helper()
+	db, err := openReadOnlyDatabase(path)
+	if err != nil {
+		t.Fatalf("open preserved database read-only: %v", err)
+	}
+	defer db.Close()
+	var count int
+	if err := db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type = 'index' AND name = ?`, index).Scan(&count); err != nil {
+		t.Fatalf("inspect preserved database index: %v", err)
+	}
+	if count != 0 {
+		t.Fatalf("optional index %s was created before recovery rejection", index)
 	}
 }
 

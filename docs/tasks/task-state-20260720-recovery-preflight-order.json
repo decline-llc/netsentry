@@ -1,0 +1,35 @@
+{
+  "task": "r90-17-recovery-preflight-order",
+  "timestamp": "2026-07-20T05:34:39-07:00",
+  "branch": "main",
+  "remote_baseline": "4e13a25882c386c82680cc3219f13926799e5d58",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main matches the remote baseline",
+    "Verified R90-16 feature and delivery records are present in the Vault",
+    "Refreshed the empty roadmap from documented storage fault-injection gaps",
+    "Selected R90-17 as the highest-priority dependency-ready increment",
+    "Confirmed Open validates recovery input only after writable database initialization",
+    "Moved complete recovery validation before database-directory creation and writable SQLite initialization",
+    "Refactored startup to replay the validated in-memory snapshot without a second file read",
+    "Proved malformed, truncated, and semantic-invalid input leaves a missing target database absent",
+    "Proved malformed and semantic-invalid input preserves a compatible database byte-for-byte and does not recreate a missing optional index",
+    "Retained valid missing/existing database replay, truncation, optional-index initialization, and event-ID idempotency",
+    "Passed 20 uncached focused race runs, the full alert-store race package, full native tests, E2E smoke, documentation, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Run the pre-commit knowledge gate and sensitive-information review",
+    "Commit, push, fetch-verify, and synchronize the validated increment",
+    "Reconcile roadmap and task state against verified remote and Vault evidence"
+  ],
+  "todo": [
+    "Reconcile documentation, roadmap, and task state"
+  ],
+  "remaining_risks": [
+    "Startup must replay the validated snapshot without a second read",
+    "Rejected recovery input must not create or modify the target database",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Complete R90-17 only: validate recovery input before any writable SQLite initialization, prove missing/existing database preservation, retain valid replay semantics, and do not add cross-process locking, repair logs, or publish artifacts."
+}

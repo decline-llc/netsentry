@@ -104,6 +104,11 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 	}
 
 	dbPath := resolveDBPath(opts)
+	recoveryLogPath := resolveRecoveryLogPath(opts, dbPath)
+	pendingRecovery, err := (&Store{recoveryLogPath: recoveryLogPath}).readRecoveryLog()
+	if err != nil {
+		return nil, err
+	}
 	if err := os.MkdirAll(filepath.Dir(dbPath), 0o750); err != nil {
 		return nil, fmt.Errorf("create sqlite alert dir: %w", err)
 	}
@@ -132,7 +137,7 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 		busyTimeoutMS:     opts.BusyTimeoutMS,
 		aggregationWindow: opts.AggregationWindow,
 		retentionDays:     opts.RetentionDays,
-		recoveryLogPath:   resolveRecoveryLogPath(opts, dbPath),
+		recoveryLogPath:   recoveryLogPath,
 		now:               clock(opts.Now),
 		health:            StorageHealth{Status: "ok"},
 	}
@@ -140,7 +145,7 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 		_ = db.Close()
 		return nil, err
 	}
-	if err := store.ReplayRecoveryLog(ctx); err != nil {
+	if err := store.replayRecoveryAlerts(ctx, pendingRecovery); err != nil {
 		_ = db.Close()
 		return nil, err
 	}
@@ -985,6 +990,10 @@ func (s *Store) ReplayRecoveryLog(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	return s.replayRecoveryAlerts(ctx, alerts)
+}
+
+func (s *Store) replayRecoveryAlerts(ctx context.Context, alerts []*model.Alert) error {
 	if len(alerts) == 0 {
 		return s.truncateRecoveryLog()
 	}
