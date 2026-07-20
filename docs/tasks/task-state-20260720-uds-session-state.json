@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "20e72b4b8e7a00d5aade9c59d1e1ad157721f48f",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main matches the remote baseline",
     "Selected R90-14 as the highest-priority dependency-ready increment",
@@ -16,12 +16,21 @@
     "Enforced exactly one connection-local hello before packet or heartbeat frames and matched heartbeat session IDs",
     "Closed only state-violating connections and counted every violation exactly once",
     "Added direct packet-before-hello, heartbeat-before-hello, duplicate-hello, mismatched-session, isolation, capacity-reuse, concurrent-session, reconnect, and cancellation coverage",
-    "Passed 20 focused C socket and receiver race runs, the full native race and ASan suites, E2E smoke, documentation, knowledge, JSON, and diff checks"
+    "Passed 20 focused C socket and receiver race runs, the full native race and ASan suites, E2E smoke, documentation, knowledge, JSON, and diff checks",
+    "Pushed 3f999e497393e79d5629653055d60514791c2281 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact Vault note, full index, and MOC"
   ],
   "in_progress": [],
-  "todo": [
-    "Commit and push the validated R90-14 increment, fetch-verify origin/main, synchronize the exact Vault range, and record delivery"
-  ],
+  "todo": [],
+  "delivery": {
+    "commit": "3f999e497393e79d5629653055d60514791c2281",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "20e72b4b8e7a00d5aade9c59d1e1ad157721f48f..3f999e497393e79d5629653055d60514791c2281",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
   "resolved_blocker": {
     "summary": "The checked-in C reconnect path does not satisfy hello-first ordering on replacement connections",
     "evidence": [
@@ -36,5 +45,5 @@
     "Every state violation must close only its connection and increment decode errors once",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "R90-14 implementation and local validation are complete but not yet delivered. Commit only the intended increment, push without force, fetch-verify origin/main, run post-fetch knowledge validation, synchronize the exact Vault range, and record delivery. Do not create v0.1.1 or publish artifacts."
+  "resume_instructions": "R90-14 is complete at 3f999e497393e79d5629653055d60514791c2281. Do not repeat its implementation, validation, push, or Vault synchronization. R90-15 is the next ready increment: reject incompatible existing SQLite schemas before writable initialization while preserving compatible, empty, and missing database behavior. Do not create v0.1.1 or publish artifacts."
 }

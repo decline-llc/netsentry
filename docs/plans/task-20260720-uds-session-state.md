@@ -84,4 +84,14 @@ native, and E2E coverage required before delivery.
   connection-local sessions, valid reconnect, idle expiry, and cancellation.
 - Full native C and Go race tests, C ASan tests, E2E smoke, documentation,
   knowledge, JSON, and diff checks passed.
-- Commit, remote verification, and Vault synchronization remain pending.
+- Delivery verification is recorded below.
+
+## Completion
+
+- Feature commit: `3f999e497393e79d5629653055d60514791c2281`
+- Fetched `origin/main`: verified at the feature commit
+- Post-fetch knowledge validation: passed
+- Vault range:
+  `20e72b4b8e7a00d5aade9c59d1e1ad157721f48f..3f999e497393e79d5629653055d60514791c2281`
+- Vault iteration note, full index, and MOC link: verified
+- Tag/publication actions: none
