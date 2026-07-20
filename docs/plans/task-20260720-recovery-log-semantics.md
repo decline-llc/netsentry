@@ -77,4 +77,10 @@ operator data is required, or work reaches tag/publication authority.
   passed.
 - Valid replay, post-commit truncation, and duplicate event-ID idempotency
   remain covered and passing.
-- Delivery verification is pending.
+- Feature commit: `40b58c2c5160262efc42e3d8d7e5e588cd71fcc6`
+- Fetched `origin/main`: verified at the feature commit
+- Post-fetch knowledge validation: passed
+- Vault range:
+  `246ab7baf878d815608e407d148698c827c5a774..40b58c2c5160262efc42e3d8d7e5e588cd71fcc6`
+- Vault iteration note, full index, and MOC link: verified
+- Tag/publication actions: none

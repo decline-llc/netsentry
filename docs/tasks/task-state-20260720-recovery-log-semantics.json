@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "246ab7baf878d815608e407d148698c827c5a774",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main matches the remote baseline",
     "Verified R90-15 feature and delivery records are present in the Vault",
@@ -14,20 +14,25 @@
     "Added direct null, empty-object, and every missing-required-field regression with record-numbered errors",
     "Proved every semantic rejection preserves the complete log and persists no valid prefix",
     "Retained valid replay, post-commit truncation, and duplicate event-ID idempotency behavior",
-    "Passed 20 uncached focused race runs, the full alert-store race package, full native tests, E2E smoke, documentation, JSON, and diff checks"
+    "Passed 20 uncached focused race runs, the full alert-store race package, full native tests, E2E smoke, documentation, JSON, and diff checks",
+    "Pushed 40b58c2c5160262efc42e3d8d7e5e588cd71fcc6 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Run the pre-commit knowledge gate and sensitive-information review",
-    "Commit, push, fetch-verify, and synchronize the validated increment",
-    "Reconcile roadmap and task state against verified remote and Vault evidence"
-  ],
-  "todo": [
-    "Reconcile documentation, roadmap, and task state"
-  ],
+  "in_progress": [],
+  "todo": [],
+  "delivery": {
+    "commit": "40b58c2c5160262efc42e3d8d7e5e588cd71fcc6",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "246ab7baf878d815608e407d148698c827c5a774..40b58c2c5160262efc42e3d8d7e5e588cd71fcc6",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
   "remaining_risks": [
     "Rejected recovery logs must remain byte-for-byte unchanged",
     "Semantic validation must occur before any valid prefix is persisted",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Complete R90-16 only: validate every decoded recovery record against the current normalized-writer contract before replay, preserve rejected bytes and prevent prefix persistence, retain valid replay/idempotency behavior, and do not repair logs or publish artifacts."
+  "resume_instructions": "R90-16 is complete at 40b58c2c5160262efc42e3d8d7e5e588cd71fcc6. Do not repeat its implementation, validation, push, or Vault synchronization. No later engineering increment is selected; refresh the rolling roadmap on the next $netsentry-next trigger. Do not create v0.1.1 or publish artifacts."
 }
