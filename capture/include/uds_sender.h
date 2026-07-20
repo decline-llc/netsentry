@@ -23,6 +23,10 @@ UDSResult uds_connect(const char *path);
 /* Reconnect to the last configured socket path. */
 UDSResult uds_reconnect(void);
 
+/* Reconnect and establish the session before returning the socket to callers. */
+UDSResult uds_reconnect_with_hello(const char *session_id, const char *version,
+                                   int pid, const char *hostname);
+
 /* Send a serialised JSON line (NUL-terminated). */
 UDSResult uds_send_line(const char *json_line);
 

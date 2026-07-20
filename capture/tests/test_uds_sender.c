@@ -26,7 +26,7 @@
 } while (0)
 
 
-static pid_t start_one_line_listener(const char *path) {
+static pid_t start_one_line_listener(const char *path, const char *expected) {
     int fd = socket(AF_UNIX, SOCK_STREAM, 0);
     CHECK_SYS(fd >= 0);
 
@@ -47,13 +47,19 @@ static pid_t start_one_line_listener(const char *path) {
         if (conn < 0) {
             _exit(2);
         }
+        char line[1024] = {0};
+        size_t used = 0;
         char ch;
-        while (read(conn, &ch, 1) == 1) {
+        while (used + 1 < sizeof(line) && read(conn, &ch, 1) == 1) {
             if (ch == '\n') {
                 break;
             }
+            line[used++] = ch;
         }
         close(conn);
+        if (expected && strstr(line, expected) == NULL) {
+            _exit(3);
+        }
         _exit(0);
     }
 
@@ -138,7 +144,7 @@ static void test_limited_connect_fails_fast(void) {
 }
 
 
-static void test_reconnect_reuses_last_path(void) {
+static void test_reconnect_sends_hello_first(void) {
     char tmpdir[] = "/tmp/netsentry-uds-test-XXXXXX";
     CHECK_SYS(mkdtemp(tmpdir) != NULL);
 
@@ -146,7 +152,7 @@ static void test_reconnect_reuses_last_path(void) {
     int n = snprintf(path, sizeof(path), "%s/reconnect.sock", tmpdir);
     CHECK(n > 0 && (size_t)n < sizeof(path));
 
-    pid_t first = start_one_line_listener(path);
+    pid_t first = start_one_line_listener(path, "\"first\":true");
     CHECK(uds_connect_with_retries(path, 5) == UDS_OK);
     CHECK(uds_send_line("{\"first\":true}") == UDS_OK);
     wait_listener(first);
@@ -161,9 +167,12 @@ static void test_reconnect_reuses_last_path(void) {
     CHECK(failed != UDS_OK);
     CHECK(uds_write_errors() > 0);
 
-    pid_t second = start_one_line_listener(path);
-    CHECK(uds_reconnect() == UDS_OK);
-    CHECK(uds_send_line("{\"second\":true}") == UDS_OK);
+    pid_t second = start_one_line_listener(
+        path,
+        "\"type\":\"hello\",\"version\":\"0.1.0\","
+        "\"session_id\":\"reconnect-session\"");
+    CHECK(uds_reconnect_with_hello("reconnect-session", "0.1.0", 123,
+                                   "capture-host") == UDS_OK);
     uds_close();
     wait_listener(second);
     unlink(path);
@@ -183,7 +192,7 @@ int main(void) {
     test_packet_base64_and_escapes_flags();
     test_format_rejects_truncation();
     test_limited_connect_fails_fast();
-    test_reconnect_reuses_last_path();
+    test_reconnect_sends_hello_first();
     printf("test_uds_sender: ok\n");
     return 0;
 }

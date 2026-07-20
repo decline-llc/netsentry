@@ -70,6 +70,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - UDS receiver connections now have a validated finite read-idle timeout that
   refreshes after every complete frame and releases handler capacity on expiry
   without inflating decode-error metrics.
+- UDS connections now require exactly one hello before packet or heartbeat
+  traffic; reconnecting C capture sessions resend hello first, and session
+  violations close only the offending connection.
 - Engine worker shutdown orchestration is covered by a focused `cmd/netsentry` test.
 - Engine startup now reports HTTP bind failures synchronously, and shutdown
   waits for the receiver, pipeline workers, and HTTP API before SQLite closes;

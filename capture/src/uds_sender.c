@@ -334,6 +334,19 @@ UDSResult uds_send_hello(const char *session_id, const char *version,
     return uds_send_line(buf);
 }
 
+UDSResult uds_reconnect_with_hello(const char *session_id, const char *version,
+                                   int pid, const char *hostname) {
+    UDSResult result = uds_reconnect();
+    if (result != UDS_OK) {
+        return result;
+    }
+    result = uds_send_hello(session_id, version, pid, hostname);
+    if (result != UDS_OK) {
+        uds_close();
+    }
+    return result;
+}
+
 uint64_t uds_write_errors(void) {
     return g_write_errors;
 }

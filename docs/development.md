@@ -90,7 +90,7 @@ Expected current behavior:
 
 Current seed rules should produce 5 alerts.
 
-The capture binary accepts `-c <connect_retries>` to bound initial UDS connection attempts. Offline mode defaults to 5 attempts so a missing engine fails clearly instead of retrying forever; live mode keeps retrying unless `-c` is set.
+The capture binary accepts `-c <connect_retries>` to bound initial UDS connection attempts. Offline mode defaults to 5 attempts so a missing engine fails clearly instead of retrying forever; live mode keeps retrying unless `-c` is set. Every initial or replacement UDS connection sends hello before packet or heartbeat traffic. The receiver closes a connection after packet-before-hello, heartbeat-before-hello, duplicate hello, or a heartbeat session mismatch without closing other valid clients.
 
 Latest local quickstart verification:
 

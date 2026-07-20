@@ -47,6 +47,7 @@ Core design:
 - The C parser bounds-checks every header offset against captured length and accepts only Ethernet DLT.
 - UDS frames are limited to 64 KiB. Payload previews must be Base64 and decode to `payload_len` bytes.
 - UDS handlers are bounded, and each connection has a 30-second default read-idle timeout refreshed after every complete frame.
+- Every UDS connection starts with exactly one hello; reconnects resend hello before any packet or heartbeat.
 - Rule reload builds a complete immutable `ruleState`, then swaps it once through `atomic.Pointer`.
 - Payload rules use Aho-Corasick for candidates, followed by case, protocol, port, direction, and offset/depth verification.
 - SQLite aggregates alerts in fixed windows. A recovery JSONL and serialized write critical section preserve recovery semantics with concurrent workers.

@@ -2,34 +2,39 @@
   "task": "r90-14-uds-session-state-machine",
   "timestamp": "2026-07-20T04:38:43-07:00",
   "branch": "main",
-  "remote_baseline": "7d33e142222d9541c6ec4535a02876a96df607c2",
+  "remote_baseline": "20e72b4b8e7a00d5aade9c59d1e1ad157721f48f",
   "risk_level": "Medium",
-  "current_checkpoint": "blocked",
+  "current_checkpoint": "delivery",
   "completed": [
     "Fetched origin/main and verified clean local main matches the remote baseline",
     "Selected R90-14 as the highest-priority dependency-ready increment",
     "Confirmed the initial C connection sends hello before packet and heartbeat traffic",
     "Confirmed the UDS_ERR_PIPE reconnect path opens a replacement connection without resending hello",
-    "Recorded the compatibility impact and explicit unblock condition in the rolling roadmap"
+    "Recorded the compatibility impact and explicit unblock condition in the rolling roadmap",
+    "Received explicit authority to make every C replacement connection send hello before packet or heartbeat traffic",
+    "Added reconnect_with_hello and routed packet- and heartbeat-detected disconnects through it",
+    "Enforced exactly one connection-local hello before packet or heartbeat frames and matched heartbeat session IDs",
+    "Closed only state-violating connections and counted every violation exactly once",
+    "Added direct packet-before-hello, heartbeat-before-hello, duplicate-hello, mismatched-session, isolation, capacity-reuse, concurrent-session, reconnect, and cancellation coverage",
+    "Passed 20 focused C socket and receiver race runs, the full native race and ASan suites, E2E smoke, documentation, knowledge, JSON, and diff checks"
   ],
   "in_progress": [],
   "todo": [
-    "Obtain product authority to change the C reconnect lifecycle so every replacement connection sends hello before traffic, or approve another explicit compatibility contract",
-    "After unblocking, implement the receiver state machine and all direct rejection, reconnect, capacity, cancellation, E2E, and delivery validation"
+    "Commit and push the validated R90-14 increment, fetch-verify origin/main, synchronize the exact Vault range, and record delivery"
   ],
-  "blocker": {
+  "resolved_blocker": {
     "summary": "The checked-in C reconnect path does not satisfy hello-first ordering on replacement connections",
     "evidence": [
       "capture/src/main.c packet_handler calls uds_reconnect after UDS_ERR_PIPE without calling uds_send_hello",
       "capture/src/uds_sender.c uds_reconnect only opens the replacement socket"
     ],
     "impact": "Receiver-only enforcement would close a valid checked-in capture reconnect on its next packet or heartbeat",
-    "unblock_condition": "Authorize the C reconnect-handshake change with direct C and E2E coverage, or define another explicit compatibility contract"
+    "resolution": "The user explicitly authorized the C reconnect-handshake change on 2026-07-20"
   },
   "remaining_risks": [
     "Connection session state must remain local across concurrent clients",
     "Every state violation must close only its connection and increment decode errors once",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "R90-14 is blocked before implementation. Do not enforce hello-first receiver behavior until the reconnect compatibility decision is authorized. After authority is recorded, update the C reconnect path or the explicit compatibility contract, then complete the plan validation. Do not create v0.1.1 or publish artifacts."
+  "resume_instructions": "R90-14 implementation and local validation are complete but not yet delivered. Commit only the intended increment, push without force, fetch-verify origin/main, run post-fetch knowledge validation, synchronize the exact Vault range, and record delivery. Do not create v0.1.1 or publish artifacts."
 }

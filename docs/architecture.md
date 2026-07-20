@@ -45,7 +45,7 @@ Current implementation notes:
 
 ## 3. IPC Contract
 
-C sends one JSON object per line. String fields are escaped before serialization; `payload_preview` is Base64. The Go receiver caps a frame at 64 KiB and verifies IP fields, timestamp microseconds, Base64 validity, the 4096-byte payload ceiling, and decoded-length consistency.
+C sends one JSON object per line. String fields are escaped before serialization; `payload_preview` is Base64. Every connection starts with exactly one valid hello; packet and heartbeat frames before hello, duplicate hello frames, and heartbeats whose session ID differs from that connection's hello are rejected by closing only that connection. The C sender repeats hello immediately after every successful reconnect. The Go receiver caps a frame at 64 KiB and verifies IP fields, timestamp microseconds, Base64 validity, the 4096-byte payload ceiling, and decoded-length consistency.
 
 Control frames:
 

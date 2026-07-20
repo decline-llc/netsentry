@@ -27,6 +27,13 @@ const (
 	maxPacketPayloadBytes = 4096
 )
 
+var errSessionProtocol = errors.New("uds session protocol violation")
+
+type connectionSession struct {
+	helloReceived bool
+	sessionID     string
+}
+
 // Config controls the Unix socket receiver.
 type Config struct {
 	Path           string
@@ -169,13 +176,17 @@ func (r *Receiver) handleConn(ctx context.Context, conn net.Conn) {
 	}
 	scanner := bufio.NewScanner(conn)
 	scanner.Buffer(make([]byte, 0, 16*1024), maxUDSFrameBytes)
+	session := &connectionSession{}
 	for scanner.Scan() {
 		if isNetworkDeadline(scanner.Err()) {
 			r.logger.Debug("close idle uds connection", zap.Duration("read_timeout", r.cfg.ReadTimeout))
 			return
 		}
-		if err := r.handleLine(ctx, scanner.Bytes()); err != nil {
+		if err := r.handleLine(ctx, scanner.Bytes(), session); err != nil {
 			r.logger.Warn("handle uds frame", zap.Error(err))
+			if errors.Is(err, errSessionProtocol) {
+				return
+			}
 		}
 		if err := conn.SetReadDeadline(time.Now().Add(r.cfg.ReadTimeout)); err != nil {
 			r.logger.Warn("refresh uds read deadline", zap.Error(err))
@@ -200,7 +211,7 @@ func isNetworkDeadline(err error) bool {
 	return errors.Is(err, os.ErrDeadlineExceeded) || errors.As(err, &netErr) && netErr.Timeout()
 }
 
-func (r *Receiver) handleLine(ctx context.Context, line []byte) error {
+func (r *Receiver) handleLine(ctx context.Context, line []byte, session *connectionSession) error {
 	r.stats.IncFrame()
 	var meta struct {
 		Type string `json:"type"`
@@ -212,6 +223,9 @@ func (r *Receiver) handleLine(ctx context.Context, line []byte) error {
 
 	switch meta.Type {
 	case "hello":
+		if session.helloReceived {
+			return r.sessionProtocolError("duplicate hello frame")
+		}
 		var h HelloFrame
 		if err := json.Unmarshal(line, &h); err != nil {
 			r.stats.IncDecodeError()
@@ -221,10 +235,15 @@ func (r *Receiver) handleLine(ctx context.Context, line []byte) error {
 			r.stats.IncDecodeError()
 			return fmt.Errorf("invalid hello frame")
 		}
+		session.helloReceived = true
+		session.sessionID = h.SessionID
 		r.state.SetHello(h)
 		r.stats.IncControlFrame()
 		return nil
 	case "heartbeat":
+		if !session.helloReceived {
+			return r.sessionProtocolError("heartbeat before hello")
+		}
 		var h HeartbeatFrame
 		if err := json.Unmarshal(line, &h); err != nil {
 			r.stats.IncDecodeError()
@@ -234,10 +253,16 @@ func (r *Receiver) handleLine(ctx context.Context, line []byte) error {
 			r.stats.IncDecodeError()
 			return fmt.Errorf("invalid heartbeat frame")
 		}
+		if h.SessionID != session.sessionID {
+			return r.sessionProtocolError("heartbeat session_id does not match hello")
+		}
 		r.state.SetHeartbeat(h)
 		r.stats.IncControlFrame()
 		return nil
 	case "":
+		if !session.helloReceived {
+			return r.sessionProtocolError("packet before hello")
+		}
 		var pkt model.PacketInfo
 		if err := json.Unmarshal(line, &pkt); err != nil {
 			r.stats.IncDecodeError()
@@ -258,6 +283,11 @@ func (r *Receiver) handleLine(ctx context.Context, line []byte) error {
 		r.stats.IncDecodeError()
 		return fmt.Errorf("unknown control frame type %q", meta.Type)
 	}
+}
+
+func (r *Receiver) sessionProtocolError(message string) error {
+	r.stats.IncDecodeError()
+	return fmt.Errorf("%w: %s", errSessionProtocol, message)
 }
 
 func validatePacketFrame(pkt *model.PacketInfo) error {

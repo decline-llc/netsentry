@@ -26,15 +26,16 @@ func TestMain(m *testing.M) {
 func TestHandleLineControlFrames(t *testing.T) {
 	r := New(Config{BufferSize: 1}, zap.NewNop())
 	ctx := context.Background()
+	session := &connectionSession{}
 
-	if err := r.handleLine(ctx, []byte(`{"type":"hello","version":"0.1.0","session_id":"abcd1234","pid":123,"hostname":"host","max_payload_len":4096}`)); err != nil {
+	if err := r.handleLine(ctx, []byte(`{"type":"hello","version":"0.1.0","session_id":"abcd1234","pid":123,"hostname":"host","max_payload_len":4096}`), session); err != nil {
 		t.Fatalf("hello: %v", err)
 	}
 	if got := r.State(); got.SessionID != "abcd1234" || got.Hello.Version != "0.1.0" {
 		t.Fatalf("unexpected hello state: %+v", got)
 	}
 
-	if err := r.handleLine(ctx, []byte(`{"type":"heartbeat","session_id":"abcd1234","seq":7,"sent":11,"dropped":2,"parse_errors":3,"buf_util_pct":4,"avg_json_serialize_us":1.5,"uds_write_errors":6}`)); err != nil {
+	if err := r.handleLine(ctx, []byte(`{"type":"heartbeat","session_id":"abcd1234","seq":7,"sent":11,"dropped":2,"parse_errors":3,"buf_util_pct":4,"avg_json_serialize_us":1.5,"uds_write_errors":6}`), session); err != nil {
 		t.Fatalf("heartbeat: %v", err)
 	}
 	if got := r.State(); got.Heartbeat.Seq != 7 || got.Heartbeat.UDSWriteErrors != 6 {
@@ -47,7 +48,7 @@ func TestHandleLineDataFrame(t *testing.T) {
 	ctx := context.Background()
 
 	line := []byte(`{"timestamp_sec":1719300000,"timestamp_usec":123456,"src_ip":"10.0.0.1","dst_ip":"10.0.0.2","src_port":12345,"dst_port":80,"protocol":6,"tcp_flags":"ACK","payload_len":4,"payload_preview":"dGVzdA==","is_fragment":false,"truncated":false}`)
-	if err := r.handleLine(ctx, line); err != nil {
+	if err := r.handleLine(ctx, line, establishedSession("data-session")); err != nil {
 		t.Fatalf("packet: %v", err)
 	}
 	pkt := <-r.Packets()
@@ -58,7 +59,7 @@ func TestHandleLineDataFrame(t *testing.T) {
 
 func TestHandleLineBadJSON(t *testing.T) {
 	r := New(Config{BufferSize: 1}, zap.NewNop())
-	if err := r.handleLine(context.Background(), []byte(`{"timestamp_sec"`)); err == nil {
+	if err := r.handleLine(context.Background(), []byte(`{"timestamp_sec"`), &connectionSession{}); err == nil {
 		t.Fatal("expected bad JSON error")
 	}
 }
@@ -73,7 +74,7 @@ func TestHandleLineRejectsInvalidPacketContract(t *testing.T) {
 		`{"timestamp_sec":1,"timestamp_usec":0,"src_ip":"10.0.0.1","dst_ip":"10.0.0.2","protocol":6,"payload_len":3,"payload_preview":"dGVzdA=="}`,
 	}
 	for _, line := range tests {
-		if err := r.handleLine(context.Background(), []byte(line)); err == nil {
+		if err := r.handleLine(context.Background(), []byte(line), establishedSession("contract-session")); err == nil {
 			t.Fatalf("expected invalid packet frame to be rejected: %s", line)
 		}
 	}
@@ -94,14 +95,15 @@ func TestWaitForPacketReturnsEOFForClosedChannel(t *testing.T) {
 func TestHandleLineContextCancelWhileBlocked(t *testing.T) {
 	r := New(Config{BufferSize: 1}, zap.NewNop())
 	ctx, cancel := context.WithCancel(context.Background())
+	session := establishedSession("cancel-session")
 
 	line := []byte(`{"timestamp_sec":1,"timestamp_usec":2,"src_ip":"10.0.0.1","dst_ip":"10.0.0.2","src_port":1,"dst_port":2,"protocol":6,"payload_len":0,"is_fragment":false,"truncated":false}`)
-	if err := r.handleLine(ctx, line); err != nil {
+	if err := r.handleLine(ctx, line, session); err != nil {
 		t.Fatalf("first packet: %v", err)
 	}
 
 	done := make(chan error, 1)
-	go func() { done <- r.handleLine(ctx, line) }()
+	go func() { done <- r.handleLine(ctx, line, session) }()
 
 	select {
 	case err := <-done:
@@ -117,6 +119,175 @@ func TestHandleLineContextCancelWhileBlocked(t *testing.T) {
 		}
 	case <-time.After(time.Second):
 		t.Fatal("timed out waiting for context cancellation")
+	}
+}
+
+func TestHandleConnRejectsSessionProtocolViolations(t *testing.T) {
+	tests := []struct {
+		name   string
+		frames []any
+	}{
+		{
+			name:   "packet before hello",
+			frames: []any{testPacketFrame(80)},
+		},
+		{
+			name: "heartbeat before hello",
+			frames: []any{HeartbeatFrame{
+				Type: "heartbeat", SessionID: "session-one", Seq: 1,
+			}},
+		},
+		{
+			name: "duplicate hello",
+			frames: []any{
+				HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "session-one", PID: 1, Hostname: "host", MaxPayloadLen: 4096},
+				HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "session-two", PID: 2, Hostname: "host", MaxPayloadLen: 4096},
+			},
+		},
+		{
+			name: "mismatched heartbeat session",
+			frames: []any{
+				HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "session-one", PID: 1, Hostname: "host", MaxPayloadLen: 4096},
+				HeartbeatFrame{Type: "heartbeat", SessionID: "session-two", Seq: 1},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			metrics := stats.New()
+			r := New(Config{BufferSize: 1, Stats: metrics}, zap.NewNop())
+			server, client := net.Pipe()
+			defer client.Close()
+			done := make(chan struct{})
+			go func() {
+				r.handleConn(context.Background(), server)
+				close(done)
+			}()
+
+			for _, frame := range tt.frames {
+				if err := writeJSONFrame(client, frame); err != nil {
+					t.Fatalf("write frame: %v", err)
+				}
+			}
+			select {
+			case <-done:
+			case <-time.After(time.Second):
+				t.Fatal("protocol violation did not close the connection")
+			}
+			if got := metrics.Snapshot().DecodeErrors; got != 1 {
+				t.Fatalf("decode errors = %d, want exactly 1", got)
+			}
+			if got := len(r.Packets()); got != 0 {
+				t.Fatalf("rejected connection queued %d packet(s)", got)
+			}
+		})
+	}
+}
+
+func TestProtocolViolationClosesOnlyOffendingConnection(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	metrics := stats.New()
+	r := New(Config{BufferSize: 1, Stats: metrics}, zap.NewNop())
+
+	validServer, validClient := net.Pipe()
+	defer validClient.Close()
+	validDone := make(chan struct{})
+	go func() {
+		r.handleConn(ctx, validServer)
+		close(validDone)
+	}()
+	if err := writeJSONFrame(validClient, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "valid", PID: 1, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
+		t.Fatalf("write valid hello: %v", err)
+	}
+
+	badServer, badClient := net.Pipe()
+	badDone := make(chan struct{})
+	go func() {
+		r.handleConn(ctx, badServer)
+		close(badDone)
+	}()
+	if err := writeJSONFrame(badClient, testPacketFrame(81)); err != nil {
+		t.Fatalf("write violating packet: %v", err)
+	}
+	select {
+	case <-badDone:
+	case <-time.After(time.Second):
+		t.Fatal("offending connection remained open")
+	}
+	_ = badClient.Close()
+
+	if err := writeJSONFrame(validClient, testPacketFrame(443)); err != nil {
+		t.Fatalf("valid connection closed with offender: %v", err)
+	}
+	packetCtx, packetCancel := context.WithTimeout(context.Background(), time.Second)
+	pkt, err := WaitForPacket(packetCtx, r.Packets())
+	packetCancel()
+	if err != nil || pkt.DstPort != 443 {
+		t.Fatalf("valid connection packet=%+v err=%v", pkt, err)
+	}
+	if got := metrics.Snapshot().DecodeErrors; got != 1 {
+		t.Fatalf("decode errors = %d, want exactly 1", got)
+	}
+
+	cancel()
+	select {
+	case <-validDone:
+	case <-time.After(time.Second):
+		t.Fatal("valid connection did not stop after cancellation")
+	}
+}
+
+func TestStartProtocolViolationReleasesConnectionCapacity(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	metrics := stats.New()
+	r := New(Config{Path: path, MaxConnections: 1, BufferSize: 1, Stats: metrics}, zap.NewNop())
+	if err := r.Start(ctx); err != nil {
+		t.Fatalf("start receiver: %v", err)
+	}
+	defer func() {
+		cancel()
+		r.Wait()
+	}()
+
+	offender, err := dialUnix(path)
+	if err != nil {
+		t.Fatalf("dial offending connection: %v", err)
+	}
+	if err := writeJSONFrame(offender, testPacketFrame(80)); err != nil {
+		t.Fatalf("write violating packet: %v", err)
+	}
+	if err := offender.SetReadDeadline(time.Now().Add(time.Second)); err != nil {
+		t.Fatalf("set offender read deadline: %v", err)
+	}
+	if _, err := offender.Read(make([]byte, 1)); err == nil {
+		t.Fatal("offending connection remained open")
+	}
+	_ = offender.Close()
+
+	var replacement net.Conn
+	accepted := false
+	deadline := time.Now().Add(time.Second)
+	for time.Now().Before(deadline) {
+		replacement, err = net.Dial("unix", path)
+		if err == nil {
+			err = writeJSONFrame(replacement, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "replacement", PID: 2, Hostname: "host", MaxPayloadLen: 4096})
+			if err == nil && waitForSessionWithin(r, "replacement", 50*time.Millisecond) {
+				accepted = true
+				break
+			}
+			_ = replacement.Close()
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	if !accepted {
+		t.Fatalf("replacement was not accepted after protocol violation: %v", err)
+	}
+	defer replacement.Close()
+	if got := metrics.Snapshot().DecodeErrors; got != 1 {
+		t.Fatalf("decode errors = %d, want exactly 1", got)
 	}
 }
 
@@ -220,6 +391,56 @@ func TestStartAcceptsReconnectOnSameUnixSocket(t *testing.T) {
 	}
 	if got := r.State(); got.SessionID != "session-two" {
 		t.Fatalf("receiver state did not update after reconnect: %+v", got)
+	}
+}
+
+func TestConcurrentConnectionsKeepSessionStateLocal(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	metrics := stats.New()
+	r := New(Config{Path: path, BufferSize: 2, Stats: metrics}, zap.NewNop())
+	if err := r.Start(ctx); err != nil {
+		t.Fatalf("start receiver: %v", err)
+	}
+	defer func() {
+		cancel()
+		r.Wait()
+	}()
+
+	first, err := dialUnix(path)
+	if err != nil {
+		t.Fatalf("dial first connection: %v", err)
+	}
+	defer first.Close()
+	second, err := dialUnix(path)
+	if err != nil {
+		t.Fatalf("dial second connection: %v", err)
+	}
+	defer second.Close()
+
+	if err := writeJSONFrame(first, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "session-one", PID: 1, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
+		t.Fatalf("write first hello: %v", err)
+	}
+	if err := writeJSONFrame(second, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "session-two", PID: 2, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
+		t.Fatalf("write second hello: %v", err)
+	}
+	if err := writeJSONFrame(first, HeartbeatFrame{Type: "heartbeat", SessionID: "session-one", Seq: 1}); err != nil {
+		t.Fatalf("write first heartbeat: %v", err)
+	}
+	if err := writeJSONFrame(second, HeartbeatFrame{Type: "heartbeat", SessionID: "session-two", Seq: 2}); err != nil {
+		t.Fatalf("write second heartbeat: %v", err)
+	}
+	if err := writeJSONFrame(first, testPacketFrame(8443)); err != nil {
+		t.Fatalf("write first packet after concurrent hellos: %v", err)
+	}
+	packetCtx, packetCancel := context.WithTimeout(context.Background(), time.Second)
+	pkt, err := WaitForPacket(packetCtx, r.Packets())
+	packetCancel()
+	if err != nil || pkt.DstPort != 8443 {
+		t.Fatalf("packet=%+v err=%v", pkt, err)
+	}
+	if got := metrics.Snapshot().DecodeErrors; got != 0 {
+		t.Fatalf("connection-local sessions produced %d decode errors", got)
 	}
 }
 
@@ -526,4 +747,18 @@ func waitForSessionWithin(r *Receiver, sessionID string, timeout time.Duration) 
 		time.Sleep(10 * time.Millisecond)
 	}
 	return false
+}
+
+func establishedSession(sessionID string) *connectionSession {
+	return &connectionSession{helloReceived: true, sessionID: sessionID}
+}
+
+func testPacketFrame(dstPort uint16) map[string]any {
+	return map[string]any{
+		"timestamp_sec": 1, "timestamp_usec": 2,
+		"src_ip": "10.0.0.1", "dst_ip": "10.0.0.2",
+		"src_port": 1, "dst_port": dstPort, "protocol": 6,
+		"payload_len": 0, "payload_preview": "",
+		"is_fragment": false, "truncated": false,
+	}
 }

@@ -61,7 +61,7 @@ Stop if the checked-in C sender does not satisfy the proposed ordering,
 compatibility requires ambiguous legacy clients, peer authentication is
 required, or work reaches tag/publication authority.
 
-## Blocked Checkpoint
+## Reconnect Authorization
 
 The required sender preflight fired the stop condition. The initial connection
 sends hello from `capture/src/main.c`, but its `UDS_ERR_PIPE` recovery calls
@@ -70,6 +70,18 @@ helper in `capture/src/uds_sender.c` only reconnects that socket. A receiver-onl
 implementation would reject the next packet or heartbeat from a valid checked-in
 capture process.
 
-Resume only after product authority either permits a C reconnect-lifecycle
-change that sends hello before replacement-connection traffic, with direct C
-and E2E coverage, or defines another explicit compatibility contract.
+On 2026-07-20, the user explicitly authorized changing the C reconnect path to
+send hello before any packet or heartbeat on each replacement connection.
+R90-14 resumed with direct C socket-reconnect, Go connection-local state, full
+native, and E2E coverage required before delivery.
+
+## Local Validation
+
+- C sender reconnect tests passed 20 consecutive real Unix-socket runs and
+  prove hello is the first replacement-connection frame.
+- Receiver race tests passed 20 consecutive runs across all four state
+  rejection conditions, connection isolation, capacity reuse, concurrent
+  connection-local sessions, valid reconnect, idle expiry, and cancellation.
+- Full native C and Go race tests, C ASan tests, E2E smoke, documentation,
+  knowledge, JSON, and diff checks passed.
+- Commit, remote verification, and Vault synchronization remain pending.

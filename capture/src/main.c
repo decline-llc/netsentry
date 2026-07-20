@@ -38,6 +38,7 @@ static uint64_t g_parse_errors = 0;
 static uint32_t g_hb_seq       = 0;
 
 static char g_session_id[NS_SESSION_ID_LEN];
+static char g_hostname[64];
 
 /* ---- signal handler --------------------------------------------------- */
 static void sig_handler(int sig) {
@@ -66,6 +67,12 @@ static int parse_connect_retries(const char *value, int *result) {
     return 0;
 }
 
+static UDSResult reconnect_session(void) {
+    fprintf(stderr, "[capture] UDS connection lost, reconnecting session\n");
+    return uds_reconnect_with_hello(g_session_id, NS_VERSION, getpid(),
+                                    g_hostname);
+}
+
 /* ---- pcap callback ---------------------------------------------------- */
 static void packet_handler(uint8_t *user, const struct pcap_pkthdr *hdr,
                             const uint8_t *raw) {
@@ -85,10 +92,9 @@ static void packet_handler(uint8_t *user, const struct pcap_pkthdr *hdr,
         g_sent++;
     } else {
         g_dropped++;
-        if (r == UDS_ERR_PIPE) {
-            /* Go engine disconnected — attempt reconnect to the configured path. */
-            fprintf(stderr, "[capture] UDS pipe broken, reconnecting\n");
-            if (uds_reconnect() != UDS_OK) {
+        if (r == UDS_ERR_PIPE || r == UDS_ERR_CONN) {
+            /* Establish hello on the replacement connection before more traffic. */
+            if (reconnect_session() != UDS_OK) {
                 g_dropped++;
             }
         }
@@ -148,9 +154,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    char hostname[64] = {0};
-    gethostname(hostname, sizeof(hostname) - 1);
-    if (uds_send_hello(g_session_id, NS_VERSION, getpid(), hostname) != UDS_OK) {
+    gethostname(g_hostname, sizeof(g_hostname) - 1);
+    if (uds_send_hello(g_session_id, NS_VERSION, getpid(), g_hostname) != UDS_OK) {
         fprintf(stderr, "[capture] failed to send hello frame\n");
         uds_close();
         return 1;
@@ -222,7 +227,12 @@ int main(int argc, char *argv[]) {
                 .avg_json_serialize_us = uds_avg_json_serialize_us(),
                 .uds_write_errors     = uds_write_errors(),
             };
-            uds_send_heartbeat(&hb, g_session_id);
+            UDSResult hb_result = uds_send_heartbeat(&hb, g_session_id);
+            if (hb_result == UDS_ERR_PIPE || hb_result == UDS_ERR_CONN) {
+                if (reconnect_session() != UDS_OK) {
+                    g_dropped++;
+                }
+            }
             last_hb = now;
         }
     }
