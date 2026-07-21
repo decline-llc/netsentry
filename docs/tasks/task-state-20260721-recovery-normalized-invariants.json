@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "c1bed1e25d90e88b7d29aad0d294e4e2d137bcf8",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main matches the remote baseline",
     "Verified R90-17 feature and delivery records in the existing local Vault",
@@ -15,20 +15,25 @@
     "Added direct durable-ID, first-seen, last-seen, window-start, and aggregate-count rejection coverage",
     "Proved every rejection preserves the complete log and missing/existing database state",
     "Retained valid replay, truncation, and event-ID idempotency behavior",
-    "Passed 20 uncached focused race runs, the full native C/Go race suite, E2E smoke, documentation, knowledge, JSON, and diff checks"
+    "Passed 20 uncached focused race runs, the full native C/Go race suite, E2E smoke, documentation, knowledge, JSON, and diff checks",
+    "Pushed cb2fd7d1889b33a01829226becb44260f1668651 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Run the pre-commit knowledge gate and sensitive-information review",
-    "Commit, push, fetch-verify, and synchronize the validated increment",
-    "Reconcile roadmap and task state against verified remote and Vault evidence"
-  ],
-  "todo": [
-    "Record verified delivery evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
+  "delivery": {
+    "commit": "cb2fd7d1889b33a01829226becb44260f1668651",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "c1bed1e25d90e88b7d29aad0d294e4e2d137bcf8..cb2fd7d1889b33a01829226becb44260f1668651",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
   "remaining_risks": [
     "Validation must derive identity and window semantics from writer behavior",
     "Rejected recovery input must not create or modify the target database",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Complete R90-18 only: reject recovery records with inconsistent normalized identity/time/window/count fields before SQLite initialization, preserve input and database state, retain valid replay, and do not repair logs or publish artifacts."
+  "resume_instructions": "R90-18 is complete at cb2fd7d1889b33a01829226becb44260f1668651. Do not repeat its implementation, validation, push, or Vault synchronization. No later engineering increment is selected; refresh the rolling roadmap on the next $netsentry-next trigger. Do not create v0.1.1 or publish artifacts."
 }

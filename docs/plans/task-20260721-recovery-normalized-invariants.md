@@ -74,4 +74,10 @@ operator data is needed, or work reaches tag/publication authority.
 - Valid replay, truncation, and event-ID idempotency regressions pass.
 - Twenty uncached focused race runs, the full native C/Go race suite, E2E
   smoke, documentation, knowledge, JSON, and diff checks pass.
-- Delivery verification is pending.
+- Feature commit: `cb2fd7d1889b33a01829226becb44260f1668651`
+- Fetched `origin/main`: verified at the feature commit
+- Post-fetch knowledge validation: passed
+- Vault range:
+  `c1bed1e25d90e88b7d29aad0d294e4e2d137bcf8..cb2fd7d1889b33a01829226becb44260f1668651`
+- Vault iteration note, full index, and MOC link: verified
+- Tag/publication actions: none
