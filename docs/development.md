@@ -262,10 +262,13 @@ and validates the complete log before writing any recovered alert; malformed
 JSON or a missing final newline fails startup with `ErrRecoveryLogIntegrity`,
 leaves the log byte-for-byte unchanged, and does not persist a valid prefix.
 Each decoded record must contain the durable identity (`id`, `event_id`, and
-`rule_id`), timestamps/window, positive aggregate count, and network tuple
-(`src_ip`, `dst_ip`, and `protocol`) emitted by the normalized recovery writer.
-A missing or empty required field reports its record number and fails through
-the same preservation boundary before replay starts.
+`rule_id`), timestamps/window, aggregate count, and network tuple (`src_ip`,
+`dst_ip`, and `protocol`) emitted by the normalized recovery writer. The
+durable `id` must equal the normalized aggregation identity, `first_seen` and
+`last_seen` must equal `timestamp`, `window_start` must match the configured
+aggregation window, and `aggregated_count` must equal one. A missing, empty, or
+inconsistent field reports its record number and fails through the same
+preservation boundary before replay starts.
 This complete preflight occurs before database-directory creation and writable
 SQLite initialization. NetSentry replays the validated in-memory record set
 after initialization without a second read; invalid input therefore leaves a

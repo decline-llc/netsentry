@@ -457,6 +457,104 @@ func TestStoreRejectsSemanticallyInvalidRecoveryLogWithoutModification(t *testin
 	}
 }
 
+func TestStoreRejectsInconsistentNormalizedRecoveryLogWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 21, 4, 0, 0, 0, time.UTC)
+	window := time.Minute
+	valid := normalizeAlert(makeAlert(now, "valid-prefix"), now, window)
+	validJSON, err := json.Marshal(valid)
+	if err != nil {
+		t.Fatalf("marshal valid recovery record: %v", err)
+	}
+
+	tests := []struct {
+		name      string
+		mutate    func(*model.Alert)
+		condition string
+	}{
+		{
+			name:      "durable id",
+			mutate:    func(alert *model.Alert) { alert.ID = "inconsistent-id" },
+			condition: "field id does not match normalized identity",
+		},
+		{
+			name:      "first seen",
+			mutate:    func(alert *model.Alert) { alert.FirstSeen = alert.Timestamp.Add(-time.Second) },
+			condition: "field first_seen does not match timestamp",
+		},
+		{
+			name:      "last seen",
+			mutate:    func(alert *model.Alert) { alert.LastSeen = alert.Timestamp.Add(time.Second) },
+			condition: "field last_seen does not match timestamp",
+		},
+		{
+			name:      "window start",
+			mutate:    func(alert *model.Alert) { alert.WindowStart = alert.WindowStart.Add(window) },
+			condition: "field window_start does not match aggregation window",
+		},
+		{
+			name:      "aggregate count",
+			mutate:    func(alert *model.Alert) { alert.AggregatedCount = 2 },
+			condition: "required field aggregated_count must equal 1",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			invalid := valid
+			test.mutate(&invalid)
+			invalidJSON, err := json.Marshal(invalid)
+			if err != nil {
+				t.Fatalf("marshal inconsistent recovery record: %v", err)
+			}
+			contents := append(append(append([]byte(nil), validJSON...), '\n'), invalidJSON...)
+			contents = append(contents, '\n')
+
+			for _, existing := range []bool{false, true} {
+				state := "missing database"
+				if existing {
+					state = "existing database"
+				}
+				t.Run(state, func(t *testing.T) {
+					dir := t.TempDir()
+					dbPath := filepath.Join(dir, "alerts.db")
+					recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+					var beforeDB []byte
+					if existing {
+						createSQLiteFixture(t, dbPath, schemaSQL, `DROP INDEX idx_alerts_last_seen`)
+						beforeDB = readFileBytes(t, dbPath)
+					}
+					if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+						t.Fatalf("write inconsistent recovery log: %v", err)
+					}
+
+					store, err := Open(context.Background(), Options{
+						Path:              dbPath,
+						RecoveryLogPath:   recoveryLogPath,
+						JournalMode:       "WAL",
+						BusyTimeoutMS:     1000,
+						AggregationWindow: window,
+						Now:               func() time.Time { return now },
+					})
+					if store != nil {
+						_ = store.Close()
+						t.Fatal("inconsistent recovery log returned a usable store")
+					}
+					if !errors.Is(err, ErrRecoveryLogIntegrity) || !strings.Contains(err.Error(), "record 2") || !strings.Contains(err.Error(), test.condition) {
+						t.Fatalf("startup error = %v, want record 2 ErrRecoveryLogIntegrity containing %q", err, test.condition)
+					}
+					assertFileBytes(t, recoveryLogPath, contents)
+					if existing {
+						assertFileBytes(t, dbPath, beforeDB)
+						assertSQLiteIndexMissing(t, dbPath, "idx_alerts_last_seen")
+					} else {
+						assertFileDoesNotExist(t, dbPath)
+					}
+				})
+			}
+		})
+	}
+}
+
 func TestStoreRecoveryPreflightPreservesCompatibleDatabase(t *testing.T) {
 	tests := []struct {
 		name     string

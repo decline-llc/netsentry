@@ -105,7 +105,10 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 
 	dbPath := resolveDBPath(opts)
 	recoveryLogPath := resolveRecoveryLogPath(opts, dbPath)
-	pendingRecovery, err := (&Store{recoveryLogPath: recoveryLogPath}).readRecoveryLog()
+	pendingRecovery, err := (&Store{
+		recoveryLogPath:   recoveryLogPath,
+		aggregationWindow: opts.AggregationWindow,
+	}).readRecoveryLog()
 	if err != nil {
 		return nil, err
 	}
@@ -934,7 +937,7 @@ func (s *Store) readRecoveryLog() ([]*model.Alert, error) {
 		if err := json.Unmarshal(scanner.Bytes(), &alert); err != nil {
 			return nil, fmt.Errorf("%w: decode record %d: %v", ErrRecoveryLogIntegrity, record, err)
 		}
-		if err := validateRecoveryAlert(alert); err != nil {
+		if err := validateRecoveryAlert(alert, s.aggregationWindow); err != nil {
 			return nil, fmt.Errorf("%w: record %d: %v", ErrRecoveryLogIntegrity, record, err)
 		}
 		alerts = append(alerts, &alert)
@@ -945,7 +948,7 @@ func (s *Store) readRecoveryLog() ([]*model.Alert, error) {
 	return alerts, nil
 }
 
-func validateRecoveryAlert(alert model.Alert) error {
+func validateRecoveryAlert(alert model.Alert, aggregationWindow time.Duration) error {
 	requiredStrings := []struct {
 		name  string
 		value string
@@ -976,8 +979,21 @@ func validateRecoveryAlert(alert model.Alert) error {
 			return fmt.Errorf("required field %s is zero", field.name)
 		}
 	}
-	if alert.AggregatedCount < 1 {
-		return errors.New("required field aggregated_count must be positive")
+	normalized := normalizeAlert(&alert, alert.Timestamp, aggregationWindow)
+	if alert.ID != normalized.ID {
+		return errors.New("field id does not match normalized identity")
+	}
+	if !alert.FirstSeen.Equal(normalized.FirstSeen) {
+		return errors.New("field first_seen does not match timestamp")
+	}
+	if !alert.LastSeen.Equal(normalized.LastSeen) {
+		return errors.New("field last_seen does not match timestamp")
+	}
+	if !alert.WindowStart.Equal(normalized.WindowStart) {
+		return errors.New("field window_start does not match aggregation window")
+	}
+	if alert.AggregatedCount != normalized.AggregatedCount {
+		return errors.New("required field aggregated_count must equal 1")
 	}
 	return nil
 }

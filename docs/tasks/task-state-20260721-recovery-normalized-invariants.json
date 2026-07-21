@@ -1,0 +1,34 @@
+{
+  "task": "r90-18-recovery-normalized-invariants",
+  "timestamp": "2026-07-21T03:57:46-07:00",
+  "branch": "main",
+  "remote_baseline": "c1bed1e25d90e88b7d29aad0d294e4e2d137bcf8",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main matches the remote baseline",
+    "Verified R90-17 feature and delivery records in the existing local Vault",
+    "Refreshed the empty roadmap from release boundaries and remaining storage integrity gaps",
+    "Selected R90-18 as the highest-priority dependency-ready increment",
+    "Confirmed recovery replay currently accepts and silently renormalizes inconsistent durable fields",
+    "Derived recovery validation from the same normalizeAlert behavior used before durable writes",
+    "Added direct durable-ID, first-seen, last-seen, window-start, and aggregate-count rejection coverage",
+    "Proved every rejection preserves the complete log and missing/existing database state",
+    "Retained valid replay, truncation, and event-ID idempotency behavior",
+    "Passed 20 uncached focused race runs, the full native C/Go race suite, E2E smoke, documentation, knowledge, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Run the pre-commit knowledge gate and sensitive-information review",
+    "Commit, push, fetch-verify, and synchronize the validated increment",
+    "Reconcile roadmap and task state against verified remote and Vault evidence"
+  ],
+  "todo": [
+    "Record verified delivery evidence"
+  ],
+  "remaining_risks": [
+    "Validation must derive identity and window semantics from writer behavior",
+    "Rejected recovery input must not create or modify the target database",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Complete R90-18 only: reject recovery records with inconsistent normalized identity/time/window/count fields before SQLite initialization, preserve input and database state, retain valid replay, and do not repair logs or publish artifacts."
+}

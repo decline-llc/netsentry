@@ -203,10 +203,12 @@ Current build:
   stop startup with `ErrRecoveryLogIntegrity`; no valid prefix is persisted and
   the log remains byte-for-byte unchanged. Valid logs are truncated only after
   SQLite commits.
-- Each decoded recovery record must also retain the identity, timestamp/window,
-  positive aggregate count, and network fields emitted by normalized alert
-  writes. A semantic failure reports the record and field through
-  `ErrRecoveryLogIntegrity` before any replay write begins.
+- Each decoded recovery record must retain the required identity, time, count,
+  and network fields emitted by normalized alert writes. Its durable `id` must
+  match the normalized aggregation identity; `first_seen` and `last_seen` must
+  equal `timestamp`; `window_start` must match the configured aggregation
+  window; and `aggregated_count` must equal one. A semantic failure reports the
+  record and field through `ErrRecoveryLogIntegrity` before replay begins.
 - The complete recovery preflight runs before database-directory creation or
   any writable SQLite open. Startup replays that validated in-memory snapshot
   after initialization rather than rereading the file, so rejected input
