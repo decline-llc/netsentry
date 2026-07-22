@@ -37,7 +37,7 @@
 | R90-18 | Jul 21–Oct 9 | Complete early | Reject inconsistent normalized recovery records before replay. | R90-17 | Recovery records whose durable ID, first/last timestamps, window start, or aggregate count cannot be emitted by the normalized writer fail before SQLite initialization; the complete log and target database remain unchanged, while valid replay behavior is preserved. |
 | R90-19 | Jul 22–Oct 15 | Complete early | Preflight recovery logs before runtime append. | R90-18 | A runtime write rejects an already malformed or semantically invalid recovery log before appending or touching SQLite; the complete log and database remain unchanged, while valid pending-log persistence remains compatible. |
 | R90-20 | Jul 22–Oct 20 | Complete early | Bound recovery-record encoding and replay. | R90-19 | Valid writer-generated records above the scanner's former 64 KiB ceiling persist and replay; records above the explicit 4 MiB durable limit fail before append, leaving the recovery log and database unchanged. |
-| R90-21 | Jul 22–Oct 20 | In progress | Reject write-blocking SQLite schema extensions. | R90-20 | Existing primary and historical databases with unknown `NOT NULL` columns lacking a usable non-NULL default fail read-only preflight and remain unchanged; nullable and non-NULL-defaulted extra columns remain compatible. |
+| R90-21 | Jul 22–Oct 20 | Complete early | Reject write-blocking SQLite schema extensions. | R90-20 | Existing primary and historical databases with unknown `NOT NULL` columns lacking a usable non-NULL default fail read-only preflight and remain unchanged; nullable and non-NULL-defaulted extra columns remain compatible. |
 
 ## R90-07 Definition
 
@@ -342,7 +342,15 @@
   exact full-SHA Vault note, index, and MOC are verified. The queue was
   refreshed on Jul 22 from the clean fetched baseline, completed task state,
   release boundaries, SQLite write-critical schema constraints, and verified
-  Vault evidence. R90-21 is active. Publication remains unauthorized.
+  Vault evidence. R90-21 completed early at
+  `352cf8fc96ab70a73a0b3f7e3da0cf4f32245160`: both write-critical tables
+  now reject unknown mandatory columns without usable defaults before writable
+  initialization, while compatible extensions remain writable. Twenty focused
+  race runs, the full native suite, E2E smoke, documentation, and knowledge
+  checks passed; fetched `origin/main`, the post-fetch knowledge gate, and the
+  exact full-SHA Vault note, index, and MOC are verified. No later engineering
+  increment is selected; refresh the rolling roadmap on the next
+  `$netsentry-next` trigger. Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -413,4 +421,4 @@
 
 ## Current Checkpoint
 
-R90-20 completed early at `1009187f1dae2cc1de8abde1738b159f3c4bd8e9` with fetched-remote, post-fetch knowledge, and exact Vault evidence verified. The queue was refreshed on Jul 22 from the clean fetched baseline, completed task state, release boundaries, SQLite write-critical schema constraints, and the existing Vault. R90-21 is active: reject unknown mandatory columns that fixed NetSentry inserts cannot populate, preserve primary and historical databases, and retain nullable/defaulted extension compatibility. Publication remains unauthorized.
+R90-21 completed early at `352cf8fc96ab70a73a0b3f7e3da0cf4f32245160` after the empty queue was refreshed from the clean fetched baseline, completed task state, release boundaries, SQLite write-critical schema constraints, and verified Vault evidence. Unknown mandatory columns without usable defaults in `alerts` or `alert_events`, including literal NULL defaults and historical shards, now fail before writable initialization with byte preservation. Nullable and non-NULL-defaulted extensions remain writable. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.

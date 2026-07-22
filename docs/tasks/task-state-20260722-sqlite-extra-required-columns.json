@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "17d30a38b12b14b51e050789974f76397bea9a02",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main matches the remote baseline",
     "Verified R90-20 feature and delivery records in the existing local Vault",
@@ -15,20 +15,25 @@
     "Added direct alerts, alert_events, and literal-NULL-default primary rejection coverage with byte preservation",
     "Added historical-shard mandatory-column rejection with byte preservation",
     "Proved nullable and non-NULL-defaulted extensions reopen and accept complete alert/event writes",
-    "Passed 20 uncached focused race runs, the full native C/Go race suite, E2E smoke, documentation, JSON, and diff checks"
+    "Passed 20 uncached focused race runs, the full native C/Go race suite, E2E smoke, documentation, knowledge, JSON, and diff checks",
+    "Pushed 352cf8fc96ab70a73a0b3f7e3da0cf4f32245160 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact full-SHA Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Run the pre-commit knowledge gate and sensitive-information review",
-    "Commit, push, fetch-verify, and synchronize the validated increment",
-    "Reconcile roadmap and task state against verified remote and Vault evidence"
-  ],
-  "todo": [
-    "Record verified delivery evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
+  "delivery": {
+    "commit": "352cf8fc96ab70a73a0b3f7e3da0cf4f32245160",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "17d30a38b12b14b51e050789974f76397bea9a02..352cf8fc96ab70a73a0b3f7e3da0cf4f32245160",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
+  },
   "remaining_risks": [
     "Both write-critical tables must be checked",
     "Nullable and defaulted operator extensions must remain compatible",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Complete R90-21 only: reject unknown mandatory columns without defaults before writable initialization, preserve primary and historical database bytes, retain compatible extensions, and do not migrate schemas or publish artifacts."
+  "resume_instructions": "R90-21 is complete at 352cf8fc96ab70a73a0b3f7e3da0cf4f32245160. Do not repeat its implementation, validation, push, or Vault synchronization. No later engineering increment is selected; refresh the rolling roadmap on the next $netsentry-next trigger. Do not create v0.1.1 or publish artifacts."
 }

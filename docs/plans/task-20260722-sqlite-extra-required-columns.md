@@ -72,4 +72,10 @@ expressions, rewriting operator tables, operator data, or publication authority.
   complete alert/event write; the defaulted value is verified.
 - Twenty uncached focused race runs, the full native C/Go race suite, E2E
   smoke, documentation, JSON, and diff checks pass.
+- Feature commit: `352cf8fc96ab70a73a0b3f7e3da0cf4f32245160`
+- Fetched `origin/main`: verified at the feature commit
+- Post-fetch knowledge validation: passed
+- Vault range:
+  `17d30a38b12b14b51e050789974f76397bea9a02..352cf8fc96ab70a73a0b3f7e3da0cf4f32245160`
+- Vault iteration note, full index, and MOC link: verified
 - Tag/publication actions: none.
