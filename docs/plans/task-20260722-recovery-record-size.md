@@ -74,4 +74,11 @@ acceptance, automatic repair, operator data, or tag/publication authority.
 - Existing malformed and truncated input preservation remains compatible.
 - Twenty uncached focused race runs, the full native C/Go race suite, E2E
   smoke, documentation, JSON, and diff checks pass.
+- Feature commit: `1009187f1dae2cc1de8abde1738b159f3c4bd8e9`
+- Fetched `origin/main`: verified at the feature commit
+- Post-fetch knowledge validation: passed
+- Vault range:
+  `7f5ad8ecd1f2850c7641be4132aa44d864628097..1009187f1dae2cc1de8abde1738b159f3c4bd8e9`
+- Vault iteration note, full index, and MOC link: verified after an idempotent
+  full-SHA replay replaced the initially abbreviated command endpoint
 - Tag/publication actions: none.

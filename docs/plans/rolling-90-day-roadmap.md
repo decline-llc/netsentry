@@ -36,7 +36,7 @@
 | R90-17 | Jul 20–Oct 2 | Complete early | Preflight recovery logs before writable SQLite initialization. | R90-16 | Invalid recovery input fails before a missing database can be created or a compatible existing database can be modified; valid replay and initialization behavior remain unchanged. |
 | R90-18 | Jul 21–Oct 9 | Complete early | Reject inconsistent normalized recovery records before replay. | R90-17 | Recovery records whose durable ID, first/last timestamps, window start, or aggregate count cannot be emitted by the normalized writer fail before SQLite initialization; the complete log and target database remain unchanged, while valid replay behavior is preserved. |
 | R90-19 | Jul 22–Oct 15 | Complete early | Preflight recovery logs before runtime append. | R90-18 | A runtime write rejects an already malformed or semantically invalid recovery log before appending or touching SQLite; the complete log and database remain unchanged, while valid pending-log persistence remains compatible. |
-| R90-20 | Jul 22–Oct 20 | In progress | Bound recovery-record encoding and replay. | R90-19 | Valid writer-generated records above the scanner's former 64 KiB ceiling persist and replay; records above the explicit 4 MiB durable limit fail before append, leaving the recovery log and database unchanged. |
+| R90-20 | Jul 22–Oct 20 | Complete early | Bound recovery-record encoding and replay. | R90-19 | Valid writer-generated records above the scanner's former 64 KiB ceiling persist and replay; records above the explicit 4 MiB durable limit fail before append, leaving the recovery log and database unchanged. |
 
 ## R90-07 Definition
 
@@ -315,7 +315,15 @@
   index, and MOC are verified. The horizon was refreshed on Jul 22 through
   Oct 20 from the clean fetched baseline, completed task state, release
   boundaries, recovery reader/writer limits, and verified Vault evidence.
-  R90-20 is active. Publication remains unauthorized.
+  R90-20 completed early at
+  `1009187f1dae2cc1de8abde1738b159f3c4bd8e9`: writer batches are fully
+  encoded and checked before append, reader capacity accepts records through
+  4 MiB, and oversized output preserves the log and database. Twenty focused
+  race runs, the full native suite, E2E smoke, documentation, and knowledge
+  checks passed; fetched `origin/main`, the post-fetch knowledge gate, and the
+  exact full-SHA Vault note, index, and MOC are verified. No later engineering
+  increment is selected; refresh the rolling roadmap on the next
+  `$netsentry-next` trigger. Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -386,4 +394,4 @@
 
 ## Current Checkpoint
 
-R90-19 completed early at `9c93c8f82dfad07e17fcf57e4ba0818136b02710` with fetched-remote, post-fetch knowledge, and exact Vault evidence verified. The horizon was refreshed on Jul 22 through Oct 20 from the clean fetched baseline, completed task state, release boundaries, recovery reader/writer limits, and the existing Vault. R90-20 is active: accept valid recovery records above the scanner's former 64 KiB ceiling, enforce a shared 4 MiB durable-record limit before append, and preserve rejected log and database bytes. Publication remains unauthorized.
+R90-20 completed early at `1009187f1dae2cc1de8abde1738b159f3c4bd8e9` after the horizon was refreshed through Oct 20 from the clean fetched baseline, completed task state, release boundaries, recovery reader/writer limits, and verified Vault evidence. Valid 70 KiB and exact 4 MiB records persist and replay, while 4 MiB plus one byte fails before append with valid-prefix, log-byte, and database-byte preservation. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.
