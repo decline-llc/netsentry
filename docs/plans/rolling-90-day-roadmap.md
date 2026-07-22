@@ -35,7 +35,7 @@
 | R90-16 | Jul 20–Sep 25 | Complete early | Reject semantically invalid recovery-log records before replay. | R90-15 | Newline-terminated, syntactically valid JSON records that cannot satisfy the durable normalized-alert contract fail startup clearly; the complete recovery log remains unchanged, no valid prefix is persisted, and valid replay behavior is preserved. |
 | R90-17 | Jul 20–Oct 2 | Complete early | Preflight recovery logs before writable SQLite initialization. | R90-16 | Invalid recovery input fails before a missing database can be created or a compatible existing database can be modified; valid replay and initialization behavior remain unchanged. |
 | R90-18 | Jul 21–Oct 9 | Complete early | Reject inconsistent normalized recovery records before replay. | R90-17 | Recovery records whose durable ID, first/last timestamps, window start, or aggregate count cannot be emitted by the normalized writer fail before SQLite initialization; the complete log and target database remain unchanged, while valid replay behavior is preserved. |
-| R90-19 | Jul 22–Oct 15 | In progress | Preflight recovery logs before runtime append. | R90-18 | A runtime write rejects an already malformed or semantically invalid recovery log before appending or touching SQLite; the complete log and database remain unchanged, while valid pending-log persistence remains compatible. |
+| R90-19 | Jul 22–Oct 15 | Complete early | Preflight recovery logs before runtime append. | R90-18 | A runtime write rejects an already malformed or semantically invalid recovery log before appending or touching SQLite; the complete log and database remain unchanged, while valid pending-log persistence remains compatible. |
 
 ## R90-07 Definition
 
@@ -289,7 +289,15 @@
   gate, and the exact Vault note, full index, and MOC are verified. The queue
   was refreshed on Jul 22 from the clean fetched baseline, completed task
   state, release boundaries, the runtime recovery write path, and verified
-  Vault evidence. R90-19 is active. Publication remains unauthorized.
+  Vault evidence. R90-19 completed early at
+  `9c93c8f82dfad07e17fcf57e4ba0818136b02710`: runtime writes now reject
+  invalid existing recovery input before append or SQLite access, while valid
+  pending records remain compatible. Twenty focused race runs, the full native
+  suite, E2E smoke, documentation, and knowledge checks passed; fetched
+  `origin/main`, the post-fetch knowledge gate, and the exact Vault note, full
+  index, and MOC are verified. No later engineering increment is selected;
+  refresh the rolling roadmap on the next `$netsentry-next` trigger.
+  Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -360,4 +368,4 @@
 
 ## Current Checkpoint
 
-R90-18 completed early at `cb2fd7d1889b33a01829226becb44260f1668651` with fetched-remote, post-fetch knowledge, and exact Vault evidence verified. The empty queue was refreshed on Jul 22 from the clean fetched baseline, completed task state, release boundaries, the runtime recovery write path, and the existing Vault. R90-19 is active: preflight an existing recovery log before a normal write can append to it, preserve rejected log and database bytes, and retain valid pending-log behavior. Publication remains unauthorized.
+R90-19 completed early at `9c93c8f82dfad07e17fcf57e4ba0818136b02710` after the empty queue was refreshed from the clean fetched baseline, completed task state, release boundaries, the runtime recovery write path, and verified Vault evidence. Malformed, truncated, semantic-invalid, and normalized-invariant recovery input now fails a normal runtime write before append or SQLite access with full log and database preservation; valid pending records remain compatible. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.

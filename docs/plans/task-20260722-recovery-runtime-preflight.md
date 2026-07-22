@@ -67,4 +67,10 @@ change, automatic repair, operator data, or tag/publication authority.
   log truncates only after successful persistence.
 - Twenty uncached focused race runs, the full native C/Go race suite, E2E
   smoke, documentation, JSON, and diff checks pass.
+- Feature commit: `9c93c8f82dfad07e17fcf57e4ba0818136b02710`
+- Fetched `origin/main`: verified at the feature commit
+- Post-fetch knowledge validation: passed
+- Vault range:
+  `53c90ef4cefff4d22391196b6c8be61e3c8cc058..9c93c8f82dfad07e17fcf57e4ba0818136b02710`
+- Vault iteration note, full index, and MOC link: verified
 - Tag/publication actions: none.
