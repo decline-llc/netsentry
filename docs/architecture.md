@@ -218,6 +218,10 @@ Current build:
   Structural or semantic failure therefore leaves both the rejected log and
   SQLite unchanged; valid pending records are still persisted with the current
   batch before truncation.
+- Recovery writer batches are fully JSON-encoded and size-checked before the
+  log is opened. The reader and writer share a 4 MiB per-record limit, allowing
+  valid records above 64 KiB while rejecting oversized writer output before
+  any prefix can be appended.
 - Storage health tracking marks the store degraded after ordinary SQLite write/query errors and emergency after disk-full, quota, read-only filesystem, or disk I/O failures. Emergency mode stops retrying SQLite writes in the current process after the recovery log is updated when possible, and exposes that state through verbose health and Prometheus gauges.
 
 Remaining v0.1.0 storage work:

@@ -27,6 +27,12 @@ import (
 
 var ErrStorageEmergency = errors.New("alert storage is in emergency mode; clear disk/storage fault and restart NetSentry")
 
+const maxRecoveryRecordBytes = 4 << 20
+
+// ErrRecoveryRecordTooLarge reports that a writer-generated record exceeded
+// the durable JSONL size contract before the recovery log was opened.
+var ErrRecoveryRecordTooLarge = errors.New("alert recovery record exceeds 4 MiB durable limit; recovery log was not modified")
+
 // ErrRecoveryLogIntegrity reports that durable recovery input is malformed or
 // truncated and was left unchanged for operator-led recovery.
 var ErrRecoveryLogIntegrity = errors.New("alert recovery log failed integrity check; file was not modified")
@@ -876,6 +882,10 @@ func (s *Store) appendRecoveryLog(alerts []*model.Alert) error {
 	if s.recoveryLogPath == "" || len(alerts) == 0 {
 		return nil
 	}
+	records, err := encodeRecoveryRecords(alerts)
+	if err != nil {
+		return err
+	}
 	if err := os.MkdirAll(filepath.Dir(s.recoveryLogPath), 0o750); err != nil {
 		return fmt.Errorf("create alert recovery log dir: %w", err)
 	}
@@ -883,9 +893,8 @@ func (s *Store) appendRecoveryLog(alerts []*model.Alert) error {
 	if err != nil {
 		return fmt.Errorf("open alert recovery log: %w", err)
 	}
-	enc := json.NewEncoder(file)
-	for _, alert := range alerts {
-		if err := enc.Encode(alert); err != nil {
+	for _, record := range records {
+		if _, err := file.Write(record); err != nil {
 			_ = file.Close()
 			return fmt.Errorf("write alert recovery log: %w", err)
 		}
@@ -898,6 +907,21 @@ func (s *Store) appendRecoveryLog(alerts []*model.Alert) error {
 		return fmt.Errorf("close alert recovery log: %w", err)
 	}
 	return nil
+}
+
+func encodeRecoveryRecords(alerts []*model.Alert) ([][]byte, error) {
+	records := make([][]byte, 0, len(alerts))
+	for index, alert := range alerts {
+		record, err := json.Marshal(alert)
+		if err != nil {
+			return nil, fmt.Errorf("encode alert recovery record %d: %w", index+1, err)
+		}
+		if len(record) > maxRecoveryRecordBytes {
+			return nil, fmt.Errorf("%w: record %d encoded to %d bytes", ErrRecoveryRecordTooLarge, index+1, len(record))
+		}
+		records = append(records, append(record, '\n'))
+	}
+	return records, nil
 }
 
 func (s *Store) readRecoveryLog() ([]*model.Alert, error) {
@@ -934,6 +958,7 @@ func (s *Store) readRecoveryLog() ([]*model.Alert, error) {
 
 	var alerts []*model.Alert
 	scanner := bufio.NewScanner(file)
+	scanner.Buffer(make([]byte, 0, 64<<10), maxRecoveryRecordBytes+1)
 	record := 0
 	for scanner.Scan() {
 		record++

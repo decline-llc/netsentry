@@ -769,6 +769,138 @@ func TestStoreWriteBatchRejectsInvalidRecoveryLogBeforeAppend(t *testing.T) {
 	}
 }
 
+func TestStoreWritesRecoveryRecordAboveFormerScannerLimit(t *testing.T) {
+	now := time.Date(2026, 7, 22, 2, 30, 0, 0, time.UTC)
+	alert := makeRecoveryAlertWithEncodedSize(t, 70<<10, now)
+	dir := t.TempDir()
+	recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+	store, err := Open(context.Background(), Options{
+		Path:              filepath.Join(dir, "alerts.db"),
+		RecoveryLogPath:   recoveryLogPath,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now:               func() time.Time { return now },
+	})
+	if err != nil {
+		t.Fatalf("open store: %v", err)
+	}
+	defer store.Close()
+
+	if err := store.WriteBatch(context.Background(), []*model.Alert{alert}); err != nil {
+		t.Fatalf("write large recovery record: %v", err)
+	}
+	listed, err := store.List(context.Background())
+	if err != nil {
+		t.Fatalf("list large alert: %v", err)
+	}
+	if len(listed) != 1 || listed[0].RuleName != alert.RuleName {
+		t.Fatalf("large alert was not preserved: count=%d", len(listed))
+	}
+	if info, err := os.Stat(recoveryLogPath); err != nil || info.Size() != 0 {
+		t.Fatalf("recovery log should be truncated after large-record persistence, info=%+v err=%v", info, err)
+	}
+}
+
+func TestStoreReplaysRecoveryRecordAboveFormerScannerLimit(t *testing.T) {
+	now := time.Date(2026, 7, 22, 2, 35, 0, 0, time.UTC)
+	alert := makeRecoveryAlertWithEncodedSize(t, 70<<10, now)
+	dir := t.TempDir()
+	recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+	logOnly := &Store{recoveryLogPath: recoveryLogPath}
+	if err := logOnly.appendRecoveryLog([]*model.Alert{alert}); err != nil {
+		t.Fatalf("append large recovery record: %v", err)
+	}
+
+	store, err := Open(context.Background(), Options{
+		Path:              filepath.Join(dir, "alerts.db"),
+		RecoveryLogPath:   recoveryLogPath,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now:               func() time.Time { return now },
+	})
+	if err != nil {
+		t.Fatalf("replay large recovery record: %v", err)
+	}
+	defer store.Close()
+	listed, err := store.List(context.Background())
+	if err != nil {
+		t.Fatalf("list replayed large alert: %v", err)
+	}
+	if len(listed) != 1 || listed[0].RuleName != alert.RuleName {
+		t.Fatalf("large replay was not preserved: count=%d", len(listed))
+	}
+}
+
+func TestStoreAcceptsRecoveryRecordAtDurableLimit(t *testing.T) {
+	now := time.Date(2026, 7, 22, 2, 40, 0, 0, time.UTC)
+	alert := makeRecoveryAlertWithEncodedSize(t, maxRecoveryRecordBytes, now)
+	logOnly := &Store{
+		recoveryLogPath:   filepath.Join(t.TempDir(), "alerts-recovery.jsonl"),
+		aggregationWindow: time.Minute,
+	}
+	if err := logOnly.appendRecoveryLog([]*model.Alert{alert}); err != nil {
+		t.Fatalf("append boundary recovery record: %v", err)
+	}
+	alerts, err := logOnly.readRecoveryLog()
+	if err != nil {
+		t.Fatalf("read boundary recovery record: %v", err)
+	}
+	if len(alerts) != 1 || alerts[0].RuleName != alert.RuleName {
+		t.Fatalf("boundary recovery record changed: count=%d", len(alerts))
+	}
+}
+
+func TestStoreRejectsOversizedRecoveryBatchBeforeAppend(t *testing.T) {
+	now := time.Date(2026, 7, 22, 2, 45, 0, 0, time.UTC)
+	valid := normalizeAlert(makeAlert(now, "existing-valid"), now, time.Minute)
+	oversized := makeRecoveryAlertWithEncodedSize(t, maxRecoveryRecordBytes+1, now.Add(time.Second))
+	recoveryLogPath := filepath.Join(t.TempDir(), "alerts-recovery.jsonl")
+	logOnly := &Store{recoveryLogPath: recoveryLogPath}
+	if err := logOnly.appendRecoveryLog([]*model.Alert{&valid}); err != nil {
+		t.Fatalf("seed recovery log: %v", err)
+	}
+	wantBytes := readFileBytes(t, recoveryLogPath)
+
+	err := logOnly.appendRecoveryLog([]*model.Alert{&valid, oversized})
+	if !errors.Is(err, ErrRecoveryRecordTooLarge) || !strings.Contains(err.Error(), "record 2") {
+		t.Fatalf("append oversized batch error = %v, want record 2 ErrRecoveryRecordTooLarge", err)
+	}
+	assertFileBytes(t, recoveryLogPath, wantBytes)
+}
+
+func TestStoreWriteBatchRejectsOversizedRecoveryRecordWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 22, 2, 50, 0, 0, time.UTC)
+	dir := t.TempDir()
+	dbPath := filepath.Join(dir, "alerts.db")
+	recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+	store, err := Open(context.Background(), Options{
+		Path:              dbPath,
+		RecoveryLogPath:   recoveryLogPath,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now:               func() time.Time { return now },
+	})
+	if err != nil {
+		t.Fatalf("open store: %v", err)
+	}
+	defer store.Close()
+	wantLog := readFileBytes(t, recoveryLogPath)
+	wantDB := readFileBytes(t, dbPath)
+	valid := makeAlert(now, "valid-prefix-must-not-append")
+	oversized := makeRecoveryAlertWithEncodedSize(t, maxRecoveryRecordBytes+1, now.Add(time.Second))
+
+	err = store.WriteBatch(context.Background(), []*model.Alert{valid, oversized})
+	if !errors.Is(err, ErrRecoveryRecordTooLarge) || !strings.Contains(err.Error(), "record 2") {
+		t.Fatalf("WriteBatch oversized error = %v, want record 2 ErrRecoveryRecordTooLarge", err)
+	}
+	assertFileBytes(t, recoveryLogPath, wantLog)
+	assertFileBytes(t, dbPath, wantDB)
+	assertSQLiteAlertCount(t, dbPath, 0)
+}
+
 func TestStoreWritesDistinctEventsInSameAggregationWindow(t *testing.T) {
 	ctx := context.Background()
 	store := openTestStore(t, 60*time.Second)
@@ -1815,4 +1947,26 @@ func makeAlert(ts time.Time, keyword string) *model.Alert {
 		PayloadPreview:     "GET / HTTP/1.1",
 		MatchedKeyword:     keyword,
 	}
+}
+
+func makeRecoveryAlertWithEncodedSize(t *testing.T, size int, ts time.Time) *model.Alert {
+	t.Helper()
+	alert := normalizeAlert(makeAlert(ts, "large-record"), ts, time.Minute)
+	alert.RuleName = ""
+	base, err := json.Marshal(alert)
+	if err != nil {
+		t.Fatalf("marshal recovery record base: %v", err)
+	}
+	if size < len(base) {
+		t.Fatalf("requested recovery record size %d is smaller than base %d", size, len(base))
+	}
+	alert.RuleName = strings.Repeat("r", size-len(base))
+	encoded, err := json.Marshal(alert)
+	if err != nil {
+		t.Fatalf("marshal sized recovery record: %v", err)
+	}
+	if len(encoded) != size {
+		t.Fatalf("encoded recovery record size = %d, want %d", len(encoded), size)
+	}
+	return &alert
 }

@@ -1,0 +1,35 @@
+{
+  "task": "r90-20-recovery-record-size",
+  "timestamp": "2026-07-22T02:14:56-07:00",
+  "branch": "main",
+  "remote_baseline": "7f5ad8ecd1f2850c7641be4132aa44d864628097",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main matches the remote baseline",
+    "Verified R90-19 feature and delivery records in the existing local Vault",
+    "Refreshed the rolling horizon through 2026-10-20 from release and storage evidence",
+    "Selected R90-20 as the highest-priority dependency-ready increment",
+    "Confirmed the writer can emit valid records above the reader's default 64 KiB scanner ceiling",
+    "Added a shared 4 MiB per-record writer and reader contract with delimiter-aware scanner capacity",
+    "Pre-encoded and checked complete recovery batches before opening the log for append",
+    "Added direct 70 KiB runtime and startup replay compatibility plus exact 4 MiB acceptance coverage",
+    "Added above-limit direct-append and runtime rejection coverage with valid-prefix, log-byte, database-byte, and read-only row-count preservation",
+    "Retained malformed and truncated recovery input behavior",
+    "Passed 20 uncached focused race runs, the full native C/Go race suite, E2E smoke, documentation, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Run the pre-commit knowledge gate and sensitive-information review",
+    "Commit, push, fetch-verify, and synchronize the validated increment",
+    "Reconcile roadmap and task state against verified remote and Vault evidence"
+  ],
+  "todo": [
+    "Record verified delivery evidence"
+  ],
+  "remaining_risks": [
+    "The complete batch must be validated before the recovery file is opened",
+    "The scanner ceiling must account for the JSONL delimiter",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Complete R90-20 only: accept valid recovery records through 4 MiB, reject oversized writer output before append, preserve log and database bytes, and do not change the format or publish artifacts."
+}
