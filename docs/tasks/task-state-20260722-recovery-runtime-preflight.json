@@ -1,0 +1,34 @@
+{
+  "task": "r90-19-recovery-runtime-preflight",
+  "timestamp": "2026-07-22T01:57:23-07:00",
+  "branch": "main",
+  "remote_baseline": "53c90ef4cefff4d22391196b6c8be61e3c8cc058",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main matches the remote baseline",
+    "Verified R90-18 feature and delivery records in the existing local Vault",
+    "Refreshed the empty roadmap from release boundaries and the runtime recovery write path",
+    "Selected R90-19 as the highest-priority dependency-ready increment",
+    "Confirmed WriteBatch appends before validating an existing recovery log",
+    "Added a complete recovery-log preflight inside the serialized runtime write path before append",
+    "Added direct malformed, truncated, semantic-invalid, and normalized-invariant runtime rejection coverage",
+    "Proved every rejection preserves the complete log and SQLite bytes with no rows visible through a separate read-only handle",
+    "Retained valid pending-log persistence and post-append verification behavior",
+    "Passed 20 uncached focused race runs, the full native C/Go race suite, E2E smoke, documentation, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Run the pre-commit knowledge gate and sensitive-information review",
+    "Commit, push, fetch-verify, and synchronize the validated increment",
+    "Reconcile roadmap and task state against verified remote and Vault evidence"
+  ],
+  "todo": [
+    "Record verified delivery evidence"
+  ],
+  "remaining_risks": [
+    "Valid pending recovery records must persist with the current batch",
+    "Process-local serialization does not provide cross-process locking",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Complete R90-19 only: reject invalid existing recovery input before runtime append, preserve log and database bytes, retain valid pending-log persistence, and do not repair logs or publish artifacts."
+}

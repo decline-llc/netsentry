@@ -710,6 +710,65 @@ func TestStoreWriteBatchPersistsExistingRecoveryLogBeforeTruncate(t *testing.T) 
 	}
 }
 
+func TestStoreWriteBatchRejectsInvalidRecoveryLogBeforeAppend(t *testing.T) {
+	now := time.Date(2026, 7, 22, 2, 0, 0, 0, time.UTC)
+	valid := normalizeAlert(makeAlert(now, "existing-invalid"), now, time.Minute)
+	validJSON, err := json.Marshal(valid)
+	if err != nil {
+		t.Fatalf("marshal valid recovery record: %v", err)
+	}
+	inconsistent := valid
+	inconsistent.ID = "inconsistent-id"
+	inconsistentJSON, err := json.Marshal(inconsistent)
+	if err != nil {
+		t.Fatalf("marshal inconsistent recovery record: %v", err)
+	}
+
+	tests := []struct {
+		name      string
+		contents  []byte
+		condition string
+	}{
+		{name: "malformed", contents: []byte("{\"rule_id\":\n"), condition: "decode record 1"},
+		{name: "truncated", contents: validJSON, condition: "truncated final JSONL record"},
+		{name: "semantic", contents: []byte("{}\n"), condition: "required field id is empty"},
+		{name: "normalized invariant", contents: append(inconsistentJSON, '\n'), condition: "field id does not match normalized identity"},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			dir := t.TempDir()
+			dbPath := filepath.Join(dir, "alerts.db")
+			recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+			store, err := Open(context.Background(), Options{
+				Path:              dbPath,
+				RecoveryLogPath:   recoveryLogPath,
+				JournalMode:       "WAL",
+				BusyTimeoutMS:     1000,
+				AggregationWindow: time.Minute,
+				Now:               func() time.Time { return now },
+			})
+			if err != nil {
+				t.Fatalf("open store: %v", err)
+			}
+			defer store.Close()
+
+			if err := os.WriteFile(recoveryLogPath, test.contents, 0o600); err != nil {
+				t.Fatalf("write invalid runtime recovery log: %v", err)
+			}
+			beforeDB := readFileBytes(t, dbPath)
+			err = store.WriteBatch(context.Background(), []*model.Alert{
+				makeAlert(now.Add(time.Second), "must-not-append"),
+			})
+			if !errors.Is(err, ErrRecoveryLogIntegrity) || !strings.Contains(err.Error(), test.condition) {
+				t.Fatalf("WriteBatch error = %v, want ErrRecoveryLogIntegrity containing %q", err, test.condition)
+			}
+			assertFileBytes(t, recoveryLogPath, test.contents)
+			assertFileBytes(t, dbPath, beforeDB)
+			assertSQLiteAlertCount(t, dbPath, 0)
+		})
+	}
+}
+
 func TestStoreWritesDistinctEventsInSameAggregationWindow(t *testing.T) {
 	ctx := context.Background()
 	store := openTestStore(t, 60*time.Second)
@@ -1671,6 +1730,22 @@ func assertSQLiteIndexMissing(t *testing.T, path, index string) {
 	}
 	if count != 0 {
 		t.Fatalf("optional index %s was created before recovery rejection", index)
+	}
+}
+
+func assertSQLiteAlertCount(t *testing.T, path string, want int) {
+	t.Helper()
+	db, err := openReadOnlyDatabase(path)
+	if err != nil {
+		t.Fatalf("open preserved database read-only: %v", err)
+	}
+	defer db.Close()
+	var got int
+	if err := db.QueryRow(`SELECT COUNT(*) FROM alerts`).Scan(&got); err != nil {
+		t.Fatalf("count preserved database alerts: %v", err)
+	}
+	if got != want {
+		t.Fatalf("preserved database alert count = %d, want %d", got, want)
 	}
 }
 

@@ -481,7 +481,7 @@ Remaining test gaps:
 
 - Sustained external C fuzz campaign results from larger parser and formatter corpora.
 - Realistic pcap corpora for throughput and query tuning beyond repeat-pcap smoke runs.
-- Additional SQLite corruption/fault-injection scenarios beyond the current startup integrity preflight, disk-full, read-only, I/O, recovery replay, and emergency-mode tests.
+- Additional SQLite corruption/fault-injection scenarios beyond the current startup/runtime recovery integrity preflights, disk-full, read-only, I/O, recovery replay, and emergency-mode tests.
 
 The full-engine lifecycle regression now combines the real UDS receiver,
 pipeline worker, HTTP API, and SQLite store under active load. It verifies that

@@ -35,6 +35,7 @@
 | R90-16 | Jul 20–Sep 25 | Complete early | Reject semantically invalid recovery-log records before replay. | R90-15 | Newline-terminated, syntactically valid JSON records that cannot satisfy the durable normalized-alert contract fail startup clearly; the complete recovery log remains unchanged, no valid prefix is persisted, and valid replay behavior is preserved. |
 | R90-17 | Jul 20–Oct 2 | Complete early | Preflight recovery logs before writable SQLite initialization. | R90-16 | Invalid recovery input fails before a missing database can be created or a compatible existing database can be modified; valid replay and initialization behavior remain unchanged. |
 | R90-18 | Jul 21–Oct 9 | Complete early | Reject inconsistent normalized recovery records before replay. | R90-17 | Recovery records whose durable ID, first/last timestamps, window start, or aggregate count cannot be emitted by the normalized writer fail before SQLite initialization; the complete log and target database remain unchanged, while valid replay behavior is preserved. |
+| R90-19 | Jul 22–Oct 15 | In progress | Preflight recovery logs before runtime append. | R90-18 | A runtime write rejects an already malformed or semantically invalid recovery log before appending or touching SQLite; the complete log and database remain unchanged, while valid pending-log persistence remains compatible. |
 
 ## R90-07 Definition
 
@@ -226,6 +227,22 @@
   automatic log repair is required, operator data is needed, or work reaches
   tag/publication authority.
 
+## R90-19 Definition
+
+- **Goal:** extend the recovery-input preservation boundary from startup to
+  normal runtime writes before they append new durable records.
+- **Risk:** an extra preflight can accidentally drop valid pending records or
+  create a check/append race, while appending first mutates invalid operator
+  evidence before the existing integrity failure is reported.
+- **Required validation:** direct malformed, truncated, semantic-invalid, and
+  normalized-invariant runtime rejection regressions with full-log and database
+  byte preservation; valid pending-log persistence compatibility; repeated
+  focused alert-store race tests, full native, documentation, E2E, and
+  knowledge checks.
+- **Stop condition:** stop if safe completion requires cross-process recovery
+  locking, changing the recovery format, automatic repair, operator data, or
+  tag/publication authority.
+
 ## Global Schedule-Window Waiver
 
 - **Authorization:** On Jul 16, 2026, the user cancelled every roadmap planning
@@ -269,9 +286,10 @@
   rejection cases preserve the full log and missing/existing database state.
   Twenty focused race runs, the full native suite, E2E smoke, documentation,
   and knowledge checks passed; fetched `origin/main`, the post-fetch knowledge
-  gate, and the exact Vault note, full index, and MOC are verified. No later
-  engineering increment is selected; refresh the rolling roadmap on the next
-  `$netsentry-next` trigger. Publication remains unauthorized.
+  gate, and the exact Vault note, full index, and MOC are verified. The queue
+  was refreshed on Jul 22 from the clean fetched baseline, completed task
+  state, release boundaries, the runtime recovery write path, and verified
+  Vault evidence. R90-19 is active. Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -290,7 +308,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -342,4 +360,4 @@
 
 ## Current Checkpoint
 
-R90-18 completed early at `cb2fd7d1889b33a01829226becb44260f1668651` after the empty queue was refreshed from the clean fetched baseline, completed task state, release boundaries, remaining storage integrity gaps, and verified Vault evidence. Inconsistent normalized recovery identity/time/window/count fields now fail before SQLite initialization with full log and database preservation. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.
+R90-18 completed early at `cb2fd7d1889b33a01829226becb44260f1668651` with fetched-remote, post-fetch knowledge, and exact Vault evidence verified. The empty queue was refreshed on Jul 22 from the clean fetched baseline, completed task state, release boundaries, the runtime recovery write path, and the existing Vault. R90-19 is active: preflight an existing recovery log before a normal write can append to it, preserve rejected log and database bytes, and retain valid pending-log behavior. Publication remains unauthorized.

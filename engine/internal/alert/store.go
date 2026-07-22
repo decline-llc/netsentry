@@ -687,6 +687,10 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 	if len(normalized) == 0 {
 		return nil
 	}
+	if _, err := s.readRecoveryLog(); err != nil {
+		s.markStorageError(err)
+		return err
+	}
 	if err := s.appendRecoveryLog(normalized); err != nil {
 		s.markStorageError(err)
 		return err
