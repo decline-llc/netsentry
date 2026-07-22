@@ -1,0 +1,34 @@
+{
+  "task": "r90-21-sqlite-extra-required-columns",
+  "timestamp": "2026-07-22T02:25:08-07:00",
+  "branch": "main",
+  "remote_baseline": "17d30a38b12b14b51e050789974f76397bea9a02",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main matches the remote baseline",
+    "Verified R90-20 feature and delivery records in the existing local Vault",
+    "Refreshed the empty queue from release boundaries and SQLite write-critical schema constraints",
+    "Selected R90-21 as the highest-priority dependency-ready increment",
+    "Confirmed required-column preflight discards default metadata and accepts unknown mandatory columns",
+    "Retained PRAGMA default metadata and rejected unknown NOT NULL columns without usable non-NULL defaults",
+    "Added direct alerts, alert_events, and literal-NULL-default primary rejection coverage with byte preservation",
+    "Added historical-shard mandatory-column rejection with byte preservation",
+    "Proved nullable and non-NULL-defaulted extensions reopen and accept complete alert/event writes",
+    "Passed 20 uncached focused race runs, the full native C/Go race suite, E2E smoke, documentation, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Run the pre-commit knowledge gate and sensitive-information review",
+    "Commit, push, fetch-verify, and synchronize the validated increment",
+    "Reconcile roadmap and task state against verified remote and Vault evidence"
+  ],
+  "todo": [
+    "Record verified delivery evidence"
+  ],
+  "remaining_risks": [
+    "Both write-critical tables must be checked",
+    "Nullable and defaulted operator extensions must remain compatible",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Complete R90-21 only: reject unknown mandatory columns without defaults before writable initialization, preserve primary and historical database bytes, retain compatible extensions, and do not migrate schemas or publish artifacts."
+}

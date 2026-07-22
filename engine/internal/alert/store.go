@@ -227,6 +227,7 @@ type requiredColumn struct {
 	typeName   string
 	notNull    bool
 	primaryKey int
+	hasDefault bool
 }
 
 var requiredSchema = map[string][]requiredColumn{
@@ -292,6 +293,7 @@ func validateRequiredColumns(ctx context.Context, db *sql.DB, table string, requ
 			typeName:   strings.ToUpper(strings.TrimSpace(typeName)),
 			notNull:    notNull != 0,
 			primaryKey: primaryKey,
+			hasDefault: sqliteDefaultIsUsable(defaultValue),
 		}
 	}
 	if err := rows.Err(); err != nil {
@@ -312,7 +314,30 @@ func validateRequiredColumns(ctx context.Context, db *sql.DB, table string, requ
 			return fmt.Errorf("%w: incompatible schema: required column %s.%s has an incompatible definition", ErrDatabaseIntegrity, table, expected.name)
 		}
 	}
+	requiredNames := make(map[string]struct{}, len(required))
+	for _, expected := range required {
+		requiredNames[expected.name] = struct{}{}
+	}
+	for name, column := range actual {
+		if _, ok := requiredNames[name]; ok {
+			continue
+		}
+		if column.notNull && !column.hasDefault {
+			return fmt.Errorf("%w: incompatible schema: unknown column %s.%s is NOT NULL without a usable default", ErrDatabaseIntegrity, table, name)
+		}
+	}
 	return nil
+}
+
+func sqliteDefaultIsUsable(value any) bool {
+	if value == nil {
+		return false
+	}
+	text := strings.TrimSpace(fmt.Sprint(value))
+	for len(text) >= 2 && text[0] == '(' && text[len(text)-1] == ')' {
+		text = strings.TrimSpace(text[1 : len(text)-1])
+	}
+	return !strings.EqualFold(text, "NULL")
 }
 
 func validateAggregationConstraint(ctx context.Context, db *sql.DB) error {

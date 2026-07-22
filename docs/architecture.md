@@ -194,7 +194,10 @@ Current build:
 - Before journal or schema initialization, an existing non-empty primary
   database must pass read-only SQLite `quick_check` plus required `alerts` and
   `alert_events` table/column definitions and the aggregation uniqueness
-  contract. A failed check stops startup with `ErrDatabaseIntegrity`;
+  contract. Unknown nullable columns and unknown `NOT NULL` columns with a
+  non-NULL default remain compatible; an unknown mandatory column without a
+  usable default is rejected because NetSentry's fixed inserts cannot populate
+  it. A failed check stops startup with `ErrDatabaseIntegrity`;
   NetSentry does not repair, migrate, truncate, rename, or overwrite the
   rejected file. Missing query indexes remain compatible and are created by
   normal writable initialization after the preflight succeeds.

@@ -37,6 +37,7 @@
 | R90-18 | Jul 21–Oct 9 | Complete early | Reject inconsistent normalized recovery records before replay. | R90-17 | Recovery records whose durable ID, first/last timestamps, window start, or aggregate count cannot be emitted by the normalized writer fail before SQLite initialization; the complete log and target database remain unchanged, while valid replay behavior is preserved. |
 | R90-19 | Jul 22–Oct 15 | Complete early | Preflight recovery logs before runtime append. | R90-18 | A runtime write rejects an already malformed or semantically invalid recovery log before appending or touching SQLite; the complete log and database remain unchanged, while valid pending-log persistence remains compatible. |
 | R90-20 | Jul 22–Oct 20 | Complete early | Bound recovery-record encoding and replay. | R90-19 | Valid writer-generated records above the scanner's former 64 KiB ceiling persist and replay; records above the explicit 4 MiB durable limit fail before append, leaving the recovery log and database unchanged. |
+| R90-21 | Jul 22–Oct 20 | In progress | Reject write-blocking SQLite schema extensions. | R90-20 | Existing primary and historical databases with unknown `NOT NULL` columns lacking a usable non-NULL default fail read-only preflight and remain unchanged; nullable and non-NULL-defaulted extra columns remain compatible. |
 
 ## R90-07 Definition
 
@@ -260,6 +261,23 @@
   format migration, accepting unbounded records, automatic repair, operator
   data, or tag/publication authority.
 
+## R90-21 Definition
+
+- **Goal:** close the required-schema gap where an extra mandatory column can
+  pass preflight even though NetSentry's fixed inserts cannot populate it.
+- **Risk:** rejecting every unknown column would break compatible operator
+  extensions, while inspecting defaults incorrectly can accept a write-blocking
+  schema or reject a valid nullable/defaulted extension.
+- **Required validation:** direct `alerts` and `alert_events` unknown
+  `NOT NULL`-without-default startup rejections plus a literal-NULL-default
+  rejection with byte preservation; a historical-shard rejection; nullable
+  and non-NULL-defaulted compatibility
+  with successful writes; focused alert-store race tests, full native,
+  documentation, E2E, and knowledge checks.
+- **Stop condition:** stop if safe completion requires schema migration,
+  evaluating arbitrary default expressions, rewriting operator tables,
+  operator data, or tag/publication authority.
+
 ## Global Schedule-Window Waiver
 
 - **Authorization:** On Jul 16, 2026, the user cancelled every roadmap planning
@@ -321,9 +339,10 @@
   4 MiB, and oversized output preserves the log and database. Twenty focused
   race runs, the full native suite, E2E smoke, documentation, and knowledge
   checks passed; fetched `origin/main`, the post-fetch knowledge gate, and the
-  exact full-SHA Vault note, index, and MOC are verified. No later engineering
-  increment is selected; refresh the rolling roadmap on the next
-  `$netsentry-next` trigger. Publication remains unauthorized.
+  exact full-SHA Vault note, index, and MOC are verified. The queue was
+  refreshed on Jul 22 from the clean fetched baseline, completed task state,
+  release boundaries, SQLite write-critical schema constraints, and verified
+  Vault evidence. R90-21 is active. Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -342,7 +361,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -394,4 +413,4 @@
 
 ## Current Checkpoint
 
-R90-20 completed early at `1009187f1dae2cc1de8abde1738b159f3c4bd8e9` after the horizon was refreshed through Oct 20 from the clean fetched baseline, completed task state, release boundaries, recovery reader/writer limits, and verified Vault evidence. Valid 70 KiB and exact 4 MiB records persist and replay, while 4 MiB plus one byte fails before append with valid-prefix, log-byte, and database-byte preservation. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.
+R90-20 completed early at `1009187f1dae2cc1de8abde1738b159f3c4bd8e9` with fetched-remote, post-fetch knowledge, and exact Vault evidence verified. The queue was refreshed on Jul 22 from the clean fetched baseline, completed task state, release boundaries, SQLite write-critical schema constraints, and the existing Vault. R90-21 is active: reject unknown mandatory columns that fixed NetSentry inserts cannot populate, preserve primary and historical databases, and retain nullable/defaulted extension compatibility. Publication remains unauthorized.

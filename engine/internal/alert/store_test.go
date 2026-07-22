@@ -1082,6 +1082,77 @@ func TestStoreRejectsMissingAlertEventsTableWithoutModification(t *testing.T) {
 	}
 }
 
+func TestStoreRejectsUnknownRequiredColumnsWithoutModification(t *testing.T) {
+	tests := []struct {
+		name      string
+		statement string
+		table     string
+		column    string
+	}{
+		{
+			name:      "alerts without default",
+			statement: `ALTER TABLE alerts ADD COLUMN operator_required TEXT NOT NULL`,
+			table:     "alerts",
+			column:    "operator_required",
+		},
+		{
+			name:      "alert events without default",
+			statement: `ALTER TABLE alert_events ADD COLUMN operator_required TEXT NOT NULL`,
+			table:     "alert_events",
+			column:    "operator_required",
+		},
+		{
+			name:      "literal null default",
+			statement: `ALTER TABLE alerts ADD COLUMN operator_null TEXT NOT NULL DEFAULT NULL`,
+			table:     "alerts",
+			column:    "operator_null",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "alerts.db")
+			createSQLiteFixture(t, path, schemaSQL, test.statement)
+			before := readFileBytes(t, path)
+
+			store, err := Open(context.Background(), Options{Path: path, JournalMode: "WAL"})
+			if store != nil {
+				_ = store.Close()
+				t.Fatal("schema with an unknown required column returned a usable store")
+			}
+			assertIntegrityRejectionPreservesFile(t, path, before, err)
+			condition := "unknown column " + test.table + "." + test.column + " is NOT NULL without a usable default"
+			if !strings.Contains(err.Error(), condition) {
+				t.Fatalf("startup error = %v, want %q", err, condition)
+			}
+		})
+	}
+}
+
+func TestStoreAllowsCompatibleExtraColumns(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	createSQLiteFixture(t, path, schemaSQL,
+		`ALTER TABLE alerts ADD COLUMN operator_note TEXT`,
+		`ALTER TABLE alert_events ADD COLUMN ingest_source TEXT NOT NULL DEFAULT 'legacy'`,
+	)
+	store, err := Open(context.Background(), Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open schema with compatible extra columns: %v", err)
+	}
+	defer store.Close()
+	if err := store.WriteBatch(context.Background(), []*model.Alert{
+		makeAlert(time.Date(2026, 7, 22, 3, 0, 0, 0, time.UTC), "compatible-extra-columns"),
+	}); err != nil {
+		t.Fatalf("write schema with compatible extra columns: %v", err)
+	}
+	var source string
+	if err := store.db.QueryRow(`SELECT ingest_source FROM alert_events`).Scan(&source); err != nil {
+		t.Fatalf("read defaulted extra column: %v", err)
+	}
+	if source != "legacy" {
+		t.Fatalf("defaulted extra column = %q, want legacy", source)
+	}
+}
+
 func TestStoreRejectsMissingAggregationConstraintWithoutModification(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "alerts.db")
 	withoutAggregationKey := strings.Replace(schemaSQL,
@@ -1157,6 +1228,27 @@ func TestStoreRejectsIncompatibleHistoricalShardWithoutModification(t *testing.T
 
 	err := store.WriteBatch(ctx, []*model.Alert{makeAlert(historical, "incompatible-historical-shard")})
 	assertIntegrityRejectionPreservesFile(t, path, before, err)
+}
+
+func TestStoreRejectsHistoricalShardWithUnknownRequiredColumnWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	now := time.Date(2026, 7, 22, 12, 0, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	createSQLiteFixture(t, path, schemaSQL,
+		`ALTER TABLE alerts ADD COLUMN operator_required TEXT NOT NULL`,
+	)
+	before := readFileBytes(t, path)
+
+	err := store.WriteBatch(ctx, []*model.Alert{makeAlert(historical, "required-column-historical-shard")})
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+	if !strings.Contains(err.Error(), "unknown column alerts.operator_required is NOT NULL without a usable default") {
+		t.Fatalf("historical shard error = %v, want unknown required column", err)
+	}
 }
 
 func assertIntegrityRejectionPreservesFile(t *testing.T, path string, before []byte, err error) {
