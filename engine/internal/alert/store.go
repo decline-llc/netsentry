@@ -228,6 +228,7 @@ type requiredColumn struct {
 	notNull    bool
 	primaryKey int
 	hasDefault bool
+	hidden     int
 }
 
 var requiredSchema = map[string][]requiredColumn{
@@ -280,7 +281,7 @@ func validateRequiredSchema(ctx context.Context, db *sql.DB) error {
 }
 
 func validateRequiredColumns(ctx context.Context, db *sql.DB, table string, required []requiredColumn) error {
-	rows, err := db.QueryContext(ctx, "PRAGMA table_info("+quoteSQLiteIdentifier(table)+")")
+	rows, err := db.QueryContext(ctx, "PRAGMA table_xinfo("+quoteSQLiteIdentifier(table)+")")
 	if err != nil {
 		if ctx.Err() != nil {
 			return ctx.Err()
@@ -291,10 +292,10 @@ func validateRequiredColumns(ctx context.Context, db *sql.DB, table string, requ
 
 	actual := make(map[string]requiredColumn)
 	for rows.Next() {
-		var cid, notNull, primaryKey int
+		var cid, notNull, primaryKey, hidden int
 		var name, typeName string
 		var defaultValue any
-		if err := rows.Scan(&cid, &name, &typeName, &notNull, &defaultValue, &primaryKey); err != nil {
+		if err := rows.Scan(&cid, &name, &typeName, &notNull, &defaultValue, &primaryKey, &hidden); err != nil {
 			return fmt.Errorf("%w: inspect required table %s: %v", ErrDatabaseIntegrity, table, err)
 		}
 		actual[name] = requiredColumn{
@@ -303,6 +304,7 @@ func validateRequiredColumns(ctx context.Context, db *sql.DB, table string, requ
 			notNull:    notNull != 0,
 			primaryKey: primaryKey,
 			hasDefault: sqliteDefaultIsUsable(defaultValue),
+			hidden:     hidden,
 		}
 	}
 	if err := rows.Err(); err != nil {
@@ -319,7 +321,7 @@ func validateRequiredColumns(ctx context.Context, db *sql.DB, table string, requ
 		if !ok {
 			return fmt.Errorf("%w: incompatible schema: required column %s.%s is missing", ErrDatabaseIntegrity, table, expected.name)
 		}
-		if got.typeName != expected.typeName || got.notNull != expected.notNull || got.primaryKey != expected.primaryKey {
+		if got.typeName != expected.typeName || got.notNull != expected.notNull || got.primaryKey != expected.primaryKey || got.hidden != 0 {
 			return fmt.Errorf("%w: incompatible schema: required column %s.%s has an incompatible definition", ErrDatabaseIntegrity, table, expected.name)
 		}
 	}
@@ -330,6 +332,9 @@ func validateRequiredColumns(ctx context.Context, db *sql.DB, table string, requ
 	for name, column := range actual {
 		if _, ok := requiredNames[name]; ok {
 			continue
+		}
+		if column.hidden == 2 || column.hidden == 3 {
+			return fmt.Errorf("%w: incompatible schema: unknown generated column %s.%s can alter or reject valid alert writes", ErrDatabaseIntegrity, table, name)
 		}
 		if column.notNull && !column.hasDefault {
 			return fmt.Errorf("%w: incompatible schema: unknown column %s.%s is NOT NULL without a usable default", ErrDatabaseIntegrity, table, name)

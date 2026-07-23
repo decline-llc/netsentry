@@ -40,6 +40,7 @@
 | R90-21 | Jul 22–Oct 20 | Complete early | Reject write-blocking SQLite schema extensions. | R90-20 | Existing primary and historical databases with unknown `NOT NULL` columns lacking a usable non-NULL default fail read-only preflight and remain unchanged; nullable and non-NULL-defaulted extra columns remain compatible. |
 | R90-22 | Jul 23–Oct 20 | Complete early | Reject write-blocking SQLite uniqueness extensions. | R90-21 | Existing primary and historical databases with extra unique indexes that do not contain a binary-collated canonical write identity fail read-only preflight and remain unchanged; non-unique indexes and uniqueness extensions containing an existing safe identity remain compatible and writable. |
 | R90-23 | Jul 23–Oct 20 | Complete early | Reject write-affecting SQLite triggers. | R90-22 | Existing primary and historical databases with triggers attached to `alerts` or `alert_events` fail read-only preflight and remain unchanged; triggers confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
+| R90-24 | Jul 23–Oct 20 | In progress | Reject write-affecting SQLite generated columns. | R90-23 | Existing primary and historical databases with virtual or stored generated columns on `alerts` or `alert_events` fail read-only preflight and remain unchanged; ordinary nullable and defaulted column extensions remain compatible and writable. |
 
 ## R90-07 Definition
 
@@ -317,6 +318,34 @@
   rewriting trigger SQL, schema migration, operator data, or tag/publication
   authority.
 
+## R90-24 Definition
+
+- **Goal:** close the required-column preflight gap where `PRAGMA table_info`
+  hides generated columns whose arbitrary expressions can abort or alter valid
+  fixed-column NetSentry writes.
+- **Risk:** parsing generated expressions would reproduce SQLite semantics
+  incompletely, while rejecting ordinary nullable/defaulted columns would
+  break the compatibility retained by R90-21.
+- **Required validation:** direct virtual and stored generated-column
+  rejections across `alerts` and `alert_events` with byte preservation; a
+  historical-shard rejection; ordinary nullable/defaulted column compatibility
+  with successful writes; repeated focused alert-store race tests, full
+  native, documentation, E2E, and knowledge checks.
+- **Stop condition:** stop if safe completion requires parsing or evaluating
+  generated expressions, schema migration, rewriting operator columns,
+  operator data, or tag/publication authority.
+
+### R90-24 Validation Deviation
+
+- **Observed:** The first full native race suite hit the existing
+  `TestStartIdleTimeoutReleasesConnectionCapacity` timing boundary: the
+  replacement session was not observed before its bounded wait expired.
+- **Impact:** Delivery was held while the unrelated result was ambiguous; no
+  receiver behavior was changed.
+- **Resolution:** Twenty uncached focused receiver race executions and the
+  complete uncached native rerun pass. The timing event did not reproduce, so
+  R90-24 validation may continue.
+
 ## Global Schedule-Window Waiver
 
 - **Authorization:** On Jul 16, 2026, the user cancelled every roadmap planning
@@ -407,7 +436,11 @@
   knowledge checks passed; fetched `origin/main`, the post-fetch knowledge
   gate, and the exact full-SHA Vault note, index, and MOC are verified. No
   later engineering increment is selected; refresh the rolling roadmap on the
-  next `$netsentry-next` trigger. Publication remains unauthorized.
+  next `$netsentry-next` trigger. The queue was refreshed on Jul 23 from the
+  clean fetched baseline, completed task state, release boundaries,
+  write-critical generated-column metadata, and verified Vault
+  evidence. R90-24 is the selected next increment. Publication remains
+  unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -426,7 +459,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -478,4 +511,4 @@
 
 ## Current Checkpoint
 
-R90-23 completed early at `c74982c13356cfa2733ed51bc890840b238d7cfe` after the empty queue was refreshed from the clean fetched R90-22 baseline, completed task state, release boundaries, write-critical SQLite trigger metadata, and verified Vault evidence. `BEFORE`, `AFTER`, case-variant table-name, and historical-shard triggers attached to `alerts` or `alert_events` now fail before writable initialization with byte preservation. Triggers confined to unrelated operator tables remain active and NetSentry writes succeed. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.
+R90-24 was selected on Jul 23 after refreshing the empty queue from the clean fetched R90-23 baseline, completed task state, release boundaries, write-critical generated-column metadata, and verified Vault evidence. It exposes columns omitted by `PRAGMA table_info` and rejects virtual or stored generated extensions on `alerts` and `alert_events` before writable initialization while retaining ordinary compatible columns. Implementation and delivery validation are in progress. Publication remains unauthorized.

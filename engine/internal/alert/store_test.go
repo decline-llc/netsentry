@@ -1302,6 +1302,61 @@ func TestStoreRejectsWriteCriticalTriggersWithoutModification(t *testing.T) {
 	}
 }
 
+func TestStoreRejectsGeneratedColumnsWithoutModification(t *testing.T) {
+	alertsVirtual := strings.Replace(
+		schemaSQL,
+		"    updated_at TEXT NOT NULL,\n    UNIQUE(rule_id, src_ip, dst_ip, dst_port, window_start)",
+		"    updated_at TEXT NOT NULL,\n    operator_generated TEXT GENERATED ALWAYS AS (rule_id || ':' || src_ip) VIRTUAL,\n    UNIQUE(rule_id, src_ip, dst_ip, dst_port, window_start)",
+		1,
+	)
+	alertsStored := strings.Replace(
+		schemaSQL,
+		"    updated_at TEXT NOT NULL,\n    UNIQUE(rule_id, src_ip, dst_ip, dst_port, window_start)",
+		"    updated_at TEXT NOT NULL,\n    operator_generated TEXT GENERATED ALWAYS AS (rule_id || ':' || src_ip) STORED,\n    UNIQUE(rule_id, src_ip, dst_ip, dst_port, window_start)",
+		1,
+	)
+	eventsVirtual := strings.Replace(
+		schemaSQL,
+		"CREATE TABLE IF NOT EXISTS alert_events (\n    event_id TEXT PRIMARY KEY,\n    created_at TEXT NOT NULL\n);",
+		"CREATE TABLE IF NOT EXISTS alert_events (\n    event_id TEXT PRIMARY KEY,\n    created_at TEXT NOT NULL,\n    operator_generated INTEGER GENERATED ALWAYS AS (length(created_at)) VIRTUAL\n);",
+		1,
+	)
+	eventsStored := strings.Replace(
+		schemaSQL,
+		"CREATE TABLE IF NOT EXISTS alert_events (\n    event_id TEXT PRIMARY KEY,\n    created_at TEXT NOT NULL\n);",
+		"CREATE TABLE IF NOT EXISTS alert_events (\n    event_id TEXT PRIMARY KEY,\n    created_at TEXT NOT NULL,\n    operator_generated INTEGER GENERATED ALWAYS AS (length(created_at)) STORED\n);",
+		1,
+	)
+	tests := []struct {
+		name   string
+		schema string
+		table  string
+	}{
+		{name: "alerts virtual", schema: alertsVirtual, table: "alerts"},
+		{name: "alerts stored", schema: alertsStored, table: "alerts"},
+		{name: "alert events virtual", schema: eventsVirtual, table: "alert_events"},
+		{name: "alert events stored", schema: eventsStored, table: "alert_events"},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "alerts.db")
+			createSQLiteFixture(t, path, test.schema)
+			before := readFileBytes(t, path)
+
+			store, err := Open(context.Background(), Options{Path: path, JournalMode: "WAL"})
+			if store != nil {
+				_ = store.Close()
+				t.Fatal("schema with a generated column returned a usable store")
+			}
+			assertIntegrityRejectionPreservesFile(t, path, before, err)
+			condition := "unknown generated column " + test.table + ".operator_generated can alter or reject valid alert writes"
+			if !strings.Contains(err.Error(), condition) {
+				t.Fatalf("startup error = %v, want %q", err, condition)
+			}
+		})
+	}
+}
+
 func TestStoreAllowsUnrelatedTableTrigger(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "alerts.db")
 	createSQLiteFixture(t, path, schemaSQL,
@@ -1479,6 +1534,31 @@ func TestStoreRejectsHistoricalShardWithWriteCriticalTriggerWithoutModification(
 	assertIntegrityRejectionPreservesFile(t, path, before, err)
 	if !strings.Contains(err.Error(), "trigger alert_events.operator_event_insert can alter or reject valid alert writes") {
 		t.Fatalf("historical shard error = %v, want write-critical trigger", err)
+	}
+}
+
+func TestStoreRejectsHistoricalShardWithGeneratedColumnWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	now := time.Date(2026, 7, 23, 4, 55, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	generatedSchema := strings.Replace(
+		schemaSQL,
+		"    updated_at TEXT NOT NULL,\n    UNIQUE(rule_id, src_ip, dst_ip, dst_port, window_start)",
+		"    updated_at TEXT NOT NULL,\n    operator_generated TEXT GENERATED ALWAYS AS (rule_id || ':' || src_ip) VIRTUAL,\n    UNIQUE(rule_id, src_ip, dst_ip, dst_port, window_start)",
+		1,
+	)
+	createSQLiteFixture(t, path, generatedSchema)
+	before := readFileBytes(t, path)
+
+	err := store.WriteBatch(ctx, []*model.Alert{makeAlert(historical, "generated-column-historical-shard")})
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+	if !strings.Contains(err.Error(), "unknown generated column alerts.operator_generated can alter or reject valid alert writes") {
+		t.Fatalf("historical shard error = %v, want generated column", err)
 	}
 }
 

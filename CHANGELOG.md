@@ -100,6 +100,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Existing primary databases and daily-shard write targets reject triggers
   attached to `alerts` or `alert_events` before writable initialization;
   triggers confined to unrelated operator tables remain compatible.
+- Existing primary databases and daily-shard write targets use complete SQLite
+  column metadata and reject hidden or generated columns on `alerts` or
+  `alert_events`; ordinary compatible column extensions remain writable.
 - Malformed or unterminated JSONL recovery logs now fail startup with a stable
   integrity error before partial replay; rejected logs remain byte-for-byte
   unchanged and valid logs truncate only after successful persistence.

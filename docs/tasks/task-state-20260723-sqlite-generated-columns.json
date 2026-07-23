@@ -1,0 +1,45 @@
+{
+  "task": "r90-24-sqlite-generated-columns",
+  "timestamp": "2026-07-23T04:50:34-07:00",
+  "branch": "main",
+  "remote_baseline": "fd1bbb476f340a159729052f2675b201678f1c68",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main matches the remote baseline",
+    "Verified both R90-23 pushed ranges and delivery records in the existing local Vault",
+    "Refreshed the empty queue from release boundaries and write-critical generated-column metadata",
+    "Selected R90-24 as the highest-priority dependency-ready increment",
+    "Confirmed required-column preflight uses table_info and therefore omits generated columns",
+    "Passed 20 uncached focused generated-column alert-store race runs",
+    "Recorded the first full native suite's unrelated receiver timing failure",
+    "Passed 20 uncached focused receiver race reruns without reproducing the failure",
+    "Passed the complete uncached native rerun including the receiver package",
+    "Used table_xinfo to reject virtual and stored generated columns on both write-critical tables",
+    "Added direct primary, historical-shard, byte-preservation, and ordinary-column compatibility coverage",
+    "Passed E2E smoke, documentation, knowledge, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Run the pre-commit knowledge gate and sensitive-information review",
+    "Commit, push, fetch-verify, and synchronize the validated increment",
+    "Reconcile roadmap and task state against verified remote and Vault evidence"
+  ],
+  "todo": [
+    "Record verified delivery evidence"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "Virtual and stored generated columns on both write-critical tables must fail closed",
+    "Ordinary nullable and defaulted extensions must remain compatible",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Complete R90-24 only: reject virtual and stored generated columns before writable initialization, preserve primary and historical database bytes, retain ordinary compatible columns, and do not parse expressions, migrate schemas, or publish artifacts."
+}
