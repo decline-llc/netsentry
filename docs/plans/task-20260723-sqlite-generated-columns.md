@@ -76,4 +76,10 @@ authority.
   focused receiver race reruns and the complete uncached native rerun pass
   without a receiver change.
 - E2E smoke, documentation, knowledge, JSON, and diff checks pass.
+- Feature commit: `4b342ae65b10279448b438e43b1947f1cfb282fc`
+- Fetched `origin/main`: verified at the feature commit
+- Post-fetch knowledge validation: passed
+- Vault range:
+  `fd1bbb476f340a159729052f2675b201678f1c68..4b342ae65b10279448b438e43b1947f1cfb282fc`
+- Vault iteration note, full index, and MOC link: verified
 - Tag/publication actions: none.

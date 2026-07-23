@@ -40,7 +40,7 @@
 | R90-21 | Jul 22–Oct 20 | Complete early | Reject write-blocking SQLite schema extensions. | R90-20 | Existing primary and historical databases with unknown `NOT NULL` columns lacking a usable non-NULL default fail read-only preflight and remain unchanged; nullable and non-NULL-defaulted extra columns remain compatible. |
 | R90-22 | Jul 23–Oct 20 | Complete early | Reject write-blocking SQLite uniqueness extensions. | R90-21 | Existing primary and historical databases with extra unique indexes that do not contain a binary-collated canonical write identity fail read-only preflight and remain unchanged; non-unique indexes and uniqueness extensions containing an existing safe identity remain compatible and writable. |
 | R90-23 | Jul 23–Oct 20 | Complete early | Reject write-affecting SQLite triggers. | R90-22 | Existing primary and historical databases with triggers attached to `alerts` or `alert_events` fail read-only preflight and remain unchanged; triggers confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
-| R90-24 | Jul 23–Oct 20 | In progress | Reject write-affecting SQLite generated columns. | R90-23 | Existing primary and historical databases with virtual or stored generated columns on `alerts` or `alert_events` fail read-only preflight and remain unchanged; ordinary nullable and defaulted column extensions remain compatible and writable. |
+| R90-24 | Jul 23–Oct 20 | Complete early | Reject write-affecting SQLite generated columns. | R90-23 | Existing primary and historical databases with virtual or stored generated columns on `alerts` or `alert_events` fail read-only preflight and remain unchanged; ordinary nullable and defaulted column extensions remain compatible and writable. |
 
 ## R90-07 Definition
 
@@ -439,7 +439,16 @@
   next `$netsentry-next` trigger. The queue was refreshed on Jul 23 from the
   clean fetched baseline, completed task state, release boundaries,
   write-critical generated-column metadata, and verified Vault
-  evidence. R90-24 is the selected next increment. Publication remains
+  evidence. R90-24 completed early at
+  `4b342ae65b10279448b438e43b1947f1cfb282fc`: complete column metadata
+  now exposes and rejects virtual or stored generated columns before writable
+  initialization, while ordinary compatible extensions remain writable.
+  Twenty focused generated-column race runs, twenty focused receiver reruns
+  after one non-reproduced timing event, the clean full native rerun, E2E
+  smoke, documentation, and knowledge checks passed; fetched `origin/main`,
+  the post-fetch knowledge gate, and the exact full-SHA Vault note, index, and
+  MOC are verified. No later engineering increment is selected; refresh the
+  rolling roadmap on the next `$netsentry-next` trigger. Publication remains
   unauthorized.
 
 ## Global PCAP Release-Gate Waiver
@@ -511,4 +520,4 @@
 
 ## Current Checkpoint
 
-R90-24 was selected on Jul 23 after refreshing the empty queue from the clean fetched R90-23 baseline, completed task state, release boundaries, write-critical generated-column metadata, and verified Vault evidence. It exposes columns omitted by `PRAGMA table_info` and rejects virtual or stored generated extensions on `alerts` and `alert_events` before writable initialization while retaining ordinary compatible columns. Implementation and delivery validation are in progress. Publication remains unauthorized.
+R90-24 completed early at `4b342ae65b10279448b438e43b1947f1cfb282fc` after the empty queue was refreshed from the clean fetched R90-23 baseline, completed task state, release boundaries, write-critical generated-column metadata, and verified Vault evidence. Virtual and stored generated columns on both `alerts` and `alert_events`, including a historical shard, now fail before writable initialization with byte preservation. Ordinary nullable and non-NULL-defaulted columns remain writable. Twenty focused generated-column race runs passed. The first full native run hit one unrelated receiver timing boundary; twenty focused receiver reruns and the clean full native rerun passed without a receiver change. E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.
