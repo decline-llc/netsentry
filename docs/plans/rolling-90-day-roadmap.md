@@ -39,7 +39,7 @@
 | R90-20 | Jul 22–Oct 20 | Complete early | Bound recovery-record encoding and replay. | R90-19 | Valid writer-generated records above the scanner's former 64 KiB ceiling persist and replay; records above the explicit 4 MiB durable limit fail before append, leaving the recovery log and database unchanged. |
 | R90-21 | Jul 22–Oct 20 | Complete early | Reject write-blocking SQLite schema extensions. | R90-20 | Existing primary and historical databases with unknown `NOT NULL` columns lacking a usable non-NULL default fail read-only preflight and remain unchanged; nullable and non-NULL-defaulted extra columns remain compatible. |
 | R90-22 | Jul 23–Oct 20 | Complete early | Reject write-blocking SQLite uniqueness extensions. | R90-21 | Existing primary and historical databases with extra unique indexes that do not contain a binary-collated canonical write identity fail read-only preflight and remain unchanged; non-unique indexes and uniqueness extensions containing an existing safe identity remain compatible and writable. |
-| R90-23 | Jul 23–Oct 20 | In progress | Reject write-affecting SQLite triggers. | R90-22 | Existing primary and historical databases with triggers attached to `alerts` or `alert_events` fail read-only preflight and remain unchanged; triggers confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
+| R90-23 | Jul 23–Oct 20 | Complete early | Reject write-affecting SQLite triggers. | R90-22 | Existing primary and historical databases with triggers attached to `alerts` or `alert_events` fail read-only preflight and remain unchanged; triggers confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 
 ## R90-07 Definition
 
@@ -399,8 +399,15 @@
   post-fetch knowledge gate, and the exact full-SHA Vault note, index, and MOC
   are verified. The queue was refreshed on Jul 23 from the clean fetched
   baseline, completed task state, release boundaries, write-critical SQLite
-  trigger metadata, and verified Vault evidence. R90-23 is the selected next
-  increment. Publication remains unauthorized.
+  trigger metadata, and verified Vault evidence. R90-23 completed early at
+  `c74982c13356cfa2733ed51bc890840b238d7cfe`: triggers attached to either
+  write-critical table now fail before writable initialization, while
+  unrelated operator-table triggers remain active and compatible. Twenty
+  focused race runs, the full native suite, E2E smoke, documentation, and
+  knowledge checks passed; fetched `origin/main`, the post-fetch knowledge
+  gate, and the exact full-SHA Vault note, index, and MOC are verified. No
+  later engineering increment is selected; refresh the rolling roadmap on the
+  next `$netsentry-next` trigger. Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -471,4 +478,4 @@
 
 ## Current Checkpoint
 
-R90-23 was selected on Jul 23 after refreshing the empty queue from the clean fetched R90-22 baseline, completed task state, release boundaries, write-critical SQLite trigger metadata, and verified Vault evidence. It rejects triggers attached to `alerts` or `alert_events` before writable initialization while retaining triggers confined to unrelated operator tables. Implementation and delivery validation are in progress. Publication remains unauthorized.
+R90-23 completed early at `c74982c13356cfa2733ed51bc890840b238d7cfe` after the empty queue was refreshed from the clean fetched R90-22 baseline, completed task state, release boundaries, write-critical SQLite trigger metadata, and verified Vault evidence. `BEFORE`, `AFTER`, case-variant table-name, and historical-shard triggers attached to `alerts` or `alert_events` now fail before writable initialization with byte preservation. Triggers confined to unrelated operator tables remain active and NetSentry writes succeed. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.

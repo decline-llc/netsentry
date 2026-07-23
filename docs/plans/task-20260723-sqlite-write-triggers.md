@@ -73,4 +73,10 @@ migration, operator data, or publication authority.
   NetSentry accepts distinct valid writes.
 - Twenty uncached focused race runs, the full native C/Go race suite, E2E
   smoke, documentation, knowledge, JSON, and diff checks pass.
+- Feature commit: `c74982c13356cfa2733ed51bc890840b238d7cfe`
+- Fetched `origin/main`: verified at the feature commit
+- Post-fetch knowledge validation: passed
+- Vault range:
+  `572038a5e081697f5b4a522687222a510dd1f0f8..c74982c13356cfa2733ed51bc890840b238d7cfe`
+- Vault iteration note, full index, and MOC link: verified
 - Tag/publication actions: none.
