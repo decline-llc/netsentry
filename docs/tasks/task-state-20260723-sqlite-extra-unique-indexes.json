@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "bd0f4d04689513ac9806a69991c97993895bd9e9",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main matches the remote baseline",
     "Verified R90-21 feature and delivery records in the existing local Vault",
@@ -13,29 +13,25 @@
     "Confirmed extra subset and expression uniqueness can reject valid fixed-column writes after preflight",
     "Rejected unique indexes that do not contain a canonical safe write identity",
     "Added direct primary subset, timestamp-only, expression-only, partial-subset, non-binary-collation, historical-shard, and compatible-index coverage",
-    "Passed 20 uncached focused race runs, the full native C/Go race suite, E2E smoke, documentation, knowledge, JSON, and diff checks"
+    "Passed 20 uncached focused race runs, the full native C/Go race suite, E2E smoke, documentation, knowledge, JSON, and diff checks",
+    "Pushed b62cbff41ec3f72adfa07030dcba17058a3e239e and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact full-SHA Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Run the pre-commit knowledge gate and sensitive-information review",
-    "Commit, push, fetch-verify, and synchronize the validated increment",
-    "Reconcile roadmap and task state against verified remote and Vault evidence"
-  ],
-  "todo": [
-    "Record verified delivery evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false
+    "commit": "b62cbff41ec3f72adfa07030dcba17058a3e239e",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "bd0f4d04689513ac9806a69991c97993895bd9e9..b62cbff41ec3f72adfa07030dcba17058a3e239e",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
   },
   "remaining_risks": [
     "Expression-only, partial-subset, and non-binary identity uniqueness must fail closed",
     "Non-unique and binary identity-containing index extensions must remain compatible",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Complete R90-22 only: reject write-blocking unique indexes before writable initialization, preserve primary and historical database bytes, retain compatible index extensions, and do not migrate schemas or publish artifacts."
+  "resume_instructions": "R90-22 is complete at b62cbff41ec3f72adfa07030dcba17058a3e239e. Do not repeat its implementation, validation, push, or Vault synchronization. No later engineering increment is selected; refresh the rolling roadmap on the next $netsentry-next trigger. Do not create v0.1.1 or publish artifacts."
 }

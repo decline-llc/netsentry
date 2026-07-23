@@ -79,4 +79,10 @@ migration, rewriting operator indexes, operator data, or publication authority.
   accept distinct valid writes.
 - Twenty uncached focused race runs, the full native C/Go race suite, E2E
   smoke, documentation, knowledge, JSON, and diff checks pass.
+- Feature commit: `b62cbff41ec3f72adfa07030dcba17058a3e239e`
+- Fetched `origin/main`: verified at the feature commit
+- Post-fetch knowledge validation: passed
+- Vault range:
+  `bd0f4d04689513ac9806a69991c97993895bd9e9..b62cbff41ec3f72adfa07030dcba17058a3e239e`
+- Vault iteration note, full index, and MOC link: verified
 - Tag/publication actions: none.

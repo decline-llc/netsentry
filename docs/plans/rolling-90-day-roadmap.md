@@ -38,7 +38,7 @@
 | R90-19 | Jul 22–Oct 15 | Complete early | Preflight recovery logs before runtime append. | R90-18 | A runtime write rejects an already malformed or semantically invalid recovery log before appending or touching SQLite; the complete log and database remain unchanged, while valid pending-log persistence remains compatible. |
 | R90-20 | Jul 22–Oct 20 | Complete early | Bound recovery-record encoding and replay. | R90-19 | Valid writer-generated records above the scanner's former 64 KiB ceiling persist and replay; records above the explicit 4 MiB durable limit fail before append, leaving the recovery log and database unchanged. |
 | R90-21 | Jul 22–Oct 20 | Complete early | Reject write-blocking SQLite schema extensions. | R90-20 | Existing primary and historical databases with unknown `NOT NULL` columns lacking a usable non-NULL default fail read-only preflight and remain unchanged; nullable and non-NULL-defaulted extra columns remain compatible. |
-| R90-22 | Jul 23–Oct 20 | In progress | Reject write-blocking SQLite uniqueness extensions. | R90-21 | Existing primary and historical databases with extra unique indexes that do not contain a canonical write identity fail read-only preflight and remain unchanged; non-unique indexes and uniqueness extensions containing an existing safe identity remain compatible and writable. |
+| R90-22 | Jul 23–Oct 20 | Complete early | Reject write-blocking SQLite uniqueness extensions. | R90-21 | Existing primary and historical databases with extra unique indexes that do not contain a binary-collated canonical write identity fail read-only preflight and remain unchanged; non-unique indexes and uniqueness extensions containing an existing safe identity remain compatible and writable. |
 
 ## R90-07 Definition
 
@@ -371,7 +371,15 @@
   exact full-SHA Vault note, index, and MOC are verified. The queue was
   refreshed on Jul 23 from the clean fetched baseline, completed task state,
   release boundaries, SQLite uniqueness constraints, and verified Vault
-  evidence. R90-22 is the selected next increment. Publication remains
+  evidence. R90-22 completed early at
+  `b62cbff41ec3f72adfa07030dcba17058a3e239e`: both write-critical tables
+  now reject extra unique indexes lacking a binary-collated canonical write
+  identity before writable initialization, while compatible index extensions
+  remain writable. Twenty focused race runs, the full native suite, E2E smoke,
+  documentation, and knowledge checks passed; fetched `origin/main`, the
+  post-fetch knowledge gate, and the exact full-SHA Vault note, index, and MOC
+  are verified. No later engineering increment is selected; refresh the
+  rolling roadmap on the next `$netsentry-next` trigger. Publication remains
   unauthorized.
 
 ## Global PCAP Release-Gate Waiver
@@ -443,4 +451,4 @@
 
 ## Current Checkpoint
 
-R90-22 was selected on Jul 23 after refreshing the empty queue from the clean fetched R90-21 baseline, completed task state, release boundaries, SQLite uniqueness constraints, and verified Vault evidence. It rejects extra unique indexes that can block NetSentry's valid fixed-column writes before writable initialization, while retaining non-unique extensions and uniqueness that contains an already-safe identity. Implementation and delivery validation are in progress. Publication remains unauthorized.
+R90-22 completed early at `b62cbff41ec3f72adfa07030dcba17058a3e239e` after the empty queue was refreshed from the clean fetched R90-21 baseline, completed task state, release boundaries, SQLite uniqueness constraints, and verified Vault evidence. Subset, unrelated timestamp, expression-only, partial-subset, and non-binary identity unique indexes now fail before writable initialization with byte preservation in primary and historical databases. Non-unique and binary-identity-containing extensions remain writable. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.
