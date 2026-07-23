@@ -267,7 +267,13 @@ func validateRequiredSchema(ctx context.Context, db *sql.DB) error {
 			return err
 		}
 	}
-	return validateAggregationConstraint(ctx, db)
+	if err := validateAggregationConstraint(ctx, db); err != nil {
+		return err
+	}
+	if err := validateWriteCompatibleUniqueIndexes(ctx, db, "alerts", []string{"id"}, requiredAggregationKey); err != nil {
+		return err
+	}
+	return validateWriteCompatibleUniqueIndexes(ctx, db, "alert_events", []string{"event_id"})
 }
 
 func validateRequiredColumns(ctx context.Context, db *sql.DB, table string, required []requiredColumn) error {
@@ -383,6 +389,56 @@ func validateAggregationConstraint(ctx context.Context, db *sql.DB) error {
 	return fmt.Errorf("%w: incompatible schema: alerts aggregation uniqueness constraint is missing", ErrDatabaseIntegrity)
 }
 
+func validateWriteCompatibleUniqueIndexes(ctx context.Context, db *sql.DB, table string, safeKeys ...[]string) error {
+	rows, err := db.QueryContext(ctx, "PRAGMA index_list("+quoteSQLiteIdentifier(table)+")")
+	if err != nil {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		return fmt.Errorf("%w: inspect %s indexes: %v", ErrDatabaseIntegrity, table, err)
+	}
+	var uniqueIndexes []string
+	for rows.Next() {
+		var seq, unique, partial int
+		var name, origin string
+		if err := rows.Scan(&seq, &name, &unique, &origin, &partial); err != nil {
+			_ = rows.Close()
+			return fmt.Errorf("%w: inspect %s indexes: %v", ErrDatabaseIntegrity, table, err)
+		}
+		if unique != 0 {
+			uniqueIndexes = append(uniqueIndexes, name)
+		}
+	}
+	if err := rows.Err(); err != nil {
+		_ = rows.Close()
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		return fmt.Errorf("%w: inspect %s indexes: %v", ErrDatabaseIntegrity, table, err)
+	}
+	if err := rows.Close(); err != nil {
+		return fmt.Errorf("%w: inspect %s indexes: %v", ErrDatabaseIntegrity, table, err)
+	}
+
+	for _, index := range uniqueIndexes {
+		columns, err := readIndexKeyColumns(ctx, db, index)
+		if err != nil {
+			return err
+		}
+		compatible := false
+		for _, safeKey := range safeKeys {
+			if containsBinaryColumns(columns, safeKey) {
+				compatible = true
+				break
+			}
+		}
+		if !compatible {
+			return fmt.Errorf("%w: incompatible schema: unique index %s.%s can reject valid alert writes", ErrDatabaseIntegrity, table, index)
+		}
+	}
+	return nil
+}
+
 func readIndexColumns(ctx context.Context, db *sql.DB, index string) ([]string, error) {
 	rows, err := db.QueryContext(ctx, "PRAGMA index_info("+quoteSQLiteIdentifier(index)+")")
 	if err != nil {
@@ -410,6 +466,56 @@ func readIndexColumns(ctx context.Context, db *sql.DB, index string) ([]string, 
 		return nil, fmt.Errorf("%w: inspect alerts index: %v", ErrDatabaseIntegrity, err)
 	}
 	return columns, nil
+}
+
+type indexKeyColumn struct {
+	name      sql.NullString
+	collation sql.NullString
+}
+
+func readIndexKeyColumns(ctx context.Context, db *sql.DB, index string) ([]indexKeyColumn, error) {
+	rows, err := db.QueryContext(ctx, "PRAGMA index_xinfo("+quoteSQLiteIdentifier(index)+")")
+	if err != nil {
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+		return nil, fmt.Errorf("%w: inspect unique index: %v", ErrDatabaseIntegrity, err)
+	}
+	defer rows.Close()
+	var columns []indexKeyColumn
+	for rows.Next() {
+		var seq, cid, descending, key int
+		var name, collation sql.NullString
+		if err := rows.Scan(&seq, &cid, &name, &descending, &collation, &key); err != nil {
+			return nil, fmt.Errorf("%w: inspect unique index: %v", ErrDatabaseIntegrity, err)
+		}
+		if key != 0 {
+			columns = append(columns, indexKeyColumn{name: name, collation: collation})
+		}
+	}
+	if err := rows.Err(); err != nil {
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+		return nil, fmt.Errorf("%w: inspect unique index: %v", ErrDatabaseIntegrity, err)
+	}
+	return columns, nil
+}
+
+func containsBinaryColumns(columns []indexKeyColumn, required []string) bool {
+	present := make(map[string]bool, len(columns))
+	for _, column := range columns {
+		if column.name.Valid {
+			present[column.name.String] = column.collation.Valid &&
+				strings.EqualFold(strings.TrimSpace(column.collation.String), "BINARY")
+		}
+	}
+	for _, column := range required {
+		if !present[column] {
+			return false
+		}
+	}
+	return true
 }
 
 func quoteSQLiteIdentifier(value string) string {

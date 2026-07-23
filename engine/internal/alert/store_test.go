@@ -1172,6 +1172,90 @@ func TestStoreRejectsMissingAggregationConstraintWithoutModification(t *testing.
 	}
 }
 
+func TestStoreRejectsWriteBlockingUniqueIndexesWithoutModification(t *testing.T) {
+	tests := []struct {
+		name      string
+		statement string
+		table     string
+		index     string
+	}{
+		{
+			name:      "alerts subset",
+			statement: `CREATE UNIQUE INDEX operator_alert_rule_unique ON alerts(rule_id)`,
+			table:     "alerts",
+			index:     "operator_alert_rule_unique",
+		},
+		{
+			name:      "alert events timestamp",
+			statement: `CREATE UNIQUE INDEX operator_event_time_unique ON alert_events(created_at)`,
+			table:     "alert_events",
+			index:     "operator_event_time_unique",
+		},
+		{
+			name:      "alerts expression",
+			statement: `CREATE UNIQUE INDEX operator_alert_rule_expression_unique ON alerts(lower(rule_id))`,
+			table:     "alerts",
+			index:     "operator_alert_rule_expression_unique",
+		},
+		{
+			name:      "alerts partial subset",
+			statement: `CREATE UNIQUE INDEX operator_alert_rule_partial_unique ON alerts(rule_id) WHERE severity = 'high'`,
+			table:     "alerts",
+			index:     "operator_alert_rule_partial_unique",
+		},
+		{
+			name:      "alerts collated identity",
+			statement: `CREATE UNIQUE INDEX operator_alert_identity_nocase_unique ON alerts(id COLLATE NOCASE)`,
+			table:     "alerts",
+			index:     "operator_alert_identity_nocase_unique",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "alerts.db")
+			createSQLiteFixture(t, path, schemaSQL, test.statement)
+			before := readFileBytes(t, path)
+
+			store, err := Open(context.Background(), Options{Path: path, JournalMode: "WAL"})
+			if store != nil {
+				_ = store.Close()
+				t.Fatal("schema with a write-blocking unique index returned a usable store")
+			}
+			assertIntegrityRejectionPreservesFile(t, path, before, err)
+			condition := "unique index " + test.table + "." + test.index + " can reject valid alert writes"
+			if !strings.Contains(err.Error(), condition) {
+				t.Fatalf("startup error = %v, want %q", err, condition)
+			}
+		})
+	}
+}
+
+func TestStoreAllowsWriteCompatibleAdditionalIndexes(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	createSQLiteFixture(t, path, schemaSQL,
+		`CREATE INDEX operator_rule_lookup ON alerts(rule_id)`,
+		`CREATE UNIQUE INDEX operator_alert_identity_unique ON alerts(id, rule_name)`,
+		`CREATE UNIQUE INDEX operator_alert_aggregate_extension_unique ON alerts(rule_id, src_ip, dst_ip, dst_port, window_start, severity)`,
+		`CREATE UNIQUE INDEX operator_event_identity_unique ON alert_events(event_id, created_at)`,
+	)
+	store, err := Open(context.Background(), Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open schema with compatible additional indexes: %v", err)
+	}
+	defer store.Close()
+
+	base := time.Date(2026, 7, 23, 4, 30, 0, 0, time.UTC)
+	first := makeAlert(base, "compatible-index-one")
+	second := makeAlert(base.Add(time.Second), "compatible-index-two")
+	second.SrcIP = "10.0.0.3"
+	if err := store.WriteBatch(context.Background(), []*model.Alert{first, second}); err != nil {
+		t.Fatalf("write schema with compatible additional indexes: %v", err)
+	}
+	if count, err := store.Count(context.Background()); err != nil || count != 2 {
+		t.Fatalf("compatible additional index count=%d err=%v, want 2/nil", count, err)
+	}
+}
+
 func TestStoreReopensCompatibleExistingDatabase(t *testing.T) {
 	ctx := context.Background()
 	path := filepath.Join(t.TempDir(), "alerts.db")
@@ -1248,6 +1332,27 @@ func TestStoreRejectsHistoricalShardWithUnknownRequiredColumnWithoutModification
 	assertIntegrityRejectionPreservesFile(t, path, before, err)
 	if !strings.Contains(err.Error(), "unknown column alerts.operator_required is NOT NULL without a usable default") {
 		t.Fatalf("historical shard error = %v, want unknown required column", err)
+	}
+}
+
+func TestStoreRejectsHistoricalShardWithWriteBlockingUniqueIndexWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	now := time.Date(2026, 7, 23, 4, 30, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	createSQLiteFixture(t, path, schemaSQL,
+		`CREATE UNIQUE INDEX operator_alert_rule_unique ON alerts(rule_id)`,
+	)
+	before := readFileBytes(t, path)
+
+	err := store.WriteBatch(ctx, []*model.Alert{makeAlert(historical, "unique-index-historical-shard")})
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+	if !strings.Contains(err.Error(), "unique index alerts.operator_alert_rule_unique can reject valid alert writes") {
+		t.Fatalf("historical shard error = %v, want write-blocking unique index", err)
 	}
 }
 
