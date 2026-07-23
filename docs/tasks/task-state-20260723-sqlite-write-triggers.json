@@ -1,0 +1,41 @@
+{
+  "task": "r90-23-sqlite-write-triggers",
+  "timestamp": "2026-07-23T04:43:03-07:00",
+  "branch": "main",
+  "remote_baseline": "572038a5e081697f5b4a522687222a510dd1f0f8",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main matches the remote baseline",
+    "Verified both R90-22 pushed ranges and delivery records in the existing local Vault",
+    "Refreshed the empty queue from release boundaries and write-critical SQLite trigger metadata",
+    "Selected R90-23 as the highest-priority dependency-ready increment",
+    "Confirmed required-schema preflight does not inspect triggers attached to alerts or alert_events",
+    "Rejected triggers attached to either write-critical table using case-insensitive ownership matching",
+    "Added direct BEFORE, AFTER, case-variant table-name, historical-shard, byte-preservation, and unrelated-trigger compatibility coverage",
+    "Passed 20 uncached focused race runs, the full native C/Go race suite, E2E smoke, documentation, knowledge, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Run the pre-commit knowledge gate and sensitive-information review",
+    "Commit, push, fetch-verify, and synchronize the validated increment",
+    "Reconcile roadmap and task state against verified remote and Vault evidence"
+  ],
+  "todo": [
+    "Record verified delivery evidence"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "Both write-critical tables and distinct trigger timings must fail closed",
+    "Unrelated operator-table triggers must remain compatible",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Complete R90-23 only: reject write-critical table triggers before writable initialization, preserve primary and historical database bytes, retain unrelated operator triggers, and do not interpret or rewrite triggers, migrate schemas, or publish artifacts."
+}

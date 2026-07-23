@@ -97,6 +97,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
   indexes that do not contain a canonical alert or event identity before
   writable initialization; ordinary indexes and redundant identity-containing
   uniqueness extensions remain compatible.
+- Existing primary databases and daily-shard write targets reject triggers
+  attached to `alerts` or `alert_events` before writable initialization;
+  triggers confined to unrelated operator tables remain compatible.
 - Malformed or unterminated JSONL recovery logs now fail startup with a stable
   integrity error before partial replay; rejected logs remain byte-for-byte
   unchanged and valid logs truncate only after successful persistence.

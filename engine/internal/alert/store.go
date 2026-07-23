@@ -273,7 +273,10 @@ func validateRequiredSchema(ctx context.Context, db *sql.DB) error {
 	if err := validateWriteCompatibleUniqueIndexes(ctx, db, "alerts", []string{"id"}, requiredAggregationKey); err != nil {
 		return err
 	}
-	return validateWriteCompatibleUniqueIndexes(ctx, db, "alert_events", []string{"event_id"})
+	if err := validateWriteCompatibleUniqueIndexes(ctx, db, "alert_events", []string{"event_id"}); err != nil {
+		return err
+	}
+	return validateWriteCriticalTriggers(ctx, db)
 }
 
 func validateRequiredColumns(ctx context.Context, db *sql.DB, table string, required []requiredColumn) error {
@@ -435,6 +438,30 @@ func validateWriteCompatibleUniqueIndexes(ctx context.Context, db *sql.DB, table
 		if !compatible {
 			return fmt.Errorf("%w: incompatible schema: unique index %s.%s can reject valid alert writes", ErrDatabaseIntegrity, table, index)
 		}
+	}
+	return nil
+}
+
+func validateWriteCriticalTriggers(ctx context.Context, db *sql.DB) error {
+	for _, table := range []string{"alerts", "alert_events"} {
+		var name string
+		err := db.QueryRowContext(ctx, `
+SELECT name
+FROM sqlite_schema
+WHERE type = 'trigger' AND tbl_name = ? COLLATE NOCASE
+ORDER BY name
+LIMIT 1
+`, table).Scan(&name)
+		if errors.Is(err, sql.ErrNoRows) {
+			continue
+		}
+		if err != nil {
+			if ctx.Err() != nil {
+				return ctx.Err()
+			}
+			return fmt.Errorf("%w: inspect %s triggers: %v", ErrDatabaseIntegrity, table, err)
+		}
+		return fmt.Errorf("%w: incompatible schema: trigger %s.%s can alter or reject valid alert writes", ErrDatabaseIntegrity, table, name)
 	}
 	return nil
 }

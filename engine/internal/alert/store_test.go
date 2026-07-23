@@ -1256,6 +1256,111 @@ func TestStoreAllowsWriteCompatibleAdditionalIndexes(t *testing.T) {
 	}
 }
 
+func TestStoreRejectsWriteCriticalTriggersWithoutModification(t *testing.T) {
+	tests := []struct {
+		name      string
+		statement string
+		table     string
+		trigger   string
+	}{
+		{
+			name:      "alerts before insert",
+			statement: `CREATE TRIGGER operator_alert_insert BEFORE INSERT ON alerts BEGIN SELECT RAISE(ABORT, 'blocked alert insert'); END`,
+			table:     "alerts",
+			trigger:   "operator_alert_insert",
+		},
+		{
+			name:      "alerts after update",
+			statement: `CREATE TRIGGER operator_alert_update AFTER UPDATE ON alerts BEGIN SELECT RAISE(ABORT, 'blocked alert update'); END`,
+			table:     "alerts",
+			trigger:   "operator_alert_update",
+		},
+		{
+			name:      "alert events after insert",
+			statement: `CREATE TRIGGER operator_event_insert AFTER INSERT ON alert_events BEGIN SELECT RAISE(ABORT, 'blocked event insert'); END`,
+			table:     "alert_events",
+			trigger:   "operator_event_insert",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "alerts.db")
+			createSQLiteFixture(t, path, schemaSQL, test.statement)
+			before := readFileBytes(t, path)
+
+			store, err := Open(context.Background(), Options{Path: path, JournalMode: "WAL"})
+			if store != nil {
+				_ = store.Close()
+				t.Fatal("schema with a write-critical trigger returned a usable store")
+			}
+			assertIntegrityRejectionPreservesFile(t, path, before, err)
+			condition := "trigger " + test.table + "." + test.trigger + " can alter or reject valid alert writes"
+			if !strings.Contains(err.Error(), condition) {
+				t.Fatalf("startup error = %v, want %q", err, condition)
+			}
+		})
+	}
+}
+
+func TestStoreAllowsUnrelatedTableTrigger(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	createSQLiteFixture(t, path, schemaSQL,
+		`CREATE TABLE operator_data (id INTEGER PRIMARY KEY, value TEXT NOT NULL)`,
+		`CREATE TABLE operator_audit (operator_id INTEGER NOT NULL, value TEXT NOT NULL)`,
+		`CREATE TRIGGER operator_data_audit AFTER INSERT ON operator_data BEGIN INSERT INTO operator_audit (operator_id, value) VALUES (NEW.id, NEW.value); END`,
+	)
+	store, err := Open(context.Background(), Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open schema with unrelated table trigger: %v", err)
+	}
+	defer store.Close()
+
+	base := time.Date(2026, 7, 23, 4, 45, 0, 0, time.UTC)
+	first := makeAlert(base, "unrelated-trigger-one")
+	second := makeAlert(base.Add(time.Second), "unrelated-trigger-two")
+	second.SrcIP = "10.0.0.3"
+	if err := store.WriteBatch(context.Background(), []*model.Alert{first, second}); err != nil {
+		t.Fatalf("write schema with unrelated table trigger: %v", err)
+	}
+	if count, err := store.Count(context.Background()); err != nil || count != 2 {
+		t.Fatalf("unrelated trigger alert count=%d err=%v, want 2/nil", count, err)
+	}
+	if _, err := store.db.Exec(`INSERT INTO operator_data (id, value) VALUES (1, 'retained')`); err != nil {
+		t.Fatalf("exercise unrelated table trigger: %v", err)
+	}
+	var value string
+	if err := store.db.QueryRow(`SELECT value FROM operator_audit WHERE operator_id = 1`).Scan(&value); err != nil {
+		t.Fatalf("read unrelated trigger output: %v", err)
+	}
+	if value != "retained" {
+		t.Fatalf("unrelated trigger output = %q, want retained", value)
+	}
+}
+
+func TestStoreRejectsWriteCriticalTriggerWithCaseVariantTableWithoutModification(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	caseVariantSchema := strings.Replace(
+		schemaSQL,
+		"CREATE TABLE IF NOT EXISTS alerts (",
+		"CREATE TABLE IF NOT EXISTS ALERTS (",
+		1,
+	)
+	createSQLiteFixture(t, path, caseVariantSchema,
+		`CREATE TRIGGER operator_alert_insert BEFORE INSERT ON ALERTS BEGIN SELECT RAISE(ABORT, 'blocked alert insert'); END`,
+	)
+	before := readFileBytes(t, path)
+
+	store, err := Open(context.Background(), Options{Path: path, JournalMode: "WAL"})
+	if store != nil {
+		_ = store.Close()
+		t.Fatal("case-variant write-critical trigger returned a usable store")
+	}
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+	if !strings.Contains(err.Error(), "trigger alerts.operator_alert_insert can alter or reject valid alert writes") {
+		t.Fatalf("startup error = %v, want case-variant write-critical trigger", err)
+	}
+}
+
 func TestStoreReopensCompatibleExistingDatabase(t *testing.T) {
 	ctx := context.Background()
 	path := filepath.Join(t.TempDir(), "alerts.db")
@@ -1353,6 +1458,27 @@ func TestStoreRejectsHistoricalShardWithWriteBlockingUniqueIndexWithoutModificat
 	assertIntegrityRejectionPreservesFile(t, path, before, err)
 	if !strings.Contains(err.Error(), "unique index alerts.operator_alert_rule_unique can reject valid alert writes") {
 		t.Fatalf("historical shard error = %v, want write-blocking unique index", err)
+	}
+}
+
+func TestStoreRejectsHistoricalShardWithWriteCriticalTriggerWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	now := time.Date(2026, 7, 23, 4, 45, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	createSQLiteFixture(t, path, schemaSQL,
+		`CREATE TRIGGER operator_event_insert BEFORE INSERT ON alert_events BEGIN SELECT RAISE(ABORT, 'blocked event insert'); END`,
+	)
+	before := readFileBytes(t, path)
+
+	err := store.WriteBatch(ctx, []*model.Alert{makeAlert(historical, "trigger-historical-shard")})
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+	if !strings.Contains(err.Error(), "trigger alert_events.operator_event_insert can alter or reject valid alert writes") {
+		t.Fatalf("historical shard error = %v, want write-critical trigger", err)
 	}
 }
 

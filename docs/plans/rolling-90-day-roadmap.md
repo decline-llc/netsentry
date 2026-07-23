@@ -39,6 +39,7 @@
 | R90-20 | Jul 22–Oct 20 | Complete early | Bound recovery-record encoding and replay. | R90-19 | Valid writer-generated records above the scanner's former 64 KiB ceiling persist and replay; records above the explicit 4 MiB durable limit fail before append, leaving the recovery log and database unchanged. |
 | R90-21 | Jul 22–Oct 20 | Complete early | Reject write-blocking SQLite schema extensions. | R90-20 | Existing primary and historical databases with unknown `NOT NULL` columns lacking a usable non-NULL default fail read-only preflight and remain unchanged; nullable and non-NULL-defaulted extra columns remain compatible. |
 | R90-22 | Jul 23–Oct 20 | Complete early | Reject write-blocking SQLite uniqueness extensions. | R90-21 | Existing primary and historical databases with extra unique indexes that do not contain a binary-collated canonical write identity fail read-only preflight and remain unchanged; non-unique indexes and uniqueness extensions containing an existing safe identity remain compatible and writable. |
+| R90-23 | Jul 23–Oct 20 | In progress | Reject write-affecting SQLite triggers. | R90-22 | Existing primary and historical databases with triggers attached to `alerts` or `alert_events` fail read-only preflight and remain unchanged; triggers confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 
 ## R90-07 Definition
 
@@ -298,6 +299,24 @@
   index expressions, schema migration, rewriting operator indexes, operator
   data, or tag/publication authority.
 
+## R90-23 Definition
+
+- **Goal:** close the schema-preflight gap where a trigger attached to a
+  write-critical table can abort, redirect, or add side effects to valid
+  NetSentry writes only after writable initialization.
+- **Risk:** inspecting trigger bodies would require interpreting arbitrary SQL,
+  while rejecting triggers on unrelated operator tables would unnecessarily
+  narrow compatible extensions.
+- **Required validation:** direct `alerts` `BEFORE INSERT`, `alerts`
+  `AFTER UPDATE`, `alert_events`, and case-variant table-name trigger
+  rejections with byte preservation; a historical-shard rejection;
+  unrelated-table trigger compatibility with successful writes; repeated
+  focused alert-store race tests, full native, documentation, E2E, and
+  knowledge checks.
+- **Stop condition:** stop if safe completion requires interpreting or
+  rewriting trigger SQL, schema migration, operator data, or tag/publication
+  authority.
+
 ## Global Schedule-Window Waiver
 
 - **Authorization:** On Jul 16, 2026, the user cancelled every roadmap planning
@@ -378,9 +397,10 @@
   remain writable. Twenty focused race runs, the full native suite, E2E smoke,
   documentation, and knowledge checks passed; fetched `origin/main`, the
   post-fetch knowledge gate, and the exact full-SHA Vault note, index, and MOC
-  are verified. No later engineering increment is selected; refresh the
-  rolling roadmap on the next `$netsentry-next` trigger. Publication remains
-  unauthorized.
+  are verified. The queue was refreshed on Jul 23 from the clean fetched
+  baseline, completed task state, release boundaries, write-critical SQLite
+  trigger metadata, and verified Vault evidence. R90-23 is the selected next
+  increment. Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -399,7 +419,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -451,4 +471,4 @@
 
 ## Current Checkpoint
 
-R90-22 completed early at `b62cbff41ec3f72adfa07030dcba17058a3e239e` after the empty queue was refreshed from the clean fetched R90-21 baseline, completed task state, release boundaries, SQLite uniqueness constraints, and verified Vault evidence. Subset, unrelated timestamp, expression-only, partial-subset, and non-binary identity unique indexes now fail before writable initialization with byte preservation in primary and historical databases. Non-unique and binary-identity-containing extensions remain writable. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.
+R90-23 was selected on Jul 23 after refreshing the empty queue from the clean fetched R90-22 baseline, completed task state, release boundaries, write-critical SQLite trigger metadata, and verified Vault evidence. It rejects triggers attached to `alerts` or `alert_events` before writable initialization while retaining triggers confined to unrelated operator tables. Implementation and delivery validation are in progress. Publication remains unauthorized.
