@@ -226,8 +226,9 @@ An existing non-empty primary alerts database receives a read-only SQLite
 schema initialization. The schema check requires the current `alerts` and
 `alert_events` columns, types, primary-key/non-null roles, and aggregation
 uniqueness contract. It also rejects extra uniqueness constraints, generated
-columns, triggers, and `CHECK` constraints that attach to either write-critical
-table and can alter or reject NetSentry's fixed writes. Corrupt, truncated,
+columns, triggers, `CHECK` constraints, and foreign-key relationships that
+attach to or reference either write-critical table and can alter or reject
+NetSentry's fixed writes. Corrupt, truncated,
 unrelated, or incompatible input fails startup with `ErrDatabaseIntegrity` and
 an explicit statement that the file was not modified. Missing query indexes
 and extensions confined to unrelated operator tables are compatible. New paths
@@ -427,7 +428,7 @@ Current validation baseline:
 - `make test-unit` runs C/Go unit and race tests followed serially by C ASan tests.
 - `make test-integration` verifies the pinned PcapPlusPlus/Zeek fixture manifest, processes supported external pcaps, and checks invalid CLI/non-Ethernet rejection.
 - `make test-e2e` covers pcap -> UDS -> worker pool -> SQLite -> API; `make test-stress` runs configurable repeat-pcap pressure.
-- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation, daily shards, bounded recovery-log encoding/replay and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, generated-column and `CHECK`-constraint rejection, compatible ordinary column/index/unrelated-table extensions, active WAL-backed read-only access, and storage degraded/emergency behavior.
+- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation, daily shards, bounded recovery-log encoding/replay and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, generated-column, `CHECK`-constraint, and write-critical foreign-key rejection, compatible ordinary column/index/unrelated-table extensions, active WAL-backed read-only access, and storage degraded/emergency behavior.
 - Release-candidate checks run syntax checks, repository configuration validation, dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 
 The C-side JSON line formatter is intentionally kept as a bounded handwritten v0.1.0 implementation. It avoids a new C dependency, rejects truncation, escapes JSON strings, Base64-encodes packet payload previews, and is covered by the UDS sender tests and current smoke checks. A cJSON migration should be reopened only with a concrete defect or fuzzing result.

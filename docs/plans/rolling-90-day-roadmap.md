@@ -42,6 +42,7 @@
 | R90-23 | Jul 23–Oct 20 | Complete early | Reject write-affecting SQLite triggers. | R90-22 | Existing primary and historical databases with triggers attached to `alerts` or `alert_events` fail read-only preflight and remain unchanged; triggers confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 | R90-24 | Jul 23–Oct 20 | Complete early | Reject write-affecting SQLite generated columns. | R90-23 | Existing primary and historical databases with virtual or stored generated columns on `alerts` or `alert_events` fail read-only preflight and remain unchanged; ordinary nullable and defaulted column extensions remain compatible and writable. |
 | R90-25 | Jul 24–Oct 20 | Complete early | Reject write-affecting SQLite check constraints. | R90-24 | Existing primary and historical databases with `CHECK` constraints on `alerts` or `alert_events` fail read-only preflight and remain unchanged; constraints confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
+| R90-26 | Jul 24–Oct 20 | In progress | Reject write-affecting SQLite foreign keys. | R90-25 | Existing primary and historical databases with foreign-key relationships whose source or target is `alerts` or `alert_events` fail read-only preflight and remain unchanged; relationships confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 
 ## R90-07 Definition
 
@@ -355,6 +356,24 @@
   expressions, schema migration, rewriting operator constraints, operator
   data, or tag/publication authority.
 
+## R90-26 Definition
+
+- **Goal:** close the schema-preflight gap where foreign-key relationships can
+  reject or cascade NetSentry inserts, updates, and retention deletes when
+  SQLite foreign-key enforcement is active.
+- **Risk:** inspecting only outgoing relationships misses unrelated tables
+  that reference write-critical tables, while rejecting relationships confined
+  to operator tables would unnecessarily narrow compatible extensions.
+- **Required validation:** direct outgoing `alerts` and `alert_events`
+  rejections plus an incoming and case-variant relationship rejection with
+  byte preservation; a historical-shard rejection; unrelated-table
+  relationship compatibility with successful writes; repeated focused
+  alert-store race tests, full native, documentation, E2E, and knowledge
+  checks.
+- **Stop condition:** stop if safe completion requires enabling or evaluating
+  foreign-key actions, schema migration, rewriting operator relationships,
+  operator data, or tag/publication authority.
+
 ### R90-24 Validation Deviation
 
 - **Observed:** The first full native race suite hit the existing
@@ -476,8 +495,9 @@
   identifiers, or identifier substrings. Twenty focused race runs, the full
   native suite, E2E smoke, documentation, and knowledge checks passed; fetched
   `origin/main`, the post-fetch knowledge gate, and the exact full-SHA Vault
-  note, index, and MOC are verified. No later engineering increment is
-  selected; refresh the rolling roadmap on the next `$netsentry-next` trigger.
+  note, index, and MOC are verified. The queue was refreshed on Jul 24 from the
+  clean fetched baseline, completed task state, release boundaries, SQLite
+  foreign-key metadata, and verified Vault evidence. R90-26 is in progress.
   Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
@@ -497,7 +517,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -549,4 +569,4 @@
 
 ## Current Checkpoint
 
-R90-25 completed early at `1a4f565b1ef07b91a0c5ce80efc7cc78c382bb5b` after the queue was refreshed from the clean fetched R90-24 baseline, completed task state, release boundaries, write-critical SQLite constraint metadata, and verified Vault evidence. `CHECK` constraints on both `alerts` and `alert_events`, including a historical shard, now fail before writable initialization with byte preservation. Strings, comments, quoted identifiers, identifier substrings, and constraints on unrelated tables remain compatible. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.
+R90-25 completed early at `1a4f565b1ef07b91a0c5ce80efc7cc78c382bb5b`; its feature and delivery-record commits are present on fetched `origin/main`, and both exact Vault iteration notes, the full index, and MOC links are verified. The Jul 24 queue refresh selected R90-26 from the remaining SQLite foreign-key metadata gap. R90-26 rejects outgoing and incoming foreign-key relationships involving `alerts` or `alert_events` before writable initialization while retaining relationships confined to unrelated operator tables. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks pass. Delivery is in progress; publication remains unauthorized.

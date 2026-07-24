@@ -197,9 +197,10 @@ Current build:
   contract. Unknown nullable columns and unknown `NOT NULL` columns with a
   non-NULL default remain compatible; an unknown mandatory column without a
   usable default is rejected because NetSentry's fixed inserts cannot populate
-  it. Generated columns, triggers, and `CHECK` constraints attached to either
-  write-critical table are rejected because their expressions or side effects
-  can alter or reject valid fixed-column writes; equivalent extensions
+  it. Generated columns, triggers, `CHECK` constraints, and foreign-key
+  relationships attached to or referencing either write-critical table are
+  rejected because their expressions, relationships, or side effects can alter
+  or reject valid fixed-column writes; equivalent extensions
   confined to unrelated operator tables remain compatible. A failed check
   stops startup with `ErrDatabaseIntegrity`;
   NetSentry does not repair, migrate, truncate, rename, or overwrite the
@@ -262,7 +263,7 @@ v0.1.0 target:
 
 Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, engine worker shutdown orchestration, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
 
-Alert storage tests cover SQLite aggregation windows, JSONL recovery-log replay idempotency and semantic validation with byte preservation, required-schema plus write-blocking uniqueness/trigger/generated-column rejection with byte preservation, compatible ordinary column/index/unrelated-trigger extensions, optional query-index recreation, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, corrupt/truncated/incompatible historical-shard read/write preservation, active WAL-backed read-only access, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics counts backed by a real daily-shard SQLite store.
+Alert storage tests cover SQLite aggregation windows, JSONL recovery-log replay idempotency and semantic validation with byte preservation, required-schema plus write-blocking uniqueness/trigger/generated-column/constraint/foreign-key rejection with byte preservation, compatible ordinary column/index/unrelated-table extensions, optional query-index recreation, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, corrupt/truncated/incompatible historical-shard read/write preservation, active WAL-backed read-only access, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics counts backed by a real daily-shard SQLite store.
 
 The v0.1.0 IPC serializer decision is to retain the current bounded handwritten C JSON formatter instead of adding cJSON. The formatter is narrow, fails closed on buffer exhaustion, Base64-encodes payload previews, and is already exercised through unit tests, microbenchmarks, deterministic fuzz smoke, and e2e heartbeat assertions. Replacing it remains a future option only if sustained fuzzing or production evidence shows a concrete defect.
 

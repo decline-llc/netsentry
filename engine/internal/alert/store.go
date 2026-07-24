@@ -280,7 +280,10 @@ func validateRequiredSchema(ctx context.Context, db *sql.DB) error {
 	if err := validateWriteCriticalTriggers(ctx, db); err != nil {
 		return err
 	}
-	return validateWriteCriticalCheckConstraints(ctx, db)
+	if err := validateWriteCriticalCheckConstraints(ctx, db); err != nil {
+		return err
+	}
+	return validateWriteCriticalForeignKeys(ctx, db)
 }
 
 func validateRequiredColumns(ctx context.Context, db *sql.DB, table string, required []requiredColumn) error {
@@ -498,6 +501,101 @@ LIMIT 1
 		}
 	}
 	return nil
+}
+
+func validateWriteCriticalForeignKeys(ctx context.Context, db *sql.DB) error {
+	rows, err := db.QueryContext(ctx, `
+SELECT name
+FROM sqlite_schema
+WHERE type = 'table'
+ORDER BY name
+`)
+	if err != nil {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		return fmt.Errorf("%w: inspect foreign-key tables: %v", ErrDatabaseIntegrity, err)
+	}
+	var tables []string
+	for rows.Next() {
+		var table string
+		if err := rows.Scan(&table); err != nil {
+			_ = rows.Close()
+			return fmt.Errorf("%w: inspect foreign-key tables: %v", ErrDatabaseIntegrity, err)
+		}
+		tables = append(tables, table)
+	}
+	if err := rows.Err(); err != nil {
+		_ = rows.Close()
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		return fmt.Errorf("%w: inspect foreign-key tables: %v", ErrDatabaseIntegrity, err)
+	}
+	if err := rows.Close(); err != nil {
+		return fmt.Errorf("%w: inspect foreign-key tables: %v", ErrDatabaseIntegrity, err)
+	}
+
+	for _, sourceTable := range tables {
+		foreignKeys, err := db.QueryContext(ctx, "PRAGMA foreign_key_list("+quoteSQLiteIdentifier(sourceTable)+")")
+		if err != nil {
+			if ctx.Err() != nil {
+				return ctx.Err()
+			}
+			return fmt.Errorf("%w: inspect %s foreign keys: %v", ErrDatabaseIntegrity, sourceTable, err)
+		}
+		for foreignKeys.Next() {
+			var id, sequence int
+			var targetTable, onUpdate, onDelete, match string
+			var sourceColumn, targetColumn sql.NullString
+			if err := foreignKeys.Scan(
+				&id,
+				&sequence,
+				&targetTable,
+				&sourceColumn,
+				&targetColumn,
+				&onUpdate,
+				&onDelete,
+				&match,
+			); err != nil {
+				_ = foreignKeys.Close()
+				return fmt.Errorf("%w: inspect %s foreign keys: %v", ErrDatabaseIntegrity, sourceTable, err)
+			}
+			if isWriteCriticalTable(sourceTable) || isWriteCriticalTable(targetTable) {
+				_ = foreignKeys.Close()
+				return fmt.Errorf(
+					"%w: incompatible schema: foreign key %s.%s -> %s.%s can alter or reject valid alert writes",
+					ErrDatabaseIntegrity,
+					sourceTable,
+					sqliteForeignKeyColumn(sourceColumn),
+					targetTable,
+					sqliteForeignKeyColumn(targetColumn),
+				)
+			}
+		}
+		if err := foreignKeys.Err(); err != nil {
+			_ = foreignKeys.Close()
+			if ctx.Err() != nil {
+				return ctx.Err()
+			}
+			return fmt.Errorf("%w: inspect %s foreign keys: %v", ErrDatabaseIntegrity, sourceTable, err)
+		}
+		if err := foreignKeys.Close(); err != nil {
+			return fmt.Errorf("%w: inspect %s foreign keys: %v", ErrDatabaseIntegrity, sourceTable, err)
+		}
+	}
+	return nil
+}
+
+func sqliteForeignKeyColumn(column sql.NullString) string {
+	if column.Valid {
+		return column.String
+	}
+	return "<primary-key>"
+}
+
+func isWriteCriticalTable(table string) bool {
+	return strings.EqualFold(table, "alerts") || strings.EqualFold(table, "alert_events")
 }
 
 func containsSQLiteKeyword(sqlText, keyword string) bool {

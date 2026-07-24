@@ -1458,6 +1458,89 @@ func TestStoreAllowsUnrelatedTableCheckConstraint(t *testing.T) {
 	}
 }
 
+func TestStoreRejectsWriteCriticalForeignKeysWithoutModification(t *testing.T) {
+	tests := []struct {
+		name       string
+		schema     string
+		statements []string
+		condition  string
+	}{
+		{
+			name: "alerts outgoing",
+			schema: strings.Replace(
+				schemaSQL,
+				"    updated_at TEXT NOT NULL,\n    UNIQUE(rule_id, src_ip, dst_ip, dst_port, window_start)",
+				"    updated_at TEXT NOT NULL,\n    operator_rule TEXT REFERENCES operator_rules(id),\n    UNIQUE(rule_id, src_ip, dst_ip, dst_port, window_start)",
+				1,
+			),
+			statements: []string{`CREATE TABLE operator_rules (id TEXT PRIMARY KEY)`},
+			condition:  "foreign key alerts.operator_rule -> operator_rules.id can alter or reject valid alert writes",
+		},
+		{
+			name: "alert events outgoing",
+			schema: strings.Replace(
+				schemaSQL,
+				"    created_at TEXT NOT NULL\n);",
+				"    created_at TEXT NOT NULL,\n    operator_rule TEXT REFERENCES operator_rules(id)\n);",
+				1,
+			),
+			statements: []string{`CREATE TABLE operator_rules (id TEXT PRIMARY KEY)`},
+			condition:  "foreign key alert_events.operator_rule -> operator_rules.id can alter or reject valid alert writes",
+		},
+		{
+			name:       "alerts incoming",
+			schema:     schemaSQL,
+			statements: []string{`CREATE TABLE operator_links (alert_id TEXT REFERENCES alerts(id))`},
+			condition:  "foreign key operator_links.alert_id -> alerts.id can alter or reject valid alert writes",
+		},
+		{
+			name:       "case variant incoming",
+			schema:     schemaSQL,
+			statements: []string{`CREATE TABLE operator_events (event_id TEXT REFERENCES ALERT_EVENTS)`},
+			condition:  "foreign key operator_events.event_id -> ALERT_EVENTS.<primary-key> can alter or reject valid alert writes",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "alerts.db")
+			statements := append([]string{test.schema}, test.statements...)
+			createSQLiteFixture(t, path, statements...)
+			before := readFileBytes(t, path)
+
+			store, err := Open(context.Background(), Options{Path: path, JournalMode: "WAL"})
+			if store != nil {
+				_ = store.Close()
+				t.Fatal("schema with a write-critical foreign key returned a usable store")
+			}
+			assertIntegrityRejectionPreservesFile(t, path, before, err)
+			if !strings.Contains(err.Error(), test.condition) {
+				t.Fatalf("startup error = %v, want %q", err, test.condition)
+			}
+		})
+	}
+}
+
+func TestStoreAllowsUnrelatedTableForeignKeys(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	createSQLiteFixture(t, path, schemaSQL,
+		`CREATE TABLE operator_rules (id TEXT PRIMARY KEY)`,
+		`CREATE TABLE operator_links (
+			link_id TEXT PRIMARY KEY,
+			rule_id TEXT REFERENCES operator_rules(id)
+		)`,
+	)
+	store, err := Open(context.Background(), Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open schema with unrelated foreign key: %v", err)
+	}
+	defer store.Close()
+	if err := store.WriteBatch(context.Background(), []*model.Alert{
+		makeAlert(time.Date(2026, 7, 24, 7, 15, 0, 0, time.UTC), "unrelated-foreign-key"),
+	}); err != nil {
+		t.Fatalf("write schema with unrelated foreign key: %v", err)
+	}
+}
+
 func TestStoreAllowsUnrelatedTableTrigger(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "alerts.db")
 	createSQLiteFixture(t, path, schemaSQL,
@@ -1685,6 +1768,27 @@ func TestStoreRejectsHistoricalShardWithCheckConstraintWithoutModification(t *te
 	assertIntegrityRejectionPreservesFile(t, path, before, err)
 	if !strings.Contains(err.Error(), "CHECK constraint on alert_events can reject valid alert writes") {
 		t.Fatalf("historical shard error = %v, want CHECK constraint", err)
+	}
+}
+
+func TestStoreRejectsHistoricalShardWithForeignKeyWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	now := time.Date(2026, 7, 24, 7, 20, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	createSQLiteFixture(t, path, schemaSQL,
+		`CREATE TABLE operator_links (event_id TEXT REFERENCES alert_events(event_id))`,
+	)
+	before := readFileBytes(t, path)
+
+	err := store.WriteBatch(ctx, []*model.Alert{makeAlert(historical, "foreign-key-historical-shard")})
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+	if !strings.Contains(err.Error(), "foreign key operator_links.event_id -> alert_events.event_id can alter or reject valid alert writes") {
+		t.Fatalf("historical shard error = %v, want foreign key", err)
 	}
 }
 
