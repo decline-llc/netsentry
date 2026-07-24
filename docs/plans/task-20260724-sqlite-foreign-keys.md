@@ -79,4 +79,10 @@ authority.
 - Twenty uncached focused foreign-key race runs pass.
 - The complete uncached native suite, E2E smoke, documentation, knowledge,
   JSON, and diff checks pass.
+- Feature commit: `0ddba61bde65fe1bb5ca9757bc87d06123409251`
+- Fetched `origin/main`: verified at the feature commit
+- Post-fetch knowledge validation: passed
+- Vault range:
+  `b1c60bec99f7d3f367d531836b6d2f26b93d556c..0ddba61bde65fe1bb5ca9757bc87d06123409251`
+- Vault iteration note, full index, and MOC link: verified
 - Tag/publication actions: none.

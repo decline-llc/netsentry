@@ -42,7 +42,7 @@
 | R90-23 | Jul 23–Oct 20 | Complete early | Reject write-affecting SQLite triggers. | R90-22 | Existing primary and historical databases with triggers attached to `alerts` or `alert_events` fail read-only preflight and remain unchanged; triggers confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 | R90-24 | Jul 23–Oct 20 | Complete early | Reject write-affecting SQLite generated columns. | R90-23 | Existing primary and historical databases with virtual or stored generated columns on `alerts` or `alert_events` fail read-only preflight and remain unchanged; ordinary nullable and defaulted column extensions remain compatible and writable. |
 | R90-25 | Jul 24–Oct 20 | Complete early | Reject write-affecting SQLite check constraints. | R90-24 | Existing primary and historical databases with `CHECK` constraints on `alerts` or `alert_events` fail read-only preflight and remain unchanged; constraints confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
-| R90-26 | Jul 24–Oct 20 | In progress | Reject write-affecting SQLite foreign keys. | R90-25 | Existing primary and historical databases with foreign-key relationships whose source or target is `alerts` or `alert_events` fail read-only preflight and remain unchanged; relationships confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
+| R90-26 | Jul 24–Oct 20 | Complete early | Reject write-affecting SQLite foreign keys. | R90-25 | Existing primary and historical databases with foreign-key relationships whose source or target is `alerts` or `alert_events` fail read-only preflight and remain unchanged; relationships confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 
 ## R90-07 Definition
 
@@ -497,8 +497,16 @@
   `origin/main`, the post-fetch knowledge gate, and the exact full-SHA Vault
   note, index, and MOC are verified. The queue was refreshed on Jul 24 from the
   clean fetched baseline, completed task state, release boundaries, SQLite
-  foreign-key metadata, and verified Vault evidence. R90-26 is in progress.
-  Publication remains unauthorized.
+  foreign-key metadata, and verified Vault evidence. R90-26 completed early at
+  `0ddba61bde65fe1bb5ca9757bc87d06123409251`: read-only metadata inspection
+  now rejects outgoing and incoming foreign-key relationships involving both
+  write-critical tables, including case-variant and implicit-primary-key
+  references. Twenty focused race runs, the full native suite, E2E smoke,
+  documentation, and knowledge checks passed; fetched `origin/main`, the
+  post-fetch knowledge gate, and the exact full-SHA Vault note, index, and MOC
+  are verified. No later engineering increment is selected; refresh the
+  rolling roadmap on the next `$netsentry-next` trigger. Publication remains
+  unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -569,4 +577,4 @@
 
 ## Current Checkpoint
 
-R90-25 completed early at `1a4f565b1ef07b91a0c5ce80efc7cc78c382bb5b`; its feature and delivery-record commits are present on fetched `origin/main`, and both exact Vault iteration notes, the full index, and MOC links are verified. The Jul 24 queue refresh selected R90-26 from the remaining SQLite foreign-key metadata gap. R90-26 rejects outgoing and incoming foreign-key relationships involving `alerts` or `alert_events` before writable initialization while retaining relationships confined to unrelated operator tables. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks pass. Delivery is in progress; publication remains unauthorized.
+R90-26 completed early at `0ddba61bde65fe1bb5ca9757bc87d06123409251` after the queue was refreshed from the clean fetched R90-25 baseline, completed task state, release boundaries, SQLite foreign-key metadata, and verified Vault evidence. Outgoing and incoming relationships involving `alerts` or `alert_events`, including a historical shard, now fail before writable initialization with byte preservation. Case-variant and implicit-primary-key references are covered, while relationships confined to unrelated operator tables remain compatible. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.

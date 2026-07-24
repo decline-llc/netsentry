@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "b1c60bec99f7d3f367d531836b6d2f26b93d556c",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main matches the remote baseline",
     "Verified both R90-25 pushed commits and their iteration notes in the single discovered local Vault",
@@ -13,24 +13,20 @@
     "Rejected outgoing and incoming foreign-key relationships involving write-critical tables before writable initialization",
     "Added direct primary, historical-shard, byte-preservation, identifier-case, implicit-primary-key, and unrelated-table compatibility coverage",
     "Passed 20 uncached focused foreign-key alert-store race runs",
-    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, and diff checks"
+    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, and diff checks",
+    "Pushed 0ddba61bde65fe1bb5ca9757bc87d06123409251 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact full-SHA Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Run the pre-commit knowledge gate and sensitive-information review",
-    "Commit, push, fetch-verify, and synchronize the validated increment",
-    "Reconcile roadmap and task state against verified remote and Vault evidence"
-  ],
-  "todo": [
-    "Record verified delivery evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false
+    "commit": "0ddba61bde65fe1bb5ca9757bc87d06123409251",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "b1c60bec99f7d3f367d531836b6d2f26b93d556c..0ddba61bde65fe1bb5ca9757bc87d06123409251",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
   },
   "remaining_risks": [
     "Incoming relationships can affect retention deletes even when declared on an unrelated table",
@@ -38,5 +34,5 @@
     "Primary and historical rejected databases must remain byte-for-byte unchanged",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Complete R90-26 only: reject foreign-key relationships involving write-critical tables before writable initialization, preserve primary and historical database bytes, retain unrelated-table foreign-key compatibility, and do not enable enforcement, migrate schemas, or publish artifacts."
+  "resume_instructions": "R90-26 is complete at 0ddba61bde65fe1bb5ca9757bc87d06123409251. Do not repeat its implementation, validation, push, or Vault synchronization. No later engineering increment is selected; refresh the rolling roadmap on the next $netsentry-next trigger. Do not create v0.1.1 or publish artifacts."
 }
