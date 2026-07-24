@@ -197,7 +197,11 @@ Current build:
   contract. Unknown nullable columns and unknown `NOT NULL` columns with a
   non-NULL default remain compatible; an unknown mandatory column without a
   usable default is rejected because NetSentry's fixed inserts cannot populate
-  it. A failed check stops startup with `ErrDatabaseIntegrity`;
+  it. Generated columns, triggers, and `CHECK` constraints attached to either
+  write-critical table are rejected because their expressions or side effects
+  can alter or reject valid fixed-column writes; equivalent extensions
+  confined to unrelated operator tables remain compatible. A failed check
+  stops startup with `ErrDatabaseIntegrity`;
   NetSentry does not repair, migrate, truncate, rename, or overwrite the
   rejected file. Missing query indexes remain compatible and are created by
   normal writable initialization after the preflight succeeds.

@@ -41,6 +41,7 @@
 | R90-22 | Jul 23–Oct 20 | Complete early | Reject write-blocking SQLite uniqueness extensions. | R90-21 | Existing primary and historical databases with extra unique indexes that do not contain a binary-collated canonical write identity fail read-only preflight and remain unchanged; non-unique indexes and uniqueness extensions containing an existing safe identity remain compatible and writable. |
 | R90-23 | Jul 23–Oct 20 | Complete early | Reject write-affecting SQLite triggers. | R90-22 | Existing primary and historical databases with triggers attached to `alerts` or `alert_events` fail read-only preflight and remain unchanged; triggers confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 | R90-24 | Jul 23–Oct 20 | Complete early | Reject write-affecting SQLite generated columns. | R90-23 | Existing primary and historical databases with virtual or stored generated columns on `alerts` or `alert_events` fail read-only preflight and remain unchanged; ordinary nullable and defaulted column extensions remain compatible and writable. |
+| R90-25 | Jul 24–Oct 20 | In progress | Reject write-affecting SQLite check constraints. | R90-24 | Existing primary and historical databases with `CHECK` constraints on `alerts` or `alert_events` fail read-only preflight and remain unchanged; constraints confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 
 ## R90-07 Definition
 
@@ -335,6 +336,25 @@
   generated expressions, schema migration, rewriting operator columns,
   operator data, or tag/publication authority.
 
+## R90-25 Definition
+
+- **Goal:** close the schema-preflight gap where a `CHECK` constraint attached
+  to a write-critical table can reject valid fixed-column NetSentry writes
+  only after writable initialization.
+- **Risk:** matching raw schema text without SQLite lexical boundaries can
+  mistake strings, comments, or quoted identifiers for constraints, while
+  evaluating arbitrary constraint expressions would reproduce SQLite
+  semantics incompletely.
+- **Required validation:** direct table-level and column-level `CHECK`
+  rejections across `alerts` and `alert_events`, including case-variant
+  keywords and false-positive lexical boundaries, with byte preservation; a
+  historical-shard rejection; unrelated-table constraint compatibility with
+  successful writes; repeated focused alert-store race tests, full native,
+  documentation, E2E, and knowledge checks.
+- **Stop condition:** stop if safe completion requires evaluating constraint
+  expressions, schema migration, rewriting operator constraints, operator
+  data, or tag/publication authority.
+
 ### R90-24 Validation Deviation
 
 - **Observed:** The first full native race suite hit the existing
@@ -447,9 +467,11 @@
   after one non-reproduced timing event, the clean full native rerun, E2E
   smoke, documentation, and knowledge checks passed; fetched `origin/main`,
   the post-fetch knowledge gate, and the exact full-SHA Vault note, index, and
-  MOC are verified. No later engineering increment is selected; refresh the
-  rolling roadmap on the next `$netsentry-next` trigger. Publication remains
-  unauthorized.
+  MOC are verified. The queue was refreshed on Jul 24 from the clean fetched
+  baseline, completed task state, release boundaries, write-critical SQLite
+  constraint metadata, and verified Vault evidence. R90-25 is the selected
+  increment and its local validation is complete; delivery is in progress.
+  Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -468,7 +490,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -520,4 +542,4 @@
 
 ## Current Checkpoint
 
-R90-24 completed early at `4b342ae65b10279448b438e43b1947f1cfb282fc` after the empty queue was refreshed from the clean fetched R90-23 baseline, completed task state, release boundaries, write-critical generated-column metadata, and verified Vault evidence. Virtual and stored generated columns on both `alerts` and `alert_events`, including a historical shard, now fail before writable initialization with byte preservation. Ordinary nullable and non-NULL-defaulted columns remain writable. Twenty focused generated-column race runs passed. The first full native run hit one unrelated receiver timing boundary; twenty focused receiver reruns and the clean full native rerun passed without a receiver change. E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.
+R90-24 completed early at `4b342ae65b10279448b438e43b1947f1cfb282fc`; its feature and delivery-record commits are present on fetched `origin/main`, and both exact Vault iteration notes, the full index, and MOC links are verified. The Jul 24 queue refresh selected R90-25 from the current write-critical SQLite constraint gap. R90-25 rejects `CHECK` constraints on `alerts` and `alert_events` before writable initialization while retaining unrelated-table constraint compatibility. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks pass. Delivery is in progress; publication remains unauthorized.

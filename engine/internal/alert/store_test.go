@@ -1357,6 +1357,107 @@ func TestStoreRejectsGeneratedColumnsWithoutModification(t *testing.T) {
 	}
 }
 
+func TestStoreRejectsWriteCriticalCheckConstraintsWithoutModification(t *testing.T) {
+	tests := []struct {
+		name   string
+		schema string
+		table  string
+	}{
+		{
+			name: "alerts table constraint",
+			schema: strings.Replace(
+				schemaSQL,
+				"    updated_at TEXT NOT NULL,\n    UNIQUE(rule_id, src_ip, dst_ip, dst_port, window_start)",
+				"    updated_at TEXT NOT NULL,\n    CHECK (severity <> 'blocked'),\n    UNIQUE(rule_id, src_ip, dst_ip, dst_port, window_start)",
+				1,
+			),
+			table: "alerts",
+		},
+		{
+			name: "alerts column constraint",
+			schema: strings.Replace(
+				schemaSQL,
+				"    severity TEXT NOT NULL,",
+				"    severity TEXT NOT NULL CHECK (length(severity) > 0),",
+				1,
+			),
+			table: "alerts",
+		},
+		{
+			name: "alert events case variant constraint",
+			schema: strings.Replace(
+				schemaSQL,
+				"    created_at TEXT NOT NULL\n);",
+				"    created_at TEXT NOT NULL cHeCk (length(created_at) > 0)\n);",
+				1,
+			),
+			table: "alert_events",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "alerts.db")
+			createSQLiteFixture(t, path, test.schema)
+			before := readFileBytes(t, path)
+
+			store, err := Open(context.Background(), Options{Path: path, JournalMode: "WAL"})
+			if store != nil {
+				_ = store.Close()
+				t.Fatal("schema with a write-critical CHECK constraint returned a usable store")
+			}
+			assertIntegrityRejectionPreservesFile(t, path, before, err)
+			condition := "CHECK constraint on " + test.table + " can reject valid alert writes"
+			if !strings.Contains(err.Error(), condition) {
+				t.Fatalf("startup error = %v, want %q", err, condition)
+			}
+		})
+	}
+}
+
+func TestStoreAllowsCheckKeywordOutsideConstraint(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	compatibleSchema := strings.Replace(
+		schemaSQL,
+		"    updated_at TEXT NOT NULL,\n    UNIQUE(rule_id, src_ip, dst_ip, dst_port, window_start)",
+		"    updated_at TEXT NOT NULL,\n"+
+			"    precheck_note TEXT DEFAULT 'CHECK',\n"+
+			"    \"CHECK\" TEXT, -- CHECK (ignored_comment)\n"+
+			"    [CHECK note] TEXT, /* CHECK (ignored_block_comment) */\n"+
+			"    `CHECK value` TEXT,\n"+
+			"    UNIQUE(rule_id, src_ip, dst_ip, dst_port, window_start)",
+		1,
+	)
+	createSQLiteFixture(t, path, compatibleSchema)
+
+	store, err := Open(context.Background(), Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open schema with non-constraint CHECK text: %v", err)
+	}
+	defer store.Close()
+	if err := store.WriteBatch(context.Background(), []*model.Alert{
+		makeAlert(time.Date(2026, 7, 24, 7, 0, 0, 0, time.UTC), "compatible-check-text"),
+	}); err != nil {
+		t.Fatalf("write schema with non-constraint CHECK text: %v", err)
+	}
+}
+
+func TestStoreAllowsUnrelatedTableCheckConstraint(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	createSQLiteFixture(t, path, schemaSQL,
+		`CREATE TABLE operator_data (id INTEGER PRIMARY KEY, value TEXT NOT NULL CHECK (length(value) > 0))`,
+	)
+	store, err := Open(context.Background(), Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open schema with unrelated CHECK constraint: %v", err)
+	}
+	defer store.Close()
+	if err := store.WriteBatch(context.Background(), []*model.Alert{
+		makeAlert(time.Date(2026, 7, 24, 7, 5, 0, 0, time.UTC), "unrelated-check-constraint"),
+	}); err != nil {
+		t.Fatalf("write schema with unrelated CHECK constraint: %v", err)
+	}
+}
+
 func TestStoreAllowsUnrelatedTableTrigger(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "alerts.db")
 	createSQLiteFixture(t, path, schemaSQL,
@@ -1559,6 +1660,31 @@ func TestStoreRejectsHistoricalShardWithGeneratedColumnWithoutModification(t *te
 	assertIntegrityRejectionPreservesFile(t, path, before, err)
 	if !strings.Contains(err.Error(), "unknown generated column alerts.operator_generated can alter or reject valid alert writes") {
 		t.Fatalf("historical shard error = %v, want generated column", err)
+	}
+}
+
+func TestStoreRejectsHistoricalShardWithCheckConstraintWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	now := time.Date(2026, 7, 24, 7, 10, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	constrainedSchema := strings.Replace(
+		schemaSQL,
+		"    created_at TEXT NOT NULL\n);",
+		"    created_at TEXT NOT NULL CHECK (length(created_at) > 0)\n);",
+		1,
+	)
+	createSQLiteFixture(t, path, constrainedSchema)
+	before := readFileBytes(t, path)
+
+	err := store.WriteBatch(ctx, []*model.Alert{makeAlert(historical, "check-constraint-historical-shard")})
+	assertIntegrityRejectionPreservesFile(t, path, before, err)
+	if !strings.Contains(err.Error(), "CHECK constraint on alert_events can reject valid alert writes") {
+		t.Fatalf("historical shard error = %v, want CHECK constraint", err)
 	}
 }
 

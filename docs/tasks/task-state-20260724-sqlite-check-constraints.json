@@ -1,0 +1,42 @@
+{
+  "task": "r90-25-sqlite-check-constraints",
+  "timestamp": "2026-07-24T00:11:08-07:00",
+  "branch": "main",
+  "remote_baseline": "a1aeefeb4071a3844dd4a69d1c1e66fa10f679b2",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main matches the remote baseline",
+    "Verified both R90-24 pushed commits and their iteration notes in the existing local Vault",
+    "Refreshed the empty queue from release boundaries and write-critical SQLite constraint metadata",
+    "Selected R90-25 as the highest-priority dependency-ready increment",
+    "Detected CHECK only at SQLite lexical boundaries outside quoted strings, quoted identifiers, and comments",
+    "Rejected CHECK constraints on both write-critical tables before writable initialization",
+    "Added direct primary, historical-shard, byte-preservation, lexical-boundary, and unrelated-table compatibility coverage",
+    "Passed 20 uncached focused check-constraint alert-store race runs",
+    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, diff, and sensitive-data checks"
+  ],
+  "in_progress": [
+    "Run the pre-commit knowledge gate and sensitive-information review",
+    "Commit, push, fetch-verify, and synchronize the validated increment",
+    "Reconcile roadmap and task state against verified remote and Vault evidence"
+  ],
+  "todo": [
+    "Record verified delivery evidence"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "SQLite lexical boundaries must avoid false positives in strings, comments, and quoted identifiers",
+    "Primary and historical rejected databases must remain byte-for-byte unchanged",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Complete R90-25 only: reject CHECK constraints on write-critical tables before writable initialization, preserve primary and historical database bytes, retain unrelated-table constraint compatibility, and do not evaluate expressions, migrate schemas, or publish artifacts."
+}

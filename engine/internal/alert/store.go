@@ -277,7 +277,10 @@ func validateRequiredSchema(ctx context.Context, db *sql.DB) error {
 	if err := validateWriteCompatibleUniqueIndexes(ctx, db, "alert_events", []string{"event_id"}); err != nil {
 		return err
 	}
-	return validateWriteCriticalTriggers(ctx, db)
+	if err := validateWriteCriticalTriggers(ctx, db); err != nil {
+		return err
+	}
+	return validateWriteCriticalCheckConstraints(ctx, db)
 }
 
 func validateRequiredColumns(ctx context.Context, db *sql.DB, table string, required []requiredColumn) error {
@@ -469,6 +472,104 @@ LIMIT 1
 		return fmt.Errorf("%w: incompatible schema: trigger %s.%s can alter or reject valid alert writes", ErrDatabaseIntegrity, table, name)
 	}
 	return nil
+}
+
+func validateWriteCriticalCheckConstraints(ctx context.Context, db *sql.DB) error {
+	for _, table := range []string{"alerts", "alert_events"} {
+		var createSQL string
+		err := db.QueryRowContext(ctx, `
+SELECT sql
+FROM sqlite_schema
+WHERE type = 'table' AND name = ? COLLATE NOCASE
+ORDER BY name
+LIMIT 1
+`, table).Scan(&createSQL)
+		if errors.Is(err, sql.ErrNoRows) {
+			continue
+		}
+		if err != nil {
+			if ctx.Err() != nil {
+				return ctx.Err()
+			}
+			return fmt.Errorf("%w: inspect %s constraints: %v", ErrDatabaseIntegrity, table, err)
+		}
+		if containsSQLiteKeyword(createSQL, "CHECK") {
+			return fmt.Errorf("%w: incompatible schema: CHECK constraint on %s can reject valid alert writes", ErrDatabaseIntegrity, table)
+		}
+	}
+	return nil
+}
+
+func containsSQLiteKeyword(sqlText, keyword string) bool {
+	for offset := 0; offset < len(sqlText); {
+		switch sqlText[offset] {
+		case '\'', '"', '`':
+			quote := sqlText[offset]
+			offset++
+			for offset < len(sqlText) {
+				if sqlText[offset] != quote {
+					offset++
+					continue
+				}
+				offset++
+				if offset < len(sqlText) && sqlText[offset] == quote {
+					offset++
+					continue
+				}
+				break
+			}
+		case '[':
+			offset++
+			for offset < len(sqlText) && sqlText[offset] != ']' {
+				offset++
+			}
+			if offset < len(sqlText) {
+				offset++
+			}
+		case '-':
+			if offset+1 < len(sqlText) && sqlText[offset+1] == '-' {
+				offset += 2
+				for offset < len(sqlText) && sqlText[offset] != '\n' && sqlText[offset] != '\r' {
+					offset++
+				}
+				continue
+			}
+			offset++
+		case '/':
+			if offset+1 < len(sqlText) && sqlText[offset+1] == '*' {
+				offset += 2
+				for offset+1 < len(sqlText) && (sqlText[offset] != '*' || sqlText[offset+1] != '/') {
+					offset++
+				}
+				if offset+1 < len(sqlText) {
+					offset += 2
+				}
+				continue
+			}
+			offset++
+		default:
+			if !isSQLiteIdentifierByte(sqlText[offset]) {
+				offset++
+				continue
+			}
+			start := offset
+			for offset < len(sqlText) && isSQLiteIdentifierByte(sqlText[offset]) {
+				offset++
+			}
+			if strings.EqualFold(sqlText[start:offset], keyword) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func isSQLiteIdentifierByte(value byte) bool {
+	return value >= 0x80 ||
+		value >= 'a' && value <= 'z' ||
+		value >= 'A' && value <= 'Z' ||
+		value >= '0' && value <= '9' ||
+		value == '_' || value == '$'
 }
 
 func readIndexColumns(ctx context.Context, db *sql.DB, index string) ([]string, error) {
