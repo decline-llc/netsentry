@@ -79,4 +79,10 @@ authority.
 - Twenty uncached focused check-constraint race runs pass.
 - The complete uncached native suite, E2E smoke, documentation, knowledge,
   JSON, diff, and sensitive-data checks pass.
+- Feature commit: `1a4f565b1ef07b91a0c5ce80efc7cc78c382bb5b`
+- Fetched `origin/main`: verified at the feature commit
+- Post-fetch knowledge validation: passed
+- Vault range:
+  `a1aeefeb4071a3844dd4a69d1c1e66fa10f679b2..1a4f565b1ef07b91a0c5ce80efc7cc78c382bb5b`
+- Vault iteration note, full index, and MOC link: verified
 - Tag/publication actions: none.

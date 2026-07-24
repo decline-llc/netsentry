@@ -41,7 +41,7 @@
 | R90-22 | Jul 23–Oct 20 | Complete early | Reject write-blocking SQLite uniqueness extensions. | R90-21 | Existing primary and historical databases with extra unique indexes that do not contain a binary-collated canonical write identity fail read-only preflight and remain unchanged; non-unique indexes and uniqueness extensions containing an existing safe identity remain compatible and writable. |
 | R90-23 | Jul 23–Oct 20 | Complete early | Reject write-affecting SQLite triggers. | R90-22 | Existing primary and historical databases with triggers attached to `alerts` or `alert_events` fail read-only preflight and remain unchanged; triggers confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 | R90-24 | Jul 23–Oct 20 | Complete early | Reject write-affecting SQLite generated columns. | R90-23 | Existing primary and historical databases with virtual or stored generated columns on `alerts` or `alert_events` fail read-only preflight and remain unchanged; ordinary nullable and defaulted column extensions remain compatible and writable. |
-| R90-25 | Jul 24–Oct 20 | In progress | Reject write-affecting SQLite check constraints. | R90-24 | Existing primary and historical databases with `CHECK` constraints on `alerts` or `alert_events` fail read-only preflight and remain unchanged; constraints confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
+| R90-25 | Jul 24–Oct 20 | Complete early | Reject write-affecting SQLite check constraints. | R90-24 | Existing primary and historical databases with `CHECK` constraints on `alerts` or `alert_events` fail read-only preflight and remain unchanged; constraints confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 
 ## R90-07 Definition
 
@@ -469,8 +469,15 @@
   the post-fetch knowledge gate, and the exact full-SHA Vault note, index, and
   MOC are verified. The queue was refreshed on Jul 24 from the clean fetched
   baseline, completed task state, release boundaries, write-critical SQLite
-  constraint metadata, and verified Vault evidence. R90-25 is the selected
-  increment and its local validation is complete; delivery is in progress.
+  constraint metadata, and verified Vault evidence. R90-25 completed early at
+  `1a4f565b1ef07b91a0c5ce80efc7cc78c382bb5b`: lexical schema inspection now
+  rejects `CHECK` constraints on both write-critical tables before writable
+  initialization without false positives from strings, comments, quoted
+  identifiers, or identifier substrings. Twenty focused race runs, the full
+  native suite, E2E smoke, documentation, and knowledge checks passed; fetched
+  `origin/main`, the post-fetch knowledge gate, and the exact full-SHA Vault
+  note, index, and MOC are verified. No later engineering increment is
+  selected; refresh the rolling roadmap on the next `$netsentry-next` trigger.
   Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
@@ -542,4 +549,4 @@
 
 ## Current Checkpoint
 
-R90-24 completed early at `4b342ae65b10279448b438e43b1947f1cfb282fc`; its feature and delivery-record commits are present on fetched `origin/main`, and both exact Vault iteration notes, the full index, and MOC links are verified. The Jul 24 queue refresh selected R90-25 from the current write-critical SQLite constraint gap. R90-25 rejects `CHECK` constraints on `alerts` and `alert_events` before writable initialization while retaining unrelated-table constraint compatibility. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks pass. Delivery is in progress; publication remains unauthorized.
+R90-25 completed early at `1a4f565b1ef07b91a0c5ce80efc7cc78c382bb5b` after the queue was refreshed from the clean fetched R90-24 baseline, completed task state, release boundaries, write-critical SQLite constraint metadata, and verified Vault evidence. `CHECK` constraints on both `alerts` and `alert_events`, including a historical shard, now fail before writable initialization with byte preservation. Strings, comments, quoted identifiers, identifier substrings, and constraints on unrelated tables remain compatible. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.

@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "a1aeefeb4071a3844dd4a69d1c1e66fa10f679b2",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main matches the remote baseline",
     "Verified both R90-24 pushed commits and their iteration notes in the existing local Vault",
@@ -14,29 +14,25 @@
     "Rejected CHECK constraints on both write-critical tables before writable initialization",
     "Added direct primary, historical-shard, byte-preservation, lexical-boundary, and unrelated-table compatibility coverage",
     "Passed 20 uncached focused check-constraint alert-store race runs",
-    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, diff, and sensitive-data checks"
+    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, diff, and sensitive-data checks",
+    "Pushed 1a4f565b1ef07b91a0c5ce80efc7cc78c382bb5b and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact full-SHA Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Run the pre-commit knowledge gate and sensitive-information review",
-    "Commit, push, fetch-verify, and synchronize the validated increment",
-    "Reconcile roadmap and task state against verified remote and Vault evidence"
-  ],
-  "todo": [
-    "Record verified delivery evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false
+    "commit": "1a4f565b1ef07b91a0c5ce80efc7cc78c382bb5b",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "a1aeefeb4071a3844dd4a69d1c1e66fa10f679b2..1a4f565b1ef07b91a0c5ce80efc7cc78c382bb5b",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
   },
   "remaining_risks": [
     "SQLite lexical boundaries must avoid false positives in strings, comments, and quoted identifiers",
     "Primary and historical rejected databases must remain byte-for-byte unchanged",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Complete R90-25 only: reject CHECK constraints on write-critical tables before writable initialization, preserve primary and historical database bytes, retain unrelated-table constraint compatibility, and do not evaluate expressions, migrate schemas, or publish artifacts."
+  "resume_instructions": "R90-25 is complete at 1a4f565b1ef07b91a0c5ce80efc7cc78c382bb5b. Do not repeat its implementation, validation, push, or Vault synchronization. No later engineering increment is selected; refresh the rolling roadmap on the next $netsentry-next trigger. Do not create v0.1.1 or publish artifacts."
 }
