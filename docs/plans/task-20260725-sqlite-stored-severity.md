@@ -62,3 +62,11 @@ classifying the row.
 Stop if completion requires automatic row repair, deletion, schema migration,
 changing the public severity enum, operator data, tag creation, or publication
 authority.
+
+## Delivery Evidence
+
+- Feature commit: `856d1788c7f5abea0116b526ad8d7e2ebd5b9e11`
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range: `17ef01cb24a3bccfa3b3f0aefa9eba64904a9f7f..856d1788c7f5abea0116b526ad8d7e2ebd5b9e11`
+- Vault iteration note, full commit index, and `00-MOC` link: verified.
