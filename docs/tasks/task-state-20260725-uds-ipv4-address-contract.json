@@ -1,0 +1,43 @@
+{
+  "task": "r90-35-uds-ipv4-address-contract",
+  "timestamp": "2026-07-25T09:34:42-07:00",
+  "branch": "main",
+  "remote_baseline": "42721e10ef84dd7cf24306f03e23c8ad8d401870",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_pending_delivery",
+  "completed": [
+    "Verified clean local main and fetched origin/main agree",
+    "Verified the completed R90-34 task state and both delivery commits in the single discovered local Vault",
+    "Refreshed the empty queue from release boundaries and the documented IPv4-only packet contract",
+    "Selected R90-35 as the highest-priority dependency-ready increment",
+    "Confirmed the current UDS validator accepts IPv6 even though the C parser and v0.1 contract are IPv4-only",
+    "Enforced strict IPv4 source and destination parsing with netip address-family semantics",
+    "Rejected ordinary and IPv4-mapped IPv6 in both address positions with one decode error and no queued packet",
+    "Preserved malformed-address rejection and valid IPv4 packet delivery",
+    "Passed 20 uncached focused receiver race runs",
+    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, diff, and sensitive-information checks"
+  ],
+  "in_progress": [
+    "Commit and deliver the validated R90-35 feature"
+  ],
+  "todo": [
+    "Commit and push the feature",
+    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
+    "Reconcile roadmap and task-state delivery evidence"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "The UDS receiver currently accepts IPv6 text outside the documented v0.1 boundary",
+    "IPv4-mapped IPv6 must not bypass strict family validation",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-35 implementation and validation are complete but not yet committed. Reconfirm the intended eight paths, commit the validated feature, push from 42721e10ef84dd7cf24306f03e23c8ad8d401870, fetch and verify origin/main, run the post-fetch knowledge gate, synchronize the exact full-SHA range to the single local Vault, then reconcile delivery evidence. Do not add IPv6 support, create v0.1.1, or publish artifacts."
+}

@@ -8,6 +8,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -80,6 +81,52 @@ func TestHandleLineRejectsInvalidPacketContract(t *testing.T) {
 	}
 	if got := metrics.Snapshot().DecodeErrors; got != uint64(len(tests)) {
 		t.Fatalf("decode errors = %d, want %d", got, len(tests))
+	}
+}
+
+func TestHandleLineRejectsNonIPv4PacketAddresses(t *testing.T) {
+	tests := []struct {
+		name string
+		line string
+	}{
+		{
+			name: "IPv6 source",
+			line: `{"timestamp_sec":1,"timestamp_usec":0,"src_ip":"2001:db8::1","dst_ip":"10.0.0.2","protocol":6,"payload_len":0,"payload_preview":""}`,
+		},
+		{
+			name: "IPv6 destination",
+			line: `{"timestamp_sec":1,"timestamp_usec":0,"src_ip":"10.0.0.1","dst_ip":"2001:db8::2","protocol":6,"payload_len":0,"payload_preview":""}`,
+		},
+		{
+			name: "IPv4-mapped IPv6 source",
+			line: `{"timestamp_sec":1,"timestamp_usec":0,"src_ip":"::ffff:192.0.2.1","dst_ip":"10.0.0.2","protocol":6,"payload_len":0,"payload_preview":""}`,
+		},
+		{
+			name: "IPv4-mapped IPv6 destination",
+			line: `{"timestamp_sec":1,"timestamp_usec":0,"src_ip":"10.0.0.1","dst_ip":"::ffff:192.0.2.2","protocol":6,"payload_len":0,"payload_preview":""}`,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			metrics := stats.New()
+			r := New(Config{BufferSize: 1, Stats: metrics}, zap.NewNop())
+			err := r.handleLine(
+				context.Background(),
+				[]byte(test.line),
+				establishedSession("ipv4-contract-session"),
+			)
+			if err == nil || !strings.Contains(err.Error(), "source and destination must be IPv4 addresses") {
+				t.Fatalf("packet error = %v, want IPv4 contract rejection", err)
+			}
+			if got := metrics.Snapshot().DecodeErrors; got != 1 {
+				t.Fatalf("decode errors = %d, want 1", got)
+			}
+			select {
+			case packet := <-r.Packets():
+				t.Fatalf("rejected packet was queued: %+v", packet)
+			default:
+			}
+		})
 	}
 }
 

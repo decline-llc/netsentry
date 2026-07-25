@@ -51,6 +51,7 @@
 | R90-32 | Jul 25–Oct 20 | Complete early | Validate stored SQLite timestamp ordering. | R90-31 | Primary and historical reads reject rows with `first_seen > last_seen` or `window_start > first_seen` without modifying historical shard bytes; valid historical aggregation windows remain compatible. |
 | R90-33 | Jul 25–Oct 20 | Complete early | Validate stored SQLite aggregation identity. | R90-32 | Primary and historical reads reject empty or altered alert IDs that disagree with the canonical aggregation tuple without modifying historical shard bytes; valid aggregation identities remain compatible. |
 | R90-34 | Jul 25–Oct 20 | Complete early | Validate stored SQLite required text. | R90-33 | Primary and historical reads reject blank required identity, rule, and network text without modifying historical shard bytes; optional empty text and valid rows remain compatible. |
+| R90-35 | Jul 25–Oct 20 | In progress | Enforce the UDS IPv4 address contract. | R90-34 | UDS packet frames accept only strict IPv4 source and destination addresses; ordinary and IPv4-mapped IPv6 text fails once without queueing a packet, while valid capture traffic remains compatible. |
 
 ## R90-07 Definition
 
@@ -506,6 +507,21 @@
   reconciliation, automatic row repair, deletion, schema migration, operator
   data, or tag/publication authority.
 
+## R90-35 Definition
+
+- **Goal:** align UDS packet address validation with the C capture parser and
+  documented IPv4-only v0.1 contract.
+- **Risk:** generic IP parsing accepts IPv6, while `To4`-style checks can also
+  accept IPv4-mapped IPv6 text; rejected frames must not enter the packet queue
+  or double-count decode errors.
+- **Required validation:** direct ordinary and IPv4-mapped IPv6 source and
+  destination rejection; malformed-address and valid IPv4 compatibility;
+  decode-error and no-enqueue assertions; twenty focused receiver race runs,
+  full native, documentation, E2E, and knowledge checks.
+- **Stop condition:** stop if safe completion requires IPv6 product support, a
+  packet-schema change, C capture changes, address normalization, stored-data
+  migration, operator data, or tag/publication authority.
+
 ### R90-24 Validation Deviation
 
 - **Observed:** The first full native race suite hit the existing
@@ -730,7 +746,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -782,15 +798,12 @@
 
 ## Current Checkpoint
 
-R90-34 completed early at `9aaad8c837e89434f5eebd51f3397899df31027e`
-after the queue was refreshed from the clean fetched R90-33 reconciliation
-baseline, completed task state, release boundaries, persisted required-text
-behavior, and verified Vault evidence. Primary and read-only historical paths
-now reject all six blank required-text conditions while legitimate empty
-payload, match, and MITRE text remains compatible; the historical regression
-proves unchanged bytes through an encoded path. Twenty uncached focused race
-runs, the full native suite, E2E smoke, documentation, and knowledge checks
-passed; fetched `origin/main`, post-fetch knowledge validation, and the exact
-full-SHA Vault note, full index, and MOC are verified. No later engineering
-increment is selected; refresh the rolling roadmap on the next
-`$netsentry-next` trigger. Publication remains unauthorized.
+R90-35 is validated pending delivery from the clean fetched R90-34
+reconciliation baseline `42721e10ef84dd7cf24306f03e23c8ad8d401870`.
+UDS packet validation now accepts only strict IPv4 source and destination
+addresses; ordinary and IPv4-mapped IPv6 in either position produce one decode
+error and no queued packet, while valid IPv4 delivery remains compatible.
+Twenty uncached focused receiver race runs, the full native suite, E2E smoke,
+documentation, knowledge, JSON, diff, and sensitive-information checks pass.
+Commit, push, fetched-remote verification, exact-range Vault synchronization,
+and final delivery reconciliation remain. Publication remains unauthorized.

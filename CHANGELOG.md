@@ -11,6 +11,8 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ### Added
 - C capture binary for offline pcap analysis with Ethernet, VLAN, Q-in-Q, IPv4, TCP, and UDP parsing.
 - JSON line protocol over Unix Domain Socket with hello, packet, and heartbeat frames.
+- UDS packet validation now enforces the documented IPv4-only boundary,
+  rejecting ordinary and IPv4-mapped IPv6 source or destination text.
 - Go receiver and single-worker packet pipeline with context-aware shutdown and packet-level panic isolation.
 - Lock-free rule engine using immutable `atomic.Pointer[ruleState]` snapshots.
 - Pure Go Aho-Corasick matcher for `payload_match` rules.

@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"net/netip"
 	"os"
 	"strconv"
 	"sync"
@@ -297,8 +298,8 @@ func validatePacketFrame(pkt *model.PacketInfo) error {
 	if pkt.TimestampUsec < 0 || pkt.TimestampUsec >= 1_000_000 {
 		return fmt.Errorf("invalid packet frame: timestamp_usec out of range")
 	}
-	if net.ParseIP(pkt.SrcIP) == nil || net.ParseIP(pkt.DstIP) == nil {
-		return fmt.Errorf("invalid packet frame: source and destination IPs are required")
+	if !isIPv4Address(pkt.SrcIP) || !isIPv4Address(pkt.DstIP) {
+		return fmt.Errorf("invalid packet frame: source and destination must be IPv4 addresses")
 	}
 	if pkt.PayloadLen > maxPacketPayloadBytes {
 		return fmt.Errorf("invalid packet frame: payload_len exceeds %d", maxPacketPayloadBytes)
@@ -311,6 +312,11 @@ func validatePacketFrame(pkt *model.PacketInfo) error {
 		return fmt.Errorf("invalid packet frame: payload_len does not match payload_preview")
 	}
 	return nil
+}
+
+func isIPv4Address(value string) bool {
+	address, err := netip.ParseAddr(value)
+	return err == nil && address.Is4()
 }
 
 // ParseSocketMode converts config values such as "0600" into a file mode.
