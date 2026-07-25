@@ -304,7 +304,7 @@ func validateRequiredColumns(ctx context.Context, db *sql.DB, table string, requ
 		if err := rows.Scan(&cid, &name, &typeName, &notNull, &defaultValue, &primaryKey, &hidden); err != nil {
 			return fmt.Errorf("%w: inspect required table %s: %v", ErrDatabaseIntegrity, table, err)
 		}
-		actual[name] = requiredColumn{
+		actual[strings.ToLower(name)] = requiredColumn{
 			name:       name,
 			typeName:   strings.ToUpper(strings.TrimSpace(typeName)),
 			notNull:    notNull != 0,
@@ -323,7 +323,7 @@ func validateRequiredColumns(ctx context.Context, db *sql.DB, table string, requ
 		return fmt.Errorf("%w: incompatible schema: required table %s is missing", ErrDatabaseIntegrity, table)
 	}
 	for _, expected := range required {
-		got, ok := actual[expected.name]
+		got, ok := actual[strings.ToLower(expected.name)]
 		if !ok {
 			return fmt.Errorf("%w: incompatible schema: required column %s.%s is missing", ErrDatabaseIntegrity, table, expected.name)
 		}
@@ -333,17 +333,17 @@ func validateRequiredColumns(ctx context.Context, db *sql.DB, table string, requ
 	}
 	requiredNames := make(map[string]struct{}, len(required))
 	for _, expected := range required {
-		requiredNames[expected.name] = struct{}{}
+		requiredNames[strings.ToLower(expected.name)] = struct{}{}
 	}
-	for name, column := range actual {
-		if _, ok := requiredNames[name]; ok {
+	for normalizedName, column := range actual {
+		if _, ok := requiredNames[normalizedName]; ok {
 			continue
 		}
 		if column.hidden == 2 || column.hidden == 3 {
-			return fmt.Errorf("%w: incompatible schema: unknown generated column %s.%s can alter or reject valid alert writes", ErrDatabaseIntegrity, table, name)
+			return fmt.Errorf("%w: incompatible schema: unknown generated column %s.%s can alter or reject valid alert writes", ErrDatabaseIntegrity, table, column.name)
 		}
 		if column.notNull && !column.hasDefault {
-			return fmt.Errorf("%w: incompatible schema: unknown column %s.%s is NOT NULL without a usable default", ErrDatabaseIntegrity, table, name)
+			return fmt.Errorf("%w: incompatible schema: unknown column %s.%s is NOT NULL without a usable default", ErrDatabaseIntegrity, table, column.name)
 		}
 	}
 	return nil
@@ -737,12 +737,12 @@ func containsBinaryColumns(columns []indexKeyColumn, required []string) bool {
 	present := make(map[string]bool, len(columns))
 	for _, column := range columns {
 		if column.name.Valid {
-			present[column.name.String] = column.collation.Valid &&
+			present[strings.ToLower(column.name.String)] = column.collation.Valid &&
 				strings.EqualFold(strings.TrimSpace(column.collation.String), "BINARY")
 		}
 	}
 	for _, column := range required {
-		if !present[column] {
+		if !present[strings.ToLower(column)] {
 			return false
 		}
 	}
@@ -754,7 +754,7 @@ func matchesBinaryColumnsInOrder(columns []indexKeyColumn, required []string) bo
 		return false
 	}
 	for index, column := range columns {
-		if !column.name.Valid || column.name.String != required[index] ||
+		if !column.name.Valid || !strings.EqualFold(column.name.String, required[index]) ||
 			!column.collation.Valid || !strings.EqualFold(strings.TrimSpace(column.collation.String), "BINARY") {
 			return false
 		}

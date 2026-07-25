@@ -96,6 +96,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Existing primary databases and daily-shard write targets now require binary
   collation across the canonical aggregation uniqueness key, preventing
   case-insensitive indexes from merging distinct NetSentry identities.
+- SQLite schema preflight now compares required column and unique-index key
+  identifiers case-insensitively, matching runtime SQLite name resolution for
+  compatible primary databases and historical shards.
 - Existing primary databases and daily-shard write targets reject extra unique
   indexes that do not contain a canonical alert or event identity before
   writable initialization; ordinary indexes and redundant identity-containing

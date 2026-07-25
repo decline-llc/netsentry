@@ -1,0 +1,40 @@
+{
+  "task": "r90-28-sqlite-identifier-case",
+  "timestamp": "2026-07-25T06:31:02-07:00",
+  "branch": "main",
+  "remote_baseline": "544ca7498c2623daaaf25381b04ef6793de49e5c",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Verified clean local main and fetched origin/main agree",
+    "Verified the completed R90-27 task state and both delivery commits in the single discovered local Vault",
+    "Refreshed the empty queue from release boundaries and SQLite identifier metadata semantics",
+    "Selected R90-28 as the highest-priority dependency-ready increment",
+    "Aligned required-column and unique-index key comparisons with SQLite case-insensitive identifier semantics",
+    "Added direct primary and historical case-variant compatibility regressions",
+    "Passed 20 uncached focused alert-store race runs",
+    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Commit, push, and verify the completed increment"
+  ],
+  "todo": [
+    "Verify fetched origin/main and synchronize the exact range to the local Vault",
+    "Reconcile the roadmap and task-state resume instructions"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "Metadata can preserve declared identifier casing even though runtime name resolution is case-insensitive",
+    "Binary-collation and incompatible-schema rejection boundaries must remain unchanged",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Continue R90-28 delivery from the clean fetched 544ca7498c2623daaaf25381b04ef6793de49e5c baseline. Implementation, direct regressions, and required local validation pass. Commit the intended increment, push it, verify fetched origin/main, synchronize the exact range to the single local Vault, and reconcile completion evidence. Do not create v0.1.1 or publish artifacts."
+}

@@ -1153,6 +1153,27 @@ func TestStoreAllowsCompatibleExtraColumns(t *testing.T) {
 	}
 }
 
+func TestStoreAllowsCaseVariantRequiredIdentifiers(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	createSQLiteFixture(t, path, caseVariantRequiredSchema())
+
+	store, err := Open(context.Background(), Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open schema with case-variant required identifiers: %v", err)
+	}
+	defer store.Close()
+
+	base := time.Date(2026, 7, 25, 6, 35, 0, 0, time.UTC)
+	if err := store.WriteBatch(context.Background(), []*model.Alert{
+		makeAlert(base, "case-variant-required-identifiers"),
+	}); err != nil {
+		t.Fatalf("write schema with case-variant required identifiers: %v", err)
+	}
+	if count, err := store.Count(context.Background()); err != nil || count != 1 {
+		t.Fatalf("case-variant schema count=%d err=%v, want 1/nil", count, err)
+	}
+}
+
 func TestStoreRejectsMissingAggregationConstraintWithoutModification(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "alerts.db")
 	withoutAggregationKey := strings.Replace(schemaSQL,
@@ -1787,6 +1808,25 @@ func TestStoreRejectsHistoricalShardWithNonBinaryAggregationWithoutModification(
 	}
 }
 
+func TestStoreAllowsHistoricalShardWithCaseVariantRequiredIdentifiers(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	now := time.Date(2026, 7, 25, 6, 40, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	createSQLiteFixture(t, path, caseVariantRequiredSchema())
+
+	if err := store.WriteBatch(ctx, []*model.Alert{
+		makeAlert(historical, "case-variant-historical-shard"),
+	}); err != nil {
+		t.Fatalf("write historical schema with case-variant required identifiers: %v", err)
+	}
+	assertSQLiteAlertCount(t, path, 1)
+}
+
 func TestStoreRejectsHistoricalShardWithWriteCriticalTriggerWithoutModification(t *testing.T) {
 	ctx := context.Background()
 	dir := t.TempDir()
@@ -1916,6 +1956,23 @@ func createSQLiteFixture(t *testing.T, path string, statements ...string) {
 	if err := db.Close(); err != nil {
 		t.Fatalf("close SQLite fixture: %v", err)
 	}
+}
+
+func caseVariantRequiredSchema() string {
+	result := strings.NewReplacer(
+		"CREATE TABLE IF NOT EXISTS alerts (", "CREATE TABLE IF NOT EXISTS ALERTS (",
+		"CREATE TABLE IF NOT EXISTS alert_events (", "CREATE TABLE IF NOT EXISTS ALERT_EVENTS (",
+	).Replace(schemaSQL)
+	for _, columns := range requiredSchema {
+		for _, column := range columns {
+			result = strings.ReplaceAll(
+				result,
+				"\n    "+column.name+" ",
+				"\n    "+strings.ToUpper(column.name)+" ",
+			)
+		}
+	}
+	return result
 }
 
 func readFileBytes(t *testing.T, path string) []byte {
