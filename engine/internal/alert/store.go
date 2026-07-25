@@ -1365,6 +1365,9 @@ func validateRecoveryAlert(alert model.Alert, aggregationWindow time.Duration) e
 	if err := validateIPv4Addresses(alert.SrcIP, alert.DstIP); err != nil {
 		return err
 	}
+	if err := validateSeverity(alert.Severity); err != nil {
+		return err
+	}
 	requiredTimes := []struct {
 		name  string
 		value time.Time
@@ -1415,6 +1418,15 @@ func validateIPv4Addresses(srcIP, dstIP string) error {
 		}
 	}
 	return nil
+}
+
+func validateSeverity(severity model.Severity) error {
+	switch severity {
+	case model.SeverityLow, model.SeverityMedium, model.SeverityHigh, model.SeverityCritical:
+		return nil
+	default:
+		return fmt.Errorf("severity %q is unsupported", severity)
+	}
 }
 
 // ReplayRecoveryLog restores alert writes that were durably logged before a
@@ -1940,10 +1952,8 @@ func scanAlert(rows *sql.Rows) (*model.Alert, error) {
 	if alert.AggregatedCount < 1 {
 		return nil, fmt.Errorf("invalid stored alert %s: aggregated_count %d is below 1", alert.ID, alert.AggregatedCount)
 	}
-	switch model.Severity(severity) {
-	case model.SeverityLow, model.SeverityMedium, model.SeverityHigh, model.SeverityCritical:
-	default:
-		return nil, fmt.Errorf("invalid stored alert %s: severity %q is unsupported", alert.ID, severity)
+	if err := validateSeverity(model.Severity(severity)); err != nil {
+		return nil, fmt.Errorf("invalid stored alert %s: %w", alert.ID, err)
 	}
 	parsedFirstSeen, err := parseTime(firstSeen)
 	if err != nil {

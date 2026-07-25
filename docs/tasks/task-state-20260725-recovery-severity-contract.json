@@ -1,0 +1,42 @@
+{
+  "task": "r90-39-recovery-severity-contract",
+  "timestamp": "2026-07-25T10:18:06-07:00",
+  "branch": "main",
+  "remote_baseline": "ad913f05c90d71b53205d66bc6cc969fd98b8121",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_pending_delivery",
+  "completed": [
+    "Verified clean local main and fetched origin/main agree",
+    "Verified the completed R90-38 task state, both delivery commits, and both exact-range notes in the single discovered local Vault",
+    "Refreshed the empty queue from release boundaries and the public severity enum",
+    "Selected R90-39 as the highest-priority dependency-ready correctness increment",
+    "Confirmed recovery validation accepted severity values that rule loading and stored-row decoding reject",
+    "Implemented shared severity validation for recovery records and stored rows",
+    "Covered empty, case-variant, and unsupported startup rejection across missing and existing databases",
+    "Covered runtime no-append preservation and replay compatibility for all four public severity values",
+    "Corrected the collation-filter fixture exposed by the first full race suite and reran its focused test successfully",
+    "Passed twenty uncached focused alert-store race runs, the complete native race suite, E2E smoke, documentation, knowledge, JSON, diff, and sensitive-information checks"
+  ],
+  "in_progress": [
+    "Commit and deliver the validated R90-39 increment"
+  ],
+  "todo": [
+    "Commit and push the feature",
+    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
+    "Reconcile roadmap and task-state delivery evidence"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "Delivery evidence remains pending until fetched origin/main and the exact-range Vault note are verified",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-39 is implemented and validated from clean fetched origin/main at ad913f05c90d71b53205d66bc6cc969fd98b8121. Stage only the eight intended feature paths, commit, push, fetch and verify origin/main, rerun the explicit-Vault knowledge check, synchronize the exact full-SHA range, verify its note/index/MOC, then reconcile the roadmap, plan, and task state in a docs-only delivery commit. Do not repeat implementation or normalize severity, change the enum or recovery format, migrate stored rows, create v0.1.1, or publish artifacts."
+}

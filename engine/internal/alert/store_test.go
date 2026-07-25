@@ -210,9 +210,10 @@ func TestStoreQueryFiltersCountsAndPagesAlerts(t *testing.T) {
 
 func TestStoreExactFiltersOverrideCompatibleNoCaseColumns(t *testing.T) {
 	tests := []struct {
-		name   string
-		mutate func(*model.Alert)
-		query  Query
+		name         string
+		mutate       func(*model.Alert)
+		mutateStored bool
+		query        Query
 	}{
 		{
 			name: "rule",
@@ -226,7 +227,8 @@ func TestStoreExactFiltersOverrideCompatibleNoCaseColumns(t *testing.T) {
 			mutate: func(alert *model.Alert) {
 				alert.Severity = model.Severity(strings.ToUpper(string(alert.Severity)))
 			},
-			query: Query{Severity: model.SeverityHigh},
+			mutateStored: true,
+			query:        Query{Severity: model.SeverityHigh},
 		},
 		{
 			name: "source",
@@ -258,9 +260,21 @@ func TestStoreExactFiltersOverrideCompatibleNoCaseColumns(t *testing.T) {
 			variant := makeAlert(base.Add(2*time.Minute), "case-variant")
 			variant.SrcIP = lower.SrcIP
 			variant.DstIP = lower.DstIP
-			test.mutate(variant)
+			if !test.mutateStored {
+				test.mutate(variant)
+			}
 			if err := store.WriteBatch(context.Background(), []*model.Alert{lower, variant}); err != nil {
 				t.Fatalf("write compatible NOCASE schema: %v", err)
+			}
+			if test.mutateStored {
+				test.mutate(variant)
+				if _, err := store.db.Exec(
+					`UPDATE alerts SET severity = ? WHERE matched_keyword = ?`,
+					variant.Severity,
+					variant.MatchedKeyword,
+				); err != nil {
+					t.Fatalf("seed intentionally invalid stored severity: %v", err)
+				}
 			}
 
 			test.query.Protocol = "tcp"
@@ -1307,6 +1321,129 @@ func TestStoreRejectsNonIPv4RecoveryAddressesWithoutModification(t *testing.T) {
 	}
 }
 
+func TestStoreRejectsInvalidRecoverySeverityWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 25, 10, 20, 0, 0, time.UTC)
+	window := time.Minute
+	valid := normalizeAlert(makeAlert(now, "valid-prefix"), now, window)
+	validJSON, err := json.Marshal(valid)
+	if err != nil {
+		t.Fatalf("marshal valid recovery record: %v", err)
+	}
+
+	tests := []struct {
+		name     string
+		severity model.Severity
+	}{
+		{name: "empty", severity: ""},
+		{name: "case variant", severity: "HIGH"},
+		{name: "unsupported", severity: "urgent"},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			invalid := valid
+			invalid.Severity = test.severity
+			invalidJSON, err := json.Marshal(invalid)
+			if err != nil {
+				t.Fatalf("marshal invalid-severity recovery record: %v", err)
+			}
+			contents := append(append(append([]byte(nil), validJSON...), '\n'), invalidJSON...)
+			contents = append(contents, '\n')
+
+			for _, existing := range []bool{false, true} {
+				state := "missing database"
+				if existing {
+					state = "existing database"
+				}
+				t.Run(state, func(t *testing.T) {
+					dir := t.TempDir()
+					dbPath := filepath.Join(dir, "alerts.db")
+					recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+					var beforeDB []byte
+					if existing {
+						createSQLiteFixture(t, dbPath, schemaSQL, `DROP INDEX idx_alerts_last_seen`)
+						beforeDB = readFileBytes(t, dbPath)
+					}
+					if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+						t.Fatalf("write invalid-severity recovery log: %v", err)
+					}
+
+					store, err := Open(context.Background(), Options{
+						Path:              dbPath,
+						RecoveryLogPath:   recoveryLogPath,
+						JournalMode:       "WAL",
+						BusyTimeoutMS:     1000,
+						AggregationWindow: window,
+						Now:               func() time.Time { return now },
+					})
+					if store != nil {
+						_ = store.Close()
+						t.Fatal("invalid-severity recovery log returned a usable store")
+					}
+					condition := fmt.Sprintf("severity %q is unsupported", test.severity)
+					if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+						!strings.Contains(err.Error(), "record 2") ||
+						!strings.Contains(err.Error(), condition) {
+						t.Fatalf("startup error = %v, want record 2 ErrRecoveryLogIntegrity containing %q", err, condition)
+					}
+					assertFileBytes(t, recoveryLogPath, contents)
+					if existing {
+						assertFileBytes(t, dbPath, beforeDB)
+						assertSQLiteIndexMissing(t, dbPath, "idx_alerts_last_seen")
+					} else {
+						assertFileDoesNotExist(t, dbPath)
+					}
+				})
+			}
+		})
+	}
+}
+
+func TestStoreReplaysAllPublicRecoverySeverities(t *testing.T) {
+	for _, severity := range []model.Severity{
+		model.SeverityLow,
+		model.SeverityMedium,
+		model.SeverityHigh,
+		model.SeverityCritical,
+	} {
+		t.Run(string(severity), func(t *testing.T) {
+			dir := t.TempDir()
+			dbPath := filepath.Join(dir, "alerts.db")
+			recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+			now := time.Date(2026, 7, 25, 10, 25, 0, 0, time.UTC)
+			alert := makeAlert(now, "valid-"+string(severity))
+			alert.Severity = severity
+			logged := normalizeAlerts([]*model.Alert{alert}, now, time.Minute)
+			logOnly := &Store{recoveryLogPath: recoveryLogPath}
+			if err := logOnly.appendRecoveryLog(logged); err != nil {
+				t.Fatalf("append %s recovery record: %v", severity, err)
+			}
+
+			store, err := Open(context.Background(), Options{
+				Path:              dbPath,
+				RecoveryLogPath:   recoveryLogPath,
+				JournalMode:       "WAL",
+				BusyTimeoutMS:     1000,
+				AggregationWindow: time.Minute,
+				Now:               func() time.Time { return now },
+			})
+			if err != nil {
+				t.Fatalf("open store with %s recovery severity: %v", severity, err)
+			}
+			defer store.Close()
+			listed, err := store.List(context.Background())
+			if err != nil {
+				t.Fatalf("list %s recovery severity: %v", severity, err)
+			}
+			if len(listed) != 1 || listed[0].Severity != severity {
+				t.Fatalf("replayed alerts = %+v, want one %s severity", listed, severity)
+			}
+			if info, err := os.Stat(recoveryLogPath); err != nil || info.Size() != 0 {
+				t.Fatalf("%s recovery log should be truncated after replay, info=%+v err=%v", severity, info, err)
+			}
+		})
+	}
+}
+
 func TestStoreRejectsInconsistentNormalizedRecoveryLogWithoutModification(t *testing.T) {
 	now := time.Date(2026, 7, 21, 4, 0, 0, 0, time.UTC)
 	window := time.Minute
@@ -1603,6 +1740,30 @@ func TestStoreWriteBatchRejectsInvalidRecoveryLogBeforeAppend(t *testing.T) {
 		{name: "normalized invariant", contents: append(inconsistentJSON, '\n'), condition: "field id does not match normalized identity"},
 		{name: "event identity", contents: append(inconsistentEventJSON, '\n'), condition: "field event_id does not match deterministic event identity"},
 		{name: "non-IPv4 address", contents: append(nonIPv4JSON, '\n'), condition: "field src_ip must be an IPv4 address"},
+	}
+	for _, test := range []struct {
+		name     string
+		severity model.Severity
+	}{
+		{name: "empty severity", severity: ""},
+		{name: "case-variant severity", severity: "HIGH"},
+		{name: "unsupported severity", severity: "urgent"},
+	} {
+		invalid := valid
+		invalid.Severity = test.severity
+		invalidJSON, err := json.Marshal(invalid)
+		if err != nil {
+			t.Fatalf("marshal %s recovery record: %v", test.name, err)
+		}
+		tests = append(tests, struct {
+			name      string
+			contents  []byte
+			condition string
+		}{
+			name:      test.name,
+			contents:  append(invalidJSON, '\n'),
+			condition: fmt.Sprintf("severity %q is unsupported", test.severity),
+		})
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
