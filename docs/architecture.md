@@ -238,12 +238,14 @@ Current build:
   the log remains byte-for-byte unchanged. Valid logs are truncated only after
   SQLite commits.
 - Each decoded recovery record must retain the required identity, time, count,
-  and network fields emitted by normalized alert writes. Its durable `id` must
-  match the normalized aggregation identity; `first_seen` and `last_seen` must
-  equal `timestamp`; `window_start` must match the configured aggregation
-  window; `aggregated_count` must equal one; and `src_ip` plus `dst_ip` must be
-  strict IPv4 addresses. Malformed, ordinary IPv6, and IPv4-mapped IPv6 address
-  text fails through `ErrRecoveryLogIntegrity` before replay begins.
+  and network fields emitted by normalized alert writes. Its `event_id` must
+  match the deterministic writer identity used by the replay ledger, and its
+  durable `id` must match the normalized aggregation identity. `first_seen` and
+  `last_seen` must equal `timestamp`; `window_start` must match the configured
+  aggregation window; `aggregated_count` must equal one; and `src_ip` plus
+  `dst_ip` must be strict IPv4 addresses. An altered event identity or malformed,
+  ordinary IPv6, and IPv4-mapped IPv6 address text fails through
+  `ErrRecoveryLogIntegrity` before replay begins.
 - The complete recovery preflight runs before database-directory creation or
   any writable SQLite open. Startup replays that validated in-memory snapshot
   after initialization rather than rereading the file, so rejected input

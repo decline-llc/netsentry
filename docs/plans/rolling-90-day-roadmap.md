@@ -54,6 +54,7 @@
 | R90-35 | Jul 25–Oct 20 | Complete early | Enforce the UDS IPv4 address contract. | R90-34 | UDS packet frames accept only strict IPv4 source and destination addresses; ordinary and IPv4-mapped IPv6 text fails once without queueing a packet, while valid capture traffic remains compatible. |
 | R90-36 | Jul 25–Oct 20 | Complete early | Enforce the recovery IPv4 address contract. | R90-35 | Startup and runtime recovery preflight reject malformed, ordinary IPv6, or IPv4-mapped IPv6 source/destination addresses before modifying the complete log or missing/existing SQLite state; valid IPv4 replay remains compatible. |
 | R90-37 | Jul 25–Oct 20 | Complete early | Validate stored SQLite IPv4 addresses. | R90-36 | Primary and historical reads reject malformed, ordinary IPv6, and IPv4-mapped IPv6 source/destination text before identity derivation; valid IPv4 rows remain compatible and historical rejection preserves shard bytes. |
+| R90-38 | Jul 25–Oct 20 | In progress | Validate recovery event identity. | R90-37 | Startup and runtime recovery preflight reject nonblank `event_id` values that differ from the deterministic event identity before modifying the complete log or missing/existing SQLite state; valid idempotent replay remains compatible. |
 
 ## R90-07 Definition
 
@@ -585,6 +586,23 @@
   affected test then passed twenty uncached race runs, and the combined focused
   and complete native race suites passed.
 
+## R90-38 Definition
+
+- **Goal:** require each durable recovery record's `event_id` to match the
+  deterministic event identity used by the writer and idempotency ledger.
+- **Risk:** accepting an altered identity can bypass or collide with replay
+  deduplication, while late validation can create or initialize SQLite or append
+  a new recovery record before failing.
+- **Required validation:** direct nonblank event-identity mismatch with a valid
+  prefix; missing and existing database startup preservation; runtime
+  log/database preservation; valid replay/idempotency compatibility; twenty
+  focused alert-store race runs, full native, documentation, E2E, and knowledge
+  checks.
+- **Stop condition:** stop if safe completion requires changing event-ID
+  derivation, rewriting the recovery format, stored-row or event-ledger
+  reconciliation, automatic repair, operator data, or tag/publication
+  authority.
+
 ### R90-24 Validation Deviation
 
 - **Observed:** The first full native race suite hit the existing
@@ -818,9 +836,11 @@
   twenty affected-fixture race runs, the full native suite, E2E smoke,
   documentation, and knowledge checks passed; fetched `origin/main`, the
   post-fetch knowledge gate, and the exact full-SHA Vault note, index, and MOC
-  are verified. No later engineering increment is selected; refresh the rolling
-  roadmap on the next `$netsentry-next` trigger. Publication remains
-  unauthorized.
+  are verified. The queue was refreshed on Jul 25 from the clean fetched
+  reconciliation baseline, completed task state, release boundaries, recovery
+  idempotency invariants, and verified Vault evidence. R90-38 is selected as
+  the highest-priority dependency-ready correctness increment. Publication
+  remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -839,7 +859,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -891,13 +911,14 @@
 
 ## Current Checkpoint
 
-R90-37 is complete at `fecf62d317d92e64a7816dacb337c6f444610086`
-from clean fetched baseline
-`9b5e4299d18e774a955ecc7b0561d6bbd5aed977`. Twenty focused race runs,
-twenty affected-fixture race runs, the combined focused suite, complete native
-race suite, E2E smoke, documentation, knowledge, JSON, diff, and
-sensitive-information checks passed. The R90-29 fixture deviation is resolved;
-fetched `origin/main`, the post-fetch knowledge gate, and exact-range Vault
-note, full index, and MOC are verified. No later engineering increment is
-selected; refresh the roadmap on the next `$netsentry-next` trigger.
-Publication remains unauthorized.
+R90-38 is selected from clean fetched `origin/main`
+`54b7a39618c616566bb69792d9d11e992fd3a2ef` after verifying the completed
+R90-37 task state, feature and reconciliation commits, post-fetch knowledge
+gate, and both exact-range Vault notes, full index, and MOC. Recovery validation
+previously required a nonblank `event_id` but did not compare it with the
+deterministic identity used by the writer and idempotency ledger; R90-38 now
+enforces that invariant before startup replay or runtime append. Twenty
+uncached focused race runs, the complete native race suite, E2E smoke,
+documentation, knowledge, JSON, diff, and sensitive-information checks are
+clean. Feature commit, push, fetched-remote verification, and exact-range Vault
+synchronization remain. Publication remains unauthorized.

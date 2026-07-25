@@ -1327,6 +1327,11 @@ func TestStoreRejectsInconsistentNormalizedRecoveryLogWithoutModification(t *tes
 			condition: "field id does not match normalized identity",
 		},
 		{
+			name:      "event identity",
+			mutate:    func(alert *model.Alert) { alert.EventID = "evt_00000000000000000000000000000000" },
+			condition: "field event_id does not match deterministic event identity",
+		},
+		{
 			name:      "first seen",
 			mutate:    func(alert *model.Alert) { alert.FirstSeen = alert.Timestamp.Add(-time.Second) },
 			condition: "field first_seen does not match timestamp",
@@ -1573,6 +1578,12 @@ func TestStoreWriteBatchRejectsInvalidRecoveryLogBeforeAppend(t *testing.T) {
 	if err != nil {
 		t.Fatalf("marshal inconsistent recovery record: %v", err)
 	}
+	inconsistentEvent := valid
+	inconsistentEvent.EventID = "evt_00000000000000000000000000000000"
+	inconsistentEventJSON, err := json.Marshal(inconsistentEvent)
+	if err != nil {
+		t.Fatalf("marshal inconsistent recovery event identity: %v", err)
+	}
 	nonIPv4 := valid
 	nonIPv4.SrcIP = "2001:db8::1"
 	nonIPv4 = normalizeAlert(&nonIPv4, nonIPv4.Timestamp, time.Minute)
@@ -1590,6 +1601,7 @@ func TestStoreWriteBatchRejectsInvalidRecoveryLogBeforeAppend(t *testing.T) {
 		{name: "truncated", contents: validJSON, condition: "truncated final JSONL record"},
 		{name: "semantic", contents: []byte("{}\n"), condition: "required field id is empty"},
 		{name: "normalized invariant", contents: append(inconsistentJSON, '\n'), condition: "field id does not match normalized identity"},
+		{name: "event identity", contents: append(inconsistentEventJSON, '\n'), condition: "field event_id does not match deterministic event identity"},
 		{name: "non-IPv4 address", contents: append(nonIPv4JSON, '\n'), condition: "field src_ip must be an IPv4 address"},
 	}
 	for _, test := range tests {

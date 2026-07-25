@@ -1,0 +1,44 @@
+{
+  "task": "r90-38-recovery-event-identity-contract",
+  "timestamp": "2026-07-25T10:09:40-07:00",
+  "branch": "main",
+  "remote_baseline": "54b7a39618c616566bb69792d9d11e992fd3a2ef",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_pending_delivery",
+  "completed": [
+    "Verified clean local main and fetched origin/main agree",
+    "Verified the completed R90-37 task state, both delivery commits, and both exact-range notes in the single discovered local Vault",
+    "Confirmed capture and rule code intentionally support IPv4 protocol numbers beyond TCP and UDP, so protocol narrowing requires a product decision and was not selected",
+    "Refreshed the empty queue from release boundaries and the recovery idempotency invariant",
+    "Selected R90-38 as the highest-priority dependency-ready correctness increment",
+    "Confirmed recovery validation requires nonblank event_id text but does not compare it with deterministic writer identity",
+    "Added deterministic recovery event-identity validation before replay",
+    "Added valid-prefix missing/existing database startup preservation and runtime no-append coverage",
+    "Preserved valid replay and duplicate-event idempotency behavior",
+    "Passed 20 uncached focused alert-store race runs",
+    "Passed the complete native race suite and E2E smoke",
+    "Passed documentation, knowledge, JSON, diff, and sensitive-information checks"
+  ],
+  "in_progress": [
+    "Commit and push the validated feature"
+  ],
+  "todo": [
+    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
+    "Reconcile roadmap and task-state delivery evidence"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "The validated feature is not yet present on fetched origin/main",
+    "Exact-range Vault synchronization remains pending",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-38 implementation and all required validation pass from clean fetched origin/main at 54b7a39618c616566bb69792d9d11e992fd3a2ef. Recovery event_id now must match the existing deterministic writer identity before startup replay or runtime append; valid-prefix missing/existing database preservation, runtime no-append preservation, valid replay, and duplicate-event idempotency are covered. Commit and push the feature, verify fetched origin/main, synchronize the exact pushed range to the local Vault, then reconcile delivery evidence. Do not narrow protocol support, change event-ID derivation, reconcile stored rows or the event ledger, create v0.1.1, or publish artifacts."
+}

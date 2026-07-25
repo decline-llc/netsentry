@@ -1383,6 +1383,9 @@ func validateRecoveryAlert(alert model.Alert, aggregationWindow time.Duration) e
 	if alert.ID != normalized.ID {
 		return errors.New("field id does not match normalized identity")
 	}
+	if alert.EventID != alertEventID(alert) {
+		return errors.New("field event_id does not match deterministic event identity")
+	}
 	if !alert.FirstSeen.Equal(normalized.FirstSeen) {
 		return errors.New("field first_seen does not match timestamp")
 	}
