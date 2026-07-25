@@ -1,0 +1,42 @@
+{
+  "task": "r90-41-sqlite-stored-mitre-tuple",
+  "timestamp": "2026-07-25T11:21:21-07:00",
+  "branch": "main",
+  "remote_baseline": "9c62066e6d2bea08295a2c4a7c1ee5069a59386f",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_pending_delivery",
+  "completed": [
+    "Verified clean local main and fetched origin/main agree",
+    "Verified the completed R90-40 task state, both delivery commits, and both exact-range notes in the single discovered local Vault",
+    "Refreshed the empty queue from release boundaries and public alert tuple invariants",
+    "Selected R90-41 as the highest-priority dependency-ready correctness increment",
+    "Confirmed rule-engine alerts emit MITRE fields either all empty or fully populated while stored-row decoding accepted partial tuples",
+    "Added shared all-empty or all-nonblank MITRE tuple validation to stored-row decoding",
+    "Covered all six partial empty/populated shapes and whitespace-only tactic, technique ID, and technique name",
+    "Covered historical encoded-path read-only byte preservation",
+    "Preserved all-empty and complete unnormalized historical tuple compatibility",
+    "Passed twenty uncached focused alert-store race runs, the complete native race suite, E2E smoke, documentation, knowledge, JSON, diff, and sensitive-information checks"
+  ],
+  "in_progress": [
+    "Commit and deliver the validated R90-41 increment"
+  ],
+  "todo": [
+    "Commit and push the feature",
+    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
+    "Reconcile roadmap and task-state delivery evidence"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "Delivery evidence remains pending until fetched origin/main and the exact-range Vault note are verified",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-41 is implemented and validated from clean fetched origin/main at 9c62066e6d2bea08295a2c4a7c1ee5069a59386f. Stage only the eight intended feature paths, commit, push, fetch and verify origin/main, rerun the explicit-Vault knowledge check, synchronize the exact full-SHA range, verify its note/index/MOC, then reconcile the roadmap, plan, and task state in a docs-only delivery commit. Do not repeat implementation or validate against the current MITRE catalog, normalize text, change filters or recovery validation, migrate rows, create v0.1.1, or publish artifacts."
+}

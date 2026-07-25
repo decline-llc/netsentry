@@ -819,6 +819,191 @@ func TestStoreAllowsEmptyOptionalStoredText(t *testing.T) {
 	}
 }
 
+func TestStoreRejectsIncompleteStoredMITRETuple(t *testing.T) {
+	const (
+		tactic        = "Initial Access"
+		techniqueID   = "T1190"
+		techniqueName = "Exploit Public-Facing Application"
+	)
+	tests := []struct {
+		name          string
+		tactic        string
+		techniqueID   string
+		techniqueName string
+		read          func(context.Context, *Store) error
+	}{
+		{
+			name:   "only tactic through list",
+			tactic: tactic,
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:        "only technique id through query",
+			techniqueID: techniqueID,
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+		{
+			name:          "only technique name through list",
+			techniqueName: techniqueName,
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:        "missing technique name through query",
+			tactic:      tactic,
+			techniqueID: techniqueID,
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+		{
+			name:          "missing technique id through list",
+			tactic:        tactic,
+			techniqueName: techniqueName,
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:          "missing tactic through query",
+			techniqueID:   techniqueID,
+			techniqueName: techniqueName,
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+		{
+			name:          "whitespace tactic through list",
+			tactic:        " \t ",
+			techniqueID:   techniqueID,
+			techniqueName: techniqueName,
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:          "whitespace technique id through query",
+			tactic:        tactic,
+			techniqueID:   "\n",
+			techniqueName: techniqueName,
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+		{
+			name:          "whitespace technique name through list",
+			tactic:        tactic,
+			techniqueID:   techniqueID,
+			techniqueName: "   ",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			ctx := context.Background()
+			store := openTestStore(t, time.Minute)
+			defer store.Close()
+			if err := store.WriteBatch(ctx, []*model.Alert{
+				makeAlert(time.Date(2026, 7, 25, 11, 25, 0, 0, time.UTC), "stored-mitre-tuple"),
+			}); err != nil {
+				t.Fatalf("seed alert: %v", err)
+			}
+			if _, err := store.db.ExecContext(
+				ctx,
+				"UPDATE alerts SET mitre_tactic = ?, mitre_technique_id = ?, mitre_technique_name = ?",
+				test.tactic,
+				test.techniqueID,
+				test.techniqueName,
+			); err != nil {
+				t.Fatalf("inject incomplete stored MITRE tuple: %v", err)
+			}
+
+			err := test.read(ctx, store)
+			if err == nil || !strings.Contains(err.Error(), "MITRE fields must be all empty or all nonblank") {
+				t.Fatalf("read error = %v, want incomplete MITRE tuple rejection", err)
+			}
+		})
+	}
+}
+
+func TestStoreAllowsCompleteStoredMITRETupleWithoutNormalization(t *testing.T) {
+	ctx := context.Background()
+	store := openTestStore(t, time.Minute)
+	defer store.Close()
+	alert := makeAlert(time.Date(2026, 7, 25, 11, 30, 0, 0, time.UTC), "complete-mitre-tuple")
+	alert.MitreTactic = "  Historical Tactic  "
+	alert.MitreTechniqueID = "  T9999  "
+	alert.MitreTechniqueName = "  Historical Technique  "
+	if err := store.WriteBatch(ctx, []*model.Alert{alert}); err != nil {
+		t.Fatalf("write complete stored MITRE tuple: %v", err)
+	}
+
+	listed, err := store.List(ctx)
+	if err != nil {
+		t.Fatalf("list complete stored MITRE tuple: %v", err)
+	}
+	if len(listed) != 1 ||
+		listed[0].MitreTactic != alert.MitreTactic ||
+		listed[0].MitreTechniqueID != alert.MitreTechniqueID ||
+		listed[0].MitreTechniqueName != alert.MitreTechniqueName {
+		t.Fatalf("complete stored MITRE tuple changed: %+v", listed)
+	}
+}
+
+func TestStoreRejectsIncompleteHistoricalMITRETupleWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := filepath.Join(t.TempDir(), "MITRE tuple shard fixtures")
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	now := time.Date(2026, 7, 25, 11, 35, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	historicalStore, err := Open(ctx, Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open historical MITRE tuple fixture: %v", err)
+	}
+	if err := historicalStore.WriteBatch(ctx, []*model.Alert{
+		makeAlert(historical, "invalid-historical-mitre-tuple"),
+	}); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("seed historical MITRE tuple fixture: %v", err)
+	}
+	if _, err := historicalStore.db.ExecContext(ctx, "UPDATE alerts SET mitre_technique_name = ''"); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("inject historical incomplete MITRE tuple: %v", err)
+	}
+	if err := historicalStore.Close(); err != nil {
+		t.Fatalf("close historical MITRE tuple fixture: %v", err)
+	}
+	before := readFileBytes(t, path)
+
+	_, _, err = store.Query(ctx, Query{Limit: 10})
+	if err == nil || !strings.Contains(err.Error(), "MITRE fields must be all empty or all nonblank") {
+		t.Fatalf("historical query error = %v, want incomplete MITRE tuple rejection", err)
+	}
+	assertFileBytesUnchanged(t, path, before)
+}
+
 func TestStoreRejectsBlankHistoricalRequiredTextWithoutModification(t *testing.T) {
 	ctx := context.Background()
 	dir := filepath.Join(t.TempDir(), "required text shard fixtures")

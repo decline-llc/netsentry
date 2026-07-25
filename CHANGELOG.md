@@ -116,6 +116,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
   the canonical aggregation tuple.
 - Alert row decoding now rejects blank required event, rule, protocol, and
   network identity text while preserving legitimate empty optional fields.
+- Alert row decoding now requires stored MITRE tactic, technique ID, and
+  technique name to be either all empty or all nonblank, rejecting partial or
+  whitespace-only tuple members without normalizing complete historical text.
 - Alert row decoding now rejects malformed, ordinary IPv6, and IPv4-mapped
   IPv6 stored source or destination addresses before aggregation-identity
   derivation.

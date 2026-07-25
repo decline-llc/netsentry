@@ -1430,6 +1430,18 @@ func validateSeverity(severity model.Severity) error {
 	}
 }
 
+func validateMITRETuple(tactic, techniqueID, techniqueName string) error {
+	if tactic == "" && techniqueID == "" && techniqueName == "" {
+		return nil
+	}
+	if strings.TrimSpace(tactic) != "" &&
+		strings.TrimSpace(techniqueID) != "" &&
+		strings.TrimSpace(techniqueName) != "" {
+		return nil
+	}
+	return errors.New("MITRE fields must be all empty or all nonblank")
+}
+
 // ReplayRecoveryLog restores alert writes that were durably logged before a
 // previous process exited. Existing event IDs are skipped, so replay is safe to
 // repeat after SQLite committed but the recovery log was not truncated.
@@ -1943,6 +1955,9 @@ func scanAlert(rows *sql.Rows) (*model.Alert, error) {
 		if strings.TrimSpace(field.value) == "" {
 			return nil, fmt.Errorf("invalid stored alert %s: required field %s is blank", alert.ID, field.name)
 		}
+	}
+	if err := validateMITRETuple(alert.MitreTactic, alert.MitreTechniqueID, alert.MitreTechniqueName); err != nil {
+		return nil, fmt.Errorf("invalid stored alert %s: %w", alert.ID, err)
 	}
 	if err := validateIPv4Addresses(alert.SrcIP, alert.DstIP); err != nil {
 		return nil, fmt.Errorf("invalid stored alert %s: %w", alert.ID, err)
