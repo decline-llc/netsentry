@@ -69,6 +69,7 @@ creation, or publication authority.
 
 ## Delivery Evidence
 
+- Feature commit: `a7eca65c9a8d327480821c22b1c42ae165f238b3`
 - Implementation and all required validation pass.
 - The first full native suite exposed an R90-29 collation fixture that wrote
   IPv6 through recovery. Rule/severity cases now use valid IPv4 input, while
@@ -78,5 +79,7 @@ creation, or publication authority.
   suite and complete native race suite then passed.
 - E2E smoke, documentation, knowledge, JSON, diff, and
   sensitive-information checks pass.
-- Pending commit, push, fetched-remote verification, and exact-range Vault
-  synchronization.
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range: `6306fce9b5bad932ca3d907fefaf7640eb5a318a..a7eca65c9a8d327480821c22b1c42ae165f238b3`
+- Vault iteration note, full commit index, and `00-MOC` link: verified.

@@ -52,7 +52,7 @@
 | R90-33 | Jul 25–Oct 20 | Complete early | Validate stored SQLite aggregation identity. | R90-32 | Primary and historical reads reject empty or altered alert IDs that disagree with the canonical aggregation tuple without modifying historical shard bytes; valid aggregation identities remain compatible. |
 | R90-34 | Jul 25–Oct 20 | Complete early | Validate stored SQLite required text. | R90-33 | Primary and historical reads reject blank required identity, rule, and network text without modifying historical shard bytes; optional empty text and valid rows remain compatible. |
 | R90-35 | Jul 25–Oct 20 | Complete early | Enforce the UDS IPv4 address contract. | R90-34 | UDS packet frames accept only strict IPv4 source and destination addresses; ordinary and IPv4-mapped IPv6 text fails once without queueing a packet, while valid capture traffic remains compatible. |
-| R90-36 | Jul 25–Oct 20 | In progress | Enforce the recovery IPv4 address contract. | R90-35 | Startup and runtime recovery preflight reject malformed, ordinary IPv6, or IPv4-mapped IPv6 source/destination addresses before modifying the complete log or missing/existing SQLite state; valid IPv4 replay remains compatible. |
+| R90-36 | Jul 25–Oct 20 | Complete early | Enforce the recovery IPv4 address contract. | R90-35 | Startup and runtime recovery preflight reject malformed, ordinary IPv6, or IPv4-mapped IPv6 source/destination addresses before modifying the complete log or missing/existing SQLite state; valid IPv4 replay remains compatible. |
 
 ## R90-07 Definition
 
@@ -764,6 +764,16 @@
   remains compatible. Twenty focused race runs, the full native suite, E2E
   smoke, documentation, and knowledge checks passed; fetched `origin/main`,
   the post-fetch knowledge gate, and the exact full-SHA Vault note, index, and
+  MOC are verified. The queue was refreshed on Jul 25 from the clean fetched
+  baseline, completed task state, release boundaries, the strict IPv4 recovery
+  boundary, and verified Vault evidence. R90-36 completed early at
+  `a7eca65c9a8d327480821c22b1c42ae165f238b3`: startup replay and runtime
+  preflight now reject malformed, ordinary IPv6, and IPv4-mapped IPv6 source or
+  destination addresses before modifying the recovery log or missing/existing
+  SQLite state, while valid IPv4 replay remains compatible. Twenty focused
+  race runs, twenty affected-fixture race runs, the full native suite, E2E
+  smoke, documentation, and knowledge checks passed; fetched `origin/main`,
+  the post-fetch knowledge gate, and the exact full-SHA Vault note, index, and
   MOC are verified. No later engineering increment is selected; refresh the
   rolling roadmap on the next `$netsentry-next` trigger. Publication remains
   unauthorized.
@@ -837,11 +847,13 @@
 
 ## Current Checkpoint
 
-R90-36 implementation and validation pass from the clean fetched R90-35
-reconciliation baseline `6306fce9b5bad932ca3d907fefaf7640eb5a318a`.
-The recovery-focused suite, twenty uncached focused race runs, twenty uncached
-collation-fixture race runs, complete native race suite, E2E smoke,
-documentation, knowledge, JSON, diff, and sensitive-information checks are
-clean. The validation deviation is resolved; feature commit, push,
-fetched-remote verification, and exact-range Vault synchronization remain.
+R90-36 is complete at `a7eca65c9a8d327480821c22b1c42ae165f238b3`
+from the clean fetched R90-35 reconciliation baseline
+`6306fce9b5bad932ca3d907fefaf7640eb5a318a`. The recovery-focused suite,
+twenty uncached focused race runs, twenty uncached collation-fixture race runs,
+complete native race suite, E2E smoke, documentation, knowledge, JSON, diff,
+and sensitive-information checks passed. The validation deviation is resolved;
+fetched `origin/main`, the post-fetch knowledge gate, and exact-range Vault
+note, full index, and MOC are verified. No later engineering increment is
+selected; refresh the roadmap on the next `$netsentry-next` trigger.
 Publication remains unauthorized.

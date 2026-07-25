@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "6306fce9b5bad932ca3d907fefaf7640eb5a318a",
   "risk_level": "Medium",
-  "current_checkpoint": "validated_pending_delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean local main and fetched origin/main agree",
     "Verified the completed R90-35 task state and both delivery commits in the single discovered local Vault",
@@ -17,28 +17,25 @@
     "Reconciled the collation fixture so writer-contract cases use IPv4 and persisted-collation cases seed below recovery",
     "Passed 20 uncached affected-fixture race runs and the combined focused recovery suite",
     "Passed the complete native race suite and E2E smoke",
-    "Passed documentation, knowledge, JSON, diff, and sensitive-information checks"
+    "Passed documentation, knowledge, JSON, diff, and sensitive-information checks",
+    "Pushed a7eca65c9a8d327480821c22b1c42ae165f238b3 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact full-SHA Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Commit and push the validated feature"
-  ],
-  "todo": [
-    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
-    "Reconcile roadmap and task-state delivery evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false
+    "commit": "a7eca65c9a8d327480821c22b1c42ae165f238b3",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "6306fce9b5bad932ca3d907fefaf7640eb5a318a..a7eca65c9a8d327480821c22b1c42ae165f238b3",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
   },
   "remaining_risks": [
-    "The validated feature is not yet present on fetched origin/main",
-    "Exact-range Vault synchronization remains pending",
+    "IPv6 recovery support and address normalization remain out of scope",
+    "Stored historical SQLite addresses are not retroactively validated or migrated",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "R90-36 implementation and all required validation pass. The first full native run exposed an R90-29 exact-filter fixture writing IPv6 through recovery; the fixture now uses valid IPv4 writer input for rule/severity cases and seeds source/destination collation-only rows below recovery. Twenty affected-fixture race reruns, the combined focused suite, full native suite, and remaining gates are clean. Commit and push the feature, verify fetched origin/main, synchronize the exact pushed range to the local Vault, then reconcile delivery evidence. Do not migrate stored rows, create v0.1.1, or publish artifacts."
+  "resume_instructions": "R90-36 is complete at a7eca65c9a8d327480821c22b1c42ae165f238b3. Do not repeat its implementation, validation, push, or Vault synchronization. No later engineering increment is selected; refresh the rolling roadmap on the next $netsentry-next trigger. Do not add IPv6 recovery support, migrate stored rows, create v0.1.1, or publish artifacts."
 }
