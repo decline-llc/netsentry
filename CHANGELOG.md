@@ -153,6 +153,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Recovery semantic validation now requires a nonblank `rule_name`, rejecting
   missing, empty, or whitespace-only names before startup replay or runtime
   append without trimming valid names.
+- Recovery semantic validation now requires MITRE tactic, technique ID, and
+  technique name to be either all empty or all nonblank before startup replay
+  or runtime append, without normalizing complete historical tuples.
 - Recovery semantic validation now requires `event_id` to match the
   deterministic writer identity before startup replay or runtime append.
 - Recovery logs now receive their complete structural and semantic preflight

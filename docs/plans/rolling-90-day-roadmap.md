@@ -58,6 +58,7 @@
 | R90-39 | Jul 25–Oct 20 | Complete early | Validate recovery severity. | R90-38 | Startup and runtime recovery preflight accept only `low`, `medium`, `high`, or `critical`; empty, case-variant, and unsupported severities fail before modifying the complete log or missing/existing SQLite state, while all four public values remain compatible. |
 | R90-40 | Jul 25–Oct 20 | Complete early | Validate recovery rule names. | R90-39 | Startup and runtime recovery preflight reject missing, empty, or whitespace-only `rule_name` before modifying the complete log or missing/existing SQLite state, while nonblank names replay without normalization. |
 | R90-41 | Jul 25–Oct 20 | Complete early | Validate stored SQLite MITRE tuples. | R90-40 | Primary and historical reads accept MITRE tactic/ID/name only when all three are empty or all three are nonblank; partial and whitespace-only tuple members fail without normalization or historical shard modification. |
+| R90-42 | Jul 25–Oct 20 | In progress | Validate recovery MITRE tuples. | R90-41 | Startup and runtime recovery preflight accept MITRE tactic/ID/name only when all three are empty or all three are nonblank; every partial and whitespace-only tuple fails before modifying the complete log or missing/existing SQLite state, while valid tuple text remains unchanged. |
 
 ## R90-07 Definition
 
@@ -668,6 +669,23 @@
   semantics, recovery-format validation, automatic row repair, deletion,
   schema migration, operator data, or tag/publication authority.
 
+## R90-42 Definition
+
+- **Goal:** align durable recovery records with the rule engine and stored-row
+  all-empty-or-fully-populated MITRE tuple contract.
+- **Risk:** partial tuples can currently persist and fail only on a later row
+  read, while current-catalog validation or normalization could reject or alter
+  legitimate historical complete tuples.
+- **Required validation:** all six partial empty/populated tuple shapes and
+  whitespace-only tactic, technique ID, and technique name rejection with a
+  valid prefix; missing and existing database startup preservation; runtime
+  log/database preservation; all-empty and complete unnormalized replay
+  compatibility; stored-row compatibility; twenty focused alert-store race
+  runs, full native, documentation, E2E, and knowledge checks.
+- **Stop condition:** stop if safe completion requires current-catalog
+  revalidation, text normalization, a recovery-format change, stored-row
+  migration, automatic repair, operator data, or tag/publication authority.
+
 ### R90-24 Validation Deviation
 
 - **Observed:** The first full native race suite hit the existing
@@ -943,9 +961,11 @@
   revalidation. Twenty focused race runs, the full native suite, E2E smoke,
   documentation, and knowledge checks passed; fetched `origin/main`, the
   post-fetch knowledge gate, and the exact full-SHA Vault note, index, and MOC
-  are verified. No later engineering increment is selected; refresh the rolling
-  roadmap on the next `$netsentry-next` trigger. Publication remains
-  unauthorized.
+  are verified. The queue was refreshed on Jul 25 from the clean fetched
+  reconciliation baseline, completed task state, release boundaries, the
+  shared stored-row MITRE contract, recovery preflight behavior, and verified
+  Vault evidence. R90-42 is selected as the highest-priority dependency-ready
+  correctness increment. Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -964,7 +984,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -1016,11 +1036,12 @@
 
 ## Current Checkpoint
 
-R90-41 is complete at `5e1425a6c81aac720a8a7743aee782bf2a5f61ed` from
-clean fetched baseline `9c62066e6d2bea08295a2c4a7c1ee5069a59386f`.
-Twenty uncached focused race runs, the complete native race suite, E2E smoke,
-documentation, knowledge, JSON, diff, and sensitive-information checks passed.
-Fetched `origin/main`, the post-fetch knowledge gate, and exact full-SHA Vault
-note, full index, and MOC are verified. No later engineering increment is
-selected; refresh the roadmap on the next `$netsentry-next` trigger.
-Publication remains unauthorized.
+R90-42 implementation is validated pending delivery from clean fetched
+`origin/main` `da25754b70df111746853b8bfc817db6e44cb4e5`. Shared recovery
+preflight now rejects all six partial MITRE tuple shapes and each
+whitespace-only member before startup or runtime state changes, while all-empty
+and complete padded tuples replay unchanged. Twenty uncached focused race runs,
+the complete native race suite, E2E smoke, documentation, knowledge, JSON,
+diff, and sensitive-information checks pass. Commit, push, fetched-remote
+verification, and exact-range Vault synchronization remain. Publication
+remains unauthorized.

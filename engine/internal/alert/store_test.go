@@ -1776,6 +1776,156 @@ func TestStoreReplaysNonBlankRecoveryRuleNameWithoutNormalization(t *testing.T) 
 	}
 }
 
+func TestStoreRejectsIncompleteRecoveryMITRETupleWithoutModification(t *testing.T) {
+	const (
+		tactic        = "Initial Access"
+		techniqueID   = "T1190"
+		techniqueName = "Exploit Public-Facing Application"
+	)
+	now := time.Date(2026, 7, 25, 11, 35, 0, 0, time.UTC)
+	window := time.Minute
+	valid := normalizeAlert(makeAlert(now, "valid-prefix"), now, window)
+	validJSON, err := json.Marshal(valid)
+	if err != nil {
+		t.Fatalf("marshal valid recovery record: %v", err)
+	}
+	tests := []struct {
+		name          string
+		tactic        string
+		techniqueID   string
+		techniqueName string
+	}{
+		{name: "only tactic", tactic: tactic},
+		{name: "only technique id", techniqueID: techniqueID},
+		{name: "only technique name", techniqueName: techniqueName},
+		{name: "missing technique name", tactic: tactic, techniqueID: techniqueID},
+		{name: "missing technique id", tactic: tactic, techniqueName: techniqueName},
+		{name: "missing tactic", techniqueID: techniqueID, techniqueName: techniqueName},
+		{name: "whitespace tactic", tactic: " \t ", techniqueID: techniqueID, techniqueName: techniqueName},
+		{name: "whitespace technique id", tactic: tactic, techniqueID: "\n", techniqueName: techniqueName},
+		{name: "whitespace technique name", tactic: tactic, techniqueID: techniqueID, techniqueName: "   "},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			invalid := valid
+			invalid.MitreTactic = test.tactic
+			invalid.MitreTechniqueID = test.techniqueID
+			invalid.MitreTechniqueName = test.techniqueName
+			invalidJSON, err := json.Marshal(invalid)
+			if err != nil {
+				t.Fatalf("marshal incomplete-MITRE recovery record: %v", err)
+			}
+			contents := append(append(append([]byte(nil), validJSON...), '\n'), invalidJSON...)
+			contents = append(contents, '\n')
+
+			for _, existing := range []bool{false, true} {
+				state := "missing database"
+				if existing {
+					state = "existing database"
+				}
+				t.Run(state, func(t *testing.T) {
+					dir := t.TempDir()
+					dbPath := filepath.Join(dir, "alerts.db")
+					recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+					var beforeDB []byte
+					if existing {
+						createSQLiteFixture(t, dbPath, schemaSQL, `DROP INDEX idx_alerts_last_seen`)
+						beforeDB = readFileBytes(t, dbPath)
+					}
+					if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+						t.Fatalf("write incomplete-MITRE recovery log: %v", err)
+					}
+
+					store, err := Open(context.Background(), Options{
+						Path:              dbPath,
+						RecoveryLogPath:   recoveryLogPath,
+						JournalMode:       "WAL",
+						BusyTimeoutMS:     1000,
+						AggregationWindow: window,
+						Now:               func() time.Time { return now },
+					})
+					if store != nil {
+						_ = store.Close()
+						t.Fatal("incomplete-MITRE recovery log returned a usable store")
+					}
+					if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+						!strings.Contains(err.Error(), "record 2") ||
+						!strings.Contains(err.Error(), "MITRE fields must be all empty or all nonblank") {
+						t.Fatalf("startup error = %v, want record 2 incomplete MITRE tuple ErrRecoveryLogIntegrity", err)
+					}
+					assertFileBytes(t, recoveryLogPath, contents)
+					if existing {
+						assertFileBytes(t, dbPath, beforeDB)
+						assertSQLiteIndexMissing(t, dbPath, "idx_alerts_last_seen")
+					} else {
+						assertFileDoesNotExist(t, dbPath)
+					}
+				})
+			}
+		})
+	}
+}
+
+func TestStoreReplaysValidRecoveryMITRETuplesWithoutNormalization(t *testing.T) {
+	tests := []struct {
+		name          string
+		tactic        string
+		techniqueID   string
+		techniqueName string
+	}{
+		{name: "all empty"},
+		{
+			name:          "complete padded",
+			tactic:        "  Historical Tactic  ",
+			techniqueID:   "  T9999  ",
+			techniqueName: "  Historical Technique  ",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			dir := t.TempDir()
+			dbPath := filepath.Join(dir, "alerts.db")
+			recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+			now := time.Date(2026, 7, 25, 11, 40, 0, 0, time.UTC)
+			alert := makeAlert(now, "valid-recovery-mitre-tuple")
+			alert.MitreTactic = test.tactic
+			alert.MitreTechniqueID = test.techniqueID
+			alert.MitreTechniqueName = test.techniqueName
+			logged := normalizeAlerts([]*model.Alert{alert}, now, time.Minute)
+			logOnly := &Store{recoveryLogPath: recoveryLogPath}
+			if err := logOnly.appendRecoveryLog(logged); err != nil {
+				t.Fatalf("append valid MITRE recovery record: %v", err)
+			}
+
+			store, err := Open(context.Background(), Options{
+				Path:              dbPath,
+				RecoveryLogPath:   recoveryLogPath,
+				JournalMode:       "WAL",
+				BusyTimeoutMS:     1000,
+				AggregationWindow: time.Minute,
+				Now:               func() time.Time { return now },
+			})
+			if err != nil {
+				t.Fatalf("open store with valid MITRE recovery tuple: %v", err)
+			}
+			defer store.Close()
+			listed, err := store.List(context.Background())
+			if err != nil {
+				t.Fatalf("list valid MITRE recovery tuple: %v", err)
+			}
+			if len(listed) != 1 ||
+				listed[0].MitreTactic != test.tactic ||
+				listed[0].MitreTechniqueID != test.techniqueID ||
+				listed[0].MitreTechniqueName != test.techniqueName {
+				t.Fatalf("replayed MITRE tuple changed: %+v", listed)
+			}
+			if info, err := os.Stat(recoveryLogPath); err != nil || info.Size() != 0 {
+				t.Fatalf("recovery log should be truncated after replay, info=%+v err=%v", info, err)
+			}
+		})
+	}
+}
+
 func TestStoreRejectsInconsistentNormalizedRecoveryLogWithoutModification(t *testing.T) {
 	now := time.Date(2026, 7, 21, 4, 0, 0, 0, time.UTC)
 	window := time.Minute
@@ -2138,6 +2288,40 @@ func TestStoreWriteBatchRejectsInvalidRecoveryLogBeforeAppend(t *testing.T) {
 		contents:  append(missingRuleNameJSON, '\n'),
 		condition: "required field rule_name is empty",
 	})
+	for _, test := range []struct {
+		name          string
+		tactic        string
+		techniqueID   string
+		techniqueName string
+	}{
+		{name: "only MITRE tactic", tactic: "Initial Access"},
+		{name: "only MITRE technique id", techniqueID: "T1190"},
+		{name: "only MITRE technique name", techniqueName: "Exploit Public-Facing Application"},
+		{name: "missing MITRE technique name", tactic: "Initial Access", techniqueID: "T1190"},
+		{name: "missing MITRE technique id", tactic: "Initial Access", techniqueName: "Exploit Public-Facing Application"},
+		{name: "missing MITRE tactic", techniqueID: "T1190", techniqueName: "Exploit Public-Facing Application"},
+		{name: "whitespace MITRE tactic", tactic: " \t ", techniqueID: "T1190", techniqueName: "Exploit Public-Facing Application"},
+		{name: "whitespace MITRE technique id", tactic: "Initial Access", techniqueID: "\n", techniqueName: "Exploit Public-Facing Application"},
+		{name: "whitespace MITRE technique name", tactic: "Initial Access", techniqueID: "T1190", techniqueName: "   "},
+	} {
+		invalid := valid
+		invalid.MitreTactic = test.tactic
+		invalid.MitreTechniqueID = test.techniqueID
+		invalid.MitreTechniqueName = test.techniqueName
+		invalidJSON, err := json.Marshal(invalid)
+		if err != nil {
+			t.Fatalf("marshal %s recovery record: %v", test.name, err)
+		}
+		tests = append(tests, struct {
+			name      string
+			contents  []byte
+			condition string
+		}{
+			name:      test.name,
+			contents:  append(invalidJSON, '\n'),
+			condition: "MITRE fields must be all empty or all nonblank",
+		})
+	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			dir := t.TempDir()

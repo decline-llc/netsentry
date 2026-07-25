@@ -1369,6 +1369,9 @@ func validateRecoveryAlert(alert model.Alert, aggregationWindow time.Duration) e
 	if err := validateSeverity(alert.Severity); err != nil {
 		return err
 	}
+	if err := validateMITRETuple(alert.MitreTactic, alert.MitreTechniqueID, alert.MitreTechniqueName); err != nil {
+		return err
+	}
 	requiredTimes := []struct {
 		name  string
 		value time.Time
