@@ -51,7 +51,7 @@
 | R90-32 | Jul 25–Oct 20 | Complete early | Validate stored SQLite timestamp ordering. | R90-31 | Primary and historical reads reject rows with `first_seen > last_seen` or `window_start > first_seen` without modifying historical shard bytes; valid historical aggregation windows remain compatible. |
 | R90-33 | Jul 25–Oct 20 | Complete early | Validate stored SQLite aggregation identity. | R90-32 | Primary and historical reads reject empty or altered alert IDs that disagree with the canonical aggregation tuple without modifying historical shard bytes; valid aggregation identities remain compatible. |
 | R90-34 | Jul 25–Oct 20 | Complete early | Validate stored SQLite required text. | R90-33 | Primary and historical reads reject blank required identity, rule, and network text without modifying historical shard bytes; optional empty text and valid rows remain compatible. |
-| R90-35 | Jul 25–Oct 20 | In progress | Enforce the UDS IPv4 address contract. | R90-34 | UDS packet frames accept only strict IPv4 source and destination addresses; ordinary and IPv4-mapped IPv6 text fails once without queueing a packet, while valid capture traffic remains compatible. |
+| R90-35 | Jul 25–Oct 20 | Complete early | Enforce the UDS IPv4 address contract. | R90-34 | UDS packet frames accept only strict IPv4 source and destination addresses; ordinary and IPv4-mapped IPv6 text fails once without queueing a packet, while valid capture traffic remains compatible. |
 
 ## R90-07 Definition
 
@@ -725,9 +725,18 @@
   rejection preserves shard bytes. Twenty focused race runs, the full native
   suite, E2E smoke, documentation, and knowledge checks passed; fetched
   `origin/main`, the post-fetch knowledge gate, and the exact full-SHA Vault
-  note, index, and MOC are verified. No later engineering increment is
-  selected; refresh the rolling roadmap on the next `$netsentry-next` trigger.
-  Publication remains unauthorized.
+  note, index, and MOC are verified. The queue was refreshed on Jul 25 from the
+  clean fetched baseline, completed task state, release boundaries, the
+  IPv4-only packet contract, and verified Vault evidence. R90-35 completed
+  early at `ab90caa9b2148f9cfd706445bbd35c6646ac44a5`: UDS packet
+  validation now rejects ordinary and IPv4-mapped IPv6 in either address
+  position with one decode error and no queued packet, while valid IPv4 traffic
+  remains compatible. Twenty focused race runs, the full native suite, E2E
+  smoke, documentation, and knowledge checks passed; fetched `origin/main`,
+  the post-fetch knowledge gate, and the exact full-SHA Vault note, index, and
+  MOC are verified. No later engineering increment is selected; refresh the
+  rolling roadmap on the next `$netsentry-next` trigger. Publication remains
+  unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -798,12 +807,15 @@
 
 ## Current Checkpoint
 
-R90-35 is validated pending delivery from the clean fetched R90-34
-reconciliation baseline `42721e10ef84dd7cf24306f03e23c8ad8d401870`.
-UDS packet validation now accepts only strict IPv4 source and destination
-addresses; ordinary and IPv4-mapped IPv6 in either position produce one decode
-error and no queued packet, while valid IPv4 delivery remains compatible.
-Twenty uncached focused receiver race runs, the full native suite, E2E smoke,
-documentation, knowledge, JSON, diff, and sensitive-information checks pass.
-Commit, push, fetched-remote verification, exact-range Vault synchronization,
-and final delivery reconciliation remain. Publication remains unauthorized.
+R90-35 completed early at `ab90caa9b2148f9cfd706445bbd35c6646ac44a5`
+after the queue was refreshed from the clean fetched R90-34 reconciliation
+baseline, completed task state, release boundaries, the IPv4-only packet
+contract, and verified Vault evidence. UDS packet validation now accepts only
+strict IPv4 source and destination addresses; ordinary and IPv4-mapped IPv6 in
+either position produce one decode error and no queued packet, while valid IPv4
+delivery remains compatible. Twenty uncached focused receiver race runs, the
+full native suite, E2E smoke, documentation, and knowledge checks passed;
+fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA
+Vault note, full index, and MOC are verified. No later engineering increment is
+selected; refresh the rolling roadmap on the next `$netsentry-next` trigger.
+Publication remains unauthorized.
