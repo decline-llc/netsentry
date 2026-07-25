@@ -102,6 +102,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Alert queries now pin rule, severity, source, and destination exact filters
   to binary comparison so compatible custom column collations cannot broaden
   primary or historical-shard results.
+- Alert row decoding now rejects stored destination ports outside `0..65535`
+  and aggregate counts below one instead of wrapping or returning invalid
+  public-model values.
 - Existing primary databases and daily-shard write targets reject extra unique
   indexes that do not contain a canonical alert or event identity before
   writable initialization; ordinary indexes and redundant identity-containing

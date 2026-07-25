@@ -46,6 +46,7 @@
 | R90-27 | Jul 25–Oct 20 | Complete early | Require binary collation on SQLite aggregation uniqueness. | R90-26 | Existing primary and historical databases whose canonical alert aggregation uniqueness uses a non-binary collation fail read-only preflight and remain unchanged; a binary-collated canonical key remains compatible and preserves distinct NetSentry identities. |
 | R90-28 | Jul 25–Oct 20 | Complete early | Honor SQLite identifier case semantics during schema preflight. | R90-27 | Existing primary and historical databases with case-variant required table, column, aggregation-key, and safe unique-key identifiers pass the same validation and remain writable; all write-safety checks remain enforced. |
 | R90-29 | Jul 25–Oct 20 | Complete early | Pin SQLite exact-filter collation. | R90-28 | Rule, severity, source, and destination filters retain binary exact-match semantics for compatible primary and historical schemas regardless of declared column collation; intentionally case-insensitive filters remain unchanged. |
+| R90-30 | Jul 25–Oct 20 | In progress | Validate stored SQLite alert numerics. | R90-29 | Primary and historical reads reject destination ports outside `0..65535` and aggregate counts below one without silently narrowing values or modifying historical shard bytes; valid rows remain compatible. |
 
 ## R90-07 Definition
 
@@ -424,6 +425,21 @@
   rejecting a compatible database, changing public filter semantics, operator
   data, or tag/publication authority.
 
+## R90-30 Definition
+
+- **Goal:** reject persisted numeric alert fields that cannot satisfy the
+  public model before conversion or return.
+- **Risk:** integer narrowing can silently wrap invalid ports, while accepting
+  non-positive aggregate counts exposes states the writer cannot generate.
+- **Required validation:** direct negative and above-65535 port rejection;
+  direct zero and negative aggregate-count rejection; historical read-only
+  rejection with byte preservation; healthy primary/cross-shard compatibility;
+  twenty focused alert-store race runs, full native, documentation, E2E, and
+  knowledge checks.
+- **Stop condition:** stop if safe completion requires automatic row repair,
+  deletion, schema migration, a full-table startup scan, operator data, or
+  tag/publication authority.
+
 ### R90-24 Validation Deviation
 
 - **Observed:** The first full native race suite hit the existing
@@ -603,7 +619,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -655,14 +671,12 @@
 
 ## Current Checkpoint
 
-R90-29 completed early at `f12a454c95515dd92549e33e3c56d00449408d89`
-after the queue was refreshed from the clean fetched R90-28 baseline, completed
-task state, release boundaries, exact-filter query semantics, and verified
-Vault evidence. Rule, severity, source, and destination filters now use
-explicit binary comparison for both rows and counts across primary and
-historical schemas; intentionally case-insensitive protocol and MITRE filters
-remain unchanged. Twenty focused race runs, the full native suite, E2E smoke,
-documentation, and knowledge checks passed; fetched `origin/main`, post-fetch
-knowledge validation, and the exact full-SHA Vault note, full index, and MOC
-are verified. No later engineering increment is selected; refresh the rolling
-roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.
+R90-30 is selected from the clean fetched
+`2aabb40cb0058e4c0ffbde428edfd25ed1d9ecf2` baseline after verifying the
+completed R90-29 task state and both delivery commits in the single discovered
+local Vault. Persisted destination ports are currently narrowed directly from
+`int` to `uint16`, and non-positive aggregate counts are returned without
+validation. R90-30 is limited to numeric row-decoding invariants plus direct
+primary and historical regressions. Twenty uncached focused race runs, the full
+native suite, E2E smoke, documentation, and knowledge checks pass; delivery
+verification is pending. Publication remains unauthorized.

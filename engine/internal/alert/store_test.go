@@ -312,6 +312,110 @@ func TestStoreHistoricalExactFilterOverridesCompatibleNoCaseColumn(t *testing.T)
 	}
 }
 
+func TestStoreRejectsInvalidStoredAlertNumerics(t *testing.T) {
+	tests := []struct {
+		name      string
+		statement string
+		read      func(context.Context, *Store) error
+		condition string
+	}{
+		{
+			name:      "negative destination port through list",
+			statement: "UPDATE alerts SET dst_port = -1",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+			condition: "dst_port -1 is outside 0..65535",
+		},
+		{
+			name:      "oversized destination port through query",
+			statement: "UPDATE alerts SET dst_port = 65536",
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+			condition: "dst_port 65536 is outside 0..65535",
+		},
+		{
+			name:      "zero aggregate count through list",
+			statement: "UPDATE alerts SET aggregated_count = 0",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+			condition: "aggregated_count 0 is below 1",
+		},
+		{
+			name:      "negative aggregate count through query",
+			statement: "UPDATE alerts SET aggregated_count = -1",
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+			condition: "aggregated_count -1 is below 1",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			ctx := context.Background()
+			store := openTestStore(t, time.Minute)
+			defer store.Close()
+			if err := store.WriteBatch(ctx, []*model.Alert{
+				makeAlert(time.Date(2026, 7, 25, 7, 0, 0, 0, time.UTC), "stored-numeric"),
+			}); err != nil {
+				t.Fatalf("seed alert: %v", err)
+			}
+			if _, err := store.db.ExecContext(ctx, test.statement); err != nil {
+				t.Fatalf("inject invalid stored numeric: %v", err)
+			}
+
+			err := test.read(ctx, store)
+			if err == nil || !strings.Contains(err.Error(), test.condition) {
+				t.Fatalf("read error = %v, want %q", err, test.condition)
+			}
+		})
+	}
+}
+
+func TestStoreRejectsInvalidHistoricalStoredNumericWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := filepath.Join(t.TempDir(), "numeric shard fixtures")
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	now := time.Date(2026, 7, 25, 7, 5, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	historicalStore, err := Open(ctx, Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open historical numeric fixture: %v", err)
+	}
+	if err := historicalStore.WriteBatch(ctx, []*model.Alert{
+		makeAlert(historical, "invalid-historical-numeric"),
+	}); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("seed historical numeric fixture: %v", err)
+	}
+	if _, err := historicalStore.db.ExecContext(ctx, "UPDATE alerts SET dst_port = -1"); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("inject historical invalid numeric: %v", err)
+	}
+	if err := historicalStore.Close(); err != nil {
+		t.Fatalf("close historical numeric fixture: %v", err)
+	}
+	before := readFileBytes(t, path)
+
+	_, _, err = store.Query(ctx, Query{Limit: 10})
+	if err == nil || !strings.Contains(err.Error(), "dst_port -1 is outside 0..65535") {
+		t.Fatalf("historical query error = %v, want invalid destination port", err)
+	}
+	assertFileBytesUnchanged(t, path, before)
+}
+
 func TestStoreReplaysRecoveryLogIdempotently(t *testing.T) {
 	ctx := context.Background()
 	dir := t.TempDir()

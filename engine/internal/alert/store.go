@@ -1888,6 +1888,12 @@ func scanAlert(rows *sql.Rows) (*model.Alert, error) {
 	); err != nil {
 		return nil, fmt.Errorf("scan alert: %w", err)
 	}
+	if dstPort < 0 || dstPort > 65535 {
+		return nil, fmt.Errorf("invalid stored alert %s: dst_port %d is outside 0..65535", alert.ID, dstPort)
+	}
+	if alert.AggregatedCount < 1 {
+		return nil, fmt.Errorf("invalid stored alert %s: aggregated_count %d is below 1", alert.ID, alert.AggregatedCount)
+	}
 	parsedFirstSeen, err := parseTime(firstSeen)
 	if err != nil {
 		return nil, err
