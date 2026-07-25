@@ -57,7 +57,7 @@
 | R90-38 | Jul 25–Oct 20 | Complete early | Validate recovery event identity. | R90-37 | Startup and runtime recovery preflight reject nonblank `event_id` values that differ from the deterministic event identity before modifying the complete log or missing/existing SQLite state; valid idempotent replay remains compatible. |
 | R90-39 | Jul 25–Oct 20 | Complete early | Validate recovery severity. | R90-38 | Startup and runtime recovery preflight accept only `low`, `medium`, `high`, or `critical`; empty, case-variant, and unsupported severities fail before modifying the complete log or missing/existing SQLite state, while all four public values remain compatible. |
 | R90-40 | Jul 25–Oct 20 | Complete early | Validate recovery rule names. | R90-39 | Startup and runtime recovery preflight reject missing, empty, or whitespace-only `rule_name` before modifying the complete log or missing/existing SQLite state, while nonblank names replay without normalization. |
-| R90-41 | Jul 25–Oct 20 | In progress | Validate stored SQLite MITRE tuples. | R90-40 | Primary and historical reads accept MITRE tactic/ID/name only when all three are empty or all three are nonblank; partial and whitespace-only tuple members fail without normalization or historical shard modification. |
+| R90-41 | Jul 25–Oct 20 | Complete early | Validate stored SQLite MITRE tuples. | R90-40 | Primary and historical reads accept MITRE tactic/ID/name only when all three are empty or all three are nonblank; partial and whitespace-only tuple members fail without normalization or historical shard modification. |
 
 ## R90-07 Definition
 
@@ -935,8 +935,17 @@
   are verified. The queue was refreshed on Jul 25 from the clean fetched
   reconciliation baseline, completed task state, release boundaries, rule
   engine MITRE emission, stored-row decoding, and verified Vault evidence.
-  R90-41 is selected as the highest-priority dependency-ready correctness
-  increment. Publication remains unauthorized.
+  R90-41 completed early at
+  `5e1425a6c81aac720a8a7743aee782bf2a5f61ed`: shared primary and historical
+  row decoding now rejects every partial MITRE tactic/ID/name tuple and each
+  whitespace-only member, while all-empty and fully populated historical
+  values remain compatible without normalization or current-catalog
+  revalidation. Twenty focused race runs, the full native suite, E2E smoke,
+  documentation, and knowledge checks passed; fetched `origin/main`, the
+  post-fetch knowledge gate, and the exact full-SHA Vault note, index, and MOC
+  are verified. No later engineering increment is selected; refresh the rolling
+  roadmap on the next `$netsentry-next` trigger. Publication remains
+  unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -1007,12 +1016,11 @@
 
 ## Current Checkpoint
 
-R90-41 implementation is validated pending delivery from clean fetched
-`origin/main` `9c62066e6d2bea08295a2c4a7c1ee5069a59386f`. Shared primary and
-historical row decoding now rejects all six partial MITRE tuple shapes and each
-whitespace-only member, while all-empty and complete historical tuples remain
-compatible without normalization or current-catalog validation. Twenty
-uncached focused race runs, the complete native race suite, E2E smoke,
-documentation, knowledge, JSON, diff, and sensitive-information checks pass.
-Commit, push, fetched-remote verification, and exact-range Vault
-synchronization remain. Publication remains unauthorized.
+R90-41 is complete at `5e1425a6c81aac720a8a7743aee782bf2a5f61ed` from
+clean fetched baseline `9c62066e6d2bea08295a2c4a7c1ee5069a59386f`.
+Twenty uncached focused race runs, the complete native race suite, E2E smoke,
+documentation, knowledge, JSON, diff, and sensitive-information checks passed.
+Fetched `origin/main`, the post-fetch knowledge gate, and exact full-SHA Vault
+note, full index, and MOC are verified. No later engineering increment is
+selected; refresh the roadmap on the next `$netsentry-next` trigger.
+Publication remains unauthorized.

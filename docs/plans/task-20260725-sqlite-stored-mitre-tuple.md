@@ -75,6 +75,7 @@ migration, operator data, tag creation, or publication authority.
 
 ## Delivery Evidence
 
+- Feature commit: `5e1425a6c81aac720a8a7743aee782bf2a5f61ed`
 - Shared stored-row MITRE tuple validation implemented with all six partial
   shapes, each whitespace-only field, encoded-path historical preservation,
   all-empty compatibility, and complete unnormalized tuple regressions.
@@ -82,5 +83,8 @@ migration, operator data, tag creation, or publication authority.
 - `make test`, `make e2e-smoke`, `make docs-check`, explicit-Vault
   `make knowledge-check`, task-state JSON parsing, `git diff --check`, and the
   sensitive-information review passed.
-- Pending commit, push, fetched-remote verification, post-fetch knowledge
-  validation, and exact-range Vault synchronization.
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range:
+  `9c62066e6d2bea08295a2c4a7c1ee5069a59386f..5e1425a6c81aac720a8a7743aee782bf2a5f61ed`
+- Vault iteration note, full commit index, and `00-MOC` link: verified.

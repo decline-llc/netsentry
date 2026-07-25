@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "9c62066e6d2bea08295a2c4a7c1ee5069a59386f",
   "risk_level": "Medium",
-  "current_checkpoint": "validated_pending_delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean local main and fetched origin/main agree",
     "Verified the completed R90-40 task state, both delivery commits, and both exact-range notes in the single discovered local Vault",
@@ -15,28 +15,24 @@
     "Covered all six partial empty/populated shapes and whitespace-only tactic, technique ID, and technique name",
     "Covered historical encoded-path read-only byte preservation",
     "Preserved all-empty and complete unnormalized historical tuple compatibility",
-    "Passed twenty uncached focused alert-store race runs, the complete native race suite, E2E smoke, documentation, knowledge, JSON, diff, and sensitive-information checks"
+    "Passed twenty uncached focused alert-store race runs, the complete native race suite, E2E smoke, documentation, knowledge, JSON, diff, and sensitive-information checks",
+    "Pushed 5e1425a6c81aac720a8a7743aee782bf2a5f61ed and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact full-SHA Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Commit and deliver the validated R90-41 increment"
-  ],
-  "todo": [
-    "Commit and push the feature",
-    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
-    "Reconcile roadmap and task-state delivery evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false
+    "commit": "5e1425a6c81aac720a8a7743aee782bf2a5f61ed",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "9c62066e6d2bea08295a2c4a7c1ee5069a59386f..5e1425a6c81aac720a8a7743aee782bf2a5f61ed",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
   },
   "remaining_risks": [
-    "Delivery evidence remains pending until fetched origin/main and the exact-range Vault note are verified",
+    "Recovery records are not yet subject to the stored-row MITRE tuple contract",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "R90-41 is implemented and validated from clean fetched origin/main at 9c62066e6d2bea08295a2c4a7c1ee5069a59386f. Stage only the eight intended feature paths, commit, push, fetch and verify origin/main, rerun the explicit-Vault knowledge check, synchronize the exact full-SHA range, verify its note/index/MOC, then reconcile the roadmap, plan, and task state in a docs-only delivery commit. Do not repeat implementation or validate against the current MITRE catalog, normalize text, change filters or recovery validation, migrate rows, create v0.1.1, or publish artifacts."
+  "resume_instructions": "R90-41 is complete at 5e1425a6c81aac720a8a7743aee782bf2a5f61ed. Do not repeat its implementation, validation, push, or Vault synchronization. No later engineering increment is selected; refresh the rolling roadmap on the next $netsentry-next trigger. Do not validate stored tuples against the current MITRE catalog, normalize text, change filters, migrate rows, create v0.1.1, or publish artifacts."
 }
