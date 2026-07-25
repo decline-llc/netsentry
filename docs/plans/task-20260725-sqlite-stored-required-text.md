@@ -68,9 +68,11 @@ authority.
 
 ## Delivery Evidence
 
-- Implementation complete.
+- Feature commit: `9aaad8c837e89434f5eebd51f3397899df31027e`
 - Twenty uncached focused alert-store race runs passed.
 - Complete native race suite, E2E smoke, documentation, knowledge, JSON, diff,
   and sensitive-information checks passed.
-- Commit, push, fetched-remote verification, and exact-range Vault
-  synchronization remain pending.
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range: `cf8f0493b5847c677c8b03922177b18b6a4cbdbb..9aaad8c837e89434f5eebd51f3397899df31027e`
+- Vault iteration note, full commit index, and `00-MOC` link: verified.
