@@ -81,6 +81,7 @@ operator data, tag creation, or publication authority.
 
 ## Delivery Evidence
 
+- Feature commit: `4780f02688fabf75e89b954bc4f3f0982c0d1f6a`
 - Shared recovery MITRE tuple validation implemented with all six partial
   shapes, each whitespace-only field, missing/existing database preservation,
   runtime preservation, all-empty compatibility, and complete unnormalized
@@ -88,5 +89,9 @@ operator data, tag creation, or publication authority.
 - Twenty uncached focused alert-store race runs, the complete native race
   suite, E2E smoke, documentation, knowledge, JSON, diff, and
   sensitive-information checks passed.
-- Pending commit, push, fetched-remote verification, post-fetch knowledge
-  validation, and exact-range Vault synchronization.
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range:
+  `da25754b70df111746853b8bfc817db6e44cb4e5..4780f02688fabf75e89b954bc4f3f0982c0d1f6a`
+- Vault iteration note, full commit index, `00-MOC` link, and reusable stable
+  storage note: verified.

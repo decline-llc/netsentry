@@ -58,7 +58,7 @@
 | R90-39 | Jul 25–Oct 20 | Complete early | Validate recovery severity. | R90-38 | Startup and runtime recovery preflight accept only `low`, `medium`, `high`, or `critical`; empty, case-variant, and unsupported severities fail before modifying the complete log or missing/existing SQLite state, while all four public values remain compatible. |
 | R90-40 | Jul 25–Oct 20 | Complete early | Validate recovery rule names. | R90-39 | Startup and runtime recovery preflight reject missing, empty, or whitespace-only `rule_name` before modifying the complete log or missing/existing SQLite state, while nonblank names replay without normalization. |
 | R90-41 | Jul 25–Oct 20 | Complete early | Validate stored SQLite MITRE tuples. | R90-40 | Primary and historical reads accept MITRE tactic/ID/name only when all three are empty or all three are nonblank; partial and whitespace-only tuple members fail without normalization or historical shard modification. |
-| R90-42 | Jul 25–Oct 20 | In progress | Validate recovery MITRE tuples. | R90-41 | Startup and runtime recovery preflight accept MITRE tactic/ID/name only when all three are empty or all three are nonblank; every partial and whitespace-only tuple fails before modifying the complete log or missing/existing SQLite state, while valid tuple text remains unchanged. |
+| R90-42 | Jul 25–Oct 20 | Complete early | Validate recovery MITRE tuples. | R90-41 | Startup and runtime recovery preflight accept MITRE tactic/ID/name only when all three are empty or all three are nonblank; every partial and whitespace-only tuple fails before modifying the complete log or missing/existing SQLite state, while valid tuple text remains unchanged. |
 
 ## R90-07 Definition
 
@@ -964,8 +964,17 @@
   are verified. The queue was refreshed on Jul 25 from the clean fetched
   reconciliation baseline, completed task state, release boundaries, the
   shared stored-row MITRE contract, recovery preflight behavior, and verified
-  Vault evidence. R90-42 is selected as the highest-priority dependency-ready
-  correctness increment. Publication remains unauthorized.
+  Vault evidence. R90-42 completed early at
+  `4780f02688fabf75e89b954bc4f3f0982c0d1f6a`: shared startup and runtime
+  recovery preflight now rejects every partial MITRE tactic/ID/name tuple and
+  each whitespace-only member before modifying the complete log or
+  missing/existing SQLite state, while all-empty and complete padded values
+  replay unchanged without current-catalog revalidation. Twenty focused race
+  runs, the full native suite, E2E smoke, documentation, and knowledge checks
+  passed; fetched `origin/main`, the post-fetch knowledge gate, the exact
+  full-SHA Vault note, index, MOC, and stable storage note are verified. No
+  later engineering increment is selected; refresh the rolling roadmap on the
+  next `$netsentry-next` trigger. Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -1036,12 +1045,11 @@
 
 ## Current Checkpoint
 
-R90-42 implementation is validated pending delivery from clean fetched
-`origin/main` `da25754b70df111746853b8bfc817db6e44cb4e5`. Shared recovery
-preflight now rejects all six partial MITRE tuple shapes and each
-whitespace-only member before startup or runtime state changes, while all-empty
-and complete padded tuples replay unchanged. Twenty uncached focused race runs,
-the complete native race suite, E2E smoke, documentation, knowledge, JSON,
-diff, and sensitive-information checks pass. Commit, push, fetched-remote
-verification, and exact-range Vault synchronization remain. Publication
-remains unauthorized.
+R90-42 is complete at `4780f02688fabf75e89b954bc4f3f0982c0d1f6a` from
+clean fetched baseline `da25754b70df111746853b8bfc817db6e44cb4e5`.
+Twenty uncached focused race runs, the complete native race suite, E2E smoke,
+documentation, knowledge, JSON, diff, and sensitive-information checks passed.
+Fetched `origin/main`, the post-fetch knowledge gate, and exact full-SHA Vault
+note, full index, MOC, and stable storage note are verified. No later
+engineering increment is selected; refresh the roadmap on the next
+`$netsentry-next` trigger. Publication remains unauthorized.
