@@ -210,6 +210,9 @@ Current build:
 - Persisted `event_id`, `rule_id`, `rule_name`, `protocol`, `src_ip`, and
   `dst_ip` values must contain non-whitespace text. Payload, match, and MITRE
   text remain optional and may be empty.
+- Persisted `src_ip` and `dst_ip` values must also be strict IPv4 addresses.
+  Malformed, ordinary IPv6, and IPv4-mapped IPv6 text fails shared primary and
+  historical row decoding before aggregation-identity derivation.
 - Row-level TTL pruning in the opened database using `engine.alert_retention_days`.
 - Startup cleanup of old `netsentry-YYYY-MM-DD.db` daily shard files and their WAL/SHM sidecars when retention is enabled.
 - Before journal or schema initialization, an existing non-empty primary

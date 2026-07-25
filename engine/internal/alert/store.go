@@ -1362,17 +1362,8 @@ func validateRecoveryAlert(alert model.Alert, aggregationWindow time.Duration) e
 			return fmt.Errorf("required field %s is empty", field.name)
 		}
 	}
-	for _, field := range []struct {
-		name  string
-		value string
-	}{
-		{name: "src_ip", value: alert.SrcIP},
-		{name: "dst_ip", value: alert.DstIP},
-	} {
-		address, err := netip.ParseAddr(field.value)
-		if err != nil || !address.Is4() {
-			return fmt.Errorf("field %s must be an IPv4 address", field.name)
-		}
+	if err := validateIPv4Addresses(alert.SrcIP, alert.DstIP); err != nil {
+		return err
 	}
 	requiredTimes := []struct {
 		name  string
@@ -1403,6 +1394,22 @@ func validateRecoveryAlert(alert model.Alert, aggregationWindow time.Duration) e
 	}
 	if alert.AggregatedCount != normalized.AggregatedCount {
 		return errors.New("required field aggregated_count must equal 1")
+	}
+	return nil
+}
+
+func validateIPv4Addresses(srcIP, dstIP string) error {
+	for _, field := range []struct {
+		name  string
+		value string
+	}{
+		{name: "src_ip", value: srcIP},
+		{name: "dst_ip", value: dstIP},
+	} {
+		address, err := netip.ParseAddr(field.value)
+		if err != nil || !address.Is4() {
+			return fmt.Errorf("field %s must be an IPv4 address", field.name)
+		}
 	}
 	return nil
 }
@@ -1920,6 +1927,9 @@ func scanAlert(rows *sql.Rows) (*model.Alert, error) {
 		if strings.TrimSpace(field.value) == "" {
 			return nil, fmt.Errorf("invalid stored alert %s: required field %s is blank", alert.ID, field.name)
 		}
+	}
+	if err := validateIPv4Addresses(alert.SrcIP, alert.DstIP); err != nil {
+		return nil, fmt.Errorf("invalid stored alert %s: %w", alert.ID, err)
 	}
 	if dstPort < 0 || dstPort > 65535 {
 		return nil, fmt.Errorf("invalid stored alert %s: dst_port %d is outside 0..65535", alert.ID, dstPort)

@@ -1,0 +1,45 @@
+{
+  "task": "r90-37-stored-ipv4-address-contract",
+  "timestamp": "2026-07-25T09:56:17-07:00",
+  "branch": "main",
+  "remote_baseline": "9b5e4299d18e774a955ecc7b0561d6bbd5aed977",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_pending_delivery",
+  "completed": [
+    "Verified clean local main and fetched origin/main agree",
+    "Verified the completed R90-36 task state, both delivery commits, and both exact-range notes in the single discovered local Vault",
+    "Refreshed the empty queue from release boundaries and the remaining stored-address contract",
+    "Selected R90-37 as the highest-priority dependency-ready correctness increment",
+    "Confirmed stored row decoding rejects blank addresses but does not enforce strict IPv4 before aggregation-identity derivation",
+    "Added strict IPv4 validation to the shared stored-row decoder before aggregation-identity derivation",
+    "Added all six direct primary rejection cases and historical read-only byte-preservation coverage",
+    "Passed 20 uncached focused alert-store race runs",
+    "Held delivery after the full native suite exposed R90-29 source/destination collation cases that seed case-variant IPv6 below recovery",
+    "Reconciled the collation fixture to distinct valid IPv4 rows under the compatible NOCASE schema",
+    "Passed 20 uncached affected-fixture race runs and the combined focused suite",
+    "Passed the complete native race suite and E2E smoke",
+    "Passed documentation, knowledge, JSON, diff, and sensitive-information checks"
+  ],
+  "in_progress": [
+    "Commit and push the validated feature"
+  ],
+  "todo": [
+    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
+    "Reconcile roadmap and task-state delivery evidence"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "The validated feature is not yet present on fetched origin/main",
+    "Exact-range Vault synchronization remains pending",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-37 implementation and all required validation pass from clean fetched origin/main at 9b5e4299d18e774a955ecc7b0561d6bbd5aed977. The first full native suite exposed R90-29 source/destination collation cases that seeded case-variant IPv6 below recovery; the fixture now uses distinct valid IPv4 rows under its compatible NOCASE schema. Twenty focused race runs, twenty affected-fixture race runs, the combined focused suite, full native suite, and remaining gates are clean. Commit and push the feature, verify fetched origin/main, synchronize the exact pushed range to the local Vault, then reconcile delivery evidence. Do not add IPv6 support, scan all rows at startup, repair or migrate stored rows, create v0.1.1, or publish artifacts."
+}

@@ -210,10 +210,9 @@ func TestStoreQueryFiltersCountsAndPagesAlerts(t *testing.T) {
 
 func TestStoreExactFiltersOverrideCompatibleNoCaseColumns(t *testing.T) {
 	tests := []struct {
-		name           string
-		mutate         func(*model.Alert)
-		query          Query
-		bypassRecovery bool
+		name   string
+		mutate func(*model.Alert)
+		query  Query
 	}{
 		{
 			name: "rule",
@@ -230,20 +229,18 @@ func TestStoreExactFiltersOverrideCompatibleNoCaseColumns(t *testing.T) {
 			query: Query{Severity: model.SeverityHigh},
 		},
 		{
-			name:           "source",
-			bypassRecovery: true,
+			name: "source",
 			mutate: func(alert *model.Alert) {
-				alert.SrcIP = strings.ToUpper(alert.SrcIP)
+				alert.SrcIP = "10.0.0.3"
 			},
-			query: Query{SrcIP: "2001:db8::1"},
+			query: Query{SrcIP: "10.0.0.1"},
 		},
 		{
-			name:           "destination",
-			bypassRecovery: true,
+			name: "destination",
 			mutate: func(alert *model.Alert) {
-				alert.DstIP = strings.ToUpper(alert.DstIP)
+				alert.DstIP = "10.0.0.3"
 			},
-			query: Query{DstIP: "2001:db8::2"},
+			query: Query{DstIP: "10.0.0.2"},
 		},
 	}
 	for _, test := range tests {
@@ -261,21 +258,9 @@ func TestStoreExactFiltersOverrideCompatibleNoCaseColumns(t *testing.T) {
 			variant := makeAlert(base.Add(2*time.Minute), "case-variant")
 			variant.SrcIP = lower.SrcIP
 			variant.DstIP = lower.DstIP
-			if test.bypassRecovery {
-				lower.SrcIP = "2001:db8::1"
-				lower.DstIP = "2001:db8::2"
-				variant.SrcIP = lower.SrcIP
-				variant.DstIP = lower.DstIP
-			}
 			test.mutate(variant)
-			var writeErr error
-			if test.bypassRecovery {
-				writeErr = store.writeBatchToDB(context.Background(), store.db, []*model.Alert{lower, variant}, base)
-			} else {
-				writeErr = store.WriteBatch(context.Background(), []*model.Alert{lower, variant})
-			}
-			if writeErr != nil {
-				t.Fatalf("write compatible NOCASE schema: %v", writeErr)
+			if err := store.WriteBatch(context.Background(), []*model.Alert{lower, variant}); err != nil {
+				t.Fatalf("write compatible NOCASE schema: %v", err)
 			}
 
 			test.query.Protocol = "tcp"
@@ -854,6 +839,132 @@ func TestStoreRejectsBlankHistoricalRequiredTextWithoutModification(t *testing.T
 	_, _, err = store.Query(ctx, Query{Limit: 10})
 	if err == nil || !strings.Contains(err.Error(), "required field protocol is blank") {
 		t.Fatalf("historical query error = %v, want blank protocol", err)
+	}
+	assertFileBytesUnchanged(t, path, before)
+}
+
+func TestStoreRejectsNonIPv4StoredAddresses(t *testing.T) {
+	tests := []struct {
+		name  string
+		field string
+		value string
+		read  func(context.Context, *Store) error
+	}{
+		{
+			name:  "malformed source through list",
+			field: "src_ip",
+			value: "not-an-ip",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:  "malformed destination through query",
+			field: "dst_ip",
+			value: "not-an-ip",
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+		{
+			name:  "IPv6 source through query",
+			field: "src_ip",
+			value: "2001:db8::1",
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+		{
+			name:  "IPv6 destination through list",
+			field: "dst_ip",
+			value: "2001:db8::2",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:  "IPv4-mapped IPv6 source through list",
+			field: "src_ip",
+			value: "::ffff:192.0.2.1",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:  "IPv4-mapped IPv6 destination through query",
+			field: "dst_ip",
+			value: "::ffff:192.0.2.2",
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			ctx := context.Background()
+			store := openTestStore(t, time.Minute)
+			defer store.Close()
+			if err := store.WriteBatch(ctx, []*model.Alert{
+				makeAlert(time.Date(2026, 7, 25, 10, 0, 0, 0, time.UTC), "stored-ipv4-address"),
+			}); err != nil {
+				t.Fatalf("seed alert: %v", err)
+			}
+			if _, err := store.db.ExecContext(ctx, "UPDATE alerts SET "+test.field+" = ?", test.value); err != nil {
+				t.Fatalf("inject non-IPv4 stored %s: %v", test.field, err)
+			}
+
+			err := test.read(ctx, store)
+			condition := "field " + test.field + " must be an IPv4 address"
+			if err == nil || !strings.Contains(err.Error(), condition) {
+				t.Fatalf("read error = %v, want %q", err, condition)
+			}
+			if strings.Contains(err.Error(), "does not match aggregation identity") {
+				t.Fatalf("address error was obscured by dependent identity validation: %v", err)
+			}
+		})
+	}
+}
+
+func TestStoreRejectsNonIPv4HistoricalAddressWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := filepath.Join(t.TempDir(), "IPv4 shard fixtures")
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	now := time.Date(2026, 7, 25, 10, 5, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	historicalStore, err := Open(ctx, Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open historical IPv4 fixture: %v", err)
+	}
+	if err := historicalStore.WriteBatch(ctx, []*model.Alert{
+		makeAlert(historical, "invalid-historical-ipv4-address"),
+	}); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("seed historical IPv4 fixture: %v", err)
+	}
+	if _, err := historicalStore.db.ExecContext(ctx, "UPDATE alerts SET dst_ip = '::ffff:192.0.2.2'"); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("inject historical non-IPv4 address: %v", err)
+	}
+	if err := historicalStore.Close(); err != nil {
+		t.Fatalf("close historical IPv4 fixture: %v", err)
+	}
+	before := readFileBytes(t, path)
+
+	_, _, err = store.Query(ctx, Query{Limit: 10})
+	if err == nil || !strings.Contains(err.Error(), "field dst_ip must be an IPv4 address") {
+		t.Fatalf("historical query error = %v, want non-IPv4 destination rejection", err)
 	}
 	assertFileBytesUnchanged(t, path, before)
 }
