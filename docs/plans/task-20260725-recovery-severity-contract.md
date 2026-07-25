@@ -74,6 +74,7 @@ operator data, tag creation, or publication authority.
 
 ## Delivery Evidence
 
+- Feature commit: `601a6dd5a47083a925727ef2b35b841566a72a24`
 - Shared recovery/stored-row severity validation implemented with direct
   startup, runtime, valid-enum, and compatibility regressions.
 - Twenty uncached focused alert-store race runs passed.
@@ -85,5 +86,8 @@ operator data, tag creation, or publication authority.
 - `make test`, `make e2e-smoke`, `make docs-check`, explicit-Vault
   `make knowledge-check`, task-state JSON parsing, `git diff --check`, and the
   sensitive-information review passed.
-- Pending commit, push, fetched-remote verification, post-fetch knowledge
-  validation, and exact-range Vault synchronization.
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range:
+  `ad913f05c90d71b53205d66bc6cc969fd98b8121..601a6dd5a47083a925727ef2b35b841566a72a24`
+- Vault iteration note, full commit index, and `00-MOC` link: verified.
