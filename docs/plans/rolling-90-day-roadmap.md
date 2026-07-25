@@ -48,7 +48,7 @@
 | R90-29 | Jul 25–Oct 20 | Complete early | Pin SQLite exact-filter collation. | R90-28 | Rule, severity, source, and destination filters retain binary exact-match semantics for compatible primary and historical schemas regardless of declared column collation; intentionally case-insensitive filters remain unchanged. |
 | R90-30 | Jul 25–Oct 20 | Complete early | Validate stored SQLite alert numerics. | R90-29 | Primary and historical reads reject destination ports outside `0..65535` and aggregate counts below one without silently narrowing values or modifying historical shard bytes; valid rows remain compatible. |
 | R90-31 | Jul 25–Oct 20 | Complete early | Validate stored SQLite alert severity. | R90-30 | Primary and historical reads accept only the four public severity values; empty, case-variant, and unsupported values fail without substitution or historical shard modification. |
-| R90-32 | Jul 25–Oct 20 | In progress | Validate stored SQLite timestamp ordering. | R90-31 | Primary and historical reads reject rows with `first_seen > last_seen` or `window_start > first_seen` without modifying historical shard bytes; valid historical aggregation windows remain compatible. |
+| R90-32 | Jul 25–Oct 20 | Complete early | Validate stored SQLite timestamp ordering. | R90-31 | Primary and historical reads reject rows with `first_seen > last_seen` or `window_start > first_seen` without modifying historical shard bytes; valid historical aggregation windows remain compatible. |
 
 ## R90-07 Definition
 
@@ -646,8 +646,17 @@
   preserves shard bytes. Twenty focused race runs, the full native suite, E2E
   smoke, documentation, and knowledge checks passed; fetched `origin/main`,
   the post-fetch knowledge gate, and the exact full-SHA Vault note, index, and
-  MOC are verified. No later engineering increment is selected; refresh the
-  rolling roadmap on the next `$netsentry-next` trigger. Publication remains
+  MOC are verified. The queue was refreshed on Jul 25 from the clean fetched
+  baseline, completed task state, release boundaries, persisted timestamp
+  ordering, and verified Vault evidence. R90-32 completed early at
+  `5d8eb60015c977e5f371846faff85ab015002615`: primary and historical
+  reads now enforce `window_start <= first_seen <= last_seen` without assuming
+  a historical window duration, while historical rejection preserves shard
+  bytes. Twenty focused race runs, the full native suite, E2E smoke,
+  documentation, and knowledge checks passed; fetched `origin/main`, the
+  post-fetch knowledge gate, and the exact full-SHA Vault note, index, and MOC
+  are verified. No later engineering increment is selected; refresh the rolling
+  roadmap on the next `$netsentry-next` trigger. Publication remains
   unauthorized.
 
 ## Global PCAP Release-Gate Waiver
@@ -719,12 +728,14 @@
 
 ## Current Checkpoint
 
-R90-32 is selected from the clean fetched
-`5fb3e1b8920746a65e4f1eb4bdd90870c98d2b04` baseline after verifying the
-completed R90-31 task state and both delivery commits in the single discovered
-local Vault. Stored timestamps are parsed but their writer-derived ordering is
-not checked, allowing reversed first/last values or a window start after the
-first event. R90-32 is limited to those two ordering invariants plus direct
-primary and historical regressions. Twenty uncached focused race runs, the full
-native suite, E2E smoke, documentation, and knowledge checks pass; delivery
-verification is pending. Publication remains unauthorized.
+R90-32 completed early at `5d8eb60015c977e5f371846faff85ab015002615`
+after the queue was refreshed from the clean fetched R90-31 baseline, completed
+task state, release boundaries, persisted timestamp ordering, and verified
+Vault evidence. Primary and historical reads now require
+`window_start <= first_seen <= last_seen` without assuming the historical
+aggregation-window duration; historical rejection remains read-only and
+byte-preserving. Twenty focused race runs, the full native suite, E2E smoke,
+documentation, and knowledge checks passed; fetched `origin/main`, post-fetch
+knowledge validation, and the exact full-SHA Vault note, full index, and MOC
+are verified. No later engineering increment is selected; refresh the rolling
+roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.

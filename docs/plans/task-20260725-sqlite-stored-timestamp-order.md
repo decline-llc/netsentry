@@ -60,3 +60,11 @@ produced by the aggregation writer.
 Stop if completion requires automatic row repair, deletion, schema migration,
 assuming a historical aggregation-window duration, operator data, tag creation,
 or publication authority.
+
+## Delivery Evidence
+
+- Feature commit: `5d8eb60015c977e5f371846faff85ab015002615`
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range: `5fb3e1b8920746a65e4f1eb4bdd90870c98d2b04..5d8eb60015c977e5f371846faff85ab015002615`
+- Vault iteration note, full commit index, and `00-MOC` link: verified.

@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "5fb3e1b8920746a65e4f1eb4bdd90870c98d2b04",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean local main and fetched origin/main agree",
     "Verified the completed R90-31 task state and both delivery commits in the single discovered local Vault",
@@ -14,28 +14,25 @@
     "Rejected persisted window_start values after first_seen without assuming a historical window duration",
     "Added both direct ordering regressions and historical byte-preservation coverage using a path with spaces",
     "Passed 20 uncached focused alert-store race runs",
-    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, and diff checks"
+    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, and diff checks",
+    "Pushed 5d8eb60015c977e5f371846faff85ab015002615 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact full-SHA Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Commit, push, and verify the completed increment"
-  ],
-  "todo": [
-    "Verify fetched origin/main and synchronize the exact range to the local Vault",
-    "Reconcile the roadmap and task-state resume instructions"
-  ],
+  "in_progress": [],
+  "todo": [],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false
+    "commit": "5d8eb60015c977e5f371846faff85ab015002615",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "5fb3e1b8920746a65e4f1eb4bdd90870c98d2b04..5d8eb60015c977e5f371846faff85ab015002615",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
   },
   "remaining_risks": [
     "Reversed first/last timestamps can violate aggregate ordering",
     "A window start after first_seen cannot describe the stored aggregate",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Continue R90-32 delivery from the clean fetched 5fb3e1b8920746a65e4f1eb4bdd90870c98d2b04 baseline. Implementation, both direct ordering rejections, historical preservation coverage, and required local validation pass. Commit the intended increment, push it, verify fetched origin/main, synchronize the exact range to the single local Vault, and reconcile completion evidence. Do not create v0.1.1 or publish artifacts."
+  "resume_instructions": "R90-32 is complete at 5d8eb60015c977e5f371846faff85ab015002615. Do not repeat its implementation, validation, push, or Vault synchronization. No later engineering increment is selected; refresh the rolling roadmap on the next $netsentry-next trigger. Do not create v0.1.1 or publish artifacts."
 }
