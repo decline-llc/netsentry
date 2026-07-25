@@ -1220,11 +1220,15 @@ func normalizeAlert(alert *model.Alert, now time.Time, window time.Duration) mod
 	out.FirstSeen = out.Timestamp
 	out.LastSeen = out.Timestamp
 	out.AggregatedCount = 1
-	out.ID = fmt.Sprintf("%s-%s-%s-%d-%d", out.RuleID, out.SrcIP, out.DstIP, out.DstPort, out.WindowStart.Unix())
+	out.ID = alertAggregationID(out.RuleID, out.SrcIP, out.DstIP, out.DstPort, out.WindowStart)
 	if strings.TrimSpace(out.EventID) == "" {
 		out.EventID = alertEventID(out)
 	}
 	return out
+}
+
+func alertAggregationID(ruleID, srcIP, dstIP string, dstPort uint16, windowStart time.Time) string {
+	return fmt.Sprintf("%s-%s-%s-%d-%d", ruleID, srcIP, dstIP, dstPort, windowStart.Unix())
 }
 
 func alertEventID(alert model.Alert) string {
@@ -1916,6 +1920,10 @@ func scanAlert(rows *sql.Rows) (*model.Alert, error) {
 	}
 	if parsedWindowStart.After(parsedFirstSeen) {
 		return nil, fmt.Errorf("invalid stored alert %s: window_start is after first_seen", alert.ID)
+	}
+	expectedID := alertAggregationID(alert.RuleID, alert.SrcIP, alert.DstIP, uint16(dstPort), parsedWindowStart)
+	if alert.ID != expectedID {
+		return nil, fmt.Errorf("invalid stored alert: id %q does not match aggregation identity %q", alert.ID, expectedID)
 	}
 	alert.Severity = model.Severity(severity)
 	alert.DstPort = uint16(dstPort)

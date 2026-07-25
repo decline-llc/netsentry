@@ -1,0 +1,43 @@
+{
+  "task": "r90-33-sqlite-stored-aggregation-identity",
+  "timestamp": "2026-07-25T09:17:15-07:00",
+  "branch": "main",
+  "remote_baseline": "d6ff41dff8599cff718fbe627ce64c9ee85b2053",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_pending_delivery",
+  "completed": [
+    "Verified clean local main and fetched origin/main agree",
+    "Verified the completed R90-32 task state and both delivery commits in the single discovered local Vault",
+    "Refreshed the empty queue from release boundaries and persisted aggregation identity behavior",
+    "Selected R90-33 as the highest-priority dependency-ready increment",
+    "Confirmed the aggregation ID format has been stable since SQLite aggregation was introduced",
+    "Shared canonical aggregation-ID derivation between writer normalization and row decoding",
+    "Rejected empty and altered stored alert IDs across list and query paths",
+    "Added historical read-only rejection with byte preservation through a path containing spaces",
+    "Passed 20 uncached focused alert-store race runs",
+    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, diff, and sensitive-information checks"
+  ],
+  "in_progress": [
+    "Commit and deliver the validated R90-33 feature"
+  ],
+  "todo": [
+    "Commit and push the feature",
+    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
+    "Reconcile roadmap and task-state delivery evidence"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "A stored row can currently expose an ID unrelated to its aggregation tuple",
+    "Historical rejection must not modify the shard",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-33 implementation and validation are complete but not yet committed. Reconfirm the intended eight paths, commit the validated feature, push from d6ff41dff8599cff718fbe627ce64c9ee85b2053, fetch and verify origin/main, run the post-fetch knowledge gate, synchronize the exact full-SHA range to the single local Vault, then reconcile delivery evidence. Do not create v0.1.1 or publish artifacts."
+}
