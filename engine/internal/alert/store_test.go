@@ -694,6 +694,157 @@ func TestStoreRejectsMismatchedHistoricalIdentityWithoutModification(t *testing.
 	assertFileBytesUnchanged(t, path, before)
 }
 
+func TestStoreRejectsBlankStoredRequiredText(t *testing.T) {
+	tests := []struct {
+		name  string
+		field string
+		value string
+		read  func(context.Context, *Store) error
+	}{
+		{
+			name:  "empty event id through list",
+			field: "event_id",
+			value: "",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:  "whitespace rule id through query",
+			field: "rule_id",
+			value: "   ",
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+		{
+			name:  "whitespace rule name through list",
+			field: "rule_name",
+			value: "\t",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:  "whitespace protocol through query",
+			field: "protocol",
+			value: "\n",
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+		{
+			name:  "empty source ip through list",
+			field: "src_ip",
+			value: "",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:  "whitespace destination ip through query",
+			field: "dst_ip",
+			value: " \t ",
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			ctx := context.Background()
+			store := openTestStore(t, time.Minute)
+			defer store.Close()
+			if err := store.WriteBatch(ctx, []*model.Alert{
+				makeAlert(time.Date(2026, 7, 25, 9, 30, 0, 0, time.UTC), "stored-required-text"),
+			}); err != nil {
+				t.Fatalf("seed alert: %v", err)
+			}
+			if _, err := store.db.ExecContext(ctx, "UPDATE alerts SET "+test.field+" = ?", test.value); err != nil {
+				t.Fatalf("inject blank stored %s: %v", test.field, err)
+			}
+
+			err := test.read(ctx, store)
+			condition := "required field " + test.field + " is blank"
+			if err == nil || !strings.Contains(err.Error(), condition) {
+				t.Fatalf("read error = %v, want %q", err, condition)
+			}
+		})
+	}
+}
+
+func TestStoreAllowsEmptyOptionalStoredText(t *testing.T) {
+	ctx := context.Background()
+	store := openTestStore(t, time.Minute)
+	defer store.Close()
+	alert := makeAlert(time.Date(2026, 7, 25, 9, 35, 0, 0, time.UTC), "")
+	alert.MitreTactic = ""
+	alert.MitreTechniqueID = ""
+	alert.MitreTechniqueName = ""
+	alert.PayloadPreview = ""
+	alert.MatchedKeyword = ""
+	if err := store.WriteBatch(ctx, []*model.Alert{alert}); err != nil {
+		t.Fatalf("write alert with empty optional text: %v", err)
+	}
+
+	listed, err := store.List(ctx)
+	if err != nil {
+		t.Fatalf("list alert with empty optional text: %v", err)
+	}
+	if len(listed) != 1 {
+		t.Fatalf("listed alerts = %d, want 1", len(listed))
+	}
+	got := listed[0]
+	if got.MitreTactic != "" || got.MitreTechniqueID != "" || got.MitreTechniqueName != "" ||
+		got.PayloadPreview != "" || got.MatchedKeyword != "" {
+		t.Fatalf("optional text changed: %+v", got)
+	}
+}
+
+func TestStoreRejectsBlankHistoricalRequiredTextWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := filepath.Join(t.TempDir(), "required text shard fixtures")
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	now := time.Date(2026, 7, 25, 9, 40, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	historicalStore, err := Open(ctx, Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open historical required-text fixture: %v", err)
+	}
+	if err := historicalStore.WriteBatch(ctx, []*model.Alert{
+		makeAlert(historical, "invalid-historical-required-text"),
+	}); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("seed historical required-text fixture: %v", err)
+	}
+	if _, err := historicalStore.db.ExecContext(ctx, "UPDATE alerts SET protocol = '   '"); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("inject historical blank required text: %v", err)
+	}
+	if err := historicalStore.Close(); err != nil {
+		t.Fatalf("close historical required-text fixture: %v", err)
+	}
+	before := readFileBytes(t, path)
+
+	_, _, err = store.Query(ctx, Query{Limit: 10})
+	if err == nil || !strings.Contains(err.Error(), "required field protocol is blank") {
+		t.Fatalf("historical query error = %v, want blank protocol", err)
+	}
+	assertFileBytesUnchanged(t, path, before)
+}
+
 func TestStoreReplaysRecoveryLogIdempotently(t *testing.T) {
 	ctx := context.Background()
 	dir := t.TempDir()

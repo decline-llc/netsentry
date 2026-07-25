@@ -1892,6 +1892,22 @@ func scanAlert(rows *sql.Rows) (*model.Alert, error) {
 	); err != nil {
 		return nil, fmt.Errorf("scan alert: %w", err)
 	}
+	requiredText := []struct {
+		name  string
+		value string
+	}{
+		{name: "event_id", value: alert.EventID},
+		{name: "rule_id", value: alert.RuleID},
+		{name: "rule_name", value: alert.RuleName},
+		{name: "protocol", value: alert.Protocol},
+		{name: "src_ip", value: alert.SrcIP},
+		{name: "dst_ip", value: alert.DstIP},
+	}
+	for _, field := range requiredText {
+		if strings.TrimSpace(field.value) == "" {
+			return nil, fmt.Errorf("invalid stored alert %s: required field %s is blank", alert.ID, field.name)
+		}
+	}
 	if dstPort < 0 || dstPort > 65535 {
 		return nil, fmt.Errorf("invalid stored alert %s: dst_port %d is outside 0..65535", alert.ID, dstPort)
 	}

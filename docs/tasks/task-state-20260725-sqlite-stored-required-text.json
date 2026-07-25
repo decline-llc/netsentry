@@ -1,0 +1,43 @@
+{
+  "task": "r90-34-sqlite-stored-required-text",
+  "timestamp": "2026-07-25T09:26:18-07:00",
+  "branch": "main",
+  "remote_baseline": "cf8f0493b5847c677c8b03922177b18b6a4cbdbb",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_pending_delivery",
+  "completed": [
+    "Verified clean local main and fetched origin/main agree",
+    "Verified the completed R90-33 task state and both delivery commits in the single discovered local Vault",
+    "Refreshed the empty queue from release boundaries and persisted required-text behavior",
+    "Selected R90-34 as the highest-priority dependency-ready increment",
+    "Confirmed the rule and receiver pipeline plus recovery validator require the selected public fields",
+    "Rejected empty and whitespace-only event_id, rule_id, rule_name, protocol, src_ip, and dst_ip values",
+    "Preserved compatibility for empty optional payload, match, and MITRE text",
+    "Added historical read-only rejection with byte preservation through a path containing spaces",
+    "Passed 20 uncached focused alert-store race runs",
+    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, diff, and sensitive-information checks"
+  ],
+  "in_progress": [
+    "Commit and deliver the validated R90-34 feature"
+  ],
+  "todo": [
+    "Commit and push the feature",
+    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
+    "Reconcile roadmap and task-state delivery evidence"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "Required stored text can currently escape the public contract as blank",
+    "Optional text must remain compatible when empty",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-34 implementation and validation are complete but not yet committed. Reconfirm the intended eight paths, commit the validated feature, push from cf8f0493b5847c677c8b03922177b18b6a4cbdbb, fetch and verify origin/main, run the post-fetch knowledge gate, synchronize the exact full-SHA range to the single local Vault, then reconcile delivery evidence. Do not create v0.1.1 or publish artifacts."
+}

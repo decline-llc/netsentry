@@ -50,6 +50,7 @@
 | R90-31 | Jul 25–Oct 20 | Complete early | Validate stored SQLite alert severity. | R90-30 | Primary and historical reads accept only the four public severity values; empty, case-variant, and unsupported values fail without substitution or historical shard modification. |
 | R90-32 | Jul 25–Oct 20 | Complete early | Validate stored SQLite timestamp ordering. | R90-31 | Primary and historical reads reject rows with `first_seen > last_seen` or `window_start > first_seen` without modifying historical shard bytes; valid historical aggregation windows remain compatible. |
 | R90-33 | Jul 25–Oct 20 | Complete early | Validate stored SQLite aggregation identity. | R90-32 | Primary and historical reads reject empty or altered alert IDs that disagree with the canonical aggregation tuple without modifying historical shard bytes; valid aggregation identities remain compatible. |
+| R90-34 | Jul 25–Oct 20 | In progress | Validate stored SQLite required text. | R90-33 | Primary and historical reads reject blank required identity, rule, and network text without modifying historical shard bytes; optional empty text and valid rows remain compatible. |
 
 ## R90-07 Definition
 
@@ -487,6 +488,24 @@
   identity, automatic row repair, deletion, schema migration, event-ledger
   reconciliation, operator data, or tag/publication authority.
 
+## R90-34 Definition
+
+- **Goal:** reject persisted required public text fields that the rule,
+  receiver, and durable recovery contracts do not permit to be blank.
+- **Risk:** validating every non-null text column would reject legitimate empty
+  optional fields, while dependent identity validation can obscure which
+  required field is corrupt.
+- **Required validation:** direct blank `event_id`, `rule_id`, `rule_name`,
+  `protocol`, `src_ip`, and `dst_ip` rejection across list/query decoding;
+  historical read-only rejection with byte preservation through an encoded
+  filesystem path; optional-text and healthy aggregation compatibility; twenty
+  focused alert-store race runs, full native, documentation, E2E, and knowledge
+  checks.
+- **Stop condition:** stop if safe completion requires validating optional
+  fields, changing the public protocol or address contract, event-ledger
+  reconciliation, automatic row repair, deletion, schema migration, operator
+  data, or tag/publication authority.
+
 ### R90-24 Validation Deviation
 
 - **Observed:** The first full native race suite hit the existing
@@ -702,7 +721,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -754,15 +773,13 @@
 
 ## Current Checkpoint
 
-R90-33 completed early at `824de0ee51fa5841d17021e797ba1f293c7aa128`
-after the queue was refreshed from the clean fetched R90-32 reconciliation
-baseline, completed task state, release boundaries, persisted aggregation
-identity behavior, and verified Vault evidence. Writer normalization and row
-decoding now share canonical aggregation-ID derivation; primary and read-only
-historical paths reject empty or altered IDs, and the historical regression
-proves unchanged bytes through an encoded path. Twenty uncached focused race
-runs, the full native suite, E2E smoke, documentation, and knowledge checks
-passed; fetched `origin/main`, post-fetch knowledge validation, and the exact
-full-SHA Vault note, full index, and MOC are verified. No later engineering
-increment is selected; refresh the rolling roadmap on the next
-`$netsentry-next` trigger. Publication remains unauthorized.
+R90-34 is validated pending delivery from the clean fetched R90-33
+reconciliation baseline `cf8f0493b5847c677c8b03922177b18b6a4cbdbb`.
+Primary and read-only historical paths now reject all six blank required-text
+conditions while legitimate empty payload, match, and MITRE text remains
+compatible; the historical regression proves unchanged bytes through an
+encoded path. Twenty uncached focused race runs, the full native suite, E2E
+smoke, documentation, knowledge, JSON, diff, and sensitive-information checks
+pass. Commit, push, fetched-remote verification, exact-range Vault
+synchronization, and final delivery reconciliation remain. Publication remains
+unauthorized.
