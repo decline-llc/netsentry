@@ -147,6 +147,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Recovery semantic validation now accepts only `low`, `medium`, `high`, and
   `critical`, rejecting empty, case-variant, or unsupported severity before
   startup replay or runtime append.
+- Recovery semantic validation now requires a nonblank `rule_name`, rejecting
+  missing, empty, or whitespace-only names before startup replay or runtime
+  append without trimming valid names.
 - Recovery semantic validation now requires `event_id` to match the
   deterministic writer identity before startup replay or runtime append.
 - Recovery logs now receive their complete structural and semantic preflight

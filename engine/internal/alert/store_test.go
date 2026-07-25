@@ -1444,6 +1444,153 @@ func TestStoreReplaysAllPublicRecoverySeverities(t *testing.T) {
 	}
 }
 
+func TestStoreRejectsBlankRecoveryRuleNameWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 25, 10, 35, 0, 0, time.UTC)
+	window := time.Minute
+	valid := normalizeAlert(makeAlert(now, "valid-prefix"), now, window)
+	validJSON, err := json.Marshal(valid)
+	if err != nil {
+		t.Fatalf("marshal valid recovery record: %v", err)
+	}
+
+	tests := []struct {
+		name    string
+		invalid func(t *testing.T) []byte
+	}{
+		{
+			name: "missing",
+			invalid: func(t *testing.T) []byte {
+				t.Helper()
+				var record map[string]any
+				if err := json.Unmarshal(validJSON, &record); err != nil {
+					t.Fatalf("decode valid recovery record: %v", err)
+				}
+				delete(record, "rule_name")
+				encoded, err := json.Marshal(record)
+				if err != nil {
+					t.Fatalf("marshal missing-rule-name recovery record: %v", err)
+				}
+				return encoded
+			},
+		},
+		{
+			name: "empty",
+			invalid: func(t *testing.T) []byte {
+				t.Helper()
+				invalid := valid
+				invalid.RuleName = ""
+				encoded, err := json.Marshal(invalid)
+				if err != nil {
+					t.Fatalf("marshal empty-rule-name recovery record: %v", err)
+				}
+				return encoded
+			},
+		},
+		{
+			name: "whitespace only",
+			invalid: func(t *testing.T) []byte {
+				t.Helper()
+				invalid := valid
+				invalid.RuleName = " \t "
+				encoded, err := json.Marshal(invalid)
+				if err != nil {
+					t.Fatalf("marshal whitespace-rule-name recovery record: %v", err)
+				}
+				return encoded
+			},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			invalidJSON := test.invalid(t)
+			contents := append(append(append([]byte(nil), validJSON...), '\n'), invalidJSON...)
+			contents = append(contents, '\n')
+
+			for _, existing := range []bool{false, true} {
+				state := "missing database"
+				if existing {
+					state = "existing database"
+				}
+				t.Run(state, func(t *testing.T) {
+					dir := t.TempDir()
+					dbPath := filepath.Join(dir, "alerts.db")
+					recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+					var beforeDB []byte
+					if existing {
+						createSQLiteFixture(t, dbPath, schemaSQL, `DROP INDEX idx_alerts_last_seen`)
+						beforeDB = readFileBytes(t, dbPath)
+					}
+					if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+						t.Fatalf("write blank-rule-name recovery log: %v", err)
+					}
+
+					store, err := Open(context.Background(), Options{
+						Path:              dbPath,
+						RecoveryLogPath:   recoveryLogPath,
+						JournalMode:       "WAL",
+						BusyTimeoutMS:     1000,
+						AggregationWindow: window,
+						Now:               func() time.Time { return now },
+					})
+					if store != nil {
+						_ = store.Close()
+						t.Fatal("blank-rule-name recovery log returned a usable store")
+					}
+					if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+						!strings.Contains(err.Error(), "record 2") ||
+						!strings.Contains(err.Error(), "required field rule_name is empty") {
+						t.Fatalf("startup error = %v, want record 2 blank rule_name ErrRecoveryLogIntegrity", err)
+					}
+					assertFileBytes(t, recoveryLogPath, contents)
+					if existing {
+						assertFileBytes(t, dbPath, beforeDB)
+						assertSQLiteIndexMissing(t, dbPath, "idx_alerts_last_seen")
+					} else {
+						assertFileDoesNotExist(t, dbPath)
+					}
+				})
+			}
+		})
+	}
+}
+
+func TestStoreReplaysNonBlankRecoveryRuleNameWithoutNormalization(t *testing.T) {
+	dir := t.TempDir()
+	dbPath := filepath.Join(dir, "alerts.db")
+	recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+	now := time.Date(2026, 7, 25, 10, 40, 0, 0, time.UTC)
+	alert := makeAlert(now, "padded-rule-name")
+	alert.RuleName = "  Test Rule  "
+	logged := normalizeAlerts([]*model.Alert{alert}, now, time.Minute)
+	logOnly := &Store{recoveryLogPath: recoveryLogPath}
+	if err := logOnly.appendRecoveryLog(logged); err != nil {
+		t.Fatalf("append padded-rule-name recovery record: %v", err)
+	}
+
+	store, err := Open(context.Background(), Options{
+		Path:              dbPath,
+		RecoveryLogPath:   recoveryLogPath,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now:               func() time.Time { return now },
+	})
+	if err != nil {
+		t.Fatalf("open store with padded recovery rule name: %v", err)
+	}
+	defer store.Close()
+	listed, err := store.List(context.Background())
+	if err != nil {
+		t.Fatalf("list padded recovery rule name: %v", err)
+	}
+	if len(listed) != 1 || listed[0].RuleName != alert.RuleName {
+		t.Fatalf("replayed alerts = %+v, want exact rule name %q", listed, alert.RuleName)
+	}
+	if info, err := os.Stat(recoveryLogPath); err != nil || info.Size() != 0 {
+		t.Fatalf("recovery log should be truncated after replay, info=%+v err=%v", info, err)
+	}
+}
+
 func TestStoreRejectsInconsistentNormalizedRecoveryLogWithoutModification(t *testing.T) {
 	now := time.Date(2026, 7, 21, 4, 0, 0, 0, time.UTC)
 	window := time.Minute
@@ -1765,6 +1912,47 @@ func TestStoreWriteBatchRejectsInvalidRecoveryLogBeforeAppend(t *testing.T) {
 			condition: fmt.Sprintf("severity %q is unsupported", test.severity),
 		})
 	}
+	for _, test := range []struct {
+		name     string
+		ruleName string
+	}{
+		{name: "empty rule name", ruleName: ""},
+		{name: "whitespace-only rule name", ruleName: " \t "},
+	} {
+		invalid := valid
+		invalid.RuleName = test.ruleName
+		invalidJSON, err := json.Marshal(invalid)
+		if err != nil {
+			t.Fatalf("marshal %s recovery record: %v", test.name, err)
+		}
+		tests = append(tests, struct {
+			name      string
+			contents  []byte
+			condition string
+		}{
+			name:      test.name,
+			contents:  append(invalidJSON, '\n'),
+			condition: "required field rule_name is empty",
+		})
+	}
+	var missingRuleName map[string]any
+	if err := json.Unmarshal(validJSON, &missingRuleName); err != nil {
+		t.Fatalf("decode valid recovery record for missing rule name: %v", err)
+	}
+	delete(missingRuleName, "rule_name")
+	missingRuleNameJSON, err := json.Marshal(missingRuleName)
+	if err != nil {
+		t.Fatalf("marshal missing-rule-name recovery record: %v", err)
+	}
+	tests = append(tests, struct {
+		name      string
+		contents  []byte
+		condition string
+	}{
+		name:      "missing rule name",
+		contents:  append(missingRuleNameJSON, '\n'),
+		condition: "required field rule_name is empty",
+	})
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			dir := t.TempDir()

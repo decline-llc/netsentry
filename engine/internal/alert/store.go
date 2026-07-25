@@ -1353,6 +1353,7 @@ func validateRecoveryAlert(alert model.Alert, aggregationWindow time.Duration) e
 		{name: "id", value: alert.ID},
 		{name: "event_id", value: alert.EventID},
 		{name: "rule_id", value: alert.RuleID},
+		{name: "rule_name", value: alert.RuleName},
 		{name: "src_ip", value: alert.SrcIP},
 		{name: "dst_ip", value: alert.DstIP},
 		{name: "protocol", value: alert.Protocol},

@@ -240,14 +240,15 @@ Current build:
 - Each decoded recovery record must retain the required identity, time, count,
   and network fields emitted by normalized alert writes. Its `event_id` must
   match the deterministic writer identity used by the replay ledger, and its
-  durable `id` must match the normalized aggregation identity. `first_seen` and
-  `last_seen` must equal `timestamp`; `window_start` must match the configured
-  aggregation window; `aggregated_count` must equal one; severity must be
-  exactly `low`, `medium`, `high`, or `critical`; and `src_ip` plus `dst_ip`
-  must be strict IPv4 addresses. An altered event identity, empty,
-  case-variant, or unsupported severity, or malformed, ordinary IPv6, and
-  IPv4-mapped IPv6 address text fails through `ErrRecoveryLogIntegrity` before
-  replay begins.
+  durable `id` must match the normalized aggregation identity. Its `rule_name`
+  must contain a non-whitespace character without being normalized.
+  `first_seen` and `last_seen` must equal `timestamp`; `window_start` must match
+  the configured aggregation window; `aggregated_count` must equal one;
+  severity must be exactly `low`, `medium`, `high`, or `critical`; and `src_ip`
+  plus `dst_ip` must be strict IPv4 addresses. An altered event identity,
+  missing or blank rule name, empty, case-variant, or unsupported severity, or
+  malformed, ordinary IPv6, and IPv4-mapped IPv6 address text fails through
+  `ErrRecoveryLogIntegrity` before replay begins.
 - The complete recovery preflight runs before database-directory creation or
   any writable SQLite open. Startup replays that validated in-memory snapshot
   after initialization rather than rereading the file, so rejected input
@@ -294,7 +295,7 @@ v0.1.0 target:
 
 Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, engine worker shutdown orchestration, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
 
-Alert storage tests cover SQLite aggregation windows, JSONL recovery-log replay idempotency and semantic validation including severity with byte preservation, required-schema plus non-binary aggregation/write-blocking uniqueness/trigger/generated-column/constraint/foreign-key rejection with byte preservation, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact filters, persisted numeric/severity/timestamp-order/aggregation-identity/required-text validation, optional query-index recreation, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, corrupt/truncated/incompatible historical-shard read/write preservation, active WAL-backed read-only access, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics counts backed by a real daily-shard SQLite store.
+Alert storage tests cover SQLite aggregation windows, JSONL recovery-log replay idempotency and semantic validation including severity and rule names with byte preservation, required-schema plus non-binary aggregation/write-blocking uniqueness/trigger/generated-column/constraint/foreign-key rejection with byte preservation, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact filters, persisted numeric/severity/timestamp-order/aggregation-identity/required-text validation, optional query-index recreation, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, corrupt/truncated/incompatible historical-shard read/write preservation, active WAL-backed read-only access, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics counts backed by a real daily-shard SQLite store.
 
 The v0.1.0 IPC serializer decision is to retain the current bounded handwritten C JSON formatter instead of adding cJSON. The formatter is narrow, fails closed on buffer exhaustion, Base64-encodes payload previews, and is already exercised through unit tests, microbenchmarks, deterministic fuzz smoke, and e2e heartbeat assertions. Replacing it remains a future option only if sustained fuzzing or production evidence shows a concrete defect.
 

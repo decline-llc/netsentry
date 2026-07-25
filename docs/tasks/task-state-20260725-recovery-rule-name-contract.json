@@ -1,0 +1,42 @@
+{
+  "task": "r90-40-recovery-rule-name-contract",
+  "timestamp": "2026-07-25T10:31:07-07:00",
+  "branch": "main",
+  "remote_baseline": "e40c15b2028c1a7aa4c7185a575553659c3c9ec8",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_pending_delivery",
+  "completed": [
+    "Verified clean local main and fetched origin/main agree",
+    "Verified the completed R90-39 task state, both delivery commits, and both exact-range notes in the single discovered local Vault",
+    "Refreshed the empty queue from release boundaries and required public alert text",
+    "Selected R90-40 as the highest-priority dependency-ready correctness increment",
+    "Confirmed recovery validation omitted rule_name even though rule loading and stored-row decoding reject blank names",
+    "Required recovery rule_name to contain a non-whitespace character",
+    "Covered missing, empty, and whitespace-only startup rejection across missing and existing databases",
+    "Covered runtime no-append preservation and padded nonblank replay without normalization",
+    "Preserved stored-row required-text behavior",
+    "Passed twenty uncached focused alert-store race runs, the complete native race suite, E2E smoke, documentation, knowledge, JSON, diff, and sensitive-information checks"
+  ],
+  "in_progress": [
+    "Commit and deliver the validated R90-40 increment"
+  ],
+  "todo": [
+    "Commit and push the feature",
+    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
+    "Reconcile roadmap and task-state delivery evidence"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "Delivery evidence remains pending until fetched origin/main and the exact-range Vault note are verified",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-40 is implemented and validated from clean fetched origin/main at e40c15b2028c1a7aa4c7185a575553659c3c9ec8. Stage only the eight intended feature paths, commit, push, fetch and verify origin/main, rerun the explicit-Vault knowledge check, synchronize the exact full-SHA range, verify its note/index/MOC, then reconcile the roadmap, plan, and task state in a docs-only delivery commit. Do not repeat implementation or normalize rule names, change rule schema, alert identity, or recovery format, migrate stored rows, create v0.1.1, or publish artifacts."
+}
