@@ -1,0 +1,41 @@
+{
+  "task": "r90-32-sqlite-stored-timestamp-order",
+  "timestamp": "2026-07-25T07:13:02-07:00",
+  "branch": "main",
+  "remote_baseline": "5fb3e1b8920746a65e4f1eb4bdd90870c98d2b04",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Verified clean local main and fetched origin/main agree",
+    "Verified the completed R90-31 task state and both delivery commits in the single discovered local Vault",
+    "Refreshed the empty queue from release boundaries and persisted timestamp ordering",
+    "Selected R90-32 as the highest-priority dependency-ready increment",
+    "Rejected persisted first_seen values after last_seen",
+    "Rejected persisted window_start values after first_seen without assuming a historical window duration",
+    "Added both direct ordering regressions and historical byte-preservation coverage using a path with spaces",
+    "Passed 20 uncached focused alert-store race runs",
+    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Commit, push, and verify the completed increment"
+  ],
+  "todo": [
+    "Verify fetched origin/main and synchronize the exact range to the local Vault",
+    "Reconcile the roadmap and task-state resume instructions"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "Reversed first/last timestamps can violate aggregate ordering",
+    "A window start after first_seen cannot describe the stored aggregate",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Continue R90-32 delivery from the clean fetched 5fb3e1b8920746a65e4f1eb4bdd90870c98d2b04 baseline. Implementation, both direct ordering rejections, historical preservation coverage, and required local validation pass. Commit the intended increment, push it, verify fetched origin/main, synchronize the exact range to the single local Vault, and reconcile completion evidence. Do not create v0.1.1 or publish artifacts."
+}

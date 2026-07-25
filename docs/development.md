@@ -268,6 +268,10 @@ recovery process; NetSentry does not clamp or rewrite those values.
 Stored severity must be exactly `low`, `medium`, `high`, or `critical`; empty,
 case-variant, and unsupported text returns the same kind of field-specific read
 error rather than being normalized or classified under another severity.
+Stored aggregate timestamps must also satisfy
+`window_start <= first_seen <= last_seen`. This check preserves compatibility
+with historical aggregation-window durations while rejecting reversed event
+ranges and window starts after the first event.
 
 Recovery-log replay requires newline-terminated JSONL records. NetSentry reads
 and validates the complete log before writing any recovered alert; malformed
@@ -437,7 +441,7 @@ Current validation baseline:
 - `make test-unit` runs C/Go unit and race tests followed serially by C ASan tests.
 - `make test-integration` verifies the pinned PcapPlusPlus/Zeek fixture manifest, processes supported external pcaps, and checks invalid CLI/non-Ethernet rejection.
 - `make test-e2e` covers pcap -> UDS -> worker pool -> SQLite -> API; `make test-stress` runs configurable repeat-pcap pressure.
-- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation, daily shards, bounded recovery-log encoding/replay and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, non-binary aggregation, generated-column, `CHECK`-constraint, and write-critical foreign-key rejection, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact alert filters, persisted numeric and severity rejection, active WAL-backed read-only access, and storage degraded/emergency behavior.
+- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation, daily shards, bounded recovery-log encoding/replay and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, non-binary aggregation, generated-column, `CHECK`-constraint, and write-critical foreign-key rejection, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact alert filters, persisted numeric/severity/timestamp-order rejection, active WAL-backed read-only access, and storage degraded/emergency behavior.
 - Release-candidate checks run syntax checks, repository configuration validation, dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 
 The C-side JSON line formatter is intentionally kept as a bounded handwritten v0.1.0 implementation. It avoids a new C dependency, rejects truncation, escapes JSON strings, Base64-encodes packet payload previews, and is covered by the UDS sender tests and current smoke checks. A cJSON migration should be reopened only with a concrete defect or fuzzing result.

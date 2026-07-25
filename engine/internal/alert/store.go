@@ -1911,6 +1911,12 @@ func scanAlert(rows *sql.Rows) (*model.Alert, error) {
 	if err != nil {
 		return nil, err
 	}
+	if parsedFirstSeen.After(parsedLastSeen) {
+		return nil, fmt.Errorf("invalid stored alert %s: first_seen is after last_seen", alert.ID)
+	}
+	if parsedWindowStart.After(parsedFirstSeen) {
+		return nil, fmt.Errorf("invalid stored alert %s: window_start is after first_seen", alert.ID)
+	}
 	alert.Severity = model.Severity(severity)
 	alert.DstPort = uint16(dstPort)
 	alert.FirstSeen = parsedFirstSeen

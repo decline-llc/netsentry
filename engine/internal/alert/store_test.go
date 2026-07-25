@@ -509,6 +509,105 @@ func TestStoreRejectsInvalidHistoricalStoredSeverityWithoutModification(t *testi
 	assertFileBytesUnchanged(t, path, before)
 }
 
+func TestStoreRejectsInvalidStoredAlertTimestampOrder(t *testing.T) {
+	tests := []struct {
+		name      string
+		statement string
+		args      func(time.Time) []any
+		read      func(context.Context, *Store) error
+		condition string
+	}{
+		{
+			name:      "first seen after last seen through list",
+			statement: "UPDATE alerts SET first_seen = ?, last_seen = ?",
+			args: func(base time.Time) []any {
+				return []any{formatTime(base.Add(time.Minute)), formatTime(base)}
+			},
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+			condition: "first_seen is after last_seen",
+		},
+		{
+			name:      "window start after first seen through query",
+			statement: "UPDATE alerts SET window_start = ?, first_seen = ?",
+			args: func(base time.Time) []any {
+				return []any{formatTime(base.Add(time.Minute)), formatTime(base)}
+			},
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+			condition: "window_start is after first_seen",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			ctx := context.Background()
+			store := openTestStore(t, time.Minute)
+			defer store.Close()
+			base := time.Date(2026, 7, 25, 7, 20, 0, 0, time.UTC)
+			if err := store.WriteBatch(ctx, []*model.Alert{
+				makeAlert(base, "stored-timestamp-order"),
+			}); err != nil {
+				t.Fatalf("seed alert: %v", err)
+			}
+			if _, err := store.db.ExecContext(ctx, test.statement, test.args(base)...); err != nil {
+				t.Fatalf("inject invalid stored timestamp order: %v", err)
+			}
+
+			err := test.read(ctx, store)
+			if err == nil || !strings.Contains(err.Error(), test.condition) {
+				t.Fatalf("read error = %v, want %q", err, test.condition)
+			}
+		})
+	}
+}
+
+func TestStoreRejectsInvalidHistoricalTimestampOrderWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := filepath.Join(t.TempDir(), "timestamp shard fixtures")
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	now := time.Date(2026, 7, 25, 7, 25, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	historicalStore, err := Open(ctx, Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open historical timestamp fixture: %v", err)
+	}
+	if err := historicalStore.WriteBatch(ctx, []*model.Alert{
+		makeAlert(historical, "invalid-historical-timestamp-order"),
+	}); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("seed historical timestamp fixture: %v", err)
+	}
+	if _, err := historicalStore.db.ExecContext(
+		ctx,
+		"UPDATE alerts SET first_seen = ?, last_seen = ?",
+		formatTime(historical.Add(time.Minute)),
+		formatTime(historical),
+	); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("inject historical invalid timestamp order: %v", err)
+	}
+	if err := historicalStore.Close(); err != nil {
+		t.Fatalf("close historical timestamp fixture: %v", err)
+	}
+	before := readFileBytes(t, path)
+
+	_, _, err = store.Query(ctx, Query{Limit: 10})
+	if err == nil || !strings.Contains(err.Error(), "first_seen is after last_seen") {
+		t.Fatalf("historical query error = %v, want invalid timestamp order", err)
+	}
+	assertFileBytesUnchanged(t, path, before)
+}
+
 func TestStoreReplaysRecoveryLogIdempotently(t *testing.T) {
 	ctx := context.Background()
 	dir := t.TempDir()

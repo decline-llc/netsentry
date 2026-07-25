@@ -48,6 +48,7 @@
 | R90-29 | Jul 25–Oct 20 | Complete early | Pin SQLite exact-filter collation. | R90-28 | Rule, severity, source, and destination filters retain binary exact-match semantics for compatible primary and historical schemas regardless of declared column collation; intentionally case-insensitive filters remain unchanged. |
 | R90-30 | Jul 25–Oct 20 | Complete early | Validate stored SQLite alert numerics. | R90-29 | Primary and historical reads reject destination ports outside `0..65535` and aggregate counts below one without silently narrowing values or modifying historical shard bytes; valid rows remain compatible. |
 | R90-31 | Jul 25–Oct 20 | Complete early | Validate stored SQLite alert severity. | R90-30 | Primary and historical reads accept only the four public severity values; empty, case-variant, and unsupported values fail without substitution or historical shard modification. |
+| R90-32 | Jul 25–Oct 20 | In progress | Validate stored SQLite timestamp ordering. | R90-31 | Primary and historical reads reject rows with `first_seen > last_seen` or `window_start > first_seen` without modifying historical shard bytes; valid historical aggregation windows remain compatible. |
 
 ## R90-07 Definition
 
@@ -455,6 +456,20 @@
   deletion, schema migration, changing the public severity enum, operator data,
   or tag/publication authority.
 
+## R90-32 Definition
+
+- **Goal:** reject syntactically valid persisted timestamp ordering that the
+  aggregation writer cannot produce.
+- **Risk:** reversed first/last timestamps break aggregate ordering, while a
+  window start after the first event cannot describe the stored aggregate.
+- **Required validation:** direct first-after-last and window-after-first
+  rejection across list/query decoding; historical read-only rejection with
+  byte preservation; healthy timestamp compatibility; twenty focused
+  alert-store race runs, full native, documentation, E2E, and knowledge checks.
+- **Stop condition:** stop if safe completion requires automatic row repair,
+  deletion, schema migration, assuming a historical aggregation-window
+  duration, operator data, or tag/publication authority.
+
 ### R90-24 Validation Deviation
 
 - **Observed:** The first full native race suite hit the existing
@@ -652,7 +667,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -704,14 +719,12 @@
 
 ## Current Checkpoint
 
-R90-31 completed early at `856d1788c7f5abea0116b526ad8d7e2ebd5b9e11`
-after the queue was refreshed from the clean fetched R90-30 baseline, completed
-task state, release boundaries, persisted severity decoding, and verified Vault
-evidence. Primary and historical reads now accept only `low`, `medium`, `high`,
-and `critical`; empty, case-variant, and unsupported text fails without
-substitution or historical modification. Twenty focused race runs, the full
-native suite, E2E smoke, documentation, and knowledge checks passed; fetched
-`origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault
-note, full index, and MOC are verified. No later engineering increment is
-selected; refresh the rolling roadmap on the next `$netsentry-next` trigger.
-Publication remains unauthorized.
+R90-32 is selected from the clean fetched
+`5fb3e1b8920746a65e4f1eb4bdd90870c98d2b04` baseline after verifying the
+completed R90-31 task state and both delivery commits in the single discovered
+local Vault. Stored timestamps are parsed but their writer-derived ordering is
+not checked, allowing reversed first/last values or a window start after the
+first event. R90-32 is limited to those two ordering invariants plus direct
+primary and historical regressions. Twenty uncached focused race runs, the full
+native suite, E2E smoke, documentation, and knowledge checks pass; delivery
+verification is pending. Publication remains unauthorized.
