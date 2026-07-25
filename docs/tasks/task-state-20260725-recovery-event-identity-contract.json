@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "54b7a39618c616566bb69792d9d11e992fd3a2ef",
   "risk_level": "Medium",
-  "current_checkpoint": "validated_pending_delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean local main and fetched origin/main agree",
     "Verified the completed R90-37 task state, both delivery commits, and both exact-range notes in the single discovered local Vault",
@@ -17,28 +17,25 @@
     "Preserved valid replay and duplicate-event idempotency behavior",
     "Passed 20 uncached focused alert-store race runs",
     "Passed the complete native race suite and E2E smoke",
-    "Passed documentation, knowledge, JSON, diff, and sensitive-information checks"
+    "Passed documentation, knowledge, JSON, diff, and sensitive-information checks",
+    "Pushed 99b081bf941af5ab4a257900c3d08cfd339c5dc2 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact full-SHA Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Commit and push the validated feature"
-  ],
-  "todo": [
-    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
-    "Reconcile roadmap and task-state delivery evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false
+    "commit": "99b081bf941af5ab4a257900c3d08cfd339c5dc2",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "54b7a39618c616566bb69792d9d11e992fd3a2ef..99b081bf941af5ab4a257900c3d08cfd339c5dc2",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
   },
   "remaining_risks": [
-    "The validated feature is not yet present on fetched origin/main",
-    "Exact-range Vault synchronization remains pending",
+    "Stored aggregated event identity and event-ledger reconciliation remain out of scope",
+    "Invalid recovery input is rejected but not automatically repaired",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "R90-38 implementation and all required validation pass from clean fetched origin/main at 54b7a39618c616566bb69792d9d11e992fd3a2ef. Recovery event_id now must match the existing deterministic writer identity before startup replay or runtime append; valid-prefix missing/existing database preservation, runtime no-append preservation, valid replay, and duplicate-event idempotency are covered. Commit and push the feature, verify fetched origin/main, synchronize the exact pushed range to the local Vault, then reconcile delivery evidence. Do not narrow protocol support, change event-ID derivation, reconcile stored rows or the event ledger, create v0.1.1, or publish artifacts."
+  "resume_instructions": "R90-38 is complete at 99b081bf941af5ab4a257900c3d08cfd339c5dc2. Do not repeat its implementation, validation, push, or Vault synchronization. No later engineering increment is selected; refresh the rolling roadmap on the next $netsentry-next trigger. Do not narrow protocol support, change event-ID derivation, reconcile stored rows or the event ledger, create v0.1.1, or publish artifacts."
 }

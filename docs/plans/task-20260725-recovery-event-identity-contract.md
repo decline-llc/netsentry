@@ -72,8 +72,11 @@ operator data, tag creation, or publication authority.
 
 ## Delivery Evidence
 
+- Feature commit: `99b081bf941af5ab4a257900c3d08cfd339c5dc2`
 - Implementation and twenty uncached focused alert-store race runs pass.
 - Complete native race suite, E2E smoke, documentation, knowledge, JSON, diff,
   and sensitive-information checks pass.
-- Pending commit, push, fetched-remote verification, and exact-range Vault
-  synchronization.
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range: `54b7a39618c616566bb69792d9d11e992fd3a2ef..99b081bf941af5ab4a257900c3d08cfd339c5dc2`
+- Vault iteration note, full commit index, and `00-MOC` link: verified.

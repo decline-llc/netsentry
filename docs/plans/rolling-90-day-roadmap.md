@@ -54,7 +54,7 @@
 | R90-35 | Jul 25–Oct 20 | Complete early | Enforce the UDS IPv4 address contract. | R90-34 | UDS packet frames accept only strict IPv4 source and destination addresses; ordinary and IPv4-mapped IPv6 text fails once without queueing a packet, while valid capture traffic remains compatible. |
 | R90-36 | Jul 25–Oct 20 | Complete early | Enforce the recovery IPv4 address contract. | R90-35 | Startup and runtime recovery preflight reject malformed, ordinary IPv6, or IPv4-mapped IPv6 source/destination addresses before modifying the complete log or missing/existing SQLite state; valid IPv4 replay remains compatible. |
 | R90-37 | Jul 25–Oct 20 | Complete early | Validate stored SQLite IPv4 addresses. | R90-36 | Primary and historical reads reject malformed, ordinary IPv6, and IPv4-mapped IPv6 source/destination text before identity derivation; valid IPv4 rows remain compatible and historical rejection preserves shard bytes. |
-| R90-38 | Jul 25–Oct 20 | In progress | Validate recovery event identity. | R90-37 | Startup and runtime recovery preflight reject nonblank `event_id` values that differ from the deterministic event identity before modifying the complete log or missing/existing SQLite state; valid idempotent replay remains compatible. |
+| R90-38 | Jul 25–Oct 20 | Complete early | Validate recovery event identity. | R90-37 | Startup and runtime recovery preflight reject nonblank `event_id` values that differ from the deterministic event identity before modifying the complete log or missing/existing SQLite state; valid idempotent replay remains compatible. |
 
 ## R90-07 Definition
 
@@ -838,9 +838,16 @@
   post-fetch knowledge gate, and the exact full-SHA Vault note, index, and MOC
   are verified. The queue was refreshed on Jul 25 from the clean fetched
   reconciliation baseline, completed task state, release boundaries, recovery
-  idempotency invariants, and verified Vault evidence. R90-38 is selected as
-  the highest-priority dependency-ready correctness increment. Publication
-  remains unauthorized.
+  idempotency invariants, and verified Vault evidence. R90-38 completed early
+  at `99b081bf941af5ab4a257900c3d08cfd339c5dc2`: startup and runtime
+  recovery preflight now rejects an altered nonblank `event_id` before
+  modifying the complete log or missing/existing SQLite state, while valid
+  replay and duplicate-event idempotency remain compatible. Twenty focused
+  race runs, the full native suite, E2E smoke, documentation, and knowledge
+  checks passed; fetched `origin/main`, the post-fetch knowledge gate, and the
+  exact full-SHA Vault note, index, and MOC are verified. No later engineering
+  increment is selected; refresh the rolling roadmap on the next
+  `$netsentry-next` trigger. Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -911,14 +918,11 @@
 
 ## Current Checkpoint
 
-R90-38 is selected from clean fetched `origin/main`
-`54b7a39618c616566bb69792d9d11e992fd3a2ef` after verifying the completed
-R90-37 task state, feature and reconciliation commits, post-fetch knowledge
-gate, and both exact-range Vault notes, full index, and MOC. Recovery validation
-previously required a nonblank `event_id` but did not compare it with the
-deterministic identity used by the writer and idempotency ledger; R90-38 now
-enforces that invariant before startup replay or runtime append. Twenty
-uncached focused race runs, the complete native race suite, E2E smoke,
-documentation, knowledge, JSON, diff, and sensitive-information checks are
-clean. Feature commit, push, fetched-remote verification, and exact-range Vault
-synchronization remain. Publication remains unauthorized.
+R90-38 is complete at `99b081bf941af5ab4a257900c3d08cfd339c5dc2`
+from clean fetched baseline
+`54b7a39618c616566bb69792d9d11e992fd3a2ef`. Twenty uncached focused race
+runs, the complete native race suite, E2E smoke, documentation, knowledge,
+JSON, diff, and sensitive-information checks passed. Fetched `origin/main`,
+the post-fetch knowledge gate, and exact-range Vault note, full index, and MOC
+are verified. No later engineering increment is selected; refresh the roadmap
+on the next `$netsentry-next` trigger. Publication remains unauthorized.
