@@ -1,0 +1,41 @@
+{
+  "task": "r90-27-sqlite-aggregation-collation",
+  "timestamp": "2026-07-25T03:02:04-07:00",
+  "branch": "main",
+  "remote_baseline": "75b160aa268331e37883bbb1ac3019346ce494f0",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Verified clean local main, fetched origin/main, and the latest R90-26 task state agree",
+    "Verified both R90-26 commits and their iteration notes in the single discovered local Vault",
+    "Refreshed the empty queue from release boundaries and SQLite aggregation-index collation metadata",
+    "Selected R90-27 as the highest-priority dependency-ready increment",
+    "Required the exact canonical aggregation key to use binary collation in column order",
+    "Added direct inline, explicit-index, historical-shard, byte-preservation, and case-distinct compatible-write coverage",
+    "Passed 20 uncached focused alert-store race runs",
+    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Commit, push, and verify the completed increment"
+  ],
+  "todo": [
+    "Verify fetched origin/main and synchronize the exact range to the local Vault",
+    "Reconcile the roadmap and task-state resume instructions"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "Column-only inspection can accept a non-binary aggregation key",
+    "The R90-22 compatible-extension policy must remain unchanged",
+    "Primary and historical rejected databases must remain byte-for-byte unchanged",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Continue R90-27 from the clean 75b160aa268331e37883bbb1ac3019346ce494f0 baseline. Implement binary-collation validation, add direct regressions, run the required checks, then commit, push, verify fetched origin/main, and synchronize the exact pushed range to the single local Vault. Do not create v0.1.1 or publish artifacts."
+}

@@ -93,6 +93,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
   NetSentry table, column, and aggregation-uniqueness schema contract during
   that read-only preflight; unrelated or incompatible databases are rejected
   without modifying their bytes.
+- Existing primary databases and daily-shard write targets now require binary
+  collation across the canonical aggregation uniqueness key, preventing
+  case-insensitive indexes from merging distinct NetSentry identities.
 - Existing primary databases and daily-shard write targets reject extra unique
   indexes that do not contain a canonical alert or event identity before
   writable initialization; ordinary indexes and redundant identity-containing

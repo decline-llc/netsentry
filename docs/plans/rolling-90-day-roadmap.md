@@ -43,6 +43,7 @@
 | R90-24 | Jul 23–Oct 20 | Complete early | Reject write-affecting SQLite generated columns. | R90-23 | Existing primary and historical databases with virtual or stored generated columns on `alerts` or `alert_events` fail read-only preflight and remain unchanged; ordinary nullable and defaulted column extensions remain compatible and writable. |
 | R90-25 | Jul 24–Oct 20 | Complete early | Reject write-affecting SQLite check constraints. | R90-24 | Existing primary and historical databases with `CHECK` constraints on `alerts` or `alert_events` fail read-only preflight and remain unchanged; constraints confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 | R90-26 | Jul 24–Oct 20 | Complete early | Reject write-affecting SQLite foreign keys. | R90-25 | Existing primary and historical databases with foreign-key relationships whose source or target is `alerts` or `alert_events` fail read-only preflight and remain unchanged; relationships confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
+| R90-27 | Jul 25–Oct 20 | In progress | Require binary collation on SQLite aggregation uniqueness. | R90-26 | Existing primary and historical databases whose canonical alert aggregation uniqueness uses a non-binary collation fail read-only preflight and remain unchanged; a binary-collated canonical key remains compatible and preserves distinct NetSentry identities. |
 
 ## R90-07 Definition
 
@@ -374,6 +375,23 @@
   foreign-key actions, schema migration, rewriting operator relationships,
   operator data, or tag/publication authority.
 
+## R90-27 Definition
+
+- **Goal:** close the required aggregation-schema gap where a canonical
+  uniqueness key with non-binary collation can merge distinct NetSentry alert
+  identities even though its column order passes preflight.
+- **Risk:** inspecting only column names misses SQLite collation semantics,
+  while rejecting additional compatible indexes would narrow the extension
+  policy established by R90-22.
+- **Required validation:** direct inline and explicit non-binary aggregation
+  uniqueness rejections with byte preservation; a historical-shard rejection;
+  binary-collated canonical-key compatibility with successful writes of
+  identities that differ only by case; repeated focused alert-store race tests,
+  full native, documentation, E2E, and knowledge checks.
+- **Stop condition:** stop if safe completion requires changing the canonical
+  aggregation identity, schema migration, rewriting operator indexes, operator
+  data, or tag/publication authority.
+
 ### R90-24 Validation Deviation
 
 - **Observed:** The first full native race suite hit the existing
@@ -525,7 +543,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -577,4 +595,4 @@
 
 ## Current Checkpoint
 
-R90-26 completed early at `0ddba61bde65fe1bb5ca9757bc87d06123409251` after the queue was refreshed from the clean fetched R90-25 baseline, completed task state, release boundaries, SQLite foreign-key metadata, and verified Vault evidence. Outgoing and incoming relationships involving `alerts` or `alert_events`, including a historical shard, now fail before writable initialization with byte preservation. Case-variant and implicit-primary-key references are covered, while relationships confined to unrelated operator tables remain compatible. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.
+R90-26 completed early at `0ddba61bde65fe1bb5ca9757bc87d06123409251` after the queue was refreshed from the clean fetched R90-25 baseline, completed task state, release boundaries, SQLite foreign-key metadata, and verified Vault evidence. Outgoing and incoming relationships involving `alerts` or `alert_events`, including a historical shard, now fail before writable initialization with byte preservation. Case-variant and implicit-primary-key references are covered, while relationships confined to unrelated operator tables remain compatible. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. The queue was refreshed on Jul 25 from that clean fetched baseline, completed task state, release boundaries, aggregation-index collation metadata, and verified Vault evidence. R90-27 is the highest-priority dependency-ready increment. Publication remains unauthorized.

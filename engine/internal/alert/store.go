@@ -392,15 +392,15 @@ func validateAggregationConstraint(ctx context.Context, db *sql.DB) error {
 	}
 
 	for _, index := range uniqueIndexes {
-		columns, err := readIndexColumns(ctx, db, index)
+		columns, err := readIndexKeyColumns(ctx, db, index)
 		if err != nil {
 			return err
 		}
-		if slicesEqual(columns, requiredAggregationKey) {
+		if matchesBinaryColumnsInOrder(columns, requiredAggregationKey) {
 			return nil
 		}
 	}
-	return fmt.Errorf("%w: incompatible schema: alerts aggregation uniqueness constraint is missing", ErrDatabaseIntegrity)
+	return fmt.Errorf("%w: incompatible schema: binary-collated alerts aggregation uniqueness constraint is missing", ErrDatabaseIntegrity)
 }
 
 func validateWriteCompatibleUniqueIndexes(ctx context.Context, db *sql.DB, table string, safeKeys ...[]string) error {
@@ -749,20 +749,21 @@ func containsBinaryColumns(columns []indexKeyColumn, required []string) bool {
 	return true
 }
 
-func quoteSQLiteIdentifier(value string) string {
-	return `"` + strings.ReplaceAll(value, `"`, `""`) + `"`
-}
-
-func slicesEqual(left, right []string) bool {
-	if len(left) != len(right) {
+func matchesBinaryColumnsInOrder(columns []indexKeyColumn, required []string) bool {
+	if len(columns) != len(required) {
 		return false
 	}
-	for i := range left {
-		if left[i] != right[i] {
+	for index, column := range columns {
+		if !column.name.Valid || column.name.String != required[index] ||
+			!column.collation.Valid || !strings.EqualFold(strings.TrimSpace(column.collation.String), "BINARY") {
 			return false
 		}
 	}
 	return true
+}
+
+func quoteSQLiteIdentifier(value string) string {
+	return `"` + strings.ReplaceAll(value, `"`, `""`) + `"`
 }
 
 func openReadOnlyDatabase(path string) (*sql.DB, error) {
