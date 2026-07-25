@@ -44,7 +44,7 @@
 | R90-25 | Jul 24–Oct 20 | Complete early | Reject write-affecting SQLite check constraints. | R90-24 | Existing primary and historical databases with `CHECK` constraints on `alerts` or `alert_events` fail read-only preflight and remain unchanged; constraints confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 | R90-26 | Jul 24–Oct 20 | Complete early | Reject write-affecting SQLite foreign keys. | R90-25 | Existing primary and historical databases with foreign-key relationships whose source or target is `alerts` or `alert_events` fail read-only preflight and remain unchanged; relationships confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 | R90-27 | Jul 25–Oct 20 | Complete early | Require binary collation on SQLite aggregation uniqueness. | R90-26 | Existing primary and historical databases whose canonical alert aggregation uniqueness uses a non-binary collation fail read-only preflight and remain unchanged; a binary-collated canonical key remains compatible and preserves distinct NetSentry identities. |
-| R90-28 | Jul 25–Oct 20 | In progress | Honor SQLite identifier case semantics during schema preflight. | R90-27 | Existing primary and historical databases with case-variant required table, column, aggregation-key, and safe unique-key identifiers pass the same validation and remain writable; all write-safety checks remain enforced. |
+| R90-28 | Jul 25–Oct 20 | Complete early | Honor SQLite identifier case semantics during schema preflight. | R90-27 | Existing primary and historical databases with case-variant required table, column, aggregation-key, and safe unique-key identifiers pass the same validation and remain writable; all write-safety checks remain enforced. |
 
 ## R90-07 Definition
 
@@ -546,9 +546,19 @@
   while compatible binary indexes preserve case-distinct identities. Twenty
   focused race runs, the full native suite, E2E smoke, documentation, and
   knowledge checks passed; fetched `origin/main`, the post-fetch knowledge
-  gate, and the exact full-SHA Vault note, index, and MOC are verified. No later
-  engineering increment is selected; refresh the rolling roadmap on the next
-  `$netsentry-next` trigger. Publication remains unauthorized.
+  gate, and the exact full-SHA Vault note, index, and MOC are verified. The
+  queue was refreshed on Jul 25 from the clean fetched baseline, completed task
+  state, release boundaries, SQLite identifier metadata semantics, and verified
+  Vault evidence. R90-28 completed early at
+  `41d4c94517d503175dc288fe763f1e860c55ed02`: required-column and
+  unique-index key comparisons now follow SQLite's case-insensitive identifier
+  semantics, while type, nullability, key order, collation, and every other
+  write-safety check remain enforced. Twenty focused race runs, the full native
+  suite, E2E smoke, documentation, and knowledge checks passed; fetched
+  `origin/main`, the post-fetch knowledge gate, and the exact full-SHA Vault
+  note, index, and MOC are verified. No later engineering increment is
+  selected; refresh the rolling roadmap on the next `$netsentry-next` trigger.
+  Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -619,13 +629,15 @@
 
 ## Current Checkpoint
 
-R90-28 is selected from the clean fetched
-`544ca7498c2623daaaf25381b04ef6793de49e5c` baseline after verifying the
-completed R90-27 task state and both delivery commits in the single discovered
-local Vault. SQLite runtime name resolution is case-insensitive, but required
-column and unique-index key metadata comparisons remain case-sensitive and can
-reject an otherwise compatible existing database. R90-28 is limited to
-identifier comparison semantics plus direct primary and historical
-compatibility regressions. Twenty uncached focused race runs, the full native
-suite, E2E smoke, documentation, and knowledge checks pass; delivery
-verification is pending. Publication remains unauthorized.
+R90-28 completed early at `41d4c94517d503175dc288fe763f1e860c55ed02`
+after the queue was refreshed from the clean fetched R90-27 baseline, completed
+task state, release boundaries, SQLite identifier metadata semantics, and
+verified Vault evidence. Required columns and unique-index keys now use
+case-insensitive identifier matching, so compatible primary and historical
+schemas retain SQLite's runtime behavior without weakening binary collation or
+other write-safety checks. Twenty focused race runs, the full native suite, E2E
+smoke, documentation, and knowledge checks passed; fetched `origin/main`,
+post-fetch knowledge validation, and the exact full-SHA Vault note, full index,
+and MOC are verified. No later engineering increment is selected; refresh the
+rolling roadmap on the next `$netsentry-next` trigger. Publication remains
+unauthorized.

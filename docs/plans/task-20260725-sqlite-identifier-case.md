@@ -64,3 +64,11 @@ case-insensitive identifier semantics during read-only schema preflight.
 
 Stop if completion requires schema migration, identifier rewriting, weakening a
 write-safety constraint, operator data, tag creation, or publication authority.
+
+## Delivery Evidence
+
+- Feature commit: `41d4c94517d503175dc288fe763f1e860c55ed02`
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range: `544ca7498c2623daaaf25381b04ef6793de49e5c..41d4c94517d503175dc288fe763f1e860c55ed02`
+- Vault iteration note, full commit index, and `00-MOC` link: verified.
