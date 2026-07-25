@@ -53,7 +53,7 @@
 | R90-34 | Jul 25–Oct 20 | Complete early | Validate stored SQLite required text. | R90-33 | Primary and historical reads reject blank required identity, rule, and network text without modifying historical shard bytes; optional empty text and valid rows remain compatible. |
 | R90-35 | Jul 25–Oct 20 | Complete early | Enforce the UDS IPv4 address contract. | R90-34 | UDS packet frames accept only strict IPv4 source and destination addresses; ordinary and IPv4-mapped IPv6 text fails once without queueing a packet, while valid capture traffic remains compatible. |
 | R90-36 | Jul 25–Oct 20 | Complete early | Enforce the recovery IPv4 address contract. | R90-35 | Startup and runtime recovery preflight reject malformed, ordinary IPv6, or IPv4-mapped IPv6 source/destination addresses before modifying the complete log or missing/existing SQLite state; valid IPv4 replay remains compatible. |
-| R90-37 | Jul 25–Oct 20 | In progress | Validate stored SQLite IPv4 addresses. | R90-36 | Primary and historical reads reject malformed, ordinary IPv6, and IPv4-mapped IPv6 source/destination text before identity derivation; valid IPv4 rows remain compatible and historical rejection preserves shard bytes. |
+| R90-37 | Jul 25–Oct 20 | Complete early | Validate stored SQLite IPv4 addresses. | R90-36 | Primary and historical reads reject malformed, ordinary IPv6, and IPv4-mapped IPv6 source/destination text before identity derivation; valid IPv4 rows remain compatible and historical rejection preserves shard bytes. |
 
 ## R90-07 Definition
 
@@ -809,9 +809,18 @@
   the post-fetch knowledge gate, and the exact full-SHA Vault note, index, and
   MOC are verified. The queue was refreshed on Jul 25 from the clean fetched
   reconciliation baseline, completed task state, release boundaries, the
-  remaining stored-address contract, and verified Vault evidence. R90-37 is
-  selected as the highest-priority dependency-ready correctness increment.
-  Publication remains unauthorized.
+  remaining stored-address contract, and verified Vault evidence. R90-37
+  completed early at `fecf62d317d92e64a7816dacb337c6f444610086`:
+  shared primary and historical row decoding now rejects malformed, ordinary
+  IPv6, and IPv4-mapped IPv6 source or destination addresses before dependent
+  aggregation-identity validation, while valid IPv4 rows remain compatible and
+  historical rejection preserves shard bytes. Twenty focused race runs,
+  twenty affected-fixture race runs, the full native suite, E2E smoke,
+  documentation, and knowledge checks passed; fetched `origin/main`, the
+  post-fetch knowledge gate, and the exact full-SHA Vault note, index, and MOC
+  are verified. No later engineering increment is selected; refresh the rolling
+  roadmap on the next `$netsentry-next` trigger. Publication remains
+  unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -882,15 +891,13 @@
 
 ## Current Checkpoint
 
-R90-37 is selected from clean fetched `origin/main`
-`9b5e4299d18e774a955ecc7b0561d6bbd5aed977` after verifying the completed
-R90-36 task state, feature and reconciliation commits, post-fetch knowledge
-gate, and both exact-range Vault notes, full index, and MOC. The baseline
-rejected blank addresses but did not enforce the documented strict IPv4 family
-before aggregation-identity validation; R90-37 now enforces that boundary.
-Twenty focused race runs pass. The R90-29 fixture deviation is resolved with
-valid IPv4 rows; twenty affected-fixture race runs, the combined focused suite,
-complete native race suite, E2E smoke, documentation, knowledge, JSON, diff,
-and sensitive-information checks are clean. Feature commit, push,
-fetched-remote verification, and exact-range Vault synchronization remain.
+R90-37 is complete at `fecf62d317d92e64a7816dacb337c6f444610086`
+from clean fetched baseline
+`9b5e4299d18e774a955ecc7b0561d6bbd5aed977`. Twenty focused race runs,
+twenty affected-fixture race runs, the combined focused suite, complete native
+race suite, E2E smoke, documentation, knowledge, JSON, diff, and
+sensitive-information checks passed. The R90-29 fixture deviation is resolved;
+fetched `origin/main`, the post-fetch knowledge gate, and exact-range Vault
+note, full index, and MOC are verified. No later engineering increment is
+selected; refresh the roadmap on the next `$netsentry-next` trigger.
 Publication remains unauthorized.

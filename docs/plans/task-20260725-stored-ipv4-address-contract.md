@@ -71,6 +71,7 @@ authority.
 
 ## Delivery Evidence
 
+- Feature commit: `fecf62d317d92e64a7816dacb337c6f444610086`
 - Implementation and twenty uncached focused alert-store race runs pass.
 - The first full native suite exposed an R90-29 collation fixture whose
   source/destination cases seed case-variant IPv6 below recovery. R90-37
@@ -80,5 +81,7 @@ authority.
   combined focused and complete native race suites.
 - E2E smoke, documentation, knowledge, JSON, diff, and
   sensitive-information checks pass.
-- Pending commit, push, fetched-remote verification, and exact-range Vault
-  synchronization.
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range: `9b5e4299d18e774a955ecc7b0561d6bbd5aed977..fecf62d317d92e64a7816dacb337c6f444610086`
+- Vault iteration note, full commit index, and `00-MOC` link: verified.
