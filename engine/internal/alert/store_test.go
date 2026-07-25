@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -412,6 +413,98 @@ func TestStoreRejectsInvalidHistoricalStoredNumericWithoutModification(t *testin
 	_, _, err = store.Query(ctx, Query{Limit: 10})
 	if err == nil || !strings.Contains(err.Error(), "dst_port -1 is outside 0..65535") {
 		t.Fatalf("historical query error = %v, want invalid destination port", err)
+	}
+	assertFileBytesUnchanged(t, path, before)
+}
+
+func TestStoreRejectsInvalidStoredAlertSeverity(t *testing.T) {
+	tests := []struct {
+		name     string
+		severity string
+		read     func(context.Context, *Store) error
+	}{
+		{
+			name:     "empty through list",
+			severity: "",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:     "uppercase known through query",
+			severity: "HIGH",
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+		{
+			name:     "unsupported through list",
+			severity: "urgent",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			ctx := context.Background()
+			store := openTestStore(t, time.Minute)
+			defer store.Close()
+			if err := store.WriteBatch(ctx, []*model.Alert{
+				makeAlert(time.Date(2026, 7, 25, 7, 10, 0, 0, time.UTC), "stored-severity"),
+			}); err != nil {
+				t.Fatalf("seed alert: %v", err)
+			}
+			if _, err := store.db.ExecContext(ctx, "UPDATE alerts SET severity = ?", test.severity); err != nil {
+				t.Fatalf("inject invalid stored severity: %v", err)
+			}
+
+			err := test.read(ctx, store)
+			condition := fmt.Sprintf("severity %q is unsupported", test.severity)
+			if err == nil || !strings.Contains(err.Error(), condition) {
+				t.Fatalf("read error = %v, want %q", err, condition)
+			}
+		})
+	}
+}
+
+func TestStoreRejectsInvalidHistoricalStoredSeverityWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := filepath.Join(t.TempDir(), "severity shard fixtures")
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	now := time.Date(2026, 7, 25, 7, 15, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	historicalStore, err := Open(ctx, Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open historical severity fixture: %v", err)
+	}
+	if err := historicalStore.WriteBatch(ctx, []*model.Alert{
+		makeAlert(historical, "invalid-historical-severity"),
+	}); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("seed historical severity fixture: %v", err)
+	}
+	if _, err := historicalStore.db.ExecContext(ctx, "UPDATE alerts SET severity = 'urgent'"); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("inject historical invalid severity: %v", err)
+	}
+	if err := historicalStore.Close(); err != nil {
+		t.Fatalf("close historical severity fixture: %v", err)
+	}
+	before := readFileBytes(t, path)
+
+	_, _, err = store.Query(ctx, Query{Limit: 10})
+	if err == nil || !strings.Contains(err.Error(), `severity "urgent" is unsupported`) {
+		t.Fatalf("historical query error = %v, want invalid severity", err)
 	}
 	assertFileBytesUnchanged(t, path, before)
 }

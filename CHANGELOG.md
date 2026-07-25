@@ -105,6 +105,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Alert row decoding now rejects stored destination ports outside `0..65535`
   and aggregate counts below one instead of wrapping or returning invalid
   public-model values.
+- Alert row decoding now accepts only the four public severity values, rejecting
+  empty, case-variant, or unsupported stored text instead of normalizing or
+  misclassifying it.
 - Existing primary databases and daily-shard write targets reject extra unique
   indexes that do not contain a canonical alert or event identity before
   writable initialization; ordinary indexes and redundant identity-containing

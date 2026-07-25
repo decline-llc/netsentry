@@ -1894,6 +1894,11 @@ func scanAlert(rows *sql.Rows) (*model.Alert, error) {
 	if alert.AggregatedCount < 1 {
 		return nil, fmt.Errorf("invalid stored alert %s: aggregated_count %d is below 1", alert.ID, alert.AggregatedCount)
 	}
+	switch model.Severity(severity) {
+	case model.SeverityLow, model.SeverityMedium, model.SeverityHigh, model.SeverityCritical:
+	default:
+		return nil, fmt.Errorf("invalid stored alert %s: severity %q is unsupported", alert.ID, severity)
+	}
 	parsedFirstSeen, err := parseTime(firstSeen)
 	if err != nil {
 		return nil, err
