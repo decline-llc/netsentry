@@ -1625,16 +1625,16 @@ func alertQueryWhere(query Query) (string, []any) {
 		args = append(args, value)
 	}
 	if query.RuleID != "" {
-		add("rule_id = ?", query.RuleID)
+		add("rule_id COLLATE BINARY = ?", query.RuleID)
 	}
 	if query.Severity != "" {
-		add("severity = ?", string(query.Severity))
+		add("severity COLLATE BINARY = ?", string(query.Severity))
 	}
 	if query.SrcIP != "" {
-		add("src_ip = ?", query.SrcIP)
+		add("src_ip COLLATE BINARY = ?", query.SrcIP)
 	}
 	if query.DstIP != "" {
-		add("dst_ip = ?", query.DstIP)
+		add("dst_ip COLLATE BINARY = ?", query.DstIP)
 	}
 	if query.Protocol != "" {
 		add("UPPER(protocol) = ?", strings.ToUpper(query.Protocol))

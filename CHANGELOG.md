@@ -99,6 +99,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - SQLite schema preflight now compares required column and unique-index key
   identifiers case-insensitively, matching runtime SQLite name resolution for
   compatible primary databases and historical shards.
+- Alert queries now pin rule, severity, source, and destination exact filters
+  to binary comparison so compatible custom column collations cannot broaden
+  primary or historical-shard results.
 - Existing primary databases and daily-shard write targets reject extra unique
   indexes that do not contain a canonical alert or event identity before
   writable initialization; ordinary indexes and redundant identity-containing

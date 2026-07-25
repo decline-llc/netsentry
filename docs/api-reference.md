@@ -60,10 +60,10 @@ Query parameters:
 | --- | --- |
 | `page` | Positive page number. Defaults to `1`. |
 | `per_page` | Page size from `1` to `100`. Defaults to `20`. |
-| `rule_id` | Exact rule ID match. |
-| `severity` | One of `low`, `medium`, `high`, `critical`. |
-| `src_ip` | Exact source IP match. |
-| `dst_ip` | Exact destination IP match. |
+| `rule_id` | Exact, case-sensitive rule ID match. |
+| `severity` | Exact, case-sensitive match for one of `low`, `medium`, `high`, `critical`. |
+| `src_ip` | Exact, case-sensitive source IP text match. |
+| `dst_ip` | Exact, case-sensitive destination IP text match. |
 | `protocol` | Exact protocol match; compared case-insensitively. |
 | `dst_port` | Destination port from `0` to `65535`. |
 | `since` | Include alerts whose `last_seen` is greater than or equal to this RFC3339 timestamp. |
@@ -204,7 +204,7 @@ Reloads rules from `engine.rules_seed_file` and atomically swaps the active rule
 
 Current limitations:
 
-- Alert pagination, the stable list envelope, exact-match filters, time range filters, MITRE filters, matched-keyword substring filtering, and minimum aggregate-count filtering exist. The SQLite-backed store applies those filters and pagination in SQL, with indexes for common exact/range filters; matched-keyword substring filtering remains a regular SQL substring predicate.
+- Alert pagination, the stable list envelope, exact-match filters, time range filters, MITRE filters, matched-keyword substring filtering, and minimum aggregate-count filtering exist. The SQLite-backed store pins rule, severity, source, and destination exact matches to binary comparison regardless of a compatible database's declared column collation, while protocol and MITRE filters remain case-insensitive. It applies those filters and pagination in SQL, with indexes for common exact/range filters; matched-keyword substring filtering remains a regular SQL substring predicate.
 - Alert storage is SQLite-backed with JSONL recovery-log replay, startup TTL pruning, old daily shard file cleanup, and sticky emergency mode for disk-full/read-only/I/O failures. When `engine.db_shard_daily` is enabled, alert writes use each alert timestamp to select `netsentry-YYYY-MM-DD.db`, alert queries scan matching shards and apply the same filters, ordering, and pagination across shards, and health and metrics alert counts also sum matching shard files.
 - Validation, unsupported method, and internal API errors use the unified error envelope.
 - Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk.

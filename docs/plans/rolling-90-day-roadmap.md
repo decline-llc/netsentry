@@ -45,6 +45,7 @@
 | R90-26 | Jul 24–Oct 20 | Complete early | Reject write-affecting SQLite foreign keys. | R90-25 | Existing primary and historical databases with foreign-key relationships whose source or target is `alerts` or `alert_events` fail read-only preflight and remain unchanged; relationships confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 | R90-27 | Jul 25–Oct 20 | Complete early | Require binary collation on SQLite aggregation uniqueness. | R90-26 | Existing primary and historical databases whose canonical alert aggregation uniqueness uses a non-binary collation fail read-only preflight and remain unchanged; a binary-collated canonical key remains compatible and preserves distinct NetSentry identities. |
 | R90-28 | Jul 25–Oct 20 | Complete early | Honor SQLite identifier case semantics during schema preflight. | R90-27 | Existing primary and historical databases with case-variant required table, column, aggregation-key, and safe unique-key identifiers pass the same validation and remain writable; all write-safety checks remain enforced. |
+| R90-29 | Jul 25–Oct 20 | In progress | Pin SQLite exact-filter collation. | R90-28 | Rule, severity, source, and destination filters retain binary exact-match semantics for compatible primary and historical schemas regardless of declared column collation; intentionally case-insensitive filters remain unchanged. |
 
 ## R90-07 Definition
 
@@ -408,6 +409,21 @@
   identifier rewriting, weakening a write-safety constraint, operator data, or
   tag/publication authority.
 
+## R90-29 Definition
+
+- **Goal:** make documented exact-match alert predicates independent of
+  compatible operator-declared SQLite column collations.
+- **Risk:** applying binary collation too broadly could break intentionally
+  case-insensitive protocol or MITRE filters, while fixing only list selection
+  could leave filtered counts or cross-shard results inconsistent.
+- **Required validation:** direct rule, severity, source, and destination
+  primary-query regressions against compatible `NOCASE` columns; a historical
+  cross-shard regression; existing protocol/MITRE compatibility; twenty focused
+  alert-store race runs, full native, documentation, E2E, and knowledge checks.
+- **Stop condition:** stop if safe completion requires schema migration,
+  rejecting a compatible database, changing public filter semantics, operator
+  data, or tag/publication authority.
+
 ### R90-24 Validation Deviation
 
 - **Observed:** The first full native race suite hit the existing
@@ -577,7 +593,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -629,15 +645,13 @@
 
 ## Current Checkpoint
 
-R90-28 completed early at `41d4c94517d503175dc288fe763f1e860c55ed02`
-after the queue was refreshed from the clean fetched R90-27 baseline, completed
-task state, release boundaries, SQLite identifier metadata semantics, and
-verified Vault evidence. Required columns and unique-index keys now use
-case-insensitive identifier matching, so compatible primary and historical
-schemas retain SQLite's runtime behavior without weakening binary collation or
-other write-safety checks. Twenty focused race runs, the full native suite, E2E
-smoke, documentation, and knowledge checks passed; fetched `origin/main`,
-post-fetch knowledge validation, and the exact full-SHA Vault note, full index,
-and MOC are verified. No later engineering increment is selected; refresh the
-rolling roadmap on the next `$netsentry-next` trigger. Publication remains
+R90-29 is selected from the clean fetched
+`3360e16effae4b0f9e8ecc911907d492e7c6d75a` baseline after verifying the
+completed R90-28 task state and both delivery commits in the single discovered
+local Vault. Compatible schemas can declare `NOCASE` on exact-filter columns
+while retaining an explicit binary aggregation key, causing SQLite to broaden
+documented exact matches. R90-29 is limited to explicit query-predicate
+collation plus direct primary and historical regressions. Twenty uncached
+focused race runs, the full native suite, E2E smoke, documentation, and
+knowledge checks pass; delivery verification is pending. Publication remains
 unauthorized.

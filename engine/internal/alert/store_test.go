@@ -207,6 +207,111 @@ func TestStoreQueryFiltersCountsAndPagesAlerts(t *testing.T) {
 	}
 }
 
+func TestStoreExactFiltersOverrideCompatibleNoCaseColumns(t *testing.T) {
+	tests := []struct {
+		name   string
+		mutate func(*model.Alert)
+		query  Query
+	}{
+		{
+			name: "rule",
+			mutate: func(alert *model.Alert) {
+				alert.RuleID = strings.ToUpper(alert.RuleID)
+			},
+			query: Query{RuleID: "rule-1"},
+		},
+		{
+			name: "severity",
+			mutate: func(alert *model.Alert) {
+				alert.Severity = model.Severity(strings.ToUpper(string(alert.Severity)))
+			},
+			query: Query{Severity: model.SeverityHigh},
+		},
+		{
+			name: "source",
+			mutate: func(alert *model.Alert) {
+				alert.SrcIP = strings.ToUpper(alert.SrcIP)
+			},
+			query: Query{SrcIP: "2001:db8::1"},
+		},
+		{
+			name: "destination",
+			mutate: func(alert *model.Alert) {
+				alert.DstIP = strings.ToUpper(alert.DstIP)
+			},
+			query: Query{DstIP: "2001:db8::2"},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "alerts.db")
+			createSQLiteFixture(t, path, noCaseExactFilterSchema())
+			store, err := Open(context.Background(), Options{Path: path, JournalMode: "DELETE"})
+			if err != nil {
+				t.Fatalf("open compatible NOCASE schema: %v", err)
+			}
+			defer store.Close()
+
+			base := time.Date(2026, 7, 25, 6, 50, 0, 0, time.UTC)
+			lower := makeAlert(base, "exact-lower")
+			lower.SrcIP = "2001:db8::1"
+			lower.DstIP = "2001:db8::2"
+			variant := makeAlert(base.Add(2*time.Minute), "case-variant")
+			variant.SrcIP = lower.SrcIP
+			variant.DstIP = lower.DstIP
+			test.mutate(variant)
+			if err := store.WriteBatch(context.Background(), []*model.Alert{lower, variant}); err != nil {
+				t.Fatalf("write compatible NOCASE schema: %v", err)
+			}
+
+			test.query.Protocol = "tcp"
+			test.query.MitreTactic = "initial access"
+			test.query.MitreTechniqueID = "t1190"
+			alerts, total, err := store.Query(context.Background(), test.query)
+			if err != nil {
+				t.Fatalf("query compatible NOCASE schema: %v", err)
+			}
+			if total != 1 || len(alerts) != 1 || alerts[0].MatchedKeyword != "exact-lower" {
+				t.Fatalf("exact query total=%d alerts=%+v, want only exact-lower", total, alerts)
+			}
+		})
+	}
+}
+
+func TestStoreHistoricalExactFilterOverridesCompatibleNoCaseColumn(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	now := time.Date(2026, 7, 25, 6, 55, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	createSQLiteFixture(t, path, noCaseExactFilterSchema())
+	historicalStore, err := Open(ctx, Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open historical compatible NOCASE schema: %v", err)
+	}
+	lower := makeAlert(historical, "historical-exact")
+	variant := makeAlert(historical.Add(2*time.Minute), "historical-variant")
+	variant.RuleID = strings.ToUpper(lower.RuleID)
+	if err := historicalStore.WriteBatch(ctx, []*model.Alert{lower, variant}); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("write historical compatible NOCASE schema: %v", err)
+	}
+	if err := historicalStore.Close(); err != nil {
+		t.Fatalf("close historical compatible NOCASE schema: %v", err)
+	}
+
+	alerts, total, err := store.Query(ctx, Query{RuleID: lower.RuleID, Limit: 10})
+	if err != nil {
+		t.Fatalf("query historical compatible NOCASE schema: %v", err)
+	}
+	if total != 1 || len(alerts) != 1 || alerts[0].MatchedKeyword != "historical-exact" {
+		t.Fatalf("historical exact query total=%d alerts=%+v, want only historical-exact", total, alerts)
+	}
+}
+
 func TestStoreReplaysRecoveryLogIdempotently(t *testing.T) {
 	ctx := context.Background()
 	dir := t.TempDir()
@@ -1973,6 +2078,17 @@ func caseVariantRequiredSchema() string {
 		}
 	}
 	return result
+}
+
+func noCaseExactFilterSchema() string {
+	return strings.NewReplacer(
+		"rule_id TEXT NOT NULL", "rule_id TEXT COLLATE NOCASE NOT NULL",
+		"severity TEXT NOT NULL", "severity TEXT COLLATE NOCASE NOT NULL",
+		"src_ip TEXT NOT NULL", "src_ip TEXT COLLATE NOCASE NOT NULL",
+		"dst_ip TEXT NOT NULL", "dst_ip TEXT COLLATE NOCASE NOT NULL",
+		"UNIQUE(rule_id, src_ip, dst_ip, dst_port, window_start)",
+		"UNIQUE(rule_id COLLATE BINARY, src_ip COLLATE BINARY, dst_ip COLLATE BINARY, dst_port, window_start)",
+	).Replace(schemaSQL)
 }
 
 func readFileBytes(t *testing.T, path string) []byte {

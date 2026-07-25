@@ -1,0 +1,40 @@
+{
+  "task": "r90-29-sqlite-exact-filter-collation",
+  "timestamp": "2026-07-25T06:45:27-07:00",
+  "branch": "main",
+  "remote_baseline": "3360e16effae4b0f9e8ecc911907d492e7c6d75a",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Verified clean local main and fetched origin/main agree",
+    "Verified the completed R90-28 task state and both delivery commits in the single discovered local Vault",
+    "Refreshed the empty queue from release boundaries and exact-filter query semantics",
+    "Selected R90-29 as the highest-priority dependency-ready increment",
+    "Pinned rule, severity, source, and destination predicates to binary SQLite comparison",
+    "Added direct primary and historical NOCASE-schema query regressions while preserving protocol and MITRE behavior",
+    "Passed 20 uncached focused alert-store race runs",
+    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Commit, push, and verify the completed increment"
+  ],
+  "todo": [
+    "Verify fetched origin/main and synchronize the exact range to the local Vault",
+    "Reconcile the roadmap and task-state resume instructions"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "Compatible column collations can broaden exact filters unless the predicate overrides them",
+    "Protocol and MITRE filters must remain intentionally case-insensitive",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Continue R90-29 delivery from the clean fetched 3360e16effae4b0f9e8ecc911907d492e7c6d75a baseline. Implementation, direct regressions, and required local validation pass. Commit the intended increment, push it, verify fetched origin/main, synchronize the exact range to the single local Vault, and reconcile completion evidence. Do not create v0.1.1 or publish artifacts."
+}
