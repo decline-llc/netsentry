@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "e40c15b2028c1a7aa4c7185a575553659c3c9ec8",
   "risk_level": "Medium",
-  "current_checkpoint": "validated_pending_delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean local main and fetched origin/main agree",
     "Verified the completed R90-39 task state, both delivery commits, and both exact-range notes in the single discovered local Vault",
@@ -15,28 +15,24 @@
     "Covered missing, empty, and whitespace-only startup rejection across missing and existing databases",
     "Covered runtime no-append preservation and padded nonblank replay without normalization",
     "Preserved stored-row required-text behavior",
-    "Passed twenty uncached focused alert-store race runs, the complete native race suite, E2E smoke, documentation, knowledge, JSON, diff, and sensitive-information checks"
+    "Passed twenty uncached focused alert-store race runs, the complete native race suite, E2E smoke, documentation, knowledge, JSON, diff, and sensitive-information checks",
+    "Pushed 75692ad0a9eb17a3672f60fbccf990204c50945f and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact full-SHA Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Commit and deliver the validated R90-40 increment"
-  ],
-  "todo": [
-    "Commit and push the feature",
-    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
-    "Reconcile roadmap and task-state delivery evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false
+    "commit": "75692ad0a9eb17a3672f60fbccf990204c50945f",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "e40c15b2028c1a7aa4c7185a575553659c3c9ec8..75692ad0a9eb17a3672f60fbccf990204c50945f",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
   },
   "remaining_risks": [
-    "Delivery evidence remains pending until fetched origin/main and the exact-range Vault note are verified",
+    "Invalid recovery input is rejected but not automatically repaired",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "R90-40 is implemented and validated from clean fetched origin/main at e40c15b2028c1a7aa4c7185a575553659c3c9ec8. Stage only the eight intended feature paths, commit, push, fetch and verify origin/main, rerun the explicit-Vault knowledge check, synchronize the exact full-SHA range, verify its note/index/MOC, then reconcile the roadmap, plan, and task state in a docs-only delivery commit. Do not repeat implementation or normalize rule names, change rule schema, alert identity, or recovery format, migrate stored rows, create v0.1.1, or publish artifacts."
+  "resume_instructions": "R90-40 is complete at 75692ad0a9eb17a3672f60fbccf990204c50945f. Do not repeat its implementation, validation, push, or Vault synchronization. No later engineering increment is selected; refresh the rolling roadmap on the next $netsentry-next trigger. Do not normalize rule names, change rule schema, alert identity, or recovery format, migrate stored rows, create v0.1.1, or publish artifacts."
 }

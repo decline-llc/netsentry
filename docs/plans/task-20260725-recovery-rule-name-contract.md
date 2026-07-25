@@ -73,6 +73,7 @@ repair, operator data, tag creation, or publication authority.
 
 ## Delivery Evidence
 
+- Feature commit: `75692ad0a9eb17a3672f60fbccf990204c50945f`
 - Recovery rule-name validation implemented with direct missing, empty,
   whitespace-only, startup-preservation, runtime-preservation, padded-name, and
   stored-row compatibility regressions.
@@ -80,5 +81,8 @@ repair, operator data, tag creation, or publication authority.
 - `make test`, `make e2e-smoke`, `make docs-check`, explicit-Vault
   `make knowledge-check`, task-state JSON parsing, `git diff --check`, and the
   sensitive-information review passed.
-- Pending commit, push, fetched-remote verification, post-fetch knowledge
-  validation, and exact-range Vault synchronization.
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range:
+  `e40c15b2028c1a7aa4c7185a575553659c3c9ec8..75692ad0a9eb17a3672f60fbccf990204c50945f`
+- Vault iteration note, full commit index, and `00-MOC` link: verified.
