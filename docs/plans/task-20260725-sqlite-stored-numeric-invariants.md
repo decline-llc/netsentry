@@ -62,3 +62,11 @@ model instead of silently narrowing or returning them.
 
 Stop if completion requires automatic row repair, deletion, schema migration, a
 full-table startup scan, operator data, tag creation, or publication authority.
+
+## Delivery Evidence
+
+- Feature commit: `23679d6fbf6619315b6260e614dad62b2f3c2863`
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range: `2aabb40cb0058e4c0ffbde428edfd25ed1d9ecf2..23679d6fbf6619315b6260e614dad62b2f3c2863`
+- Vault iteration note, full commit index, and `00-MOC` link: verified.
