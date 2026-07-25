@@ -1,0 +1,44 @@
+{
+  "task": "r90-36-recovery-ipv4-address-contract",
+  "timestamp": "2026-07-25T09:43:54-07:00",
+  "branch": "main",
+  "remote_baseline": "6306fce9b5bad932ca3d907fefaf7640eb5a318a",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_pending_delivery",
+  "completed": [
+    "Verified clean local main and fetched origin/main agree",
+    "Verified the completed R90-35 task state and both delivery commits in the single discovered local Vault",
+    "Refreshed the empty queue from release boundaries and the strict IPv4 ingress contract",
+    "Selected R90-36 as the highest-priority dependency-ready increment",
+    "Confirmed recovery semantic validation currently accepts non-blank malformed and IPv6 addresses",
+    "Added strict IPv4 recovery validation and direct startup/runtime preservation regressions",
+    "Passed 20 uncached focused alert-store race runs",
+    "Held delivery after the full native suite exposed an R90-29 collation fixture that used IPv6 through the recovery path",
+    "Reconciled the collation fixture so writer-contract cases use IPv4 and persisted-collation cases seed below recovery",
+    "Passed 20 uncached affected-fixture race runs and the combined focused recovery suite",
+    "Passed the complete native race suite and E2E smoke",
+    "Passed documentation, knowledge, JSON, diff, and sensitive-information checks"
+  ],
+  "in_progress": [
+    "Commit and push the validated feature"
+  ],
+  "todo": [
+    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
+    "Reconcile roadmap and task-state delivery evidence"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "The validated feature is not yet present on fetched origin/main",
+    "Exact-range Vault synchronization remains pending",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-36 implementation and all required validation pass. The first full native run exposed an R90-29 exact-filter fixture writing IPv6 through recovery; the fixture now uses valid IPv4 writer input for rule/severity cases and seeds source/destination collation-only rows below recovery. Twenty affected-fixture race reruns, the combined focused suite, full native suite, and remaining gates are clean. Commit and push the feature, verify fetched origin/main, synchronize the exact pushed range to the local Vault, then reconcile delivery evidence. Do not migrate stored rows, create v0.1.1, or publish artifacts."
+}

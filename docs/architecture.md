@@ -238,8 +238,9 @@ Current build:
   and network fields emitted by normalized alert writes. Its durable `id` must
   match the normalized aggregation identity; `first_seen` and `last_seen` must
   equal `timestamp`; `window_start` must match the configured aggregation
-  window; and `aggregated_count` must equal one. A semantic failure reports the
-  record and field through `ErrRecoveryLogIntegrity` before replay begins.
+  window; `aggregated_count` must equal one; and `src_ip` plus `dst_ip` must be
+  strict IPv4 addresses. Malformed, ordinary IPv6, and IPv4-mapped IPv6 address
+  text fails through `ErrRecoveryLogIntegrity` before replay begins.
 - The complete recovery preflight runs before database-directory creation or
   any writable SQLite open. Startup replays that validated in-memory snapshot
   after initialization rather than rereading the file, so rejected input

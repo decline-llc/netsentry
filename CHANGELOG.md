@@ -139,6 +139,8 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Syntactically valid recovery records now must contain the durable normalized
   alert identity, timestamps/window/count, and network tuple before replay;
   semantic failures preserve the complete log without persisting a valid prefix.
+- Recovery semantic validation now requires strict IPv4 source and destination
+  addresses before startup replay or runtime append.
 - Recovery logs now receive their complete structural and semantic preflight
   before writable SQLite initialization, so rejected input cannot create a
   missing database or modify a compatible existing database.

@@ -210,9 +210,10 @@ func TestStoreQueryFiltersCountsAndPagesAlerts(t *testing.T) {
 
 func TestStoreExactFiltersOverrideCompatibleNoCaseColumns(t *testing.T) {
 	tests := []struct {
-		name   string
-		mutate func(*model.Alert)
-		query  Query
+		name           string
+		mutate         func(*model.Alert)
+		query          Query
+		bypassRecovery bool
 	}{
 		{
 			name: "rule",
@@ -229,14 +230,16 @@ func TestStoreExactFiltersOverrideCompatibleNoCaseColumns(t *testing.T) {
 			query: Query{Severity: model.SeverityHigh},
 		},
 		{
-			name: "source",
+			name:           "source",
+			bypassRecovery: true,
 			mutate: func(alert *model.Alert) {
 				alert.SrcIP = strings.ToUpper(alert.SrcIP)
 			},
 			query: Query{SrcIP: "2001:db8::1"},
 		},
 		{
-			name: "destination",
+			name:           "destination",
+			bypassRecovery: true,
 			mutate: func(alert *model.Alert) {
 				alert.DstIP = strings.ToUpper(alert.DstIP)
 			},
@@ -255,14 +258,24 @@ func TestStoreExactFiltersOverrideCompatibleNoCaseColumns(t *testing.T) {
 
 			base := time.Date(2026, 7, 25, 6, 50, 0, 0, time.UTC)
 			lower := makeAlert(base, "exact-lower")
-			lower.SrcIP = "2001:db8::1"
-			lower.DstIP = "2001:db8::2"
 			variant := makeAlert(base.Add(2*time.Minute), "case-variant")
 			variant.SrcIP = lower.SrcIP
 			variant.DstIP = lower.DstIP
+			if test.bypassRecovery {
+				lower.SrcIP = "2001:db8::1"
+				lower.DstIP = "2001:db8::2"
+				variant.SrcIP = lower.SrcIP
+				variant.DstIP = lower.DstIP
+			}
 			test.mutate(variant)
-			if err := store.WriteBatch(context.Background(), []*model.Alert{lower, variant}); err != nil {
-				t.Fatalf("write compatible NOCASE schema: %v", err)
+			var writeErr error
+			if test.bypassRecovery {
+				writeErr = store.writeBatchToDB(context.Background(), store.db, []*model.Alert{lower, variant}, base)
+			} else {
+				writeErr = store.WriteBatch(context.Background(), []*model.Alert{lower, variant})
+			}
+			if writeErr != nil {
+				t.Fatalf("write compatible NOCASE schema: %v", writeErr)
 			}
 
 			test.query.Protocol = "tcp"
@@ -1095,6 +1108,94 @@ func TestStoreRejectsSemanticallyInvalidRecoveryLogWithoutModification(t *testin
 	}
 }
 
+func TestStoreRejectsNonIPv4RecoveryAddressesWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 25, 9, 45, 0, 0, time.UTC)
+	window := time.Minute
+	valid := normalizeAlert(makeAlert(now, "valid-prefix"), now, window)
+	validJSON, err := json.Marshal(valid)
+	if err != nil {
+		t.Fatalf("marshal valid recovery record: %v", err)
+	}
+	tests := []struct {
+		name      string
+		field     string
+		value     string
+		condition string
+	}{
+		{name: "malformed source", field: "src_ip", value: "not-an-ip", condition: "field src_ip must be an IPv4 address"},
+		{name: "malformed destination", field: "dst_ip", value: "not-an-ip", condition: "field dst_ip must be an IPv4 address"},
+		{name: "IPv6 source", field: "src_ip", value: "2001:db8::1", condition: "field src_ip must be an IPv4 address"},
+		{name: "IPv6 destination", field: "dst_ip", value: "2001:db8::2", condition: "field dst_ip must be an IPv4 address"},
+		{name: "IPv4-mapped IPv6 source", field: "src_ip", value: "::ffff:192.0.2.1", condition: "field src_ip must be an IPv4 address"},
+		{name: "IPv4-mapped IPv6 destination", field: "dst_ip", value: "::ffff:192.0.2.2", condition: "field dst_ip must be an IPv4 address"},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			invalid := valid
+			switch test.field {
+			case "src_ip":
+				invalid.SrcIP = test.value
+			case "dst_ip":
+				invalid.DstIP = test.value
+			default:
+				t.Fatalf("unsupported address field %q", test.field)
+			}
+			invalid = normalizeAlert(&invalid, invalid.Timestamp, window)
+			invalidJSON, err := json.Marshal(invalid)
+			if err != nil {
+				t.Fatalf("marshal invalid recovery record: %v", err)
+			}
+			contents := append(append(append([]byte(nil), validJSON...), '\n'), invalidJSON...)
+			contents = append(contents, '\n')
+
+			for _, existing := range []bool{false, true} {
+				state := "missing database"
+				if existing {
+					state = "existing database"
+				}
+				t.Run(state, func(t *testing.T) {
+					dir := t.TempDir()
+					dbPath := filepath.Join(dir, "alerts.db")
+					recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+					var beforeDB []byte
+					if existing {
+						createSQLiteFixture(t, dbPath, schemaSQL, `DROP INDEX idx_alerts_last_seen`)
+						beforeDB = readFileBytes(t, dbPath)
+					}
+					if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+						t.Fatalf("write invalid recovery log: %v", err)
+					}
+
+					store, err := Open(context.Background(), Options{
+						Path:              dbPath,
+						RecoveryLogPath:   recoveryLogPath,
+						JournalMode:       "WAL",
+						BusyTimeoutMS:     1000,
+						AggregationWindow: window,
+						Now:               func() time.Time { return now },
+					})
+					if store != nil {
+						_ = store.Close()
+						t.Fatal("non-IPv4 recovery log returned a usable store")
+					}
+					if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+						!strings.Contains(err.Error(), "record 2") ||
+						!strings.Contains(err.Error(), test.condition) {
+						t.Fatalf("startup error = %v, want record 2 ErrRecoveryLogIntegrity containing %q", err, test.condition)
+					}
+					assertFileBytes(t, recoveryLogPath, contents)
+					if existing {
+						assertFileBytes(t, dbPath, beforeDB)
+						assertSQLiteIndexMissing(t, dbPath, "idx_alerts_last_seen")
+					} else {
+						assertFileDoesNotExist(t, dbPath)
+					}
+				})
+			}
+		})
+	}
+}
+
 func TestStoreRejectsInconsistentNormalizedRecoveryLogWithoutModification(t *testing.T) {
 	now := time.Date(2026, 7, 21, 4, 0, 0, 0, time.UTC)
 	window := time.Minute
@@ -1361,6 +1462,13 @@ func TestStoreWriteBatchRejectsInvalidRecoveryLogBeforeAppend(t *testing.T) {
 	if err != nil {
 		t.Fatalf("marshal inconsistent recovery record: %v", err)
 	}
+	nonIPv4 := valid
+	nonIPv4.SrcIP = "2001:db8::1"
+	nonIPv4 = normalizeAlert(&nonIPv4, nonIPv4.Timestamp, time.Minute)
+	nonIPv4JSON, err := json.Marshal(nonIPv4)
+	if err != nil {
+		t.Fatalf("marshal non-IPv4 recovery record: %v", err)
+	}
 
 	tests := []struct {
 		name      string
@@ -1371,6 +1479,7 @@ func TestStoreWriteBatchRejectsInvalidRecoveryLogBeforeAppend(t *testing.T) {
 		{name: "truncated", contents: validJSON, condition: "truncated final JSONL record"},
 		{name: "semantic", contents: []byte("{}\n"), condition: "required field id is empty"},
 		{name: "normalized invariant", contents: append(inconsistentJSON, '\n'), condition: "field id does not match normalized identity"},
+		{name: "non-IPv4 address", contents: append(nonIPv4JSON, '\n'), condition: "field src_ip must be an IPv4 address"},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

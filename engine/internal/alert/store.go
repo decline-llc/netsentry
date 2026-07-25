@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/netip"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -1359,6 +1360,18 @@ func validateRecoveryAlert(alert model.Alert, aggregationWindow time.Duration) e
 	for _, field := range requiredStrings {
 		if strings.TrimSpace(field.value) == "" {
 			return fmt.Errorf("required field %s is empty", field.name)
+		}
+	}
+	for _, field := range []struct {
+		name  string
+		value string
+	}{
+		{name: "src_ip", value: alert.SrcIP},
+		{name: "dst_ip", value: alert.DstIP},
+	} {
+		address, err := netip.ParseAddr(field.value)
+		if err != nil || !address.Is4() {
+			return fmt.Errorf("field %s must be an IPv4 address", field.name)
 		}
 	}
 	requiredTimes := []struct {

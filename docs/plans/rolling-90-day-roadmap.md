@@ -52,6 +52,7 @@
 | R90-33 | Jul 25–Oct 20 | Complete early | Validate stored SQLite aggregation identity. | R90-32 | Primary and historical reads reject empty or altered alert IDs that disagree with the canonical aggregation tuple without modifying historical shard bytes; valid aggregation identities remain compatible. |
 | R90-34 | Jul 25–Oct 20 | Complete early | Validate stored SQLite required text. | R90-33 | Primary and historical reads reject blank required identity, rule, and network text without modifying historical shard bytes; optional empty text and valid rows remain compatible. |
 | R90-35 | Jul 25–Oct 20 | Complete early | Enforce the UDS IPv4 address contract. | R90-34 | UDS packet frames accept only strict IPv4 source and destination addresses; ordinary and IPv4-mapped IPv6 text fails once without queueing a packet, while valid capture traffic remains compatible. |
+| R90-36 | Jul 25–Oct 20 | In progress | Enforce the recovery IPv4 address contract. | R90-35 | Startup and runtime recovery preflight reject malformed, ordinary IPv6, or IPv4-mapped IPv6 source/destination addresses before modifying the complete log or missing/existing SQLite state; valid IPv4 replay remains compatible. |
 
 ## R90-07 Definition
 
@@ -522,6 +523,35 @@
   packet-schema change, C capture changes, address normalization, stored-data
   migration, operator data, or tag/publication authority.
 
+## R90-36 Definition
+
+- **Goal:** extend the strict IPv4 ingress contract to durable recovery records
+  before startup replay or runtime append can modify state.
+- **Risk:** dependent identity validation can obscure an invalid address, while
+  late validation can create or initialize SQLite or append a new recovery
+  record before failing.
+- **Required validation:** direct malformed, ordinary IPv6, and IPv4-mapped
+  IPv6 source/destination rejection; missing and existing database startup
+  preservation with a valid prefix; runtime log/database preservation; valid
+  replay/write compatibility; twenty focused alert-store race runs, full
+  native, documentation, E2E, and knowledge checks.
+- **Stop condition:** stop if safe completion requires IPv6 support, a
+  recovery-format change, address normalization, stored-row migration,
+  automatic log repair, operator data, or tag/publication authority.
+
+### R90-36 Validation Deviation
+
+- **Observed:** The first full native race suite failed the four
+  `TestStoreExactFiltersOverrideCompatibleNoCaseColumns` cases because their
+  shared fixture wrote IPv6 source/destination text through the recovery path.
+- **Impact:** Delivery was held pending a clean full-suite rerun. The strict
+  recovery behavior itself passed all focused tests.
+- **Resolution:** Keep rule/severity compatibility on valid IPv4 writer input.
+  Seed the source/destination collation-only rows below the recovery boundary
+  because that test exercises persisted SQL comparison semantics. The affected
+  test then passed twenty uncached race runs, and the combined focused and
+  complete native race suites passed.
+
 ### R90-24 Validation Deviation
 
 - **Observed:** The first full native race suite hit the existing
@@ -755,7 +785,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -807,15 +837,11 @@
 
 ## Current Checkpoint
 
-R90-35 completed early at `ab90caa9b2148f9cfd706445bbd35c6646ac44a5`
-after the queue was refreshed from the clean fetched R90-34 reconciliation
-baseline, completed task state, release boundaries, the IPv4-only packet
-contract, and verified Vault evidence. UDS packet validation now accepts only
-strict IPv4 source and destination addresses; ordinary and IPv4-mapped IPv6 in
-either position produce one decode error and no queued packet, while valid IPv4
-delivery remains compatible. Twenty uncached focused receiver race runs, the
-full native suite, E2E smoke, documentation, and knowledge checks passed;
-fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA
-Vault note, full index, and MOC are verified. No later engineering increment is
-selected; refresh the rolling roadmap on the next `$netsentry-next` trigger.
+R90-36 implementation and validation pass from the clean fetched R90-35
+reconciliation baseline `6306fce9b5bad932ca3d907fefaf7640eb5a318a`.
+The recovery-focused suite, twenty uncached focused race runs, twenty uncached
+collation-fixture race runs, complete native race suite, E2E smoke,
+documentation, knowledge, JSON, diff, and sensitive-information checks are
+clean. The validation deviation is resolved; feature commit, push,
+fetched-remote verification, and exact-range Vault synchronization remain.
 Publication remains unauthorized.

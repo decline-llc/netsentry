@@ -288,9 +288,10 @@ Each decoded record must contain the durable identity (`id`, `event_id`, and
 `dst_ip`, and `protocol`) emitted by the normalized recovery writer. The
 durable `id` must equal the normalized aggregation identity, `first_seen` and
 `last_seen` must equal `timestamp`, `window_start` must match the configured
-aggregation window, and `aggregated_count` must equal one. A missing, empty, or
-inconsistent field reports its record number and fails through the same
-preservation boundary before replay starts.
+aggregation window, `aggregated_count` must equal one, and both addresses must
+be strict IPv4. A missing, empty, inconsistent, malformed, ordinary IPv6, or
+IPv4-mapped IPv6 address field reports its record number and fails through the
+same preservation boundary before replay starts.
 This complete preflight occurs before database-directory creation and writable
 SQLite initialization. NetSentry replays the validated in-memory record set
 after initialization without a second read; invalid input therefore leaves a
