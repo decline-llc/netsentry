@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "3360e16effae4b0f9e8ecc911907d492e7c6d75a",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean local main and fetched origin/main agree",
     "Verified the completed R90-28 task state and both delivery commits in the single discovered local Vault",
@@ -13,28 +13,25 @@
     "Pinned rule, severity, source, and destination predicates to binary SQLite comparison",
     "Added direct primary and historical NOCASE-schema query regressions while preserving protocol and MITRE behavior",
     "Passed 20 uncached focused alert-store race runs",
-    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, and diff checks"
+    "Passed the complete native race suite, E2E smoke, documentation, knowledge, JSON, and diff checks",
+    "Pushed f12a454c95515dd92549e33e3c56d00449408d89 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact full-SHA Vault note, full index, and MOC"
   ],
-  "in_progress": [
-    "Commit, push, and verify the completed increment"
-  ],
-  "todo": [
-    "Verify fetched origin/main and synchronize the exact range to the local Vault",
-    "Reconcile the roadmap and task-state resume instructions"
-  ],
+  "in_progress": [],
+  "todo": [],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false
+    "commit": "f12a454c95515dd92549e33e3c56d00449408d89",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "3360e16effae4b0f9e8ecc911907d492e7c6d75a..f12a454c95515dd92549e33e3c56d00449408d89",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
   },
   "remaining_risks": [
     "Compatible column collations can broaden exact filters unless the predicate overrides them",
     "Protocol and MITRE filters must remain intentionally case-insensitive",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Continue R90-29 delivery from the clean fetched 3360e16effae4b0f9e8ecc911907d492e7c6d75a baseline. Implementation, direct regressions, and required local validation pass. Commit the intended increment, push it, verify fetched origin/main, synchronize the exact range to the single local Vault, and reconcile completion evidence. Do not create v0.1.1 or publish artifacts."
+  "resume_instructions": "R90-29 is complete at f12a454c95515dd92549e33e3c56d00449408d89. Do not repeat its implementation, validation, push, or Vault synchronization. No later engineering increment is selected; refresh the rolling roadmap on the next $netsentry-next trigger. Do not create v0.1.1 or publish artifacts."
 }

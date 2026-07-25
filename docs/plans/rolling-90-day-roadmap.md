@@ -45,7 +45,7 @@
 | R90-26 | Jul 24–Oct 20 | Complete early | Reject write-affecting SQLite foreign keys. | R90-25 | Existing primary and historical databases with foreign-key relationships whose source or target is `alerts` or `alert_events` fail read-only preflight and remain unchanged; relationships confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 | R90-27 | Jul 25–Oct 20 | Complete early | Require binary collation on SQLite aggregation uniqueness. | R90-26 | Existing primary and historical databases whose canonical alert aggregation uniqueness uses a non-binary collation fail read-only preflight and remain unchanged; a binary-collated canonical key remains compatible and preserves distinct NetSentry identities. |
 | R90-28 | Jul 25–Oct 20 | Complete early | Honor SQLite identifier case semantics during schema preflight. | R90-27 | Existing primary and historical databases with case-variant required table, column, aggregation-key, and safe unique-key identifiers pass the same validation and remain writable; all write-safety checks remain enforced. |
-| R90-29 | Jul 25–Oct 20 | In progress | Pin SQLite exact-filter collation. | R90-28 | Rule, severity, source, and destination filters retain binary exact-match semantics for compatible primary and historical schemas regardless of declared column collation; intentionally case-insensitive filters remain unchanged. |
+| R90-29 | Jul 25–Oct 20 | Complete early | Pin SQLite exact-filter collation. | R90-28 | Rule, severity, source, and destination filters retain binary exact-match semantics for compatible primary and historical schemas regardless of declared column collation; intentionally case-insensitive filters remain unchanged. |
 
 ## R90-07 Definition
 
@@ -572,9 +572,19 @@
   write-safety check remain enforced. Twenty focused race runs, the full native
   suite, E2E smoke, documentation, and knowledge checks passed; fetched
   `origin/main`, the post-fetch knowledge gate, and the exact full-SHA Vault
-  note, index, and MOC are verified. No later engineering increment is
-  selected; refresh the rolling roadmap on the next `$netsentry-next` trigger.
-  Publication remains unauthorized.
+  note, index, and MOC are verified. The queue was refreshed on Jul 25 from the
+  clean fetched baseline, completed task state, release boundaries,
+  exact-filter query semantics, and verified Vault evidence. R90-29 completed
+  early at `f12a454c95515dd92549e33e3c56d00449408d89`: rule, severity,
+  source, and destination predicates now explicitly use binary comparison,
+  preventing compatible custom column collations from broadening primary or
+  historical results while protocol and MITRE matching remain
+  case-insensitive. Twenty focused race runs, the full native suite, E2E smoke,
+  documentation, and knowledge checks passed; fetched `origin/main`, the
+  post-fetch knowledge gate, and the exact full-SHA Vault note, index, and MOC
+  are verified. No later engineering increment is selected; refresh the rolling
+  roadmap on the next `$netsentry-next` trigger. Publication remains
+  unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -645,13 +655,14 @@
 
 ## Current Checkpoint
 
-R90-29 is selected from the clean fetched
-`3360e16effae4b0f9e8ecc911907d492e7c6d75a` baseline after verifying the
-completed R90-28 task state and both delivery commits in the single discovered
-local Vault. Compatible schemas can declare `NOCASE` on exact-filter columns
-while retaining an explicit binary aggregation key, causing SQLite to broaden
-documented exact matches. R90-29 is limited to explicit query-predicate
-collation plus direct primary and historical regressions. Twenty uncached
-focused race runs, the full native suite, E2E smoke, documentation, and
-knowledge checks pass; delivery verification is pending. Publication remains
-unauthorized.
+R90-29 completed early at `f12a454c95515dd92549e33e3c56d00449408d89`
+after the queue was refreshed from the clean fetched R90-28 baseline, completed
+task state, release boundaries, exact-filter query semantics, and verified
+Vault evidence. Rule, severity, source, and destination filters now use
+explicit binary comparison for both rows and counts across primary and
+historical schemas; intentionally case-insensitive protocol and MITRE filters
+remain unchanged. Twenty focused race runs, the full native suite, E2E smoke,
+documentation, and knowledge checks passed; fetched `origin/main`, post-fetch
+knowledge validation, and the exact full-SHA Vault note, full index, and MOC
+are verified. No later engineering increment is selected; refresh the rolling
+roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.

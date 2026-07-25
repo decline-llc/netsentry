@@ -63,3 +63,11 @@ operator-declared SQLite column collations.
 Stop if completion requires schema migration, rejecting an otherwise compatible
 database, changing public filter semantics, operator data, tag creation, or
 publication authority.
+
+## Delivery Evidence
+
+- Feature commit: `f12a454c95515dd92549e33e3c56d00449408d89`
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range: `3360e16effae4b0f9e8ecc911907d492e7c6d75a..f12a454c95515dd92549e33e3c56d00449408d89`
+- Vault iteration note, full commit index, and `00-MOC` link: verified.
