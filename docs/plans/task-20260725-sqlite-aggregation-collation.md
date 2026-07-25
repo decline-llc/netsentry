@@ -64,3 +64,11 @@ collation before writable initialization.
 - Stop if completion requires changing the aggregation identity, schema
   migration, rewriting operator indexes, operator data, tag creation, or
   publication authority.
+
+## Delivery Evidence
+
+- Feature commit: `6a40a0aaf9b21d5d8a9ce08b7939d5b7b4ec8241`
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range: `75b160aa268331e37883bbb1ac3019346ce494f0..6a40a0aaf9b21d5d8a9ce08b7939d5b7b4ec8241`
+- Vault iteration note, full commit index, and `00-MOC` link: verified.

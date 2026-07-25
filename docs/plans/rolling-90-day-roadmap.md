@@ -43,7 +43,7 @@
 | R90-24 | Jul 23–Oct 20 | Complete early | Reject write-affecting SQLite generated columns. | R90-23 | Existing primary and historical databases with virtual or stored generated columns on `alerts` or `alert_events` fail read-only preflight and remain unchanged; ordinary nullable and defaulted column extensions remain compatible and writable. |
 | R90-25 | Jul 24–Oct 20 | Complete early | Reject write-affecting SQLite check constraints. | R90-24 | Existing primary and historical databases with `CHECK` constraints on `alerts` or `alert_events` fail read-only preflight and remain unchanged; constraints confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
 | R90-26 | Jul 24–Oct 20 | Complete early | Reject write-affecting SQLite foreign keys. | R90-25 | Existing primary and historical databases with foreign-key relationships whose source or target is `alerts` or `alert_events` fail read-only preflight and remain unchanged; relationships confined to unrelated operator tables remain compatible and NetSentry writes succeed. |
-| R90-27 | Jul 25–Oct 20 | In progress | Require binary collation on SQLite aggregation uniqueness. | R90-26 | Existing primary and historical databases whose canonical alert aggregation uniqueness uses a non-binary collation fail read-only preflight and remain unchanged; a binary-collated canonical key remains compatible and preserves distinct NetSentry identities. |
+| R90-27 | Jul 25–Oct 20 | Complete early | Require binary collation on SQLite aggregation uniqueness. | R90-26 | Existing primary and historical databases whose canonical alert aggregation uniqueness uses a non-binary collation fail read-only preflight and remain unchanged; a binary-collated canonical key remains compatible and preserves distinct NetSentry identities. |
 
 ## R90-07 Definition
 
@@ -522,9 +522,17 @@
   references. Twenty focused race runs, the full native suite, E2E smoke,
   documentation, and knowledge checks passed; fetched `origin/main`, the
   post-fetch knowledge gate, and the exact full-SHA Vault note, index, and MOC
-  are verified. No later engineering increment is selected; refresh the
-  rolling roadmap on the next `$netsentry-next` trigger. Publication remains
-  unauthorized.
+  are verified. The queue was refreshed on Jul 25 from the clean fetched
+  baseline, completed task state, release boundaries, aggregation-index
+  collation metadata, and verified Vault evidence. R90-27 completed early at
+  `6a40a0aaf9b21d5d8a9ce08b7939d5b7b4ec8241`: the exact canonical
+  aggregation uniqueness key now requires binary collation in column order,
+  while compatible binary indexes preserve case-distinct identities. Twenty
+  focused race runs, the full native suite, E2E smoke, documentation, and
+  knowledge checks passed; fetched `origin/main`, the post-fetch knowledge
+  gate, and the exact full-SHA Vault note, index, and MOC are verified. No later
+  engineering increment is selected; refresh the rolling roadmap on the next
+  `$netsentry-next` trigger. Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -595,4 +603,4 @@
 
 ## Current Checkpoint
 
-R90-26 completed early at `0ddba61bde65fe1bb5ca9757bc87d06123409251` after the queue was refreshed from the clean fetched R90-25 baseline, completed task state, release boundaries, SQLite foreign-key metadata, and verified Vault evidence. Outgoing and incoming relationships involving `alerts` or `alert_events`, including a historical shard, now fail before writable initialization with byte preservation. Case-variant and implicit-primary-key references are covered, while relationships confined to unrelated operator tables remain compatible. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. The queue was refreshed on Jul 25 from that clean fetched baseline, completed task state, release boundaries, aggregation-index collation metadata, and verified Vault evidence. R90-27 is the highest-priority dependency-ready increment. Publication remains unauthorized.
+R90-27 completed early at `6a40a0aaf9b21d5d8a9ce08b7939d5b7b4ec8241` after the queue was refreshed from the clean fetched R90-26 baseline, completed task state, release boundaries, aggregation-index collation metadata, and verified Vault evidence. Inline and explicit non-binary aggregation keys, including a historical shard, now fail before writable initialization with byte preservation. Explicit binary keys remain writable and preserve identities that differ only by case. Twenty focused race runs, the full native suite, E2E smoke, documentation, and knowledge checks passed; fetched `origin/main`, post-fetch knowledge validation, and the exact full-SHA Vault note, full index, and MOC are verified. No later engineering increment is selected; refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication remains unauthorized.
