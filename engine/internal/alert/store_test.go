@@ -1004,6 +1004,177 @@ func TestStoreRejectsIncompleteHistoricalMITRETupleWithoutModification(t *testin
 	assertFileBytesUnchanged(t, path, before)
 }
 
+func TestStoreRejectsNoncanonicalStoredProtocols(t *testing.T) {
+	tests := []struct {
+		name     string
+		protocol string
+		read     func(context.Context, *Store) error
+	}{
+		{
+			name:     "case variant through list",
+			protocol: "tcp",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:     "unsupported name through query",
+			protocol: "SCTP",
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+		{
+			name:     "missing protocol number through list",
+			protocol: "PROTO_",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:     "negative protocol number through query",
+			protocol: "PROTO_-1",
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+		{
+			name:     "leading zero protocol number through list",
+			protocol: "PROTO_02",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:     "numeric ICMP alias through query",
+			protocol: "PROTO_1",
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+		{
+			name:     "numeric TCP alias through list",
+			protocol: "PROTO_6",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:     "numeric UDP alias through query",
+			protocol: "PROTO_17",
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+		{
+			name:     "out of range protocol number through list",
+			protocol: "PROTO_256",
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+		},
+		{
+			name:     "padded protocol number through query",
+			protocol: "PROTO_2 ",
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			ctx := context.Background()
+			store := openTestStore(t, time.Minute)
+			defer store.Close()
+			if err := store.WriteBatch(ctx, []*model.Alert{
+				makeAlert(time.Date(2026, 7, 26, 0, 10, 0, 0, time.UTC), "stored-protocol"),
+			}); err != nil {
+				t.Fatalf("seed alert: %v", err)
+			}
+			if _, err := store.db.ExecContext(ctx, "UPDATE alerts SET protocol = ?", test.protocol); err != nil {
+				t.Fatalf("inject noncanonical stored protocol: %v", err)
+			}
+
+			err := test.read(ctx, store)
+			condition := fmt.Sprintf("protocol %q is not canonical", test.protocol)
+			if err == nil || !strings.Contains(err.Error(), condition) {
+				t.Fatalf("read error = %v, want %q", err, condition)
+			}
+		})
+	}
+}
+
+func TestStoreAllowsCanonicalStoredProtocols(t *testing.T) {
+	for _, protocol := range []string{"TCP", "UDP", "ICMP", "PROTO_0", "PROTO_2", "PROTO_255"} {
+		t.Run(protocol, func(t *testing.T) {
+			ctx := context.Background()
+			store := openTestStore(t, time.Minute)
+			defer store.Close()
+			alert := makeAlert(time.Date(2026, 7, 26, 0, 15, 0, 0, time.UTC), "canonical-protocol")
+			alert.Protocol = protocol
+			if err := store.WriteBatch(ctx, []*model.Alert{alert}); err != nil {
+				t.Fatalf("write canonical protocol %q: %v", protocol, err)
+			}
+
+			listed, err := store.List(ctx)
+			if err != nil {
+				t.Fatalf("list canonical protocol %q: %v", protocol, err)
+			}
+			if len(listed) != 1 || listed[0].Protocol != protocol {
+				t.Fatalf("canonical protocol changed: %+v", listed)
+			}
+		})
+	}
+}
+
+func TestStoreRejectsNoncanonicalHistoricalProtocolWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := filepath.Join(t.TempDir(), "protocol shard fixtures")
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	now := time.Date(2026, 7, 26, 0, 20, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	historicalStore, err := Open(ctx, Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open historical protocol fixture: %v", err)
+	}
+	if err := historicalStore.WriteBatch(ctx, []*model.Alert{
+		makeAlert(historical, "invalid-historical-protocol"),
+	}); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("seed historical protocol fixture: %v", err)
+	}
+	if _, err := historicalStore.db.ExecContext(ctx, "UPDATE alerts SET protocol = 'PROTO_256'"); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("inject historical noncanonical protocol: %v", err)
+	}
+	if err := historicalStore.Close(); err != nil {
+		t.Fatalf("close historical protocol fixture: %v", err)
+	}
+	before := readFileBytes(t, path)
+
+	_, _, err = store.Query(ctx, Query{Limit: 10})
+	if err == nil || !strings.Contains(err.Error(), `protocol "PROTO_256" is not canonical`) {
+		t.Fatalf("historical query error = %v, want noncanonical protocol rejection", err)
+	}
+	assertFileBytesUnchanged(t, path, before)
+}
+
 func TestStoreRejectsBlankHistoricalRequiredTextWithoutModification(t *testing.T) {
 	ctx := context.Background()
 	dir := filepath.Join(t.TempDir(), "required text shard fixtures")

@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-07-22 through 2026-10-20. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from the prior horizon is preserved below.
+> Window: 2026-07-26 through 2026-10-24. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from the prior horizon is preserved below.
 
 ## Status Rules
 
@@ -59,6 +59,7 @@
 | R90-40 | Jul 25–Oct 20 | Complete early | Validate recovery rule names. | R90-39 | Startup and runtime recovery preflight reject missing, empty, or whitespace-only `rule_name` before modifying the complete log or missing/existing SQLite state, while nonblank names replay without normalization. |
 | R90-41 | Jul 25–Oct 20 | Complete early | Validate stored SQLite MITRE tuples. | R90-40 | Primary and historical reads accept MITRE tactic/ID/name only when all three are empty or all three are nonblank; partial and whitespace-only tuple members fail without normalization or historical shard modification. |
 | R90-42 | Jul 25–Oct 20 | Complete early | Validate recovery MITRE tuples. | R90-41 | Startup and runtime recovery preflight accept MITRE tactic/ID/name only when all three are empty or all three are nonblank; every partial and whitespace-only tuple fails before modifying the complete log or missing/existing SQLite state, while valid tuple text remains unchanged. |
+| R90-43 | Jul 26–Oct 24 | In progress | Validate stored SQLite protocol names. | R90-42 | Primary and historical reads accept exactly the canonical writer-emittable `TCP`, `UDP`, `ICMP`, and `PROTO_<0..255>` names; case variants, arbitrary names, malformed/out-of-range numeric forms, and numeric aliases of named protocols fail without historical shard modification. |
 
 ## R90-07 Definition
 
@@ -686,6 +687,36 @@
   revalidation, text normalization, a recovery-format change, stored-row
   migration, automatic repair, operator data, or tag/publication authority.
 
+## R90-43 Definition
+
+- **Goal:** align stored alert protocol decoding with the rule engine's
+  canonical IP protocol-name emission contract.
+- **Risk:** arbitrary stored protocol text can currently escape through the API,
+  while over-restricting unknown IP protocol numbers could reject values the
+  current writer legitimately emits.
+- **Required validation:** case-variant named protocol, unsupported name,
+  malformed, noncanonical, named-protocol numeric alias, and out-of-range
+  `PROTO_` rejection across list/query decoding; historical read-only rejection
+  with byte preservation through an encoded filesystem path; named and unknown
+  boundary-value compatibility; focused alert-store, rule, and shared-model
+  tests, twenty focused alert-store race runs, full native, documentation, E2E,
+  and knowledge checks.
+- **Stop condition:** stop if safe completion requires restricting the UDS IP
+  protocol number, changing query-filter case semantics, rewriting stored data,
+  schema migration, operator data, or tag/publication authority.
+
+### R90-43 Validation Deviation
+
+- **Observed:** The first full native race suite reached the new stored-row
+  contract through `TestActiveLoadFullEngineShutdown`; its synthetic matcher
+  emitted lowercase `tcp`, unlike the production rule engine's canonical
+  `TCP`, so the alert API correctly returned a storage decode error.
+- **Impact:** Delivery was held while the fixture mismatch was investigated; no
+  shutdown orchestration or production protocol behavior changed.
+- **Resolution:** The synthetic matcher now emits the production contract's
+  canonical value. Twenty uncached focused shutdown race executions and the
+  complete uncached native rerun pass.
+
 ### R90-24 Validation Deviation
 
 - **Observed:** The first full native race suite hit the existing
@@ -973,8 +1004,12 @@
   runs, the full native suite, E2E smoke, documentation, and knowledge checks
   passed; fetched `origin/main`, the post-fetch knowledge gate, the exact
   full-SHA Vault note, index, MOC, and stable storage note are verified. No
-  later engineering increment is selected; refresh the rolling roadmap on the
-  next `$netsentry-next` trigger. Publication remains unauthorized.
+  later engineering increment was selected. The horizon was refreshed on
+  Jul 26 through Oct 24 from the clean fetched reconciliation baseline,
+  completed task state, release boundaries, canonical protocol emission,
+  stored-row decoding, and verified Vault evidence. R90-43 is selected as the
+  highest-priority dependency-ready correctness increment. Publication remains
+  unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -993,7 +1028,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -1045,11 +1080,12 @@
 
 ## Current Checkpoint
 
-R90-42 is complete at `4780f02688fabf75e89b954bc4f3f0982c0d1f6a` from
-clean fetched baseline `da25754b70df111746853b8bfc817db6e44cb4e5`.
-Twenty uncached focused race runs, the complete native race suite, E2E smoke,
-documentation, knowledge, JSON, diff, and sensitive-information checks passed.
-Fetched `origin/main`, the post-fetch knowledge gate, and exact full-SHA Vault
-note, full index, MOC, and stable storage note are verified. No later
-engineering increment is selected; refresh the roadmap on the next
-`$netsentry-next` trigger. Publication remains unauthorized.
+R90-43 implementation is validated pending delivery from clean fetched
+`origin/main` `9b6ddf92557c1cc7c13bdebc1c4de5166b8067ad`. The rule engine now
+shares its canonical IP protocol-name formatter with stored-row decoding;
+direct primary and historical regressions cover canonical compatibility,
+noncanonical rejection, and read-only byte preservation. Twenty uncached
+focused alert-store race runs, twenty affected shutdown-fixture race runs, the
+complete native race suite, E2E smoke, documentation, knowledge, JSON, and diff
+checks pass. Commit, push, fetched-remote verification, and exact-range Vault
+synchronization remain. Publication remains unauthorized.

@@ -155,7 +155,7 @@ func (m *stagedShutdownMatcher) Match(pkt *model.PacketInfo) []*model.Alert {
 		RuleID:         "shutdown-rule",
 		RuleName:       "shutdown drill",
 		Severity:       model.SeverityHigh,
-		Protocol:       "tcp",
+		Protocol:       "TCP",
 		SrcIP:          pkt.SrcIP,
 		DstIP:          pkt.DstIP,
 		DstPort:        pkt.DstPort,

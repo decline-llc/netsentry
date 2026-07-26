@@ -119,6 +119,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Alert row decoding now requires stored MITRE tactic, technique ID, and
   technique name to be either all empty or all nonblank, rejecting partial or
   whitespace-only tuple members without normalizing complete historical text.
+- Alert row decoding now accepts only canonical writer-emittable IP protocol
+  names, rejecting case variants, arbitrary names, malformed or out-of-range
+  numeric forms, and numeric aliases of named protocols.
 - Alert row decoding now rejects malformed, ordinary IPv6, and IPv4-mapped
   IPv6 stored source or destination addresses before aggregation-identity
   derivation.

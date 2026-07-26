@@ -212,6 +212,11 @@ Current build:
   remain optional and may be empty. MITRE tactic, technique ID, and technique
   name must be exactly all empty or each contain non-whitespace text; complete
   tuple text is returned unchanged without current-catalog revalidation.
+- Persisted protocol text must equal the shared writer format: `TCP`, `UDP`,
+  `ICMP`, or `PROTO_<number>` for an otherwise unnamed uint8 IP protocol.
+  Case variants, arbitrary names, malformed or out-of-range numbers, and
+  numeric aliases of the three named protocols fail shared primary and
+  historical row decoding.
 - Persisted `src_ip` and `dst_ip` values must also be strict IPv4 addresses.
   Malformed, ordinary IPv6, and IPv4-mapped IPv6 text fails shared primary and
   historical row decoding before aggregation-identity derivation.

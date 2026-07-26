@@ -16,6 +16,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"syscall"
@@ -1962,6 +1963,9 @@ func scanAlert(rows *sql.Rows) (*model.Alert, error) {
 	if err := validateMITRETuple(alert.MitreTactic, alert.MitreTechniqueID, alert.MitreTechniqueName); err != nil {
 		return nil, fmt.Errorf("invalid stored alert %s: %w", alert.ID, err)
 	}
+	if err := validateProtocolName(alert.Protocol); err != nil {
+		return nil, fmt.Errorf("invalid stored alert %s: %w", alert.ID, err)
+	}
 	if err := validateIPv4Addresses(alert.SrcIP, alert.DstIP); err != nil {
 		return nil, fmt.Errorf("invalid stored alert %s: %w", alert.ID, err)
 	}
@@ -2003,6 +2007,24 @@ func scanAlert(rows *sql.Rows) (*model.Alert, error) {
 	alert.Timestamp = parsedLastSeen
 	alert.WindowStart = parsedWindowStart
 	return &alert, nil
+}
+
+func validateProtocolName(protocol string) error {
+	switch protocol {
+	case "TCP", "UDP", "ICMP":
+		return nil
+	}
+	if !strings.HasPrefix(protocol, "PROTO_") {
+		return fmt.Errorf("protocol %q is not canonical", protocol)
+	}
+	suffix := strings.TrimPrefix(protocol, "PROTO_")
+	number, err := strconv.ParseUint(suffix, 10, 8)
+	if err != nil ||
+		strconv.FormatUint(number, 10) != suffix ||
+		model.ProtocolName(uint8(number)) != protocol {
+		return fmt.Errorf("protocol %q is not canonical", protocol)
+	}
+	return nil
 }
 
 func formatTime(t time.Time) string {

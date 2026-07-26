@@ -281,6 +281,11 @@ remain valid when empty. Stored MITRE tactic, technique ID, and technique name
 must be either exactly all empty or all nonblank. Partial and whitespace-only
 tuple members fail shared row decoding; complete values are returned unchanged
 without being checked against the current catalog.
+Stored protocol text must also equal the canonical writer name: `TCP`, `UDP`,
+`ICMP`, or `PROTO_<number>` for another uint8 IP protocol. Case variants,
+arbitrary names, malformed or out-of-range numbers, leading-zero forms, and
+numeric aliases of named protocols fail without normalizing or rewriting the
+row.
 Stored source and destination addresses must additionally parse as strict IPv4.
 Malformed, ordinary IPv6, and IPv4-mapped IPv6 text returns a field-specific
 read error before dependent aggregation-identity validation. Historical reads

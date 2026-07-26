@@ -540,25 +540,12 @@ func buildAlert(rule *model.Rule, pkt *model.PacketInfo, payloadPreview, matched
 		SrcIP:              pkt.SrcIP,
 		DstIP:              pkt.DstIP,
 		DstPort:            pkt.DstPort,
-		Protocol:           protocolName(pkt.Protocol),
+		Protocol:           model.ProtocolName(pkt.Protocol),
 		Severity:           rule.Severity,
 		MitreTactic:        mitreTactic,
 		MitreTechniqueID:   mitreTechID,
 		MitreTechniqueName: mitreTechName,
 		PayloadPreview:     payloadPreview,
 		MatchedKeyword:     matchedKeyword,
-	}
-}
-
-func protocolName(p uint8) string {
-	switch p {
-	case 6:
-		return "TCP"
-	case 17:
-		return "UDP"
-	case 1:
-		return "ICMP"
-	default:
-		return fmt.Sprintf("PROTO_%d", p)
 	}
 }
