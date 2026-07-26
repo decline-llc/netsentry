@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "9b6ddf92557c1cc7c13bdebc1c4de5166b8067ad",
   "risk_level": "Medium",
-  "current_checkpoint": "validated_pending_delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main agrees",
     "Verified the completed R90-42 task state and both delivery commits",
@@ -18,28 +18,24 @@
     "Covered historical read-only rejection with byte preservation through a path containing spaces",
     "Corrected the affected synthetic shutdown matcher from lowercase tcp to the production canonical TCP value",
     "Passed twenty uncached focused alert-store race runs and twenty uncached focused shutdown-fixture race runs",
-    "Passed the complete native race rerun, E2E smoke, documentation, knowledge, JSON, and diff checks"
+    "Passed the complete native race rerun, E2E smoke, documentation, knowledge, JSON, diff, and sensitive-information checks",
+    "Pushed 8b030b205f50768c9051354d19ec680b46ba876c and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact full-SHA Vault note, full index, MOC, and reusable stable storage note"
   ],
-  "in_progress": [
-    "Commit and deliver the validated R90-43 increment"
-  ],
-  "todo": [
-    "Commit and push the feature",
-    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
-    "Reconcile roadmap and task-state delivery evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false
+    "commit": "8b030b205f50768c9051354d19ec680b46ba876c",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "9b6ddf92557c1cc7c13bdebc1c4de5166b8067ad..8b030b205f50768c9051354d19ec680b46ba876c",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true
   },
   "remaining_risks": [
-    "Delivery evidence remains pending until fetched origin/main and the exact-range Vault note are verified",
+    "Recovery protocol text remains independently validated as nonblank durable input; future roadmap refresh should assess canonical recovery validation separately",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "R90-43 is implemented and validated from clean fetched origin/main at 9b6ddf92557c1cc7c13bdebc1c4de5166b8067ad. Stage only the intended feature paths, commit, push, fetch and verify origin/main, rerun the explicit-Vault knowledge check, synchronize the exact full-SHA range, verify its note/index/MOC, then reconcile the roadmap, plan, and task state in a docs-only delivery commit. Do not repeat implementation, restrict UDS protocol numbers, change query-filter semantics, migrate or repair data, create a release tag, or publish artifacts."
+  "resume_instructions": "R90-43 is complete at 8b030b205f50768c9051354d19ec680b46ba876c. Do not repeat its implementation, validation, push, or Vault synchronization. No later engineering increment is selected; refresh the rolling roadmap on the next $netsentry-next trigger. Do not restrict UDS protocol numbers, change query-filter semantics, migrate or repair data, create a release tag, or publish artifacts."
 }

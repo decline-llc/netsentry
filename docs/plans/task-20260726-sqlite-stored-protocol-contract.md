@@ -79,6 +79,7 @@ operator data, tag creation, or publication authority.
 
 ## Delivery Evidence
 
+- Feature commit: `8b030b205f50768c9051354d19ec680b46ba876c`
 - Shared canonical protocol-name formatting is implemented across rule emission
   and stored-row decoding.
 - Direct regressions cover every planned rejection category, canonical named
@@ -89,5 +90,9 @@ operator data, tag creation, or publication authority.
   race reruns pass, and the complete native race rerun passes.
 - Twenty uncached focused alert-store race runs, E2E smoke, documentation,
   knowledge, JSON, and diff checks passed.
-- Commit, push, fetched-remote verification, post-fetch knowledge validation,
-  and exact-range Vault synchronization remain pending.
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range:
+  `9b6ddf92557c1cc7c13bdebc1c4de5166b8067ad..8b030b205f50768c9051354d19ec680b46ba876c`
+- Vault iteration note, full commit index, `00-MOC` link, and reusable stable
+  storage note: verified.

@@ -59,7 +59,7 @@
 | R90-40 | Jul 25–Oct 20 | Complete early | Validate recovery rule names. | R90-39 | Startup and runtime recovery preflight reject missing, empty, or whitespace-only `rule_name` before modifying the complete log or missing/existing SQLite state, while nonblank names replay without normalization. |
 | R90-41 | Jul 25–Oct 20 | Complete early | Validate stored SQLite MITRE tuples. | R90-40 | Primary and historical reads accept MITRE tactic/ID/name only when all three are empty or all three are nonblank; partial and whitespace-only tuple members fail without normalization or historical shard modification. |
 | R90-42 | Jul 25–Oct 20 | Complete early | Validate recovery MITRE tuples. | R90-41 | Startup and runtime recovery preflight accept MITRE tactic/ID/name only when all three are empty or all three are nonblank; every partial and whitespace-only tuple fails before modifying the complete log or missing/existing SQLite state, while valid tuple text remains unchanged. |
-| R90-43 | Jul 26–Oct 24 | In progress | Validate stored SQLite protocol names. | R90-42 | Primary and historical reads accept exactly the canonical writer-emittable `TCP`, `UDP`, `ICMP`, and `PROTO_<0..255>` names; case variants, arbitrary names, malformed/out-of-range numeric forms, and numeric aliases of named protocols fail without historical shard modification. |
+| R90-43 | Jul 26–Oct 24 | Complete early | Validate stored SQLite protocol names. | R90-42 | Primary and historical reads accept exactly the canonical writer-emittable `TCP`, `UDP`, `ICMP`, and `PROTO_<0..255>` names; case variants, arbitrary names, malformed/out-of-range numeric forms, and numeric aliases of named protocols fail without historical shard modification. |
 
 ## R90-07 Definition
 
@@ -1008,7 +1008,16 @@
   Jul 26 through Oct 24 from the clean fetched reconciliation baseline,
   completed task state, release boundaries, canonical protocol emission,
   stored-row decoding, and verified Vault evidence. R90-43 is selected as the
-  highest-priority dependency-ready correctness increment. Publication remains
+  highest-priority dependency-ready correctness increment. R90-43 completed
+  early at `8b030b205f50768c9051354d19ec680b46ba876c`: rule emission and
+  stored-row decoding now share canonical protocol names; noncanonical primary
+  and historical values fail clearly, while historical rejection preserves
+  shard bytes. Twenty focused alert-store race runs, twenty affected
+  shutdown-fixture race runs, the full native suite, E2E smoke, documentation,
+  and knowledge checks passed; fetched `origin/main`, the post-fetch knowledge
+  gate, the exact full-SHA Vault note, index, MOC, and stable storage note are
+  verified. No later engineering increment is selected; refresh the rolling
+  roadmap on the next `$netsentry-next` trigger. Publication remains
   unauthorized.
 
 ## Global PCAP Release-Gate Waiver
@@ -1080,12 +1089,12 @@
 
 ## Current Checkpoint
 
-R90-43 implementation is validated pending delivery from clean fetched
-`origin/main` `9b6ddf92557c1cc7c13bdebc1c4de5166b8067ad`. The rule engine now
-shares its canonical IP protocol-name formatter with stored-row decoding;
-direct primary and historical regressions cover canonical compatibility,
-noncanonical rejection, and read-only byte preservation. Twenty uncached
-focused alert-store race runs, twenty affected shutdown-fixture race runs, the
-complete native race suite, E2E smoke, documentation, knowledge, JSON, and diff
-checks pass. Commit, push, fetched-remote verification, and exact-range Vault
-synchronization remain. Publication remains unauthorized.
+R90-43 is complete at `8b030b205f50768c9051354d19ec680b46ba876c` from
+clean fetched baseline `9b6ddf92557c1cc7c13bdebc1c4de5166b8067ad`.
+Twenty uncached focused alert-store race runs, twenty affected
+shutdown-fixture race runs, the complete native race suite, E2E smoke,
+documentation, knowledge, JSON, diff, and sensitive-information checks passed.
+Fetched `origin/main`, the post-fetch knowledge gate, and exact full-SHA Vault
+note, full index, MOC, and stable storage note are verified. No later
+engineering increment is selected; refresh the roadmap on the next
+`$netsentry-next` trigger. Publication remains unauthorized.
