@@ -1062,6 +1062,9 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 		s.markStorageError(err)
 		return err
 	}
+	if err := validateCurrentRecoveryBatch(normalized, s.aggregationWindow); err != nil {
+		return err
+	}
 	if err := s.appendRecoveryLog(normalized); err != nil {
 		s.markStorageError(err)
 		return err
@@ -1408,6 +1411,18 @@ func validateRecoveryAlert(alert model.Alert, aggregationWindow time.Duration) e
 	}
 	if alert.AggregatedCount != normalized.AggregatedCount {
 		return errors.New("required field aggregated_count must equal 1")
+	}
+	return nil
+}
+
+func validateCurrentRecoveryBatch(alerts []*model.Alert, aggregationWindow time.Duration) error {
+	for index, alert := range alerts {
+		if alert == nil {
+			continue
+		}
+		if err := validateRecoveryAlert(*alert, aggregationWindow); err != nil {
+			return fmt.Errorf("validate current alert recovery record %d: %w", index+1, err)
+		}
 	}
 	return nil
 }

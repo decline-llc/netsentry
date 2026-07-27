@@ -270,6 +270,11 @@ Current build:
   Structural or semantic failure therefore leaves both the rejected log and
   SQLite unchanged; valid pending records are still persisted with the current
   batch before truncation.
+- After the existing log passes, normal runtime writes validate the complete
+  newly normalized batch against the same durable record contract before
+  appending its first record. Invalid current input therefore cannot partially
+  append a valid prefix, change SQLite, or degrade healthy storage, and any
+  existing valid pending log remains unchanged.
 - Recovery writer batches are fully JSON-encoded and size-checked before the
   log is opened. The reader and writer share a 4 MiB per-record limit, allowing
   valid records above 64 KiB while rejecting oversized writer output before

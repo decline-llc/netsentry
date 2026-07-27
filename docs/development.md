@@ -321,6 +321,12 @@ missing target database absent and a compatible existing database unchanged.
 Preserve the rejected log, inspect only a copy, and repair or replace it only
 through an operator-controlled recovery path. A valid log is truncated only
 after every recovered alert is successfully persisted.
+Normal runtime writes first validate any existing recovery log, then validate
+the complete newly normalized batch against the same durable contract before
+appending its first record. A later invalid current record therefore cannot
+partially append an earlier valid record, modify SQLite, or mark healthy
+storage degraded; an existing valid pending log remains byte-for-byte
+unchanged.
 
 ---
 

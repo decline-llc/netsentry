@@ -2727,6 +2727,121 @@ func TestStoreWriteBatchRejectsInvalidRecoveryLogBeforeAppend(t *testing.T) {
 	}
 }
 
+func TestStoreWriteBatchRejectsInvalidCurrentBatchBeforeAppend(t *testing.T) {
+	now := time.Date(2026, 7, 27, 5, 10, 0, 0, time.UTC)
+	tests := []struct {
+		name      string
+		mutate    func(*model.Alert)
+		condition string
+	}{
+		{
+			name:      "blank rule id",
+			mutate:    func(alert *model.Alert) { alert.RuleID = " \t " },
+			condition: "required field rule_id is empty",
+		},
+		{
+			name:      "blank rule name",
+			mutate:    func(alert *model.Alert) { alert.RuleName = "\n " },
+			condition: "required field rule_name is empty",
+		},
+		{
+			name:      "blank source address",
+			mutate:    func(alert *model.Alert) { alert.SrcIP = " " },
+			condition: "required field src_ip is empty",
+		},
+		{
+			name:      "blank destination address",
+			mutate:    func(alert *model.Alert) { alert.DstIP = "\t" },
+			condition: "required field dst_ip is empty",
+		},
+		{
+			name:      "blank protocol",
+			mutate:    func(alert *model.Alert) { alert.Protocol = " " },
+			condition: "required field protocol is empty",
+		},
+		{
+			name:      "event identity mismatch",
+			mutate:    func(alert *model.Alert) { alert.EventID = "evt_00000000000000000000000000000000" },
+			condition: "field event_id does not match deterministic event identity",
+		},
+		{
+			name:      "unsupported severity",
+			mutate:    func(alert *model.Alert) { alert.Severity = "urgent" },
+			condition: `severity "urgent" is unsupported`,
+		},
+		{
+			name: "partial MITRE tuple",
+			mutate: func(alert *model.Alert) {
+				alert.MitreTechniqueName = ""
+			},
+			condition: "MITRE fields must be all empty or all nonblank",
+		},
+		{
+			name:      "noncanonical protocol",
+			mutate:    func(alert *model.Alert) { alert.Protocol = "tcp" },
+			condition: `protocol "tcp" is not canonical`,
+		},
+		{
+			name:      "invalid source address",
+			mutate:    func(alert *model.Alert) { alert.SrcIP = "2001:db8::1" },
+			condition: "field src_ip must be an IPv4 address",
+		},
+		{
+			name:      "invalid destination address",
+			mutate:    func(alert *model.Alert) { alert.DstIP = "::ffff:192.0.2.2" },
+			condition: "field dst_ip must be an IPv4 address",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			dir := t.TempDir()
+			dbPath := filepath.Join(dir, "alerts.db")
+			recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+			store, err := Open(context.Background(), Options{
+				Path:              dbPath,
+				RecoveryLogPath:   recoveryLogPath,
+				JournalMode:       "WAL",
+				BusyTimeoutMS:     1000,
+				AggregationWindow: time.Minute,
+				Now:               func() time.Time { return now },
+			})
+			if err != nil {
+				t.Fatalf("open store: %v", err)
+			}
+			defer store.Close()
+
+			pending := normalizeAlerts(
+				[]*model.Alert{makeAlert(now.Add(-10*time.Second), "existing-valid-pending")},
+				now,
+				time.Minute,
+			)
+			if err := store.appendRecoveryLog(pending); err != nil {
+				t.Fatalf("append existing valid recovery record: %v", err)
+			}
+			beforeLog := readFileBytes(t, recoveryLogPath)
+			beforeDB := readFileBytes(t, dbPath)
+
+			invalid := makeAlert(now.Add(2*time.Second), "invalid-current")
+			test.mutate(invalid)
+			err = store.WriteBatch(context.Background(), []*model.Alert{
+				makeAlert(now.Add(time.Second), "valid-current-prefix"),
+				invalid,
+			})
+			if err == nil ||
+				!strings.Contains(err.Error(), "current alert recovery record 2") ||
+				!strings.Contains(err.Error(), test.condition) {
+				t.Fatalf("WriteBatch error = %v, want current record 2 containing %q", err, test.condition)
+			}
+			assertFileBytes(t, recoveryLogPath, beforeLog)
+			assertFileBytes(t, dbPath, beforeDB)
+			assertSQLiteAlertCount(t, dbPath, 0)
+			if health := store.Health(); health.Status != "ok" || health.LastError != "" {
+				t.Fatalf("invalid current input degraded healthy storage: %+v", health)
+			}
+		})
+	}
+}
+
 func TestStoreWritesRecoveryRecordAboveFormerScannerLimit(t *testing.T) {
 	now := time.Date(2026, 7, 22, 2, 30, 0, 0, time.UTC)
 	alert := makeRecoveryAlertWithEncodedSize(t, 70<<10, now)

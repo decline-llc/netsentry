@@ -9,6 +9,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Current alert batches now pass the complete durable recovery-record contract
+  before any JSONL append or SQLite write, preventing partial valid-prefix
+  persistence when a later current record is invalid.
 - Recovery-log startup and runtime preflight now reject protocol names that the
   normalized alert writer cannot canonically emit before modifying durable
   state.
