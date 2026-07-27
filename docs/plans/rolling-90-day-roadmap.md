@@ -61,7 +61,7 @@
 | R90-42 | Jul 25–Oct 20 | Complete early | Validate recovery MITRE tuples. | R90-41 | Startup and runtime recovery preflight accept MITRE tactic/ID/name only when all three are empty or all three are nonblank; every partial and whitespace-only tuple fails before modifying the complete log or missing/existing SQLite state, while valid tuple text remains unchanged. |
 | R90-43 | Jul 26–Oct 24 | Complete early | Validate stored SQLite protocol names. | R90-42 | Primary and historical reads accept exactly the canonical writer-emittable `TCP`, `UDP`, `ICMP`, and `PROTO_<0..255>` names; case variants, arbitrary names, malformed/out-of-range numeric forms, and numeric aliases of named protocols fail without historical shard modification. |
 | R90-44 | Jul 27–Oct 25 | Complete early | Validate recovery protocol names. | R90-43 | Startup and runtime recovery preflight accept exactly the canonical writer-emittable `TCP`, `UDP`, `ICMP`, and `PROTO_<0..255>` names; every noncanonical form fails before modifying the complete log or missing/existing SQLite state. |
-| R90-45 | Jul 27–Oct 25 | In progress | Preflight the current recovery batch. | R90-44 | Every newly normalized alert passes the complete durable recovery contract before any current-batch append or SQLite write; a later invalid record cannot partially append a valid prefix, alter an existing pending log/database, or degrade healthy storage. |
+| R90-45 | Jul 27–Oct 25 | Complete early | Preflight the current recovery batch. | R90-44 | Every newly normalized alert passes the complete durable recovery contract before any current-batch append or SQLite write; a later invalid record cannot partially append a valid prefix, alter an existing pending log/database, or degrade healthy storage. |
 
 ## R90-07 Definition
 
@@ -1073,7 +1073,17 @@
   baseline, completed task state, release boundaries, durable recovery
   validation, current `WriteBatch` ordering, and verified Vault evidence.
   R90-45 is selected as the highest-priority dependency-ready correctness
-  increment. Publication remains unauthorized.
+  increment. R90-45 completed early at
+  `3990a1b228deddb3f43ef957af0eb102fbc170e4`: `WriteBatch` now
+  validates the complete normalized current batch after existing-log preflight
+  and before append, so a later invalid record cannot partially append a valid
+  prefix, alter the pending log or SQLite, persist an alert, or degrade healthy
+  storage. Twenty focused alert-store race runs, the full native suite, E2E
+  smoke, documentation, config, and knowledge checks passed; fetched
+  `origin/main`, the post-fetch knowledge gate, and the exact full-SHA Vault
+  note, index, MOC, and stable storage note are verified. No later engineering
+  increment is selected; refresh the rolling roadmap on the next
+  `$netsentry-next` trigger. Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -1144,13 +1154,12 @@
 
 ## Current Checkpoint
 
-R90-45 implementation is validated pending delivery from clean fetched
-`origin/main` `11371d520abd6004d6b1991eef5544dcffc48c8f`. `WriteBatch` now
-validates the complete normalized current batch after existing-log preflight
-and before append; direct regressions prove a later invalid record cannot
-partially append a valid prefix, alter the pending log or SQLite, persist an
-alert, or degrade healthy storage. Twenty uncached focused alert-store race
-runs, the complete native race suite, E2E smoke, documentation, config,
-knowledge, JSON, and diff checks pass. Commit, push, fetched-remote
-verification, and exact-range Vault synchronization remain. Publication
-remains unauthorized.
+R90-45 is complete at `3990a1b228deddb3f43ef957af0eb102fbc170e4` from
+clean fetched baseline `11371d520abd6004d6b1991eef5544dcffc48c8f`.
+Twenty uncached focused alert-store race runs, the complete native race suite,
+E2E smoke, documentation, config, knowledge, JSON, diff, and
+sensitive-information checks passed. Fetched `origin/main`, the post-fetch
+knowledge gate, and exact full-SHA Vault note, full index, MOC, and stable
+storage note are verified. No later engineering increment is selected; refresh
+the roadmap on the next `$netsentry-next` trigger. Publication remains
+unauthorized.

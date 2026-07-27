@@ -81,6 +81,7 @@ deletion, operator data, tag creation, or publication authority.
 
 ## Delivery Evidence
 
+- Feature commit: `3990a1b228deddb3f43ef957af0eb102fbc170e4`
 - `WriteBatch` now validates the complete normalized current batch with
   `validateRecoveryAlert` after existing-log preflight and before append.
 - Direct valid-prefix regressions cover every planned reachable required-text,
@@ -93,5 +94,9 @@ deletion, operator data, tag creation, or publication authority.
 - Twenty uncached focused alert-store race runs, the complete native race
   suite, E2E smoke, documentation, config, knowledge, JSON, and diff checks
   passed.
-- Commit, push, fetched-remote verification, post-fetch knowledge validation,
-  and exact-range Vault synchronization remain pending.
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range:
+  `11371d520abd6004d6b1991eef5544dcffc48c8f..3990a1b228deddb3f43ef957af0eb102fbc170e4`
+- Vault iteration note, full commit index, `00-MOC` link, and reusable stable
+  storage note: verified.
