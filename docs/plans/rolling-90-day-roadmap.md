@@ -60,7 +60,7 @@
 | R90-41 | Jul 25–Oct 20 | Complete early | Validate stored SQLite MITRE tuples. | R90-40 | Primary and historical reads accept MITRE tactic/ID/name only when all three are empty or all three are nonblank; partial and whitespace-only tuple members fail without normalization or historical shard modification. |
 | R90-42 | Jul 25–Oct 20 | Complete early | Validate recovery MITRE tuples. | R90-41 | Startup and runtime recovery preflight accept MITRE tactic/ID/name only when all three are empty or all three are nonblank; every partial and whitespace-only tuple fails before modifying the complete log or missing/existing SQLite state, while valid tuple text remains unchanged. |
 | R90-43 | Jul 26–Oct 24 | Complete early | Validate stored SQLite protocol names. | R90-42 | Primary and historical reads accept exactly the canonical writer-emittable `TCP`, `UDP`, `ICMP`, and `PROTO_<0..255>` names; case variants, arbitrary names, malformed/out-of-range numeric forms, and numeric aliases of named protocols fail without historical shard modification. |
-| R90-44 | Jul 27–Oct 25 | In progress | Validate recovery protocol names. | R90-43 | Startup and runtime recovery preflight accept exactly the canonical writer-emittable `TCP`, `UDP`, `ICMP`, and `PROTO_<0..255>` names; every noncanonical form fails before modifying the complete log or missing/existing SQLite state. |
+| R90-44 | Jul 27–Oct 25 | Complete early | Validate recovery protocol names. | R90-43 | Startup and runtime recovery preflight accept exactly the canonical writer-emittable `TCP`, `UDP`, `ICMP`, and `PROTO_<0..255>` names; every noncanonical form fails before modifying the complete log or missing/existing SQLite state. |
 
 ## R90-07 Definition
 
@@ -1042,7 +1042,17 @@
   baseline, completed task state, release boundaries, canonical protocol
   emission, stored-row decoding, recovery preflight behavior, and verified
   Vault evidence. R90-44 is selected as the highest-priority dependency-ready
-  correctness increment. Publication remains unauthorized.
+  correctness increment. R90-44 completed early at
+  `a87b2161bf65b726d827a805f21aa209bd71ed3b`: shared startup and runtime
+  recovery preflight now rejects every planned noncanonical protocol form
+  before modifying the complete log or missing/existing SQLite state, while
+  canonical named and unknown protocol records remain compatible. Twenty
+  focused alert-store race runs, the full native suite, E2E smoke,
+  documentation, config, and knowledge checks passed; fetched `origin/main`,
+  the post-fetch knowledge gate, and the exact full-SHA Vault note, index, MOC,
+  and stable storage note are verified. No later engineering increment is
+  selected; refresh the rolling roadmap on the next `$netsentry-next` trigger.
+  Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -1113,12 +1123,12 @@
 
 ## Current Checkpoint
 
-R90-44 implementation is validated pending delivery from clean fetched
-`origin/main` `d4334654a8eafee84f9cc1de69ea6d733a4a2160`. Shared recovery
-preflight now rejects every planned noncanonical protocol form before
-modifying the complete log or missing/existing SQLite state, while canonical
-named and unknown protocol records remain compatible. Twenty uncached focused
-alert-store race runs, the complete native race suite, E2E smoke,
-documentation, config, knowledge, JSON, and diff checks pass. Commit, push,
-fetched-remote verification, and exact-range Vault synchronization remain.
-Publication remains unauthorized.
+R90-44 is complete at `a87b2161bf65b726d827a805f21aa209bd71ed3b` from
+clean fetched baseline `d4334654a8eafee84f9cc1de69ea6d733a4a2160`.
+Twenty uncached focused alert-store race runs, the complete native race suite,
+E2E smoke, documentation, config, knowledge, JSON, diff, and
+sensitive-information checks passed. Fetched `origin/main`, the post-fetch
+knowledge gate, and exact full-SHA Vault note, full index, MOC, and stable
+storage note are verified. No later engineering increment is selected; refresh
+the roadmap on the next `$netsentry-next` trigger. Publication remains
+unauthorized.

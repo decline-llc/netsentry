@@ -84,6 +84,7 @@ repair or deletion, operator data, tag creation, or publication authority.
 
 ## Delivery Evidence
 
+- Feature commit: `a87b2161bf65b726d827a805f21aa209bd71ed3b`
 - Recovery preflight now applies the same canonical protocol-name validator as
   stored-row decoding before dependent identity validation.
 - Direct startup and runtime regressions cover every planned noncanonical form,
@@ -94,5 +95,9 @@ repair or deletion, operator data, tag creation, or publication authority.
 - Twenty uncached focused alert-store race runs, the complete native race
   suite, E2E smoke, documentation, config, knowledge, JSON, and diff checks
   passed.
-- Commit, push, fetched-remote verification, post-fetch knowledge validation,
-  and exact-range Vault synchronization remain pending.
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range:
+  `d4334654a8eafee84f9cc1de69ea6d733a4a2160..a87b2161bf65b726d827a805f21aa209bd71ed3b`
+- Vault iteration note, full commit index, `00-MOC` link, and reusable stable
+  storage note: verified.
