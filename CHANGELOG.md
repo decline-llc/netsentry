@@ -9,6 +9,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Recovery-log startup and runtime preflight now reject protocol names that the
+  normalized alert writer cannot canonically emit before modifying durable
+  state.
 - C capture binary for offline pcap analysis with Ethernet, VLAN, Q-in-Q, IPv4, TCP, and UDP parsing.
 - JSON line protocol over Unix Domain Socket with hello, packet, and heartbeat frames.
 - UDS packet validation now enforces the documented IPv4-only boundary,

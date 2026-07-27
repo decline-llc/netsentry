@@ -1364,6 +1364,9 @@ func validateRecoveryAlert(alert model.Alert, aggregationWindow time.Duration) e
 			return fmt.Errorf("required field %s is empty", field.name)
 		}
 	}
+	if err := validateProtocolName(alert.Protocol); err != nil {
+		return err
+	}
 	if err := validateIPv4Addresses(alert.SrcIP, alert.DstIP); err != nil {
 		return err
 	}

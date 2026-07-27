@@ -2097,6 +2097,205 @@ func TestStoreReplaysValidRecoveryMITRETuplesWithoutNormalization(t *testing.T) 
 	}
 }
 
+func TestStoreRejectsNoncanonicalRecoveryProtocolWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 27, 4, 55, 0, 0, time.UTC)
+	window := time.Minute
+	valid := normalizeAlert(makeAlert(now, "valid-prefix"), now, window)
+	validJSON, err := json.Marshal(valid)
+	if err != nil {
+		t.Fatalf("marshal valid recovery record: %v", err)
+	}
+	tests := []struct {
+		name     string
+		protocol string
+	}{
+		{name: "named case variant", protocol: "tcp"},
+		{name: "unsupported name", protocol: "SCTP"},
+		{name: "missing protocol number", protocol: "PROTO_"},
+		{name: "negative protocol number", protocol: "PROTO_-1"},
+		{name: "leading zero protocol number", protocol: "PROTO_02"},
+		{name: "ICMP numeric alias", protocol: "PROTO_1"},
+		{name: "TCP numeric alias", protocol: "PROTO_6"},
+		{name: "UDP numeric alias", protocol: "PROTO_17"},
+		{name: "out of range protocol number", protocol: "PROTO_256"},
+		{name: "padded protocol number", protocol: "PROTO_2 "},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			invalid := valid
+			invalid.Protocol = test.protocol
+			invalid.EventID = alertEventID(invalid)
+			invalidJSON, err := json.Marshal(invalid)
+			if err != nil {
+				t.Fatalf("marshal noncanonical-protocol recovery record: %v", err)
+			}
+			contents := append(append(append([]byte(nil), validJSON...), '\n'), invalidJSON...)
+			contents = append(contents, '\n')
+
+			for _, existing := range []bool{false, true} {
+				state := "missing database"
+				if existing {
+					state = "existing database"
+				}
+				t.Run(state, func(t *testing.T) {
+					dir := t.TempDir()
+					dbPath := filepath.Join(dir, "alerts.db")
+					recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+					var beforeDB []byte
+					if existing {
+						createSQLiteFixture(t, dbPath, schemaSQL, `DROP INDEX idx_alerts_last_seen`)
+						beforeDB = readFileBytes(t, dbPath)
+					}
+					if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+						t.Fatalf("write noncanonical-protocol recovery log: %v", err)
+					}
+
+					store, err := Open(context.Background(), Options{
+						Path:              dbPath,
+						RecoveryLogPath:   recoveryLogPath,
+						JournalMode:       "WAL",
+						BusyTimeoutMS:     1000,
+						AggregationWindow: window,
+						Now:               func() time.Time { return now },
+					})
+					if store != nil {
+						_ = store.Close()
+						t.Fatal("noncanonical-protocol recovery log returned a usable store")
+					}
+					condition := fmt.Sprintf("protocol %q is not canonical", test.protocol)
+					if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+						!strings.Contains(err.Error(), "record 2") ||
+						!strings.Contains(err.Error(), condition) {
+						t.Fatalf("startup error = %v, want record 2 ErrRecoveryLogIntegrity containing %q", err, condition)
+					}
+					assertFileBytes(t, recoveryLogPath, contents)
+					if existing {
+						assertFileBytes(t, dbPath, beforeDB)
+						assertSQLiteIndexMissing(t, dbPath, "idx_alerts_last_seen")
+					} else {
+						assertFileDoesNotExist(t, dbPath)
+					}
+				})
+			}
+		})
+	}
+}
+
+func TestStoreWriteBatchRejectsNoncanonicalRecoveryProtocolWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 27, 5, 0, 0, 0, time.UTC)
+	valid := normalizeAlert(makeAlert(now, "existing-invalid-protocol"), now, time.Minute)
+	tests := []struct {
+		name     string
+		protocol string
+	}{
+		{name: "named case variant", protocol: "tcp"},
+		{name: "unsupported name", protocol: "SCTP"},
+		{name: "missing protocol number", protocol: "PROTO_"},
+		{name: "negative protocol number", protocol: "PROTO_-1"},
+		{name: "leading zero protocol number", protocol: "PROTO_02"},
+		{name: "ICMP numeric alias", protocol: "PROTO_1"},
+		{name: "TCP numeric alias", protocol: "PROTO_6"},
+		{name: "UDP numeric alias", protocol: "PROTO_17"},
+		{name: "out of range protocol number", protocol: "PROTO_256"},
+		{name: "padded protocol number", protocol: "PROTO_2 "},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			invalid := valid
+			invalid.Protocol = test.protocol
+			invalid.EventID = alertEventID(invalid)
+			contents, err := json.Marshal(invalid)
+			if err != nil {
+				t.Fatalf("marshal noncanonical-protocol recovery record: %v", err)
+			}
+			contents = append(contents, '\n')
+
+			dir := t.TempDir()
+			dbPath := filepath.Join(dir, "alerts.db")
+			recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+			store, err := Open(context.Background(), Options{
+				Path:              dbPath,
+				RecoveryLogPath:   recoveryLogPath,
+				JournalMode:       "WAL",
+				BusyTimeoutMS:     1000,
+				AggregationWindow: time.Minute,
+				Now:               func() time.Time { return now },
+			})
+			if err != nil {
+				t.Fatalf("open store: %v", err)
+			}
+			defer store.Close()
+
+			if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+				t.Fatalf("write noncanonical runtime recovery log: %v", err)
+			}
+			beforeDB := readFileBytes(t, dbPath)
+			err = store.WriteBatch(context.Background(), []*model.Alert{
+				makeAlert(now.Add(time.Second), "must-not-append"),
+			})
+			condition := fmt.Sprintf("protocol %q is not canonical", test.protocol)
+			if !errors.Is(err, ErrRecoveryLogIntegrity) || !strings.Contains(err.Error(), condition) {
+				t.Fatalf("WriteBatch error = %v, want ErrRecoveryLogIntegrity containing %q", err, condition)
+			}
+			assertFileBytes(t, recoveryLogPath, contents)
+			assertFileBytes(t, dbPath, beforeDB)
+			assertSQLiteAlertCount(t, dbPath, 0)
+		})
+	}
+}
+
+func TestStoreAcceptsCanonicalRecoveryProtocols(t *testing.T) {
+	for _, protocol := range []string{"TCP", "UDP", "ICMP", "PROTO_0", "PROTO_2", "PROTO_255"} {
+		t.Run(protocol, func(t *testing.T) {
+			for _, path := range []string{"startup replay", "runtime write"} {
+				t.Run(path, func(t *testing.T) {
+					dir := t.TempDir()
+					dbPath := filepath.Join(dir, "alerts.db")
+					recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+					now := time.Date(2026, 7, 27, 5, 5, 0, 0, time.UTC)
+					alert := makeAlert(now, "canonical-recovery-protocol")
+					alert.Protocol = protocol
+					if path == "startup replay" {
+						logged := normalizeAlerts([]*model.Alert{alert}, now, time.Minute)
+						logOnly := &Store{recoveryLogPath: recoveryLogPath}
+						if err := logOnly.appendRecoveryLog(logged); err != nil {
+							t.Fatalf("append canonical protocol %q: %v", protocol, err)
+						}
+					}
+
+					store, err := Open(context.Background(), Options{
+						Path:              dbPath,
+						RecoveryLogPath:   recoveryLogPath,
+						JournalMode:       "WAL",
+						BusyTimeoutMS:     1000,
+						AggregationWindow: time.Minute,
+						Now:               func() time.Time { return now },
+					})
+					if err != nil {
+						t.Fatalf("open store with canonical protocol %q: %v", protocol, err)
+					}
+					defer store.Close()
+					if path == "runtime write" {
+						if err := store.WriteBatch(context.Background(), []*model.Alert{alert}); err != nil {
+							t.Fatalf("write canonical protocol %q: %v", protocol, err)
+						}
+					}
+					listed, err := store.List(context.Background())
+					if err != nil {
+						t.Fatalf("list canonical protocol %q: %v", protocol, err)
+					}
+					if len(listed) != 1 || listed[0].Protocol != protocol {
+						t.Fatalf("canonical protocol changed: %+v", listed)
+					}
+					if info, err := os.Stat(recoveryLogPath); err != nil || info.Size() != 0 {
+						t.Fatalf("recovery log should be truncated after persistence, info=%+v err=%v", info, err)
+					}
+				})
+			}
+		})
+	}
+}
+
 func TestStoreRejectsInconsistentNormalizedRecoveryLogWithoutModification(t *testing.T) {
 	now := time.Date(2026, 7, 21, 4, 0, 0, 0, time.UTC)
 	window := time.Minute

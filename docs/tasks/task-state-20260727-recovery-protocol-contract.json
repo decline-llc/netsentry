@@ -1,0 +1,44 @@
+{
+  "task": "r90-44-recovery-protocol-contract",
+  "timestamp": "2026-07-27T04:53:16-07:00",
+  "branch": "main",
+  "remote_baseline": "d4334654a8eafee84f9cc1de69ea6d733a4a2160",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_pending_delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main agrees",
+    "Verified the completed R90-43 task state and both delivery commits",
+    "Verified the single discovered local Vault contains R90-43 feature and delivery notes, full-index entries, and MOC links",
+    "Refreshed the 90-day horizon from release boundaries, canonical protocol emission, stored-row decoding, recovery preflight behavior, and verified Vault evidence",
+    "Selected R90-44 as the highest-priority dependency-ready correctness increment",
+    "Confirmed recovery preflight accepted nonblank protocol names that the normalized writer cannot emit",
+    "Applied the shared canonical protocol-name validator during recovery preflight",
+    "Covered named case variants, arbitrary names, malformed, negative, leading-zero, padded, named-protocol numeric aliases, and out-of-range PROTO forms at startup and runtime",
+    "Covered complete-log, missing-database, compatible-existing-database, and runtime database byte preservation",
+    "Covered canonical TCP, UDP, ICMP, PROTO_0, PROTO_2, and PROTO_255 startup replay and runtime writes",
+    "Passed twenty uncached focused alert-store race runs",
+    "Passed the complete native race suite, E2E smoke, documentation, config, knowledge, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Commit and deliver the validated R90-44 increment"
+  ],
+  "todo": [
+    "Commit and push the feature",
+    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
+    "Reconcile roadmap and task-state delivery evidence"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "Delivery evidence remains pending until fetched origin/main and the exact-range Vault note are verified",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-44 is implemented and validated from clean fetched origin/main at d4334654a8eafee84f9cc1de69ea6d733a4a2160. Stage only the intended feature paths, commit, push, fetch and verify origin/main, rerun the knowledge check, synchronize the exact full-SHA range to the single local Vault, verify its note/index/MOC, then reconcile the roadmap, plan, and task state in a docs-only delivery commit. Do not repeat implementation, restrict UDS protocol numbers, change query-filter semantics, migrate or repair data, create a release tag, or publish artifacts."
+}
