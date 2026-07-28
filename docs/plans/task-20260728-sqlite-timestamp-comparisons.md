@@ -98,10 +98,15 @@ losing nanosecond precision or rewriting stored rows.
 
 ## Delivery Evidence
 
-- Feature commit: pending
-- Exact Vault range: pending
-- Fetched `origin/main`, post-fetch knowledge gate, feature note, full index,
-  MOC, and stable storage note: pending
+- Feature commit: `046f89673491b2bab78d6c21eedc067fa9c8584b`
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed all 33 tests.
+- Exact Vault range:
+  `e28e3de9fafc099ae082ffc45ae867e20abf19dd..046f89673491b2bab78d6c21eedc067fa9c8584b`
+- Vault feature note, full commit index, MOC link, and reusable stable storage
+  note: verified.
+- No later engineering increment was selected; the next `$netsentry-next`
+  trigger will refresh the rolling roadmap.
 
 ## Stop Conditions
 
