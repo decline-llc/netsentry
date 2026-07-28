@@ -62,7 +62,8 @@
 | R90-43 | Jul 26–Oct 24 | Complete early | Validate stored SQLite protocol names. | R90-42 | Primary and historical reads accept exactly the canonical writer-emittable `TCP`, `UDP`, `ICMP`, and `PROTO_<0..255>` names; case variants, arbitrary names, malformed/out-of-range numeric forms, and numeric aliases of named protocols fail without historical shard modification. |
 | R90-44 | Jul 27–Oct 25 | Complete early | Validate recovery protocol names. | R90-43 | Startup and runtime recovery preflight accept exactly the canonical writer-emittable `TCP`, `UDP`, `ICMP`, and `PROTO_<0..255>` names; every noncanonical form fails before modifying the complete log or missing/existing SQLite state. |
 | R90-45 | Jul 27–Oct 25 | Complete early | Preflight the current recovery batch. | R90-44 | Every newly normalized alert passes the complete durable recovery contract before any current-batch append or SQLite write; a later invalid record cannot partially append a valid prefix, alter an existing pending log/database, or degrade healthy storage. |
-| R90-46 | Jul 28–Oct 26 | In progress | Validate stored SQLite timestamp encoding. | R90-45 | Primary and historical row reads accept aggregate timestamps only in the exact UTC RFC3339Nano text emitted by the writer; parseable offsets and nonminimal fractional forms fail without historical shard modification, while canonical rows remain compatible. |
+| R90-46 | Jul 28–Oct 26 | Complete early | Validate stored SQLite timestamp encoding. | R90-45 | Primary and historical row reads accept aggregate timestamps only in the exact UTC RFC3339Nano text emitted by the writer; parseable offsets and nonminimal fractional forms fail without historical shard modification, while canonical rows remain compatible. |
+| R90-47 | Jul 28–Oct 26 | Ready | Pin SQLite timestamp comparison semantics. | R90-46 | Aggregation updates, alert ordering/pagination, time filters, and retention pruning compare canonical variable-width RFC3339Nano values by instant with nanosecond fidelity; mixed fractional widths remain chronological without rewriting stored rows. |
 
 ## R90-07 Definition
 
@@ -777,6 +778,23 @@
   increment that pins SQL time comparisons without silently migrating or
   rewriting stored rows.
 
+## R90-47 Definition
+
+- **Goal:** make every SQL comparison over stored aggregate timestamps preserve
+  chronological order for canonical RFC3339Nano values with absent, trimmed,
+  or full fractional seconds.
+- **Risk:** SQLite date helpers can lose sub-millisecond precision or bypass
+  existing indexes, while a fixed-width storage migration would rewrite
+  operator data outside the accepted preservation boundary.
+- **Required validation:** direct mixed-width and sub-millisecond aggregation
+  earliest/latest selection; primary and historical ordering/pagination plus
+  `since`/`until` filtering; retention-boundary pruning; query-plan or focused
+  performance review; twenty focused alert-store race runs, full native,
+  documentation, E2E, and knowledge checks.
+- **Stop condition:** stop if safe completion requires a schema or stored-data
+  migration, loses nanosecond ordering fidelity, changes public time/filter
+  semantics, needs operator data, or reaches tag/publication authority.
+
 ### R90-43 Validation Deviation
 
 - **Observed:** The first full native race suite reached the new stored-row
@@ -1120,7 +1138,16 @@
   Oct 26 from the clean fetched reconciliation baseline, completed task state,
   release boundaries, SQLite text-ordering behavior, stored-row decoding, and
   verified Vault evidence. R90-46 is selected as the highest-priority
-  dependency-ready correctness increment. Publication remains unauthorized.
+  dependency-ready correctness increment. R90-46 completed early at
+  `9c6d574ba0f1f9766e9411b41d54b1ddeafb207b`: shared row decoding now
+  rejects parseable timestamp encodings that differ from writer output before
+  ordering or identity checks, while canonical rows remain compatible and
+  historical rejection preserves shard bytes. Twenty focused alert-store race
+  runs, the full native suite, E2E smoke, documentation, config, and knowledge
+  checks passed; fetched `origin/main`, the post-fetch knowledge gate, the
+  exact full-SHA Vault note, index, MOC, and stable storage note are verified.
+  R90-47 is the next ready increment; it is not started. Publication remains
+  unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -1139,7 +1166,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -1191,14 +1218,11 @@
 
 ## Current Checkpoint
 
-R90-46 implementation is validated pending delivery from clean fetched
-`origin/main` `8d10cd23965ba3d7c3d7f899777ad3b16baf9022`. Shared primary and
-historical row decoding now rejects explicit UTC offsets, non-UTC offsets, and
-redundant fractional precision before ordering or identity validation, while
-canonical writer output remains compatible and encoded-path historical
-rejection preserves shard bytes. Twenty uncached focused alert-store race runs,
-the complete native race suite, E2E smoke, documentation, config, and knowledge
-checks pass. Exact writer-format validation does not claim to repair the
-separate variable-width SQL time-comparison gap. Commit, push, fetched-remote
-verification, and exact-range Vault synchronization remain. Publication
-remains unauthorized.
+R90-46 is complete at `9c6d574ba0f1f9766e9411b41d54b1ddeafb207b`
+from clean fetched baseline `8d10cd23965ba3d7c3d7f899777ad3b16baf9022`.
+Twenty uncached focused alert-store race runs, the complete native race suite,
+E2E smoke, documentation, config, knowledge, JSON, diff, and
+sensitive-information checks passed. Fetched `origin/main`, the post-fetch
+knowledge gate, and exact full-SHA Vault note, full index, MOC, and stable
+storage note are verified. R90-47 is ready to pin variable-width timestamp
+comparison semantics and has not started. Publication remains unauthorized.

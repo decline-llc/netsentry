@@ -91,5 +91,12 @@ full-table startup scan, operator data, tag creation, or publication authority.
 - Twenty uncached focused alert-store race runs passed.
 - The complete native race suite, E2E smoke, documentation, configuration, and
   knowledge checks passed.
-- Commit, push, fetched-remote verification, and exact-range Vault
-  synchronization remain pending.
+- Feature commit: `9c6d574ba0f1f9766e9411b41d54b1ddeafb207b`
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed.
+- Vault range:
+  `8d10cd23965ba3d7c3d7f899777ad3b16baf9022..9c6d574ba0f1f9766e9411b41d54b1ddeafb207b`
+- Vault iteration note, full commit index, `00-MOC` link, and reusable stable
+  storage note: verified.
+- Variable-width canonical RFC3339Nano comparison remains explicitly queued as
+  R90-47 rather than being included in this increment's delivery claim.
