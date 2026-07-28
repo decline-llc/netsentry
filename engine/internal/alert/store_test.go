@@ -620,6 +620,150 @@ func TestStoreRejectsInvalidHistoricalTimestampOrderWithoutModification(t *testi
 	assertFileBytesUnchanged(t, path, before)
 }
 
+func TestStoreRejectsNoncanonicalStoredTimestampEncoding(t *testing.T) {
+	tests := []struct {
+		name      string
+		field     string
+		value     func(time.Time) string
+		read      func(context.Context, *Store) error
+		condition string
+	}{
+		{
+			name:  "explicit UTC offset first seen through list",
+			field: "first_seen",
+			value: func(base time.Time) string {
+				return base.Format("2006-01-02T15:04:05+00:00")
+			},
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+			condition: "first_seen timestamp",
+		},
+		{
+			name:  "non-UTC offset last seen through query",
+			field: "last_seen",
+			value: func(base time.Time) string {
+				return base.In(time.FixedZone("fixture", -7*60*60)).Format(time.RFC3339Nano)
+			},
+			read: func(ctx context.Context, store *Store) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+			condition: "last_seen timestamp",
+		},
+		{
+			name:  "redundant fractional window start through list",
+			field: "window_start",
+			value: func(base time.Time) string {
+				return base.Format("2006-01-02T15:04:05") + ".000Z"
+			},
+			read: func(ctx context.Context, store *Store) error {
+				_, err := store.List(ctx)
+				return err
+			},
+			condition: "window_start timestamp",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			ctx := context.Background()
+			store := openTestStore(t, time.Minute)
+			defer store.Close()
+			base := time.Date(2026, 7, 28, 8, 5, 0, 0, time.UTC)
+			if err := store.WriteBatch(ctx, []*model.Alert{
+				makeAlert(base, "stored-timestamp-encoding"),
+			}); err != nil {
+				t.Fatalf("seed alert: %v", err)
+			}
+			value := test.value(base)
+			if _, err := store.db.ExecContext(
+				ctx,
+				"UPDATE alerts SET "+test.field+" = ?",
+				value,
+			); err != nil {
+				t.Fatalf("inject noncanonical stored %s: %v", test.field, err)
+			}
+
+			err := test.read(ctx, store)
+			if err == nil ||
+				!strings.Contains(err.Error(), test.condition) ||
+				!strings.Contains(err.Error(), "is not canonical UTC RFC3339Nano") {
+				t.Fatalf("read error = %v, want noncanonical %s rejection", err, test.field)
+			}
+			if strings.Contains(err.Error(), "is after") ||
+				strings.Contains(err.Error(), "does not match aggregation identity") {
+				t.Fatalf("timestamp encoding error was obscured by dependent validation: %v", err)
+			}
+		})
+	}
+}
+
+func TestStoreRejectsNoncanonicalHistoricalTimestampWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := filepath.Join(t.TempDir(), "timestamp encoding shard fixtures")
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	now := time.Date(2026, 7, 28, 8, 10, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	historicalStore, err := Open(ctx, Options{Path: path, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open historical timestamp-encoding fixture: %v", err)
+	}
+	if err := historicalStore.WriteBatch(ctx, []*model.Alert{
+		makeAlert(historical, "invalid-historical-timestamp-encoding"),
+	}); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("seed historical timestamp-encoding fixture: %v", err)
+	}
+	noncanonical := historical.In(time.FixedZone("fixture", 5*60*60+30*60)).Format(time.RFC3339Nano)
+	if _, err := historicalStore.db.ExecContext(
+		ctx,
+		"UPDATE alerts SET last_seen = ?",
+		noncanonical,
+	); err != nil {
+		_ = historicalStore.Close()
+		t.Fatalf("inject historical noncanonical timestamp: %v", err)
+	}
+	if err := historicalStore.Close(); err != nil {
+		t.Fatalf("close historical timestamp-encoding fixture: %v", err)
+	}
+	before := readFileBytes(t, path)
+
+	_, _, err = store.Query(ctx, Query{Limit: 10})
+	if err == nil ||
+		!strings.Contains(err.Error(), "last_seen timestamp") ||
+		!strings.Contains(err.Error(), "is not canonical UTC RFC3339Nano") {
+		t.Fatalf("historical query error = %v, want noncanonical last_seen rejection", err)
+	}
+	assertFileBytesUnchanged(t, path, before)
+}
+
+func TestStoreAllowsCanonicalStoredTimestampEncoding(t *testing.T) {
+	ctx := context.Background()
+	store := openTestStore(t, time.Minute)
+	defer store.Close()
+	timestamp := time.Date(2026, 7, 28, 8, 15, 0, 123400000, time.UTC)
+	if err := store.WriteBatch(ctx, []*model.Alert{
+		makeAlert(timestamp, "canonical-stored-timestamp-encoding"),
+	}); err != nil {
+		t.Fatalf("write canonical timestamp alert: %v", err)
+	}
+
+	alerts, err := store.List(ctx)
+	if err != nil {
+		t.Fatalf("list canonical timestamp alert: %v", err)
+	}
+	if len(alerts) != 1 || !alerts[0].Timestamp.Equal(timestamp) {
+		t.Fatalf("canonical timestamp alert = %+v, want timestamp %s", alerts, timestamp)
+	}
+}
+
 func TestStoreRejectsMismatchedStoredAlertIdentity(t *testing.T) {
 	tests := []struct {
 		name      string

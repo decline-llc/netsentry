@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-07-27 through 2026-10-25. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from the prior horizon is preserved below.
+> Window: 2026-07-28 through 2026-10-26. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from the prior horizon is preserved below.
 
 ## Status Rules
 
@@ -62,6 +62,7 @@
 | R90-43 | Jul 26–Oct 24 | Complete early | Validate stored SQLite protocol names. | R90-42 | Primary and historical reads accept exactly the canonical writer-emittable `TCP`, `UDP`, `ICMP`, and `PROTO_<0..255>` names; case variants, arbitrary names, malformed/out-of-range numeric forms, and numeric aliases of named protocols fail without historical shard modification. |
 | R90-44 | Jul 27–Oct 25 | Complete early | Validate recovery protocol names. | R90-43 | Startup and runtime recovery preflight accept exactly the canonical writer-emittable `TCP`, `UDP`, `ICMP`, and `PROTO_<0..255>` names; every noncanonical form fails before modifying the complete log or missing/existing SQLite state. |
 | R90-45 | Jul 27–Oct 25 | Complete early | Preflight the current recovery batch. | R90-44 | Every newly normalized alert passes the complete durable recovery contract before any current-batch append or SQLite write; a later invalid record cannot partially append a valid prefix, alter an existing pending log/database, or degrade healthy storage. |
+| R90-46 | Jul 28–Oct 26 | In progress | Validate stored SQLite timestamp encoding. | R90-45 | Primary and historical row reads accept aggregate timestamps only in the exact UTC RFC3339Nano text emitted by the writer; parseable offsets and nonminimal fractional forms fail without historical shard modification, while canonical rows remain compatible. |
 
 ## R90-07 Definition
 
@@ -744,6 +745,38 @@
   SQLite-schema change, cross-process locking, changing public alert semantics,
   automatic repair, operator data, or tag/publication authority.
 
+## R90-46 Definition
+
+- **Goal:** align stored aggregate timestamp decoding with the exact UTC
+  RFC3339Nano text emitted by NetSentry before SQLite text comparisons see
+  alternate encodings.
+- **Risk:** accepting parseable but noncanonical offsets or redundant
+  fractional precision can make SQLite lexical comparisons disagree with the
+  decoded instants, while over-validation could reject legitimate writer
+  output.
+- **Required validation:** direct `first_seen`, `last_seen`, and
+  `window_start` rejection for explicit UTC offsets, non-UTC offsets, and
+  nonminimal fractional forms across list/query decoding; historical read-only
+  rejection with byte preservation through an encoded filesystem path;
+  healthy primary and cross-shard compatibility; twenty focused alert-store
+  race runs, full native, documentation, E2E, and knowledge checks.
+- **Stop condition:** stop if safe completion requires a schema migration,
+  rewriting stored timestamps, changing recovery JSON or public time
+  semantics, validating `created_at`/`updated_at`, a full-table startup scan,
+  operator data, or tag/publication authority.
+
+### R90-46 Scope Observation
+
+- **Observed:** Go's canonical RFC3339Nano output omits or trims fractional
+  seconds, so exact writer-format validation does not by itself prove that
+  every variable-width timestamp string has chronological lexical order.
+- **Impact:** R90-46 rejects alternate offset and redundant-precision input but
+  makes no claim that SQLite time comparison, aggregation, ordering, or pruning
+  semantics are fully corrected.
+- **Follow-up:** Refresh the queue after R90-46 delivery with a separate
+  increment that pins SQL time comparisons without silently migrating or
+  rewriting stored rows.
+
 ### R90-43 Validation Deviation
 
 - **Observed:** The first full native race suite reached the new stored-row
@@ -1083,7 +1116,11 @@
   `origin/main`, the post-fetch knowledge gate, and the exact full-SHA Vault
   note, index, MOC, and stable storage note are verified. No later engineering
   increment is selected; refresh the rolling roadmap on the next
-  `$netsentry-next` trigger. Publication remains unauthorized.
+  `$netsentry-next` trigger. The horizon was refreshed on Jul 28 through
+  Oct 26 from the clean fetched reconciliation baseline, completed task state,
+  release boundaries, SQLite text-ordering behavior, stored-row decoding, and
+  verified Vault evidence. R90-46 is selected as the highest-priority
+  dependency-ready correctness increment. Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -1102,7 +1139,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -1154,12 +1191,14 @@
 
 ## Current Checkpoint
 
-R90-45 is complete at `3990a1b228deddb3f43ef957af0eb102fbc170e4` from
-clean fetched baseline `11371d520abd6004d6b1991eef5544dcffc48c8f`.
-Twenty uncached focused alert-store race runs, the complete native race suite,
-E2E smoke, documentation, config, knowledge, JSON, diff, and
-sensitive-information checks passed. Fetched `origin/main`, the post-fetch
-knowledge gate, and exact full-SHA Vault note, full index, MOC, and stable
-storage note are verified. No later engineering increment is selected; refresh
-the roadmap on the next `$netsentry-next` trigger. Publication remains
-unauthorized.
+R90-46 implementation is validated pending delivery from clean fetched
+`origin/main` `8d10cd23965ba3d7c3d7f899777ad3b16baf9022`. Shared primary and
+historical row decoding now rejects explicit UTC offsets, non-UTC offsets, and
+redundant fractional precision before ordering or identity validation, while
+canonical writer output remains compatible and encoded-path historical
+rejection preserves shard bytes. Twenty uncached focused alert-store race runs,
+the complete native race suite, E2E smoke, documentation, config, and knowledge
+checks pass. Exact writer-format validation does not claim to repair the
+separate variable-width SQL time-comparison gap. Commit, push, fetched-remote
+verification, and exact-range Vault synchronization remain. Publication
+remains unauthorized.

@@ -1996,15 +1996,15 @@ func scanAlert(rows *sql.Rows) (*model.Alert, error) {
 	if err := validateSeverity(model.Severity(severity)); err != nil {
 		return nil, fmt.Errorf("invalid stored alert %s: %w", alert.ID, err)
 	}
-	parsedFirstSeen, err := parseTime(firstSeen)
+	parsedFirstSeen, err := parseStoredTime(alert.ID, "first_seen", firstSeen)
 	if err != nil {
 		return nil, err
 	}
-	parsedLastSeen, err := parseTime(lastSeen)
+	parsedLastSeen, err := parseStoredTime(alert.ID, "last_seen", lastSeen)
 	if err != nil {
 		return nil, err
 	}
-	parsedWindowStart, err := parseTime(windowStart)
+	parsedWindowStart, err := parseStoredTime(alert.ID, "window_start", windowStart)
 	if err != nil {
 		return nil, err
 	}
@@ -2049,10 +2049,20 @@ func formatTime(t time.Time) string {
 	return t.UTC().Format(time.RFC3339Nano)
 }
 
-func parseTime(value string) (time.Time, error) {
+func parseStoredTime(alertID, field, value string) (time.Time, error) {
 	parsed, err := time.Parse(time.RFC3339Nano, value)
 	if err != nil {
-		return time.Time{}, fmt.Errorf("parse alert timestamp %q: %w", value, err)
+		return time.Time{}, fmt.Errorf("invalid stored alert %s: parse %s timestamp %q: %w", alertID, field, value, err)
+	}
+	canonical := formatTime(parsed)
+	if value != canonical {
+		return time.Time{}, fmt.Errorf(
+			"invalid stored alert %s: %s timestamp %q is not canonical UTC RFC3339Nano; expected %q",
+			alertID,
+			field,
+			value,
+			canonical,
+		)
 	}
 	return parsed, nil
 }

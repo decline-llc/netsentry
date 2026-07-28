@@ -1,0 +1,46 @@
+{
+  "task": "r90-46-sqlite-stored-timestamp-encoding",
+  "timestamp": "2026-07-28T01:00:41-07:00",
+  "branch": "main",
+  "remote_baseline": "8d10cd23965ba3d7c3d7f899777ad3b16baf9022",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_pending_delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main agrees",
+    "Verified the completed R90-45 task state and both delivery commits",
+    "Verified the single discovered local Vault contains R90-45 feature and delivery notes, full-index entries, MOC links, and the stable storage update",
+    "Passed the clean fetched-baseline knowledge check",
+    "Refreshed the 90-day horizon from release boundaries, SQLite text-ordering behavior, stored-row decoding, and verified Vault evidence",
+    "Selected R90-46 as the highest-priority dependency-ready correctness increment",
+    "Confirmed shared row decoding accepts parseable timestamp text that differs from the writer's canonical UTC RFC3339Nano encoding",
+    "Required exact formatTime equality for stored first_seen, last_seen, and window_start values before ordering and identity checks",
+    "Covered explicit UTC offsets, non-UTC offsets, and redundant fractional precision as distinct rejection conditions",
+    "Proved encoded-path historical rejection preserves shard bytes and canonical fractional writer output remains compatible",
+    "Passed twenty uncached focused alert-store race runs",
+    "Passed the complete native race suite, E2E smoke, documentation, config, and knowledge checks",
+    "Recorded that variable-width canonical RFC3339Nano SQL comparisons remain a separate follow-up"
+  ],
+  "in_progress": [
+    "Commit and deliver the validated R90-46 increment"
+  ],
+  "todo": [
+    "Commit and push the feature",
+    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
+    "Reconcile roadmap and task-state delivery evidence"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "Delivery evidence remains pending until fetched origin/main and the exact-range Vault note are verified",
+    "Canonical RFC3339Nano uses variable fractional precision, so SQL time-comparison semantics require a separate follow-up increment",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-46 is implemented and validated from clean fetched origin/main at 8d10cd23965ba3d7c3d7f899777ad3b16baf9022. Stage only the intended feature paths, commit, push, fetch and verify origin/main, rerun the knowledge check, synchronize the exact full-SHA range to the single local Vault, verify its note/index/MOC, then reconcile the roadmap, plan, and task state in a docs-only delivery commit. Preserve the separate variable-width SQL time-comparison follow-up. Do not change the SQLite schema, recovery JSON, public time semantics, created_at/updated_at handling, repair stored data, create a release tag, or publish artifacts."
+}

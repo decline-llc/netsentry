@@ -9,6 +9,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Stored aggregate timestamp decoding now requires the exact canonical UTC
+  RFC3339Nano text emitted by the SQLite writer, rejecting parseable offset or
+  redundant fractional encodings before ordering or identity validation.
 - Current alert batches now pass the complete durable recovery-record contract
   before any JSONL append or SQLite write, preventing partial valid-prefix
   persistence when a later current record is invalid.
