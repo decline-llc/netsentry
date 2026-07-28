@@ -272,9 +272,14 @@ Stored aggregate timestamps must also use the exact canonical UTC RFC3339Nano
 text emitted by the SQLite writer and satisfy
 `window_start <= first_seen <= last_seen`. Parseable explicit or non-UTC
 offsets and redundant fractional precision fail before ordering or identity
-validation because SQLite compares these columns as text. The ordering check
-preserves compatibility with historical aggregation-window durations while
-rejecting reversed event ranges and window starts after the first event.
+validation because SQLite compares these columns as text. Every aggregation,
+ordering, inclusive time-filter, and retention inequality converts canonical
+text to a shared fixed-width nanosecond key first. The writable primary
+database creates an optional expression index for global `last_seen`
+order/range scans; read-only legacy shards use the same comparison without
+index creation or byte modification. The row-ordering check preserves
+compatibility with historical aggregation-window durations while rejecting
+reversed event ranges and window starts after the first event.
 Stored alert IDs must equal the canonical identity derived from `rule_id`,
 `src_ip`, `dst_ip`, `dst_port`, and `window_start`. Empty or altered IDs fail
 row decoding; the reader does not repair the row.
@@ -482,7 +487,7 @@ Current validation baseline:
 - Receiver contract tests enforce strict IPv4 packet addresses, including
   ordinary and IPv4-mapped IPv6 rejection with one decode error and no queued
   packet.
-- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation, daily shards, bounded recovery-log encoding/replay plus event-identity, severity, rule-name, MITRE-tuple, protocol-name, and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, non-binary aggregation, generated-column, `CHECK`-constraint, and write-critical foreign-key rejection, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact alert filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple/IPv4-address rejection, active WAL-backed read-only access, and storage degraded/emergency behavior.
+- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation including nanosecond timestamp aggregation/order/filter/pruning and query-plan coverage, daily shards, bounded recovery-log encoding/replay plus event-identity, severity, rule-name, MITRE-tuple, protocol-name, and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, non-binary aggregation, generated-column, `CHECK`-constraint, and write-critical foreign-key rejection, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact alert filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple/IPv4-address rejection, active WAL-backed read-only access, and storage degraded/emergency behavior.
 - Release-candidate checks run syntax checks, repository configuration validation, dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 
 The C-side JSON line formatter is intentionally kept as a bounded handwritten v0.1.0 implementation. It avoids a new C dependency, rejects truncation, escapes JSON strings, Base64-encodes packet payload previews, and is covered by the UDS sender tests and current smoke checks. A cJSON migration should be reopened only with a concrete defect or fuzzing result.

@@ -1,0 +1,47 @@
+{
+  "task": "r90-47-sqlite-timestamp-comparisons",
+  "timestamp": "2026-07-28T01:26:36-07:00",
+  "branch": "main",
+  "remote_baseline": "e28e3de9fafc099ae082ffc45ae867e20abf19dd",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_pending_delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main agrees",
+    "Verified the completed R90-46 task state and both delivery commits",
+    "Verified the single discovered local Vault contains R90-46 feature and delivery notes, full-index entries, MOC links, and the stable storage update",
+    "Passed the clean fetched-baseline knowledge check",
+    "Selected R90-47 as the highest-priority dependency-ready correctness increment",
+    "Confirmed UPSERT, ordering, julianday filters, and pruning do not share a nanosecond-safe comparison contract",
+    "Selected a pure-SQL fixed-width key and optional expression index that require no stored-row rewrite or custom SQLite extension",
+    "Applied the shared fixed-width nanosecond key to UPSERT, list/query ordering, inclusive time filters, and retention pruning",
+    "Added the optional primary last_seen expression index and verified its order/range query plan avoids a temporary sort",
+    "Covered exact-second, one-nanosecond, and two-nanosecond aggregation, ordering, pagination, filtering, and pruning boundaries",
+    "Proved an encoded-path legacy historical shard without the optional index remains byte-for-byte unchanged while filtering and ordering correctly",
+    "Passed twenty uncached focused alert-store race runs",
+    "Passed the complete native race suite",
+    "Passed E2E smoke with 6 packets, 5 alerts, and 8 loaded rules",
+    "Passed documentation, configuration, knowledge, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Commit and deliver the validated R90-47 feature"
+  ],
+  "todo": [
+    "Commit and push the feature",
+    "Verify fetched origin/main and synchronize the exact pushed range to the local Vault",
+    "Reconcile roadmap and task-state delivery evidence"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "Delivery and exact-range Vault synchronization remain",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Continue the validated R90-47 delivery from clean fetched baseline e28e3de9fafc099ae082ffc45ae867e20abf19dd. Run the final pre-commit hygiene checks, commit and push the feature, fetch-verify origin/main, synchronize the exact full-SHA range to the single local Vault, verify its feature note/index/MOC/stable storage note, and reconcile delivery evidence in a separate documentation commit. Do not repeat implementation or the completed proportional validation, rewrite stored timestamps, add a custom durable SQLite extension, write historical shards, change public semantics, create a release tag, or publish artifacts."
+}

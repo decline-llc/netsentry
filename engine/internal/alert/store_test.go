@@ -85,6 +85,46 @@ func TestStoreAggregatesOutOfOrderAlertsWithoutRegressingLatestFields(t *testing
 	}
 }
 
+func TestStoreAggregatesNanosecondTimestampsChronologically(t *testing.T) {
+	ctx := context.Background()
+	store := openTestStore(t, time.Minute)
+	defer store.Close()
+
+	base := time.Date(2026, 7, 28, 8, 30, 0, 0, time.UTC)
+	exact := makeAlert(base, "exact")
+	exact.PayloadPreview = "exact payload"
+	latest := makeAlert(base.Add(2*time.Nanosecond), "latest")
+	latest.PayloadPreview = "latest payload"
+	middle := makeAlert(base.Add(time.Nanosecond), "middle")
+	middle.PayloadPreview = "middle payload"
+	for _, alert := range []*model.Alert{exact, latest, middle} {
+		if err := store.WriteBatch(ctx, []*model.Alert{alert}); err != nil {
+			t.Fatalf("write %q alert: %v", alert.MatchedKeyword, err)
+		}
+	}
+
+	listed, err := store.List(ctx)
+	if err != nil {
+		t.Fatalf("list nanosecond aggregate: %v", err)
+	}
+	if len(listed) != 1 {
+		t.Fatalf("aggregated rows = %d, want 1", len(listed))
+	}
+	got := listed[0]
+	if got.AggregatedCount != 3 {
+		t.Fatalf("aggregated count = %d, want 3", got.AggregatedCount)
+	}
+	if !got.FirstSeen.Equal(base) {
+		t.Fatalf("first_seen = %s, want %s", got.FirstSeen, base)
+	}
+	if !got.LastSeen.Equal(latest.Timestamp) {
+		t.Fatalf("last_seen = %s, want %s", got.LastSeen, latest.Timestamp)
+	}
+	if got.MatchedKeyword != "latest" || got.PayloadPreview != "latest payload" {
+		t.Fatalf("latest fields = keyword %q payload %q, want latest values", got.MatchedKeyword, got.PayloadPreview)
+	}
+}
+
 func TestStoreKeepsAggregationKeysSeparate(t *testing.T) {
 	ctx := context.Background()
 	store := openTestStore(t, 60*time.Second)
@@ -145,6 +185,7 @@ func TestStoreCreatesAlertQueryIndexes(t *testing.T) {
 		"idx_alerts_protocol_port_last_seen",
 		"idx_alerts_mitre_technique_last_seen",
 		"idx_alerts_count_last_seen",
+		"idx_alerts_last_seen_time_id",
 	} {
 		if !indexes[want] {
 			t.Fatalf("expected alert query index %q, got %+v", want, indexes)
@@ -205,6 +246,98 @@ func TestStoreQueryFiltersCountsAndPagesAlerts(t *testing.T) {
 	}
 	if total != 3 || len(alerts) != 1 {
 		t.Fatalf("page returned total=%d len=%d, want 3/1", total, len(alerts))
+	}
+}
+
+func TestStoreTimestampQueryPlanUsesExpressionIndex(t *testing.T) {
+	ctx := context.Background()
+	store := openTestStore(t, time.Minute)
+	defer store.Close()
+
+	rows, err := store.db.QueryContext(
+		ctx,
+		"EXPLAIN QUERY PLAN SELECT id FROM alerts WHERE "+
+			sqliteTimestampKeySQL("last_seen")+" >= ? ORDER BY "+
+			sqliteTimestampKeySQL("last_seen")+" DESC, id ASC",
+		formatSQLiteTimestampKey(time.Date(2026, 7, 28, 8, 35, 0, 0, time.UTC)),
+	)
+	if err != nil {
+		t.Fatalf("explain timestamp range/order query: %v", err)
+	}
+	defer rows.Close()
+	var details []string
+	for rows.Next() {
+		var id, parent, unused int
+		var detail string
+		if err := rows.Scan(&id, &parent, &unused, &detail); err != nil {
+			t.Fatalf("scan timestamp query plan: %v", err)
+		}
+		details = append(details, detail)
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatalf("iterate timestamp query plan: %v", err)
+	}
+	plan := strings.Join(details, "\n")
+	if !strings.Contains(plan, "idx_alerts_last_seen_time_id") {
+		t.Fatalf("timestamp query plan does not use expression index: %s", plan)
+	}
+	if strings.Contains(plan, "USE TEMP B-TREE FOR ORDER BY") {
+		t.Fatalf("timestamp query plan uses a temporary order sort: %s", plan)
+	}
+}
+
+func TestStoreOrdersAndFiltersNanosecondTimestamps(t *testing.T) {
+	ctx := context.Background()
+	store := openTestStore(t, time.Minute)
+	defer store.Close()
+
+	base := time.Date(2026, 7, 28, 8, 40, 0, 0, time.UTC)
+	alerts := []*model.Alert{
+		makeAlert(base, "exact"),
+		makeAlert(base.Add(time.Nanosecond), "one-nanosecond"),
+		makeAlert(base.Add(2*time.Nanosecond), "two-nanoseconds"),
+	}
+	for index, alert := range alerts {
+		alert.RuleID = fmt.Sprintf("timestamp-order-%d", index)
+	}
+	if err := store.WriteBatch(ctx, alerts); err != nil {
+		t.Fatalf("write timestamp ordering fixtures: %v", err)
+	}
+
+	listed, err := store.List(ctx)
+	if err != nil {
+		t.Fatalf("list timestamp ordering fixtures: %v", err)
+	}
+	wantOrder := []string{"two-nanoseconds", "one-nanosecond", "exact"}
+	if len(listed) != len(wantOrder) {
+		t.Fatalf("listed rows = %d, want %d", len(listed), len(wantOrder))
+	}
+	for index, want := range wantOrder {
+		if listed[index].MatchedKeyword != want {
+			t.Fatalf("listed[%d] keyword = %q, want %q", index, listed[index].MatchedKeyword, want)
+		}
+	}
+
+	for offset, want := range wantOrder {
+		page, total, err := store.Query(ctx, Query{Limit: 1, Offset: offset})
+		if err != nil {
+			t.Fatalf("query timestamp page %d: %v", offset, err)
+		}
+		if total != 3 || len(page) != 1 || page[0].MatchedKeyword != want {
+			t.Fatalf("page %d = total %d alerts %+v, want %q", offset, total, page, want)
+		}
+	}
+
+	since := base.Add(time.Nanosecond)
+	until := base.Add(2 * time.Nanosecond)
+	filtered, total, err := store.Query(ctx, Query{Since: &since, Until: &until, Limit: 10})
+	if err != nil {
+		t.Fatalf("query inclusive nanosecond range: %v", err)
+	}
+	if total != 2 || len(filtered) != 2 ||
+		filtered[0].MatchedKeyword != "two-nanoseconds" ||
+		filtered[1].MatchedKeyword != "one-nanosecond" {
+		t.Fatalf("inclusive nanosecond range = total %d alerts %+v", total, filtered)
 	}
 }
 
@@ -3929,19 +4062,30 @@ func TestStoreReopensCompatibleExistingDatabase(t *testing.T) {
 
 func TestStoreRecreatesOptionalQueryIndexOnCompatibleDatabase(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "alerts.db")
-	createSQLiteFixture(t, path, schemaSQL, `DROP INDEX idx_alerts_last_seen`)
+	createSQLiteFixture(
+		t,
+		path,
+		schemaSQL,
+		`DROP INDEX idx_alerts_last_seen`,
+		`DROP INDEX idx_alerts_last_seen_time_id`,
+	)
 
 	store, err := Open(context.Background(), Options{Path: path, JournalMode: "DELETE"})
 	if err != nil {
 		t.Fatalf("reopen compatible database without optional index: %v", err)
 	}
 	defer store.Close()
-	var count int
-	if err := store.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type = 'index' AND name = 'idx_alerts_last_seen'`).Scan(&count); err != nil {
-		t.Fatalf("inspect recreated query index: %v", err)
-	}
-	if count != 1 {
-		t.Fatalf("recreated query index count = %d, want 1", count)
+	for _, index := range []string{"idx_alerts_last_seen", "idx_alerts_last_seen_time_id"} {
+		var count int
+		if err := store.db.QueryRow(
+			`SELECT COUNT(*) FROM sqlite_master WHERE type = 'index' AND name = ?`,
+			index,
+		).Scan(&count); err != nil {
+			t.Fatalf("inspect recreated query index %s: %v", index, err)
+		}
+		if count != 1 {
+			t.Fatalf("recreated query index %s count = %d, want 1", index, count)
+		}
 	}
 }
 
@@ -4719,6 +4863,49 @@ func TestStoreDailyShardQueryHonorsTimeRange(t *testing.T) {
 	}
 }
 
+func TestStoreHistoricalNanosecondRangeIsReadOnly(t *testing.T) {
+	ctx := context.Background()
+	dir := filepath.Join(t.TempDir(), "timestamp comparison shard fixtures")
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	historicalDay := time.Date(2026, 7, 27, 8, 45, 0, 0, time.UTC)
+	historical := openDailyShardStoreAt(t, dir, historicalDay)
+	alerts := []*model.Alert{
+		makeAlert(historicalDay, "historical-exact"),
+		makeAlert(historicalDay.Add(time.Nanosecond), "historical-one-nanosecond"),
+		makeAlert(historicalDay.Add(2*time.Nanosecond), "historical-two-nanoseconds"),
+	}
+	for index, alert := range alerts {
+		alert.RuleID = fmt.Sprintf("historical-timestamp-%d", index)
+	}
+	if err := historical.WriteBatch(ctx, alerts); err != nil {
+		_ = historical.Close()
+		t.Fatalf("write historical timestamp fixtures: %v", err)
+	}
+	path := historical.Path()
+	if err := historical.Close(); err != nil {
+		t.Fatalf("close historical timestamp fixtures: %v", err)
+	}
+	createSQLiteFixture(t, path, `DROP INDEX idx_alerts_last_seen_time_id`)
+	before := readFileBytes(t, path)
+
+	current := openDailyShardStoreAt(t, dir, historicalDay.AddDate(0, 0, 1))
+	defer current.Close()
+	since := historicalDay.Add(time.Nanosecond)
+	until := historicalDay.Add(2 * time.Nanosecond)
+	got, total, err := current.Query(ctx, Query{Since: &since, Until: &until, Limit: 10})
+	if err != nil {
+		t.Fatalf("query historical nanosecond range: %v", err)
+	}
+	if total != 2 || len(got) != 2 ||
+		got[0].MatchedKeyword != "historical-two-nanoseconds" ||
+		got[1].MatchedKeyword != "historical-one-nanosecond" {
+		t.Fatalf("historical nanosecond range = total %d alerts %+v", total, got)
+	}
+	assertFileBytesUnchanged(t, path, before)
+}
+
 func TestStorePrunesExpiredAlerts(t *testing.T) {
 	ctx := context.Background()
 	now := time.Date(2026, 6, 27, 12, 0, 0, 0, time.UTC)
@@ -4757,6 +4944,53 @@ func TestStorePrunesExpiredAlerts(t *testing.T) {
 	}
 	if len(listed) != 1 || listed[0].MatchedKeyword != "fresh" {
 		t.Fatalf("expected only fresh alert, got %+v", listed)
+	}
+}
+
+func TestStorePrunesAtNanosecondRetentionBoundary(t *testing.T) {
+	ctx := context.Background()
+	base := time.Date(2026, 7, 21, 8, 50, 0, 0, time.UTC)
+	cutoff := base.Add(time.Nanosecond)
+	now := cutoff.AddDate(0, 0, 7)
+	store, err := Open(ctx, Options{
+		Path:              filepath.Join(t.TempDir(), "alerts.db"),
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		RetentionDays:     7,
+		Now:               func() time.Time { return now },
+	})
+	if err != nil {
+		t.Fatalf("open nanosecond retention store: %v", err)
+	}
+	defer store.Close()
+	alerts := []*model.Alert{
+		makeAlert(base, "expired-before-cutoff"),
+		makeAlert(cutoff, "retained-at-cutoff"),
+		makeAlert(cutoff.Add(time.Nanosecond), "retained-after-cutoff"),
+	}
+	for index, alert := range alerts {
+		alert.RuleID = fmt.Sprintf("retention-timestamp-%d", index)
+	}
+	if err := store.WriteBatch(ctx, alerts); err != nil {
+		t.Fatalf("write nanosecond retention fixtures: %v", err)
+	}
+
+	pruned, err := store.PruneExpired(ctx)
+	if err != nil {
+		t.Fatalf("prune nanosecond retention fixtures: %v", err)
+	}
+	if pruned != 1 {
+		t.Fatalf("pruned rows = %d, want 1", pruned)
+	}
+	listed, err := store.List(ctx)
+	if err != nil {
+		t.Fatalf("list nanosecond retention fixtures: %v", err)
+	}
+	if len(listed) != 2 ||
+		listed[0].MatchedKeyword != "retained-after-cutoff" ||
+		listed[1].MatchedKeyword != "retained-at-cutoff" {
+		t.Fatalf("retained nanosecond rows = %+v", listed)
 	}
 }
 

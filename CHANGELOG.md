@@ -9,6 +9,10 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- SQLite aggregation, ordering, time filters, and retention pruning now compare
+  canonical variable-width RFC3339Nano timestamps through a fixed-width
+  nanosecond key, with an optional expression index for primary order/range
+  scans.
 - Stored aggregate timestamp decoding now requires the exact canonical UTC
   RFC3339Nano text emitted by the SQLite writer, rejecting parseable offset or
   redundant fractional encodings before ordering or identity validation.

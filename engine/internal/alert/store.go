@@ -970,7 +970,20 @@ func (s *Store) shardPathFor(ts time.Time) string {
 	return filepath.Join(s.dir, fmt.Sprintf("netsentry-%s.db", ts.UTC().Format("2006-01-02")))
 }
 
-const schemaSQL = `
+const sqliteTimestampKeyLayout = "2006-01-02T15:04:05.000000000Z"
+
+func sqliteTimestampKeySQL(value string) string {
+	return fmt.Sprintf(
+		`(substr(%[1]s, 1, 19) || '.' || substr((CASE WHEN substr(%[1]s, 20, 1) = 'Z' THEN '' ELSE substr(%[1]s, 21, length(%[1]s) - 21) END) || '000000000', 1, 9) || 'Z')`,
+		value,
+	)
+}
+
+func formatSQLiteTimestampKey(value time.Time) string {
+	return value.UTC().Format(sqliteTimestampKeyLayout)
+}
+
+var schemaSQL = fmt.Sprintf(`
 CREATE TABLE IF NOT EXISTS alerts (
     id TEXT PRIMARY KEY,
     event_id TEXT NOT NULL,
@@ -1009,9 +1022,10 @@ CREATE INDEX IF NOT EXISTS idx_alerts_dst_last_seen ON alerts(dst_ip, last_seen 
 CREATE INDEX IF NOT EXISTS idx_alerts_protocol_port_last_seen ON alerts(protocol, dst_port, last_seen DESC);
 CREATE INDEX IF NOT EXISTS idx_alerts_mitre_technique_last_seen ON alerts(mitre_technique_id, last_seen DESC);
 CREATE INDEX IF NOT EXISTS idx_alerts_count_last_seen ON alerts(aggregated_count, last_seen DESC);
-`
+CREATE INDEX IF NOT EXISTS idx_alerts_last_seen_time_id ON alerts(%s DESC, id ASC);
+`, sqliteTimestampKeySQL("last_seen"))
 
-const upsertAlertSQL = `
+var upsertAlertSQL = fmt.Sprintf(`
 INSERT INTO alerts (
     id, event_id, rule_id, rule_name, severity, protocol, src_ip, dst_ip, dst_port,
     mitre_tactic, mitre_technique_id, mitre_technique_name,
@@ -1021,23 +1035,28 @@ INSERT INTO alerts (
 ON CONFLICT(rule_id, src_ip, dst_ip, dst_port, window_start) DO UPDATE SET
     aggregated_count = alerts.aggregated_count + excluded.aggregated_count,
     first_seen = CASE
-        WHEN excluded.first_seen < alerts.first_seen THEN excluded.first_seen
+        WHEN %[1]s < %[2]s THEN excluded.first_seen
         ELSE alerts.first_seen
     END,
     last_seen = CASE
-        WHEN excluded.last_seen > alerts.last_seen THEN excluded.last_seen
+        WHEN %[3]s > %[4]s THEN excluded.last_seen
         ELSE alerts.last_seen
     END,
     payload_preview = CASE
-        WHEN excluded.last_seen >= alerts.last_seen THEN excluded.payload_preview
+        WHEN %[3]s >= %[4]s THEN excluded.payload_preview
         ELSE alerts.payload_preview
     END,
     matched_keyword = CASE
-        WHEN excluded.last_seen >= alerts.last_seen THEN excluded.matched_keyword
+        WHEN %[3]s >= %[4]s THEN excluded.matched_keyword
         ELSE alerts.matched_keyword
     END,
     updated_at = excluded.updated_at;
-`
+`,
+	sqliteTimestampKeySQL("excluded.first_seen"),
+	sqliteTimestampKeySQL("alerts.first_seen"),
+	sqliteTimestampKeySQL("excluded.last_seen"),
+	sqliteTimestampKeySQL("alerts.last_seen"),
+)
 
 const insertAlertEventSQL = `
 INSERT OR IGNORE INTO alert_events (event_id, created_at) VALUES (?, ?)
@@ -1546,8 +1565,7 @@ SELECT id, event_id, rule_id, rule_name, severity, protocol, src_ip, dst_ip, dst
        mitre_tactic, mitre_technique_id, mitre_technique_name,
        payload_preview, matched_keyword,
        aggregated_count, first_seen, last_seen, window_start
-FROM alerts
-ORDER BY last_seen DESC, id ASC
+FROM alerts`+alertOrderSQL+`
 LIMIT 1000`)
 	if err != nil {
 		s.markStorageError(err)
@@ -1577,6 +1595,8 @@ SELECT id, event_id, rule_id, rule_name, severity, protocol, src_ip, dst_ip, dst
        payload_preview, matched_keyword,
        aggregated_count, first_seen, last_seen, window_start
 FROM alerts`
+
+var alertOrderSQL = "\nORDER BY " + sqliteTimestampKeySQL("last_seen") + " DESC, id ASC"
 
 // Query returns filtered and paginated alerts plus the total filtered row count.
 func (s *Store) Query(ctx context.Context, query Query) ([]*model.Alert, int, error) {
@@ -1612,8 +1632,7 @@ func queryAlertsDB(ctx context.Context, db *sql.DB, query Query) ([]*model.Alert
 	}
 	listArgs := append([]any{}, args...)
 	listArgs = append(listArgs, limit, offset)
-	rows, err := db.QueryContext(ctx, alertSelectColumns+where+`
-ORDER BY last_seen DESC, id ASC
+	rows, err := db.QueryContext(ctx, alertSelectColumns+where+alertOrderSQL+`
 LIMIT ? OFFSET ?`, listArgs...)
 	if err != nil {
 		return nil, 0, fmt.Errorf("query alerts: %w", err)
@@ -1717,10 +1736,10 @@ func alertQueryWhere(query Query) (string, []any) {
 		add("dst_port = ?", int(*query.DstPort))
 	}
 	if query.Since != nil {
-		add("julianday(last_seen) >= julianday(?)", formatTime(*query.Since))
+		add(sqliteTimestampKeySQL("last_seen")+" >= ?", formatSQLiteTimestampKey(*query.Since))
 	}
 	if query.Until != nil {
-		add("julianday(last_seen) <= julianday(?)", formatTime(*query.Until))
+		add(sqliteTimestampKeySQL("last_seen")+" <= ?", formatSQLiteTimestampKey(*query.Until))
 	}
 	if query.MitreTactic != "" {
 		add("LOWER(mitre_tactic) = LOWER(?)", query.MitreTactic)
@@ -1864,7 +1883,11 @@ func (s *Store) PruneExpired(ctx context.Context) (int64, error) {
 		return 0, nil
 	}
 	cutoff := s.retentionCutoff()
-	result, err := s.db.ExecContext(ctx, "DELETE FROM alerts WHERE last_seen < ?", formatTime(cutoff))
+	result, err := s.db.ExecContext(
+		ctx,
+		"DELETE FROM alerts WHERE "+sqliteTimestampKeySQL("last_seen")+" < ?",
+		formatSQLiteTimestampKey(cutoff),
+	)
 	if err != nil {
 		return 0, fmt.Errorf("prune expired alerts: %w", err)
 	}
