@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "e1434794348c5cc01b075f5e375c98027ec34a15",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main agrees",
     "Verified the completed R90-48 task state and both delivery commits",
@@ -25,17 +25,26 @@
     "Passed twenty uncached focused receiver race reruns without reproducing the broken-pipe failure",
     "Passed the required clean complete native race-suite rerun",
     "Passed E2E smoke with 6 packets, 5 alerts, and 8 loaded rules",
-    "Passed documentation, configuration, knowledge, JSON, diff, and sensitive-information checks"
+    "Passed documentation, configuration, knowledge, JSON, diff, and sensitive-information checks",
+    "Pushed e015e9726bb5359bbd447b10d43953abda5b5149 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact full-SHA Vault note, full index, MOC, and reusable stable storage note",
+    "Left the next engineering increment unselected for a fresh rolling-roadmap review"
   ],
-  "in_progress": [
-    "Commit and push the validated R90-49 increment"
-  ],
-  "todo": [
-    "Commit, push, verify fetched origin/main, synchronize the exact range to the local Vault, and reconcile delivery evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
+  "delivery": {
+    "commit": "e015e9726bb5359bbd447b10d43953abda5b5149",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "e1434794348c5cc01b075f5e375c98027ec34a15..e015e9726bb5359bbd447b10d43953abda5b5149",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_storage_note_verified": true
+  },
   "remaining_risks": [
-    "Duplicate detection must not broaden unknown-field or nested-value semantics",
+    "The next engineering increment requires a fresh rolling-roadmap review",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Continue R90-49 from clean fetched baseline e1434794348c5cc01b075f5e375c98027ec34a15. Reject exact duplicate top-level recovery JSON names and case-variant aliases targeting the same durable field before model decoding. Preserve rejected logs and missing/existing SQLite state; run the plan validation before commit and push. Do not reject all unknown fields, recurse into unknown values, change the recovery format, create a release tag, or publish artifacts."
+  "resume_instructions": "R90-49 is complete at e015e9726bb5359bbd447b10d43953abda5b5149. Do not repeat its implementation, validation, push, or Vault synchronization. On the next $netsentry-next trigger, fetch and verify origin/main, confirm this completed task state and both delivery commits plus Vault evidence, refresh the rolling roadmap, and select at most one dependency-ready increment. Do not reject all unknown fields, recurse into unknown values, change the recovery format, create a release tag, or publish artifacts."
 }
