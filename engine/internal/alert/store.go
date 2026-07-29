@@ -1357,6 +1357,9 @@ func (s *Store) readRecoveryLog() ([]*model.Alert, error) {
 		if err := json.Unmarshal(scanner.Bytes(), &alert); err != nil {
 			return nil, fmt.Errorf("%w: decode record %d: %v", ErrRecoveryLogIntegrity, record, err)
 		}
+		if err := validateRecoveryTimestampEncoding(scanner.Bytes(), alert); err != nil {
+			return nil, fmt.Errorf("%w: record %d: %v", ErrRecoveryLogIntegrity, record, err)
+		}
 		if err := validateRecoveryAlert(alert, s.aggregationWindow); err != nil {
 			return nil, fmt.Errorf("%w: record %d: %v", ErrRecoveryLogIntegrity, record, err)
 		}
@@ -1430,6 +1433,44 @@ func validateRecoveryAlert(alert model.Alert, aggregationWindow time.Duration) e
 	}
 	if alert.AggregatedCount != normalized.AggregatedCount {
 		return errors.New("required field aggregated_count must equal 1")
+	}
+	return nil
+}
+
+func validateRecoveryTimestampEncoding(record []byte, alert model.Alert) error {
+	var encodedFields map[string]json.RawMessage
+	if err := json.Unmarshal(record, &encodedFields); err != nil {
+		return fmt.Errorf("inspect recovery timestamp encoding: %w", err)
+	}
+	for _, field := range []struct {
+		name  string
+		value time.Time
+	}{
+		{name: "timestamp", value: alert.Timestamp},
+		{name: "first_seen", value: alert.FirstSeen},
+		{name: "last_seen", value: alert.LastSeen},
+		{name: "window_start", value: alert.WindowStart},
+	} {
+		if field.value.IsZero() {
+			continue
+		}
+		raw, ok := encodedFields[field.name]
+		if !ok {
+			continue
+		}
+		var encoded string
+		if err := json.Unmarshal(raw, &encoded); err != nil {
+			return fmt.Errorf("field %s is not a timestamp string: %w", field.name, err)
+		}
+		expected := formatTime(field.value)
+		if encoded != expected {
+			return fmt.Errorf(
+				"field %s value %q is not canonical UTC RFC3339Nano; expected %q",
+				field.name,
+				encoded,
+				expected,
+			)
+		}
 	}
 	return nil
 }

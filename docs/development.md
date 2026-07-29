@@ -311,17 +311,21 @@ the event ledger, the durable `id` must equal the normalized aggregation
 identity, `first_seen` and `last_seen` must equal `timestamp`, `window_start`
 must match the configured aggregation window, `aggregated_count` must equal
 one, severity must be exactly `low`, `medium`, `high`, or `critical`, and both
-addresses must be strict IPv4. Missing, empty, and whitespace-only rule names
-are rejected without trimming nonblank names. Empty, case-variant, and
-unsupported severities are rejected rather than normalized. MITRE tactic,
+addresses must be strict IPv4. Each of the four timestamp strings must equal
+the canonical UTC RFC3339Nano value emitted by the writer; parseable explicit
+or non-UTC offsets and redundant fractional precision are rejected before
+representation-dependent identity checks. Missing, empty, and whitespace-only
+rule names are rejected without trimming nonblank names. Empty, case-variant,
+and unsupported severities are rejected rather than normalized. MITRE tactic,
 technique ID, and technique name must be either exactly all empty or all
 nonblank; complete tuple text is preserved without trimming or current-catalog
 validation. Protocol text must equal the same canonical writer name enforced
 for stored rows: `TCP`, `UDP`, `ICMP`, or `PROTO_<number>` for another uint8 IP
-protocol. A missing, empty, altered, inconsistent, partial or whitespace-only
-MITRE tuple, noncanonical protocol, malformed, ordinary IPv6, or IPv4-mapped
-IPv6 identity/address field reports its record number and fails through the
-same preservation boundary before replay starts.
+protocol. A missing, empty, altered, inconsistent, alternate timestamp
+encoding, partial or whitespace-only MITRE tuple, noncanonical protocol,
+malformed, ordinary IPv6, or IPv4-mapped IPv6 identity/address field reports
+its record number and fails through the same preservation boundary before
+replay starts.
 This complete preflight occurs before database-directory creation and writable
 SQLite initialization. NetSentry replays the validated in-memory record set
 after initialization without a second read; invalid input therefore leaves a
@@ -487,7 +491,7 @@ Current validation baseline:
 - Receiver contract tests enforce strict IPv4 packet addresses, including
   ordinary and IPv4-mapped IPv6 rejection with one decode error and no queued
   packet.
-- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation including nanosecond timestamp aggregation/order/filter/pruning and query-plan coverage, daily shards, bounded recovery-log encoding/replay plus event-identity, severity, rule-name, MITRE-tuple, protocol-name, and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, non-binary aggregation, generated-column, `CHECK`-constraint, and write-critical foreign-key rejection, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact alert filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple/IPv4-address rejection, active WAL-backed read-only access, and storage degraded/emergency behavior.
+- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation including nanosecond timestamp aggregation/order/filter/pruning and query-plan coverage, daily shards, bounded recovery-log encoding/replay plus timestamp-encoding, event-identity, severity, rule-name, MITRE-tuple, protocol-name, and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, non-binary aggregation, generated-column, `CHECK`-constraint, and write-critical foreign-key rejection, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact alert filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple/IPv4-address rejection, active WAL-backed read-only access, and storage degraded/emergency behavior.
 - Release-candidate checks run syntax checks, repository configuration validation, dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 
 The C-side JSON line formatter is intentionally kept as a bounded handwritten v0.1.0 implementation. It avoids a new C dependency, rejects truncation, escapes JSON strings, Base64-encodes packet payload previews, and is covered by the UDS sender tests and current smoke checks. A cJSON migration should be reopened only with a concrete defect or fuzzing result.

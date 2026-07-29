@@ -1,0 +1,37 @@
+{
+  "task": "r90-48-recovery-timestamp-encoding",
+  "timestamp": "2026-07-29T00:21:43-07:00",
+  "branch": "main",
+  "remote_baseline": "f164f048f95ec326577996bf614ab3a4c3e66bbc",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main agrees",
+    "Verified the completed R90-47 task state and both delivery commits",
+    "Verified the single discovered local Vault contains R90-47 feature and delivery notes, full-index entries, MOC links, and the stable storage update",
+    "Passed the clean fetched-baseline knowledge check",
+    "Refreshed the rolling horizon through 2026-10-27 and selected R90-48 as the highest-priority dependency-ready correctness increment",
+    "Confirmed recovery JSON decoding discards alternate timestamp spelling before durable semantic validation",
+    "Validated each raw recovery timestamp before representation-dependent semantic checks while preserving established missing-field diagnostics",
+    "Covered explicit UTC offsets, equivalent non-UTC offsets, and nonminimal fractions for all four timestamp fields across startup and runtime preflight",
+    "Proved startup rejection preserves a complete valid-prefix log and missing or compatible existing database state",
+    "Proved runtime rejection preserves the existing log and SQLite bytes without appending the current batch",
+    "Verified canonical writer timestamp strings replay and truncate normally",
+    "Updated the changelog, architecture, development guide, roadmap, plan, and task state",
+    "Passed twenty uncached focused alert-store race runs",
+    "Passed the complete native race suite",
+    "Passed E2E smoke with 6 packets, 5 alerts, and 8 loaded rules",
+    "Passed documentation, configuration, knowledge, JSON, diff, and sensitive-information checks"
+  ],
+  "in_progress": [
+    "Commit and push the validated R90-48 increment"
+  ],
+  "todo": [
+    "Commit, push, verify fetched origin/main, synchronize the exact range to the local Vault, and reconcile delivery evidence"
+  ],
+  "remaining_risks": [
+    "Raw JSON timestamp inspection must remain aligned with model decoding",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Continue R90-48 from clean fetched baseline f164f048f95ec326577996bf614ab3a4c3e66bbc. Implement exact canonical UTC RFC3339Nano validation for timestamp, first_seen, last_seen, and window_start in recovery JSON. Preserve rejected logs and missing/existing SQLite state; run the plan validation before commit and push. Do not change the recovery format, normalize rejected input, create a release tag, or publish artifacts."
+}

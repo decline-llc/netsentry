@@ -1628,6 +1628,7 @@ func TestStoreReplaysRecoveryLogIdempotently(t *testing.T) {
 	if err := logOnly.appendRecoveryLog(logged); err != nil {
 		t.Fatalf("append recovery log: %v", err)
 	}
+	assertCanonicalRecoveryTimestampStrings(t, recoveryLogPath, *logged[0])
 
 	store, err := Open(ctx, Options{
 		Path:              dbPath,
@@ -1679,6 +1680,118 @@ func TestStoreReplaysRecoveryLogIdempotently(t *testing.T) {
 	}
 	if len(listed) != 1 || listed[0].AggregatedCount != 1 {
 		t.Fatalf("duplicate replay should not increment aggregate: %+v", listed)
+	}
+}
+
+func TestStoreRejectsNoncanonicalRecoveryTimestampEncodingWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 29, 7, 30, 0, 100_000_000, time.UTC)
+	window := time.Minute
+	validPrefix := normalizeAlert(makeAlert(now.Add(-time.Second), "valid-prefix"), now, window)
+	validPrefixJSON, err := json.Marshal(validPrefix)
+	if err != nil {
+		t.Fatalf("marshal valid recovery prefix: %v", err)
+	}
+	invalid := normalizeAlert(makeAlert(now, "invalid-timestamp-encoding"), now, window)
+
+	for _, test := range recoveryTimestampEncodingCases(invalid) {
+		t.Run(test.name, func(t *testing.T) {
+			invalidJSON := recoveryRecordWithTimestampEncoding(t, invalid, test.field, test.encoded)
+			contents := append(append(append([]byte(nil), validPrefixJSON...), '\n'), invalidJSON...)
+			contents = append(contents, '\n')
+
+			for _, existing := range []bool{false, true} {
+				state := "missing database"
+				if existing {
+					state = "existing database"
+				}
+				t.Run(state, func(t *testing.T) {
+					dir := t.TempDir()
+					dbPath := filepath.Join(dir, "alerts.db")
+					recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+					var beforeDB []byte
+					if existing {
+						createSQLiteFixture(t, dbPath, schemaSQL, `DROP INDEX idx_alerts_last_seen_time_id`)
+						beforeDB = readFileBytes(t, dbPath)
+					}
+					if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+						t.Fatalf("write noncanonical-timestamp recovery log: %v", err)
+					}
+
+					store, err := Open(context.Background(), Options{
+						Path:              dbPath,
+						RecoveryLogPath:   recoveryLogPath,
+						JournalMode:       "WAL",
+						BusyTimeoutMS:     1000,
+						AggregationWindow: window,
+						Now:               func() time.Time { return now },
+					})
+					if store != nil {
+						_ = store.Close()
+						t.Fatal("noncanonical-timestamp recovery log returned a usable store")
+					}
+					condition := "field " + test.field + " value"
+					if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+						!strings.Contains(err.Error(), "record 2") ||
+						!strings.Contains(err.Error(), condition) ||
+						!strings.Contains(err.Error(), "not canonical UTC RFC3339Nano") {
+						t.Fatalf("startup error = %v, want record 2 ErrRecoveryLogIntegrity containing %q", err, condition)
+					}
+					assertFileBytes(t, recoveryLogPath, contents)
+					if existing {
+						assertFileBytes(t, dbPath, beforeDB)
+						assertSQLiteIndexMissing(t, dbPath, "idx_alerts_last_seen_time_id")
+					} else {
+						assertFileDoesNotExist(t, dbPath)
+					}
+				})
+			}
+		})
+	}
+}
+
+func TestStoreWriteBatchRejectsNoncanonicalRecoveryTimestampEncodingWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 29, 7, 35, 0, 100_000_000, time.UTC)
+	window := time.Minute
+	invalid := normalizeAlert(makeAlert(now, "invalid-runtime-timestamp-encoding"), now, window)
+
+	for _, test := range recoveryTimestampEncodingCases(invalid) {
+		t.Run(test.name, func(t *testing.T) {
+			contents := recoveryRecordWithTimestampEncoding(t, invalid, test.field, test.encoded)
+			contents = append(contents, '\n')
+
+			dir := t.TempDir()
+			dbPath := filepath.Join(dir, "alerts.db")
+			recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+			store, err := Open(context.Background(), Options{
+				Path:              dbPath,
+				RecoveryLogPath:   recoveryLogPath,
+				JournalMode:       "WAL",
+				BusyTimeoutMS:     1000,
+				AggregationWindow: window,
+				Now:               func() time.Time { return now },
+			})
+			if err != nil {
+				t.Fatalf("open store: %v", err)
+			}
+			defer store.Close()
+
+			if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+				t.Fatalf("write noncanonical runtime recovery log: %v", err)
+			}
+			beforeDB := readFileBytes(t, dbPath)
+			err = store.WriteBatch(context.Background(), []*model.Alert{
+				makeAlert(now.Add(time.Second), "must-not-append"),
+			})
+			condition := "field " + test.field + " value"
+			if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+				!strings.Contains(err.Error(), condition) ||
+				!strings.Contains(err.Error(), "not canonical UTC RFC3339Nano") {
+				t.Fatalf("WriteBatch error = %v, want ErrRecoveryLogIntegrity containing %q", err, condition)
+			}
+			assertFileBytes(t, recoveryLogPath, contents)
+			assertFileBytes(t, dbPath, beforeDB)
+			assertSQLiteAlertCount(t, dbPath, 0)
+		})
 	}
 }
 
@@ -5167,6 +5280,104 @@ func writeDailyShardAlert(t *testing.T, dir string, now time.Time, alert *model.
 	defer store.Close()
 	if err := store.WriteBatch(context.Background(), []*model.Alert{alert}); err != nil {
 		t.Fatalf("write daily shard alert at %s: %v", now, err)
+	}
+}
+
+type recoveryTimestampEncodingCase struct {
+	name    string
+	field   string
+	encoded string
+}
+
+func recoveryTimestampEncodingCases(alert model.Alert) []recoveryTimestampEncodingCase {
+	fields := []struct {
+		name  string
+		value time.Time
+	}{
+		{name: "timestamp", value: alert.Timestamp},
+		{name: "first_seen", value: alert.FirstSeen},
+		{name: "last_seen", value: alert.LastSeen},
+		{name: "window_start", value: alert.WindowStart},
+	}
+	var tests []recoveryTimestampEncodingCase
+	for _, field := range fields {
+		canonical := formatTime(field.value)
+		nonminimalFraction := strings.TrimSuffix(canonical, "Z")
+		if strings.Contains(nonminimalFraction, ".") {
+			nonminimalFraction += "000Z"
+		} else {
+			nonminimalFraction += ".000Z"
+		}
+		tests = append(tests,
+			recoveryTimestampEncodingCase{
+				name:    field.name + " explicit UTC offset",
+				field:   field.name,
+				encoded: strings.TrimSuffix(canonical, "Z") + "+00:00",
+			},
+			recoveryTimestampEncodingCase{
+				name:    field.name + " non-UTC offset",
+				field:   field.name,
+				encoded: field.value.In(time.FixedZone("UTC-07", -7*60*60)).Format(time.RFC3339Nano),
+			},
+			recoveryTimestampEncodingCase{
+				name:    field.name + " nonminimal fraction",
+				field:   field.name,
+				encoded: nonminimalFraction,
+			},
+		)
+	}
+	return tests
+}
+
+func recoveryRecordWithTimestampEncoding(
+	t *testing.T,
+	alert model.Alert,
+	field string,
+	encoded string,
+) []byte {
+	t.Helper()
+	record, err := json.Marshal(alert)
+	if err != nil {
+		t.Fatalf("marshal recovery record: %v", err)
+	}
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(record, &fields); err != nil {
+		t.Fatalf("decode recovery record fields: %v", err)
+	}
+	fields[field], err = json.Marshal(encoded)
+	if err != nil {
+		t.Fatalf("marshal recovery timestamp %s: %v", field, err)
+	}
+	record, err = json.Marshal(fields)
+	if err != nil {
+		t.Fatalf("marshal recovery record with %s encoding: %v", field, err)
+	}
+	return record
+}
+
+func assertCanonicalRecoveryTimestampStrings(t *testing.T, path string, alert model.Alert) {
+	t.Helper()
+	record := bytes.TrimSuffix(readFileBytes(t, path), []byte{'\n'})
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(record, &fields); err != nil {
+		t.Fatalf("decode writer recovery record: %v", err)
+	}
+	for _, field := range []struct {
+		name  string
+		value time.Time
+	}{
+		{name: "timestamp", value: alert.Timestamp},
+		{name: "first_seen", value: alert.FirstSeen},
+		{name: "last_seen", value: alert.LastSeen},
+		{name: "window_start", value: alert.WindowStart},
+	} {
+		var encoded string
+		if err := json.Unmarshal(fields[field.name], &encoded); err != nil {
+			t.Fatalf("decode writer recovery timestamp %s: %v", field.name, err)
+		}
+		if want := formatTime(field.value); encoded != want {
+			t.Fatalf("writer recovery timestamp %s = %q, want %q", field.name, encoded, want)
+		}
 	}
 }
 

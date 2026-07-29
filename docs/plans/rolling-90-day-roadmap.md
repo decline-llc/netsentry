@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-07-28 through 2026-10-26. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from the prior horizon is preserved below.
+> Window: 2026-07-29 through 2026-10-27. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from the prior horizon is preserved below.
 
 ## Status Rules
 
@@ -64,6 +64,7 @@
 | R90-45 | Jul 27–Oct 25 | Complete early | Preflight the current recovery batch. | R90-44 | Every newly normalized alert passes the complete durable recovery contract before any current-batch append or SQLite write; a later invalid record cannot partially append a valid prefix, alter an existing pending log/database, or degrade healthy storage. |
 | R90-46 | Jul 28–Oct 26 | Complete early | Validate stored SQLite timestamp encoding. | R90-45 | Primary and historical row reads accept aggregate timestamps only in the exact UTC RFC3339Nano text emitted by the writer; parseable offsets and nonminimal fractional forms fail without historical shard modification, while canonical rows remain compatible. |
 | R90-47 | Jul 28–Oct 26 | Complete early | Pin SQLite timestamp comparison semantics. | R90-46 | Aggregation updates, alert ordering/pagination, time filters, and retention pruning compare canonical variable-width RFC3339Nano values by instant with nanosecond fidelity; mixed fractional widths remain chronological without rewriting stored rows. |
+| R90-48 | Jul 29–Oct 27 | In progress | Validate recovery timestamp encoding. | R90-47 | Startup and runtime recovery preflight accept `timestamp`, `first_seen`, `last_seen`, and `window_start` only as exact canonical UTC RFC3339Nano strings emitted by the writer; parseable offsets and nonminimal fractional forms fail before modifying the complete log or missing/existing SQLite state. |
 
 ## R90-07 Definition
 
@@ -795,6 +796,24 @@
   migration, loses nanosecond ordering fidelity, changes public time/filter
   semantics, needs operator data, or reaches tag/publication authority.
 
+## R90-48 Definition
+
+- **Goal:** align every durable recovery timestamp with the exact UTC
+  RFC3339Nano string emitted by NetSentry rather than accepting alternate JSON
+  timestamp spellings that decode to the same instant.
+- **Risk:** validating only decoded `time.Time` values loses the original
+  offset and fractional spelling, while raw JSON inspection could accidentally
+  diverge from the model decoder or reject canonical writer output.
+- **Required validation:** direct `timestamp`, `first_seen`, `last_seen`, and
+  `window_start` rejection for explicit UTC offsets, equivalent non-UTC
+  offsets, and nonminimal fractional forms; startup preservation for missing
+  and compatible existing databases; runtime log/database preservation;
+  canonical replay compatibility; twenty focused alert-store race runs, full
+  native, documentation, E2E, and knowledge checks.
+- **Stop condition:** stop if safe completion requires changing the recovery
+  JSON format, accepting a timestamp the current writer cannot emit, automatic
+  log repair, operator data, or tag/publication authority.
+
 ### R90-43 Validation Deviation
 
 - **Observed:** The first full native race suite reached the new stored-row
@@ -1175,7 +1194,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -1227,12 +1246,15 @@
 
 ## Current Checkpoint
 
-R90-47 is complete at `046f89673491b2bab78d6c21eedc067fa9c8584b`
-from clean fetched baseline `e28e3de9fafc099ae082ffc45ae867e20abf19dd`.
-Twenty uncached focused alert-store race runs, the complete native race suite,
-E2E smoke, documentation, configuration, knowledge, JSON, diff, and
-sensitive-information checks passed. Fetched `origin/main`, the post-fetch
-knowledge gate, and exact full-SHA Vault note, full index, MOC, and stable
-storage note are verified. No later engineering increment is selected;
-refresh the rolling roadmap on the next `$netsentry-next` trigger. Publication
+R90-48 is in progress from clean fetched baseline
+`f164f048f95ec326577996bf614ab3a4c3e66bbc`. R90-47 is complete and its
+feature plus delivery commits, post-fetch knowledge gate, exact Vault notes,
+full index, MOC links, and stable storage note are verified. Recovery decoding
+now compares every raw timestamp string with canonical writer output before
+representation-dependent semantics. All planned startup and runtime rejection,
+preservation, and canonical replay regressions pass across twenty uncached
+focused race runs; the complete native race suite and E2E smoke also pass.
+Documentation, configuration, knowledge, JSON, diff, and
+sensitive-information checks pass. Commit, push, fetched-remote verification,
+and exact-range Vault synchronization remain before completion. Publication
 remains unauthorized.

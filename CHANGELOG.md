@@ -9,6 +9,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Recovery-log decoding now requires `timestamp`, `first_seen`, `last_seen`,
+  and `window_start` to use the exact canonical UTC RFC3339Nano strings emitted
+  by the JSON writer before startup replay or runtime append can modify state.
 - SQLite aggregation, ordering, time filters, and retention pruning now compare
   canonical variable-width RFC3339Nano timestamps through a fixed-width
   nanosecond key, with an optional expression index for primary order/range
