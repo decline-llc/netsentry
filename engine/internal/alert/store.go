@@ -2,6 +2,7 @@ package alert
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"database/sql"
@@ -1353,6 +1354,9 @@ func (s *Store) readRecoveryLog() ([]*model.Alert, error) {
 	record := 0
 	for scanner.Scan() {
 		record++
+		if err := validateRecoveryRecordFieldNames(scanner.Bytes()); err != nil {
+			return nil, fmt.Errorf("%w: record %d: %v", ErrRecoveryLogIntegrity, record, err)
+		}
 		var alert model.Alert
 		if err := json.Unmarshal(scanner.Bytes(), &alert); err != nil {
 			return nil, fmt.Errorf("%w: decode record %d: %v", ErrRecoveryLogIntegrity, record, err)
@@ -1369,6 +1373,96 @@ func (s *Store) readRecoveryLog() ([]*model.Alert, error) {
 		return nil, fmt.Errorf("%w: read records: %v", ErrRecoveryLogIntegrity, err)
 	}
 	return alerts, nil
+}
+
+func validateRecoveryRecordFieldNames(record []byte) error {
+	decoder := json.NewDecoder(bytes.NewReader(record))
+	open, err := decoder.Token()
+	if err != nil {
+		return nil
+	}
+	delim, ok := open.(json.Delim)
+	if !ok || delim != '{' {
+		return nil
+	}
+
+	seenNames := make(map[string]struct{})
+	seenModelFields := make(map[string]string)
+	var duplicateErr error
+	for decoder.More() {
+		token, err := decoder.Token()
+		if err != nil {
+			return nil
+		}
+		name, ok := token.(string)
+		if !ok {
+			return nil
+		}
+		if _, exists := seenNames[name]; exists && duplicateErr == nil {
+			duplicateErr = fmt.Errorf("duplicate top-level recovery field %q", name)
+		}
+		seenNames[name] = struct{}{}
+
+		modelField := strings.ToLower(name)
+		if isRecoveryModelField(modelField) {
+			if previous, exists := seenModelFields[modelField]; exists {
+				if previous != name && duplicateErr == nil {
+					duplicateErr = fmt.Errorf(
+						"duplicate top-level recovery field %q aliases %q",
+						name,
+						previous,
+					)
+				}
+			} else {
+				seenModelFields[modelField] = name
+			}
+		}
+
+		var value json.RawMessage
+		if err := decoder.Decode(&value); err != nil {
+			return nil
+		}
+	}
+	closeToken, err := decoder.Token()
+	if err != nil {
+		return nil
+	}
+	closeDelim, ok := closeToken.(json.Delim)
+	if !ok || closeDelim != '}' {
+		return nil
+	}
+	if _, err := decoder.Token(); !errors.Is(err, io.EOF) {
+		return nil
+	}
+	return duplicateErr
+}
+
+func isRecoveryModelField(name string) bool {
+	switch name {
+	case "id",
+		"event_id",
+		"rule_id",
+		"rule_name",
+		"timestamp",
+		"src_ip",
+		"dst_ip",
+		"dst_port",
+		"protocol",
+		"severity",
+		"aggregated_count",
+		"first_seen",
+		"last_seen",
+		"window_start",
+		"mitre_tactic",
+		"mitre_technique_id",
+		"mitre_technique_name",
+		"payload_preview",
+		"matched_keyword",
+		"raw_payload":
+		return true
+	default:
+		return false
+	}
 }
 
 func validateRecoveryAlert(alert model.Alert, aggregationWindow time.Duration) error {

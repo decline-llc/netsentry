@@ -1,0 +1,41 @@
+{
+  "task": "r90-49-recovery-duplicate-fields",
+  "timestamp": "2026-07-29T00:44:46-07:00",
+  "branch": "main",
+  "remote_baseline": "e1434794348c5cc01b075f5e375c98027ec34a15",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main agrees",
+    "Verified the completed R90-48 task state and both delivery commits",
+    "Verified the single discovered local Vault contains R90-48 feature and delivery notes, full-index entries, MOC links, and the stable storage update",
+    "Passed the clean fetched-baseline knowledge check",
+    "Selected R90-49 as the highest-priority dependency-ready correctness increment",
+    "Confirmed recovery JSON decoding silently retains the last duplicate top-level member",
+    "Rejected identical and conflicting duplicate durable fields before model decoding",
+    "Rejected case-variant aliases targeting the same supported durable field",
+    "Rejected repeated unknown top-level names without recursively inspecting nested values",
+    "Preserved the original decode diagnostic for structurally malformed input containing a duplicate",
+    "Proved startup rejection preserves a complete valid-prefix log and missing or compatible existing database state",
+    "Proved runtime rejection preserves the existing log and SQLite bytes without appending the current batch",
+    "Verified canonical replay plus single unknown, nested unknown, and single case-variant compatibility",
+    "Updated the changelog, architecture, development guide, roadmap, plan, and task state",
+    "Passed twenty uncached focused alert-store race runs",
+    "Recorded the first complete native suite receiver timing failure while the changed alert package passed",
+    "Passed twenty uncached focused receiver race reruns without reproducing the broken-pipe failure",
+    "Passed the required clean complete native race-suite rerun",
+    "Passed E2E smoke with 6 packets, 5 alerts, and 8 loaded rules",
+    "Passed documentation, configuration, knowledge, JSON, diff, and sensitive-information checks"
+  ],
+  "in_progress": [
+    "Commit and push the validated R90-49 increment"
+  ],
+  "todo": [
+    "Commit, push, verify fetched origin/main, synchronize the exact range to the local Vault, and reconcile delivery evidence"
+  ],
+  "remaining_risks": [
+    "Duplicate detection must not broaden unknown-field or nested-value semantics",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Continue R90-49 from clean fetched baseline e1434794348c5cc01b075f5e375c98027ec34a15. Reject exact duplicate top-level recovery JSON names and case-variant aliases targeting the same durable field before model decoding. Preserve rejected logs and missing/existing SQLite state; run the plan validation before commit and push. Do not reject all unknown fields, recurse into unknown values, change the recovery format, create a release tag, or publish artifacts."
+}

@@ -1795,6 +1795,268 @@ func TestStoreWriteBatchRejectsNoncanonicalRecoveryTimestampEncodingWithoutModif
 	}
 }
 
+func TestStoreRejectsDuplicateRecoveryFieldsWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 29, 8, 0, 0, 0, time.UTC)
+	window := time.Minute
+	validPrefix := normalizeAlert(makeAlert(now.Add(-time.Second), "valid-prefix"), now, window)
+	validPrefixJSON, err := json.Marshal(validPrefix)
+	if err != nil {
+		t.Fatalf("marshal valid recovery prefix: %v", err)
+	}
+	invalid := normalizeAlert(makeAlert(now, "duplicate-recovery-field"), now, window)
+	tests := []struct {
+		name      string
+		members   string
+		condition string
+	}{
+		{
+			name:      "agreeing durable field",
+			members:   `"rule_id":"rule-1"`,
+			condition: `duplicate top-level recovery field "rule_id"`,
+		},
+		{
+			name:      "conflicting durable field",
+			members:   `"rule_id":"tampered"`,
+			condition: `duplicate top-level recovery field "rule_id"`,
+		},
+		{
+			name:      "case-variant durable alias",
+			members:   `"Rule_ID":"rule-1"`,
+			condition: `duplicate top-level recovery field "Rule_ID" aliases "rule_id"`,
+		},
+		{
+			name:      "repeated unknown field",
+			members:   `"future_field":1,"future_field":2`,
+			condition: `duplicate top-level recovery field "future_field"`,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			invalidJSON := recoveryRecordWithMembers(t, invalid, test.members)
+			contents := append(append(append([]byte(nil), validPrefixJSON...), '\n'), invalidJSON...)
+			contents = append(contents, '\n')
+
+			for _, existing := range []bool{false, true} {
+				state := "missing database"
+				if existing {
+					state = "existing database"
+				}
+				t.Run(state, func(t *testing.T) {
+					dir := t.TempDir()
+					dbPath := filepath.Join(dir, "alerts.db")
+					recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+					var beforeDB []byte
+					if existing {
+						createSQLiteFixture(t, dbPath, schemaSQL, `DROP INDEX idx_alerts_last_seen_time_id`)
+						beforeDB = readFileBytes(t, dbPath)
+					}
+					if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+						t.Fatalf("write duplicate-field recovery log: %v", err)
+					}
+
+					store, err := Open(context.Background(), Options{
+						Path:              dbPath,
+						RecoveryLogPath:   recoveryLogPath,
+						JournalMode:       "WAL",
+						BusyTimeoutMS:     1000,
+						AggregationWindow: window,
+						Now:               func() time.Time { return now },
+					})
+					if store != nil {
+						_ = store.Close()
+						t.Fatal("duplicate-field recovery log returned a usable store")
+					}
+					if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+						!strings.Contains(err.Error(), "record 2") ||
+						!strings.Contains(err.Error(), test.condition) {
+						t.Fatalf("startup error = %v, want record 2 ErrRecoveryLogIntegrity containing %q", err, test.condition)
+					}
+					assertFileBytes(t, recoveryLogPath, contents)
+					if existing {
+						assertFileBytes(t, dbPath, beforeDB)
+						assertSQLiteIndexMissing(t, dbPath, "idx_alerts_last_seen_time_id")
+					} else {
+						assertFileDoesNotExist(t, dbPath)
+					}
+				})
+			}
+		})
+	}
+}
+
+func TestStoreWriteBatchRejectsDuplicateRecoveryFieldsWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 29, 8, 5, 0, 0, time.UTC)
+	window := time.Minute
+	invalid := normalizeAlert(makeAlert(now, "duplicate-runtime-recovery-field"), now, window)
+	tests := []struct {
+		name      string
+		members   string
+		condition string
+	}{
+		{
+			name:      "agreeing durable field",
+			members:   `"rule_id":"rule-1"`,
+			condition: `duplicate top-level recovery field "rule_id"`,
+		},
+		{
+			name:      "conflicting durable field",
+			members:   `"rule_id":"tampered"`,
+			condition: `duplicate top-level recovery field "rule_id"`,
+		},
+		{
+			name:      "case-variant durable alias",
+			members:   `"Rule_ID":"rule-1"`,
+			condition: `duplicate top-level recovery field "Rule_ID" aliases "rule_id"`,
+		},
+		{
+			name:      "repeated unknown field",
+			members:   `"future_field":1,"future_field":2`,
+			condition: `duplicate top-level recovery field "future_field"`,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			contents := recoveryRecordWithMembers(t, invalid, test.members)
+			contents = append(contents, '\n')
+
+			dir := t.TempDir()
+			dbPath := filepath.Join(dir, "alerts.db")
+			recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+			store, err := Open(context.Background(), Options{
+				Path:              dbPath,
+				RecoveryLogPath:   recoveryLogPath,
+				JournalMode:       "WAL",
+				BusyTimeoutMS:     1000,
+				AggregationWindow: window,
+				Now:               func() time.Time { return now },
+			})
+			if err != nil {
+				t.Fatalf("open store: %v", err)
+			}
+			defer store.Close()
+
+			if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+				t.Fatalf("write duplicate-field runtime recovery log: %v", err)
+			}
+			beforeDB := readFileBytes(t, dbPath)
+			err = store.WriteBatch(context.Background(), []*model.Alert{
+				makeAlert(now.Add(time.Second), "must-not-append"),
+			})
+			if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+				!strings.Contains(err.Error(), test.condition) {
+				t.Fatalf("WriteBatch error = %v, want ErrRecoveryLogIntegrity containing %q", err, test.condition)
+			}
+			assertFileBytes(t, recoveryLogPath, contents)
+			assertFileBytes(t, dbPath, beforeDB)
+			assertSQLiteAlertCount(t, dbPath, 0)
+		})
+	}
+}
+
+func TestStoreAllowsNonDuplicateRecoveryFieldExtensions(t *testing.T) {
+	now := time.Date(2026, 7, 29, 8, 8, 0, 0, time.UTC)
+	valid := normalizeAlert(makeAlert(now, "nonduplicate-field-extension"), now, time.Minute)
+	validJSON, err := json.Marshal(valid)
+	if err != nil {
+		t.Fatalf("marshal valid recovery record: %v", err)
+	}
+	tests := []struct {
+		name   string
+		record []byte
+	}{
+		{
+			name:   "single unknown field",
+			record: recoveryRecordWithMembers(t, valid, `"future_field":1`),
+		},
+		{
+			name:   "nested unknown duplicates",
+			record: recoveryRecordWithMembers(t, valid, `"future_field":{"nested":1,"nested":2}`),
+		},
+		{
+			name: "single case-variant supported name",
+			record: bytes.Replace(
+				validJSON,
+				[]byte(`"rule_id":`),
+				[]byte(`"Rule_ID":`),
+				1,
+			),
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			dir := t.TempDir()
+			dbPath := filepath.Join(dir, "alerts.db")
+			recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+			contents := append(append([]byte(nil), test.record...), '\n')
+			if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+				t.Fatalf("write compatible recovery log: %v", err)
+			}
+
+			store, err := Open(context.Background(), Options{
+				Path:              dbPath,
+				RecoveryLogPath:   recoveryLogPath,
+				JournalMode:       "WAL",
+				BusyTimeoutMS:     1000,
+				AggregationWindow: time.Minute,
+				Now:               func() time.Time { return now },
+			})
+			if err != nil {
+				t.Fatalf("open compatible recovery log: %v", err)
+			}
+			defer store.Close()
+			listed, err := store.List(context.Background())
+			if err != nil {
+				t.Fatalf("list replayed compatible recovery record: %v", err)
+			}
+			if len(listed) != 1 || listed[0].MatchedKeyword != valid.MatchedKeyword {
+				t.Fatalf("replayed compatible recovery alerts = %+v", listed)
+			}
+			if info, err := os.Stat(recoveryLogPath); err != nil || info.Size() != 0 {
+				t.Fatalf("compatible recovery log should be truncated, info=%+v err=%v", info, err)
+			}
+		})
+	}
+}
+
+func TestStoreMalformedDuplicateRecoveryRecordKeepsDecodeError(t *testing.T) {
+	now := time.Date(2026, 7, 29, 8, 10, 0, 0, time.UTC)
+	valid := normalizeAlert(makeAlert(now, "valid-prefix"), now, time.Minute)
+	validJSON, err := json.Marshal(valid)
+	if err != nil {
+		t.Fatalf("marshal valid recovery prefix: %v", err)
+	}
+	contents := append(append(append([]byte(nil), validJSON...), '\n'), []byte(`{"rule_id":"a","rule_id":`)...)
+	contents = append(contents, '\n')
+
+	dir := t.TempDir()
+	dbPath := filepath.Join(dir, "alerts.db")
+	recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+	if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+		t.Fatalf("write malformed duplicate recovery log: %v", err)
+	}
+	store, err := Open(context.Background(), Options{
+		Path:              dbPath,
+		RecoveryLogPath:   recoveryLogPath,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now:               func() time.Time { return now },
+	})
+	if store != nil {
+		_ = store.Close()
+		t.Fatal("malformed duplicate recovery log returned a usable store")
+	}
+	if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+		!strings.Contains(err.Error(), "decode record 2") ||
+		strings.Contains(err.Error(), "duplicate top-level recovery field") {
+		t.Fatalf("startup error = %v, want original decode record 2 error", err)
+	}
+	assertFileBytes(t, recoveryLogPath, contents)
+	assertFileDoesNotExist(t, dbPath)
+}
+
 func TestStoreRejectsMalformedRecoveryLogWithoutModification(t *testing.T) {
 	ctx := context.Background()
 	dir := t.TempDir()
@@ -5287,6 +5549,22 @@ type recoveryTimestampEncodingCase struct {
 	name    string
 	field   string
 	encoded string
+}
+
+func recoveryRecordWithMembers(t *testing.T, alert model.Alert, members string) []byte {
+	t.Helper()
+	record, err := json.Marshal(alert)
+	if err != nil {
+		t.Fatalf("marshal recovery record: %v", err)
+	}
+	if len(record) == 0 || record[len(record)-1] != '}' {
+		t.Fatalf("recovery record is not a JSON object: %q", record)
+	}
+	result := append([]byte(nil), record[:len(record)-1]...)
+	result = append(result, ',')
+	result = append(result, members...)
+	result = append(result, '}')
+	return result
 }
 
 func recoveryTimestampEncodingCases(alert model.Alert) []recoveryTimestampEncodingCase {
