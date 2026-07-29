@@ -66,7 +66,7 @@
 | R90-47 | Jul 28–Oct 26 | Complete early | Pin SQLite timestamp comparison semantics. | R90-46 | Aggregation updates, alert ordering/pagination, time filters, and retention pruning compare canonical variable-width RFC3339Nano values by instant with nanosecond fidelity; mixed fractional widths remain chronological without rewriting stored rows. |
 | R90-48 | Jul 29–Oct 27 | Complete early | Validate recovery timestamp encoding. | R90-47 | Startup and runtime recovery preflight accept `timestamp`, `first_seen`, `last_seen`, and `window_start` only as exact canonical UTC RFC3339Nano strings emitted by the writer; parseable offsets and nonminimal fractional forms fail before modifying the complete log or missing/existing SQLite state. |
 | R90-49 | Jul 29–Oct 27 | Complete early | Reject duplicate recovery JSON fields. | R90-48 | Startup and runtime recovery preflight reject exact duplicate top-level JSON names and case-variant aliases targeting the same durable field before last-value decoding can obscure input; the complete log and missing/existing SQLite state remain unchanged while canonical writer records remain compatible. |
-| R90-50 | Jul 29–Oct 27 | In progress | Enforce canonical recovery JSON field names. | R90-49 | Startup and runtime recovery preflight reject a single unknown top-level name or noncanonical case alias before model decoding; every current writer field, including optional `raw_payload`, remains compatible and rejected input preserves the complete log plus missing/existing SQLite state. |
+| R90-50 | Jul 29–Oct 27 | Complete early | Enforce canonical recovery JSON field names. | R90-49 | Startup and runtime recovery preflight reject a single unknown top-level name or noncanonical case alias before model decoding; every current writer field, including optional `raw_payload`, remains compatible and rejected input preserves the complete log plus missing/existing SQLite state. |
 
 ## R90-07 Definition
 
@@ -1246,9 +1246,18 @@
   deviation and its twenty focused reruns, the clean complete native rerun,
   E2E smoke, documentation, configuration, and knowledge checks passed;
   fetched `origin/main`, the post-fetch knowledge gate, exact full-SHA Vault
-  note, index, MOC, and stable storage note are verified. No later engineering
-  increment is selected; refresh the rolling roadmap on the next
-  `$netsentry-next` trigger. Publication remains unauthorized.
+  note, index, MOC, and stable storage note are verified. R90-50 completed
+  early at `e49f2feea7fe3a3915998895f3c6e755b2ec3d17`: startup and runtime
+  recovery preflight now reject unknown scalar and nested top-level members
+  plus case-variant supported names, while duplicate and malformed diagnostics
+  retain precedence and canonical writer output including optional
+  `raw_payload` remains compatible. Twenty uncached focused alert-store race
+  runs, the complete native race suite, E2E smoke, documentation,
+  configuration, and knowledge checks passed; fetched `origin/main`, the
+  post-fetch knowledge gate, exact full-SHA Vault note, index, MOC, and stable
+  storage note are verified. No later engineering increment is selected;
+  refresh the rolling roadmap on the next `$netsentry-next` trigger.
+  Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -1319,16 +1328,17 @@
 
 ## Current Checkpoint
 
-R90-50 is in progress from clean fetched baseline
-`6c981dff0757aa8f05d09f3454c735ed4ae05ea4`. R90-49 is complete and both
-delivery commits, the post-fetch knowledge gate, exact Vault notes, full index,
-MOC links, and stable storage note are verified. Recovery member scanning
-now rejects unknown scalar and nested top-level members plus case-variant
-supported names before model decoding, while duplicate and malformed
-diagnostics retain precedence. Startup and runtime byte-preservation cases,
-canonical writer replay with omitted and populated `raw_payload`, every emitted
-writer field, and twenty uncached focused race runs pass. The complete native
-race suite, E2E smoke, documentation, configuration, knowledge, JSON, diff, and
-sensitive-information checks also pass. Commit, push, fetched-remote
-verification, and exact-range Vault synchronization remain before completion.
-Publication remains unauthorized.
+R90-50 is complete at
+`e49f2feea7fe3a3915998895f3c6e755b2ec3d17` from clean fetched baseline
+`6c981dff0757aa8f05d09f3454c735ed4ae05ea4`. Recovery member scanning rejects
+unknown scalar and nested top-level members plus case-variant supported names
+before model decoding, while duplicate and malformed diagnostics retain
+precedence. Startup and runtime byte-preservation cases, canonical writer
+replay with omitted and populated `raw_payload`, every emitted writer field,
+and twenty uncached focused race runs passed. The complete native race suite,
+E2E smoke, documentation, configuration, knowledge, JSON, diff, and
+sensitive-information checks passed. Fetched `origin/main`, the post-fetch
+knowledge gate, exact-range Vault note, full index, MOC link, and stable storage
+note are verified. No later engineering increment is selected; refresh the
+rolling roadmap on the next `$netsentry-next` trigger. Publication remains
+unauthorized.
