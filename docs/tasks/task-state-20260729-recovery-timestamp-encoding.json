@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "f164f048f95ec326577996bf614ab3a4c3e66bbc",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main agrees",
     "Verified the completed R90-47 task state and both delivery commits",
@@ -21,17 +21,26 @@
     "Passed twenty uncached focused alert-store race runs",
     "Passed the complete native race suite",
     "Passed E2E smoke with 6 packets, 5 alerts, and 8 loaded rules",
-    "Passed documentation, configuration, knowledge, JSON, diff, and sensitive-information checks"
+    "Passed documentation, configuration, knowledge, JSON, diff, and sensitive-information checks",
+    "Pushed 6df3d8f45b2c581cf49c3b40e00198ba59dbc20e and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact full-SHA Vault note, full index, MOC, and reusable stable storage note",
+    "Left the next engineering increment unselected for a fresh rolling-roadmap review"
   ],
-  "in_progress": [
-    "Commit and push the validated R90-48 increment"
-  ],
-  "todo": [
-    "Commit, push, verify fetched origin/main, synchronize the exact range to the local Vault, and reconcile delivery evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
+  "delivery": {
+    "commit": "6df3d8f45b2c581cf49c3b40e00198ba59dbc20e",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "f164f048f95ec326577996bf614ab3a4c3e66bbc..6df3d8f45b2c581cf49c3b40e00198ba59dbc20e",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_storage_note_verified": true
+  },
   "remaining_risks": [
-    "Raw JSON timestamp inspection must remain aligned with model decoding",
+    "The next engineering increment requires a fresh rolling-roadmap review",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Continue R90-48 from clean fetched baseline f164f048f95ec326577996bf614ab3a4c3e66bbc. Implement exact canonical UTC RFC3339Nano validation for timestamp, first_seen, last_seen, and window_start in recovery JSON. Preserve rejected logs and missing/existing SQLite state; run the plan validation before commit and push. Do not change the recovery format, normalize rejected input, create a release tag, or publish artifacts."
+  "resume_instructions": "R90-48 is complete at 6df3d8f45b2c581cf49c3b40e00198ba59dbc20e. Do not repeat its implementation, validation, push, or Vault synchronization. On the next $netsentry-next trigger, fetch and verify origin/main, confirm this completed task state and both delivery commits plus Vault evidence, refresh the rolling roadmap, and select at most one dependency-ready increment. Do not change the recovery format, normalize rejected input, create a release tag, or publish artifacts."
 }

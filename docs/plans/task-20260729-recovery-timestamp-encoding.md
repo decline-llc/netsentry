@@ -85,6 +85,18 @@ can modify the recovery log or SQLite state.
 - Documentation, configuration, knowledge, JSON, diff, and
   sensitive-information checks passed.
 
+## Delivery Evidence
+
+- Feature commit: `6df3d8f45b2c581cf49c3b40e00198ba59dbc20e`
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed all 33 tests.
+- Exact Vault range:
+  `f164f048f95ec326577996bf614ab3a4c3e66bbc..6df3d8f45b2c581cf49c3b40e00198ba59dbc20e`
+- Vault feature note, full commit index, MOC link, and reusable stable storage
+  note: verified.
+- No later engineering increment was selected; the next `$netsentry-next`
+  trigger will refresh the rolling roadmap.
+
 ## Stop Conditions
 
 Stop if completion requires a recovery-format migration, accepting a timestamp
