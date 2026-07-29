@@ -1829,6 +1829,11 @@ func TestStoreRejectsDuplicateRecoveryFieldsWithoutModification(t *testing.T) {
 			members:   `"future_field":1,"future_field":2`,
 			condition: `duplicate top-level recovery field "future_field"`,
 		},
+		{
+			name:      "durable duplicate precedes unknown field",
+			members:   `"rule_id":"rule-1","future_field":1`,
+			condition: `duplicate top-level recovery field "rule_id"`,
+		},
 	}
 
 	for _, test := range tests {
@@ -1914,6 +1919,11 @@ func TestStoreWriteBatchRejectsDuplicateRecoveryFieldsWithoutModification(t *tes
 			members:   `"future_field":1,"future_field":2`,
 			condition: `duplicate top-level recovery field "future_field"`,
 		},
+		{
+			name:      "durable duplicate precedes unknown field",
+			members:   `"rule_id":"rule-1","future_field":1`,
+			condition: `duplicate top-level recovery field "rule_id"`,
+		},
 	}
 
 	for _, test := range tests {
@@ -1955,33 +1965,129 @@ func TestStoreWriteBatchRejectsDuplicateRecoveryFieldsWithoutModification(t *tes
 	}
 }
 
-func TestStoreAllowsNonDuplicateRecoveryFieldExtensions(t *testing.T) {
+func TestStoreRejectsNoncanonicalRecoveryFieldsWithoutModification(t *testing.T) {
 	now := time.Date(2026, 7, 29, 8, 8, 0, 0, time.UTC)
-	valid := normalizeAlert(makeAlert(now, "nonduplicate-field-extension"), now, time.Minute)
-	validJSON, err := json.Marshal(valid)
+	window := time.Minute
+	validPrefix := normalizeAlert(makeAlert(now.Add(-time.Second), "valid-prefix"), now, window)
+	validPrefixJSON, err := json.Marshal(validPrefix)
 	if err != nil {
-		t.Fatalf("marshal valid recovery record: %v", err)
+		t.Fatalf("marshal valid recovery prefix: %v", err)
+	}
+	invalid := normalizeAlert(makeAlert(now, "noncanonical-recovery-field"), now, window)
+	invalidJSON, err := json.Marshal(invalid)
+	if err != nil {
+		t.Fatalf("marshal invalid recovery record: %v", err)
 	}
 	tests := []struct {
-		name   string
-		record []byte
+		name      string
+		record    []byte
+		condition string
 	}{
 		{
-			name:   "single unknown field",
-			record: recoveryRecordWithMembers(t, valid, `"future_field":1`),
+			name:      "unknown scalar field",
+			record:    recoveryRecordWithMembers(t, invalid, `"future_field":1`),
+			condition: `unknown top-level recovery field "future_field"`,
 		},
 		{
-			name:   "nested unknown duplicates",
-			record: recoveryRecordWithMembers(t, valid, `"future_field":{"nested":1,"nested":2}`),
+			name:      "unknown nested field",
+			record:    recoveryRecordWithMembers(t, invalid, `"future_field":{"nested":1,"nested":2}`),
+			condition: `unknown top-level recovery field "future_field"`,
 		},
 		{
-			name: "single case-variant supported name",
+			name: "case-variant supported field",
 			record: bytes.Replace(
-				validJSON,
+				invalidJSON,
 				[]byte(`"rule_id":`),
 				[]byte(`"Rule_ID":`),
 				1,
 			),
+			condition: `noncanonical top-level recovery field "Rule_ID"; expected "rule_id"`,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			contents := append(append(append([]byte(nil), validPrefixJSON...), '\n'), test.record...)
+			contents = append(contents, '\n')
+			for _, existing := range []bool{false, true} {
+				state := "missing database"
+				if existing {
+					state = "existing database"
+				}
+				t.Run(state, func(t *testing.T) {
+					dir := t.TempDir()
+					dbPath := filepath.Join(dir, "alerts.db")
+					recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+					var beforeDB []byte
+					if existing {
+						createSQLiteFixture(t, dbPath, schemaSQL, `DROP INDEX idx_alerts_last_seen_time_id`)
+						beforeDB = readFileBytes(t, dbPath)
+					}
+					if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+						t.Fatalf("write noncanonical recovery log: %v", err)
+					}
+
+					store, err := Open(context.Background(), Options{
+						Path:              dbPath,
+						RecoveryLogPath:   recoveryLogPath,
+						JournalMode:       "WAL",
+						BusyTimeoutMS:     1000,
+						AggregationWindow: window,
+						Now:               func() time.Time { return now },
+					})
+					if store != nil {
+						_ = store.Close()
+						t.Fatal("noncanonical recovery log returned a usable store")
+					}
+					if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+						!strings.Contains(err.Error(), "record 2") ||
+						!strings.Contains(err.Error(), test.condition) {
+						t.Fatalf("startup error = %v, want record 2 ErrRecoveryLogIntegrity containing %q", err, test.condition)
+					}
+					assertFileBytes(t, recoveryLogPath, contents)
+					if existing {
+						assertFileBytes(t, dbPath, beforeDB)
+						assertSQLiteIndexMissing(t, dbPath, "idx_alerts_last_seen_time_id")
+					} else {
+						assertFileDoesNotExist(t, dbPath)
+					}
+				})
+			}
+		})
+	}
+}
+
+func TestStoreWriteBatchRejectsNoncanonicalRecoveryFieldsWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 29, 8, 9, 0, 0, time.UTC)
+	window := time.Minute
+	invalid := normalizeAlert(makeAlert(now, "noncanonical-runtime-recovery-field"), now, window)
+	invalidJSON, err := json.Marshal(invalid)
+	if err != nil {
+		t.Fatalf("marshal invalid recovery record: %v", err)
+	}
+	tests := []struct {
+		name      string
+		record    []byte
+		condition string
+	}{
+		{
+			name:      "unknown scalar field",
+			record:    recoveryRecordWithMembers(t, invalid, `"future_field":1`),
+			condition: `unknown top-level recovery field "future_field"`,
+		},
+		{
+			name:      "unknown nested field",
+			record:    recoveryRecordWithMembers(t, invalid, `"future_field":{"nested":1,"nested":2}`),
+			condition: `unknown top-level recovery field "future_field"`,
+		},
+		{
+			name: "case-variant supported field",
+			record: bytes.Replace(
+				invalidJSON,
+				[]byte(`"rule_id":`),
+				[]byte(`"Rule_ID":`),
+				1,
+			),
+			condition: `noncanonical top-level recovery field "Rule_ID"; expected "rule_id"`,
 		},
 	}
 	for _, test := range tests {
@@ -1990,8 +2096,68 @@ func TestStoreAllowsNonDuplicateRecoveryFieldExtensions(t *testing.T) {
 			dbPath := filepath.Join(dir, "alerts.db")
 			recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
 			contents := append(append([]byte(nil), test.record...), '\n')
+			store, err := Open(context.Background(), Options{
+				Path:              dbPath,
+				RecoveryLogPath:   recoveryLogPath,
+				JournalMode:       "WAL",
+				BusyTimeoutMS:     1000,
+				AggregationWindow: window,
+				Now:               func() time.Time { return now },
+			})
+			if err != nil {
+				t.Fatalf("open store: %v", err)
+			}
+			defer store.Close()
 			if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
-				t.Fatalf("write compatible recovery log: %v", err)
+				t.Fatalf("write noncanonical runtime recovery log: %v", err)
+			}
+			beforeDB := readFileBytes(t, dbPath)
+
+			err = store.WriteBatch(context.Background(), []*model.Alert{
+				makeAlert(now.Add(time.Second), "must-not-append"),
+			})
+			if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+				!strings.Contains(err.Error(), test.condition) {
+				t.Fatalf("WriteBatch error = %v, want ErrRecoveryLogIntegrity containing %q", err, test.condition)
+			}
+			assertFileBytes(t, recoveryLogPath, contents)
+			assertFileBytes(t, dbPath, beforeDB)
+			assertSQLiteAlertCount(t, dbPath, 0)
+		})
+	}
+}
+
+func TestStoreAcceptsCanonicalRecoveryFieldVocabulary(t *testing.T) {
+	now := time.Date(2026, 7, 29, 8, 9, 30, 0, time.UTC)
+	for _, rawPayload := range []string{"", "synthetic recovery payload"} {
+		name := "empty raw payload"
+		if rawPayload != "" {
+			name = "populated raw payload"
+		}
+		t.Run(name, func(t *testing.T) {
+			dir := t.TempDir()
+			dbPath := filepath.Join(dir, "alerts.db")
+			recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+			alert := normalizeAlert(makeAlert(now, name), now, time.Minute)
+			alert.RawPayload = rawPayload
+			logOnly := &Store{recoveryLogPath: recoveryLogPath}
+			if err := logOnly.appendRecoveryLog([]*model.Alert{&alert}); err != nil {
+				t.Fatalf("append canonical recovery record: %v", err)
+			}
+			record := bytes.TrimSuffix(readFileBytes(t, recoveryLogPath), []byte{'\n'})
+			var fields map[string]json.RawMessage
+			if err := json.Unmarshal(record, &fields); err != nil {
+				t.Fatalf("decode writer-generated recovery record: %v", err)
+			}
+			for field := range fields {
+				canonical, supported := canonicalRecoveryModelField(field)
+				if !supported || field != canonical {
+					t.Fatalf("writer-generated field %q is outside the canonical recovery vocabulary", field)
+				}
+			}
+			_, hasRawPayload := fields["raw_payload"]
+			if hasRawPayload != (rawPayload != "") {
+				t.Fatalf("raw_payload presence = %v, want %v", hasRawPayload, rawPayload != "")
 			}
 
 			store, err := Open(context.Background(), Options{
@@ -2003,18 +2169,18 @@ func TestStoreAllowsNonDuplicateRecoveryFieldExtensions(t *testing.T) {
 				Now:               func() time.Time { return now },
 			})
 			if err != nil {
-				t.Fatalf("open compatible recovery log: %v", err)
+				t.Fatalf("open canonical recovery log: %v", err)
 			}
 			defer store.Close()
 			listed, err := store.List(context.Background())
 			if err != nil {
-				t.Fatalf("list replayed compatible recovery record: %v", err)
+				t.Fatalf("list replayed canonical recovery record: %v", err)
 			}
-			if len(listed) != 1 || listed[0].MatchedKeyword != valid.MatchedKeyword {
-				t.Fatalf("replayed compatible recovery alerts = %+v", listed)
+			if len(listed) != 1 || listed[0].MatchedKeyword != alert.MatchedKeyword {
+				t.Fatalf("replayed canonical recovery alerts = %+v", listed)
 			}
 			if info, err := os.Stat(recoveryLogPath); err != nil || info.Size() != 0 {
-				t.Fatalf("compatible recovery log should be truncated, info=%+v err=%v", info, err)
+				t.Fatalf("canonical recovery log should be truncated, info=%+v err=%v", info, err)
 			}
 		})
 	}
@@ -2027,7 +2193,7 @@ func TestStoreMalformedDuplicateRecoveryRecordKeepsDecodeError(t *testing.T) {
 	if err != nil {
 		t.Fatalf("marshal valid recovery prefix: %v", err)
 	}
-	contents := append(append(append([]byte(nil), validJSON...), '\n'), []byte(`{"rule_id":"a","rule_id":`)...)
+	contents := append(append(append([]byte(nil), validJSON...), '\n'), []byte(`{"future_field":1,"rule_id":"a","rule_id":`)...)
 	contents = append(contents, '\n')
 
 	dir := t.TempDir()

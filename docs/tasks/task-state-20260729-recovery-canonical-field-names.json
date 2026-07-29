@@ -1,0 +1,39 @@
+{
+  "task": "r90-50-recovery-canonical-field-names",
+  "timestamp": "2026-07-29T01:14:16-07:00",
+  "branch": "main",
+  "remote_baseline": "6c981dff0757aa8f05d09f3454c735ed4ae05ea4",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main agrees",
+    "Verified the completed R90-49 task state and both delivery commits",
+    "Verified the single discovered local Vault contains R90-49 feature and delivery notes, full-index entries, MOC links, and the stable storage update",
+    "Passed the clean fetched-baseline knowledge check",
+    "Selected R90-50 as the highest-priority dependency-ready correctness increment",
+    "Confirmed recovery member scanning still accepts single unknown fields and case-variant supported aliases",
+    "Rejected unknown scalar and nested top-level recovery members before model decoding",
+    "Rejected case-variant supported names with the exact canonical writer name in the diagnostic",
+    "Preserved duplicate-field precedence when unsupported names are also present",
+    "Preserved the original decode diagnostic for structurally malformed input containing unsupported and duplicate names",
+    "Proved startup rejection preserves a complete valid-prefix log and missing or compatible existing database state",
+    "Proved runtime rejection preserves the existing log and SQLite bytes without appending the current batch",
+    "Verified canonical writer replay with omitted and populated raw_payload and checked every emitted top-level name against the vocabulary",
+    "Updated the changelog, architecture, development guide, roadmap, plan, and task state",
+    "Passed twenty uncached focused alert-store race runs",
+    "Passed the complete native race suite",
+    "Passed E2E smoke with 6 packets, 5 alerts, and 8 loaded rules",
+    "Passed documentation, configuration, knowledge, JSON, diff, and sensitive-information checks"
+  ],
+  "in_progress": [
+    "Commit and push the validated R90-50 increment"
+  ],
+  "todo": [
+    "Commit, push, verify fetched origin/main, synchronize the exact range to the local Vault, and reconcile delivery evidence"
+  ],
+  "remaining_risks": [
+    "The accepted vocabulary must remain aligned with every current writer tag",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Continue R90-50 from clean fetched baseline 6c981dff0757aa8f05d09f3454c735ed4ae05ea4. Reject unknown top-level recovery names and noncanonical case aliases after a complete structural parse while preserving duplicate and malformed error precedence. Preserve rejected logs and missing/existing SQLite state; run the plan validation before commit and push. Do not recurse into JSON values, change the recovery format, create a release tag, or publish artifacts."
+}

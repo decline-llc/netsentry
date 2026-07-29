@@ -1389,6 +1389,7 @@ func validateRecoveryRecordFieldNames(record []byte) error {
 	seenNames := make(map[string]struct{})
 	seenModelFields := make(map[string]string)
 	var duplicateErr error
+	var fieldNameErr error
 	for decoder.More() {
 		token, err := decoder.Token()
 		if err != nil {
@@ -1403,8 +1404,8 @@ func validateRecoveryRecordFieldNames(record []byte) error {
 		}
 		seenNames[name] = struct{}{}
 
-		modelField := strings.ToLower(name)
-		if isRecoveryModelField(modelField) {
+		modelField, supported := canonicalRecoveryModelField(name)
+		if supported {
 			if previous, exists := seenModelFields[modelField]; exists {
 				if previous != name && duplicateErr == nil {
 					duplicateErr = fmt.Errorf(
@@ -1416,6 +1417,15 @@ func validateRecoveryRecordFieldNames(record []byte) error {
 			} else {
 				seenModelFields[modelField] = name
 			}
+			if name != modelField && fieldNameErr == nil {
+				fieldNameErr = fmt.Errorf(
+					"noncanonical top-level recovery field %q; expected %q",
+					name,
+					modelField,
+				)
+			}
+		} else if fieldNameErr == nil {
+			fieldNameErr = fmt.Errorf("unknown top-level recovery field %q", name)
 		}
 
 		var value json.RawMessage
@@ -1434,11 +1444,15 @@ func validateRecoveryRecordFieldNames(record []byte) error {
 	if _, err := decoder.Token(); !errors.Is(err, io.EOF) {
 		return nil
 	}
-	return duplicateErr
+	if duplicateErr != nil {
+		return duplicateErr
+	}
+	return fieldNameErr
 }
 
-func isRecoveryModelField(name string) bool {
-	switch name {
+func canonicalRecoveryModelField(name string) (string, bool) {
+	canonical := strings.ToLower(name)
+	switch canonical {
 	case "id",
 		"event_id",
 		"rule_id",
@@ -1459,9 +1473,9 @@ func isRecoveryModelField(name string) bool {
 		"payload_preview",
 		"matched_keyword",
 		"raw_payload":
-		return true
+		return canonical, true
 	default:
-		return false
+		return "", false
 	}
 }
 

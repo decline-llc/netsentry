@@ -9,6 +9,10 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Recovery-log preflight now accepts only the exact top-level JSON field names
+  emitted by the current alert writer, rejecting unknown members and
+  case-variant supported names before startup replay or runtime append can
+  modify durable state.
 - Recovery-log preflight now rejects duplicate top-level JSON names, including
   case-variant aliases of supported durable fields, before last-value decoding
   can obscure the original record.
