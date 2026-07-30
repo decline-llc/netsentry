@@ -94,6 +94,18 @@ emits to be present before model decoding can substitute a Go zero value.
 - E2E smoke passed with 6 packets, 5 alerts, and 8 loaded rules.
 - Documentation, configuration, knowledge, JSON, and diff checks passed.
 
+## Delivery Evidence
+
+- Feature commit: `4a27cece77f0f94b18982677c7562fac1e754b93`
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed all 33 tests.
+- Exact Vault range:
+  `9e93170ec61e0bdfd8928d1ab7a4c4ed6061cf87..4a27cece77f0f94b18982677c7562fac1e754b93`
+- Vault feature note, full commit index, MOC link, and reusable stable storage
+  note: verified.
+- No later engineering increment was selected; the next `$netsentry-next`
+  trigger will refresh the rolling roadmap.
+
 ## Stop Conditions
 
 Stop if completion requires a versioned recovery migration, making
