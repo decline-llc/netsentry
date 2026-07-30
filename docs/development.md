@@ -308,14 +308,22 @@ decoding, including exact duplicates and case-variant aliases that Go would map
 to the same durable field. Every top-level name must exactly match the current
 alert writer's JSON vocabulary; unknown scalar or nested members and
 case-variant supported names are rejected. Object member names inside accepted
-field values are not recursively inspected. Every non-`omitempty` field
-emitted by the current writer must be present before model decoding;
-`raw_payload` remains optional. Every present value must use the non-null
-top-level JSON kind emitted by the writer: strings for text and timestamps,
-and numbers for `dst_port` plus `aggregated_count`. A present `raw_payload`
-must be a string. Both numeric fields must use canonical unsigned base-10
-integer JSON spelling without an exponent, fractional component, sign, or
-multi-digit leading zero; alternate representations fail before model
+field values are not recursively inspected. At package initialization,
+NetSentry derives one immutable recovery contract from the declared exported
+`model.Alert` fields, their `json` tags, and supported writer types. Per-record
+validation uses that contract for field order, canonical names,
+required/optional status, JSON kinds, and integral encoding without reflection.
+Ignored and unexported fields are excluded; embedded fields,
+case-insensitive name conflicts, composite types, and custom marshalers fail
+contract construction rather than silently weakening validation. Every field
+the writer cannot omit under the module toolchain's supported `omitempty` and
+`omitzero` behavior must be present before model decoding; `raw_payload`
+remains the only current optional field. Every present value must use the
+non-null top-level JSON kind emitted by the writer: strings for text and
+timestamps, and numbers for `dst_port` plus `aggregated_count`. A present
+`raw_payload` must be a string. Both numeric fields must use canonical unsigned
+base-10 integer JSON spelling without an exponent, fractional component, sign,
+or multi-digit leading zero; alternate representations fail before model
 decoding.
 Each decoded record must contain the durable identity (`id`, `event_id`, and
 `rule_id`), a nonblank `rule_name`, timestamps/window, aggregate count, and

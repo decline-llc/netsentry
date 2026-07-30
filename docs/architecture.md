@@ -258,8 +258,16 @@ Current build:
   the same durable model field before Go's last-value decoding can discard the
   earlier member. Every top-level name must exactly match the current alert
   writer's JSON vocabulary; unknown scalar or nested members and case-variant
-  supported names are rejected. Every field the writer emits without
-  `omitempty` must be present; only `raw_payload` may be omitted. Every present
+  supported names are rejected. One immutable contract is built at package
+  initialization from the declared exported `model.Alert` fields, their
+  `json` tags, and supported writer types; per-record validation uses that
+  contract for names, declaration order, presence, JSON kind, and integral
+  encoding policy without runtime reflection. Ignored and unexported fields
+  stay outside the contract, while embedded fields, case-insensitive name
+  conflicts, composite types, and custom marshalers fail contract construction
+  instead of silently bypassing validation. Every field the writer cannot omit
+  under the module toolchain's supported `omitempty` and `omitzero` behavior
+  must be present; only `raw_payload` may currently be omitted. Every present
   value must use the non-null top-level JSON kind emitted by the writer:
   strings for text and timestamps, and numbers for `dst_port` plus
   `aggregated_count`. Both numeric fields must use canonical unsigned base-10
@@ -339,7 +347,7 @@ v0.1.0 target:
 
 Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, engine worker shutdown orchestration, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
 
-Alert storage tests cover SQLite aggregation windows, nanosecond timestamp aggregation/order/filter/pruning, JSONL recovery-log replay idempotency and structural/semantic validation including the exact canonical top-level field vocabulary, required non-null value kinds, duplicate top-level fields, canonical timestamp encodings, severity, rule names, MITRE tuples, and protocol names with byte preservation, required-schema plus non-binary aggregation/write-blocking uniqueness/trigger/generated-column/constraint/foreign-key rejection with byte preservation, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple validation, optional query-index recreation and timestamp query plans, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, corrupt/truncated/incompatible historical-shard read/write preservation, active WAL-backed read-only access, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics alert counts backed by a real daily-shard SQLite store.
+Alert storage tests cover SQLite aggregation windows, nanosecond timestamp aggregation/order/filter/pruning, JSONL recovery-log replay idempotency and structural/semantic validation including model-derived canonical fields, required/optional status, JSON kinds, integral encoding policy, fail-closed unsupported model shapes, duplicate top-level fields, canonical timestamp encodings, severity, rule names, MITRE tuples, and protocol names with byte preservation, required-schema plus non-binary aggregation/write-blocking uniqueness/trigger/generated-column/constraint/foreign-key rejection with byte preservation, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple validation, optional query-index recreation and timestamp query plans, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, corrupt/truncated/incompatible historical-shard read/write preservation, active WAL-backed read-only access, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics alert counts backed by a real daily-shard SQLite store.
 
 The v0.1.0 IPC serializer decision is to retain the current bounded handwritten C JSON formatter instead of adding cJSON. The formatter is narrow, fails closed on buffer exhaustion, Base64-encodes payload previews, and is already exercised through unit tests, microbenchmarks, deterministic fuzz smoke, and e2e heartbeat assertions. Replacing it remains a future option only if sustained fuzzing or production evidence shows a concrete defect.
 

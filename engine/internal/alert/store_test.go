@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"syscall"
 	"testing"
@@ -16,6 +17,18 @@ import (
 
 	"github.com/decline-llc/netsentry/pkg/model"
 )
+
+type recoveryContractCustomJSON struct{}
+
+func (recoveryContractCustomJSON) MarshalJSON() ([]byte, error) {
+	return []byte(`"custom"`), nil
+}
+
+type recoveryContractCustomText string
+
+func (recoveryContractCustomText) MarshalText() ([]byte, error) {
+	return []byte("custom"), nil
+}
 
 func TestStoreAggregatesAlertsInWindow(t *testing.T) {
 	ctx := context.Background()
@@ -2137,7 +2150,7 @@ func TestStoreRejectsMissingRecoveryFieldsWithoutModification(t *testing.T) {
 	}
 	incomplete := normalizeAlert(makeAlert(now, "missing-recovery-field"), now, window)
 
-	for _, field := range requiredRecoveryModelFields {
+	for _, field := range alertRecoveryModelContract.requiredFieldNames() {
 		t.Run(field, func(t *testing.T) {
 			incompleteJSON := recoveryRecordWithoutField(t, incomplete, field)
 			contents := append(append(append([]byte(nil), validPrefixJSON...), '\n'), incompleteJSON...)
@@ -2197,7 +2210,7 @@ func TestStoreWriteBatchRejectsMissingRecoveryFieldsWithoutModification(t *testi
 	window := time.Minute
 	incomplete := normalizeAlert(makeAlert(now, "missing-runtime-recovery-field"), now, window)
 
-	for _, field := range requiredRecoveryModelFields {
+	for _, field := range alertRecoveryModelContract.requiredFieldNames() {
 		t.Run(field, func(t *testing.T) {
 			dir := t.TempDir()
 			dbPath := filepath.Join(dir, "alerts.db")
@@ -2570,6 +2583,216 @@ func TestRecoveryValueErrorsUseRecordOrder(t *testing.T) {
 	}
 }
 
+func TestBuildRecoveryModelContractDerivesWriterShape(t *testing.T) {
+	type syntheticModel struct {
+		Required    string
+		Explicit    string `json:"explicit"`
+		Optional    string `json:",omitempty"`
+		DefaultName bool
+		Signed      int8                        `json:"signed"`
+		Unsigned    uint16                      `json:"unsigned"`
+		Ratio       float64                     `json:"ratio"`
+		Timestamp   time.Time                   `json:"timestamp"`
+		TimeOmit    time.Time                   `json:"time_omit,omitempty"`
+		ZeroTime    time.Time                   `json:"zero_time,omitzero"`
+		ZeroCount   int                         `json:"zero_count,omitzero"`
+		Quoted      int                         `json:"quoted,string"`
+		Ignored     *recoveryContractCustomJSON `json:"-"`
+		hidden      *recoveryContractCustomJSON
+	}
+
+	contract, err := buildRecoveryModelContract(reflect.TypeOf(syntheticModel{}))
+	if err != nil {
+		t.Fatalf("build synthetic recovery contract: %v", err)
+	}
+	expected := []recoveryModelField{
+		{name: "Required", kind: recoveryJSONString, required: true},
+		{name: "explicit", kind: recoveryJSONString, required: true},
+		{name: "Optional", kind: recoveryJSONString, required: false},
+		{name: "DefaultName", kind: recoveryJSONBoolean, required: true},
+		{name: "signed", kind: recoveryJSONNumber, required: true, canonicalInteger: true},
+		{name: "unsigned", kind: recoveryJSONNumber, required: true, canonicalInteger: true},
+		{name: "ratio", kind: recoveryJSONNumber, required: true},
+		{name: "timestamp", kind: recoveryJSONString, required: true},
+		{name: "time_omit", kind: recoveryJSONString, required: true},
+		{name: "zero_time", kind: recoveryJSONString, required: false},
+		{name: "zero_count", kind: recoveryJSONNumber, required: false, canonicalInteger: true},
+		{name: "quoted", kind: recoveryJSONString, required: true},
+	}
+	if !reflect.DeepEqual(contract.fields, expected) {
+		t.Fatalf("synthetic recovery fields = %#v, want %#v", contract.fields, expected)
+	}
+	if field, ok := contract.lookup("EXPLICIT"); !ok || field != expected[1] {
+		t.Fatalf("case-variant lookup = %#v, %v; want %#v, true", field, ok, expected[1])
+	}
+	if got, want := contract.requiredFieldNames(), []string{
+		"Required",
+		"explicit",
+		"DefaultName",
+		"signed",
+		"unsigned",
+		"ratio",
+		"timestamp",
+		"time_omit",
+		"quoted",
+	}; !reflect.DeepEqual(got, want) {
+		t.Fatalf("required field names = %v, want %v", got, want)
+	}
+
+	value := syntheticModel{
+		Required:    "required",
+		Explicit:    "explicit",
+		Optional:    "optional",
+		DefaultName: true,
+		Signed:      1,
+		Unsigned:    2,
+		Ratio:       1.5,
+		Timestamp:   time.Date(2026, 7, 30, 10, 0, 0, 0, time.UTC),
+		TimeOmit:    time.Time{},
+		ZeroTime:    time.Date(2026, 7, 30, 11, 0, 0, 0, time.UTC),
+		ZeroCount:   5,
+		Quoted:      4,
+	}
+	record, err := json.Marshal(value)
+	if err != nil {
+		t.Fatalf("marshal synthetic recovery writer: %v", err)
+	}
+	if got := recoveryRecordFieldNames(t, record); !reflect.DeepEqual(got, recoveryFieldNames(contract.fields)) {
+		t.Fatalf("writer field order = %v, want contract order %v", got, recoveryFieldNames(contract.fields))
+	}
+	zeroRecord, err := json.Marshal(syntheticModel{})
+	if err != nil {
+		t.Fatalf("marshal zero-value synthetic recovery writer: %v", err)
+	}
+	var requiredFields []recoveryModelField
+	for _, field := range contract.fields {
+		if field.required {
+			requiredFields = append(requiredFields, field)
+		}
+	}
+	if got, want := recoveryRecordFieldNames(t, zeroRecord), recoveryFieldNames(requiredFields); !reflect.DeepEqual(got, want) {
+		t.Fatalf("zero-value writer field order = %v, want required contract order %v", got, want)
+	}
+	if !recoveryJSONValueHasKind(json.RawMessage("true"), recoveryJSONBoolean) ||
+		!recoveryJSONValueHasKind(json.RawMessage("false"), recoveryJSONBoolean) ||
+		recoveryJSONValueHasKind(json.RawMessage(`"true"`), recoveryJSONBoolean) {
+		t.Fatal("boolean JSON kind validation does not match writer output")
+	}
+}
+
+func TestBuildRecoveryModelContractRejectsAmbiguousOrUnsupportedShapes(t *testing.T) {
+	type embedded struct {
+		Value string `json:"value"`
+	}
+	tests := []struct {
+		name      string
+		modelType reflect.Type
+		condition string
+	}{
+		{
+			name:      "non-struct",
+			modelType: reflect.TypeOf(""),
+			condition: "is not a struct",
+		},
+		{
+			name: "anonymous field",
+			modelType: reflect.TypeOf(struct {
+				embedded
+			}{}),
+			condition: "is anonymous",
+		},
+		{
+			name: "case-insensitive duplicate",
+			modelType: reflect.TypeOf(struct {
+				Lower string `json:"name"`
+				Upper string `json:"Name"`
+			}{}),
+			condition: `conflicts with "name"`,
+		},
+		{
+			name: "invalid JSON name",
+			modelType: reflect.TypeOf(struct {
+				Value string `json:"bad\\name"`
+			}{}),
+			condition: "JSON name",
+		},
+		{
+			name: "pointer",
+			modelType: reflect.TypeOf(struct {
+				Value *string `json:"value"`
+			}{}),
+			condition: "JSON writer type *string is unsupported",
+		},
+		{
+			name: "slice",
+			modelType: reflect.TypeOf(struct {
+				Value []string `json:"value"`
+			}{}),
+			condition: "JSON writer type []string is unsupported",
+		},
+		{
+			name: "map",
+			modelType: reflect.TypeOf(struct {
+				Value map[string]string `json:"value"`
+			}{}),
+			condition: "JSON writer type map[string]string is unsupported",
+		},
+		{
+			name: "custom JSON marshaler",
+			modelType: reflect.TypeOf(struct {
+				Value recoveryContractCustomJSON `json:"value"`
+			}{}),
+			condition: "custom marshaler type",
+		},
+		{
+			name: "custom text marshaler",
+			modelType: reflect.TypeOf(struct {
+				Value recoveryContractCustomText `json:"value"`
+			}{}),
+			condition: "custom marshaler type",
+		},
+		{
+			name: "special JSON number",
+			modelType: reflect.TypeOf(struct {
+				Value json.Number `json:"value"`
+			}{}),
+			condition: "special JSON number type",
+		},
+		{
+			name: "unsupported quoted shape",
+			modelType: reflect.TypeOf(struct {
+				Value []string `json:"value,string"`
+			}{}),
+			condition: "JSON string option",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			_, err := buildRecoveryModelContract(test.modelType)
+			if err == nil || !strings.Contains(err.Error(), test.condition) {
+				t.Fatalf("build recovery contract error = %v, want %q", err, test.condition)
+			}
+		})
+	}
+}
+
+func TestAlertRecoveryModelContractMatchesZeroValueWriter(t *testing.T) {
+	record, err := json.Marshal(model.Alert{})
+	if err != nil {
+		t.Fatalf("marshal zero-value alert: %v", err)
+	}
+	writerFields := recoveryRecordFieldNames(t, record)
+	var requiredFields []recoveryModelField
+	for _, field := range alertRecoveryModelContract.fields {
+		if field.required {
+			requiredFields = append(requiredFields, field)
+		}
+	}
+	if want := recoveryFieldNames(requiredFields); !reflect.DeepEqual(writerFields, want) {
+		t.Fatalf("zero-value writer fields = %v, want required contract fields %v", writerFields, want)
+	}
+}
+
 func TestStoreAcceptsCanonicalRecoveryFieldVocabulary(t *testing.T) {
 	now := time.Date(2026, 7, 29, 8, 9, 30, 0, time.UTC)
 	for _, rawPayload := range []string{"", "synthetic recovery payload"} {
@@ -2593,23 +2816,19 @@ func TestStoreAcceptsCanonicalRecoveryFieldVocabulary(t *testing.T) {
 				t.Fatalf("decode writer-generated recovery record: %v", err)
 			}
 			for field := range fields {
-				canonical, supported := canonicalRecoveryModelField(field)
-				if !supported || field != canonical {
+				fieldContract, supported := alertRecoveryModelContract.lookup(field)
+				if !supported || field != fieldContract.name {
 					t.Fatalf("writer-generated field %q is outside the canonical recovery vocabulary", field)
 				}
-				_, expectedKind, supported := recoveryModelFieldContract(field)
-				if !supported {
-					t.Fatalf("writer-generated field %q has no value contract", field)
-				}
-				if !recoveryJSONValueHasKind(fields[field], expectedKind) {
+				if !recoveryJSONValueHasKind(fields[field], fieldContract.kind) {
 					t.Fatalf(
 						"writer-generated field %q value %s does not satisfy JSON %s contract",
 						field,
 						fields[field],
-						expectedKind,
+						fieldContract.kind,
 					)
 				}
-				if expectedKind == recoveryJSONNumber &&
+				if fieldContract.canonicalInteger &&
 					!recoveryJSONValueHasCanonicalIntegerEncoding(fields[field]) {
 					t.Fatalf(
 						"writer-generated numeric field %q value %s is not canonically encoded",
@@ -2618,14 +2837,17 @@ func TestStoreAcceptsCanonicalRecoveryFieldVocabulary(t *testing.T) {
 					)
 				}
 			}
-			requiredFields := make(map[string]struct{}, len(requiredRecoveryModelFields))
-			for _, field := range requiredRecoveryModelFields {
-				if _, duplicate := requiredFields[field]; duplicate {
-					t.Fatalf("required recovery field %q is listed more than once", field)
+			requiredFields := make(map[string]struct{}, len(alertRecoveryModelContract.fields))
+			for _, field := range alertRecoveryModelContract.fields {
+				if !field.required {
+					continue
 				}
-				requiredFields[field] = struct{}{}
-				if _, emitted := fields[field]; !emitted {
-					t.Fatalf("required recovery field %q was not emitted by the writer", field)
+				if _, duplicate := requiredFields[field.name]; duplicate {
+					t.Fatalf("required recovery field %q is listed more than once", field.name)
+				}
+				requiredFields[field.name] = struct{}{}
+				if _, emitted := fields[field.name]; !emitted {
+					t.Fatalf("required recovery field %q was not emitted by the writer", field.name)
 				}
 			}
 			for field := range fields {
@@ -6216,19 +6438,52 @@ type recoveryNumericEncodingCase struct {
 	malformed bool
 }
 
-func recoveryValueContractCases() []recoveryValueContractCase {
-	fields := append(append([]string(nil), requiredRecoveryModelFields...), "raw_payload")
-	tests := make([]recoveryValueContractCase, 0, len(fields)+4)
+func recoveryFieldNames(fields []recoveryModelField) []string {
+	names := make([]string, 0, len(fields))
 	for _, field := range fields {
-		_, kind, supported := recoveryModelFieldContract(field)
-		if !supported {
-			panic("recovery test field has no value contract: " + field)
+		names = append(names, field.name)
+	}
+	return names
+}
+
+func recoveryRecordFieldNames(t *testing.T, record []byte) []string {
+	t.Helper()
+	decoder := json.NewDecoder(bytes.NewReader(record))
+	open, err := decoder.Token()
+	if err != nil || open != json.Delim('{') {
+		t.Fatalf("decode recovery record opening object: token %v, error %v", open, err)
+	}
+	var names []string
+	for decoder.More() {
+		token, err := decoder.Token()
+		if err != nil {
+			t.Fatalf("decode recovery record field name: %v", err)
 		}
+		name, ok := token.(string)
+		if !ok {
+			t.Fatalf("recovery record field token = %T, want string", token)
+		}
+		names = append(names, name)
+		var value json.RawMessage
+		if err := decoder.Decode(&value); err != nil {
+			t.Fatalf("decode recovery record field %q: %v", name, err)
+		}
+	}
+	closeToken, err := decoder.Token()
+	if err != nil || closeToken != json.Delim('}') {
+		t.Fatalf("decode recovery record closing object: token %v, error %v", closeToken, err)
+	}
+	return names
+}
+
+func recoveryValueContractCases() []recoveryValueContractCase {
+	tests := make([]recoveryValueContractCase, 0, len(alertRecoveryModelContract.fields)+4)
+	for _, field := range alertRecoveryModelContract.fields {
 		tests = append(tests, recoveryValueContractCase{
-			name:  field + " null",
-			field: field,
+			name:  field.name + " null",
+			field: field.name,
 			value: json.RawMessage("null"),
-			kind:  kind,
+			kind:  field.kind,
 		})
 	}
 	tests = append(tests,

@@ -9,6 +9,10 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Recovery-log name, presence, JSON-kind, and integral-encoding validation now
+  uses one immutable contract derived from the current `model.Alert` writer
+  shape, so supported field changes cannot silently bypass reader validation
+  and ambiguous or unsupported future shapes fail closed.
 - Recovery-log preflight now requires `dst_port` and `aggregated_count` to use
   the canonical unsigned base-10 integer JSON spelling emitted by the
   normalized alert writer, rejecting exponent, fractional, and signed forms

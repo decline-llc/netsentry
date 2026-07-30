@@ -6,6 +6,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"database/sql"
+	"encoding"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -15,6 +16,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"sort"
 	"strconv"
@@ -22,6 +24,7 @@ import (
 	"sync"
 	"syscall"
 	"time"
+	"unicode"
 
 	_ "modernc.org/sqlite"
 
@@ -1405,9 +1408,9 @@ func validateRecoveryRecordFieldNames(record []byte) error {
 		}
 		seenNames[name] = struct{}{}
 
-		modelField, expectedKind, supported := recoveryModelFieldContract(name)
+		field, supported := alertRecoveryModelContract.lookup(name)
 		if supported {
-			if previous, exists := seenModelFields[modelField]; exists {
+			if previous, exists := seenModelFields[field.name]; exists {
 				if previous != name && duplicateErr == nil {
 					duplicateErr = fmt.Errorf(
 						"duplicate top-level recovery field %q aliases %q",
@@ -1416,13 +1419,13 @@ func validateRecoveryRecordFieldNames(record []byte) error {
 					)
 				}
 			} else {
-				seenModelFields[modelField] = name
+				seenModelFields[field.name] = name
 			}
-			if name != modelField && fieldNameErr == nil {
+			if name != field.name && fieldNameErr == nil {
 				fieldNameErr = fmt.Errorf(
 					"noncanonical top-level recovery field %q; expected %q",
 					name,
-					modelField,
+					field.name,
 				)
 			}
 		} else if fieldNameErr == nil {
@@ -1434,18 +1437,18 @@ func validateRecoveryRecordFieldNames(record []byte) error {
 			return nil
 		}
 		if supported && fieldValueErr == nil &&
-			!recoveryJSONValueHasKind(value, expectedKind) {
+			!recoveryJSONValueHasKind(value, field.kind) {
 			fieldValueErr = fmt.Errorf(
 				"top-level recovery field %q must be a non-null JSON %s",
-				modelField,
-				expectedKind,
+				field.name,
+				field.kind,
 			)
 		} else if supported && fieldValueErr == nil &&
-			expectedKind == recoveryJSONNumber &&
+			field.canonicalInteger &&
 			!recoveryJSONValueHasCanonicalIntegerEncoding(value) {
 			fieldValueErr = fmt.Errorf(
 				"top-level recovery field %q must use canonical unsigned base-10 integer JSON encoding",
-				modelField,
+				field.name,
 			)
 		}
 	}
@@ -1466,75 +1469,235 @@ func validateRecoveryRecordFieldNames(record []byte) error {
 	if fieldNameErr != nil {
 		return fieldNameErr
 	}
-	for _, field := range requiredRecoveryModelFields {
-		if _, ok := seenNames[field]; !ok {
-			return fmt.Errorf("required top-level recovery field %q is missing", field)
+	for _, field := range alertRecoveryModelContract.fields {
+		if field.required {
+			if _, ok := seenNames[field.name]; !ok {
+				return fmt.Errorf("required top-level recovery field %q is missing", field.name)
+			}
 		}
 	}
 	return fieldValueErr
 }
 
-var requiredRecoveryModelFields = []string{
-	"id",
-	"event_id",
-	"rule_id",
-	"rule_name",
-	"timestamp",
-	"src_ip",
-	"dst_ip",
-	"dst_port",
-	"protocol",
-	"severity",
-	"aggregated_count",
-	"first_seen",
-	"last_seen",
-	"window_start",
-	"mitre_tactic",
-	"mitre_technique_id",
-	"mitre_technique_name",
-	"payload_preview",
-	"matched_keyword",
-}
-
 type recoveryJSONKind string
 
 const (
-	recoveryJSONString recoveryJSONKind = "string"
-	recoveryJSONNumber recoveryJSONKind = "number"
+	recoveryJSONString  recoveryJSONKind = "string"
+	recoveryJSONNumber  recoveryJSONKind = "number"
+	recoveryJSONBoolean recoveryJSONKind = "boolean"
 )
 
-func recoveryModelFieldContract(name string) (string, recoveryJSONKind, bool) {
-	canonical := strings.ToLower(name)
-	switch canonical {
-	case "id",
-		"event_id",
-		"rule_id",
-		"rule_name",
-		"timestamp",
-		"src_ip",
-		"dst_ip",
-		"protocol",
-		"severity",
-		"first_seen",
-		"last_seen",
-		"window_start",
-		"mitre_tactic",
-		"mitre_technique_id",
-		"mitre_technique_name",
-		"payload_preview",
-		"matched_keyword",
-		"raw_payload":
-		return canonical, recoveryJSONString, true
-	case "dst_port", "aggregated_count":
-		return canonical, recoveryJSONNumber, true
+type recoveryModelField struct {
+	name             string
+	kind             recoveryJSONKind
+	required         bool
+	canonicalInteger bool
+}
+
+type recoveryModelContract struct {
+	fields []recoveryModelField
+	byName map[string]recoveryModelField
+}
+
+var alertRecoveryModelContract = mustBuildRecoveryModelContract(reflect.TypeOf(model.Alert{}))
+
+func mustBuildRecoveryModelContract(modelType reflect.Type) recoveryModelContract {
+	contract, err := buildRecoveryModelContract(modelType)
+	if err != nil {
+		panic(fmt.Sprintf("build alert recovery model contract: %v", err))
+	}
+	return contract
+}
+
+func buildRecoveryModelContract(modelType reflect.Type) (recoveryModelContract, error) {
+	if modelType.Kind() != reflect.Struct {
+		return recoveryModelContract{}, fmt.Errorf("model type %s is not a struct", modelType)
+	}
+
+	contract := recoveryModelContract{
+		fields: make([]recoveryModelField, 0, modelType.NumField()),
+		byName: make(map[string]recoveryModelField, modelType.NumField()),
+	}
+	for i := 0; i < modelType.NumField(); i++ {
+		structField := modelType.Field(i)
+		if structField.Anonymous {
+			return recoveryModelContract{}, fmt.Errorf(
+				"field %s is anonymous; embedded JSON fields are ambiguous",
+				structField.Name,
+			)
+		}
+		if structField.PkgPath != "" {
+			continue
+		}
+		if tag, ok := structField.Tag.Lookup("json"); ok && tag == "-" {
+			continue
+		}
+
+		name, options, err := recoveryJSONFieldTag(structField)
+		if err != nil {
+			return recoveryModelContract{}, fmt.Errorf("field %s: %w", structField.Name, err)
+		}
+		kind, canonicalInteger, err := recoveryJSONContractForType(structField.Type, options["string"])
+		if err != nil {
+			return recoveryModelContract{}, fmt.Errorf("field %s: %w", structField.Name, err)
+		}
+		field := recoveryModelField{
+			name: name,
+			kind: kind,
+			required: !options["omitzero"] &&
+				(!options["omitempty"] || !recoveryJSONTypeCanBeEmpty(structField.Type)),
+			canonicalInteger: canonicalInteger,
+		}
+		lookupName := strings.ToLower(name)
+		if previous, exists := contract.byName[lookupName]; exists {
+			return recoveryModelContract{}, fmt.Errorf(
+				"field %s JSON name %q conflicts with %q",
+				structField.Name,
+				name,
+				previous.name,
+			)
+		}
+		contract.fields = append(contract.fields, field)
+		contract.byName[lookupName] = field
+	}
+	return contract, nil
+}
+
+func recoveryJSONFieldTag(field reflect.StructField) (string, map[string]bool, error) {
+	name := field.Name
+	options := make(map[string]bool)
+	tag, ok := field.Tag.Lookup("json")
+	if !ok {
+		return name, options, nil
+	}
+	parts := strings.Split(tag, ",")
+	if parts[0] != "" {
+		if !recoveryJSONTagNameIsValid(parts[0]) {
+			return "", nil, fmt.Errorf("JSON name %q is invalid", parts[0])
+		}
+		name = parts[0]
+	}
+	for _, option := range parts[1:] {
+		options[option] = true
+	}
+	return name, options, nil
+}
+
+func recoveryJSONTagNameIsValid(name string) bool {
+	for _, character := range name {
+		if strings.ContainsRune("!#$%&()*+-./:;<=>?@[]^_{|}~ ", character) {
+			continue
+		}
+		if !unicode.IsLetter(character) && !unicode.IsDigit(character) {
+			return false
+		}
+	}
+	return name != ""
+}
+
+func recoveryJSONContractForType(
+	fieldType reflect.Type,
+	quoted bool,
+) (recoveryJSONKind, bool, error) {
+	if fieldType == reflect.TypeOf(time.Time{}) {
+		return recoveryJSONString, false, nil
+	}
+	if fieldType == reflect.TypeOf(json.Number("")) {
+		return "", false, fmt.Errorf("special JSON number type %s is unsupported", fieldType)
+	}
+	jsonMarshalerType := reflect.TypeOf((*json.Marshaler)(nil)).Elem()
+	textMarshalerType := reflect.TypeOf((*encoding.TextMarshaler)(nil)).Elem()
+	if fieldType.Implements(jsonMarshalerType) ||
+		reflect.PointerTo(fieldType).Implements(jsonMarshalerType) ||
+		fieldType.Implements(textMarshalerType) ||
+		reflect.PointerTo(fieldType).Implements(textMarshalerType) {
+		return "", false, fmt.Errorf("custom marshaler type %s is unsupported", fieldType)
+	}
+	if quoted {
+		switch fieldType.Kind() {
+		case reflect.String,
+			reflect.Bool,
+			reflect.Int,
+			reflect.Int8,
+			reflect.Int16,
+			reflect.Int32,
+			reflect.Int64,
+			reflect.Uint,
+			reflect.Uint8,
+			reflect.Uint16,
+			reflect.Uint32,
+			reflect.Uint64,
+			reflect.Uintptr,
+			reflect.Float32,
+			reflect.Float64:
+			return recoveryJSONString, false, nil
+		default:
+			return "", false, fmt.Errorf(
+				"JSON string option on type %s is unsupported",
+				fieldType,
+			)
+		}
+	}
+	switch fieldType.Kind() {
+	case reflect.String:
+		return recoveryJSONString, false, nil
+	case reflect.Bool:
+		return recoveryJSONBoolean, false, nil
+	case reflect.Int,
+		reflect.Int8,
+		reflect.Int16,
+		reflect.Int32,
+		reflect.Int64,
+		reflect.Uint,
+		reflect.Uint8,
+		reflect.Uint16,
+		reflect.Uint32,
+		reflect.Uint64,
+		reflect.Uintptr:
+		return recoveryJSONNumber, true, nil
+	case reflect.Float32, reflect.Float64:
+		return recoveryJSONNumber, false, nil
 	default:
-		return "", "", false
+		return "", false, fmt.Errorf("JSON writer type %s is unsupported", fieldType)
 	}
 }
 
-func canonicalRecoveryModelField(name string) (string, bool) {
-	canonical, _, supported := recoveryModelFieldContract(name)
-	return canonical, supported
+func recoveryJSONTypeCanBeEmpty(fieldType reflect.Type) bool {
+	switch fieldType.Kind() {
+	case reflect.String,
+		reflect.Bool,
+		reflect.Int,
+		reflect.Int8,
+		reflect.Int16,
+		reflect.Int32,
+		reflect.Int64,
+		reflect.Uint,
+		reflect.Uint8,
+		reflect.Uint16,
+		reflect.Uint32,
+		reflect.Uint64,
+		reflect.Uintptr,
+		reflect.Float32,
+		reflect.Float64:
+		return true
+	default:
+		return false
+	}
+}
+
+func (contract recoveryModelContract) lookup(name string) (recoveryModelField, bool) {
+	field, ok := contract.byName[strings.ToLower(name)]
+	return field, ok
+}
+
+func (contract recoveryModelContract) requiredFieldNames() []string {
+	names := make([]string, 0, len(contract.fields))
+	for _, field := range contract.fields {
+		if field.required {
+			names = append(names, field.name)
+		}
+	}
+	return names
 }
 
 func recoveryJSONValueHasKind(value json.RawMessage, expected recoveryJSONKind) bool {
@@ -1547,6 +1710,8 @@ func recoveryJSONValueHasKind(value json.RawMessage, expected recoveryJSONKind) 
 		return value[0] == '"'
 	case recoveryJSONNumber:
 		return value[0] == '-' || value[0] >= '0' && value[0] <= '9'
+	case recoveryJSONBoolean:
+		return bytes.Equal(value, []byte("true")) || bytes.Equal(value, []byte("false"))
 	default:
 		return false
 	}

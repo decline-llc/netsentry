@@ -1,0 +1,45 @@
+{
+  "task": "r90-55-recovery-model-contract",
+  "timestamp": "2026-07-30T09:52:47-07:00",
+  "branch": "main",
+  "remote_baseline": "b52d8df4de2389f6f31670e6dc83884f588f0802",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated",
+  "completed": [
+    "Fetched origin/main and verified clean local main agrees at b52d8df4de2389f6f31670e6dc83884f588f0802",
+    "Verified the completed R90-54 feature and delivery-record commits plus exact Vault notes, full index, MOC links, and stable storage note",
+    "Passed the clean fetched-baseline knowledge check with 33 tests",
+    "Rechecked the recent delivery history and found no new deviation beyond the recorded R90-53 audit and completed R90-54 closure",
+    "Verified every unfinished roadmap item has status, dependency, window, risk, acceptance criteria, required validation, and stop condition",
+    "Selected R90-55 as the highest-priority dependency-ready correctness increment",
+    "Confirmed recovery canonical names, required fields, and JSON kinds are maintained independently from model.Alert",
+    "Mapped derived contract behavior and fail-closed model-shape handling to direct synthetic and existing compatibility evidence",
+    "Persisted scope, non-goals, risks, authority boundaries, validation, and acceptance criteria before behavior changes",
+    "Replaced independent recovery canonical-name, required-field, and JSON-kind lists with one contract built once from model.Alert",
+    "Derived declared field order, JSON names, supported omission behavior, JSON kinds, and integral encoding policy without per-record reflection",
+    "Made anonymous fields, case-insensitive duplicate names, pointer and container shapes, special JSON numbers, and custom marshalers fail contract construction explicitly",
+    "Added direct synthetic writer-shape, failure-shape, boolean-kind, zero-value writer, missing-field, optional-field, value-kind, and canonical writer alignment regressions",
+    "Preserved current recovery JSON, field order, diagnostics, numeric spelling, startup/runtime no-mutation boundaries, and replay behavior",
+    "Updated the changelog, architecture, development guide, roadmap, plan, and task state",
+    "Discarded the initial wrong-module focused validation sequence and reran it successfully under the fail-fast evidence rule",
+    "Updated the local netsentry-next skill to resolve language module roots before direct package validation",
+    "Re-audited all 62 roadmap rows and Definitions plus every unfinished increment without starting R90-56",
+    "Confirmed the engine module uses its pinned Go 1.25.12 toolchain and extended omission derivation plus direct writer tests for omitzero",
+    "Invalidated the earlier full validation evidence after the omitzero implementation change",
+    "Passed twenty new uncached focused alert-store contract race runs after the omitzero correction",
+    "Passed the complete native C and Go race suite after the omitzero correction",
+    "Passed E2E smoke after the omitzero correction with 6 packets, 5 alerts, and 8 loaded rules",
+    "Passed documentation, configuration, knowledge with 33 tests, all task-state JSON, formatting, and diff checks after the omitzero correction"
+  ],
+  "in_progress": [
+    "Run the final staged-diff and sensitive-information review, then deliver R90-55"
+  ],
+  "todo": [
+    "Commit and push R90-55, fetch-verify origin/main, synchronize the exact full-SHA range to the single local Vault, and persist verified delivery evidence"
+  ],
+  "remaining_risks": [
+    "Final staged review must confirm the feature commit contains only R90-55",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-55 is implemented and validated after deriving both omitempty and omitzero behavior under the engine module's pinned Go 1.25.12 toolchain. Resume at the final staged-diff and sensitive-information review, then commit, push, fetch-verify, rerun the knowledge gate, synchronize the exact full-SHA range to the single local Vault, and persist one docs-only closure commit. Do not start R90-56, create a release tag, or publish artifacts."
+}
