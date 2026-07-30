@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "b52d8df4de2389f6f31670e6dc83884f588f0802",
   "risk_level": "Medium",
-  "current_checkpoint": "validated",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main agrees at b52d8df4de2389f6f31670e6dc83884f588f0802",
     "Verified the completed R90-54 feature and delivery-record commits plus exact Vault notes, full index, MOC links, and stable storage note",
@@ -29,17 +29,28 @@
     "Passed twenty new uncached focused alert-store contract race runs after the omitzero correction",
     "Passed the complete native C and Go race suite after the omitzero correction",
     "Passed E2E smoke after the omitzero correction with 6 packets, 5 alerts, and 8 loaded rules",
-    "Passed documentation, configuration, knowledge with 33 tests, all task-state JSON, formatting, and diff checks after the omitzero correction"
+    "Passed documentation, configuration, knowledge with 33 tests, all task-state JSON, formatting, and diff checks after the omitzero correction",
+    "Passed the final staged-diff and sensitive-information review",
+    "Pushed 20161c20db271c5dbe9f5acc3f268eb5b8308494 and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact-range Vault note, full index, MOC, idempotent replay, and reusable stable storage note",
+    "Marked R90-56 ready without starting it"
   ],
-  "in_progress": [
-    "Run the final staged-diff and sensitive-information review, then deliver R90-55"
-  ],
-  "todo": [
-    "Commit and push R90-55, fetch-verify origin/main, synchronize the exact full-SHA range to the single local Vault, and persist verified delivery evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
+  "delivery": {
+    "commit": "20161c20db271c5dbe9f5acc3f268eb5b8308494",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "b52d8df4de2389f6f31670e6dc83884f588f0802..20161c20db271c5dbe9f5acc3f268eb5b8308494",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_idempotent_replay_verified": true,
+    "vault_stable_storage_note_verified": true
+  },
   "remaining_risks": [
-    "Final staged review must confirm the feature commit contains only R90-55",
+    "Future writer types outside the explicitly supported primitive, time, and omission contracts must continue to fail closed",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "R90-55 is implemented and validated after deriving both omitempty and omitzero behavior under the engine module's pinned Go 1.25.12 toolchain. Resume at the final staged-diff and sensitive-information review, then commit, push, fetch-verify, rerun the knowledge gate, synchronize the exact full-SHA range to the single local Vault, and persist one docs-only closure commit. Do not start R90-56, create a release tag, or publish artifacts."
+  "resume_instructions": "R90-55 is complete at 20161c20db271c5dbe9f5acc3f268eb5b8308494. Do not repeat its implementation, validation, push, or Vault synchronization. On the next $netsentry-next trigger, fetch and verify origin/main, confirm both R90-55 delivery commits and Vault evidence, rerun the per-trigger history and forward-plan audits, then select at most one dependency-ready increment. R90-56 is ready. Do not change release authority, create a tag, or publish artifacts."
 }
