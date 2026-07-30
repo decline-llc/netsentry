@@ -773,13 +773,38 @@ func quoteSQLiteIdentifier(value string) string {
 }
 
 func openReadOnlyDatabase(path string) (*sql.DB, error) {
-	dsn := (&url.URL{Scheme: "file", Path: path, RawQuery: "mode=ro"}).String()
+	dsn, err := readOnlyDatabaseDSN(path)
+	if err != nil {
+		return nil, err
+	}
 	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, err
 	}
 	db.SetMaxOpenConns(1)
 	return db, nil
+}
+
+func readOnlyDatabaseDSN(path string) (string, error) {
+	resolvedPath, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		return "", fmt.Errorf("resolve sqlite database path: %w", err)
+	}
+	path = resolvedPath
+
+	query := url.Values{"mode": {"ro"}}
+	sidecarPresent := false
+	for _, suffix := range []string{"-wal", "-shm"} {
+		if _, err := os.Stat(path + suffix); err == nil {
+			sidecarPresent = true
+		} else if !errors.Is(err, os.ErrNotExist) {
+			return "", fmt.Errorf("inspect sqlite %s sidecar: %w", strings.TrimPrefix(suffix, "-"), err)
+		}
+	}
+	if sidecarPresent {
+		query.Set("readonly_shm", "1")
+	}
+	return (&url.URL{Scheme: "file", Path: path, RawQuery: query.Encode()}).String(), nil
 }
 
 func resolveDBPath(opts Options) string {

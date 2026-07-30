@@ -124,6 +124,11 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
   modifying their bytes.
 - Cross-shard query and count operations now open non-current daily shards with
   URL-safe SQLite read-only handles, including active WAL-backed shards.
+- Read-only SQLite handles now resolve database symlinks before sidecar
+  inspection and request `readonly_shm=1` whenever a WAL or SHM sidecar is
+  already present, preventing the Unix VFS from updating, creating,
+  truncating, or rebuilding SHM evidence in place while preserving active-WAL
+  visibility and clean no-sidecar startup behavior.
 - Disk-full/read-only/I/O storage failures now enter sticky emergency mode, stop retrying SQLite writes in the current process after recovery logging when possible, and replay pending recovery-log alerts after operator cleanup and restart.
 - Existing non-empty SQLite databases now receive a read-only startup integrity
   preflight; corrupt or truncated files fail with a stable error and remain

@@ -248,6 +248,19 @@ If the integrity preflight fails:
 NetSentry does not automatically repair, replace, quarantine, or delete a
 database that fails this check.
 
+The primary startup check, non-current write preflight, and historical
+query/count paths share one URL-safe SQLite `mode=ro` helper. The helper
+resolves database symlinks before inspecting sidecars and constructing the URI,
+so its WAL/SHM lookup matches the Unix VFS target location. If either WAL or
+SHM already exists, NetSentry also requests `readonly_shm=1`; the default Unix
+VFS therefore cannot update reader marks or create, truncate, or rebuild the
+existing SHM in place. A database with no sidecars retains ordinary `mode=ro`
+behavior because forcing read-only SHM in that state would reject a healthy
+clean reopen. Direct fault coverage rejects an unsupported WAL version during
+primary startup and an active-owner inconsistent SHM during encoded-path
+historical query, count, and write preflight, with database, WAL, and SHM byte
+comparisons.
+
 The same preservation rule applies when a running daily-shard store receives
 an alert for an existing non-current shard. NetSentry checks that shard through
 a separate read-only handle before writable initialization; a corrupt or
@@ -257,10 +270,11 @@ unchanged. Preserve the shard and any sidecars, inspect only a copy, and restore
 or replace it through an operator-controlled recovery path.
 
 Historical-shard query and count paths are also non-mutating at the connection
-boundary: each non-current shard is opened through a URL-safe SQLite `mode=ro`
-handle, while the current shard continues to use the store-owned connection.
-Malformed historical input returns a read error without changing its bytes;
-healthy shards remain queryable while an active WAL writer is present.
+boundary: each non-current shard uses that shared read-only helper, while the
+current shard continues to use the store-owned connection. Healthy detached
+file sets, shards owned by an active WAL writer, and an active database reached
+through a symlink remain queryable without changing database, WAL, or SHM
+bytes.
 Persisted alert rows with a destination port outside `0..65535` or an aggregate
 count below one also return a field-specific read error. Preserve the database,
 inspect a copy, and repair or replace it only through the operator-controlled
@@ -513,7 +527,7 @@ Current validation baseline:
 - Receiver contract tests enforce strict IPv4 packet addresses, including
   ordinary and IPv4-mapped IPv6 rejection with one decode error and no queued
   packet.
-- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation including nanosecond timestamp aggregation/order/filter/pruning and query-plan coverage, daily shards, bounded recovery-log encoding/replay plus canonical-field-vocabulary, required-value-kind, duplicate-field, timestamp-encoding, event-identity, severity, rule-name, MITRE-tuple, protocol-name, and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, non-binary aggregation, generated-column, `CHECK`-constraint, and write-critical foreign-key rejection, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact alert filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple/IPv4-address rejection, active WAL-backed read-only access, and storage degraded/emergency behavior.
+- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation including nanosecond timestamp aggregation/order/filter/pruning and query-plan coverage, daily shards, bounded recovery-log encoding/replay plus canonical-field-vocabulary, required-value-kind, duplicate-field, timestamp-encoding, event-identity, severity, rule-name, MITRE-tuple, protocol-name, and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, cross-process corrupt WAL/SHM three-file preservation, non-binary aggregation, generated-column, `CHECK`-constraint, and write-critical foreign-key rejection, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact alert filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple/IPv4-address rejection, direct and symlinked active WAL-backed read-only access without SHM mutation, clean no-sidecar reopen compatibility, and storage degraded/emergency behavior.
 - Release-candidate checks run syntax checks, repository configuration validation, dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 
 The C-side JSON line formatter is intentionally kept as a bounded handwritten v0.1.0 implementation. It avoids a new C dependency, rejects truncation, escapes JSON strings, Base64-encodes packet payload previews, and is covered by the UDS sender tests and current smoke checks. A cJSON migration should be reopened only with a concrete defect or fuzzing result.

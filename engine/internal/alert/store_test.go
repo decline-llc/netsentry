@@ -1,15 +1,21 @@
 package alert
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"database/sql"
+	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"syscall"
 	"testing"
@@ -4534,6 +4540,218 @@ func TestStoreRejectsUnsupportedJournalMode(t *testing.T) {
 	}
 }
 
+func TestReadOnlyDatabaseDSNProtectsPresentSQLiteSidecars(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), "encoded sqlite path")
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(dir, "operator alerts.db")
+	if err := os.WriteFile(path, nil, 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	assertDSN := func(t *testing.T, wantReadOnlySHM bool) {
+		t.Helper()
+		dsn, err := readOnlyDatabaseDSN(path)
+		if err != nil {
+			t.Fatalf("build read-only database DSN: %v", err)
+		}
+		parsed, err := url.Parse(dsn)
+		if err != nil {
+			t.Fatalf("parse read-only database DSN %q: %v", dsn, err)
+		}
+		if parsed.Path != path {
+			t.Fatalf("read-only database DSN path = %q, want %q", parsed.Path, path)
+		}
+		if got := parsed.Query().Get("mode"); got != "ro" {
+			t.Fatalf("read-only database mode = %q, want ro", got)
+		}
+		gotReadOnlySHM := parsed.Query().Get("readonly_shm") == "1"
+		if gotReadOnlySHM != wantReadOnlySHM {
+			t.Fatalf("read-only database readonly_shm = %t, want %t; DSN=%q", gotReadOnlySHM, wantReadOnlySHM, dsn)
+		}
+		if !strings.Contains(dsn, "encoded%20sqlite%20path/operator%20alerts.db") {
+			t.Fatalf("read-only database DSN did not encode spaces safely: %q", dsn)
+		}
+	}
+
+	t.Run("no sidecars", func(t *testing.T) {
+		assertDSN(t, false)
+	})
+	t.Run("wal present", func(t *testing.T) {
+		if err := os.WriteFile(path+"-wal", []byte("fixture"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		assertDSN(t, true)
+		if err := os.Remove(path + "-wal"); err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("shm present", func(t *testing.T) {
+		if err := os.WriteFile(path+"-shm", []byte("fixture"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		assertDSN(t, true)
+	})
+}
+
+func TestStoreReopensCleanWALDatabaseWithoutSidecars(t *testing.T) {
+	ctx := context.Background()
+	path := filepath.Join(t.TempDir(), "alerts.db")
+	store, err := Open(ctx, Options{Path: path, JournalMode: "WAL"})
+	if err != nil {
+		t.Fatalf("create clean WAL database: %v", err)
+	}
+	if err := store.WriteBatch(ctx, []*model.Alert{
+		makeAlert(time.Date(2026, 7, 30, 17, 0, 0, 0, time.UTC), "clean-wal-reopen"),
+	}); err != nil {
+		t.Fatalf("seed clean WAL database: %v", err)
+	}
+	if err := store.Close(); err != nil {
+		t.Fatalf("close clean WAL database: %v", err)
+	}
+	for _, suffix := range []string{"-wal", "-shm"} {
+		if _, err := os.Stat(path + suffix); !errors.Is(err, os.ErrNotExist) {
+			t.Fatalf("clean WAL sidecar %s still exists, stat error=%v", suffix, err)
+		}
+	}
+
+	dsn, err := readOnlyDatabaseDSN(path)
+	if err != nil {
+		t.Fatalf("build clean WAL read-only DSN: %v", err)
+	}
+	parsed, err := url.Parse(dsn)
+	if err != nil {
+		t.Fatalf("parse clean WAL read-only DSN: %v", err)
+	}
+	if got := parsed.Query().Get("readonly_shm"); got != "" {
+		t.Fatalf("clean WAL read-only DSN readonly_shm = %q, want absent", got)
+	}
+
+	store, err = Open(ctx, Options{Path: path, JournalMode: "WAL"})
+	if err != nil {
+		t.Fatalf("reopen clean WAL database without sidecars: %v", err)
+	}
+	defer store.Close()
+	if count, err := store.Count(ctx); err != nil || count != 1 {
+		t.Fatalf("reopened clean WAL count=%d err=%v, want 1/nil", count, err)
+	}
+}
+
+func TestStoreRejectsCorruptWALSidecarsWithoutModification(t *testing.T) {
+	sourcePath := filepath.Join(t.TempDir(), "active-source.db")
+	fixture := startSQLiteActiveWALFixture(t, sourcePath, time.Date(2026, 7, 30, 17, 10, 0, 0, time.UTC))
+	targetDir := filepath.Join(t.TempDir(), "detached primary fixture")
+	if err := os.MkdirAll(targetDir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	targetPath := filepath.Join(targetDir, "operator alerts.db")
+	copySQLiteFileSet(t, sourcePath, targetPath)
+	fixture.stop(t)
+
+	corruptSQLiteWALVersion(t, targetPath+"-wal")
+	before := readSQLiteFileSet(t, targetPath)
+	store, err := Open(context.Background(), Options{Path: targetPath, JournalMode: "WAL"})
+	if store != nil {
+		_ = store.Close()
+		t.Fatal("corrupt WAL sidecars returned a usable store")
+	}
+	if !errors.Is(err, ErrDatabaseIntegrity) {
+		t.Fatalf("corrupt WAL startup error = %v, want ErrDatabaseIntegrity", err)
+	}
+	if !strings.Contains(err.Error(), "unable to open database file") {
+		t.Fatalf("corrupt WAL startup error = %v, want clear SQLite open failure", err)
+	}
+	assertSQLiteFileSetUnchanged(t, targetPath, before)
+}
+
+func TestStoreReadsDetachedActiveWALFileSetWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	sourcePath := filepath.Join(t.TempDir(), "active-source.db")
+	fixture := startSQLiteActiveWALFixture(t, sourcePath, time.Date(2026, 7, 30, 17, 20, 0, 0, time.UTC))
+	targetPath := filepath.Join(t.TempDir(), "detached healthy fixture", "operator alerts.db")
+	copySQLiteFileSet(t, sourcePath, targetPath)
+	fixture.stop(t)
+	before := readSQLiteFileSet(t, targetPath)
+
+	if err := validateExistingDatabase(ctx, targetPath); err != nil {
+		t.Fatalf("validate detached active-WAL file set: %v", err)
+	}
+	db, err := openReadOnlyDatabase(targetPath)
+	if err != nil {
+		t.Fatalf("open detached active-WAL file set: %v", err)
+	}
+	var keyword string
+	if err := db.QueryRowContext(ctx, "SELECT matched_keyword FROM alerts").Scan(&keyword); err != nil {
+		_ = db.Close()
+		t.Fatalf("read detached active-WAL alert: %v", err)
+	}
+	if keyword != sqliteActiveWALFixtureKeyword {
+		_ = db.Close()
+		t.Fatalf("detached active-WAL keyword = %q, want %q", keyword, sqliteActiveWALFixtureKeyword)
+	}
+	if err := db.Close(); err != nil {
+		t.Fatalf("close detached active-WAL handle: %v", err)
+	}
+	assertSQLiteFileSetUnchanged(t, targetPath, before)
+}
+
+func TestStoreReadsSymlinkedActiveWALFileSetWithoutModification(t *testing.T) {
+	if runtime.GOOS == "windows" || runtime.GOOS == "plan9" {
+		t.Skip("SQLite symlink sidecar placement is a Unix VFS boundary")
+	}
+
+	ctx := context.Background()
+	targetPath := filepath.Join(t.TempDir(), "real sqlite path", "operator alerts.db")
+	fixture := startSQLiteActiveWALFixture(t, targetPath, time.Date(2026, 7, 30, 17, 30, 0, 0, time.UTC))
+	linkDir := filepath.Join(t.TempDir(), "symlink sqlite path")
+	if err := os.MkdirAll(linkDir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	linkPath := filepath.Join(linkDir, "linked alerts.db")
+	if err := os.Symlink(targetPath, linkPath); err != nil {
+		t.Fatalf("create SQLite database symlink: %v", err)
+	}
+	before := readSQLiteFileSet(t, targetPath)
+
+	dsn, err := readOnlyDatabaseDSN(linkPath)
+	if err != nil {
+		t.Fatalf("build symlinked active-WAL DSN: %v", err)
+	}
+	parsed, err := url.Parse(dsn)
+	if err != nil {
+		t.Fatalf("parse symlinked active-WAL DSN: %v", err)
+	}
+	if parsed.Path != targetPath {
+		t.Fatalf("symlinked active-WAL DSN path = %q, want resolved path %q", parsed.Path, targetPath)
+	}
+	if got := parsed.Query().Get("readonly_shm"); got != "1" {
+		t.Fatalf("symlinked active-WAL DSN readonly_shm = %q, want 1", got)
+	}
+
+	if err := validateExistingDatabase(ctx, linkPath); err != nil {
+		t.Fatalf("validate symlinked active-WAL file set: %v", err)
+	}
+	db, err := openReadOnlyDatabase(linkPath)
+	if err != nil {
+		t.Fatalf("open symlinked active-WAL file set: %v", err)
+	}
+	var keyword string
+	if err := db.QueryRowContext(ctx, "SELECT matched_keyword FROM alerts").Scan(&keyword); err != nil {
+		_ = db.Close()
+		t.Fatalf("read symlinked active-WAL alert: %v", err)
+	}
+	if keyword != sqliteActiveWALFixtureKeyword {
+		_ = db.Close()
+		t.Fatalf("symlinked active-WAL keyword = %q, want %q", keyword, sqliteActiveWALFixtureKeyword)
+	}
+	if err := db.Close(); err != nil {
+		t.Fatalf("close symlinked active-WAL handle: %v", err)
+	}
+	assertSQLiteFileSetUnchanged(t, targetPath, before)
+	runtime.KeepAlive(fixture)
+}
+
 func TestStoreRejectsCorruptExistingDatabaseWithoutModification(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "alerts.db")
 	before := []byte("not a sqlite database\x00corrupt bytes")
@@ -5604,6 +5822,258 @@ func readFileBytes(t *testing.T, path string) []byte {
 	return data
 }
 
+const (
+	sqliteActiveWALFixtureEnv      = "NETSENTRY_SQLITE_ACTIVE_WAL_FIXTURE"
+	sqliteActiveWALFixturePathEnv  = "NETSENTRY_SQLITE_ACTIVE_WAL_PATH"
+	sqliteActiveWALFixtureTimeEnv  = "NETSENTRY_SQLITE_ACTIVE_WAL_TIME"
+	sqliteActiveWALFixtureKeyword  = "external-active-wal"
+	sqliteUnsupportedFormatVersion = 3007001
+	sqliteActiveWALFixtureTimeout  = 15 * time.Second
+)
+
+type sqliteFileSet struct {
+	database []byte
+	wal      []byte
+	shm      []byte
+}
+
+type sqliteActiveWALFixture struct {
+	command *exec.Cmd
+	cancel  context.CancelFunc
+	stdin   io.WriteCloser
+	stderr  bytes.Buffer
+	stopped bool
+}
+
+func TestSQLiteActiveWALFixtureHelper(t *testing.T) {
+	if os.Getenv(sqliteActiveWALFixtureEnv) != "1" {
+		return
+	}
+	path := os.Getenv(sqliteActiveWALFixturePathEnv)
+	if path == "" {
+		t.Fatal("active-WAL helper path is empty")
+	}
+	timestamp, err := time.Parse(time.RFC3339Nano, os.Getenv(sqliteActiveWALFixtureTimeEnv))
+	if err != nil {
+		t.Fatalf("parse active-WAL helper timestamp: %v", err)
+	}
+
+	store, err := Open(context.Background(), Options{
+		Path:              path,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+	})
+	if err != nil {
+		t.Fatalf("open active-WAL helper store: %v", err)
+	}
+	if _, err := store.db.Exec("PRAGMA wal_autocheckpoint=0"); err != nil {
+		t.Fatalf("disable active-WAL helper autocheckpoint: %v", err)
+	}
+	if _, err := store.db.Exec("PRAGMA wal_checkpoint(TRUNCATE)"); err != nil {
+		t.Fatalf("checkpoint active-WAL helper schema: %v", err)
+	}
+	if err := store.WriteBatch(context.Background(), []*model.Alert{
+		makeAlert(timestamp, sqliteActiveWALFixtureKeyword),
+	}); err != nil {
+		t.Fatalf("write active-WAL helper alert: %v", err)
+	}
+	for _, suffix := range []string{"", "-wal", "-shm"} {
+		info, err := os.Stat(path + suffix)
+		if err != nil {
+			t.Fatalf("stat active-WAL helper file %s: %v", suffix, err)
+		}
+		if suffix == "-wal" && info.Size() <= 32 {
+			t.Fatalf("active-WAL helper WAL has %d bytes, want committed frames", info.Size())
+		}
+		if suffix == "-shm" && info.Size() < 96 {
+			t.Fatalf("active-WAL helper SHM has %d bytes, want two headers", info.Size())
+		}
+	}
+	if _, err := fmt.Fprintln(os.Stdout, "READY"); err != nil {
+		t.Fatalf("signal active-WAL helper readiness: %v", err)
+	}
+	var stop [1]byte
+	if _, err := io.ReadFull(os.Stdin, stop[:]); err != nil {
+		t.Fatalf("wait for active-WAL helper stop: %v", err)
+	}
+	runtime.KeepAlive(store)
+	os.Exit(0)
+}
+
+func startSQLiteActiveWALFixture(t *testing.T, path string, timestamp time.Time) *sqliteActiveWALFixture {
+	t.Helper()
+	if err := os.MkdirAll(filepath.Dir(path), 0o750); err != nil {
+		t.Fatalf("create active-WAL fixture directory: %v", err)
+	}
+
+	helperContext, cancel := context.WithTimeout(context.Background(), sqliteActiveWALFixtureTimeout)
+	command := exec.CommandContext(helperContext, os.Args[0], "-test.run=^TestSQLiteActiveWALFixtureHelper$")
+	command.Env = append(
+		os.Environ(),
+		sqliteActiveWALFixtureEnv+"=1",
+		sqliteActiveWALFixturePathEnv+"="+path,
+		sqliteActiveWALFixtureTimeEnv+"="+timestamp.UTC().Format(time.RFC3339Nano),
+	)
+	stdin, err := command.StdinPipe()
+	if err != nil {
+		cancel()
+		t.Fatalf("open active-WAL helper stdin: %v", err)
+	}
+	stdout, err := command.StdoutPipe()
+	if err != nil {
+		cancel()
+		t.Fatalf("open active-WAL helper stdout: %v", err)
+	}
+	fixture := &sqliteActiveWALFixture{
+		command: command,
+		cancel:  cancel,
+		stdin:   stdin,
+	}
+	command.Stderr = &fixture.stderr
+	if err := command.Start(); err != nil {
+		cancel()
+		t.Fatalf("start active-WAL helper: %v", err)
+	}
+	t.Cleanup(func() {
+		fixture.stop(t)
+	})
+
+	line, err := bufio.NewReader(stdout).ReadString('\n')
+	if err != nil || line != "READY\n" {
+		cancel()
+		_ = command.Process.Kill()
+		_ = command.Wait()
+		t.Fatalf(
+			"active-WAL helper readiness = %q, err=%v, stderr=%s",
+			line,
+			err,
+			strings.TrimSpace(fixture.stderr.String()),
+		)
+	}
+	return fixture
+}
+
+func (fixture *sqliteActiveWALFixture) stop(t *testing.T) {
+	t.Helper()
+	if fixture.stopped {
+		return
+	}
+	fixture.stopped = true
+	defer fixture.cancel()
+	if _, err := fixture.stdin.Write([]byte{0}); err != nil {
+		_ = fixture.command.Process.Kill()
+		_ = fixture.command.Wait()
+		t.Fatalf("signal active-WAL helper stop: %v; stderr=%s", err, strings.TrimSpace(fixture.stderr.String()))
+	}
+	if err := fixture.stdin.Close(); err != nil {
+		_ = fixture.command.Process.Kill()
+		_ = fixture.command.Wait()
+		t.Fatalf("close active-WAL helper stdin: %v", err)
+	}
+	if err := fixture.command.Wait(); err != nil {
+		t.Fatalf("wait for active-WAL helper: %v; stderr=%s", err, strings.TrimSpace(fixture.stderr.String()))
+	}
+}
+
+func readSQLiteFileSet(t *testing.T, path string) sqliteFileSet {
+	t.Helper()
+	return sqliteFileSet{
+		database: readFileBytes(t, path),
+		wal:      readFileBytes(t, path+"-wal"),
+		shm:      readFileBytes(t, path+"-shm"),
+	}
+}
+
+func copySQLiteFileSet(t *testing.T, source, destination string) {
+	t.Helper()
+	if err := os.MkdirAll(filepath.Dir(destination), 0o750); err != nil {
+		t.Fatalf("create SQLite file-set destination: %v", err)
+	}
+	for _, suffix := range []string{"", "-wal", "-shm"} {
+		if err := os.WriteFile(destination+suffix, readFileBytes(t, source+suffix), 0o600); err != nil {
+			t.Fatalf("copy SQLite file %s: %v", suffix, err)
+		}
+	}
+}
+
+func assertSQLiteFileSetUnchanged(t *testing.T, path string, before sqliteFileSet) {
+	t.Helper()
+	assertFileBytes(t, path, before.database)
+	assertFileBytes(t, path+"-wal", before.wal)
+	assertFileBytes(t, path+"-shm", before.shm)
+}
+
+func corruptSQLiteWALVersion(t *testing.T, path string) {
+	t.Helper()
+	header := readFileBytes(t, path)
+	if len(header) < 32 {
+		t.Fatalf("WAL header has %d bytes, want at least 32", len(header))
+	}
+	header = header[:32]
+	magic := binary.BigEndian.Uint32(header[0:4])
+	var checksumOrder binary.ByteOrder
+	switch magic {
+	case 0x377f0682:
+		checksumOrder = binary.LittleEndian
+	case 0x377f0683:
+		checksumOrder = binary.BigEndian
+	default:
+		t.Fatalf("WAL magic = 0x%08x, want a recognized WAL header", magic)
+	}
+	binary.BigEndian.PutUint32(header[4:8], sqliteUnsupportedFormatVersion)
+	checksum1, checksum2 := sqliteWALChecksum(header[:24], checksumOrder)
+	binary.BigEndian.PutUint32(header[24:28], checksum1)
+	binary.BigEndian.PutUint32(header[28:32], checksum2)
+	writeSQLiteFilePrefix(t, path, header)
+}
+
+func corruptSQLiteSHMVersion(t *testing.T, path string) {
+	t.Helper()
+	headers := readFileBytes(t, path)
+	if len(headers) < 96 {
+		t.Fatalf("SHM has %d bytes, want two 48-byte headers", len(headers))
+	}
+	headers = headers[:96]
+	if !bytes.Equal(headers[:48], headers[48:96]) {
+		t.Fatal("healthy SHM header copies differ before fault injection")
+	}
+	first := headers[:48]
+	binary.NativeEndian.PutUint32(first[0:4], sqliteUnsupportedFormatVersion)
+	checksum1, checksum2 := sqliteWALChecksum(first[:40], binary.NativeEndian)
+	binary.NativeEndian.PutUint32(first[40:44], checksum1)
+	binary.NativeEndian.PutUint32(first[44:48], checksum2)
+	copy(headers[48:96], first)
+	writeSQLiteFilePrefix(t, path, headers)
+}
+
+func sqliteWALChecksum(data []byte, order binary.ByteOrder) (uint32, uint32) {
+	if len(data)%8 != 0 {
+		panic("SQLite WAL checksum input must contain pairs of 32-bit words")
+	}
+	var checksum1, checksum2 uint32
+	for offset := 0; offset < len(data); offset += 8 {
+		checksum1 += order.Uint32(data[offset:offset+4]) + checksum2
+		checksum2 += order.Uint32(data[offset+4:offset+8]) + checksum1
+	}
+	return checksum1, checksum2
+}
+
+func writeSQLiteFilePrefix(t *testing.T, path string, data []byte) {
+	t.Helper()
+	file, err := os.OpenFile(path, os.O_WRONLY, 0)
+	if err != nil {
+		t.Fatalf("open SQLite fault fixture %s: %v", path, err)
+	}
+	if _, err := file.WriteAt(data, 0); err != nil {
+		_ = file.Close()
+		t.Fatalf("write SQLite fault fixture %s: %v", path, err)
+	}
+	if err := file.Close(); err != nil {
+		t.Fatalf("close SQLite fault fixture %s: %v", path, err)
+	}
+}
+
 func TestStoreWriteBatchHonorsCanceledContext(t *testing.T) {
 	ctx := context.Background()
 	store := openTestStore(t, 60*time.Second)
@@ -5985,6 +6455,95 @@ func TestStoreReadsActiveWALHistoricalShardReadOnly(t *testing.T) {
 	if count, err := current.Count(ctx); err != nil || count != 1 {
 		t.Fatalf("active WAL count=%d err=%v, want 1/nil", count, err)
 	}
+}
+
+func TestStoreRejectsCorruptActiveSHMHistoricalShardWithoutModification(t *testing.T) {
+	operations := []struct {
+		name          string
+		wantIntegrity bool
+		run           func(context.Context, *Store, time.Time) error
+	}{
+		{
+			name: "query",
+			run: func(ctx context.Context, store *Store, _ time.Time) error {
+				_, _, err := store.Query(ctx, Query{Limit: 10})
+				return err
+			},
+		},
+		{
+			name: "count",
+			run: func(ctx context.Context, store *Store, _ time.Time) error {
+				_, err := store.Count(ctx)
+				return err
+			},
+		},
+		{
+			name:          "historical write preflight",
+			wantIntegrity: true,
+			run: func(ctx context.Context, store *Store, historicalDay time.Time) error {
+				return store.WriteBatch(ctx, []*model.Alert{
+					makeAlert(historicalDay.Add(time.Minute), "rejected-corrupt-shm-write"),
+				})
+			},
+		},
+	}
+
+	for _, operation := range operations {
+		t.Run(operation.name, func(t *testing.T) {
+			ctx := context.Background()
+			dir := filepath.Join(t.TempDir(), "encoded daily shards")
+			if err := os.MkdirAll(dir, 0o750); err != nil {
+				t.Fatal(err)
+			}
+			historicalDay := time.Date(2026, 7, 17, 12, 0, 0, 0, time.UTC)
+			historicalPath := filepath.Join(dir, "netsentry-"+historicalDay.Format("2006-01-02")+".db")
+			fixture := startSQLiteActiveWALFixture(t, historicalPath, historicalDay)
+			corruptSQLiteSHMVersion(t, historicalPath+"-shm")
+			before := readSQLiteFileSet(t, historicalPath)
+
+			current := openDailyShardStoreAt(t, dir, historicalDay.AddDate(0, 0, 1))
+			defer current.Close()
+			err := operation.run(ctx, current, historicalDay)
+			if err == nil {
+				t.Fatalf("corrupt active SHM historical shard unexpectedly passed %s", operation.name)
+			}
+			if operation.wantIntegrity && !errors.Is(err, ErrDatabaseIntegrity) {
+				t.Fatalf("corrupt SHM %s error = %v, want ErrDatabaseIntegrity", operation.name, err)
+			}
+			if !strings.Contains(err.Error(), "unable to open database file") {
+				t.Fatalf("corrupt SHM %s error = %v, want clear SQLite open failure", operation.name, err)
+			}
+			assertSQLiteFileSetUnchanged(t, historicalPath, before)
+			runtime.KeepAlive(fixture)
+		})
+	}
+}
+
+func TestStoreReadsExternalActiveWALHistoricalShardWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := filepath.Join(t.TempDir(), "encoded daily shards")
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	historicalDay := time.Date(2026, 7, 17, 12, 0, 0, 0, time.UTC)
+	historicalPath := filepath.Join(dir, "netsentry-"+historicalDay.Format("2006-01-02")+".db")
+	fixture := startSQLiteActiveWALFixture(t, historicalPath, historicalDay)
+	before := readSQLiteFileSet(t, historicalPath)
+
+	current := openDailyShardStoreAt(t, dir, historicalDay.AddDate(0, 0, 1))
+	defer current.Close()
+	alerts, total, err := current.Query(ctx, Query{Limit: 10})
+	if err != nil {
+		t.Fatalf("query external active WAL historical shard: %v", err)
+	}
+	if total != 1 || len(alerts) != 1 || alerts[0].MatchedKeyword != sqliteActiveWALFixtureKeyword {
+		t.Fatalf("unexpected external active WAL query result: total=%d alerts=%+v", total, alerts)
+	}
+	if count, err := current.Count(ctx); err != nil || count != 1 {
+		t.Fatalf("external active WAL count=%d err=%v, want 1/nil", count, err)
+	}
+	assertSQLiteFileSetUnchanged(t, historicalPath, before)
+	runtime.KeepAlive(fixture)
 }
 
 func malformedHistoricalShard(t *testing.T, kind string) (string, string, []byte, time.Time) {

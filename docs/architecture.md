@@ -186,6 +186,16 @@ Current build:
   at primary startup. A corrupt, truncated, unrelated, or incompatible shard is
   not opened for journal/schema initialization and remains byte-for-byte
   unchanged.
+- Primary startup, non-current write preflight, and non-current query/count all
+  use the same URL-safe SQLite `mode=ro` helper. The helper resolves database
+  symlinks before inspecting sidecars and constructing the URI, matching the
+  Unix VFS location for WAL/SHM files. When either WAL or SHM already exists,
+  it also requests `readonly_shm=1`, so the default Unix VFS cannot update
+  reader marks or create, truncate, or rebuild the operator's SHM in place.
+  Databases without sidecars retain ordinary `mode=ro` compatibility. Direct
+  faults cover an unsupported primary WAL version and an active-owner
+  inconsistent SHM under an encoded historical path; rejection preserves the
+  database and both sidecars.
 - Cross-shard alert querying and alert counting in daily-shard mode; time range filters narrow the shard files scanned before applying the regular SQL filters and API pagination across the merged result.
 - Rule, severity, source, and destination query filters explicitly use SQLite
   binary comparison, preserving case-sensitive exact-match behavior even when
@@ -193,8 +203,9 @@ Current build:
   and MITRE filters remain intentionally case-insensitive.
 - Cross-shard query and count operations reuse the current shard's owned
   connection and open every non-current shard with a URL-safe SQLite
-  `mode=ro` handle. Malformed historical input can fail a read but cannot be
-  modified by that read-only open; active WAL-backed shards remain visible.
+  read-only handle. Healthy detached file sets and shards owned by an active
+  WAL writer, including an active database reached through a symlink, remain
+  visible without changing database, WAL, or SHM bytes.
 - Alert row decoding rejects persisted destination ports outside `0..65535`
   before `uint16` conversion and rejects aggregate counts below one. NetSentry
   reports the invalid field instead of clamping, wrapping, repairing, or
@@ -347,7 +358,7 @@ v0.1.0 target:
 
 Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, engine worker shutdown orchestration, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
 
-Alert storage tests cover SQLite aggregation windows, nanosecond timestamp aggregation/order/filter/pruning, JSONL recovery-log replay idempotency and structural/semantic validation including model-derived canonical fields, required/optional status, JSON kinds, integral encoding policy, fail-closed unsupported model shapes, duplicate top-level fields, canonical timestamp encodings, severity, rule names, MITRE tuples, and protocol names with byte preservation, required-schema plus non-binary aggregation/write-blocking uniqueness/trigger/generated-column/constraint/foreign-key rejection with byte preservation, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple validation, optional query-index recreation and timestamp query plans, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, corrupt/truncated/incompatible historical-shard read/write preservation, active WAL-backed read-only access, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics alert counts backed by a real daily-shard SQLite store.
+Alert storage tests cover SQLite aggregation windows, nanosecond timestamp aggregation/order/filter/pruning, JSONL recovery-log replay idempotency and structural/semantic validation including model-derived canonical fields, required/optional status, JSON kinds, integral encoding policy, fail-closed unsupported model shapes, duplicate top-level fields, canonical timestamp encodings, severity, rule names, MITRE tuples, and protocol names with byte preservation, required-schema plus non-binary aggregation/write-blocking uniqueness/trigger/generated-column/constraint/foreign-key rejection with byte preservation, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple validation, optional query-index recreation and timestamp query plans, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, corrupt/truncated/incompatible historical-shard read/write preservation, cross-process corrupt WAL/SHM three-file preservation, active WAL-backed read-only access without SHM mutation, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics alert counts backed by a real daily-shard SQLite store.
 
 The v0.1.0 IPC serializer decision is to retain the current bounded handwritten C JSON formatter instead of adding cJSON. The formatter is narrow, fails closed on buffer exhaustion, Base64-encodes payload previews, and is already exercised through unit tests, microbenchmarks, deterministic fuzz smoke, and e2e heartbeat assertions. Replacing it remains a future option only if sustained fuzzing or production evidence shows a concrete defect.
 

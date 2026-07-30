@@ -1,0 +1,57 @@
+{
+  "task": "r90-56-sqlite-sidecar-preflight",
+  "timestamp": "2026-07-30T10:30:01-07:00",
+  "branch": "main",
+  "remote_baseline": "cac88a4320dc820d9def98c8f5af775a0af5dfa2",
+  "risk_level": "High",
+  "current_checkpoint": "validation_complete",
+  "completed": [
+    "Fetched origin/main and verified clean local main agrees at cac88a4320dc820d9def98c8f5af775a0af5dfa2",
+    "Verified the completed R90-55 feature and delivery-record commits plus exact Vault notes, full index, MOC links, idempotent replay, and stable storage note",
+    "Passed the clean fetched-baseline knowledge check with 33 tests",
+    "Reconciled all 247 July commits and confirmed the six commits after the dated R90-53 audit are the complete R90-53, R90-54, and R90-55 feature and closure pairs",
+    "Verified all 62 roadmap rows have Definitions and every unfinished item has status, dependency, window, risk, acceptance criteria, required validation, and stop condition",
+    "Selected R90-56 as the only highest-priority dependency-ready increment",
+    "Confirmed ordinary SQLite mode=ro opens a present SHM read/write and can mutate or rebuild operator evidence",
+    "Confirmed conditional readonly_shm=1 preserves healthy and corrupt sidecar bytes while retaining active-WAL visibility",
+    "Confirmed deterministic corrupt SHM rejection requires an independent active owner rather than an in-process writer or static parser",
+    "Persisted scope, non-goals, risks, authority boundaries, validation, acceptance criteria, and stop conditions before behavior changes",
+    "Removed an interrupted competing plan and unvalidated sidecar-parser draft without accepting either as implementation or evidence",
+    "Added conditional readonly_shm=1 selection whenever either SQLite sidecar exists while preserving ordinary mode=ro for clean no-sidecar databases",
+    "Added an independent helper-process active-WAL fixture that exits without checkpointing or deleting the evidence set",
+    "Added checksummed unsupported WAL and wal-index version fixtures with separate database, WAL, and SHM byte comparisons",
+    "Covered primary startup plus encoded-path historical query, count, and write rejection and healthy external active-WAL compatibility",
+    "Updated the changelog, architecture, and development guidance for the read-only SHM boundary",
+    "Invalidated the initial test evidence after review found unbounded helper waits and unresolved database symlinks could bypass target-side sidecar inspection",
+    "Bounded helper readiness and shutdown to 15 seconds and resolved database symlinks before sidecar inspection and URI construction",
+    "Added a Unix active-WAL database-symlink regression covering resolved URI selection, validation, query visibility, and target three-file preservation",
+    "Passed 20 of 20 uncached focused sidecar race runs on the final implementation",
+    "Passed make test and make e2e-smoke; E2E processed 6 packets, generated 5 alerts, and loaded 8 rules",
+    "Passed documentation, configuration, 33-test knowledge, all-task-JSON, Go formatting, and diff checks",
+    "Completed independent read-only review with no remaining correctness or scope findings"
+  ],
+  "in_progress": [
+    "Finalize pre-commit audit evidence and deliver the validated R90-56 feature"
+  ],
+  "todo": [
+    "Create and push the feature commit, fetch origin/main, and rerun the knowledge gate",
+    "Synchronize and verify the exact full-SHA feature range in the single local Vault",
+    "Create and push one docs-only closure commit and synchronize its exact range without starting another increment"
+  ],
+  "delivery": {
+    "commit": "",
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": "",
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false,
+    "vault_idempotent_replay_verified": false,
+    "vault_stable_storage_note_verified": false
+  },
+  "remaining_risks": [
+    "Filesystem presence inspection and lazy SQLite connection establishment retain a bounded external TOCTOU window",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Resume only R90-56 from the persisted plan. Verify the clean baseline or reconcile any delivered feature commit before editing. Keep all fault fixtures temporary and independent, compare database/WAL/SHM bytes after fault injection, preserve healthy active-WAL and no-sidecar behavior, and stop before R90-57 or R90-58. Do not create a tag or publish artifacts."
+}
