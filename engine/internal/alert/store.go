@@ -1440,6 +1440,13 @@ func validateRecoveryRecordFieldNames(record []byte) error {
 				modelField,
 				expectedKind,
 			)
+		} else if supported && fieldValueErr == nil &&
+			expectedKind == recoveryJSONNumber &&
+			!recoveryJSONValueHasCanonicalIntegerEncoding(value) {
+			fieldValueErr = fmt.Errorf(
+				"top-level recovery field %q must use canonical unsigned base-10 integer JSON encoding",
+				modelField,
+			)
 		}
 	}
 	closeToken, err := decoder.Token()
@@ -1543,6 +1550,25 @@ func recoveryJSONValueHasKind(value json.RawMessage, expected recoveryJSONKind) 
 	default:
 		return false
 	}
+}
+
+func recoveryJSONValueHasCanonicalIntegerEncoding(value json.RawMessage) bool {
+	value = bytes.TrimSpace(value)
+	if len(value) == 0 {
+		return false
+	}
+	if len(value) == 1 {
+		return value[0] >= '0' && value[0] <= '9'
+	}
+	if value[0] < '1' || value[0] > '9' {
+		return false
+	}
+	for _, digit := range value[1:] {
+		if digit < '0' || digit > '9' {
+			return false
+		}
+	}
+	return true
 }
 
 func validateRecoveryAlert(alert model.Alert, aggregationWindow time.Duration) error {

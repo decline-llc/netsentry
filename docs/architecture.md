@@ -262,9 +262,11 @@ Current build:
   `omitempty` must be present; only `raw_payload` may be omitted. Every present
   value must use the non-null top-level JSON kind emitted by the writer:
   strings for text and timestamps, and numbers for `dst_port` plus
-  `aggregated_count`. A present `raw_payload` must be a string. Names inside
-  accepted field values are not recursively inspected. Valid logs are truncated
-  only after SQLite commits.
+  `aggregated_count`. Both numeric fields must use canonical unsigned base-10
+  integer JSON spelling without an exponent, fractional component, sign, or
+  multi-digit leading zero. A present `raw_payload` must be a string. Names
+  inside accepted field values are not recursively inspected. Valid logs are
+  truncated only after SQLite commits.
 - Each decoded recovery record must retain the required identity, time, count,
   and network fields emitted by normalized alert writes. Its `event_id` must
   match the deterministic writer identity used by the replay ledger, and its

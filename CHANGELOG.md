@@ -9,6 +9,10 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Recovery-log preflight now requires `dst_port` and `aggregated_count` to use
+  the canonical unsigned base-10 integer JSON spelling emitted by the
+  normalized alert writer, rejecting exponent, fractional, and signed forms
+  before model decoding or durable mutation.
 - Recovery-log preflight now requires every present top-level field value to
   use the non-null JSON kind emitted by the current alert writer, preventing
   `null` from silently becoming an accepted Go zero value.

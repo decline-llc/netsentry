@@ -1,0 +1,43 @@
+{
+  "task": "r90-54-recovery-numeric-encoding",
+  "timestamp": "2026-07-30T09:37:28-07:00",
+  "branch": "main",
+  "remote_baseline": "e466c372e21fcc67e2661e701c6ca803b94d5d9f",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated",
+  "completed": [
+    "Fetched origin/main and verified clean local main agrees at e466c372e21fcc67e2661e701c6ca803b94d5d9f",
+    "Verified the completed R90-53 feature and delivery-record commits plus exact Vault notes, full index, MOC links, and stable testing/release note",
+    "Passed the clean fetched-baseline knowledge check with 33 tests",
+    "Rechecked the recent delivery history and found no new deviation beyond the recorded R90-53 audit",
+    "Verified every unfinished roadmap item has status, dependency, window, risk, acceptance criteria, required validation, and stop condition",
+    "Selected R90-54 as the highest-priority dependency-ready correctness increment",
+    "Mapped exponent, fractional, sign, and leading-zero rejection across both numeric fields to direct startup/runtime preservation evidence",
+    "Persisted scope, non-goals, risks, authority boundaries, validation, and acceptance criteria before behavior changes",
+    "Required canonical unsigned base-10 raw JSON integer encoding before model decoding for both recovery numeric fields",
+    "Added direct startup and runtime rejection coverage for fractional, exponent, negative-sign, and leading-zero spellings across both numeric fields",
+    "Preserved field-specific encoding diagnostics for valid alternate JSON and malformed decode diagnostics for JSON-forbidden leading-zero input",
+    "Proved complete recovery-log, missing/existing startup database, and runtime SQLite byte preservation through direct regressions",
+    "Verified canonical writer output satisfies the raw integer encoding contract and replays successfully",
+    "Updated the changelog, architecture, development guide, roadmap, plan, and task state",
+    "Passed twenty uncached focused alert-store numeric-encoding race runs",
+    "Passed the complete native race suite",
+    "Passed E2E smoke with 6 packets, 5 alerts, and 8 loaded rules",
+    "Passed documentation, configuration, knowledge with 33 tests, JSON, formatting, and diff checks",
+    "Recorded and resolved the non-fail-fast initial formatting invocation without accepting its later test result",
+    "Updated the local netsentry-next skill to require fail-fast multi-step validation"
+  ],
+  "in_progress": [
+    "Run the final staged-diff and sensitive-information review, then deliver R90-54"
+  ],
+  "todo": [
+    "Commit and push R90-54, fetch-verify origin/main, synchronize the exact full-SHA range to the single local Vault, and persist verified delivery evidence"
+  ],
+  "remaining_risks": [
+    "The numeric spelling validator must run before representation details are discarded by model decoding",
+    "Malformed leading-zero JSON must retain the established decode diagnostic",
+    "Recovery field-contract deduplication remains owned by R90-55",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-54 is implemented and validated from clean fetched baseline e466c372e21fcc67e2661e701c6ca803b94d5d9f. Do not repeat implementation or completed validation. Run the final staged-diff and sensitive-information review, commit and push only R90-54, fetch-verify origin/main, rerun the knowledge gate, synchronize the exact full-SHA range to the single local Vault, and persist verified delivery evidence in one docs-only closure commit. Do not start R90-55, change numeric semantics or recovery format, create a release tag, or publish artifacts."
+}

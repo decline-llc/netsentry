@@ -2353,6 +2353,162 @@ func TestStoreWriteBatchRejectsRecoveryValueContractViolationsWithoutModificatio
 	}
 }
 
+func TestStoreRejectsNoncanonicalRecoveryNumericEncodingWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 30, 9, 40, 0, 0, time.UTC)
+	window := time.Minute
+	validPrefix := normalizeAlert(makeAlert(now.Add(-time.Second), "valid-prefix"), now, window)
+	validPrefixJSON, err := json.Marshal(validPrefix)
+	if err != nil {
+		t.Fatalf("marshal valid recovery prefix: %v", err)
+	}
+	invalid := normalizeAlert(makeAlert(now, "noncanonical-recovery-number"), now, window)
+
+	for _, test := range recoveryNumericEncodingCases() {
+		t.Run(test.name, func(t *testing.T) {
+			invalidJSON := recoveryRecordWithNumericEncoding(t, invalid, test.field, test.encoded)
+			contents := append(append(append([]byte(nil), validPrefixJSON...), '\n'), invalidJSON...)
+			contents = append(contents, '\n')
+
+			for _, existing := range []bool{false, true} {
+				state := "missing database"
+				if existing {
+					state = "existing database"
+				}
+				t.Run(state, func(t *testing.T) {
+					dir := t.TempDir()
+					dbPath := filepath.Join(dir, "alerts.db")
+					recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+					var beforeDB []byte
+					if existing {
+						createSQLiteFixture(t, dbPath, schemaSQL, `DROP INDEX idx_alerts_last_seen_time_id`)
+						assertSQLiteAlertCount(t, dbPath, 0)
+						beforeDB = readFileBytes(t, dbPath)
+					}
+					if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+						t.Fatalf("write noncanonical numeric recovery log: %v", err)
+					}
+
+					store, err := Open(context.Background(), Options{
+						Path:              dbPath,
+						RecoveryLogPath:   recoveryLogPath,
+						JournalMode:       "WAL",
+						BusyTimeoutMS:     1000,
+						AggregationWindow: window,
+						Now:               func() time.Time { return now },
+					})
+					if store != nil {
+						_ = store.Close()
+						t.Fatal("noncanonical numeric recovery log returned a usable store")
+					}
+					if !errors.Is(err, ErrRecoveryLogIntegrity) {
+						t.Fatalf("startup error = %v, want ErrRecoveryLogIntegrity", err)
+					}
+					if test.malformed {
+						if !strings.Contains(err.Error(), "decode record 2") ||
+							strings.Contains(err.Error(), "canonical unsigned base-10") {
+							t.Fatalf("startup error = %v, want malformed record 2 decode diagnostic", err)
+						}
+					} else {
+						condition := fmt.Sprintf(
+							`top-level recovery field %q must use canonical unsigned base-10 integer JSON encoding`,
+							test.field,
+						)
+						if !strings.Contains(err.Error(), "record 2") ||
+							!strings.Contains(err.Error(), condition) {
+							t.Fatalf("startup error = %v, want record 2 containing %q", err, condition)
+						}
+					}
+					assertFileBytes(t, recoveryLogPath, contents)
+					if existing {
+						assertFileBytes(t, dbPath, beforeDB)
+						assertSQLiteIndexMissing(t, dbPath, "idx_alerts_last_seen_time_id")
+						assertSQLiteAlertCount(t, dbPath, 0)
+					} else {
+						assertFileDoesNotExist(t, dbPath)
+					}
+				})
+			}
+		})
+	}
+}
+
+func TestStoreWriteBatchRejectsNoncanonicalRecoveryNumericEncodingWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 30, 9, 45, 0, 0, time.UTC)
+	window := time.Minute
+	invalid := normalizeAlert(makeAlert(now, "noncanonical-runtime-recovery-number"), now, window)
+
+	for _, test := range recoveryNumericEncodingCases() {
+		t.Run(test.name, func(t *testing.T) {
+			dir := t.TempDir()
+			dbPath := filepath.Join(dir, "alerts.db")
+			recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+			contents := append(
+				recoveryRecordWithNumericEncoding(t, invalid, test.field, test.encoded),
+				'\n',
+			)
+			store, err := Open(context.Background(), Options{
+				Path:              dbPath,
+				RecoveryLogPath:   recoveryLogPath,
+				JournalMode:       "WAL",
+				BusyTimeoutMS:     1000,
+				AggregationWindow: window,
+				Now:               func() time.Time { return now },
+			})
+			if err != nil {
+				t.Fatalf("open store: %v", err)
+			}
+			defer store.Close()
+			if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+				t.Fatalf("write noncanonical numeric runtime recovery log: %v", err)
+			}
+			beforeDB := readFileBytes(t, dbPath)
+
+			err = store.WriteBatch(context.Background(), []*model.Alert{
+				makeAlert(now.Add(time.Second), "must-not-append"),
+			})
+			if !errors.Is(err, ErrRecoveryLogIntegrity) {
+				t.Fatalf("WriteBatch error = %v, want ErrRecoveryLogIntegrity", err)
+			}
+			if test.malformed {
+				if !strings.Contains(err.Error(), "decode record 1") ||
+					strings.Contains(err.Error(), "canonical unsigned base-10") {
+					t.Fatalf("WriteBatch error = %v, want malformed record 1 decode diagnostic", err)
+				}
+			} else {
+				condition := fmt.Sprintf(
+					`top-level recovery field %q must use canonical unsigned base-10 integer JSON encoding`,
+					test.field,
+				)
+				if !strings.Contains(err.Error(), condition) {
+					t.Fatalf("WriteBatch error = %v, want ErrRecoveryLogIntegrity containing %q", err, condition)
+				}
+			}
+			assertFileBytes(t, recoveryLogPath, contents)
+			assertFileBytes(t, dbPath, beforeDB)
+			assertSQLiteAlertCount(t, dbPath, 0)
+		})
+	}
+}
+
+func TestRecoveryNumericEncodingErrorsUseRecordOrder(t *testing.T) {
+	now := time.Date(2026, 7, 30, 9, 50, 0, 0, time.UTC)
+	alert := normalizeAlert(makeAlert(now, "recovery-numeric-order"), now, time.Minute)
+	record, err := json.Marshal(alert)
+	if err != nil {
+		t.Fatalf("marshal recovery record: %v", err)
+	}
+	record = recoveryRecordWithRawNumericEncoding(t, record, "aggregated_count", "1e0")
+	record = recoveryRecordWithRawNumericEncoding(t, record, "dst_port", "8e1")
+
+	err = validateRecoveryRecordFieldNames(record)
+	if err == nil || !strings.Contains(
+		err.Error(),
+		`top-level recovery field "dst_port" must use canonical unsigned base-10 integer JSON encoding`,
+	) {
+		t.Fatalf("numeric encoding error = %v, want first invalid numeric value in record order", err)
+	}
+}
+
 func TestRecoveryFieldErrorsPrecedeMissingFieldError(t *testing.T) {
 	now := time.Date(2026, 7, 30, 4, 30, 0, 0, time.UTC)
 	alert := normalizeAlert(makeAlert(now, "recovery-field-precedence"), now, time.Minute)
@@ -2451,6 +2607,14 @@ func TestStoreAcceptsCanonicalRecoveryFieldVocabulary(t *testing.T) {
 						field,
 						fields[field],
 						expectedKind,
+					)
+				}
+				if expectedKind == recoveryJSONNumber &&
+					!recoveryJSONValueHasCanonicalIntegerEncoding(fields[field]) {
+					t.Fatalf(
+						"writer-generated numeric field %q value %s is not canonically encoded",
+						field,
+						fields[field],
 					)
 				}
 			}
@@ -6045,6 +6209,13 @@ type recoveryValueContractCase struct {
 	kind  recoveryJSONKind
 }
 
+type recoveryNumericEncodingCase struct {
+	name      string
+	field     string
+	encoded   string
+	malformed bool
+}
+
 func recoveryValueContractCases() []recoveryValueContractCase {
 	fields := append(append([]string(nil), requiredRecoveryModelFields...), "raw_payload")
 	tests := make([]recoveryValueContractCase, 0, len(fields)+4)
@@ -6087,6 +6258,53 @@ func recoveryValueContractCases() []recoveryValueContractCase {
 		},
 	)
 	return tests
+}
+
+func recoveryNumericEncodingCases() []recoveryNumericEncodingCase {
+	return []recoveryNumericEncodingCase{
+		{
+			name:    "destination port fractional",
+			field:   "dst_port",
+			encoded: "443.0",
+		},
+		{
+			name:    "destination port exponent",
+			field:   "dst_port",
+			encoded: "4.43e2",
+		},
+		{
+			name:    "destination port negative sign",
+			field:   "dst_port",
+			encoded: "-0",
+		},
+		{
+			name:      "destination port leading zero",
+			field:     "dst_port",
+			encoded:   "0443",
+			malformed: true,
+		},
+		{
+			name:    "aggregate count fractional",
+			field:   "aggregated_count",
+			encoded: "1.0",
+		},
+		{
+			name:    "aggregate count exponent",
+			field:   "aggregated_count",
+			encoded: "1e0",
+		},
+		{
+			name:    "aggregate count negative sign",
+			field:   "aggregated_count",
+			encoded: "-1",
+		},
+		{
+			name:      "aggregate count leading zero",
+			field:     "aggregated_count",
+			encoded:   "01",
+			malformed: true,
+		},
+	}
 }
 
 func recoveryRecordWithMembers(t *testing.T, alert model.Alert, members string) []byte {
@@ -6165,6 +6383,47 @@ func recoveryRecordWithRawFieldValue(
 		t.Fatalf("marshal recovery record with %s value: %v", field, err)
 	}
 	return record
+}
+
+func recoveryRecordWithNumericEncoding(
+	t *testing.T,
+	alert model.Alert,
+	field string,
+	encoded string,
+) []byte {
+	t.Helper()
+	record, err := json.Marshal(alert)
+	if err != nil {
+		t.Fatalf("marshal recovery record: %v", err)
+	}
+	return recoveryRecordWithRawNumericEncoding(t, record, field, encoded)
+}
+
+func recoveryRecordWithRawNumericEncoding(
+	t *testing.T,
+	record []byte,
+	field string,
+	encoded string,
+) []byte {
+	t.Helper()
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(record, &fields); err != nil {
+		t.Fatalf("decode recovery record fields: %v", err)
+	}
+	canonical, ok := fields[field]
+	if !ok {
+		t.Fatalf("recovery field %q was not emitted", field)
+	}
+	encodedField, err := json.Marshal(field)
+	if err != nil {
+		t.Fatalf("encode recovery field %q: %v", field, err)
+	}
+	needle := append(append(append([]byte(nil), encodedField...), ':'), canonical...)
+	if count := bytes.Count(record, needle); count != 1 {
+		t.Fatalf("recovery field %q occurrence count = %d, want 1", field, count)
+	}
+	replacement := append(append(append([]byte(nil), encodedField...), ':'), encoded...)
+	return bytes.Replace(record, needle, replacement, 1)
 }
 
 func recoveryTimestampEncodingCases(alert model.Alert) []recoveryTimestampEncodingCase {

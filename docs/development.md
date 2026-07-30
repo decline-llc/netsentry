@@ -313,7 +313,10 @@ emitted by the current writer must be present before model decoding;
 `raw_payload` remains optional. Every present value must use the non-null
 top-level JSON kind emitted by the writer: strings for text and timestamps,
 and numbers for `dst_port` plus `aggregated_count`. A present `raw_payload`
-must be a string.
+must be a string. Both numeric fields must use canonical unsigned base-10
+integer JSON spelling without an exponent, fractional component, sign, or
+multi-digit leading zero; alternate representations fail before model
+decoding.
 Each decoded record must contain the durable identity (`id`, `event_id`, and
 `rule_id`), a nonblank `rule_name`, timestamps/window, aggregate count, and
 network tuple (`src_ip`, `dst_ip`, and `protocol`) emitted by the normalized

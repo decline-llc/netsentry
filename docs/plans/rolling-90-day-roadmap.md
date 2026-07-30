@@ -101,7 +101,7 @@
 | R90-51 | Jul 30–Oct 28 | Complete early | Require complete recovery JSON records. | R90-50 | Startup and runtime recovery preflight require every non-`omitempty` field emitted by the current writer before model decoding; optional `raw_payload` remains compatible, diagnostic precedence is preserved, and rejected input leaves the complete log plus missing/existing SQLite state unchanged. |
 | R90-52 | Jul 30–Oct 28 | Complete early | Enforce recovery JSON value types. | R90-51 | Startup and runtime recovery preflight require every present top-level value to use the non-null JSON kind emitted by the current writer; optional `raw_payload` remains optional but string-typed, diagnostic precedence is preserved, and rejected input leaves the complete log plus missing/existing SQLite state unchanged. |
 | R90-53 | Jul 30–Aug 1 | Complete early | Audit recent delivery and future planning. | R90-52 | A dated audit reconciles recent commits, plans/states, remote/Vault evidence, and release boundaries; every roadmap item has a complete definition; future work spans the active horizon; each trigger has an explicit plan-audit and two-commit closeout sequence. |
-| R90-54 | Jul 31–Aug 7 | Ready | Enforce canonical recovery JSON numeric encoding. | R90-53 | Recovery `dst_port` and `aggregated_count` accept only the exact base-10 integer spelling emitted by the writer; alternate exponent, fractional, sign, and leading-zero forms fail before durable mutation while canonical replay remains compatible. |
+| R90-54 | Jul 31–Aug 7 | In progress | Enforce canonical recovery JSON numeric encoding. | R90-53 | Recovery `dst_port` and `aggregated_count` accept only the exact base-10 integer spelling emitted by the writer; alternate exponent, fractional, sign, and leading-zero forms fail before durable mutation while canonical replay remains compatible. |
 | R90-55 | Aug 8–21 | Planned | Eliminate recovery field-contract drift. | R90-54 | One authoritative model contract drives canonical field names, required/optional status, and JSON kinds; adding or changing a writer field cannot silently bypass reader validation. |
 | R90-56 | Aug 22–Sep 18 | Planned | Preserve corrupt SQLite sidecars during preflight. | R90-55 | Deterministic primary and historical fixtures with corrupt or inconsistent WAL/SHM state fail read-only preflight clearly and preserve the database plus sidecar bytes; healthy active-WAL reads remain compatible. |
 | R90-57 | Sep 19–Oct 2 | Blocked | Define restart-free emergency recovery semantics. | R90-56; product decision | A reviewed state machine defines probe, recovery, retry, concurrency, and operator-control boundaries without risking duplicate writes or deleting evidence; implementation remains blocked until the product policy is approved. |
@@ -1636,17 +1636,23 @@
 
 ## Current Checkpoint
 
-R90-53 is complete at
-`4eb67e5cec8efdb969d4de4a2dbdea00b1da6ce0` from clean fetched baseline
-`600ba104f3e45b3808f50948c4f820e5187055b4`. The audit reconciles 241 July
-commits, 68 pre-audit task states, all 55 pre-audit roadmap increments,
-fetched remote/Vault evidence, future risks, and the v0.1.1 hold boundary. It
-remediates the empty future queue, eight missing early Definitions, unstated
-two-commit closure, and stale planning/lifecycle authority. Documentation,
-knowledge, all current task-state JSON, 62/62 Definition coverage,
-skill-structure, diff, and sensitive-information checks passed. Fetched
-`origin/main`, the post-fetch knowledge gate, exact-range Vault note, full
-index, MOC link, and stable testing/release note are verified. R90-54 is ready
-but must wait for the next `$netsentry-next` trigger. R90-57 and R90-59 remain
-blocked on their recorded product and publication decisions. Tagging and
-publication remain unauthorized.
+R90-54 is in progress from clean fetched baseline
+`e466c372e21fcc67e2661e701c6ca803b94d5d9f`. The trigger audit verified both
+R90-53 delivery commits, fetched remote equality, exact Vault notes, full
+index, MOC links, and the stable testing/release note. The recent history has
+no new deviation beyond the dated audit, and every unfinished increment still
+has complete dependency, risk, validation, and stop evidence. R90-54 is the
+highest-priority dependency-ready correctness increment. Its persisted plan
+maps exponent, fractional, sign, and leading-zero spellings across both
+recovery numeric fields to direct startup/runtime preservation tests. Raw
+preflight now rejects valid exponent, fractional, and negative-sign
+alternatives before model decoding; JSON-forbidden leading zeros retain their
+malformed diagnostic. Direct startup/runtime preservation cases, twenty
+uncached focused race runs, the complete native race suite, E2E smoke,
+documentation, configuration, knowledge, JSON, formatting, and diff checks
+pass. A non-fail-fast initial formatting invocation was discarded and the
+complete sequence passed under strict rerun. Final staged/sensitive review,
+delivery, fetched-remote verification, and Vault evidence remain. R90-55 must
+not start in this trigger. R90-57 and R90-59 remain blocked on their recorded
+product and publication decisions. Tagging and publication remain
+unauthorized.
