@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "e466c372e21fcc67e2661e701c6ca803b94d5d9f",
   "risk_level": "Medium",
-  "current_checkpoint": "validated",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main agrees at e466c372e21fcc67e2661e701c6ca803b94d5d9f",
     "Verified the completed R90-53 feature and delivery-record commits plus exact Vault notes, full index, MOC links, and stable testing/release note",
@@ -25,19 +25,29 @@
     "Passed E2E smoke with 6 packets, 5 alerts, and 8 loaded rules",
     "Passed documentation, configuration, knowledge with 33 tests, JSON, formatting, and diff checks",
     "Recorded and resolved the non-fail-fast initial formatting invocation without accepting its later test result",
-    "Updated the local netsentry-next skill to require fail-fast multi-step validation"
+    "Updated the local netsentry-next skill to require fail-fast multi-step validation",
+    "Passed the final staged-diff and sensitive-information review",
+    "Pushed 1e138805cdc133b87acd722f319fcc0cc624196f and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact-range Vault note, full index, MOC, and reusable stable storage note",
+    "Marked R90-55 ready without starting it"
   ],
-  "in_progress": [
-    "Run the final staged-diff and sensitive-information review, then deliver R90-54"
-  ],
-  "todo": [
-    "Commit and push R90-54, fetch-verify origin/main, synchronize the exact full-SHA range to the single local Vault, and persist verified delivery evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
+  "delivery": {
+    "commit": "1e138805cdc133b87acd722f319fcc0cc624196f",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "e466c372e21fcc67e2661e701c6ca803b94d5d9f..1e138805cdc133b87acd722f319fcc0cc624196f",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_storage_note_verified": true
+  },
   "remaining_risks": [
     "The numeric spelling validator must run before representation details are discarded by model decoding",
     "Malformed leading-zero JSON must retain the established decode diagnostic",
     "Recovery field-contract deduplication remains owned by R90-55",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "R90-54 is implemented and validated from clean fetched baseline e466c372e21fcc67e2661e701c6ca803b94d5d9f. Do not repeat implementation or completed validation. Run the final staged-diff and sensitive-information review, commit and push only R90-54, fetch-verify origin/main, rerun the knowledge gate, synchronize the exact full-SHA range to the single local Vault, and persist verified delivery evidence in one docs-only closure commit. Do not start R90-55, change numeric semantics or recovery format, create a release tag, or publish artifacts."
+  "resume_instructions": "R90-54 is complete at 1e138805cdc133b87acd722f319fcc0cc624196f. Do not repeat its implementation, validation, push, or Vault synchronization. On the next $netsentry-next trigger, fetch and verify origin/main, confirm both R90-54 delivery commits and Vault evidence, rerun the per-trigger history and forward-plan audits, then select at most one dependency-ready increment. R90-55 is ready. Do not change release authority, create a tag, or publish artifacts."
 }

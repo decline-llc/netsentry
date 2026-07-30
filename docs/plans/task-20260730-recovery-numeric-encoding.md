@@ -135,6 +135,17 @@ writer before model decoding discards exponent, fractional, or sign details.
 - Documentation, configuration, knowledge (33 tests), task-state JSON,
   formatting, and diff checks passed.
 
+## Delivery Evidence
+
+- Feature commit: `1e138805cdc133b87acd722f319fcc0cc624196f`
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed all 33 tests.
+- Exact Vault range:
+  `e466c372e21fcc67e2661e701c6ca803b94d5d9f..1e138805cdc133b87acd722f319fcc0cc624196f`
+- Vault feature note, full commit index, MOC link, and reusable stable storage
+  note: verified.
+- R90-55 is the next ready increment and was not started.
+
 ## Stop Conditions
 
 Stop if completion requires accepting a writer-impossible numeric spelling,
