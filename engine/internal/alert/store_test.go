@@ -2235,10 +2235,129 @@ func TestStoreWriteBatchRejectsMissingRecoveryFieldsWithoutModification(t *testi
 	}
 }
 
+func TestStoreRejectsRecoveryValueContractViolationsWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 30, 9, 15, 0, 0, time.UTC)
+	window := time.Minute
+	validPrefix := normalizeAlert(makeAlert(now.Add(-time.Second), "valid-prefix"), now, window)
+	validPrefixJSON, err := json.Marshal(validPrefix)
+	if err != nil {
+		t.Fatalf("marshal valid recovery prefix: %v", err)
+	}
+	invalid := normalizeAlert(makeAlert(now, "invalid-recovery-value"), now, window)
+	invalid.RawPayload = "synthetic recovery payload"
+
+	for _, test := range recoveryValueContractCases() {
+		t.Run(test.name, func(t *testing.T) {
+			invalidJSON := recoveryRecordWithFieldValue(t, invalid, test.field, test.value)
+			contents := append(append(append([]byte(nil), validPrefixJSON...), '\n'), invalidJSON...)
+			contents = append(contents, '\n')
+
+			for _, existing := range []bool{false, true} {
+				state := "missing database"
+				if existing {
+					state = "existing database"
+				}
+				t.Run(state, func(t *testing.T) {
+					dir := t.TempDir()
+					dbPath := filepath.Join(dir, "alerts.db")
+					recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+					var beforeDB []byte
+					if existing {
+						createSQLiteFixture(t, dbPath, schemaSQL, `DROP INDEX idx_alerts_last_seen_time_id`)
+						beforeDB = readFileBytes(t, dbPath)
+					}
+					if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+						t.Fatalf("write invalid-value recovery log: %v", err)
+					}
+
+					store, err := Open(context.Background(), Options{
+						Path:              dbPath,
+						RecoveryLogPath:   recoveryLogPath,
+						JournalMode:       "WAL",
+						BusyTimeoutMS:     1000,
+						AggregationWindow: window,
+						Now:               func() time.Time { return now },
+					})
+					if store != nil {
+						_ = store.Close()
+						t.Fatal("invalid-value recovery log returned a usable store")
+					}
+					condition := fmt.Sprintf(
+						`top-level recovery field %q must be a non-null JSON %s`,
+						test.field,
+						test.kind,
+					)
+					if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+						!strings.Contains(err.Error(), "record 2") ||
+						!strings.Contains(err.Error(), condition) {
+						t.Fatalf("startup error = %v, want record 2 ErrRecoveryLogIntegrity containing %q", err, condition)
+					}
+					assertFileBytes(t, recoveryLogPath, contents)
+					if existing {
+						assertFileBytes(t, dbPath, beforeDB)
+						assertSQLiteIndexMissing(t, dbPath, "idx_alerts_last_seen_time_id")
+					} else {
+						assertFileDoesNotExist(t, dbPath)
+					}
+				})
+			}
+		})
+	}
+}
+
+func TestStoreWriteBatchRejectsRecoveryValueContractViolationsWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 30, 9, 20, 0, 0, time.UTC)
+	window := time.Minute
+	invalid := normalizeAlert(makeAlert(now, "invalid-runtime-recovery-value"), now, window)
+	invalid.RawPayload = "synthetic recovery payload"
+
+	for _, test := range recoveryValueContractCases() {
+		t.Run(test.name, func(t *testing.T) {
+			dir := t.TempDir()
+			dbPath := filepath.Join(dir, "alerts.db")
+			recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+			contents := append(recoveryRecordWithFieldValue(t, invalid, test.field, test.value), '\n')
+			store, err := Open(context.Background(), Options{
+				Path:              dbPath,
+				RecoveryLogPath:   recoveryLogPath,
+				JournalMode:       "WAL",
+				BusyTimeoutMS:     1000,
+				AggregationWindow: window,
+				Now:               func() time.Time { return now },
+			})
+			if err != nil {
+				t.Fatalf("open store: %v", err)
+			}
+			defer store.Close()
+			if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+				t.Fatalf("write invalid-value runtime recovery log: %v", err)
+			}
+			beforeDB := readFileBytes(t, dbPath)
+
+			err = store.WriteBatch(context.Background(), []*model.Alert{
+				makeAlert(now.Add(time.Second), "must-not-append"),
+			})
+			condition := fmt.Sprintf(
+				`top-level recovery field %q must be a non-null JSON %s`,
+				test.field,
+				test.kind,
+			)
+			if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+				!strings.Contains(err.Error(), condition) {
+				t.Fatalf("WriteBatch error = %v, want ErrRecoveryLogIntegrity containing %q", err, condition)
+			}
+			assertFileBytes(t, recoveryLogPath, contents)
+			assertFileBytes(t, dbPath, beforeDB)
+			assertSQLiteAlertCount(t, dbPath, 0)
+		})
+	}
+}
+
 func TestRecoveryFieldErrorsPrecedeMissingFieldError(t *testing.T) {
 	now := time.Date(2026, 7, 30, 4, 30, 0, 0, time.UTC)
 	alert := normalizeAlert(makeAlert(now, "recovery-field-precedence"), now, time.Minute)
 	missing := recoveryRecordWithoutField(t, alert, "matched_keyword")
+	missing = recoveryRecordWithRawFieldValue(t, missing, "rule_id", json.RawMessage("null"))
 	tests := []struct {
 		name      string
 		record    []byte
@@ -2264,7 +2383,34 @@ func TestRecoveryFieldErrorsPrecedeMissingFieldError(t *testing.T) {
 			if strings.Contains(err.Error(), "is missing") {
 				t.Fatalf("field validation error obscured precedence with missing field: %v", err)
 			}
+			if strings.Contains(err.Error(), "non-null JSON") {
+				t.Fatalf("field validation error obscured precedence with value contract: %v", err)
+			}
 		})
+	}
+}
+
+func TestRecoveryValueErrorsUseRecordOrder(t *testing.T) {
+	now := time.Date(2026, 7, 30, 9, 25, 0, 0, time.UTC)
+	alert := normalizeAlert(makeAlert(now, "recovery-value-order"), now, time.Minute)
+	record, err := json.Marshal(alert)
+	if err != nil {
+		t.Fatalf("marshal recovery record: %v", err)
+	}
+	encodedID, err := json.Marshal(alert.ID)
+	if err != nil {
+		t.Fatalf("marshal alert ID: %v", err)
+	}
+	encodedRuleID, err := json.Marshal(alert.RuleID)
+	if err != nil {
+		t.Fatalf("marshal rule ID: %v", err)
+	}
+	record = bytes.Replace(record, append([]byte(`"id":`), encodedID...), []byte(`"id":null`), 1)
+	record = bytes.Replace(record, append([]byte(`"rule_id":`), encodedRuleID...), []byte(`"rule_id":null`), 1)
+
+	err = validateRecoveryRecordFieldNames(record)
+	if err == nil || !strings.Contains(err.Error(), `top-level recovery field "id" must be a non-null JSON string`) {
+		t.Fatalf("value validation error = %v, want first invalid value in record order", err)
 	}
 }
 
@@ -2294,6 +2440,18 @@ func TestStoreAcceptsCanonicalRecoveryFieldVocabulary(t *testing.T) {
 				canonical, supported := canonicalRecoveryModelField(field)
 				if !supported || field != canonical {
 					t.Fatalf("writer-generated field %q is outside the canonical recovery vocabulary", field)
+				}
+				_, expectedKind, supported := recoveryModelFieldContract(field)
+				if !supported {
+					t.Fatalf("writer-generated field %q has no value contract", field)
+				}
+				if !recoveryJSONValueHasKind(fields[field], expectedKind) {
+					t.Fatalf(
+						"writer-generated field %q value %s does not satisfy JSON %s contract",
+						field,
+						fields[field],
+						expectedKind,
+					)
 				}
 			}
 			requiredFields := make(map[string]struct{}, len(requiredRecoveryModelFields))
@@ -2352,7 +2510,7 @@ func TestStoreMalformedDuplicateRecoveryRecordKeepsDecodeError(t *testing.T) {
 	if err != nil {
 		t.Fatalf("marshal valid recovery prefix: %v", err)
 	}
-	contents := append(append(append([]byte(nil), validJSON...), '\n'), []byte(`{"future_field":1,"rule_id":"a","rule_id":`)...)
+	contents := append(append(append([]byte(nil), validJSON...), '\n'), []byte(`{"future_field":1,"rule_id":null,"rule_id":`)...)
 	contents = append(contents, '\n')
 
 	dir := t.TempDir()
@@ -5880,6 +6038,57 @@ type recoveryTimestampEncodingCase struct {
 	encoded string
 }
 
+type recoveryValueContractCase struct {
+	name  string
+	field string
+	value json.RawMessage
+	kind  recoveryJSONKind
+}
+
+func recoveryValueContractCases() []recoveryValueContractCase {
+	fields := append(append([]string(nil), requiredRecoveryModelFields...), "raw_payload")
+	tests := make([]recoveryValueContractCase, 0, len(fields)+4)
+	for _, field := range fields {
+		_, kind, supported := recoveryModelFieldContract(field)
+		if !supported {
+			panic("recovery test field has no value contract: " + field)
+		}
+		tests = append(tests, recoveryValueContractCase{
+			name:  field + " null",
+			field: field,
+			value: json.RawMessage("null"),
+			kind:  kind,
+		})
+	}
+	tests = append(tests,
+		recoveryValueContractCase{
+			name:  "text wrong kind",
+			field: "rule_id",
+			value: json.RawMessage("1"),
+			kind:  recoveryJSONString,
+		},
+		recoveryValueContractCase{
+			name:  "timestamp wrong kind",
+			field: "timestamp",
+			value: json.RawMessage("false"),
+			kind:  recoveryJSONString,
+		},
+		recoveryValueContractCase{
+			name:  "port wrong kind",
+			field: "dst_port",
+			value: json.RawMessage(`"443"`),
+			kind:  recoveryJSONNumber,
+		},
+		recoveryValueContractCase{
+			name:  "count wrong kind",
+			field: "aggregated_count",
+			value: json.RawMessage(`{"value":1}`),
+			kind:  recoveryJSONNumber,
+		},
+	)
+	return tests
+}
+
 func recoveryRecordWithMembers(t *testing.T, alert model.Alert, members string) []byte {
 	t.Helper()
 	record, err := json.Marshal(alert)
@@ -5918,6 +6127,42 @@ func recoveryRecordWithoutField(t *testing.T, alert model.Alert, field string) [
 	record, err = json.Marshal(fields)
 	if err != nil {
 		t.Fatalf("marshal recovery record without %s: %v", field, err)
+	}
+	return record
+}
+
+func recoveryRecordWithFieldValue(
+	t *testing.T,
+	alert model.Alert,
+	field string,
+	value json.RawMessage,
+) []byte {
+	t.Helper()
+	record, err := json.Marshal(alert)
+	if err != nil {
+		t.Fatalf("marshal recovery record: %v", err)
+	}
+	return recoveryRecordWithRawFieldValue(t, record, field, value)
+}
+
+func recoveryRecordWithRawFieldValue(
+	t *testing.T,
+	record []byte,
+	field string,
+	value json.RawMessage,
+) []byte {
+	t.Helper()
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(record, &fields); err != nil {
+		t.Fatalf("decode recovery record fields: %v", err)
+	}
+	if _, ok := fields[field]; !ok {
+		t.Fatalf("recovery field %q was not emitted", field)
+	}
+	fields[field] = value
+	record, err := json.Marshal(fields)
+	if err != nil {
+		t.Fatalf("marshal recovery record with %s value: %v", field, err)
 	}
 	return record
 }

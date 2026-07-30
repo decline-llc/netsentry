@@ -9,6 +9,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Recovery-log preflight now requires every present top-level field value to
+  use the non-null JSON kind emitted by the current alert writer, preventing
+  `null` from silently becoming an accepted Go zero value.
 - Recovery-log preflight now requires every non-`omitempty` top-level field
   emitted by the current alert writer, preventing missing members from silently
   becoming valid Go zero values while keeping `raw_payload` optional.

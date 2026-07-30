@@ -68,6 +68,7 @@
 | R90-49 | Jul 29–Oct 27 | Complete early | Reject duplicate recovery JSON fields. | R90-48 | Startup and runtime recovery preflight reject exact duplicate top-level JSON names and case-variant aliases targeting the same durable field before last-value decoding can obscure input; the complete log and missing/existing SQLite state remain unchanged while canonical writer records remain compatible. |
 | R90-50 | Jul 29–Oct 27 | Complete early | Enforce canonical recovery JSON field names. | R90-49 | Startup and runtime recovery preflight reject a single unknown top-level name or noncanonical case alias before model decoding; every current writer field, including optional `raw_payload`, remains compatible and rejected input preserves the complete log plus missing/existing SQLite state. |
 | R90-51 | Jul 30–Oct 28 | Complete early | Require complete recovery JSON records. | R90-50 | Startup and runtime recovery preflight require every non-`omitempty` field emitted by the current writer before model decoding; optional `raw_payload` remains compatible, diagnostic precedence is preserved, and rejected input leaves the complete log plus missing/existing SQLite state unchanged. |
+| R90-52 | Jul 30–Oct 28 | In progress | Enforce recovery JSON value types. | R90-51 | Startup and runtime recovery preflight require every present top-level value to use the non-null JSON kind emitted by the current writer; optional `raw_payload` remains optional but string-typed, diagnostic precedence is preserved, and rejected input leaves the complete log plus missing/existing SQLite state unchanged. |
 
 ## R90-07 Definition
 
@@ -871,6 +872,26 @@
   semantics, changing the recovery format, automatic repair, operator data,
   or tag/publication authority.
 
+## R90-52 Definition
+
+- **Goal:** prevent JSON `null` or a mismatched top-level JSON kind from
+  becoming an accepted Go zero value that the current recovery writer cannot
+  emit.
+- **Risk:** a field-kind map can drift from the writer, while returning a value
+  error before completing the structural parse can obscure duplicate,
+  unsupported-name, or malformed-record diagnostics.
+- **Required validation:** direct null rejection for every writer field;
+  representative wrong-kind text, timestamp, and numeric rejections; complete
+  log plus missing/existing database preservation at startup; runtime
+  log/database preservation; duplicate, unsupported-name, and malformed
+  diagnostic precedence; writer-kind alignment and canonical replay with
+  omitted and populated `raw_payload`; twenty focused alert-store race runs,
+  full native, documentation, E2E, and knowledge checks.
+- **Stop condition:** stop if safe completion requires a versioned recovery
+  migration, making `raw_payload` mandatory, recursively constraining JSON
+  values, changing canonical numeric spelling, automatic repair, operator
+  data, or tag/publication authority.
+
 ### R90-49 Validation Deviation
 
 - **Observed:** The first complete native race suite hit the existing
@@ -1309,7 +1330,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -1362,15 +1383,19 @@
 ## Current Checkpoint
 
 R90-51 is complete at
-`4a27cece77f0f94b18982677c7562fac1e754b93` from clean fetched baseline
-`9e93170ec61e0bdfd8928d1ab7a4c4ed6061cf87`. Recovery preflight requires all
-19 non-`omitempty` writer fields after a complete structural parse while
-keeping `raw_payload` optional and preserving duplicate, unsupported-name, and
-malformed diagnostics. Direct startup/runtime preservation cases, writer
-alignment, twenty uncached focused race runs, the complete native race suite,
-E2E smoke, documentation, configuration, knowledge, JSON, diff, and
-sensitive-information checks passed. Fetched `origin/main`, the post-fetch
-knowledge gate, exact-range Vault note, full index, MOC link, and stable storage
-note are verified. No later engineering increment is selected; refresh the
-rolling roadmap on the next `$netsentry-next` trigger. Publication remains
-unauthorized.
+`4a27cece77f0f94b18982677c7562fac1e754b93`, and its delivery record is
+complete at fetched `origin/main`
+`13cfba3979da7526ac62c0a022bbb0d16f60ce1e`; the exact-range Vault feature
+and delivery notes, full index, and MOC links are verified. The horizon was
+refreshed on Jul 30 from that clean fetched baseline, the completed task state,
+release boundaries, top-level recovery value decoding, and verified Vault
+evidence. R90-52 is selected as the highest-priority dependency-ready
+correctness increment. It is limited to writer-aligned top-level JSON kinds and
+non-null values. Recovery preflight now rejects `null` in every writer field
+and representative wrong-kind text, timestamp, port, and count values while
+preserving the complete log and missing/existing database state. Twenty
+uncached focused race runs, the complete native race suite, E2E smoke,
+documentation, configuration, knowledge, JSON, and diff checks pass. Commit,
+push, fetched-remote verification, and exact-range Vault synchronization remain
+before completion. Recursive value policy, numeric spelling, tagging, and
+publication remain outside scope.

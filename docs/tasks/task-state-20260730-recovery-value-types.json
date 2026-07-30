@@ -1,0 +1,40 @@
+{
+  "task": "r90-52-recovery-value-types",
+  "timestamp": "2026-07-30T09:09:29-07:00",
+  "branch": "main",
+  "remote_baseline": "13cfba3979da7526ac62c0a022bbb0d16f60ce1e",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main agrees",
+    "Verified the completed R90-51 task state and both delivery commits",
+    "Discovered exactly one sibling local Vault and verified the R90-51 feature and delivery notes plus MOC links",
+    "Passed the clean fetched-baseline knowledge check",
+    "Refreshed the rolling horizon through 2026-10-28",
+    "Selected R90-52 as the highest-priority dependency-ready correctness increment",
+    "Confirmed JSON null can decode into accepted zero values for writer fields including dst_port, optional text, and the all-empty MITRE tuple",
+    "Required every present writer field to use its non-null top-level JSON kind before model decoding",
+    "Added direct startup and runtime rejection coverage for null in all 20 writer fields plus representative wrong-kind text, timestamp, port, and count values",
+    "Proved missing-database absence and compatible existing-database byte preservation at startup",
+    "Proved runtime log and SQLite byte preservation without current-batch append",
+    "Preserved duplicate, unsupported-name, missing-field, and malformed diagnostic precedence",
+    "Verified canonical writer output satisfies every configured field-kind contract",
+    "Updated the changelog, architecture, development guide, roadmap, plan, and task state",
+    "Passed twenty uncached focused alert-store value-contract race runs",
+    "Passed the complete native race suite",
+    "Passed E2E smoke with 6 packets, 5 alerts, and 8 loaded rules",
+    "Passed documentation, configuration, knowledge, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Commit and push the validated R90-52 increment"
+  ],
+  "todo": [
+    "Run final sensitive-information review, commit, push, verify fetched origin/main, synchronize the exact range to the local Vault, and reconcile delivery evidence"
+  ],
+  "remaining_risks": [
+    "The field-kind contract must remain aligned with writer tags and Go types",
+    "Recursive JSON value policy and canonical numeric spelling remain outside this increment",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-52 is validated from clean fetched baseline 13cfba3979da7526ac62c0a022bbb0d16f60ce1e. Run the final diff and sensitive-information review, then commit and push only the intended increment, fetch and verify origin/main, run the post-fetch knowledge gate, and synchronize the exact full-SHA range to the single discovered local Vault. Do not recurse into recovery values, change numeric spelling, create a release tag, or publish artifacts."
+}

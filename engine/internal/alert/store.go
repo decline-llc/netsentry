@@ -1390,6 +1390,7 @@ func validateRecoveryRecordFieldNames(record []byte) error {
 	seenModelFields := make(map[string]string)
 	var duplicateErr error
 	var fieldNameErr error
+	var fieldValueErr error
 	for decoder.More() {
 		token, err := decoder.Token()
 		if err != nil {
@@ -1404,7 +1405,7 @@ func validateRecoveryRecordFieldNames(record []byte) error {
 		}
 		seenNames[name] = struct{}{}
 
-		modelField, supported := canonicalRecoveryModelField(name)
+		modelField, expectedKind, supported := recoveryModelFieldContract(name)
 		if supported {
 			if previous, exists := seenModelFields[modelField]; exists {
 				if previous != name && duplicateErr == nil {
@@ -1432,6 +1433,14 @@ func validateRecoveryRecordFieldNames(record []byte) error {
 		if err := decoder.Decode(&value); err != nil {
 			return nil
 		}
+		if supported && fieldValueErr == nil &&
+			!recoveryJSONValueHasKind(value, expectedKind) {
+			fieldValueErr = fmt.Errorf(
+				"top-level recovery field %q must be a non-null JSON %s",
+				modelField,
+				expectedKind,
+			)
+		}
 	}
 	closeToken, err := decoder.Token()
 	if err != nil {
@@ -1455,7 +1464,7 @@ func validateRecoveryRecordFieldNames(record []byte) error {
 			return fmt.Errorf("required top-level recovery field %q is missing", field)
 		}
 	}
-	return nil
+	return fieldValueErr
 }
 
 var requiredRecoveryModelFields = []string{
@@ -1480,7 +1489,14 @@ var requiredRecoveryModelFields = []string{
 	"matched_keyword",
 }
 
-func canonicalRecoveryModelField(name string) (string, bool) {
+type recoveryJSONKind string
+
+const (
+	recoveryJSONString recoveryJSONKind = "string"
+	recoveryJSONNumber recoveryJSONKind = "number"
+)
+
+func recoveryModelFieldContract(name string) (string, recoveryJSONKind, bool) {
 	canonical := strings.ToLower(name)
 	switch canonical {
 	case "id",
@@ -1490,10 +1506,8 @@ func canonicalRecoveryModelField(name string) (string, bool) {
 		"timestamp",
 		"src_ip",
 		"dst_ip",
-		"dst_port",
 		"protocol",
 		"severity",
-		"aggregated_count",
 		"first_seen",
 		"last_seen",
 		"window_start",
@@ -1503,9 +1517,31 @@ func canonicalRecoveryModelField(name string) (string, bool) {
 		"payload_preview",
 		"matched_keyword",
 		"raw_payload":
-		return canonical, true
+		return canonical, recoveryJSONString, true
+	case "dst_port", "aggregated_count":
+		return canonical, recoveryJSONNumber, true
 	default:
-		return "", false
+		return "", "", false
+	}
+}
+
+func canonicalRecoveryModelField(name string) (string, bool) {
+	canonical, _, supported := recoveryModelFieldContract(name)
+	return canonical, supported
+}
+
+func recoveryJSONValueHasKind(value json.RawMessage, expected recoveryJSONKind) bool {
+	value = bytes.TrimSpace(value)
+	if len(value) == 0 {
+		return false
+	}
+	switch expected {
+	case recoveryJSONString:
+		return value[0] == '"'
+	case recoveryJSONNumber:
+		return value[0] == '-' || value[0] >= '0' && value[0] <= '9'
+	default:
+		return false
 	}
 }
 
