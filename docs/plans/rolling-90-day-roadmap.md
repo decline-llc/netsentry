@@ -100,8 +100,8 @@
 | R90-50 | Jul 29–Oct 27 | Complete early | Enforce canonical recovery JSON field names. | R90-49 | Startup and runtime recovery preflight reject a single unknown top-level name or noncanonical case alias before model decoding; every current writer field, including optional `raw_payload`, remains compatible and rejected input preserves the complete log plus missing/existing SQLite state. |
 | R90-51 | Jul 30–Oct 28 | Complete early | Require complete recovery JSON records. | R90-50 | Startup and runtime recovery preflight require every non-`omitempty` field emitted by the current writer before model decoding; optional `raw_payload` remains compatible, diagnostic precedence is preserved, and rejected input leaves the complete log plus missing/existing SQLite state unchanged. |
 | R90-52 | Jul 30–Oct 28 | Complete early | Enforce recovery JSON value types. | R90-51 | Startup and runtime recovery preflight require every present top-level value to use the non-null JSON kind emitted by the current writer; optional `raw_payload` remains optional but string-typed, diagnostic precedence is preserved, and rejected input leaves the complete log plus missing/existing SQLite state unchanged. |
-| R90-53 | Jul 30–Aug 1 | In progress | Audit recent delivery and future planning. | R90-52 | A dated audit reconciles recent commits, plans/states, remote/Vault evidence, and release boundaries; every roadmap item has a complete definition; future work spans the active horizon; each trigger has an explicit plan-audit and two-commit closeout sequence. |
-| R90-54 | Jul 31–Aug 7 | Planned | Enforce canonical recovery JSON numeric encoding. | R90-53 | Recovery `dst_port` and `aggregated_count` accept only the exact base-10 integer spelling emitted by the writer; alternate exponent, fractional, sign, and leading-zero forms fail before durable mutation while canonical replay remains compatible. |
+| R90-53 | Jul 30–Aug 1 | Complete early | Audit recent delivery and future planning. | R90-52 | A dated audit reconciles recent commits, plans/states, remote/Vault evidence, and release boundaries; every roadmap item has a complete definition; future work spans the active horizon; each trigger has an explicit plan-audit and two-commit closeout sequence. |
+| R90-54 | Jul 31–Aug 7 | Ready | Enforce canonical recovery JSON numeric encoding. | R90-53 | Recovery `dst_port` and `aggregated_count` accept only the exact base-10 integer spelling emitted by the writer; alternate exponent, fractional, sign, and leading-zero forms fail before durable mutation while canonical replay remains compatible. |
 | R90-55 | Aug 8–21 | Planned | Eliminate recovery field-contract drift. | R90-54 | One authoritative model contract drives canonical field names, required/optional status, and JSON kinds; adding or changing a writer field cannot silently bypass reader validation. |
 | R90-56 | Aug 22–Sep 18 | Planned | Preserve corrupt SQLite sidecars during preflight. | R90-55 | Deterministic primary and historical fixtures with corrupt or inconsistent WAL/SHM state fail read-only preflight clearly and preserve the database plus sidecar bytes; healthy active-WAL reads remain compatible. |
 | R90-57 | Sep 19–Oct 2 | Blocked | Define restart-free emergency recovery semantics. | R90-56; product decision | A reviewed state machine defines probe, recovery, retry, concurrency, and operator-control boundaries without risking duplicate writes or deleting evidence; implementation remains blocked until the product policy is approved. |
@@ -1556,7 +1556,16 @@
   `origin/main`, the post-fetch knowledge gate, exact full-SHA Vault note,
   index, MOC, and stable storage note are verified. No later engineering
   increment is selected; refresh the rolling roadmap on the next
-  `$netsentry-next` trigger. Publication remains unauthorized.
+  `$netsentry-next` trigger. Publication remains unauthorized. R90-53 completed
+  early at `4eb67e5cec8efdb969d4de4a2dbdea00b1da6ce0`: the dated audit reconciles
+  241 July commits, 68 pre-audit task states, completed remote/Vault evidence,
+  and the v0.1.1 hold boundary; the roadmap now has 62 entries and 62
+  Definitions, an eight-step per-trigger audit, and planned or blocked work
+  through Oct 28. Documentation, knowledge, JSON, definition coverage, skill
+  structure, diff, and sensitive-information checks passed; fetched
+  `origin/main`, the post-fetch knowledge gate, exact full-SHA Vault note,
+  index, MOC, and stable testing/release note are verified. R90-54 is ready but
+  was not started. Publication remains unauthorized.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -1627,16 +1636,17 @@
 
 ## Current Checkpoint
 
-R90-53 is in progress from clean fetched baseline
-`600ba104f3e45b3808f50948c4f820e5187055b4`. The audit verified 241 July
-commits, 68 valid task-state JSON records, all 55 pre-audit roadmap increments,
-the completed R90-52 state, fetched remote equality, and exact Vault evidence.
-It identified an empty future queue, eight early entries without uniform
-definitions, an unstated feature-plus-delivery-record closure pattern, and
-stale planning/lifecycle wording. The roadmap now has 62 entries and 62
-definitions, a per-trigger plan-audit checklist, and planned or blocked work
-through Oct 28. Documentation, knowledge, all task-state JSON,
-definition-coverage, skill-structure, and diff checks pass. Commit, push,
-remote, Vault, and final sensitive-information verification remain before
-completion. R90-54 is the next dependency-ordered engineering increment but
-must not start in this trigger. Tagging and publication remain unauthorized.
+R90-53 is complete at
+`4eb67e5cec8efdb969d4de4a2dbdea00b1da6ce0` from clean fetched baseline
+`600ba104f3e45b3808f50948c4f820e5187055b4`. The audit reconciles 241 July
+commits, 68 pre-audit task states, all 55 pre-audit roadmap increments,
+fetched remote/Vault evidence, future risks, and the v0.1.1 hold boundary. It
+remediates the empty future queue, eight missing early Definitions, unstated
+two-commit closure, and stale planning/lifecycle authority. Documentation,
+knowledge, all current task-state JSON, 62/62 Definition coverage,
+skill-structure, diff, and sensitive-information checks passed. Fetched
+`origin/main`, the post-fetch knowledge gate, exact-range Vault note, full
+index, MOC link, and stable testing/release note are verified. R90-54 is ready
+but must wait for the next `$netsentry-next` trigger. R90-57 and R90-59 remain
+blocked on their recorded product and publication decisions. Tagging and
+publication remain unauthorized.
