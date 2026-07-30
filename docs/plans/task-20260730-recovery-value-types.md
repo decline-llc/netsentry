@@ -103,6 +103,18 @@ decoding can turn `null` into an accepted Go zero value.
 - E2E smoke passed with 6 packets, 5 alerts, and 8 loaded rules.
 - Documentation, configuration, knowledge, JSON, and diff checks passed.
 
+## Delivery Evidence
+
+- Feature commit: `f4985bb7fc3b6f50a5f90aa13d4d482cd712695c`
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed all 33 tests.
+- Exact Vault range:
+  `13cfba3979da7526ac62c0a022bbb0d16f60ce1e..f4985bb7fc3b6f50a5f90aa13d4d482cd712695c`
+- Vault feature note, full commit index, MOC link, and reusable stable storage
+  note: verified.
+- No later engineering increment was selected; the next `$netsentry-next`
+  trigger will refresh the rolling roadmap.
+
 ## Stop Conditions
 
 Stop if completion requires a versioned recovery migration, making

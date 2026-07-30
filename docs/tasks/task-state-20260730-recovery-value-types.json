@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "13cfba3979da7526ac62c0a022bbb0d16f60ce1e",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main agrees",
     "Verified the completed R90-51 task state and both delivery commits",
@@ -23,18 +23,27 @@
     "Passed twenty uncached focused alert-store value-contract race runs",
     "Passed the complete native race suite",
     "Passed E2E smoke with 6 packets, 5 alerts, and 8 loaded rules",
-    "Passed documentation, configuration, knowledge, JSON, and diff checks"
+    "Passed documentation, configuration, knowledge, JSON, and diff checks",
+    "Pushed f4985bb7fc3b6f50a5f90aa13d4d482cd712695c and verified fetched origin/main",
+    "Passed post-fetch knowledge validation and verified the exact-range Vault note, full index, MOC, and reusable stable storage note",
+    "Left the next engineering increment unselected for a fresh rolling-roadmap review"
   ],
-  "in_progress": [
-    "Commit and push the validated R90-52 increment"
-  ],
-  "todo": [
-    "Run final sensitive-information review, commit, push, verify fetched origin/main, synchronize the exact range to the local Vault, and reconcile delivery evidence"
-  ],
+  "in_progress": [],
+  "todo": [],
+  "delivery": {
+    "commit": "f4985bb7fc3b6f50a5f90aa13d4d482cd712695c",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "13cfba3979da7526ac62c0a022bbb0d16f60ce1e..f4985bb7fc3b6f50a5f90aa13d4d482cd712695c",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_storage_note_verified": true
+  },
   "remaining_risks": [
     "The field-kind contract must remain aligned with writer tags and Go types",
     "Recursive JSON value policy and canonical numeric spelling remain outside this increment",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "R90-52 is validated from clean fetched baseline 13cfba3979da7526ac62c0a022bbb0d16f60ce1e. Run the final diff and sensitive-information review, then commit and push only the intended increment, fetch and verify origin/main, run the post-fetch knowledge gate, and synchronize the exact full-SHA range to the single discovered local Vault. Do not recurse into recovery values, change numeric spelling, create a release tag, or publish artifacts."
+  "resume_instructions": "R90-52 is complete at f4985bb7fc3b6f50a5f90aa13d4d482cd712695c. Do not repeat its implementation, validation, push, or Vault synchronization. On the next $netsentry-next trigger, fetch and verify origin/main, confirm this completed task state and both delivery commits plus Vault evidence, refresh the rolling roadmap, and select at most one dependency-ready increment. Do not recurse into recovery values, change numeric spelling, create a release tag, or publish artifacts."
 }
