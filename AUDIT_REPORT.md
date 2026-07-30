@@ -1,5 +1,10 @@
 # NetSentry 全面审计与整改报告
 
+> 2026-07-30 交付与计划复审见
+> [`docs/audit/delivery-plan-audit-20260730.md`](docs/audit/delivery-plan-audit-20260730.md)。
+> 本文件保留 2026-07-11 代码/架构审计及其历史整改证据；当前执行队列、
+> 依赖、阻塞和每次 `$netsentry-next` 的计划审计步骤以版本化滚动路线图为准。
+
 > 审计日期：2026-07-11
 > 审计基线：`608e7f3`（`main`）
 > 范围：C capture、Go engine、Unix Socket IPC、SQLite、HTTP API、规则与 MITRE ATT&CK 映射、测试/发布流水线、Obsidian 知识治理

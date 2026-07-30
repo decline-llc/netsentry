@@ -125,7 +125,9 @@ C capture
 
 Planned modules:
 
-- `internal/receiver`: UDS listener, hello validation, heartbeat state. Implemented in the current build; broader Go engine lifecycle integration remains future work.
+- `internal/receiver`: UDS listener, hello validation, heartbeat state, and
+  bounded connection lifecycle. The active-load full-engine regression
+  integrates receiver, pipeline workers, HTTP API, and SQLite startup/shutdown.
 - `internal/pipeline`: configurable worker-pool lifecycle and alert flow. Matching can run concurrently while the store serializes recovery-log/SQLite write critical sections.
 - `internal/alert`: aggregation, SQLite store, JSONL recovery-log replay, indexed SQL-backed alert filtering/pagination, daily-shard timestamp-based writes, cross-file querying/counting, TTL pruning, old shard cleanup, payload redaction, and file-backed suppressions.
 - `internal/api`: router, pagination request parsing, rule CRUD/reload, suppressions API, PSK auth for mutations, errors, health, audit middleware, and metrics.

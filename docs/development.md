@@ -569,7 +569,11 @@ before the store-close boundary.
 
 ## 8. Development Roadmap
 
-The local authoritative roadmap is `First/NETSENTRY_MASTER_PLAN.md` and is intentionally ignored by Git.
+The versioned delivery authority is
+[`docs/plans/rolling-90-day-roadmap.md`](plans/rolling-90-day-roadmap.md).
+`$netsentry-next` audits that file against Git, task-state, remote, and Vault
+evidence before selecting exactly one increment. Any ignored local master plan
+is private working material only and cannot override the versioned roadmap.
 
 Public summary:
 

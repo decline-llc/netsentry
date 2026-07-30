@@ -6,9 +6,40 @@
 
 - **Ready**: every dependency is complete. As of 2026-07-16, roadmap dates are
   forecasting metadata only and never prevent work from starting.
+- **Planned**: at least one internal dependency is unfinished; no external
+  authority or input currently blocks the item.
 - **Blocked**: requires an explicitly recorded external input, authority, or unresolved validation result.
 - **Complete**: acceptance criteria and required evidence are verified, including commit/push/Vault evidence when a repository increment was delivered.
 - Complete only one ready increment per `$netsentry-next` trigger. Record deviations before reordering unfinished work.
+
+## Per-Trigger Plan Audit
+
+1. **Baseline audit:** work from the repository root; fetch the active remote;
+   isolate pre-existing user changes; require local and fetched refs to agree;
+   verify the latest completed plan/state and exact Vault note, index, and MOC.
+2. **History audit:** review the previous two to four weeks at phase level and
+   record material deviations, missing delivery records, stale authority, and
+   unresolved risks rather than treating commit volume as completion evidence.
+3. **Forward-plan audit:** require every unfinished item to have status,
+   dependency, window, risk, acceptance criteria, required validation, and stop
+   condition. Reconcile an empty, stale, contradictory, or incomplete queue
+   before implementation.
+4. **Selection audit:** choose exactly one highest-priority dependency-ready
+   increment and persist its plan/state, non-goals, evidence map, and authority
+   boundaries before editing.
+5. **Execution audit:** compare progress to the plan at meaningful checkpoints;
+   record every validation deviation and do not start unrelated work while a
+   result is ambiguous.
+6. **Pre-commit audit:** require acceptance evidence, applicable focused and
+   repository checks, `make knowledge-check`, JSON/diff validation, intended
+   staged paths only, and a sensitive-information review.
+7. **Delivery audit:** record full old/new SHAs; push without force; fetch and
+   require `HEAD == origin/main == new`; rerun the knowledge gate; synchronize
+   and verify the exact Vault range.
+8. **Closeout audit:** persist verified delivery facts in one docs-only closure
+   commit when needed, deliver and synchronize that second exact range as part
+   of the same increment, refresh but do not start the next item, and leave
+   accurate resume instructions.
 
 ## Phased Delivery Queue
 
@@ -69,6 +100,104 @@
 | R90-50 | Jul 29–Oct 27 | Complete early | Enforce canonical recovery JSON field names. | R90-49 | Startup and runtime recovery preflight reject a single unknown top-level name or noncanonical case alias before model decoding; every current writer field, including optional `raw_payload`, remains compatible and rejected input preserves the complete log plus missing/existing SQLite state. |
 | R90-51 | Jul 30–Oct 28 | Complete early | Require complete recovery JSON records. | R90-50 | Startup and runtime recovery preflight require every non-`omitempty` field emitted by the current writer before model decoding; optional `raw_payload` remains compatible, diagnostic precedence is preserved, and rejected input leaves the complete log plus missing/existing SQLite state unchanged. |
 | R90-52 | Jul 30–Oct 28 | Complete early | Enforce recovery JSON value types. | R90-51 | Startup and runtime recovery preflight require every present top-level value to use the non-null JSON kind emitted by the current writer; optional `raw_payload` remains optional but string-typed, diagnostic precedence is preserved, and rejected input leaves the complete log plus missing/existing SQLite state unchanged. |
+| R90-53 | Jul 30–Aug 1 | In progress | Audit recent delivery and future planning. | R90-52 | A dated audit reconciles recent commits, plans/states, remote/Vault evidence, and release boundaries; every roadmap item has a complete definition; future work spans the active horizon; each trigger has an explicit plan-audit and two-commit closeout sequence. |
+| R90-54 | Jul 31–Aug 7 | Planned | Enforce canonical recovery JSON numeric encoding. | R90-53 | Recovery `dst_port` and `aggregated_count` accept only the exact base-10 integer spelling emitted by the writer; alternate exponent, fractional, sign, and leading-zero forms fail before durable mutation while canonical replay remains compatible. |
+| R90-55 | Aug 8–21 | Planned | Eliminate recovery field-contract drift. | R90-54 | One authoritative model contract drives canonical field names, required/optional status, and JSON kinds; adding or changing a writer field cannot silently bypass reader validation. |
+| R90-56 | Aug 22–Sep 18 | Planned | Preserve corrupt SQLite sidecars during preflight. | R90-55 | Deterministic primary and historical fixtures with corrupt or inconsistent WAL/SHM state fail read-only preflight clearly and preserve the database plus sidecar bytes; healthy active-WAL reads remain compatible. |
+| R90-57 | Sep 19–Oct 2 | Blocked | Define restart-free emergency recovery semantics. | R90-56; product decision | A reviewed state machine defines probe, recovery, retry, concurrency, and operator-control boundaries without risking duplicate writes or deleting evidence; implementation remains blocked until the product policy is approved. |
+| R90-58 | Oct 3–21 | Planned | Refresh the v0.1.1 candidate decision package. | R90-56 | Version, current candidate commit, gates, artifacts, checksums, platform, and hold decision are reconciled from fresh evidence without tagging or publishing. |
+| R90-59 | Oct 22–28 | Blocked | Execute the v0.1.1 publication gate. | R90-58; explicit publication authorization | Only an explicitly authorized version and commit may be tagged; GitHub Release and GHCR results must be verified directly, while absence of authority preserves the hold without mutation. |
+
+## R90-01 Definition
+
+- **Goal:** establish one versioned 90-day delivery authority and a
+  one-increment `$netsentry-next` workflow.
+- **Risk:** a parallel queue or multi-increment trigger could make delivery and
+  recovery evidence ambiguous.
+- **Required validation:** skill discovery, roadmap structure, dependency and
+  acceptance review, documentation checks, and knowledge synchronization.
+- **Stop condition:** stop if selecting work requires a second authority,
+  private input, or more than one increment.
+
+## R90-02 Definition
+
+- **Goal:** make the local knowledge gate and task-state reconciliation
+  mandatory before repository delivery.
+- **Risk:** committing against stale task/Vault evidence can make a later
+  session repeat or misreport delivery.
+- **Required validation:** direct passing/failing knowledge-gate behavior,
+  roadmap/state reconciliation review, documentation checks, and exact diff
+  inspection.
+- **Stop condition:** stop while the knowledge gate fails or its evidence
+  conflict is unresolved.
+
+## R90-03 Definition
+
+- **Goal:** make fetched `origin/main` the post-push delivery and planning
+  baseline.
+- **Risk:** local-only success can conceal a failed push or remote drift.
+- **Required validation:** push/fetch ref comparison, post-fetch knowledge
+  validation, task-state reconciliation, and Vault range verification.
+- **Stop condition:** stop if fetched refs differ, fetch/push status is
+  ambiguous, or remote authority changes.
+
+## R90-03a Definition
+
+- **Goal:** keep knowledge-sync business logic versioned and tests independent
+  of local hook files.
+- **Risk:** CI or a clean checkout cannot reproduce behavior implemented only
+  under `.git/hooks`.
+- **Required validation:** direct versioned Python API tests, hook-free
+  repository knowledge checks, idempotency fixtures, and documentation checks.
+- **Stop condition:** stop if tests require provisioning or executing local
+  hooks in CI.
+
+## R90-04 Definition
+
+- **Goal:** validate the authorized public real-traffic corpus under the
+  R90-04-only evidence exception.
+- **Risk:** public traffic can still expose sensitive metadata or be
+  misrepresented as production-derived release approval.
+- **Required validation:** privacy, provenance, sanitization,
+  sensitive-metadata, integrity, and corpus-pressure review under the exact
+  scoped exception.
+- **Stop condition:** stop on unapproved traffic, private paths, failed review,
+  digest drift, or an attempt to reuse the exception outside R90-04.
+
+## R90-04b Definition
+
+- **Goal:** expire the R90-04 exception and prevent its historical evidence
+  from authorizing later release decisions.
+- **Risk:** a technically valid old record could be reused beyond its approved
+  scope.
+- **Required validation:** direct release-gate rejection of R90-04 reuse,
+  preservation of historical v0.1.0 behavior, audit/documentation checks, and
+  knowledge validation.
+- **Stop condition:** stop if expiry would rewrite historical evidence or
+  weaken another release gate.
+
+## R90-05 Definition
+
+- **Goal:** prepare v0.1.1 release readiness from the exact approved evidence
+  and quality baseline.
+- **Risk:** synthetic or scoped-exception evidence can be generalized into an
+  unsupported release claim.
+- **Required validation:** RC, supply-chain, evidence-integrity, release-gate,
+  documentation, and exact exception-boundary checks.
+- **Stop condition:** stop on evidence/digest drift, unavailable required
+  validation, private-data need, tagging, or publication authority.
+
+## R90-06 Definition
+
+- **Goal:** assemble a hold-state v0.1.1 decision package without creating a
+  tag or artifact publication.
+- **Risk:** a reconciled candidate package can be mistaken for final
+  publication authorization or remain pinned after `main` advances.
+- **Required validation:** exact version/commit/artifact/checksum/platform
+  reconciliation, RC and release gates, fetched remote verification, and an
+  explicit hold decision.
+- **Stop condition:** stop before tag creation, GitHub Release, GHCR push, or
+  any candidate change that lacks fresh evidence.
 
 ## R90-07 Definition
 
@@ -892,6 +1021,108 @@
   values, changing canonical numeric spelling, automatic repair, operator
   data, or tag/publication authority.
 
+## R90-53 Definition
+
+- **Goal:** reconcile recent delivery evidence, restore a complete forward
+  queue, and make plan auditing repeatable on every trigger.
+- **Audit record:**
+  [`delivery-plan-audit-20260730.md`](../audit/delivery-plan-audit-20260730.md).
+- **Risk:** volume-based conclusions, rewritten history, or speculative future
+  work can create false confidence and false commitments.
+- **Required validation:** commit phase/count review, all task-state JSON
+  parsing, complete roadmap entry/definition coverage, unfinished-item field
+  audit, documentation and knowledge checks, diff review, and sensitive-data
+  review.
+- **Stop condition:** stop if completion requires historical rewrite, runtime
+  implementation, private evidence, product/release authority, or starting
+  R90-54.
+
+## R90-54 Definition
+
+- **Goal:** align recovery numeric representation with the exact integer JSON
+  spelling emitted by the writer.
+- **Risk:** semantic decoding can discard exponent, fractional, sign, or
+  leading-zero representation differences before validation.
+- **Required validation:** direct startup/runtime rejection for every planned
+  alternate numeric spelling across both numeric fields; missing/existing
+  database and log byte preservation; canonical writer compatibility;
+  focused race, full native, E2E, documentation, and knowledge checks.
+- **Stop condition:** stop if safe completion requires a recovery migration,
+  accepting a writer-impossible number, operator data, or publication.
+
+## R90-55 Definition
+
+- **Goal:** remove independently maintained recovery name, presence, and kind
+  lists that can drift from `model.Alert` writer behavior.
+- **Risk:** runtime reflection or incomplete tag parsing can weaken deterministic
+  diagnostics or mishandle `omitempty`.
+- **Required validation:** direct model-to-contract alignment tests, missing,
+  alias, value-kind, optional-field, and canonical writer regressions; focused
+  race, full native, E2E, documentation, and knowledge checks.
+- **Stop condition:** stop if the shared contract changes public JSON, field
+  order, diagnostic precedence, or requires a format migration.
+
+## R90-56 Definition
+
+- **Goal:** close a bounded SQLite fault-injection gap around corrupt or
+  inconsistent WAL/SHM sidecars.
+- **Risk:** opening a sidecar fixture incorrectly can checkpoint, delete,
+  recreate, or otherwise modify operator evidence.
+- **Required validation:** deterministic primary and encoded-path historical
+  sidecar rejection with separate read-only handles and byte comparisons;
+  healthy active-WAL compatibility; focused race, full native, E2E,
+  documentation, and knowledge checks.
+- **Stop condition:** stop if deterministic validation would mutate fixtures,
+  require operator data, depend on privileged storage faults, or perform
+  automatic repair.
+
+## R90-57 Definition
+
+- **Goal:** define safe restart-free recovery semantics for sticky storage
+  emergency mode before any implementation.
+- **Risk:** automatic retry can duplicate writes, race current writers, hide
+  persistent faults, or delete recovery evidence.
+- **Required validation:** reviewed state-machine invariants, concurrency and
+  operator-control threat review, failure/retry test plan, documentation, and
+  knowledge checks.
+- **Blocker evidence:** public architecture and development guidance explicitly
+  leave automatic cleanup or restart-free recovery unimplemented because retry
+  ownership and evidence preservation are undecided.
+- **Unblock condition:** the product owner selects automatic or
+  operator-triggered recovery and approves retry, concurrency, and evidence
+  boundaries.
+- **Stop condition:** remain blocked until the product owner chooses automatic
+  versus operator-triggered recovery and approves retry/evidence boundaries.
+
+## R90-58 Definition
+
+- **Goal:** refresh the v0.1.1 hold-state candidate package after the completed
+  hardening sequence.
+- **Risk:** reusing the historical candidate, artifact, or checksum after
+  `main` advanced would bind publication evidence to the wrong code.
+- **Required validation:** fresh RC, supply-chain, release gate, artifact
+  checksum/platform reconciliation, fetched remote verification, and explicit
+  hold-state documentation.
+- **Stop condition:** stop on ambiguous validation, unavailable required
+  infrastructure, version/SHA drift, tag creation, or publication.
+
+## R90-59 Definition
+
+- **Goal:** execute a separately authorized v0.1.1 publication decision and
+  verify immutable external outcomes.
+- **Risk:** tagging the wrong commit or inferring workflow/registry success can
+  create an unrecoverable public release mismatch.
+- **Required validation:** exact authorization/version/SHA match, annotated tag
+  and signature checks, GitHub Release assets/checksums, GHCR digest/platform,
+  workflow result, documentation, remote, and Vault evidence.
+- **Blocker evidence:** the v0.1.1 decision package records publication status
+  as hold and states that tag, GitHub Release, and GHCR publication are not
+  authorized.
+- **Unblock condition:** the user explicitly authorizes the exact version and
+  candidate commit after R90-58 evidence is complete.
+- **Stop condition:** remain blocked without explicit publication authority;
+  stop on any SHA, tag, digest, platform, workflow, or artifact ambiguity.
+
 ### R90-49 Validation Deviation
 
 - **Observed:** The first complete native race suite hit the existing
@@ -1344,7 +1575,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56`; `R90-56 → R90-57` is blocked on a restart-free recovery product decision; `R90-56 → R90-58 → R90-59`, with R90-59 also blocked on explicit publication authorization. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -1396,16 +1627,16 @@
 
 ## Current Checkpoint
 
-R90-52 is complete at
-`f4985bb7fc3b6f50a5f90aa13d4d482cd712695c` from clean fetched baseline
-`13cfba3979da7526ac62c0a022bbb0d16f60ce1e`. Recovery preflight rejects
-`null` across all 20 writer fields and mismatched top-level text, timestamp,
-port, and count JSON kinds while preserving structural diagnostic precedence
-and the complete log plus missing/existing database state. Twenty uncached
-focused race runs, the complete native race suite, E2E smoke, documentation,
-configuration, knowledge, JSON, diff, and sensitive-information checks passed.
-Fetched `origin/main`, the post-fetch knowledge gate, exact-range Vault note,
-full index, MOC link, and stable storage note are verified. No later
-engineering increment is selected; refresh the rolling roadmap on the next
-`$netsentry-next` trigger. Recursive value policy, numeric spelling, tagging,
-and publication remain outside scope.
+R90-53 is in progress from clean fetched baseline
+`600ba104f3e45b3808f50948c4f820e5187055b4`. The audit verified 241 July
+commits, 68 valid task-state JSON records, all 55 pre-audit roadmap increments,
+the completed R90-52 state, fetched remote equality, and exact Vault evidence.
+It identified an empty future queue, eight early entries without uniform
+definitions, an unstated feature-plus-delivery-record closure pattern, and
+stale planning/lifecycle wording. The roadmap now has 62 entries and 62
+definitions, a per-trigger plan-audit checklist, and planned or blocked work
+through Oct 28. Documentation, knowledge, all task-state JSON,
+definition-coverage, skill-structure, and diff checks pass. Commit, push,
+remote, Vault, and final sensitive-information verification remain before
+completion. R90-54 is the next dependency-ordered engineering increment but
+must not start in this trigger. Tagging and publication remain unauthorized.
