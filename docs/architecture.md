@@ -256,8 +256,10 @@ Current build:
   the same durable model field before Go's last-value decoding can discard the
   earlier member. Every top-level name must exactly match the current alert
   writer's JSON vocabulary; unknown scalar or nested members and case-variant
-  supported names are rejected. Names inside accepted field values are not
-  recursively inspected. Valid logs are truncated only after SQLite commits.
+  supported names are rejected. Every field the writer emits without
+  `omitempty` must be present; only `raw_payload` may be omitted. Names inside
+  accepted field values are not recursively inspected. Valid logs are
+  truncated only after SQLite commits.
 - Each decoded recovery record must retain the required identity, time, count,
   and network fields emitted by normalized alert writes. Its `event_id` must
   match the deterministic writer identity used by the replay ledger, and its

@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-07-29 through 2026-10-27. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from the prior horizon is preserved below.
+> Window: 2026-07-30 through 2026-10-28. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from the prior horizon is preserved below.
 
 ## Status Rules
 
@@ -67,6 +67,7 @@
 | R90-48 | Jul 29–Oct 27 | Complete early | Validate recovery timestamp encoding. | R90-47 | Startup and runtime recovery preflight accept `timestamp`, `first_seen`, `last_seen`, and `window_start` only as exact canonical UTC RFC3339Nano strings emitted by the writer; parseable offsets and nonminimal fractional forms fail before modifying the complete log or missing/existing SQLite state. |
 | R90-49 | Jul 29–Oct 27 | Complete early | Reject duplicate recovery JSON fields. | R90-48 | Startup and runtime recovery preflight reject exact duplicate top-level JSON names and case-variant aliases targeting the same durable field before last-value decoding can obscure input; the complete log and missing/existing SQLite state remain unchanged while canonical writer records remain compatible. |
 | R90-50 | Jul 29–Oct 27 | Complete early | Enforce canonical recovery JSON field names. | R90-49 | Startup and runtime recovery preflight reject a single unknown top-level name or noncanonical case alias before model decoding; every current writer field, including optional `raw_payload`, remains compatible and rejected input preserves the complete log plus missing/existing SQLite state. |
+| R90-51 | Jul 30–Oct 28 | In progress | Require complete recovery JSON records. | R90-50 | Startup and runtime recovery preflight require every non-`omitempty` field emitted by the current writer before model decoding; optional `raw_payload` remains compatible, diagnostic precedence is preserved, and rejected input leaves the complete log plus missing/existing SQLite state unchanged. |
 
 ## R90-07 Definition
 
@@ -852,6 +853,24 @@
   constraining value objects, automatic log repair, operator data, or
   tag/publication authority.
 
+## R90-51 Definition
+
+- **Goal:** prevent Go zero-value decoding from accepting incomplete durable
+  recovery objects that the current writer cannot emit.
+- **Risk:** a required-field list can drift from the writer, while checking
+  presence before completing the structural parse can obscure duplicate,
+  unsupported-name, or malformed-record diagnostics.
+- **Required validation:** direct removal of every non-`omitempty` writer field
+  at startup and runtime; complete-log plus missing/existing database
+  preservation; duplicate, unsupported-name, and malformed diagnostic
+  precedence; canonical writer compatibility with omitted and populated
+  `raw_payload`; twenty focused alert-store race runs, full native,
+  documentation, E2E, and knowledge checks.
+- **Stop condition:** stop if safe completion requires a versioned recovery
+  migration, making `raw_payload` mandatory, changing JSON value/null
+  semantics, changing the recovery format, automatic repair, operator data,
+  or tag/publication authority.
+
 ### R90-49 Validation Deviation
 
 - **Observed:** The first complete native race suite hit the existing
@@ -1257,7 +1276,11 @@
   post-fetch knowledge gate, exact full-SHA Vault note, index, MOC, and stable
   storage note are verified. No later engineering increment is selected;
   refresh the rolling roadmap on the next `$netsentry-next` trigger.
-  Publication remains unauthorized.
+  Publication remains unauthorized. The horizon was refreshed on Jul 30
+  through Oct 28 from the clean fetched reconciliation baseline, completed task
+  state, release boundaries, recovery writer field presence, and verified Vault
+  evidence. R90-51 is selected as the highest-priority dependency-ready
+  correctness increment.
 
 ## Global PCAP Release-Gate Waiver
 
@@ -1276,7 +1299,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51`. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -1328,17 +1351,15 @@
 
 ## Current Checkpoint
 
-R90-50 is complete at
-`e49f2feea7fe3a3915998895f3c6e755b2ec3d17` from clean fetched baseline
-`6c981dff0757aa8f05d09f3454c735ed4ae05ea4`. Recovery member scanning rejects
-unknown scalar and nested top-level members plus case-variant supported names
-before model decoding, while duplicate and malformed diagnostics retain
-precedence. Startup and runtime byte-preservation cases, canonical writer
-replay with omitted and populated `raw_payload`, every emitted writer field,
-and twenty uncached focused race runs passed. The complete native race suite,
-E2E smoke, documentation, configuration, knowledge, JSON, diff, and
-sensitive-information checks passed. Fetched `origin/main`, the post-fetch
-knowledge gate, exact-range Vault note, full index, MOC link, and stable storage
-note are verified. No later engineering increment is selected; refresh the
-rolling roadmap on the next `$netsentry-next` trigger. Publication remains
-unauthorized.
+R90-51 is in progress from clean fetched baseline
+`9e93170ec61e0bdfd8928d1ab7a4c4ed6061cf87`. R90-50 is complete and both
+delivery commits, the post-fetch knowledge gate, exact Vault notes, full index,
+MOC links, and stable storage note are verified. Recovery preflight now
+requires all 19 non-`omitempty` writer fields after a complete structural parse
+while keeping `raw_payload` optional and preserving duplicate,
+unsupported-name, and malformed diagnostics. Direct startup/runtime
+preservation cases, writer alignment, twenty uncached focused race runs, the
+complete native race suite, E2E smoke, documentation, configuration, knowledge,
+JSON, and diff checks pass. Commit, push, fetched-remote verification, and
+exact-range Vault synchronization remain before completion. Publication
+remains unauthorized.

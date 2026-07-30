@@ -1,0 +1,40 @@
+{
+  "task": "r90-51-recovery-required-fields",
+  "timestamp": "2026-07-30T04:16:05-07:00",
+  "branch": "main",
+  "remote_baseline": "9e93170ec61e0bdfd8928d1ab7a4c4ed6061cf87",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Fetched origin/main and verified clean local main agrees",
+    "Verified the completed R90-50 task state and both delivery commits",
+    "Discovered exactly one sibling local Vault and verified the R90-50 feature and delivery notes plus MOC and stable storage links",
+    "Passed the clean fetched-baseline knowledge check",
+    "Refreshed the rolling horizon through 2026-10-28",
+    "Selected R90-51 as the highest-priority dependency-ready correctness increment",
+    "Confirmed missing dst_port, payload_preview, and matched_keyword can currently decode to valid zero values",
+    "Required every non-omitempty writer field before recovery model decoding",
+    "Added direct startup and runtime rejection coverage for all 19 required writer fields",
+    "Proved missing-database absence and compatible existing-database byte preservation at startup",
+    "Proved runtime log and SQLite byte preservation without current-batch append",
+    "Preserved duplicate, unsupported-name, and malformed diagnostic precedence",
+    "Verified canonical writer replay with omitted and populated raw_payload and aligned every emitted field with the required list",
+    "Updated the changelog, architecture, development guide, roadmap, plan, and task state",
+    "Passed twenty uncached focused alert-store race runs",
+    "Passed the complete native race suite",
+    "Passed E2E smoke with 6 packets, 5 alerts, and 8 loaded rules",
+    "Passed documentation, configuration, knowledge, JSON, and diff checks"
+  ],
+  "in_progress": [
+    "Commit and push the validated R90-51 increment"
+  ],
+  "todo": [
+    "Run final sensitive-information review, commit, push, verify fetched origin/main, synchronize the exact range to the local Vault, and reconcile delivery evidence"
+  ],
+  "remaining_risks": [
+    "The required-field list must remain aligned with every non-omitempty writer tag",
+    "JSON value-type and null hardening remain outside this increment",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "R90-51 is validated from clean fetched baseline 9e93170ec61e0bdfd8928d1ab7a4c4ed6061cf87. Run the final diff and sensitive-information review, then commit and push only the intended increment, fetch and verify origin/main, run the post-fetch knowledge gate, and synchronize the exact full-SHA range to the single discovered local Vault. Do not change JSON value/null semantics, recurse into values, create a release tag, or publish artifacts."
+}

@@ -2127,6 +2127,147 @@ func TestStoreWriteBatchRejectsNoncanonicalRecoveryFieldsWithoutModification(t *
 	}
 }
 
+func TestStoreRejectsMissingRecoveryFieldsWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 30, 4, 20, 0, 0, time.UTC)
+	window := time.Minute
+	validPrefix := normalizeAlert(makeAlert(now.Add(-time.Second), "valid-prefix"), now, window)
+	validPrefixJSON, err := json.Marshal(validPrefix)
+	if err != nil {
+		t.Fatalf("marshal valid recovery prefix: %v", err)
+	}
+	incomplete := normalizeAlert(makeAlert(now, "missing-recovery-field"), now, window)
+
+	for _, field := range requiredRecoveryModelFields {
+		t.Run(field, func(t *testing.T) {
+			incompleteJSON := recoveryRecordWithoutField(t, incomplete, field)
+			contents := append(append(append([]byte(nil), validPrefixJSON...), '\n'), incompleteJSON...)
+			contents = append(contents, '\n')
+
+			for _, existing := range []bool{false, true} {
+				state := "missing database"
+				if existing {
+					state = "existing database"
+				}
+				t.Run(state, func(t *testing.T) {
+					dir := t.TempDir()
+					dbPath := filepath.Join(dir, "alerts.db")
+					recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+					var beforeDB []byte
+					if existing {
+						createSQLiteFixture(t, dbPath, schemaSQL, `DROP INDEX idx_alerts_last_seen_time_id`)
+						beforeDB = readFileBytes(t, dbPath)
+					}
+					if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+						t.Fatalf("write incomplete recovery log: %v", err)
+					}
+
+					store, err := Open(context.Background(), Options{
+						Path:              dbPath,
+						RecoveryLogPath:   recoveryLogPath,
+						JournalMode:       "WAL",
+						BusyTimeoutMS:     1000,
+						AggregationWindow: window,
+						Now:               func() time.Time { return now },
+					})
+					if store != nil {
+						_ = store.Close()
+						t.Fatal("incomplete recovery log returned a usable store")
+					}
+					condition := fmt.Sprintf("required top-level recovery field %q is missing", field)
+					if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+						!strings.Contains(err.Error(), "record 2") ||
+						!strings.Contains(err.Error(), condition) {
+						t.Fatalf("startup error = %v, want record 2 ErrRecoveryLogIntegrity containing %q", err, condition)
+					}
+					assertFileBytes(t, recoveryLogPath, contents)
+					if existing {
+						assertFileBytes(t, dbPath, beforeDB)
+						assertSQLiteIndexMissing(t, dbPath, "idx_alerts_last_seen_time_id")
+					} else {
+						assertFileDoesNotExist(t, dbPath)
+					}
+				})
+			}
+		})
+	}
+}
+
+func TestStoreWriteBatchRejectsMissingRecoveryFieldsWithoutModification(t *testing.T) {
+	now := time.Date(2026, 7, 30, 4, 25, 0, 0, time.UTC)
+	window := time.Minute
+	incomplete := normalizeAlert(makeAlert(now, "missing-runtime-recovery-field"), now, window)
+
+	for _, field := range requiredRecoveryModelFields {
+		t.Run(field, func(t *testing.T) {
+			dir := t.TempDir()
+			dbPath := filepath.Join(dir, "alerts.db")
+			recoveryLogPath := filepath.Join(dir, "alerts-recovery.jsonl")
+			contents := append(recoveryRecordWithoutField(t, incomplete, field), '\n')
+			store, err := Open(context.Background(), Options{
+				Path:              dbPath,
+				RecoveryLogPath:   recoveryLogPath,
+				JournalMode:       "WAL",
+				BusyTimeoutMS:     1000,
+				AggregationWindow: window,
+				Now:               func() time.Time { return now },
+			})
+			if err != nil {
+				t.Fatalf("open store: %v", err)
+			}
+			defer store.Close()
+			if err := os.WriteFile(recoveryLogPath, contents, 0o600); err != nil {
+				t.Fatalf("write incomplete runtime recovery log: %v", err)
+			}
+			beforeDB := readFileBytes(t, dbPath)
+
+			err = store.WriteBatch(context.Background(), []*model.Alert{
+				makeAlert(now.Add(time.Second), "must-not-append"),
+			})
+			condition := fmt.Sprintf("required top-level recovery field %q is missing", field)
+			if !errors.Is(err, ErrRecoveryLogIntegrity) ||
+				!strings.Contains(err.Error(), condition) {
+				t.Fatalf("WriteBatch error = %v, want ErrRecoveryLogIntegrity containing %q", err, condition)
+			}
+			assertFileBytes(t, recoveryLogPath, contents)
+			assertFileBytes(t, dbPath, beforeDB)
+			assertSQLiteAlertCount(t, dbPath, 0)
+		})
+	}
+}
+
+func TestRecoveryFieldErrorsPrecedeMissingFieldError(t *testing.T) {
+	now := time.Date(2026, 7, 30, 4, 30, 0, 0, time.UTC)
+	alert := normalizeAlert(makeAlert(now, "recovery-field-precedence"), now, time.Minute)
+	missing := recoveryRecordWithoutField(t, alert, "matched_keyword")
+	tests := []struct {
+		name      string
+		record    []byte
+		condition string
+	}{
+		{
+			name:      "unknown name",
+			record:    recoveryRecordWithRawMembers(t, missing, `"future_field":1`),
+			condition: `unknown top-level recovery field "future_field"`,
+		},
+		{
+			name:      "duplicate name",
+			record:    recoveryRecordWithRawMembers(t, missing, `"rule_id":"rule-1"`),
+			condition: `duplicate top-level recovery field "rule_id"`,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			err := validateRecoveryRecordFieldNames(test.record)
+			if err == nil || !strings.Contains(err.Error(), test.condition) {
+				t.Fatalf("field validation error = %v, want %q", err, test.condition)
+			}
+			if strings.Contains(err.Error(), "is missing") {
+				t.Fatalf("field validation error obscured precedence with missing field: %v", err)
+			}
+		})
+	}
+}
+
 func TestStoreAcceptsCanonicalRecoveryFieldVocabulary(t *testing.T) {
 	now := time.Date(2026, 7, 29, 8, 9, 30, 0, time.UTC)
 	for _, rawPayload := range []string{"", "synthetic recovery payload"} {
@@ -2153,6 +2294,24 @@ func TestStoreAcceptsCanonicalRecoveryFieldVocabulary(t *testing.T) {
 				canonical, supported := canonicalRecoveryModelField(field)
 				if !supported || field != canonical {
 					t.Fatalf("writer-generated field %q is outside the canonical recovery vocabulary", field)
+				}
+			}
+			requiredFields := make(map[string]struct{}, len(requiredRecoveryModelFields))
+			for _, field := range requiredRecoveryModelFields {
+				if _, duplicate := requiredFields[field]; duplicate {
+					t.Fatalf("required recovery field %q is listed more than once", field)
+				}
+				requiredFields[field] = struct{}{}
+				if _, emitted := fields[field]; !emitted {
+					t.Fatalf("required recovery field %q was not emitted by the writer", field)
+				}
+			}
+			for field := range fields {
+				if field == "raw_payload" {
+					continue
+				}
+				if _, required := requiredFields[field]; !required {
+					t.Fatalf("unconditionally emitted writer field %q is not required", field)
 				}
 			}
 			_, hasRawPayload := fields["raw_payload"]
@@ -2346,7 +2505,7 @@ func TestStoreRejectsSemanticallyInvalidRecoveryLogWithoutModification(t *testin
 		{
 			name:      "empty object",
 			invalid:   func(t *testing.T) []byte { return []byte("{}") },
-			condition: "required field id is empty",
+			condition: `required top-level recovery field "id" is missing`,
 		},
 	}
 	for _, field := range fieldCases {
@@ -2370,7 +2529,7 @@ func TestStoreRejectsSemanticallyInvalidRecoveryLogWithoutModification(t *testin
 				}
 				return encoded
 			},
-			condition: "required field " + field,
+			condition: fmt.Sprintf(`required top-level recovery field %q is missing`, field),
 		})
 	}
 
@@ -2628,8 +2787,9 @@ func TestStoreRejectsBlankRecoveryRuleNameWithoutModification(t *testing.T) {
 	}
 
 	tests := []struct {
-		name    string
-		invalid func(t *testing.T) []byte
+		name      string
+		invalid   func(t *testing.T) []byte
+		condition string
 	}{
 		{
 			name: "missing",
@@ -2646,6 +2806,7 @@ func TestStoreRejectsBlankRecoveryRuleNameWithoutModification(t *testing.T) {
 				}
 				return encoded
 			},
+			condition: `required top-level recovery field "rule_name" is missing`,
 		},
 		{
 			name: "empty",
@@ -2659,6 +2820,7 @@ func TestStoreRejectsBlankRecoveryRuleNameWithoutModification(t *testing.T) {
 				}
 				return encoded
 			},
+			condition: "required field rule_name is empty",
 		},
 		{
 			name: "whitespace only",
@@ -2672,6 +2834,7 @@ func TestStoreRejectsBlankRecoveryRuleNameWithoutModification(t *testing.T) {
 				}
 				return encoded
 			},
+			condition: "required field rule_name is empty",
 		},
 	}
 	for _, test := range tests {
@@ -2712,7 +2875,7 @@ func TestStoreRejectsBlankRecoveryRuleNameWithoutModification(t *testing.T) {
 					}
 					if !errors.Is(err, ErrRecoveryLogIntegrity) ||
 						!strings.Contains(err.Error(), "record 2") ||
-						!strings.Contains(err.Error(), "required field rule_name is empty") {
+						!strings.Contains(err.Error(), test.condition) {
 						t.Fatalf("startup error = %v, want record 2 blank rule_name ErrRecoveryLogIntegrity", err)
 					}
 					assertFileBytes(t, recoveryLogPath, contents)
@@ -3406,7 +3569,7 @@ func TestStoreWriteBatchRejectsInvalidRecoveryLogBeforeAppend(t *testing.T) {
 	}{
 		{name: "malformed", contents: []byte("{\"rule_id\":\n"), condition: "decode record 1"},
 		{name: "truncated", contents: validJSON, condition: "truncated final JSONL record"},
-		{name: "semantic", contents: []byte("{}\n"), condition: "required field id is empty"},
+		{name: "semantic", contents: []byte("{}\n"), condition: `required top-level recovery field "id" is missing`},
 		{name: "normalized invariant", contents: append(inconsistentJSON, '\n'), condition: "field id does not match normalized identity"},
 		{name: "event identity", contents: append(inconsistentEventJSON, '\n'), condition: "field event_id does not match deterministic event identity"},
 		{name: "non-IPv4 address", contents: append(nonIPv4JSON, '\n'), condition: "field src_ip must be an IPv4 address"},
@@ -3474,7 +3637,7 @@ func TestStoreWriteBatchRejectsInvalidRecoveryLogBeforeAppend(t *testing.T) {
 	}{
 		name:      "missing rule name",
 		contents:  append(missingRuleNameJSON, '\n'),
-		condition: "required field rule_name is empty",
+		condition: `required top-level recovery field "rule_name" is missing`,
 	})
 	for _, test := range []struct {
 		name          string
@@ -5723,6 +5886,11 @@ func recoveryRecordWithMembers(t *testing.T, alert model.Alert, members string) 
 	if err != nil {
 		t.Fatalf("marshal recovery record: %v", err)
 	}
+	return recoveryRecordWithRawMembers(t, record, members)
+}
+
+func recoveryRecordWithRawMembers(t *testing.T, record []byte, members string) []byte {
+	t.Helper()
 	if len(record) == 0 || record[len(record)-1] != '}' {
 		t.Fatalf("recovery record is not a JSON object: %q", record)
 	}
@@ -5731,6 +5899,27 @@ func recoveryRecordWithMembers(t *testing.T, alert model.Alert, members string) 
 	result = append(result, members...)
 	result = append(result, '}')
 	return result
+}
+
+func recoveryRecordWithoutField(t *testing.T, alert model.Alert, field string) []byte {
+	t.Helper()
+	record, err := json.Marshal(alert)
+	if err != nil {
+		t.Fatalf("marshal recovery record: %v", err)
+	}
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(record, &fields); err != nil {
+		t.Fatalf("decode recovery record fields: %v", err)
+	}
+	if _, ok := fields[field]; !ok {
+		t.Fatalf("recovery field %q was not emitted", field)
+	}
+	delete(fields, field)
+	record, err = json.Marshal(fields)
+	if err != nil {
+		t.Fatalf("marshal recovery record without %s: %v", field, err)
+	}
+	return record
 }
 
 func recoveryTimestampEncodingCases(alert model.Alert) []recoveryTimestampEncodingCase {

@@ -1447,7 +1447,37 @@ func validateRecoveryRecordFieldNames(record []byte) error {
 	if duplicateErr != nil {
 		return duplicateErr
 	}
-	return fieldNameErr
+	if fieldNameErr != nil {
+		return fieldNameErr
+	}
+	for _, field := range requiredRecoveryModelFields {
+		if _, ok := seenNames[field]; !ok {
+			return fmt.Errorf("required top-level recovery field %q is missing", field)
+		}
+	}
+	return nil
+}
+
+var requiredRecoveryModelFields = []string{
+	"id",
+	"event_id",
+	"rule_id",
+	"rule_name",
+	"timestamp",
+	"src_ip",
+	"dst_ip",
+	"dst_port",
+	"protocol",
+	"severity",
+	"aggregated_count",
+	"first_seen",
+	"last_seen",
+	"window_start",
+	"mitre_tactic",
+	"mitre_technique_id",
+	"mitre_technique_name",
+	"payload_preview",
+	"matched_keyword",
 }
 
 func canonicalRecoveryModelField(name string) (string, bool) {

@@ -308,7 +308,9 @@ decoding, including exact duplicates and case-variant aliases that Go would map
 to the same durable field. Every top-level name must exactly match the current
 alert writer's JSON vocabulary; unknown scalar or nested members and
 case-variant supported names are rejected. Object member names inside accepted
-field values are not recursively inspected.
+field values are not recursively inspected. Every non-`omitempty` field
+emitted by the current writer must be present before model decoding;
+`raw_payload` remains optional.
 Each decoded record must contain the durable identity (`id`, `event_id`, and
 `rule_id`), a nonblank `rule_name`, timestamps/window, aggregate count, and
 network tuple (`src_ip`, `dst_ip`, and `protocol`) emitted by the normalized
