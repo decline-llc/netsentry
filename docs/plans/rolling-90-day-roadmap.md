@@ -103,9 +103,9 @@
 | R90-53 | Jul 30–Aug 1 | Complete early | Audit recent delivery and future planning. | R90-52 | A dated audit reconciles recent commits, plans/states, remote/Vault evidence, and release boundaries; every roadmap item has a complete definition; future work spans the active horizon; each trigger has an explicit plan-audit and two-commit closeout sequence. |
 | R90-54 | Jul 31–Aug 7 | Complete early | Enforce canonical recovery JSON numeric encoding. | R90-53 | Recovery `dst_port` and `aggregated_count` accept only the exact base-10 integer spelling emitted by the writer; alternate exponent, fractional, sign, and leading-zero forms fail before durable mutation while canonical replay remains compatible. |
 | R90-55 | Aug 8–21 | Complete early | Eliminate recovery field-contract drift. | R90-54 | One authoritative model contract drives canonical field names, required/optional status, and JSON kinds; adding or changing a writer field cannot silently bypass reader validation. |
-| R90-56 | Aug 22–Sep 18 | In progress | Preserve corrupt SQLite sidecars during preflight. | R90-55 | Deterministic primary and historical fixtures with corrupt or inconsistent WAL/SHM state fail read-only preflight clearly and preserve the database plus sidecar bytes; healthy active-WAL reads remain compatible. |
+| R90-56 | Aug 22–Sep 18 | Complete early | Preserve corrupt SQLite sidecars during preflight. | R90-55 | Deterministic primary and historical fixtures with corrupt or inconsistent WAL/SHM state fail read-only preflight clearly and preserve the database plus sidecar bytes; healthy active-WAL reads remain compatible. |
 | R90-57 | Sep 19–Oct 2 | Blocked | Define restart-free emergency recovery semantics. | R90-56; product decision | A reviewed state machine defines probe, recovery, retry, concurrency, and operator-control boundaries without risking duplicate writes or deleting evidence; implementation remains blocked until the product policy is approved. |
-| R90-58 | Oct 3–21 | Planned | Refresh the v0.1.1 candidate decision package. | R90-56 | Version, current candidate commit, gates, artifacts, checksums, platform, and hold decision are reconciled from fresh evidence without tagging or publishing. |
+| R90-58 | Oct 3–21 | Ready | Refresh the v0.1.1 candidate decision package. | R90-56 | Version, current candidate commit, gates, artifacts, checksums, platform, and hold decision are reconciled from fresh evidence without tagging or publishing. |
 | R90-59 | Oct 22–28 | Blocked | Execute the v0.1.1 publication gate. | R90-58; explicit publication authorization | Only an explicitly authorized version and commit may be tagged; GitHub Release and GHCR results must be verified directly, while absence of authority preserves the hold without mutation. |
 
 ## R90-01 Definition
@@ -1665,23 +1665,22 @@
 
 ## Current Checkpoint
 
-R90-56 is in progress from clean fetched baseline
+R90-56 completed early at
+`e97e7ceeaa1acd877e773278f6992add7baa22a4` from clean fetched baseline
 `cac88a4320dc820d9def98c8f5af775a0af5dfa2`. The trigger audit verified the
 complete R90-55 feature and closure chain, exact Vault evidence, all 247 July
 commits, 62/62 row-to-Definition coverage, and complete future-item planning.
-Direct modernc SQLite experiments established the implementation boundary:
-ordinary `mode=ro` may write, truncate, or rebuild a present SHM; conditional
-`readonly_shm=1` preserves database/WAL/SHM bytes and active-WAL visibility,
-while databases with no sidecars must retain ordinary `mode=ro`. The persisted
-plan uses independent helper-process writers and post-fault three-file byte
-comparisons for deterministic primary and encoded-path historical fixtures.
-Review additionally closed a database-symlink bypass by resolving the SQLite
-target before sidecar inspection and URI construction. After invalidating the
-initial evidence, the final seven-test sidecar matrix passed 20/20 uncached
-race runs; `make test`, E2E smoke, documentation, configuration, the 33-test
-knowledge gate, all task-state JSON parsing, formatting, and diff checks also
-passed. R90-56 remains in progress only for commit, fetched-remote, exact-range
-Vault, and docs-only closure evidence.
-R90-57 remains blocked on its product decision, R90-58 remains planned behind
-R90-56, and R90-59 remains blocked on publication authorization. Tagging and
-publication remain unauthorized.
+The shared read-only helper now resolves database symlinks, detects target-side
+WAL/SHM, and conditionally requests `readonly_shm=1`; deterministic corrupt
+fixtures fail clearly, while direct, detached, active-owner, symlink, and clean
+no-sidecar cases preserve their documented compatibility and byte boundaries.
+After invalidating evidence for every review correction, the final seven-test
+sidecar matrix passed 20/20 uncached race runs; `make test`, E2E smoke,
+documentation, configuration, the 33-test knowledge gate, all task-state JSON
+parsing, formatting, diff, staged-diff, and sensitive-information checks also
+passed. Fetched `origin/main` equals the feature commit, and the post-fetch
+knowledge gate, exact full-SHA Vault note, full index, MOC link, idempotent
+replay, and updated stable SQLite storage note are verified. R90-57 remains
+blocked on its product decision, R90-58 is ready but was not started, and
+R90-59 remains blocked on publication authorization. Tagging and publication
+remain unauthorized.

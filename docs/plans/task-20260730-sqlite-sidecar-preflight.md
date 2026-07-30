@@ -183,10 +183,37 @@ clear rejection of deterministic corrupt or inconsistent sidecar fixtures.
   or scope blocker after three additional uncached race runs of all seven new
   sidecar tests.
 
-At this validation checkpoint, every behavior and preservation criterion maps
-to passing direct evidence. Remote equality, exact-range Vault synchronization,
-and the docs-only delivery record remain intentionally pending until the
-feature commit exists.
+Every behavior and preservation criterion maps to passing direct evidence.
+Remote equality and exact-range Vault evidence were then verified after the
+feature commit; this docs-only record closes the increment without starting
+later work.
+
+## Delivery Evidence
+
+- Feature commit:
+  `e97e7ceeaa1acd877e773278f6992add7baa22a4`
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge check: passed all 33 tests.
+- Exact Vault range:
+  `cac88a4320dc820d9def98c8f5af775a0af5dfa2..e97e7ceeaa1acd877e773278f6992add7baa22a4`
+- Vault feature note, full commit index, MOC link, idempotent identical-range
+  replay, and the stable SQLite storage note at feature version
+  `e97e7ceeaa`: verified.
+- R90-58 is ready but was not started. R90-57 remains blocked on its product
+  decision, and R90-59 remains blocked on explicit publication authorization.
+
+## Final Plan Audit
+
+- All R90-56 acceptance criteria have direct regression, full-suite, E2E,
+  documentation, review, remote, and local Vault evidence.
+- Every validation result affected by a code or fixture correction was
+  explicitly invalidated and rerun on the final implementation.
+- The delivered file set remains bounded to the selected R90-56 increment.
+  No R90-57/R90-58 implementation, release tag, artifact publication, or
+  release-authority change occurred.
+- All 62 roadmap rows still have matching Definitions; the forward queue now
+  exposes R90-58 as the only dependency-ready increment while preserving the
+  explicit R90-57 and R90-59 blocks.
 
 ## Stop Conditions
 

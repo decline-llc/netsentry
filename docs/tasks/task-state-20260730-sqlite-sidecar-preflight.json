@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "cac88a4320dc820d9def98c8f5af775a0af5dfa2",
   "risk_level": "High",
-  "current_checkpoint": "validation_complete",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main agrees at cac88a4320dc820d9def98c8f5af775a0af5dfa2",
     "Verified the completed R90-55 feature and delivery-record commits plus exact Vault notes, full index, MOC links, idempotent replay, and stable storage note",
@@ -28,30 +28,28 @@
     "Passed 20 of 20 uncached focused sidecar race runs on the final implementation",
     "Passed make test and make e2e-smoke; E2E processed 6 packets, generated 5 alerts, and loaded 8 rules",
     "Passed documentation, configuration, 33-test knowledge, all-task-JSON, Go formatting, and diff checks",
-    "Completed independent read-only review with no remaining correctness or scope findings"
+    "Completed independent read-only review with no remaining correctness or scope findings",
+    "Passed the final staged-diff and sensitive-information review",
+    "Pushed e97e7ceeaa1acd877e773278f6992add7baa22a4 and verified fetched origin/main equality",
+    "Passed post-fetch knowledge validation and verified the exact full-SHA Vault note, full index, MOC, idempotent replay, and updated stable SQLite storage note",
+    "Completed the final plan audit and marked R90-58 ready without starting it"
   ],
-  "in_progress": [
-    "Finalize pre-commit audit evidence and deliver the validated R90-56 feature"
-  ],
-  "todo": [
-    "Create and push the feature commit, fetch origin/main, and rerun the knowledge gate",
-    "Synchronize and verify the exact full-SHA feature range in the single local Vault",
-    "Create and push one docs-only closure commit and synchronize its exact range without starting another increment"
-  ],
+  "in_progress": [],
+  "todo": [],
   "delivery": {
-    "commit": "",
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": "",
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false,
-    "vault_idempotent_replay_verified": false,
-    "vault_stable_storage_note_verified": false
+    "commit": "e97e7ceeaa1acd877e773278f6992add7baa22a4",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "cac88a4320dc820d9def98c8f5af775a0af5dfa2..e97e7ceeaa1acd877e773278f6992add7baa22a4",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_idempotent_replay_verified": true,
+    "vault_stable_storage_note_verified": true
   },
   "remaining_risks": [
     "Filesystem presence inspection and lazy SQLite connection establishment retain a bounded external TOCTOU window",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Resume only R90-56 from the persisted plan. Verify the clean baseline or reconcile any delivered feature commit before editing. Keep all fault fixtures temporary and independent, compare database/WAL/SHM bytes after fault injection, preserve healthy active-WAL and no-sidecar behavior, and stop before R90-57 or R90-58. Do not create a tag or publish artifacts."
+  "resume_instructions": "R90-56 is complete at e97e7ceeaa1acd877e773278f6992add7baa22a4. Do not repeat its implementation, validation, push, or feature-range Vault synchronization. On the next $netsentry-next trigger, fetch and verify origin/main, confirm both R90-56 delivery commits and their exact Vault evidence, rerun the per-trigger history and forward-plan audits, then select at most one dependency-ready increment. R90-58 is ready. R90-57 remains blocked on its product decision, R90-59 remains blocked on explicit publication authorization, and no tag or artifact publication is authorized."
 }
