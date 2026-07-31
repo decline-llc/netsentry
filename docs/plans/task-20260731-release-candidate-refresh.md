@@ -143,4 +143,30 @@ or external coordination.
   rows retained Definitions, and `git diff --check` reported no findings.
 
 All candidate, gate, and artifact acceptance criteria have direct evidence.
-Repository delivery and exact-range Vault evidence remain pending.
+Repository delivery and exact-range Vault evidence are also verified.
+
+## Delivery Evidence
+
+- Decision-package commit:
+  `6ed01a710ff17d11e196a5fb8685401407376395`
+- Fetched `origin/main`: verified equal to the decision-package commit after
+  push.
+- Post-fetch knowledge gate: passed all 33 tests.
+- Exact Vault range:
+  `78cd78574e03c8f73ff68248eed2c409d6bca406..6ed01a710ff17d11e196a5fb8685401407376395`
+- Vault iteration note, full commit index, MOC link, idempotent identical-range
+  replay, and updated stable release/testing note: verified.
+- Tag, GitHub Release, GHCR publication, and publication workflow dispatch:
+  not performed.
+
+## Final Plan Audit
+
+- Every acceptance criterion has direct clean-candidate, gate, artifact,
+  repository, remote, and local Vault evidence.
+- The only validation deviation was recorded and resolved by a complete rerun
+  using exact repository-pinned temporary tools.
+- The delivered repository paths are documentation only; generated archive
+  bytes and local tool installations remain outside Git.
+- R90-57 remains blocked on its product decision. R90-59 remains blocked on
+  explicit publication authorization for the exact version and candidate.
+- No later increment, tag, or publication action was started.

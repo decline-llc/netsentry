@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "78cd78574e03c8f73ff68248eed2c409d6bca406",
   "risk_level": "High",
-  "current_checkpoint": "validated",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local main agrees at 78cd78574e03c8f73ff68248eed2c409d6bca406",
     "Verified the complete R90-56 feature and closure chain, exact Vault notes, full index, MOC links, and 33-test knowledge gate",
@@ -21,17 +21,19 @@
     "Passed the v0.1.1 release gate",
     "Independently verified the fresh linux/amd64 archive at 9760241 bytes with SHA-256 c68e09df46d24307c9a0d405a2724573f3382813a8b2611bdb5f3b7d8b068568",
     "Refreshed the hold-state decision package, release readiness, roadmap checkpoint, and task evidence without tagging or publication",
-    "Passed documentation, evidence, 33-test knowledge, all-task-JSON, 62-of-62 roadmap definition, and diff checks"
+    "Passed documentation, evidence, 33-test knowledge, all-task-JSON, 62-of-62 roadmap definition, and diff checks",
+    "Passed the final staged-diff and sensitive-information review",
+    "Committed and pushed the decision package at 6ed01a710ff17d11e196a5fb8685401407376395",
+    "Fetched origin/main and verified equality with the decision-package commit",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range 78cd78574e03c8f73ff68248eed2c409d6bca406..6ed01a710ff17d11e196a5fb8685401407376395 to the single local Vault",
+    "Verified the Vault iteration note, full index, MOC link, idempotent replay, and updated stable release/testing note",
+    "Completed the final plan audit without starting R90-59, creating a tag, or publishing an artifact"
   ],
-  "in_progress": [
-    "Deliver the validated R90-58 documentation and verify remote and Vault evidence"
-  ],
-  "todo": [
-    "Commit, push, fetch-verify, and synchronize the feature range to the single local Vault",
-    "Persist and deliver one docs-only closure record with verified remote and Vault facts"
-  ],
+  "in_progress": [],
+  "todo": [],
   "remaining_risks": [
-    "Required Docker or remote supply-chain infrastructure can fail ambiguously",
+    "R90-57 remains blocked on a restart-free recovery product decision",
     "Tagging and publication remain unauthorized"
   ],
   "candidate": {
@@ -51,14 +53,14 @@
     "published": false
   },
   "delivery": {
-    "commit": "",
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": "",
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false,
-    "vault_stable_release_note_verified": false
+    "commit": "6ed01a710ff17d11e196a5fb8685401407376395",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "78cd78574e03c8f73ff68248eed2c409d6bca406..6ed01a710ff17d11e196a5fb8685401407376395",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_release_note_verified": true
   },
-  "resume_instructions": "Resume R90-58 from the persisted plan. Keep the candidate pinned to fetched commit 78cd78574e03c8f73ff68248eed2c409d6bca406 unless candidate validation proves drift before delivery. Run required validation only from a clean isolated worktree at that commit. Do not tag or publish. R90-57 remains blocked on its product decision and R90-59 remains blocked on explicit publication authorization."
+  "resume_instructions": "R90-58 is complete at decision-package commit 6ed01a710ff17d11e196a5fb8685401407376395 for validated candidate 78cd78574e03c8f73ff68248eed2c409d6bca406. Do not repeat its validation, artifact build, push, or feature-range Vault synchronization. On the next $netsentry-next trigger, fetch and verify origin/main and this closure commit plus exact Vault evidence before selecting work. R90-57 remains blocked on its product decision. R90-59 remains blocked until the user explicitly authorizes exact version v0.1.1 and candidate 78cd78574e03c8f73ff68248eed2c409d6bca406. Do not tag or publish without that authority."
 }

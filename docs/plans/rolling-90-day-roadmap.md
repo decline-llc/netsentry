@@ -105,7 +105,7 @@
 | R90-55 | Aug 8–21 | Complete early | Eliminate recovery field-contract drift. | R90-54 | One authoritative model contract drives canonical field names, required/optional status, and JSON kinds; adding or changing a writer field cannot silently bypass reader validation. |
 | R90-56 | Aug 22–Sep 18 | Complete early | Preserve corrupt SQLite sidecars during preflight. | R90-55 | Deterministic primary and historical fixtures with corrupt or inconsistent WAL/SHM state fail read-only preflight clearly and preserve the database plus sidecar bytes; healthy active-WAL reads remain compatible. |
 | R90-57 | Sep 19–Oct 2 | Blocked | Define restart-free emergency recovery semantics. | R90-56; product decision | A reviewed state machine defines probe, recovery, retry, concurrency, and operator-control boundaries without risking duplicate writes or deleting evidence; implementation remains blocked until the product policy is approved. |
-| R90-58 | Oct 3–21 | In progress | Refresh the v0.1.1 candidate decision package. | R90-56 | Version, current candidate commit, gates, artifacts, checksums, platform, and hold decision are reconciled from fresh evidence without tagging or publishing. |
+| R90-58 | Oct 3–21 | Complete early | Refresh the v0.1.1 candidate decision package. | R90-56 | Version, current candidate commit, gates, artifacts, checksums, platform, and hold decision are reconciled from fresh evidence without tagging or publishing. |
 | R90-59 | Oct 22–28 | Blocked | Execute the v0.1.1 publication gate. | R90-58; explicit publication authorization | Only an explicitly authorized version and commit may be tagged; GitHub Release and GHCR results must be verified directly, while absence of authority preserves the hold without mutation. |
 
 ## R90-01 Definition
@@ -1665,7 +1665,8 @@
 
 ## Current Checkpoint
 
-R90-58 is in progress from clean fetched candidate
+R90-58 completed early at
+`6ed01a710ff17d11e196a5fb8685401407376395` for clean fetched candidate
 `78cd78574e03c8f73ff68248eed2c409d6bca406`. The trigger audit verified the
 complete R90-56 feature and closure chain, exact Vault evidence, all 249 July
 commits, 62/62 row-to-Definition coverage, and complete future-item planning.
@@ -1677,8 +1678,10 @@ zero reachable Go vulnerabilities; the v0.1.1 release gate passed. The fresh
 `c68e09df46d24307c9a0d405a2724573f3382813a8b2611bdb5f3b7d8b068568`.
 The first combined sequence stopped after RC because pinned local tools were
 absent; after installing the exact temporary tool versions, the entire sequence
-was rerun successfully. R90-58 remains in progress only for repository checks,
-commit, fetched-remote, exact-range Vault, and docs-only closure evidence.
-R90-57 remains blocked on its product decision, and R90-59 remains blocked on
-explicit authorization for the exact v0.1.1 candidate. Tagging and publication
+was rerun successfully. The feature commit is pushed and fetched
+`origin/main` equals it; the post-fetch knowledge gate, exact full-SHA Vault
+note, full index, MOC link, idempotent replay, and stable release/testing note
+are verified. R90-57 remains blocked on its product decision, and R90-59
+remains blocked on explicit authorization for exact version `v0.1.1` and
+candidate `78cd78574e03c8f73ff68248eed2c409d6bca406`. Tagging and publication
 remain unauthorized.
