@@ -10,14 +10,14 @@
 - Required next authority: explicit final publication authorization for
   `v0.1.1` at the candidate commit below
 
-This package completes R90-06 release-decision reconciliation. It does not
-grant or imply publication authority.
+This package was refreshed by R90-58 after the completed storage and protocol
+hardening sequence. It does not grant or imply publication authority.
 
 ## Proposed Release Candidate
 
 - Version: `v0.1.1`
 - Proposed tag: `v0.1.1`
-- Candidate commit: `ad8a443b5020037c235419f5696c60988d2bba99`
+- Candidate commit: `78cd78574e03c8f73ff68248eed2c409d6bca406`
 - Candidate branch: `main`
 - Remote verification: fetched `origin/main` matched the candidate commit
 - Existing tags at decision time: `v0.1.0` only
@@ -36,32 +36,35 @@ release gates, and replace this decision package before publication.
   current release gate; raw corpora, private paths, and local review materials
   remain excluded from Git and the Vault
 
-The candidate contains the accepted evidence record plus subsequent delivery
-reconciliation, the approved roadmap-window and PCAP gate waivers, and
-version-to-evidence workflow binding. The complete RC, supply-chain audit, and
-release gate were rerun on the candidate worktree.
+The candidate contains the accepted evidence record, approved roadmap-window
+and PCAP gate waivers, version-to-evidence workflow binding, and the completed
+R90-07 through R90-56 hardening sequence. The complete RC, supply-chain audit,
+and release gate were rerun from an isolated clean worktree at the exact
+candidate commit.
 
 ## Local Artifact
 
 - Platform: `linux/amd64`
 - Archive: `netsentry-0.1.1-linux-amd64.tar.gz`
-- Byte size: `9,561,869`
+- Byte size: `9,760,241`
 - SHA-256:
-  `aa88bb4b25e9bb2418e2762f788ebad0159753ebe16868b33ae9d0253b981967`
+  `c68e09df46d24307c9a0d405a2724573f3382813a8b2611bdb5f3b7d8b068568`
 - Checksum verification: pass
 - Archive release-notes version verification: pass
 - Repository handling: generated under ignored `dist/`; archive bytes and
   checksum file are not committed
 
-The artifact was rebuilt while `HEAD` and fetched `origin/main` both resolved
-to the proposed candidate commit.
+The artifact was freshly rebuilt in the isolated candidate worktree. Its
+detached `HEAD` and the source repository's fetched `origin/main` both resolved
+to the proposed candidate commit; uncommitted R90-58 planning files were
+therefore excluded from the artifact.
 
 ## Candidate Validation
 
 | Control | Result |
 | --- | --- |
 | `VERSION=0.1.1 make rc-check` | Pass, including Docker build, image-content smoke, and runtime health smoke |
-| Go statement coverage | 75.4% |
+| Go statement coverage | 78.3% |
 | Parser fuzz smoke | Pass, 5,000 iterations |
 | Release archive contents and checksum smoke | Pass |
 | `RELEASE_EVIDENCE=docs/evidence/release-v0.1.1.md make release-gate` | Pass |
@@ -70,9 +73,13 @@ to the proposed candidate commit.
 | Workflow syntax and pin checks | Pass |
 | Documentation, Python, evidence, and knowledge checks | Pass |
 
-One supply-chain download attempt ended with a transient TLS EOF after six
-matched assets. The unchanged command was rerun and completed with all nine
-assets matching their locked byte sizes and SHA-256 digests.
+The first combined validation attempt completed the full Docker RC, then
+stopped before the supply-chain audit because the pinned `actionlint` tool was
+not installed locally. Exact `actionlint v1.7.12` and `govulncheck v1.6.0`
+builds were installed into a temporary directory using Go 1.25.12, and the
+entire combined sequence was rerun from the beginning. The accepted rerun
+passed all RC checks, fetched and matched all nine locked external assets,
+reported zero reachable Go vulnerabilities, and passed the release gate.
 
 ## Publication Workflow Readiness
 
@@ -87,6 +94,7 @@ assets matching their locked byte sizes and SHA-256 digests.
 ## Publication Gate
 
 The current decision is **hold**. A later formal publication gate must
-explicitly authorize the version and candidate commit before any tag is
-created. That authorization may then permit the tag-triggered GitHub Release
-and GHCR workflows; it is outside R90-06.
+explicitly authorize version `v0.1.1` and candidate commit
+`78cd78574e03c8f73ff68248eed2c409d6bca406` before any tag is created. That
+authorization may then permit the tag-triggered GitHub Release and GHCR
+workflows; it is outside R90-58.

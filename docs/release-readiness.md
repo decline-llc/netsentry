@@ -1,4 +1,4 @@
-# NetSentry v0.1.0 Release Readiness
+# NetSentry Release Readiness
 
 > Status: release-candidate preparation. This file tracks public release gates and evidence commands. It must not contain private pcap paths, private fuzz corpora, credentials, or local operator notes.
 
@@ -28,6 +28,14 @@ Ready:
 - The user approved `docs/audit/release_exception_r9005.yaml` on 2026-07-16 for one exact 7,500-packet synthetic corpus. The exception pins SHA-256 `509e940bc275d1972c09a4d9fd061e942516e22a0931d44eb9eb24deb7c66e68`, requires explicit non-production labeling and exact integrity verification, applies only to R90-05, and expires before R90-06.
 - R90-05 final v0.1.1 release-gate acceptance passed on 2026-07-16 at commit `6c3f9ef276c99c13aa9e985b8c849bb5f0791752`. The exception is now expired and cannot be reused. This acceptance does not create a tag or authorize public release.
 - The global waiver in `docs/audit/pcap_release_gate_waiver.yaml` removes every PCAP evidence requirement from current and future release gates. PCAP tools remain optional diagnostics; raw PCAPs and private paths remain outside Git/Vault.
+- R90-58 refreshed the held v0.1.1 candidate on 2026-07-31 from clean fetched
+  commit `78cd78574e03c8f73ff68248eed2c409d6bca406`. Full Docker RC passed
+  with 78.3% Go coverage, the pinned supply-chain audit fetched and matched all
+  9 locked assets with zero reachable Go vulnerabilities, and the release gate
+  passed. The fresh `linux/amd64` archive is 9,760,241 bytes with SHA-256
+  `c68e09df46d24307c9a0d405a2724573f3382813a8b2611bdb5f3b7d8b068568`.
+  Publication remains on hold; no tag, GitHub Release, or GHCR image was
+  created.
 
 v0.1.0 publication result:
 
