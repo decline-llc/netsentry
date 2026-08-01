@@ -248,15 +248,15 @@ If the integrity preflight fails:
 NetSentry does not automatically repair, replace, quarantine, or delete a
 database that fails this check.
 
-### Planned restart-free emergency recovery test contract
+### Restart-free emergency recovery test contract
 
-R90-57 defines an operator-triggered design only. Until a later implementation
-increment lands, emergency mode remains sticky until restart. The future
-implementation must require authenticated operator intent and must not add a
-timer, free-space poller, implicit write retry, or automatic cleanup.
+R90-60 implements the operator-triggered design from R90-57. Emergency mode is
+sticky until restart or a successful authenticated `POST
+/api/storage/recovery` request. The implementation has no timer, free-space
+poller, implicit write retry, or automatic cleanup.
 
-Implementation tests must synchronize on observable state/lifecycle boundaries
-and cover all of the following without fixed sleeps:
+Tests synchronize on observable state/lifecycle boundaries without fixed
+sleeps. The durable contract covers:
 
 1. **Ownership:** exactly one request changes `emergency` to `recovering`; a
    concurrent request receives a conflict and does not wait or start later.
@@ -575,7 +575,7 @@ Current validation baseline:
 - Receiver contract tests enforce strict IPv4 packet addresses, including
   ordinary and IPv4-mapped IPv6 rejection with one decode error and no queued
   packet.
-- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation including nanosecond timestamp aggregation/order/filter/pruning and query-plan coverage, daily shards, bounded recovery-log encoding/replay plus canonical-field-vocabulary, required-value-kind, duplicate-field, timestamp-encoding, event-identity, severity, rule-name, MITRE-tuple, protocol-name, and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, cross-process corrupt WAL/SHM three-file preservation, non-binary aggregation, generated-column, `CHECK`-constraint, and write-critical foreign-key rejection, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact alert filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple/IPv4-address rejection, direct and symlinked active WAL-backed read-only access without SHM mutation, clean no-sidecar reopen compatibility, and storage degraded/emergency behavior.
+- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation including nanosecond timestamp aggregation/order/filter/pruning and query-plan coverage, daily shards, bounded recovery-log encoding/replay plus canonical-field-vocabulary, required-value-kind, duplicate-field, timestamp-encoding, event-identity, severity, rule-name, MITRE-tuple, protocol-name, and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, cross-process corrupt WAL/SHM three-file preservation, non-binary aggregation, generated-column, `CHECK`-constraint, and write-critical foreign-key rejection, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact alert filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple/IPv4-address rejection, direct and symlinked active WAL-backed read-only access without SHM mutation, clean no-sidecar reopen compatibility, storage degraded/emergency behavior, explicit recovery ownership/cancellation, preservation-safe multi-shard preflight, empty-log write probing, retained-log retry, authenticated API status mapping, recovering health observation, and redacted audit phase metadata.
 - Release-candidate checks run syntax checks, repository configuration validation, dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 
 The C-side JSON line formatter is intentionally kept as a bounded handwritten v0.1.0 implementation. It avoids a new C dependency, rejects truncation, escapes JSON strings, Base64-encodes packet payload previews, and is covered by the UDS sender tests and current smoke checks. A cJSON migration should be reopened only with a concrete defect or fuzzing result.

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -53,6 +54,17 @@ type fakeStoreWithPath struct {
 }
 
 func (s *fakeStoreWithPath) Path() string { return s.path }
+
+type fakeRecoveryStore struct {
+	fakeStore
+	recoverErr error
+	calls      int
+}
+
+func (s *fakeRecoveryStore) Recover(context.Context) error {
+	s.calls++
+	return s.recoverErr
+}
 
 type fakeQueryStore struct {
 	fakeStore
@@ -316,6 +328,118 @@ func TestReadOnlyEndpointsRejectNonGET(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestStorageRecoveryRequiresPostAndConfiguredAuthentication(t *testing.T) {
+	store := &fakeRecoveryStore{}
+	server := NewServer(store, fakeQueue{}, &fakeRules{}, stats.New())
+
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/storage/recovery", nil)
+	server.Handler().ServeHTTP(rec, req)
+	if rec.Code != http.StatusMethodNotAllowed || rec.Header().Get("Allow") != http.MethodPost {
+		t.Fatalf("GET recovery status=%d allow=%q body=%s", rec.Code, rec.Header().Get("Allow"), rec.Body.String())
+	}
+
+	rec = httptest.NewRecorder()
+	req = httptest.NewRequest(http.MethodPost, "/api/storage/recovery", nil)
+	server.Handler().ServeHTTP(rec, req)
+	if rec.Code != http.StatusConflict || !strings.Contains(rec.Body.String(), `"code":"STORAGE_RECOVERY_AUTH_REQUIRED"`) {
+		t.Fatalf("unauthenticated configuration status=%d body=%s", rec.Code, rec.Body.String())
+	}
+	if store.calls != 0 {
+		t.Fatalf("recovery calls=%d, want 0 without configured auth", store.calls)
+	}
+}
+
+func TestStorageRecoveryRequiresAndAcceptsBearerToken(t *testing.T) {
+	store := &fakeRecoveryStore{}
+	server := NewServerWithOptions(store, fakeQueue{}, &fakeRules{}, stats.New(), Options{
+		AuthEnabled: true,
+		AuthToken:   "secret",
+	})
+
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/storage/recovery", nil)
+	server.Handler().ServeHTTP(rec, req)
+	if rec.Code != http.StatusUnauthorized || store.calls != 0 {
+		t.Fatalf("missing token status=%d calls=%d body=%s", rec.Code, store.calls, rec.Body.String())
+	}
+
+	rec = httptest.NewRecorder()
+	req = httptest.NewRequest(http.MethodPost, "/api/storage/recovery", nil)
+	req.Header.Set("Authorization", "Bearer secret")
+	server.Handler().ServeHTTP(rec, req)
+	if rec.Code != http.StatusOK || store.calls != 1 {
+		t.Fatalf("valid token status=%d calls=%d body=%s", rec.Code, store.calls, rec.Body.String())
+	}
+	if rec.Header().Get("X-NetSentry-Recovery-Phase") != "complete" || !strings.Contains(rec.Body.String(), `"phase":"complete"`) {
+		t.Fatalf("unexpected recovery success response: headers=%v body=%s", rec.Header(), rec.Body.String())
+	}
+}
+
+func TestStorageRecoveryMapsStableConflictAndFailurePhases(t *testing.T) {
+	tests := []struct {
+		name     string
+		err      error
+		status   int
+		code     string
+		phase    string
+		writable string
+	}{
+		{name: "not needed", err: alert.ErrStorageRecoveryNotNeeded, status: http.StatusConflict, code: "STORAGE_RECOVERY_NOT_NEEDED", phase: "not_needed"},
+		{name: "in progress", err: alert.ErrStorageRecoveryInProgress, status: http.StatusConflict, code: "STORAGE_RECOVERY_IN_PROGRESS", phase: "in_progress"},
+		{name: "preflight", err: &alert.RecoveryError{Phase: "preflight", Err: errors.New("private path detail")}, status: http.StatusServiceUnavailable, code: "STORAGE_RECOVERY_FAILED", phase: "preflight", writable: "writable_attempted=false"},
+		{name: "replay", err: &alert.RecoveryError{Phase: "replay", WritableAttempted: true, Err: errors.New("private path detail")}, status: http.StatusServiceUnavailable, code: "STORAGE_RECOVERY_FAILED", phase: "replay", writable: "writable_attempted=true"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			store := &fakeRecoveryStore{recoverErr: tt.err}
+			server := NewServerWithOptions(store, fakeQueue{}, &fakeRules{}, stats.New(), Options{AuthEnabled: true, AuthToken: "secret"})
+			rec := httptest.NewRecorder()
+			req := httptest.NewRequest(http.MethodPost, "/api/storage/recovery", nil)
+			req.Header.Set("Authorization", "Bearer secret")
+			server.Handler().ServeHTTP(rec, req)
+
+			if rec.Code != tt.status || !strings.Contains(rec.Body.String(), `"code":"`+tt.code+`"`) {
+				t.Fatalf("status=%d body=%s", rec.Code, rec.Body.String())
+			}
+			if got := rec.Header().Get("X-NetSentry-Recovery-Phase"); got != tt.phase {
+				t.Fatalf("phase header=%q, want %q", got, tt.phase)
+			}
+			if strings.Contains(rec.Body.String(), "private path detail") {
+				t.Fatalf("response leaked underlying recovery error: %s", rec.Body.String())
+			}
+			if tt.writable != "" && !strings.Contains(rec.Body.String(), tt.writable) {
+				t.Fatalf("response missing %q: %s", tt.writable, rec.Body.String())
+			}
+		})
+	}
+}
+
+func TestHealthVerboseReportsRecoveryWithoutWaitingForStoreCount(t *testing.T) {
+	started := time.Date(2026, 8, 1, 10, 0, 0, 0, time.UTC)
+	store := &fakeStore{
+		err: errors.New("count must not run while recovering"),
+		health: alert.StorageHealth{
+			Status:            "recovering",
+			RecoveryPhase:     "preflight",
+			RecoveryStartedAt: started,
+		},
+	}
+	server := NewServer(store, fakeQueue{}, &fakeRules{}, stats.New())
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/health?verbose=true", nil)
+	server.Handler().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status=%d body=%s", rec.Code, rec.Body.String())
+	}
+	for _, want := range []string{`"status":"recovering"`, `"recovery_phase":"preflight"`, `"recovery_started_at":"` + started.Format(time.RFC3339Nano) + `"`} {
+		if !strings.Contains(rec.Body.String(), want) {
+			t.Fatalf("health missing %q: %s", want, rec.Body.String())
+		}
 	}
 }
 
@@ -1196,6 +1320,35 @@ func TestAuditLogsMutationRequests(t *testing.T) {
 	}
 	if fields["status"] != int64(http.StatusConflict) || fields["target"] != "rules" {
 		t.Fatalf("unexpected audit result fields: %+v", fields)
+	}
+}
+
+func TestAuditLogsStorageRecoveryPhaseWithoutPrivateError(t *testing.T) {
+	core, observed := observer.New(zap.InfoLevel)
+	store := &fakeRecoveryStore{recoverErr: &alert.RecoveryError{
+		Phase: "preflight",
+		Err:   errors.New("private/operator/path.db"),
+	}}
+	server := NewServerWithOptions(store, fakeQueue{}, &fakeRules{}, stats.New(), Options{
+		AuthEnabled: true,
+		AuthToken:   "secret",
+		AuditLogger: zap.New(core),
+	})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/storage/recovery", nil)
+	req.Header.Set("Authorization", "Bearer secret")
+	server.Handler().ServeHTTP(rec, req)
+
+	entries := observed.FilterMessage("api audit").All()
+	if len(entries) != 1 {
+		t.Fatalf("audit entries=%d, want 1", len(entries))
+	}
+	fields := entries[0].ContextMap()
+	if fields["target"] != "storage" || fields["phase"] != "preflight" || fields["authorized"] != true {
+		t.Fatalf("unexpected storage audit fields: %+v", fields)
+	}
+	if strings.Contains(entries[0].Message+fmt.Sprint(fields), "private/operator/path.db") || strings.Contains(rec.Body.String(), "private/operator/path.db") {
+		t.Fatalf("recovery audit or response leaked private error: fields=%+v body=%s", fields, rec.Body.String())
 	}
 }
 

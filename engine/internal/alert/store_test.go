@@ -6202,6 +6202,278 @@ func TestStoreEmergencyModePersistsRecoveryLogUntilRestart(t *testing.T) {
 	}
 }
 
+func TestStoreRecoveryRequiresEmergencyMode(t *testing.T) {
+	store := openTestStore(t, time.Minute)
+	defer store.Close()
+
+	if err := store.Recover(context.Background()); !errors.Is(err, ErrStorageRecoveryNotNeeded) {
+		t.Fatalf("recover healthy store error = %v, want ErrStorageRecoveryNotNeeded", err)
+	}
+}
+
+func TestStoreRecoveryReplaysPendingLogAndProbesEmptyLog(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	dbPath := filepath.Join(dir, "alerts.db")
+	recoveryPath := filepath.Join(dir, "alerts-recovery.jsonl")
+	now := time.Date(2026, 8, 1, 9, 0, 0, 0, time.UTC)
+	store, err := Open(ctx, Options{
+		Path:              dbPath,
+		RecoveryLogPath:   recoveryPath,
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now:               func() time.Time { return now },
+	})
+	if err != nil {
+		t.Fatalf("open store: %v", err)
+	}
+	defer store.Close()
+
+	store.markEmergency(syscall.ENOSPC)
+	if err := store.WriteBatch(ctx, []*model.Alert{makeAlert(now, "operator-recovery")}); !errors.Is(err, ErrStorageEmergency) {
+		t.Fatalf("emergency write error = %v, want ErrStorageEmergency", err)
+	}
+	if err := store.Recover(ctx); err != nil {
+		t.Fatalf("recover pending log: %v", err)
+	}
+	listed, err := store.List(ctx)
+	if err != nil {
+		t.Fatalf("list recovered alerts: %v", err)
+	}
+	if len(listed) != 1 || listed[0].MatchedKeyword != "operator-recovery" {
+		t.Fatalf("recovered alerts = %+v, want operator-recovery", listed)
+	}
+	if info, err := os.Stat(recoveryPath); err != nil || info.Size() != 0 {
+		t.Fatalf("recovery log after success = %+v, err=%v, want empty", info, err)
+	}
+	health := store.Health()
+	if health.Status != "ok" || health.RecoveryPhase != "" || health.LastRecoveryResult != "succeeded" || health.LastRecoveryAt.IsZero() {
+		t.Fatalf("health after replay recovery = %+v", health)
+	}
+
+	var eventsBefore int
+	if err := store.db.QueryRow("SELECT COUNT(*) FROM alert_events").Scan(&eventsBefore); err != nil {
+		t.Fatalf("count events before empty probe: %v", err)
+	}
+	store.markEmergency(syscall.ENOSPC)
+	if err := store.Recover(ctx); err != nil {
+		t.Fatalf("recover empty log: %v", err)
+	}
+	var eventsAfter int
+	if err := store.db.QueryRow("SELECT COUNT(*) FROM alert_events").Scan(&eventsAfter); err != nil {
+		t.Fatalf("count events after empty probe: %v", err)
+	}
+	if eventsAfter != eventsBefore {
+		t.Fatalf("empty recovery probe left %d events, want %d", eventsAfter, eventsBefore)
+	}
+}
+
+func TestStoreRecoveryPreflightPreservesMalformedLogAndDatabase(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	dbPath := filepath.Join(dir, "alerts.db")
+	recoveryPath := filepath.Join(dir, "alerts-recovery.jsonl")
+	store, err := Open(ctx, Options{Path: dbPath, RecoveryLogPath: recoveryPath, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open store: %v", err)
+	}
+	defer store.Close()
+
+	malformed := []byte("{not-json}\n")
+	if err := os.WriteFile(recoveryPath, malformed, 0o600); err != nil {
+		t.Fatalf("write malformed recovery log: %v", err)
+	}
+	databaseBefore := readFileBytes(t, dbPath)
+	store.markEmergency(syscall.ENOSPC)
+	err = store.Recover(ctx)
+	var recoveryErr *RecoveryError
+	if !errors.As(err, &recoveryErr) || recoveryErr.Phase != "preflight" || recoveryErr.WritableAttempted {
+		t.Fatalf("recovery error = %#v, want preservation-safe preflight failure", err)
+	}
+	assertFileBytes(t, recoveryPath, malformed)
+	assertFileBytes(t, dbPath, databaseBefore)
+	if health := store.Health(); health.Status != "emergency" || health.LastRecoveryResult != "failed" ||
+		health.LastError != "storage recovery failed during preflight" || strings.Contains(health.LastError, dbPath) {
+		t.Fatalf("health after rejected recovery = %+v", health)
+	}
+}
+
+func TestStoreRecoveryCancellationBeforeLifecycleReadinessReleasesOwnership(t *testing.T) {
+	ctx := context.Background()
+	store := openTestStore(t, time.Minute)
+	defer store.Close()
+	store.markEmergency(syscall.ENOSPC)
+
+	if err := store.lifecycle.acquireShared(ctx); err != nil {
+		t.Fatalf("hold lifecycle reader: %v", err)
+	}
+	recoveryCtx, cancel := context.WithCancel(ctx)
+	done := make(chan error, 1)
+	go func() { done <- store.Recover(recoveryCtx) }()
+	waitForStorageStatus(t, store, "recovering")
+	if err := store.Recover(ctx); !errors.Is(err, ErrStorageRecoveryInProgress) {
+		t.Fatalf("duplicate recovery error = %v, want ErrStorageRecoveryInProgress", err)
+	}
+	cancel()
+	var recoveryErr *RecoveryError
+	if err := <-done; !errors.As(err, &recoveryErr) || recoveryErr.Phase != "waiting_for_lifecycle" {
+		t.Fatalf("cancelled recovery error = %#v, want lifecycle RecoveryError", err)
+	}
+	store.lifecycle.releaseShared()
+	if err := store.Recover(ctx); err != nil {
+		t.Fatalf("recover after cancelled owner: %v", err)
+	}
+}
+
+func TestStoreCloseCancelsRecoveryBeforeLifecycleReadiness(t *testing.T) {
+	ctx := context.Background()
+	store := openTestStore(t, time.Minute)
+	store.markEmergency(syscall.ENOSPC)
+
+	if err := store.lifecycle.acquireShared(ctx); err != nil {
+		t.Fatalf("hold lifecycle reader: %v", err)
+	}
+	recoveryDone := make(chan error, 1)
+	go func() { recoveryDone <- store.Recover(ctx) }()
+	waitForStorageStatus(t, store, "recovering")
+
+	closeDone := make(chan error, 1)
+	go func() { closeDone <- store.Close() }()
+	var recoveryErr *RecoveryError
+	select {
+	case err := <-recoveryDone:
+		if !errors.As(err, &recoveryErr) || recoveryErr.Phase != "waiting_for_lifecycle" || !errors.Is(err, context.Canceled) {
+			t.Fatalf("shutdown-cancelled recovery error = %#v, want cancelled lifecycle RecoveryError", err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("close did not cancel recovery waiting for lifecycle")
+	}
+
+	store.lifecycle.releaseShared()
+	select {
+	case err := <-closeDone:
+		if err != nil {
+			t.Fatalf("close after recovery cancellation: %v", err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("close did not finish after lifecycle reader released")
+	}
+	if health := store.Health(); health.Status != "closed" {
+		t.Fatalf("health after close = %+v, want closed", health)
+	}
+}
+
+func TestStoreRecoveryWritableFailureRetainsLogAndAllowsExplicitRetry(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	dbPath := filepath.Join(dir, "alerts.db")
+	recoveryPath := filepath.Join(dir, "alerts-recovery.jsonl")
+	store, err := Open(ctx, Options{Path: dbPath, RecoveryLogPath: recoveryPath, JournalMode: "DELETE"})
+	if err != nil {
+		t.Fatalf("open store: %v", err)
+	}
+	defer store.Close()
+
+	store.markEmergency(syscall.ENOSPC)
+	if err := store.WriteBatch(ctx, []*model.Alert{makeAlert(time.Now().UTC(), "retry-recovery")}); !errors.Is(err, ErrStorageEmergency) {
+		t.Fatalf("emergency write error = %v, want ErrStorageEmergency", err)
+	}
+	logBefore := readFileBytes(t, recoveryPath)
+	if err := store.db.Close(); err != nil {
+		t.Fatalf("close database before recovery: %v", err)
+	}
+	err = store.Recover(ctx)
+	var recoveryErr *RecoveryError
+	if !errors.As(err, &recoveryErr) || recoveryErr.Phase != "replay" || !recoveryErr.WritableAttempted {
+		t.Fatalf("writable recovery error = %#v, want replay RecoveryError", err)
+	}
+	assertFileBytes(t, recoveryPath, logBefore)
+
+	db, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatalf("reopen database for explicit retry: %v", err)
+	}
+	db.SetMaxOpenConns(1)
+	store.db = db
+	if err := store.init(ctx, Options{JournalMode: "DELETE", BusyTimeoutMS: 1000}); err != nil {
+		t.Fatalf("initialize reopened database: %v", err)
+	}
+	if err := store.Recover(ctx); err != nil {
+		t.Fatalf("explicit recovery retry: %v", err)
+	}
+	listed, err := store.List(ctx)
+	if err != nil {
+		t.Fatalf("list after explicit retry: %v", err)
+	}
+	if len(listed) != 1 || listed[0].MatchedKeyword != "retry-recovery" || listed[0].AggregatedCount != 1 {
+		t.Fatalf("alerts after explicit retry = %+v", listed)
+	}
+}
+
+func TestStoreRecoverySupportsDailyShardEncodedPaths(t *testing.T) {
+	ctx := context.Background()
+	dir := filepath.Join(t.TempDir(), "daily shards with spaces")
+	now := time.Date(2026, 8, 1, 10, 0, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	store.markEmergency(syscall.ENOSPC)
+	if err := store.WriteBatch(ctx, []*model.Alert{makeAlert(historical, "encoded-recovery")}); !errors.Is(err, ErrStorageEmergency) {
+		t.Fatalf("emergency daily write error = %v, want ErrStorageEmergency", err)
+	}
+	if err := store.Recover(ctx); err != nil {
+		t.Fatalf("recover encoded daily shard: %v", err)
+	}
+	query := Query{Since: &historical, Until: &historical, Limit: 10}
+	listed, total, err := store.Query(ctx, query)
+	if err != nil {
+		t.Fatalf("query recovered daily shard: %v", err)
+	}
+	if total != 1 || len(listed) != 1 || listed[0].MatchedKeyword != "encoded-recovery" {
+		t.Fatalf("recovered daily alerts total=%d alerts=%+v", total, listed)
+	}
+}
+
+func TestStoreRecoveryPreflightsEveryReferencedShardWithoutModification(t *testing.T) {
+	ctx := context.Background()
+	dir := t.TempDir()
+	now := time.Date(2026, 8, 1, 11, 0, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	defer store.Close()
+
+	historical := now.AddDate(0, 0, -1)
+	path := filepath.Join(dir, "netsentry-"+historical.Format("2006-01-02")+".db")
+	createSQLiteFixture(t, path, `CREATE TABLE operator_data (value TEXT)`)
+	shardBefore := readFileBytes(t, path)
+	store.markEmergency(syscall.ENOSPC)
+	if err := store.WriteBatch(ctx, []*model.Alert{makeAlert(historical, "incompatible-recovery-shard")}); !errors.Is(err, ErrStorageEmergency) {
+		t.Fatalf("emergency daily write error = %v, want ErrStorageEmergency", err)
+	}
+	logBefore := readFileBytes(t, store.recoveryLogPath)
+
+	err := store.Recover(ctx)
+	var recoveryErr *RecoveryError
+	if !errors.As(err, &recoveryErr) || recoveryErr.Phase != "preflight" || recoveryErr.WritableAttempted || !errors.Is(err, ErrDatabaseIntegrity) {
+		t.Fatalf("referenced shard recovery error = %#v, want preservation-safe database preflight", err)
+	}
+	assertFileBytes(t, path, shardBefore)
+	assertFileBytes(t, store.recoveryLogPath, logBefore)
+}
+
+func waitForStorageStatus(t *testing.T, store *Store, status string) {
+	t.Helper()
+	deadline := time.Now().Add(5 * time.Second)
+	for time.Now().Before(deadline) {
+		if store.Health().Status == status {
+			return
+		}
+		runtime.Gosched()
+	}
+	t.Fatalf("storage status = %q, want %q", store.Health().Status, status)
+}
+
 func TestStoreSeparatesAggregationWindows(t *testing.T) {
 	ctx := context.Background()
 	store := openTestStore(t, 60*time.Second)

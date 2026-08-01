@@ -40,6 +40,10 @@ type StorageHealthProvider interface {
 	Health() alert.StorageHealth
 }
 
+type StorageRecoverer interface {
+	Recover(context.Context) error
+}
+
 type QueueDepthProvider interface {
 	QueueDepth() int
 }
@@ -92,6 +96,7 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("/api/health", s.handleHealth)
 	mux.HandleFunc("/api/metrics", s.handleMetrics)
 	mux.HandleFunc("/api/alerts", s.handleAlerts)
+	mux.HandleFunc("/api/storage/recovery", s.handleStorageRecovery)
 	mux.HandleFunc("/api/suppressions", s.handleSuppressions)
 	mux.HandleFunc("/api/suppressions/", s.handleSuppressionByID)
 	mux.HandleFunc("/api/suppressions/reload", s.handleSuppressionsReload)
@@ -127,6 +132,12 @@ func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		writeMethodNotAllowed(w, r, http.MethodGet)
 		return
+	}
+	if r.URL.Query().Get("verbose") == "true" {
+		if provider, ok := s.store.(StorageHealthProvider); ok && provider.Health().Status == "recovering" {
+			writeJSON(w, http.StatusOK, s.verboseHealth(0))
+			return
+		}
 	}
 	count, err := s.store.Count(r.Context())
 	if err != nil {
@@ -168,11 +179,15 @@ type engineHealth struct {
 }
 
 type storageHealth struct {
-	Status         string  `json:"status"`
-	Alerts         int     `json:"alerts"`
-	AvailableBytes *uint64 `json:"available_bytes,omitempty"`
-	LastError      string  `json:"last_error,omitempty"`
-	LastErrorAt    string  `json:"last_error_at,omitempty"`
+	Status             string  `json:"status"`
+	Alerts             int     `json:"alerts"`
+	AvailableBytes     *uint64 `json:"available_bytes,omitempty"`
+	LastError          string  `json:"last_error,omitempty"`
+	LastErrorAt        string  `json:"last_error_at,omitempty"`
+	RecoveryPhase      string  `json:"recovery_phase,omitempty"`
+	RecoveryStartedAt  string  `json:"recovery_started_at,omitempty"`
+	LastRecoveryResult string  `json:"last_recovery_result,omitempty"`
+	LastRecoveryAt     string  `json:"last_recovery_at,omitempty"`
 }
 
 type throughputHealth struct {
@@ -227,7 +242,68 @@ func (s *Server) storageHealth(alertCount int) storageHealth {
 	if !health.LastErrorAt.IsZero() {
 		out.LastErrorAt = health.LastErrorAt.Format(time.RFC3339Nano)
 	}
+	out.RecoveryPhase = health.RecoveryPhase
+	if !health.RecoveryStartedAt.IsZero() {
+		out.RecoveryStartedAt = health.RecoveryStartedAt.Format(time.RFC3339Nano)
+	}
+	out.LastRecoveryResult = health.LastRecoveryResult
+	if !health.LastRecoveryAt.IsZero() {
+		out.LastRecoveryAt = health.LastRecoveryAt.Format(time.RFC3339Nano)
+	}
 	return out
+}
+
+func (s *Server) handleStorageRecovery(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeMethodNotAllowed(w, r, http.MethodPost)
+		return
+	}
+	if !s.opts.AuthEnabled {
+		writeError(w, r, http.StatusConflict, "STORAGE_RECOVERY_AUTH_REQUIRED", "Storage recovery requires API authentication to be enabled")
+		return
+	}
+	if !s.requireMutationAuth(w, r) {
+		return
+	}
+	recoverer, ok := s.store.(StorageRecoverer)
+	if !ok {
+		writeError(w, r, http.StatusConflict, "STORAGE_RECOVERY_UNAVAILABLE", "Storage recovery is not available")
+		return
+	}
+	if err := recoverer.Recover(r.Context()); err != nil {
+		switch {
+		case errors.Is(err, alert.ErrStorageRecoveryNotNeeded):
+			w.Header().Set("X-NetSentry-Recovery-Phase", "not_needed")
+			writeError(w, r, http.StatusConflict, "STORAGE_RECOVERY_NOT_NEEDED", "Storage recovery requires emergency mode")
+		case errors.Is(err, alert.ErrStorageRecoveryInProgress):
+			w.Header().Set("X-NetSentry-Recovery-Phase", "in_progress")
+			writeError(w, r, http.StatusConflict, "STORAGE_RECOVERY_IN_PROGRESS", "Storage recovery is already in progress")
+		default:
+			phase := "unknown"
+			writableAttempted := false
+			var recoveryErr *alert.RecoveryError
+			if errors.As(err, &recoveryErr) {
+				phase = recoveryErr.Phase
+				writableAttempted = recoveryErr.WritableAttempted
+			}
+			w.Header().Set("X-NetSentry-Recovery-Phase", phase)
+			writeError(
+				w,
+				r,
+				http.StatusServiceUnavailable,
+				"STORAGE_RECOVERY_FAILED",
+				"Storage recovery failed; storage remains in emergency mode",
+				"phase="+phase,
+				fmt.Sprintf("writable_attempted=%t", writableAttempted),
+			)
+		}
+		return
+	}
+	w.Header().Set("X-NetSentry-Recovery-Phase", "complete")
+	writeJSON(w, http.StatusOK, map[string]string{
+		"status": "ok",
+		"phase":  "complete",
+	})
 }
 
 func throughputFromStats(snapshot stats.Snapshot) throughputHealth {

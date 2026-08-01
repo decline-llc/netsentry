@@ -9,6 +9,13 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Authenticated `POST /api/storage/recovery` now provides one explicit,
+  restart-free recovery attempt for sticky emergency storage. It serializes
+  against ordinary store operations, preflights the complete recovery log and
+  every referenced database before writable work, replays idempotently (or
+  performs a rolled-back write probe for an empty log), retains evidence on
+  failure, and exposes recovery phase and terminal history through verbose
+  health and redacted audit metadata.
 - Recovery-log name, presence, JSON-kind, and integral-encoding validation now
   uses one immutable contract derived from the current `model.Alert` writer
   shape, so supported field changes cannot silently bypass reader validation
@@ -208,9 +215,6 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
   missing database or modify a compatible existing database.
 
 ### Known Gaps
-- R90-57 defines fail-closed, operator-triggered restart-free recovery semantics
-  and a direct fault/concurrency test contract; the runtime control, lifecycle
-  barrier, and recovery endpoint are not implemented yet.
 - Automatic disk cleanup remains intentionally unsupported.
 - End-to-end pressure coverage currently includes repeat-pcap runs up to 60,000 packets locally; realistic pcap corpora can now be recorded with `make e2e-corpus-pressure` but release evidence is still pending.
 - Sustained external C fuzz evidence is still pending; `make fuzz-sustained` now provides the local evidence entrypoint.

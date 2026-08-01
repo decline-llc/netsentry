@@ -22,6 +22,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"syscall"
 	"time"
 	"unicode"
@@ -32,6 +33,11 @@ import (
 )
 
 var ErrStorageEmergency = errors.New("alert storage is in emergency mode; clear disk/storage fault and restart NetSentry")
+
+var (
+	ErrStorageRecoveryInProgress = errors.New("alert storage recovery is already in progress")
+	ErrStorageRecoveryNotNeeded  = errors.New("alert storage recovery requires emergency mode")
+)
 
 const maxRecoveryRecordBytes = 4 << 20
 
@@ -73,17 +79,124 @@ type Store struct {
 	retentionDays     int
 	recoveryLogPath   string
 	now               func() time.Time
+	lifecycle         *storeLifecycle
 	writeMu           sync.Mutex
 	healthMu          sync.RWMutex
 	health            StorageHealth
+	closing           bool
+	recoveryCancel    context.CancelFunc
 }
 
 // StorageHealth describes the current alert storage state.
 type StorageHealth struct {
-	Status      string    `json:"status"`
-	LastError   string    `json:"last_error,omitempty"`
-	LastErrorAt time.Time `json:"last_error_at,omitempty"`
+	Status             string    `json:"status"`
+	LastError          string    `json:"last_error,omitempty"`
+	LastErrorAt        time.Time `json:"last_error_at,omitempty"`
+	RecoveryPhase      string    `json:"recovery_phase,omitempty"`
+	RecoveryStartedAt  time.Time `json:"recovery_started_at,omitempty"`
+	LastRecoveryResult string    `json:"last_recovery_result,omitempty"`
+	LastRecoveryAt     time.Time `json:"last_recovery_at,omitempty"`
 }
+
+// RecoveryError reports the stable phase and mutation boundary of a failed
+// operator-triggered recovery without requiring callers to expose private
+// storage paths or driver errors.
+type RecoveryError struct {
+	Phase             string
+	WritableAttempted bool
+	Err               error
+}
+
+func (e *RecoveryError) Error() string {
+	return fmt.Sprintf("alert storage recovery failed during %s: %v", e.Phase, e.Err)
+}
+
+func (e *RecoveryError) Unwrap() error { return e.Err }
+
+type storeLifecycle struct {
+	mu               sync.Mutex
+	active           int
+	exclusive        bool
+	waitingExclusive int
+	changed          chan struct{}
+}
+
+func newStoreLifecycle() *storeLifecycle {
+	return &storeLifecycle{changed: make(chan struct{})}
+}
+
+func (g *storeLifecycle) signalLocked() {
+	close(g.changed)
+	g.changed = make(chan struct{})
+}
+
+func (g *storeLifecycle) acquireShared(ctx context.Context) error {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	for {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		if !g.exclusive && g.waitingExclusive == 0 {
+			g.active++
+			return nil
+		}
+		changed := g.changed
+		g.mu.Unlock()
+		select {
+		case <-ctx.Done():
+			g.mu.Lock()
+			return ctx.Err()
+		case <-changed:
+			g.mu.Lock()
+		}
+	}
+}
+
+func (g *storeLifecycle) releaseShared() {
+	g.mu.Lock()
+	g.active--
+	g.signalLocked()
+	g.mu.Unlock()
+}
+
+func (g *storeLifecycle) acquireExclusive(ctx context.Context) error {
+	g.mu.Lock()
+	g.waitingExclusive++
+	g.signalLocked()
+	for {
+		if err := ctx.Err(); err != nil {
+			g.waitingExclusive--
+			g.signalLocked()
+			g.mu.Unlock()
+			return err
+		}
+		if !g.exclusive && g.active == 0 {
+			g.waitingExclusive--
+			g.exclusive = true
+			g.signalLocked()
+			g.mu.Unlock()
+			return nil
+		}
+		changed := g.changed
+		g.mu.Unlock()
+		select {
+		case <-ctx.Done():
+			g.mu.Lock()
+		case <-changed:
+			g.mu.Lock()
+		}
+	}
+}
+
+func (g *storeLifecycle) releaseExclusive() {
+	g.mu.Lock()
+	g.exclusive = false
+	g.signalLocked()
+	g.mu.Unlock()
+}
+
+var recoveryProbeCounter atomic.Uint64
 
 // Query filters, counts, and pages aggregated alert rows.
 type Query struct {
@@ -154,6 +267,7 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 		retentionDays:     opts.RetentionDays,
 		recoveryLogPath:   recoveryLogPath,
 		now:               clock(opts.Now),
+		lifecycle:         newStoreLifecycle(),
 		health:            StorageHealth{Status: "ok"},
 	}
 	if err := store.init(ctx, opts); err != nil {
@@ -849,6 +963,16 @@ func clock(now func() time.Time) func() time.Time {
 // Path returns the concrete SQLite database path in use.
 func (s *Store) Path() string { return s.path }
 
+func (s *Store) acquireLifecycleShared(ctx context.Context) (func(), error) {
+	if s.lifecycle == nil {
+		return func() {}, nil
+	}
+	if err := s.lifecycle.acquireShared(ctx); err != nil {
+		return nil, err
+	}
+	return s.lifecycle.releaseShared, nil
+}
+
 // Health returns the latest known alert storage status.
 func (s *Store) Health() StorageHealth {
 	s.healthMu.RLock()
@@ -859,10 +983,14 @@ func (s *Store) Health() StorageHealth {
 func (s *Store) markHealthy() {
 	s.healthMu.Lock()
 	defer s.healthMu.Unlock()
-	if s.health.Status == "emergency" {
+	if s.health.Status == "emergency" || s.health.Status == "recovering" || s.health.Status == "closed" {
 		return
 	}
-	s.health = StorageHealth{Status: "ok"}
+	s.health = StorageHealth{
+		Status:             "ok",
+		LastRecoveryResult: s.health.LastRecoveryResult,
+		LastRecoveryAt:     s.health.LastRecoveryAt,
+	}
 }
 
 func (s *Store) markDegraded(err error) {
@@ -871,10 +999,15 @@ func (s *Store) markDegraded(err error) {
 	}
 	s.healthMu.Lock()
 	defer s.healthMu.Unlock()
+	if s.health.Status == "emergency" || s.health.Status == "recovering" || s.health.Status == "closed" {
+		return
+	}
 	s.health = StorageHealth{
-		Status:      "degraded",
-		LastError:   err.Error(),
-		LastErrorAt: s.now(),
+		Status:             "degraded",
+		LastError:          err.Error(),
+		LastErrorAt:        s.now(),
+		LastRecoveryResult: s.health.LastRecoveryResult,
+		LastRecoveryAt:     s.health.LastRecoveryAt,
 	}
 }
 
@@ -895,10 +1028,85 @@ func (s *Store) markEmergency(err error) {
 	}
 	s.healthMu.Lock()
 	defer s.healthMu.Unlock()
+	if s.health.Status == "recovering" || s.health.Status == "closed" {
+		return
+	}
 	s.health = StorageHealth{
-		Status:      "emergency",
-		LastError:   err.Error(),
-		LastErrorAt: s.now(),
+		Status:             "emergency",
+		LastError:          err.Error(),
+		LastErrorAt:        s.now(),
+		LastRecoveryResult: s.health.LastRecoveryResult,
+		LastRecoveryAt:     s.health.LastRecoveryAt,
+	}
+}
+
+func (s *Store) beginRecovery(parent context.Context) (context.Context, error) {
+	s.healthMu.Lock()
+	defer s.healthMu.Unlock()
+	if s.closing {
+		return nil, ErrStorageRecoveryNotNeeded
+	}
+	switch s.health.Status {
+	case "recovering":
+		return nil, ErrStorageRecoveryInProgress
+	case "emergency":
+		now := s.now()
+		ctx, cancel := context.WithCancel(parent)
+		s.health.Status = "recovering"
+		s.health.RecoveryPhase = "waiting_for_lifecycle"
+		s.health.RecoveryStartedAt = now
+		s.recoveryCancel = cancel
+		return ctx, nil
+	default:
+		return nil, ErrStorageRecoveryNotNeeded
+	}
+}
+
+func (s *Store) setRecoveryPhase(phase string) {
+	s.healthMu.Lock()
+	defer s.healthMu.Unlock()
+	if s.health.Status == "recovering" {
+		s.health.RecoveryPhase = phase
+	}
+}
+
+func (s *Store) finishRecoveryFailure(phase string, err error) error {
+	now := s.now()
+	writable := phase == "writable_probe" || phase == "replay" || phase == "truncate"
+	s.healthMu.Lock()
+	cancel := s.recoveryCancel
+	s.recoveryCancel = nil
+	if !s.closing {
+		s.health = StorageHealth{
+			Status:             "emergency",
+			LastError:          "storage recovery failed during " + phase,
+			LastErrorAt:        now,
+			RecoveryPhase:      phase,
+			LastRecoveryResult: "failed",
+			LastRecoveryAt:     now,
+		}
+	}
+	s.healthMu.Unlock()
+	if cancel != nil {
+		cancel()
+	}
+	return &RecoveryError{Phase: phase, WritableAttempted: writable, Err: err}
+}
+
+func (s *Store) finishRecoverySuccess() {
+	now := s.now()
+	s.healthMu.Lock()
+	cancel := s.recoveryCancel
+	s.recoveryCancel = nil
+	s.health = StorageHealth{
+		Status:             "ok",
+		RecoveryPhase:      "complete",
+		LastRecoveryResult: "succeeded",
+		LastRecoveryAt:     now,
+	}
+	s.healthMu.Unlock()
+	if cancel != nil {
+		cancel()
 	}
 }
 
@@ -1093,6 +1301,11 @@ INSERT OR IGNORE INTO alert_events (event_id, created_at) VALUES (?, ?)
 
 // WriteBatch inserts alerts and aggregates repeats in the configured window.
 func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
+	release, err := s.acquireLifecycleShared(ctx)
+	if err != nil {
+		return err
+	}
+	defer release()
 	s.writeMu.Lock()
 	defer s.writeMu.Unlock()
 	if err := ctx.Err(); err != nil {
@@ -1918,6 +2131,13 @@ func validateMITRETuple(tactic, techniqueID, techniqueName string) error {
 // previous process exited. Existing event IDs are skipped, so replay is safe to
 // repeat after SQLite committed but the recovery log was not truncated.
 func (s *Store) ReplayRecoveryLog(ctx context.Context) error {
+	release, err := s.acquireLifecycleShared(ctx)
+	if err != nil {
+		return err
+	}
+	defer release()
+	s.writeMu.Lock()
+	defer s.writeMu.Unlock()
 	alerts, err := s.readRecoveryLog()
 	if err != nil {
 		return err
@@ -1926,15 +2146,19 @@ func (s *Store) ReplayRecoveryLog(ctx context.Context) error {
 }
 
 func (s *Store) replayRecoveryAlerts(ctx context.Context, alerts []*model.Alert) error {
+	if err := s.persistRecoveryAlerts(ctx, alerts); err != nil {
+		return err
+	}
+	return s.truncateRecoveryLog()
+}
+
+func (s *Store) persistRecoveryAlerts(ctx context.Context, alerts []*model.Alert) error {
 	if len(alerts) == 0 {
-		return s.truncateRecoveryLog()
+		return nil
 	}
 	now := s.now()
 	if !s.dailyShard {
-		if err := s.writeBatchToDB(ctx, s.db, alerts, now); err != nil {
-			return err
-		}
-		return s.truncateRecoveryLog()
+		return s.writeBatchToDB(ctx, s.db, alerts, now)
 	}
 	byPath := map[string][]*model.Alert{}
 	for _, alert := range alerts {
@@ -1969,7 +2193,109 @@ func (s *Store) replayRecoveryAlerts(ctx context.Context, alerts []*model.Alert)
 			return fmt.Errorf("replay alert shard %s: %w", path, err)
 		}
 	}
-	return s.truncateRecoveryLog()
+	return nil
+}
+
+// Recover performs one explicit, serialized attempt to leave sticky emergency
+// mode. It never schedules a retry or removes operator evidence after failure.
+func (s *Store) Recover(ctx context.Context) error {
+	recoveryCtx, err := s.beginRecovery(ctx)
+	if err != nil {
+		return err
+	}
+	if err := s.lifecycle.acquireExclusive(recoveryCtx); err != nil {
+		return s.finishRecoveryFailure("waiting_for_lifecycle", err)
+	}
+	defer s.lifecycle.releaseExclusive()
+
+	s.writeMu.Lock()
+	defer s.writeMu.Unlock()
+
+	s.setRecoveryPhase("preflight")
+	pending, err := s.readRecoveryLog()
+	if err != nil {
+		return s.finishRecoveryFailure("preflight", err)
+	}
+	if err := s.preflightRecoveryDatabases(recoveryCtx, pending); err != nil {
+		return s.finishRecoveryFailure("preflight", err)
+	}
+
+	if len(pending) == 0 {
+		s.setRecoveryPhase("writable_probe")
+		if err := s.probeWritable(recoveryCtx); err != nil {
+			return s.finishRecoveryFailure("writable_probe", err)
+		}
+	} else {
+		s.setRecoveryPhase("replay")
+		if err := s.persistRecoveryAlerts(recoveryCtx, pending); err != nil {
+			return s.finishRecoveryFailure("replay", err)
+		}
+	}
+	if err := recoveryCtx.Err(); err != nil {
+		return s.finishRecoveryFailure(s.Health().RecoveryPhase, err)
+	}
+
+	s.setRecoveryPhase("truncate")
+	if err := s.truncateRecoveryLog(); err != nil {
+		return s.finishRecoveryFailure("truncate", err)
+	}
+	s.finishRecoverySuccess()
+	return nil
+}
+
+func (s *Store) preflightRecoveryDatabases(ctx context.Context, alerts []*model.Alert) error {
+	paths := map[string]struct{}{s.path: {}}
+	if s.dailyShard {
+		for _, alert := range alerts {
+			if alert != nil {
+				paths[s.shardPathFor(alert.Timestamp)] = struct{}{}
+			}
+		}
+	}
+	ordered := make([]string, 0, len(paths))
+	for path := range paths {
+		ordered = append(ordered, path)
+	}
+	sort.Strings(ordered)
+	for _, path := range ordered {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		existing, err := existingNonEmptyDatabase(path)
+		if err != nil {
+			return err
+		}
+		if existing {
+			if err := validateExistingDatabase(ctx, path); err != nil {
+				return fmt.Errorf("preflight recovery database %s: %w", path, err)
+			}
+		}
+	}
+	return nil
+}
+
+func (s *Store) probeWritable(ctx context.Context) error {
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("begin recovery probe: %w", err)
+	}
+	defer func() { _ = tx.Rollback() }()
+
+	eventID := fmt.Sprintf("__netsentry_recovery_probe_%d_%d", s.now().UnixNano(), recoveryProbeCounter.Add(1))
+	if _, err := tx.ExecContext(ctx, "INSERT INTO alert_events (event_id, created_at) VALUES (?, ?)", eventID, formatTime(s.now())); err != nil {
+		return fmt.Errorf("write recovery probe: %w", err)
+	}
+	var count int
+	if err := tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM alert_events WHERE event_id = ?", eventID).Scan(&count); err != nil {
+		return fmt.Errorf("verify recovery probe: %w", err)
+	}
+	if count != 1 {
+		return fmt.Errorf("verify recovery probe: inserted row count %d", count)
+	}
+	if err := tx.Rollback(); err != nil {
+		return fmt.Errorf("roll back recovery probe: %w", err)
+	}
+	return nil
 }
 
 func (s *Store) truncateRecoveryLog() error {
@@ -1991,6 +2317,11 @@ func (s *Store) truncateRecoveryLog() error {
 
 // List returns alerts ordered by most recent activity.
 func (s *Store) List(ctx context.Context) ([]*model.Alert, error) {
+	release, err := s.acquireLifecycleShared(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer release()
 	rows, err := s.db.QueryContext(ctx, `
 SELECT id, event_id, rule_id, rule_name, severity, protocol, src_ip, dst_ip, dst_port,
        mitre_tactic, mitre_technique_id, mitre_technique_name,
@@ -2031,6 +2362,11 @@ var alertOrderSQL = "\nORDER BY " + sqliteTimestampKeySQL("last_seen") + " DESC,
 
 // Query returns filtered and paginated alerts plus the total filtered row count.
 func (s *Store) Query(ctx context.Context, query Query) ([]*model.Alert, int, error) {
+	release, err := s.acquireLifecycleShared(ctx)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer release()
 	if s.dailyShard {
 		return s.queryDailyShards(ctx, query)
 	}
@@ -2257,6 +2593,11 @@ func sliceBounds(length, limit, offset int) (int, int) {
 
 // Count returns the number of aggregated alert rows.
 func (s *Store) Count(ctx context.Context) (int, error) {
+	release, err := s.acquireLifecycleShared(ctx)
+	if err != nil {
+		return 0, err
+	}
+	defer release()
 	if !s.dailyShard {
 		count, err := countAlertsDB(ctx, s.db)
 		if err != nil {
@@ -2310,6 +2651,11 @@ func countAlertsDB(ctx context.Context, db *sql.DB) (int, error) {
 // PruneExpired deletes alerts older than the configured retention window from
 // the currently opened SQLite database. RetentionDays <= 0 disables pruning.
 func (s *Store) PruneExpired(ctx context.Context) (int64, error) {
+	release, err := s.acquireLifecycleShared(ctx)
+	if err != nil {
+		return 0, err
+	}
+	defer release()
 	if s.retentionDays <= 0 {
 		return 0, nil
 	}
@@ -2334,6 +2680,11 @@ var dailyShardNameRe = regexp.MustCompile(`^netsentry-(\d{4}-\d{2}-\d{2})\.db$`)
 // PruneExpiredShardFiles deletes old daily shard database files and their WAL/SHM
 // sidecars. It only touches files named netsentry-YYYY-MM-DD.db.
 func (s *Store) PruneExpiredShardFiles(ctx context.Context, dir string) (int, error) {
+	release, err := s.acquireLifecycleShared(ctx)
+	if err != nil {
+		return 0, err
+	}
+	defer release()
 	if err := ctx.Err(); err != nil {
 		return 0, err
 	}
@@ -2523,5 +2874,37 @@ func parseStoredTime(alertID, field, value string) (time.Time, error) {
 
 // Close releases database resources.
 func (s *Store) Close() error {
-	return s.db.Close()
+	s.healthMu.Lock()
+	if s.health.Status == "closed" {
+		s.healthMu.Unlock()
+		return nil
+	}
+	s.closing = true
+	cancelRecovery := s.recoveryCancel
+	s.healthMu.Unlock()
+	if cancelRecovery != nil {
+		cancelRecovery()
+	}
+	if s.lifecycle != nil {
+		if err := s.lifecycle.acquireExclusive(context.Background()); err != nil {
+			s.healthMu.Lock()
+			s.closing = false
+			s.healthMu.Unlock()
+			return err
+		}
+		defer s.lifecycle.releaseExclusive()
+	}
+	err := s.db.Close()
+	if err == nil {
+		s.healthMu.Lock()
+		s.health.Status = "closed"
+		s.health.RecoveryPhase = ""
+		s.recoveryCancel = nil
+		s.healthMu.Unlock()
+	} else {
+		s.healthMu.Lock()
+		s.closing = false
+		s.healthMu.Unlock()
+	}
+	return err
 }

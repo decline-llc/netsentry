@@ -327,12 +327,12 @@ Current build:
   any prefix can be appended.
 - Storage health tracking marks the store degraded after ordinary SQLite write/query errors and emergency after disk-full, quota, read-only filesystem, or disk I/O failures. Emergency mode stops retrying SQLite writes in the current process after the recovery log is updated when possible, and exposes that state through verbose health and Prometheus gauges.
 
-### Operator-triggered restart-free recovery design
+### Operator-triggered restart-free recovery
 
-R90-57 defines the future recovery contract; it does not change current runtime
-behavior. Recovery is explicit and fail-closed: no timer, health read, free-space
-poll, or ordinary write may start a recovery attempt. An authenticated operator
-request is the only trigger, and one request owns the complete attempt.
+R90-60 implements the fail-closed contract designed in R90-57. Recovery is
+explicit: no timer, health read, free-space poll, or ordinary write may start
+an attempt. An authenticated operator request is the only trigger, and one
+request owns the complete synchronous attempt.
 
 | State | Accepted event | Guard and serialized action | Result |
 | --- | --- | --- | --- |
@@ -343,21 +343,21 @@ request is the only trigger, and one request owns the complete attempt.
 | `degraded` | emergency-class storage failure | Preserve the batch when possible and stop SQLite retries. | `emergency` |
 | `degraded` | operator recovery request | Restart-free recovery is reserved for sticky emergency mode. | Conflict; remain `degraded` |
 | `emergency` | ordinary alert batch | Under the existing write critical section, validate and append the batch when possible; do not attempt SQLite. | `ErrStorageEmergency`; remain `emergency` |
-| `emergency` | operator recovery request | Atomically claim the sole recovery owner, publish `recovering`, then acquire an exclusive store-lifecycle barrier before inspecting or replacing handles. | `recovering` |
+| `emergency` | operator recovery request | Atomically claim the sole recovery owner, publish `recovering`, then acquire an exclusive store-lifecycle barrier before preflight or replay. | `recovering` |
 | `recovering` | second operator request | Reject immediately; do not queue another attempt or alter evidence. | Conflict; remain `recovering` |
-| `recovering` | ordinary store operation | Health reads may report progress; database reads and writes wait on the lifecycle barrier or return on context cancellation. No operation may use a handle being replaced. | Remain `recovering` |
+| `recovering` | ordinary store operation | Health reads may report progress; database reads and writes wait on the lifecycle barrier or return on context cancellation. No operation may cross the exclusive recovery boundary. | Remain `recovering` |
 | `recovering` | read-only preflight rejection | Before any writable open, validate the complete recovery log and every database/shard required by it through preservation-safe read-only handles. | Record the error; return to `emergency` with rejected artifacts byte-for-byte unchanged |
 | `recovering` | writable replay failure, cancellation, or shutdown | Close any candidate handle, retain the complete recovery log, do not clean up database/WAL/SHM files, and record whether writable probing may have changed SQLite sidecars. | Return to `emergency`, or continue shutdown |
-| `recovering` | complete success | With no second writable owner, reopen the configured store, replay the preflighted snapshot idempotently, truncate the recovery log only after all target commits succeed, then publish healthy state. | `healthy` |
+| `recovering` | complete success | With no second writable owner, use the store-owned primary handle and serial shard handles to replay the preflighted snapshot idempotently, truncate the recovery log only after all target commits succeed, then publish healthy state. An empty log instead receives a rolled-back write probe. | `healthy` |
 | any state | process shutdown | Cancel any recovery owner, drain store operations, and close handles without starting recovery or deleting evidence. | `closed` |
 | `closed` | operator recovery request | The store lifecycle has ended. | Unavailable; remain `closed` |
 
-The future implementation must preserve these invariants:
+The implementation preserves these invariants:
 
 1. Recovery ownership is a compare-and-set transition from `emergency`; at
    most one caller can own it. A separate lifecycle barrier drains active
-   database operations and prevents any goroutine from using a closing or
-   candidate handle.
+   database operations and prevents any goroutine from crossing the recovery
+   boundary.
 2. No background goroutine retries recovery. A failed or cancelled request
    returns to sticky `emergency`; another attempt requires another authenticated
    operator action.
@@ -392,8 +392,6 @@ promote a partially recovered store.
 
 Remaining v0.1.0 storage work:
 
-- Implement the R90-57 operator-triggered recovery contract, lifecycle barrier,
-  authenticated control, observability, and direct fault/concurrency tests.
 - Automatic disk cleanup remains intentionally unsupported.
 
 All SQL values must use placeholders. Do not format user-controlled values into SQL strings.

@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-07-30 through 2026-10-28. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from the prior horizon is preserved below.
+> Window: 2026-08-01 through 2026-10-30. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from the prior horizon is preserved below.
 
 ## Status Rules
 
@@ -121,6 +121,7 @@
 | R90-57 | Forecast Sep 19–Oct 2; waived | Complete early | Define restart-free emergency recovery semantics. | R90-56 | An operator-triggered, fail-closed state machine defines probe, recovery, retry, concurrency, and evidence-preservation boundaries without duplicate writes or automatic cleanup; implementation remains a separate increment. |
 | R90-58 | Oct 3–21 | Complete early | Refresh the v0.1.1 candidate decision package. | R90-56 | Version, current candidate commit, gates, artifacts, checksums, platform, and hold decision are reconciled from fresh evidence without tagging or publishing. |
 | R90-59 | Oct 22–28 | Blocked | Execute the v0.1.1 publication gate. | R90-58; explicit publication authorization | Only an explicitly authorized version and commit may be tagged; GitHub Release and GHCR results must be verified directly, while absence of authority preserves the hold without mutation. |
+| R90-60 | Forecast Aug 1–Oct 30; waived | In progress | Implement operator-triggered restart-free storage recovery. | R90-57 | One authenticated request serializes recovery against store lifecycle operations, preflights durable input before the writable boundary, replays or probes idempotently, exposes bounded health/audit outcomes, and leaves failures in sticky emergency without automatic cleanup or retry. |
 
 ## R90-01 Definition
 
@@ -1135,6 +1136,20 @@
 - **Stop condition:** remain blocked without explicit publication authority;
   stop on any SHA, tag, digest, platform, workflow, or artifact ambiguity.
 
+## R90-60 Definition
+
+- **Goal:** implement the R90-57 operator-triggered recovery state machine for
+  primary and daily-sharded alert stores plus its authenticated API control.
+- **Risk:** incorrect lifecycle ownership can use a closing handle, duplicate
+  replay, erase recovery evidence, or allow concurrent recovery attempts.
+- **Required validation:** direct ownership, cancellation-before-readiness,
+  preflight byte-preservation, empty/pending-log success, writable failure,
+  idempotent retry, daily-shard, encoded-path, authentication, health, audit,
+  focused repeated race, full native, E2E, documentation, and knowledge checks.
+- **Stop condition:** stop if completion requires background retry, automatic
+  cleanup, database/recovery-format migration, private operator data, release
+  publication, or behavior beyond this one recovery-control increment.
+
 ### R90-49 Validation Deviation
 
 - **Observed:** The first complete native race suite hit the existing
@@ -1625,7 +1640,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56`; `R90-56 → R90-57` is blocked on a restart-free recovery product decision; `R90-56 → R90-58 → R90-59`, with R90-59 also blocked on explicit publication authorization. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60`; `R90-56 → R90-58 → R90-59`, with R90-59 blocked on explicit publication authorization. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -1712,4 +1727,14 @@ feature commit is pushed and fetched `origin/main` equals it; documentation,
 evidence, knowledge, JSON, definition, diff, sensitive-information, exact Vault
 note/index/MOC, and stable SQLite-storage knowledge checks passed. Runtime/API
 implementation was not started. R90-59 remains blocked on explicit publication
-action authority; no later increment is selected.
+action authority. The next trigger found that the forward queue omitted the
+runtime increment explicitly deferred by R90-57. R90-60 is therefore added and
+selected from clean fetched baseline
+`59904b79424f80d760d3a9aac9c9617ef1e975cb`; its bounded implementation plan
+and task state were persisted before runtime changes. The lifecycle gate,
+single recovery owner, preservation-safe preflight, idempotent replay or empty
+log write probe, mandatory-auth API, bounded health/audit surface, shutdown
+cancellation, and direct regressions are now implemented. Focused race tests,
+twenty uncached repetitions, full native tests, E2E smoke, documentation,
+evidence, knowledge, JSON, definition, and diff checks pass; feature delivery
+and exact remote/Vault evidence remain pending.

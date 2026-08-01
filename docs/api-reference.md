@@ -205,7 +205,7 @@ Reloads rules from `engine.rules_seed_file` and atomically swaps the active rule
 Current limitations:
 
 - Alert pagination, the stable list envelope, exact-match filters, time range filters, MITRE filters, matched-keyword substring filtering, and minimum aggregate-count filtering exist. The SQLite-backed store pins rule, severity, source, and destination exact matches to binary comparison regardless of a compatible database's declared column collation, while protocol and MITRE filters remain case-insensitive. It applies those filters and pagination in SQL, with indexes for common exact/range filters; matched-keyword substring filtering remains a regular SQL substring predicate.
-- Alert storage is SQLite-backed with JSONL recovery-log replay, startup TTL pruning, old daily shard file cleanup, and sticky emergency mode for disk-full/read-only/I/O failures. When `engine.db_shard_daily` is enabled, alert writes use each alert timestamp to select `netsentry-YYYY-MM-DD.db`, alert queries scan matching shards and apply the same filters, ordering, and pagination across shards, and health and metrics alert counts also sum matching shard files.
+- Alert storage is SQLite-backed with JSONL recovery-log replay, startup TTL pruning, old daily shard file cleanup, and sticky emergency mode for disk-full/read-only/I/O failures. Emergency mode remains sticky until restart or a successful authenticated operator recovery request. When `engine.db_shard_daily` is enabled, alert writes use each alert timestamp to select `netsentry-YYYY-MM-DD.db`, alert queries scan matching shards and apply the same filters, ordering, and pagination across shards, and health and metrics alert counts also sum matching shard files.
 - Validation, unsupported method, and internal API errors use the unified error envelope.
 - Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk.
 - Optional PSK Bearer authentication protects modifying rule and suppression endpoints when `engine.api_auth_enabled` is true.
@@ -217,32 +217,38 @@ Current limitations:
 
 ---
 
-## Planned Operator Recovery Control — R90-57 Design Only
+## `POST /api/storage/recovery`
 
-No recovery endpoint is implemented today; sticky emergency mode still
-requires cleanup and restart. A later increment may add
-`POST /api/storage/recovery` with this contract:
+Starts one synchronous, operator-triggered recovery attempt for a store in
+sticky emergency mode. The endpoint does not perform cleanup or repair and no
+timer, health read, or ordinary write can trigger recovery.
 
-- The endpoint is enabled only when API authentication is configured and
-  requires a valid Bearer token even on loopback; missing or invalid
-  credentials return `401` before storage inspection.
-- It accepts only `storage.status=emergency`. Healthy-state and duplicate
-  in-progress calls return `409` without touching SQLite or the recovery log.
+- API authentication must be enabled. If it is disabled, the endpoint returns
+  `409 STORAGE_RECOVERY_AUTH_REQUIRED`. Once enabled, a valid Bearer token is
+  mandatory even on loopback; missing or invalid credentials return `401`
+  before storage inspection.
+- Only `storage.status=emergency` is accepted. A healthy or degraded store
+  returns `409 STORAGE_RECOVERY_NOT_NEEDED`; a second request during an active
+  attempt returns `409 STORAGE_RECOVERY_IN_PROGRESS`. Neither conflict touches
+  SQLite or the recovery log.
 - The request owns one bounded synchronous attempt. Client cancellation or
   server shutdown cancels the attempt; no detached retry continues afterward.
 - `200` means read-only preflight, writable proof/replay, complete recovery-log
-  truncation, and the transition to healthy all succeeded.
+  truncation, and the transition to healthy all succeeded. The response is
+  `{"status":"ok","phase":"complete"}`.
 - A preservation-safe preflight rejection or writable replay failure returns
-  `503`, leaves the store in emergency, retains the recovery log, and reports a
-  stable phase code indicating whether failure occurred before or after the
-  writable boundary.
-- Audit logging records request ID, authorization result, starting state,
-  terminal state, phase, duration, and redacted error class. It never records
-  recovery-log content, credentials, or private filesystem paths.
+  `503 STORAGE_RECOVERY_FAILED`, leaves the store in emergency, retains the
+  recovery log, and reports only stable `phase` and `writable_attempted`
+  details. The `X-NetSentry-Recovery-Phase` response header carries the phase
+  for success, conflict, and recovery failure responses.
+- Audit logging records the request metadata, authorization result, duration,
+  storage target, and response phase. It never records the underlying recovery
+  error, recovery-log content, credentials, or private filesystem paths.
 
-Verbose health may expose `recovering`, attempt start time, phase, and last
-terminal result. Polling health is observational and cannot trigger or advance
-recovery.
+Verbose health exposes `recovering`, attempt start time, current phase, and the
+last terminal recovery result/time when available. Polling health is
+observational and cannot trigger or advance recovery. During the exclusive
+recovery window it does not enter the ordinary database count path.
 
 ---
 
@@ -283,6 +289,7 @@ Planned endpoints:
 | `GET /api/health?verbose=true` | partial | Capture heartbeat freshness, queue depth, rule count, storage status including emergency mode, storage available bytes, and throughput counters exist. |
 | `GET /api/alerts` | partial | SQLite-backed paginated list with exact-match, time range, MITRE, matched-keyword, and aggregate-count filters exists; daily-shard mode queries across matching shard files. |
 | `GET /api/metrics` | partial | Prometheus text output exists for process counters, process-lifetime packet and alert rate gauges, rule match and alert write latency buckets, current/high-water queue depth, rule/alert/storage gauges, worker counters, and capture heartbeat gauges. |
+| `POST /api/storage/recovery` | implemented | Authenticated explicit recovery from sticky emergency mode, with preservation-safe preflight, serialized replay/write probe, stable conflicts, and phase reporting. |
 | `GET /api/rules` | partial | Current rule snapshot listing exists. |
 | `POST /api/rules` | partial | Creates and persists one rule; optional PSK auth exists. |
 | `PUT /api/rules/{id}` | partial | Replaces and persists one rule; optional PSK auth exists. |

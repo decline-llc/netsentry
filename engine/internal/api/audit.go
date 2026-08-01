@@ -44,17 +44,26 @@ func (s *Server) audit(next http.Handler) http.Handler {
 		if status == 0 {
 			status = http.StatusOK
 		}
-		s.opts.AuditLogger.Info("api audit",
+		target := auditTarget(r.URL.Path)
+		authorized := status != http.StatusUnauthorized
+		if target == "storage" && !s.opts.AuthEnabled {
+			authorized = false
+		}
+		fields := []zap.Field{
 			zap.String("request_id", reqID),
 			zap.String("method", r.Method),
 			zap.String("path", r.URL.Path),
 			zap.Int("status", status),
 			zap.String("remote_addr", r.RemoteAddr),
 			zap.String("user_agent", r.UserAgent()),
-			zap.Bool("authorized", status != http.StatusUnauthorized),
+			zap.Bool("authorized", authorized),
 			zap.Duration("duration", time.Since(started)),
-			zap.String("target", auditTarget(r.URL.Path)),
-		)
+			zap.String("target", target),
+		}
+		if target == "storage" {
+			fields = append(fields, zap.String("phase", recorder.Header().Get("X-NetSentry-Recovery-Phase")))
+		}
+		s.opts.AuditLogger.Info("api audit", fields...)
 	})
 }
 
@@ -64,6 +73,8 @@ func auditTarget(path string) string {
 		return "rules"
 	case path == "/api/suppressions" || strings.HasPrefix(path, "/api/suppressions/"):
 		return "suppressions"
+	case path == "/api/storage/recovery":
+		return "storage"
 	default:
 		return "api"
 	}
