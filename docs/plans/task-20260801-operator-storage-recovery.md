@@ -123,6 +123,22 @@ and direct fault/concurrency regressions.
   not copied into the new recovery result. All validation above ran after these
   changes.
 
+## Delivery Results
+
+- Feature commit:
+  `a4a4adf662e1accf11528dc2440000426fe5fa28` (`feat: add
+  operator-triggered storage recovery`).
+- The commit was pushed without force, fetched, and verified equal to
+  `origin/main`; the post-fetch 33-test knowledge gate passed.
+- Exact range
+  `59904b79424f80d760d3a9aac9c9617ef1e975cb..a4a4adf662e1accf11528dc2440000426fe5fa28`
+  was synchronized twice with identical generated note/index/MOC hashes to the
+  single existing local Vault.
+- The iteration note, full commit index, MOC link, and manually reconciled
+  stable SQLite storage note all identify the delivered implementation.
+- R90-59 publication, automatic cleanup/retry, tags, releases, images, and
+  workflow dispatch were not started.
+
 ## Authority Boundaries
 
 The rolling trigger authorizes the dependency-ready R90-60 repository change

@@ -121,7 +121,7 @@
 | R90-57 | Forecast Sep 19–Oct 2; waived | Complete early | Define restart-free emergency recovery semantics. | R90-56 | An operator-triggered, fail-closed state machine defines probe, recovery, retry, concurrency, and evidence-preservation boundaries without duplicate writes or automatic cleanup; implementation remains a separate increment. |
 | R90-58 | Oct 3–21 | Complete early | Refresh the v0.1.1 candidate decision package. | R90-56 | Version, current candidate commit, gates, artifacts, checksums, platform, and hold decision are reconciled from fresh evidence without tagging or publishing. |
 | R90-59 | Oct 22–28 | Blocked | Execute the v0.1.1 publication gate. | R90-58; explicit publication authorization | Only an explicitly authorized version and commit may be tagged; GitHub Release and GHCR results must be verified directly, while absence of authority preserves the hold without mutation. |
-| R90-60 | Forecast Aug 1–Oct 30; waived | In progress | Implement operator-triggered restart-free storage recovery. | R90-57 | One authenticated request serializes recovery against store lifecycle operations, preflights durable input before the writable boundary, replays or probes idempotently, exposes bounded health/audit outcomes, and leaves failures in sticky emergency without automatic cleanup or retry. |
+| R90-60 | Forecast Aug 1–Oct 30; waived | Complete early | Implement operator-triggered restart-free storage recovery. | R90-57 | One authenticated request serializes recovery against store lifecycle operations, preflights durable input before the writable boundary, replays or probes idempotently, exposes bounded health/audit outcomes, and leaves failures in sticky emergency without automatic cleanup or retry. |
 
 ## R90-01 Definition
 
@@ -1737,4 +1737,12 @@ log write probe, mandatory-auth API, bounded health/audit surface, shutdown
 cancellation, and direct regressions are now implemented. Focused race tests,
 twenty uncached repetitions, full native tests, E2E smoke, documentation,
 evidence, knowledge, JSON, definition, and diff checks pass; feature delivery
-and exact remote/Vault evidence remain pending.
+and exact remote/Vault evidence passed. The feature completed at
+`a4a4adf662e1accf11528dc2440000426fe5fa28`; it was pushed without force,
+fetched equal to `origin/main`, and passed the post-fetch knowledge gate. Exact
+range
+`59904b79424f80d760d3a9aac9c9617ef1e975cb..a4a4adf662e1accf11528dc2440000426fe5fa28`
+was synchronized idempotently to the single local Vault; its iteration note,
+full index, MOC link, and updated stable SQLite-storage knowledge are verified.
+R90-59 remains blocked on explicit publication action authority; no later
+increment is selected.
