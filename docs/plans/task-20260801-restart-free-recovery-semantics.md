@@ -139,4 +139,47 @@ beyond this single increment.
 
 No runtime code, API route, configuration, schema, tag, publication action, or
 private evidence was introduced. Repository delivery and exact-range Vault
-evidence remain pending.
+evidence are verified.
+
+## Execution Deviation
+
+- **Observed:** Exact-range synchronization generated the iteration note, full
+  index, and MOC link, but classified the pure documentation change as project
+  evolution and did not merge the new state-machine semantics into the stable
+  SQLite storage note.
+- **Impact:** Commit-range traceability was complete, but the reusable design
+  conclusion was not yet present in the stable knowledge surface.
+- **Resolution:** Merged the operator-triggered ownership, preflight, writable
+  boundary, idempotent replay, cancellation, and no-cleanup invariants into the
+  existing `SQLite告警存储` stable note and verified its link to the exact
+  iteration note. The repository synchronizer was not changed in this bounded
+  documentation increment.
+
+The local roadmap skill also incorrectly required a forecast window to begin,
+despite the repository's Jul 16 global waiver. Its generic selection rule now
+treats dates as forecasts unless the repository records a real date-bound
+external dependency; that skill change remains separate from Git.
+
+## Delivery Evidence
+
+- Feature commit:
+  `6b53430e333118b5fcebeb77f6c59302a58d4382`
+- Fetched `origin/main`: verified equal to the feature commit after push.
+- Post-fetch knowledge gate: passed all 33 tests.
+- Exact Vault range:
+  `46bbf8a0535c30e707b7dfbaefee9cab27a81d84..6b53430e333118b5fcebeb77f6c59302a58d4382`
+- Vault iteration note, full index, MOC link, and updated stable SQLite storage
+  note: verified.
+- Runtime/API implementation, tag, GitHub Release, GHCR publication, and
+  workflow dispatch: not performed.
+
+## Final Plan Audit
+
+- Every acceptance criterion has direct architecture, development, API,
+  validation, remote, and local Vault evidence.
+- The only execution deviation was the documented manual stable-note merge
+  after deterministic exact-range synchronization.
+- The feature commit contains only the intended eight documentation/task paths.
+- R90-59 remains blocked on explicit authority for actual publication actions.
+- No later increment, runtime implementation, tag, or publication action was
+  started.

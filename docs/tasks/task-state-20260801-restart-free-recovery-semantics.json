@@ -2,9 +2,9 @@
   "task": "r90-57-restart-free-recovery-semantics",
   "timestamp": "2026-08-01T04:57:43-07:00",
   "branch": "main",
-  "remote_baseline": "46bbf8a0535c30e707b7dfbaefee9cab27a81d84",
+  "remote_baseline": "6b53430e333118b5fcebeb77f6c59302a58d4382",
   "risk_level": "High",
-  "current_checkpoint": "validated_for_delivery",
+  "current_checkpoint": "complete",
   "authorization": "The user cancelled hard schedule requirements and additional prerequisite review; R90-57 uses the safest bounded operator-triggered default.",
   "completed": [
     "Fetched origin/main and verified clean local and remote equality at 46bbf8a0535c30e707b7dfbaefee9cab27a81d84",
@@ -16,19 +16,30 @@
     "Defined the complete operator-triggered recovery state machine, lifecycle ownership, preflight, writable boundary, retry, cancellation, shutdown, and evidence-preservation invariants",
     "Defined the future authenticated API outcomes and direct fault, concurrency, replay, encoded-path, cancellation, shutdown, and audit test plan without implementing runtime behavior",
     "Reconciled architecture, API, development guidance, changelog gap wording, delivery audit, and roadmap status",
-    "Passed documentation, 16-test evidence, 33-test knowledge, all-task-JSON, 62-of-62 roadmap definition, and diff checks"
+    "Passed documentation, 16-test evidence, 33-test knowledge, all-task-JSON, 62-of-62 roadmap definition, diff, staged-diff, and sensitive-information checks",
+    "Committed the bounded eight-path design at 6b53430e333118b5fcebeb77f6c59302a58d4382",
+    "Pushed without force, fetched origin/main, and verified equality with the feature commit",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range 46bbf8a0535c30e707b7dfbaefee9cab27a81d84..6b53430e333118b5fcebeb77f6c59302a58d4382 to the single local Vault",
+    "Verified the Vault iteration note, full index, MOC link, and stable SQLite storage note",
+    "Corrected the local roadmap skill so forecast dates do not override repository window waivers",
+    "Completed the final plan audit without runtime implementation, R90-59 work, tagging, or publication"
   ],
-  "in_progress": [
-    "Deliver the validated R90-57 documentation and verify remote and Vault evidence"
-  ],
-  "todo": [
-    "Run the final staged-diff and sensitive-information review",
-    "Commit, push, fetch-verify, and synchronize the feature range to the local Vault",
-    "Persist and deliver one docs-only closure record"
-  ],
+  "in_progress": [],
+  "todo": [],
+  "delivery": {
+    "commit": "6b53430e333118b5fcebeb77f6c59302a58d4382",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "46bbf8a0535c30e707b7dfbaefee9cab27a81d84..6b53430e333118b5fcebeb77f6c59302a58d4382",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_storage_note_verified": true
+  },
   "remaining_risks": [
     "A future implementation must not introduce concurrent writable owners or automatic cleanup",
     "Tagging and publication remain unauthorized"
   ],
-  "resume_instructions": "Resume R90-57 from the persisted plan on clean fetched baseline 46bbf8a0535c30e707b7dfbaefee9cab27a81d84. Complete only the operator-triggered recovery state-machine design and test plan; do not implement runtime behavior, start R90-59, create a tag, or publish."
+  "resume_instructions": "R90-57 is complete at 6b53430e333118b5fcebeb77f6c59302a58d4382; do not repeat its design, validation, push, or feature-range Vault synchronization. On the next $netsentry-next trigger, fetch and verify origin/main plus the closure and exact Vault evidence before selecting work. R90-59 still requires explicit action authority for the exact tag and publication mutations; do not infer that authority from the global eligibility policy."
 }

@@ -118,7 +118,7 @@
 | R90-54 | Jul 31–Aug 7 | Complete early | Enforce canonical recovery JSON numeric encoding. | R90-53 | Recovery `dst_port` and `aggregated_count` accept only the exact base-10 integer spelling emitted by the writer; alternate exponent, fractional, sign, and leading-zero forms fail before durable mutation while canonical replay remains compatible. |
 | R90-55 | Aug 8–21 | Complete early | Eliminate recovery field-contract drift. | R90-54 | One authoritative model contract drives canonical field names, required/optional status, and JSON kinds; adding or changing a writer field cannot silently bypass reader validation. |
 | R90-56 | Aug 22–Sep 18 | Complete early | Preserve corrupt SQLite sidecars during preflight. | R90-55 | Deterministic primary and historical fixtures with corrupt or inconsistent WAL/SHM state fail read-only preflight clearly and preserve the database plus sidecar bytes; healthy active-WAL reads remain compatible. |
-| R90-57 | Forecast Sep 19–Oct 2; waived | In progress | Define restart-free emergency recovery semantics. | R90-56 | An operator-triggered, fail-closed state machine defines probe, recovery, retry, concurrency, and evidence-preservation boundaries without duplicate writes or automatic cleanup; implementation remains a separate increment. |
+| R90-57 | Forecast Sep 19–Oct 2; waived | Complete early | Define restart-free emergency recovery semantics. | R90-56 | An operator-triggered, fail-closed state machine defines probe, recovery, retry, concurrency, and evidence-preservation boundaries without duplicate writes or automatic cleanup; implementation remains a separate increment. |
 | R90-58 | Oct 3–21 | Complete early | Refresh the v0.1.1 candidate decision package. | R90-56 | Version, current candidate commit, gates, artifacts, checksums, platform, and hold decision are reconciled from fresh evidence without tagging or publishing. |
 | R90-59 | Oct 22–28 | Blocked | Execute the v0.1.1 publication gate. | R90-58; explicit publication authorization | Only an explicitly authorized version and commit may be tagged; GitHub Release and GHCR results must be verified directly, while absence of authority preserves the hold without mutation. |
 
@@ -1702,5 +1702,14 @@ and cancelled additional prerequisite review as an eligibility gate. R90-57 is
 therefore selected from clean fetched baseline
 `46bbf8a0535c30e707b7dfbaefee9cab27a81d84` using the fail-closed default of
 operator-triggered recovery with no background retry or automatic evidence
-cleanup. Its bounded plan and state are persisted; R90-59 remains blocked on
-explicit publication action authority.
+cleanup. R90-57 completed at
+`6b53430e333118b5fcebeb77f6c59302a58d4382`: the state machine covers healthy,
+degraded, emergency, recovering, and closed; one owner and an exclusive
+lifecycle barrier protect handle replacement; read-only preflight precedes any
+writable boundary; cancellation, partial replay, daily shards, empty-log proof,
+and evidence preservation have direct implementation test requirements. The
+feature commit is pushed and fetched `origin/main` equals it; documentation,
+evidence, knowledge, JSON, definition, diff, sensitive-information, exact Vault
+note/index/MOC, and stable SQLite-storage knowledge checks passed. Runtime/API
+implementation was not started. R90-59 remains blocked on explicit publication
+action authority; no later increment is selected.
