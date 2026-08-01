@@ -327,9 +327,74 @@ Current build:
   any prefix can be appended.
 - Storage health tracking marks the store degraded after ordinary SQLite write/query errors and emergency after disk-full, quota, read-only filesystem, or disk I/O failures. Emergency mode stops retrying SQLite writes in the current process after the recovery log is updated when possible, and exposes that state through verbose health and Prometheus gauges.
 
+### Operator-triggered restart-free recovery design
+
+R90-57 defines the future recovery contract; it does not change current runtime
+behavior. Recovery is explicit and fail-closed: no timer, health read, free-space
+poll, or ordinary write may start a recovery attempt. An authenticated operator
+request is the only trigger, and one request owns the complete attempt.
+
+| State | Accepted event | Guard and serialized action | Result |
+| --- | --- | --- | --- |
+| `healthy` | ordinary storage failure | Record the failure without changing recovery ownership. | `degraded` |
+| `healthy` | emergency-class storage failure | Preserve the normalized batch in the recovery log when possible, record the failure, and stop SQLite retries. | `emergency` |
+| `healthy` | operator recovery request | Recovery is unnecessary; do not touch SQLite or the recovery log. | Conflict; remain `healthy` |
+| `degraded` | successful write or full list | Clear the ordinary failure through existing health behavior. | `healthy` |
+| `degraded` | emergency-class storage failure | Preserve the batch when possible and stop SQLite retries. | `emergency` |
+| `degraded` | operator recovery request | Restart-free recovery is reserved for sticky emergency mode. | Conflict; remain `degraded` |
+| `emergency` | ordinary alert batch | Under the existing write critical section, validate and append the batch when possible; do not attempt SQLite. | `ErrStorageEmergency`; remain `emergency` |
+| `emergency` | operator recovery request | Atomically claim the sole recovery owner, publish `recovering`, then acquire an exclusive store-lifecycle barrier before inspecting or replacing handles. | `recovering` |
+| `recovering` | second operator request | Reject immediately; do not queue another attempt or alter evidence. | Conflict; remain `recovering` |
+| `recovering` | ordinary store operation | Health reads may report progress; database reads and writes wait on the lifecycle barrier or return on context cancellation. No operation may use a handle being replaced. | Remain `recovering` |
+| `recovering` | read-only preflight rejection | Before any writable open, validate the complete recovery log and every database/shard required by it through preservation-safe read-only handles. | Record the error; return to `emergency` with rejected artifacts byte-for-byte unchanged |
+| `recovering` | writable replay failure, cancellation, or shutdown | Close any candidate handle, retain the complete recovery log, do not clean up database/WAL/SHM files, and record whether writable probing may have changed SQLite sidecars. | Return to `emergency`, or continue shutdown |
+| `recovering` | complete success | With no second writable owner, reopen the configured store, replay the preflighted snapshot idempotently, truncate the recovery log only after all target commits succeed, then publish healthy state. | `healthy` |
+| any state | process shutdown | Cancel any recovery owner, drain store operations, and close handles without starting recovery or deleting evidence. | `closed` |
+| `closed` | operator recovery request | The store lifecycle has ended. | Unavailable; remain `closed` |
+
+The future implementation must preserve these invariants:
+
+1. Recovery ownership is a compare-and-set transition from `emergency`; at
+   most one caller can own it. A separate lifecycle barrier drains active
+   database operations and prevents any goroutine from using a closing or
+   candidate handle.
+2. No background goroutine retries recovery. A failed or cancelled request
+   returns to sticky `emergency`; another attempt requires another authenticated
+   operator action.
+3. Read-only preflight completes before any writable open. Structural,
+   semantic, schema, or sidecar rejection leaves the database, WAL, SHM, and
+   recovery-log bytes unchanged.
+4. Once writable replay begins, SQLite may legitimately update database or
+   sidecar bytes. Failure never triggers deletion, repair, rollback-by-copy, or
+   recovery-log truncation. The health record must disclose that boundary.
+5. The recovery log is the retry authority. Event IDs make a committed prefix
+   safe to replay after cancellation or a later-shard failure; truncation occurs
+   only after the entire snapshot is durable.
+   When the log is empty, write capability is proven in one `BEGIN IMMEDIATE`
+   transaction by inserting a reserved, nonce-scoped `alert_events` probe and
+   rolling the transaction back; the probe must leave no durable application
+   row. A read-only query is never sufficient recovery proof.
+6. Daily-shard recovery preflights every referenced shard before the first
+   writable shard open. Shard commits remain serial; a later failure retains
+   the complete log so an operator retry can idempotently finish the batch.
+7. Shutdown cancels the owner and waits for it to release the lifecycle barrier.
+   It must not mark the store healthy, launch a retry, or truncate evidence.
+8. Health and metrics may expose `recovering`, attempt time, and the last
+   result, but observation alone never changes the state.
+
+Threat boundaries are explicit: mandatory authentication prevents an
+unauthenticated caller from forcing storage churn; compare-and-set ownership
+turns request replay or trigger spam into conflicts; the lifecycle barrier and
+event identity prevent concurrent or duplicate writes; preflight-before-open
+closes the rejected-input mutation path; retained logs and the prohibition on
+cleanup preserve forensic evidence; and cancellation/shutdown cannot silently
+promote a partially recovered store.
+
 Remaining v0.1.0 storage work:
 
-- Automatic disk cleanup or restart-free recovery after emergency mode.
+- Implement the R90-57 operator-triggered recovery contract, lifecycle barrier,
+  authenticated control, observability, and direct fault/concurrency tests.
+- Automatic disk cleanup remains intentionally unsupported.
 
 All SQL values must use placeholders. Do not format user-controlled values into SQL strings.
 

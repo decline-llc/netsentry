@@ -208,7 +208,10 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
   missing database or modify a compatible existing database.
 
 ### Known Gaps
-- Automatic disk cleanup or restart-free recovery after storage emergency mode is not implemented.
+- R90-57 defines fail-closed, operator-triggered restart-free recovery semantics
+  and a direct fault/concurrency test contract; the runtime control, lifecycle
+  barrier, and recovery endpoint are not implemented yet.
+- Automatic disk cleanup remains intentionally unsupported.
 - End-to-end pressure coverage currently includes repeat-pcap runs up to 60,000 packets locally; realistic pcap corpora can now be recorded with `make e2e-corpus-pressure` but release evidence is still pending.
 - Sustained external C fuzz evidence is still pending; `make fuzz-sustained` now provides the local evidence entrypoint.
 

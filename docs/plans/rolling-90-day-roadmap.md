@@ -12,6 +12,20 @@
 - **Complete**: acceptance criteria and required evidence are verified, including commit/push/Vault evidence when a repository increment was delivered.
 - Complete only one ready increment per `$netsentry-next` trigger. Record deviations before reordering unfinished work.
 
+## Global Eligibility Policy
+
+- **Schedule authority:** The Jul 16, 2026 global schedule-window waiver remains
+  active. Dates are forecasts only and never gate selection or completion.
+- **Prerequisite authority:** On Aug 1, 2026, the user cancelled additional
+  prerequisite review as an eligibility gate. When internal dependencies are
+  complete, `$netsentry-next` may select the safest bounded default and record
+  it in the increment plan instead of waiting for a separate product review.
+- **Unchanged boundaries:** Required validation and acceptance evidence remain
+  mandatory. This policy does not authorize private-data access, destructive
+  recovery, automatic evidence deletion, version tags, GitHub Releases, image
+  publication, workflow dispatch, or any other external mutation that needs
+  explicit action authority.
+
 ## Per-Trigger Plan Audit
 
 1. **Baseline audit:** work from the repository root; fetch the active remote;
@@ -104,7 +118,7 @@
 | R90-54 | Jul 31–Aug 7 | Complete early | Enforce canonical recovery JSON numeric encoding. | R90-53 | Recovery `dst_port` and `aggregated_count` accept only the exact base-10 integer spelling emitted by the writer; alternate exponent, fractional, sign, and leading-zero forms fail before durable mutation while canonical replay remains compatible. |
 | R90-55 | Aug 8–21 | Complete early | Eliminate recovery field-contract drift. | R90-54 | One authoritative model contract drives canonical field names, required/optional status, and JSON kinds; adding or changing a writer field cannot silently bypass reader validation. |
 | R90-56 | Aug 22–Sep 18 | Complete early | Preserve corrupt SQLite sidecars during preflight. | R90-55 | Deterministic primary and historical fixtures with corrupt or inconsistent WAL/SHM state fail read-only preflight clearly and preserve the database plus sidecar bytes; healthy active-WAL reads remain compatible. |
-| R90-57 | Sep 19–Oct 2 | Blocked | Define restart-free emergency recovery semantics. | R90-56; product decision | A reviewed state machine defines probe, recovery, retry, concurrency, and operator-control boundaries without risking duplicate writes or deleting evidence; implementation remains blocked until the product policy is approved. |
+| R90-57 | Forecast Sep 19–Oct 2; waived | In progress | Define restart-free emergency recovery semantics. | R90-56 | An operator-triggered, fail-closed state machine defines probe, recovery, retry, concurrency, and evidence-preservation boundaries without duplicate writes or automatic cleanup; implementation remains a separate increment. |
 | R90-58 | Oct 3–21 | Complete early | Refresh the v0.1.1 candidate decision package. | R90-56 | Version, current candidate commit, gates, artifacts, checksums, platform, and hold decision are reconciled from fresh evidence without tagging or publishing. |
 | R90-59 | Oct 22–28 | Blocked | Execute the v0.1.1 publication gate. | R90-58; explicit publication authorization | Only an explicitly authorized version and commit may be tagged; GitHub Release and GHCR results must be verified directly, while absence of authority preserves the hold without mutation. |
 
@@ -1085,14 +1099,12 @@
 - **Required validation:** reviewed state-machine invariants, concurrency and
   operator-control threat review, failure/retry test plan, documentation, and
   knowledge checks.
-- **Blocker evidence:** public architecture and development guidance explicitly
-  leave automatic cleanup or restart-free recovery unimplemented because retry
-  ownership and evidence preservation are undecided.
-- **Unblock condition:** the product owner selects automatic or
-  operator-triggered recovery and approves retry, concurrency, and evidence
-  boundaries.
-- **Stop condition:** remain blocked until the product owner chooses automatic
-  versus operator-triggered recovery and approves retry/evidence boundaries.
+- **Authorization:** the Aug 1 global eligibility instruction removes the
+  additional product-review gate; R90-57 uses the safest bounded default of an
+  operator-triggered probe with no background retry or automatic cleanup.
+- **Stop condition:** stop if defining the state machine requires runtime/API
+  implementation, automatic cleanup, deleting recovery evidence, private
+  operator data, or more than this single documentation increment.
 
 ## R90-58 Definition
 
@@ -1681,7 +1693,14 @@ absent; after installing the exact temporary tool versions, the entire sequence
 was rerun successfully. The feature commit is pushed and fetched
 `origin/main` equals it; the post-fetch knowledge gate, exact full-SHA Vault
 note, full index, MOC link, idempotent replay, and stable release/testing note
-are verified. R90-57 remains blocked on its product decision, and R90-59
-remains blocked on explicit authorization for exact version `v0.1.1` and
-candidate `78cd78574e03c8f73ff68248eed2c409d6bca406`. Tagging and publication
-remain unauthorized.
+are verified. At that closeout, R90-57 remained blocked on its product decision
+and R90-59 remained blocked on explicit authorization for exact version
+`v0.1.1` and candidate
+`78cd78574e03c8f73ff68248eed2c409d6bca406`; tagging and publication remained
+unauthorized. On Aug 1, the user reaffirmed the global schedule waiver
+and cancelled additional prerequisite review as an eligibility gate. R90-57 is
+therefore selected from clean fetched baseline
+`46bbf8a0535c30e707b7dfbaefee9cab27a81d84` using the fail-closed default of
+operator-triggered recovery with no background retry or automatic evidence
+cleanup. Its bounded plan and state are persisted; R90-59 remains blocked on
+explicit publication action authority.

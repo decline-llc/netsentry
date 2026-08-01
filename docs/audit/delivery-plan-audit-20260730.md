@@ -77,8 +77,10 @@ The future queue is grounded in current persisted evidence:
   explicit recovery-format risks.
 - Architecture and development guidance retain broader SQLite
   corruption/fault-injection and restart-free recovery gaps.
-- Restart-free emergency recovery requires a product decision before design or
-  implementation.
+- Restart-free emergency recovery originally required a product decision. The
+  Aug 1 eligibility instruction removed that extra review gate, and R90-57
+  selected the fail-closed operator-triggered default; runtime implementation
+  remains separate.
 - The v0.1.1 decision package pins historical candidate `ad8a443…`; current
   `main` has advanced, so candidate evidence and artifacts must be refreshed
   before any future publication decision.

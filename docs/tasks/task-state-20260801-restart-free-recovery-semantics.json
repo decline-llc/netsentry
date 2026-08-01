@@ -1,0 +1,34 @@
+{
+  "task": "r90-57-restart-free-recovery-semantics",
+  "timestamp": "2026-08-01T04:57:43-07:00",
+  "branch": "main",
+  "remote_baseline": "46bbf8a0535c30e707b7dfbaefee9cab27a81d84",
+  "risk_level": "High",
+  "current_checkpoint": "validated_for_delivery",
+  "authorization": "The user cancelled hard schedule requirements and additional prerequisite review; R90-57 uses the safest bounded operator-triggered default.",
+  "completed": [
+    "Fetched origin/main and verified clean local and remote equality at 46bbf8a0535c30e707b7dfbaefee9cab27a81d84",
+    "Verified the R90-58 Git and exact Vault feature/closure evidence",
+    "Reconciled recent delivery history and all 62 roadmap row definitions",
+    "Confirmed roadmap dates were already forecast-only under the Jul 16 global waiver",
+    "Selected R90-57 after the Aug 1 instruction removed its additional product-review gate",
+    "Persisted scope, non-goals, selected operator-triggered policy, risks, evidence mapping, validation, authority boundaries, and stop conditions",
+    "Defined the complete operator-triggered recovery state machine, lifecycle ownership, preflight, writable boundary, retry, cancellation, shutdown, and evidence-preservation invariants",
+    "Defined the future authenticated API outcomes and direct fault, concurrency, replay, encoded-path, cancellation, shutdown, and audit test plan without implementing runtime behavior",
+    "Reconciled architecture, API, development guidance, changelog gap wording, delivery audit, and roadmap status",
+    "Passed documentation, 16-test evidence, 33-test knowledge, all-task-JSON, 62-of-62 roadmap definition, and diff checks"
+  ],
+  "in_progress": [
+    "Deliver the validated R90-57 documentation and verify remote and Vault evidence"
+  ],
+  "todo": [
+    "Run the final staged-diff and sensitive-information review",
+    "Commit, push, fetch-verify, and synchronize the feature range to the local Vault",
+    "Persist and deliver one docs-only closure record"
+  ],
+  "remaining_risks": [
+    "A future implementation must not introduce concurrent writable owners or automatic cleanup",
+    "Tagging and publication remain unauthorized"
+  ],
+  "resume_instructions": "Resume R90-57 from the persisted plan on clean fetched baseline 46bbf8a0535c30e707b7dfbaefee9cab27a81d84. Complete only the operator-triggered recovery state-machine design and test plan; do not implement runtime behavior, start R90-59, create a tag, or publish."
+}

@@ -217,6 +217,35 @@ Current limitations:
 
 ---
 
+## Planned Operator Recovery Control — R90-57 Design Only
+
+No recovery endpoint is implemented today; sticky emergency mode still
+requires cleanup and restart. A later increment may add
+`POST /api/storage/recovery` with this contract:
+
+- The endpoint is enabled only when API authentication is configured and
+  requires a valid Bearer token even on loopback; missing or invalid
+  credentials return `401` before storage inspection.
+- It accepts only `storage.status=emergency`. Healthy-state and duplicate
+  in-progress calls return `409` without touching SQLite or the recovery log.
+- The request owns one bounded synchronous attempt. Client cancellation or
+  server shutdown cancels the attempt; no detached retry continues afterward.
+- `200` means read-only preflight, writable proof/replay, complete recovery-log
+  truncation, and the transition to healthy all succeeded.
+- A preservation-safe preflight rejection or writable replay failure returns
+  `503`, leaves the store in emergency, retains the recovery log, and reports a
+  stable phase code indicating whether failure occurred before or after the
+  writable boundary.
+- Audit logging records request ID, authorization result, starting state,
+  terminal state, phase, duration, and redacted error class. It never records
+  recovery-log content, credentials, or private filesystem paths.
+
+Verbose health may expose `recovering`, attempt start time, phase, and last
+terminal result. Polling health is observational and cannot trigger or advance
+recovery.
+
+---
+
 ## Planned v0.1.0 API Contract
 
 List responses use:

@@ -248,6 +248,54 @@ If the integrity preflight fails:
 NetSentry does not automatically repair, replace, quarantine, or delete a
 database that fails this check.
 
+### Planned restart-free emergency recovery test contract
+
+R90-57 defines an operator-triggered design only. Until a later implementation
+increment lands, emergency mode remains sticky until restart. The future
+implementation must require authenticated operator intent and must not add a
+timer, free-space poller, implicit write retry, or automatic cleanup.
+
+Implementation tests must synchronize on observable state/lifecycle boundaries
+and cover all of the following without fixed sleeps:
+
+1. **Ownership:** exactly one request changes `emergency` to `recovering`; a
+   concurrent request receives a conflict and does not wait or start later.
+2. **Lifecycle exclusion:** active reads and writes drain before handle
+   replacement; new database operations wait or cancel; health observation
+   remains available; no operation reaches a closed or second writable handle.
+3. **Preflight preservation:** malformed/truncated recovery input, incompatible
+   schema, corrupt database, corrupt WAL, and inconsistent SHM each fail through
+   separate read-only handles before writable open, with database, WAL, SHM,
+   and recovery-log bytes compared before and after.
+4. **Fault remains:** disk-full, quota, read-only filesystem, and I/O failures
+   during writable replay return to `emergency`, retain the complete recovery
+   log, record that SQLite sidecars may have changed after the writable boundary,
+   and never schedule a retry.
+5. **Successful replay:** a repaired store reopens with one writable owner,
+   replays every pending event once, truncates the log only after the complete
+   commit set, marks healthy, and permits the next normal write.
+6. **Committed-prefix retry:** cancellation or an injected later-shard failure
+   after an earlier commit retains the full log; a second explicit request uses
+   event IDs to finish without duplicate events or aggregate inflation.
+7. **Cancellation and shutdown:** cancellation before lifecycle readiness,
+   during read-only preflight, and during active replay all release ownership;
+   shutdown waits for release and never publishes a transient healthy state.
+8. **Empty-log proof:** recovery still performs a write-capable SQLite probe
+   before marking healthy: begin an immediate transaction, insert a reserved
+   nonce-scoped `alert_events` event, verify it inside the transaction, and
+   roll back. A read-only query or free-space increase alone is insufficient
+   proof, and the probe must leave no durable application row.
+9. **Daily shards and encoded paths:** direct and space-containing database
+   paths, healthy active WAL, current and historical shards, and a failure in a
+   later shard preserve serialization and idempotent retry behavior.
+10. **Operator surface:** missing/invalid authentication, healthy-state calls,
+    duplicate calls, timeout, preflight rejection, writable failure, success,
+    and audit-log redaction have stable direct regressions.
+
+Repeated Go reliability runs must use `-count=1`. Every failure test that
+promises preservation must compare artifacts through independent read-only
+handles before any writable open.
+
 The primary startup check, non-current write preflight, and historical
 query/count paths share one URL-safe SQLite `mode=ro` helper. The helper
 resolves database symlinks before inspecting sidecars and constructing the URI,
