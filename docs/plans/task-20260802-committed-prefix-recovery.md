@@ -124,6 +124,23 @@ an explicit retry completes every event exactly once.
   interference while retaining a real observable commit boundary; the complete
   focused sequence was rerun successfully as recorded above.
 
+## Delivery Results
+
+- Feature commit:
+  `981cb1e3a0041301f42629522cff844e04764c6f` (`fix: stabilize
+  committed-prefix recovery replay`).
+- The eight-path commit was pushed without force, fetched, and verified equal
+  to `origin/main`; the post-fetch 33-test knowledge gate passed.
+- Exact range
+  `89806508802fd8d8165f9606995d19bba0ef6da0..981cb1e3a0041301f42629522cff844e04764c6f`
+  was synchronized twice with identical iteration-note, full-index, and MOC
+  hashes to the single existing local Vault.
+- The generated note, full commit index, MOC link, and manually reconciled
+  stable SQLite storage and testing/release notes identify the sorted replay
+  and committed-prefix direct evidence.
+- R90-63 is ready but was not started; R90-59 publication, tags, releases,
+  images, and workflow dispatch remain outside authority.
+
 ## Authority Boundaries
 
 The rolling trigger authorizes the bounded R90-62 recovery correctness and test
