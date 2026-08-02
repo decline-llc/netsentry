@@ -118,6 +118,23 @@ boundaries without changing the UDS wire contract.
 None. The bounded structured-input, independent JSONL-decoder, and no-wire-
 change design executed as planned.
 
+## Delivery Results
+
+- Feature commit:
+  `357455a22f62b4d85c16c431fde70320d27c28a9` (`test: add UDS
+  formatter fuzz boundary`).
+- The fourteen-path commit was pushed without force, fetched, and verified
+  equal to `origin/main`; the post-fetch 33-test knowledge gate passed.
+- Exact range
+  `f5dc37e48513de31633aaa7a812e619a3d171e90..357455a22f62b4d85c16c431fde70320d27c28a9`
+  was synchronized twice with identical iteration-note, full-index, and MOC
+  hashes to the single existing local Vault.
+- The generated note, full commit index, MOC link, and manually reconciled
+  stable testing-matrix and ASan-fuzz notes identify the deterministic
+  structured boundary, independent decoder, and honest non-sustained scope.
+- R90-64 is ready but was not started; R90-59 publication, tags, releases,
+  images, and workflow dispatch remain outside authority.
+
 ## Authority Boundaries
 
 The rolling trigger authorizes the bounded R90-63 harness, validator, build

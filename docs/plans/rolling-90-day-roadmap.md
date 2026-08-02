@@ -124,8 +124,8 @@
 | R90-60 | Forecast Aug 1–Oct 30; waived | Complete early | Implement operator-triggered restart-free storage recovery. | R90-57 | One authenticated request serializes recovery against store lifecycle operations, preflights durable input before the writable boundary, replays or probes idempotently, exposes bounded health/audit outcomes, and leaves failures in sticky emergency without automatic cleanup or retry. |
 | R90-61 | Aug 2 | Complete | Audit post-recovery delivery and restore the forward queue. | R90-60 | A dated audit reconciles recent commits, plans/states, fetched remote and Vault evidence, records the committed-prefix test gap, and restores a complete evidence-grounded queue without runtime or publication changes. |
 | R90-62 | Aug 3–Sep 4 | Complete early | Prove committed-prefix multi-shard recovery retry. | R90-61 | Deterministic direct regressions cancel or fail recovery after an earlier shard commit, retain the complete log and emergency state, and prove explicit retry completes every event once without aggregate inflation. |
-| R90-63 | Sep 5–Oct 9 | Ready | Add a dedicated C UDS JSON formatter fuzz boundary. | R90-62 | An ASan-capable deterministic harness covers packet, heartbeat, and hello formatting across escaping, payload, integer, and output-boundary inputs; valid output remains canonical JSONL and failures never overrun or expose partial buffers as success. |
-| R90-64 | Oct 10–31 | Planned | Record a sustained parser and formatter fuzz baseline. | R90-63 | Reproducible sustained ASan runs exercise both C harnesses with path-redacted corpus metadata, no crashes or sanitizer findings, and an honest local/synthetic evidence classification without a release or production-traffic claim. |
+| R90-63 | Sep 5–Oct 9 | Complete early | Add a dedicated C UDS JSON formatter fuzz boundary. | R90-62 | An ASan-capable deterministic harness covers packet, heartbeat, and hello formatting across escaping, payload, integer, and output-boundary inputs; valid output remains canonical JSONL and failures never overrun or expose partial buffers as success. |
+| R90-64 | Oct 10–31 | Ready | Record a sustained parser and formatter fuzz baseline. | R90-63 | Reproducible sustained ASan runs exercise both C harnesses with path-redacted corpus metadata, no crashes or sanitizer findings, and an honest local/synthetic evidence classification without a release or production-traffic claim. |
 
 ## R90-01 Definition
 
@@ -1856,4 +1856,11 @@ undersized-buffer behavior with canary protection. Representative output also
 passes independent strict JSONL decoding and frame-shape checks. Default and
 100,000-mutation focused runs, ordinary and ASan C tests, full native race,
 E2E, shell, Python, documentation, evidence, and knowledge gates pass. R90-64
-and R90-59 were not started; delivery evidence remains to be recorded.
+and R90-59 were not started. R90-63 completed early at
+`357455a22f62b4d85c16c431fde70320d27c28a9`: the fourteen-path feature commit
+was pushed without force, fetched equal to `origin/main`, and passed the
+post-fetch knowledge gate. Exact range
+`f5dc37e48513de31633aaa7a812e619a3d171e90..357455a22f62b4d85c16c431fde70320d27c28a9`
+was synchronized idempotently to the single local Vault; its iteration note,
+full index, MOC link, and updated stable testing/ASan-fuzz knowledge are
+verified. R90-64 is ready but was not started. R90-59 remains blocked.
