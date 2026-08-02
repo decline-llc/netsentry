@@ -58,6 +58,9 @@ make test-coverage
 echo "[rc-check] make fuzz-parser"
 make fuzz-parser
 
+echo "[rc-check] make fuzz-uds-formatter"
+make fuzz-uds-formatter
+
 echo "[rc-check] make e2e-smoke"
 make e2e-smoke
 

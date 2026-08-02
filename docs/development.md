@@ -53,6 +53,7 @@ make config-check  # validate repository config, rule, and suppression files
 make bench         # C parser/UDS microbenchmarks + Go benchmarks
 make fuzz-parser   # deterministic ASan fuzz smoke for the C frame parser
 make fuzz-parser-long # longer deterministic ASan fuzz pass for the C frame parser
+make fuzz-uds-formatter # deterministic ASan fuzz smoke for C UDS JSON formatters
 make fuzz-sustained # sustained ASan parser fuzz evidence
 make e2e-smoke     # deterministic pcap -> SQLite -> API smoke test
 make e2e-pressure  # repeat-pcap end-to-end throughput smoke test
@@ -479,10 +480,12 @@ The summaries include packet/alert counts and rates, alert match rate, sampled
 peak engine RSS, engine error-log line count, API health, metrics, and an alerts
 query snapshot. Sanitize pcaps before sharing them.
 
-For C parser hardening work, run the deterministic ASan fuzz smoke:
+For C parser and UDS JSON formatter hardening, run the deterministic ASan fuzz
+smokes:
 
 ```bash
 make fuzz-parser
+make fuzz-uds-formatter
 # Longer local pass:
 FUZZ_LONG_ITERATIONS=1000000 make fuzz-parser-long
 # Evidence-producing sustained run:
@@ -491,7 +494,13 @@ make fuzz-sustained
 FUZZ_CORPUS=/path/to/local-corpus make fuzz-sustained
 ```
 
-The harness starts from built-in Ethernet/IP/TCP/UDP, VLAN, Q-in-Q, fragment, short-frame, and malformed TCP-offset seeds, then applies deterministic mutations.
+The parser harness starts from built-in Ethernet/IP/TCP/UDP, VLAN, Q-in-Q,
+fragment, short-frame, and malformed TCP-offset seeds, then applies
+deterministic mutations. The formatter harness derives bounded structured
+packet, heartbeat, and hello inputs; it covers escaping, payload and integer
+edges, proves exact-fit success plus undersized-buffer rejection under ASan,
+and independently decodes representative JSONL frames with Python's standard
+library. `FUZZ_FORMATTER_ITERATIONS` controls its deterministic mutation count.
 `make fuzz-sustained` records JSON and Markdown evidence under
 `docs/evidence/local/` by default. That directory is ignored because external
 corpus paths may be sensitive. Corpus paths are redacted by default; set
@@ -508,7 +517,7 @@ make rc-check
 DOCKER="sudo docker" make rc-check
 ```
 
-This runs `make shell-check`, `make docs-check`, `make python-check`, `make config-check`, `make deps-check`, `make test`, `make test-coverage`, `make fuzz-parser`, `make e2e-smoke`, `make dist`, release archive checksum/content smoke checks, `make docker-build`, a minimal Docker image content smoke check, and a Docker runtime `/api/health` smoke check. If Docker is unavailable in the current environment, use:
+This runs `make shell-check`, `make docs-check`, `make python-check`, `make config-check`, `make deps-check`, `make test`, `make test-coverage`, `make fuzz-parser`, `make fuzz-uds-formatter`, `make e2e-smoke`, `make dist`, release archive checksum/content smoke checks, `make docker-build`, a minimal Docker image content smoke check, and a Docker runtime `/api/health` smoke check. If Docker is unavailable in the current environment, use:
 
 ```bash
 SKIP_DOCKER=1 make rc-check

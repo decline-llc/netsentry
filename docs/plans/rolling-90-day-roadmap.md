@@ -1847,3 +1847,13 @@ knowledge gate. Exact range
 was synchronized idempotently to the single local Vault; its iteration note,
 full index, MOC link, and updated stable SQLite/testing knowledge are verified.
 R90-63 is ready but was not started. R90-59 remains blocked.
+The next trigger fetched and verified the R90-62 closure plus exact Vault
+evidence, then selected R90-63 from clean baseline
+`f5dc37e48513de31633aaa7a812e619a3d171e90`. A dedicated C ASan boundary now
+derives bounded packet, heartbeat, and hello formatter inputs; structured seeds
+and deterministic mutations cover escaping, payload, integer, exact-fit, and
+undersized-buffer behavior with canary protection. Representative output also
+passes independent strict JSONL decoding and frame-shape checks. Default and
+100,000-mutation focused runs, ordinary and ASan C tests, full native race,
+E2E, shell, Python, documentation, evidence, and knowledge gates pass. R90-64
+and R90-59 were not started; delivery evidence remains to be recorded.

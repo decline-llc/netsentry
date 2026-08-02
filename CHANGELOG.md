@@ -75,6 +75,10 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Local sanitized pcap corpus pressure evidence via `make e2e-corpus-pressure`, with ignored JSON/Markdown evidence output.
 - Pcap sanitization helper via `make sanitize-pcap INPUT=... OUTPUT=...`.
 - Deterministic AddressSanitizer fuzz smoke for the C frame parser via `make fuzz-parser`.
+- Deterministic AddressSanitizer fuzz smoke for the C packet, heartbeat, and
+  hello JSON formatters via `make fuzz-uds-formatter`, including structured
+  escaping/payload/integer edges, exact-fit and truncation guards, and
+  independent JSONL decoding.
 - Broader deterministic C parser fuzz seeds cover TCP, UDP, VLAN, Q-in-Q, IPv4 fragments, short frames, and malformed TCP data offsets; `make fuzz-parser-long` runs a longer local ASan pass.
 - Sustained ASan C parser fuzz evidence entrypoint via `make fuzz-sustained`, with optional local corpus replay and ignored JSON/Markdown evidence output.
 - Receiver lifecycle tests for multiple active UDS connections during context cancellation, with goleak coverage for the receiver package.

@@ -179,10 +179,25 @@ static void test_reconnect_sends_hello_first(void) {
     CHECK_SYS(rmdir(tmpdir) == 0);
 }
 
-static void test_format_rejects_truncation(void) {
+static void test_formatters_reject_truncation(void) {
+    char full[1024];
     char tiny[16];
     HeartbeatInfo hb = {.seq = 1};
     CHECK(uds_format_heartbeat_json(&hb, "abcd1234", tiny, sizeof(tiny)) < 0);
+
+    PacketInfo pkt;
+    memset(&pkt, 0, sizeof(pkt));
+    strcpy(pkt.src_ip, "10.0.0.1");
+    strcpy(pkt.dst_ip, "10.0.0.2");
+    int n = uds_format_packet_json(&pkt, full, sizeof(full));
+    CHECK(n > 0);
+    CHECK(uds_format_packet_json(&pkt, full, (size_t)n) < 0);
+
+    n = uds_format_hello_json("abcd1234", "0.1.0", 123, "capture-host",
+                              full, sizeof(full));
+    CHECK(n > 0);
+    CHECK(uds_format_hello_json("abcd1234", "0.1.0", 123, "capture-host",
+                                full, (size_t)n) < 0);
 }
 
 int main(void) {
@@ -190,7 +205,7 @@ int main(void) {
     test_hello_escapes_json_strings();
     test_heartbeat_contains_metrics();
     test_packet_base64_and_escapes_flags();
-    test_format_rejects_truncation();
+    test_formatters_reject_truncation();
     test_limited_connect_fails_fast();
     test_reconnect_sends_hello_first();
     printf("test_uds_sender: ok\n");

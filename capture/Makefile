@@ -53,10 +53,14 @@ FUZZ_PARSER_SRCS   := tests/fuzz_parser.c \
                       src/eth_parser.c \
                       src/parser_registry.c \
                       src/passthrough_parser.c
+FUZZ_UDS_FORMATTER_TARGET := ../bin/fuzz-uds-formatter
+FUZZ_UDS_FORMATTER_SRCS   := tests/fuzz_uds_formatter.c \
+                             src/uds_sender.c
 FUZZ_ITERATIONS ?= 5000
 FUZZ_LONG_ITERATIONS ?= 100000
+FUZZ_FORMATTER_ITERATIONS ?= 5000
 
-.PHONY: all build-asan test asan-test bench fuzz-parser fuzz-parser-long clean
+.PHONY: all build-asan test asan-test bench fuzz-parser fuzz-parser-long fuzz-uds-formatter clean
 
 all: $(TARGET)
 
@@ -93,6 +97,10 @@ $(FUZZ_PARSER_TARGET): $(FUZZ_PARSER_SRCS)
 	@mkdir -p $(dir $@)
 	$(CC) $(ASAN_CFLAGS) -o $@ $^
 
+$(FUZZ_UDS_FORMATTER_TARGET): $(FUZZ_UDS_FORMATTER_SRCS)
+	@mkdir -p $(dir $@)
+	$(CC) $(ASAN_CFLAGS) -o $@ $^
+
 test: $(TEST_TARGETS)
 	$(TEST_PARSER_TARGET)
 	$(TEST_UDS_TARGET)
@@ -112,5 +120,9 @@ fuzz-parser: $(FUZZ_PARSER_TARGET)
 fuzz-parser-long: $(FUZZ_PARSER_TARGET)
 	ASAN_OPTIONS=detect_leaks=0 FUZZ_ITERATIONS=$(FUZZ_LONG_ITERATIONS) $(FUZZ_PARSER_TARGET)
 
+fuzz-uds-formatter: $(FUZZ_UDS_FORMATTER_TARGET)
+	ASAN_OPTIONS=detect_leaks=0 FUZZ_FORMATTER_ITERATIONS=$(FUZZ_FORMATTER_ITERATIONS) $(FUZZ_UDS_FORMATTER_TARGET)
+	ASAN_OPTIONS=detect_leaks=0 python3 tests/validate_formatter_json.py $(FUZZ_UDS_FORMATTER_TARGET)
+
 clean:
-	rm -f $(OBJS) $(TARGET) $(ASAN_TARGET) $(TEST_TARGETS) $(BENCH_TARGETS) $(FUZZ_PARSER_TARGET)
+	rm -f $(OBJS) $(TARGET) $(ASAN_TARGET) $(TEST_TARGETS) $(BENCH_TARGETS) $(FUZZ_PARSER_TARGET) $(FUZZ_UDS_FORMATTER_TARGET)

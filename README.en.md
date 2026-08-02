@@ -114,6 +114,7 @@ Additional gates:
 SUPPLY_CHAIN_FETCH_ASSETS=1 make supply-chain-check
 make test-coverage
 make fuzz-parser
+make fuzz-uds-formatter
 FUZZ_LONG_ITERATIONS=1000000 make fuzz-parser-long
 make fuzz-sustained
 PCAP_CORPUS=/path/to/reviewed-corpus make e2e-corpus-pressure
