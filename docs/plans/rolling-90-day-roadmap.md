@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-08-01 through 2026-10-30. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from the prior horizon is preserved below.
+> Window: 2026-08-02 through 2026-10-31. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from the prior horizon is preserved below.
 
 ## Status Rules
 
@@ -122,6 +122,10 @@
 | R90-58 | Oct 3–21 | Complete early | Refresh the v0.1.1 candidate decision package. | R90-56 | Version, current candidate commit, gates, artifacts, checksums, platform, and hold decision are reconciled from fresh evidence without tagging or publishing. |
 | R90-59 | Oct 22–28 | Blocked | Execute the v0.1.1 publication gate. | R90-58; explicit publication authorization | Only an explicitly authorized version and commit may be tagged; GitHub Release and GHCR results must be verified directly, while absence of authority preserves the hold without mutation. |
 | R90-60 | Forecast Aug 1–Oct 30; waived | Complete early | Implement operator-triggered restart-free storage recovery. | R90-57 | One authenticated request serializes recovery against store lifecycle operations, preflights durable input before the writable boundary, replays or probes idempotently, exposes bounded health/audit outcomes, and leaves failures in sticky emergency without automatic cleanup or retry. |
+| R90-61 | Aug 2 | Ready | Audit post-recovery delivery and restore the forward queue. | R90-60 | A dated audit reconciles recent commits, plans/states, fetched remote and Vault evidence, records the committed-prefix test gap, and restores a complete evidence-grounded queue without runtime or publication changes. |
+| R90-62 | Aug 3–Sep 4 | Planned | Prove committed-prefix multi-shard recovery retry. | R90-61 | Deterministic direct regressions cancel or fail recovery after an earlier shard commit, retain the complete log and emergency state, and prove explicit retry completes every event once without aggregate inflation. |
+| R90-63 | Sep 5–Oct 9 | Planned | Add a dedicated C UDS JSON formatter fuzz boundary. | R90-62 | An ASan-capable deterministic harness covers packet, heartbeat, and hello formatting across escaping, payload, integer, and output-boundary inputs; valid output remains canonical JSONL and failures never overrun or expose partial buffers as success. |
+| R90-64 | Oct 10–31 | Planned | Record a sustained parser and formatter fuzz baseline. | R90-63 | Reproducible sustained ASan runs exercise both C harnesses with path-redacted corpus metadata, no crashes or sanitizer findings, and an honest local/synthetic evidence classification without a release or production-traffic claim. |
 
 ## R90-01 Definition
 
@@ -1150,6 +1154,69 @@
   cleanup, database/recovery-format migration, private operator data, release
   publication, or behavior beyond this one recovery-control increment.
 
+## R90-61 Definition
+
+- **Goal:** reconcile the completed restart-free recovery delivery and repair
+  the now-empty dependency-ready engineering queue from current repository
+  evidence.
+- **Audit record:**
+  [`delivery-plan-audit-20260802.md`](../audit/delivery-plan-audit-20260802.md).
+- **Risk:** speculative planning or historical rewrite can create unsupported
+  commitments or conceal a validation gap.
+- **Required validation:** recent phase/count review, all task-state JSON
+  parsing, exact row/Definition coverage, unfinished-item field audit,
+  documentation, knowledge, diff, and sensitive-information checks.
+- **Stop condition:** stop if completion requires runtime implementation,
+  private evidence, historical rewrite, a product/release decision, or starting
+  R90-62.
+
+## R90-62 Definition
+
+- **Goal:** directly prove the committed-prefix retry invariant promised by
+  the R90-57/R90-60 storage-recovery design for daily shards.
+- **Risk:** nondeterministic shard order or a test-only timing hook can create a
+  flaky proof, while a real later-shard failure can leave earlier commits that
+  must not inflate on retry.
+- **Required validation:** deterministic shard-order review; direct later-shard
+  failure and active-replay cancellation after an earlier commit; full-log and
+  sticky-emergency preservation; idempotent explicit retry with one event and
+  aggregate count per input; twenty uncached focused race runs, full native,
+  E2E, documentation, and knowledge checks.
+- **Stop condition:** stop if deterministic proof requires production data,
+  cross-process recovery ownership, rollback-by-copy, automatic cleanup, a
+  storage-format migration, or publication authority.
+
+## R90-63 Definition
+
+- **Goal:** extend the existing C ASan fuzz boundary from frame parsing to the
+  handwritten UDS packet, heartbeat, and hello JSON formatters.
+- **Risk:** unconstrained structured-input generation can manufacture invalid
+  C strings or make success assertions meaningless, while a harness that only
+  checks for crashes can miss truncated output accepted as valid.
+- **Required validation:** deterministic structured seeds and mutations;
+  sanitizer coverage for escaping, payload boundaries, integer extremes, and
+  exact-fit/undersized output buffers; successful JSONL decode and frame-kind
+  invariants; direct truncation rejection; C tests, shell/docs checks, full
+  native, E2E, and knowledge checks.
+- **Stop condition:** stop if completion requires changing the UDS wire schema,
+  accepting noncanonical JSON, adding a C runtime dependency, private corpora,
+  or publication authority.
+
+## R90-64 Definition
+
+- **Goal:** record one current reproducible sustained ASan baseline across the
+  parser and formatter harnesses after R90-63 closes the harness gap.
+- **Risk:** cached, path-bearing, or underspecified results can be mistaken for
+  repeated execution, public corpus provenance, or production throughput
+  evidence.
+- **Required validation:** repository-pinned tool preflight; uncached sustained
+  parser and formatter runs at the recorded iteration budget; optional corpus
+  inventory with paths redacted; zero crashes and sanitizer findings; evidence
+  schema/content checks, full native, documentation, and knowledge checks.
+- **Stop condition:** stop on a crash, sanitizer finding, ambiguous iteration
+  count, sensitive path exposure, need for private corpus access, or an attempt
+  to use the result as tag/publication or production-traffic authority.
+
 ### R90-49 Validation Deviation
 
 - **Observed:** The first complete native race suite hit the existing
@@ -1640,7 +1707,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60`; `R90-56 → R90-58 → R90-59`, with R90-59 blocked on explicit publication authorization. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60 → R90-61 → R90-62 → R90-63 → R90-64`; `R90-56 → R90-58 → R90-59`, with R90-59 blocked on explicit publication authorization. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -1745,4 +1812,13 @@ range
 was synchronized idempotently to the single local Vault; its iteration note,
 full index, MOC link, and updated stable SQLite-storage knowledge are verified.
 R90-59 remains blocked on explicit publication action authority; no later
-increment is selected.
+increment is selected. The Aug 2 trigger verified the clean fetched R90-60
+closure and exact Vault evidence, then found that R90-59 was the only
+unfinished row and remained externally blocked. R90-61 is selected as the
+smallest safe documentation-only queue unblocker. Its code/test audit records
+that committed-prefix multi-shard recovery retry is promised by architecture
+and development guidance but lacks a direct later-shard failure or
+active-replay cancellation regression. R90-62 is planned as the next
+correctness increment, followed by the documented C formatter and sustained
+fuzz gaps. R90-59 remains blocked; no runtime, tag, release, registry, or
+workflow action is authorized by this audit.
