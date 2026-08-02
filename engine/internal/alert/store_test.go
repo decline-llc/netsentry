@@ -6411,6 +6411,73 @@ func TestStoreRecoveryWritableFailureRetainsLogAndAllowsExplicitRetry(t *testing
 	}
 }
 
+func TestStoreRecoveryLaterShardFailureRetainsCommittedPrefixForIdempotentRetry(t *testing.T) {
+	ctx := context.Background()
+	store, firstAlert, laterAlert, firstPath, laterPath, logBefore := prepareCommittedPrefixRecovery(t, "later-failure")
+	defer store.Close()
+	store.busyTimeoutMS = 25
+
+	releaseLock := holdSQLiteWriteLock(t, laterPath)
+	err := store.Recover(ctx)
+	var recoveryErr *RecoveryError
+	if !errors.As(err, &recoveryErr) || recoveryErr.Phase != "replay" || !recoveryErr.WritableAttempted {
+		t.Fatalf("later-shard recovery error = %#v, want writable replay RecoveryError", err)
+	}
+	assertCommittedRecoveryAlert(t, firstPath, firstAlert, 1)
+	assertCommittedRecoveryAlert(t, laterPath, laterAlert, 0)
+	assertFileBytes(t, store.recoveryLogPath, logBefore)
+	assertFailedReplayHealth(t, store)
+
+	releaseLock()
+	if err := store.Recover(ctx); err != nil {
+		t.Fatalf("retry committed-prefix recovery: %v", err)
+	}
+	assertCommittedRecoveryAlert(t, firstPath, firstAlert, 1)
+	assertCommittedRecoveryAlert(t, laterPath, laterAlert, 1)
+	assertSuccessfulRecovery(t, store)
+}
+
+func TestStoreRecoveryActiveReplayCancellationRetainsCommittedPrefixForIdempotentRetry(t *testing.T) {
+	store, firstAlert, laterAlert, firstPath, laterPath, logBefore := prepareCommittedPrefixRecovery(t, "active-cancel")
+	defer store.Close()
+	store.busyTimeoutMS = 5000
+	observer, err := openReadOnlyDatabase(firstPath)
+	if err != nil {
+		t.Fatalf("open committed-prefix observer: %v", err)
+	}
+	defer observer.Close()
+
+	releaseLock := holdSQLiteWriteLock(t, laterPath)
+	recoveryCtx, cancel := context.WithCancel(context.Background())
+	done := make(chan error, 1)
+	go func() { done <- store.Recover(recoveryCtx) }()
+	waitForCommittedRecoveryAlert(t, observer, firstAlert, done)
+	cancel()
+
+	var recoveryErr *RecoveryError
+	select {
+	case err := <-done:
+		if !errors.As(err, &recoveryErr) || recoveryErr.Phase != "replay" ||
+			!recoveryErr.WritableAttempted || !errors.Is(err, context.Canceled) {
+			t.Fatalf("cancelled active recovery error = %#v, want cancelled writable replay RecoveryError", err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("active recovery did not return after cancellation")
+	}
+	assertCommittedRecoveryAlert(t, firstPath, firstAlert, 1)
+	assertCommittedRecoveryAlert(t, laterPath, laterAlert, 0)
+	assertFileBytes(t, store.recoveryLogPath, logBefore)
+	assertFailedReplayHealth(t, store)
+
+	releaseLock()
+	if err := store.Recover(context.Background()); err != nil {
+		t.Fatalf("retry cancelled committed-prefix recovery: %v", err)
+	}
+	assertCommittedRecoveryAlert(t, firstPath, firstAlert, 1)
+	assertCommittedRecoveryAlert(t, laterPath, laterAlert, 1)
+	assertSuccessfulRecovery(t, store)
+}
+
 func TestStoreRecoverySupportsDailyShardEncodedPaths(t *testing.T) {
 	ctx := context.Background()
 	dir := filepath.Join(t.TempDir(), "daily shards with spaces")
@@ -6472,6 +6539,170 @@ func waitForStorageStatus(t *testing.T, store *Store, status string) {
 		runtime.Gosched()
 	}
 	t.Fatalf("storage status = %q, want %q", store.Health().Status, status)
+}
+
+func prepareCommittedPrefixRecovery(
+	t *testing.T,
+	keyword string,
+) (*Store, *model.Alert, *model.Alert, string, string, []byte) {
+	t.Helper()
+	ctx := context.Background()
+	dir := t.TempDir()
+	now := time.Date(2026, 8, 3, 10, 0, 0, 0, time.UTC)
+	store := openDailyShardStoreAt(t, dir, now)
+	firstAlert := makeAlert(now.AddDate(0, 0, -2), keyword+"-first")
+	laterAlert := makeAlert(now.AddDate(0, 0, -1), keyword+"-later")
+	firstPath := store.shardPathFor(firstAlert.Timestamp)
+	laterPath := store.shardPathFor(laterAlert.Timestamp)
+	if firstPath >= laterPath {
+		store.Close()
+		t.Fatalf("committed-prefix shard order %q >= %q", firstPath, laterPath)
+	}
+
+	if err := store.WriteBatch(ctx, []*model.Alert{
+		makeAlert(firstAlert.Timestamp, keyword+"-first-seed"),
+		makeAlert(laterAlert.Timestamp, keyword+"-later-seed"),
+	}); err != nil {
+		store.Close()
+		t.Fatalf("create compatible committed-prefix shards: %v", err)
+	}
+	clearSQLiteAlerts(t, firstPath)
+	clearSQLiteAlerts(t, laterPath)
+	store.markEmergency(syscall.ENOSPC)
+	if err := store.WriteBatch(ctx, []*model.Alert{firstAlert, laterAlert}); !errors.Is(err, ErrStorageEmergency) {
+		store.Close()
+		t.Fatalf("append committed-prefix recovery batch error = %v, want ErrStorageEmergency", err)
+	}
+	return store, firstAlert, laterAlert, firstPath, laterPath, readFileBytes(t, store.recoveryLogPath)
+}
+
+func clearSQLiteAlerts(t *testing.T, path string) {
+	t.Helper()
+	db, err := sql.Open("sqlite", path)
+	if err != nil {
+		t.Fatalf("open compatible shard for cleanup: %v", err)
+	}
+	db.SetMaxOpenConns(1)
+	defer db.Close()
+	if _, err := db.Exec(`DELETE FROM alerts; DELETE FROM alert_events;`); err != nil {
+		t.Fatalf("clear compatible shard: %v", err)
+	}
+}
+
+func holdSQLiteWriteLock(t *testing.T, path string) func() {
+	t.Helper()
+	db, err := sql.Open("sqlite", path)
+	if err != nil {
+		t.Fatalf("open later shard lock: %v", err)
+	}
+	db.SetMaxOpenConns(1)
+	if _, err := db.Exec("PRAGMA busy_timeout=0"); err != nil {
+		db.Close()
+		t.Fatalf("disable lock wait: %v", err)
+	}
+	if _, err := db.Exec("BEGIN IMMEDIATE"); err != nil {
+		db.Close()
+		t.Fatalf("lock later shard for writes: %v", err)
+	}
+	released := false
+	release := func() {
+		if released {
+			return
+		}
+		released = true
+		if _, err := db.Exec("ROLLBACK"); err != nil {
+			t.Errorf("release later shard lock: %v", err)
+		}
+		if err := db.Close(); err != nil {
+			t.Errorf("close later shard lock: %v", err)
+		}
+	}
+	t.Cleanup(release)
+	return release
+}
+
+func waitForCommittedRecoveryAlert(t *testing.T, observer *sql.DB, alert *model.Alert, recoveryDone <-chan error) {
+	t.Helper()
+	deadline := time.Now().Add(5 * time.Second)
+	var lastErr error
+	for time.Now().Before(deadline) {
+		select {
+		case err := <-recoveryDone:
+			t.Fatalf("recovery returned before committed prefix was observed: %v (last read error: %v)", err, lastErr)
+		default:
+		}
+		count, err := committedRecoveryAlertCountDB(observer, alert)
+		if err == nil && count == 1 {
+			return
+		}
+		lastErr = err
+		runtime.Gosched()
+	}
+	t.Fatalf("committed recovery alert %q was not observable: %v", alert.MatchedKeyword, lastErr)
+}
+
+func assertCommittedRecoveryAlert(t *testing.T, path string, alert *model.Alert, want int) {
+	t.Helper()
+	got, err := committedRecoveryAlertCount(path, alert)
+	if err != nil {
+		t.Fatalf("inspect committed recovery event %q: %v", alert.MatchedKeyword, err)
+	}
+	if got != want {
+		t.Fatalf("committed recovery event count for %q = %d, want %d", alert.MatchedKeyword, got, want)
+	}
+	if want == 0 {
+		return
+	}
+	db, err := openReadOnlyDatabase(path)
+	if err != nil {
+		t.Fatalf("open recovered shard read-only: %v", err)
+	}
+	defer db.Close()
+	var rows, aggregate int
+	if err := db.QueryRow(`SELECT COUNT(*), COALESCE(MAX(aggregated_count), 0) FROM alerts WHERE matched_keyword = ?`, alert.MatchedKeyword).Scan(&rows, &aggregate); err != nil {
+		t.Fatalf("inspect recovered alert %q: %v", alert.MatchedKeyword, err)
+	}
+	if rows != 1 || aggregate != 1 {
+		t.Fatalf("recovered alert %q rows=%d aggregate=%d, want 1/1", alert.MatchedKeyword, rows, aggregate)
+	}
+}
+
+func committedRecoveryAlertCount(path string, alert *model.Alert) (int, error) {
+	db, err := openReadOnlyDatabase(path)
+	if err != nil {
+		return 0, err
+	}
+	defer db.Close()
+	return committedRecoveryAlertCountDB(db, alert)
+}
+
+func committedRecoveryAlertCountDB(db *sql.DB, alert *model.Alert) (int, error) {
+	normalized := normalizeAlert(alert, alert.Timestamp, time.Minute)
+	var count int
+	if err := db.QueryRow(`SELECT COUNT(*) FROM alert_events WHERE event_id = ?`, normalized.EventID).Scan(&count); err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func assertFailedReplayHealth(t *testing.T, store *Store) {
+	t.Helper()
+	health := store.Health()
+	if health.Status != "emergency" || health.RecoveryPhase != "replay" ||
+		health.LastRecoveryResult != "failed" || health.LastError != "storage recovery failed during replay" {
+		t.Fatalf("failed committed-prefix health = %+v", health)
+	}
+}
+
+func assertSuccessfulRecovery(t *testing.T, store *Store) {
+	t.Helper()
+	if info, err := os.Stat(store.recoveryLogPath); err != nil || info.Size() != 0 {
+		t.Fatalf("recovery log after committed-prefix retry = %+v, err=%v, want empty", info, err)
+	}
+	health := store.Health()
+	if health.Status != "ok" || health.LastRecoveryResult != "succeeded" || health.LastRecoveryAt.IsZero() {
+		t.Fatalf("successful committed-prefix health = %+v", health)
+	}
 }
 
 func TestStoreSeparatesAggregationWindows(t *testing.T) {

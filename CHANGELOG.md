@@ -110,6 +110,10 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Engine shutdown now stops and waits for the UDS receiver and waits for the pipeline worker before returning from `main`, so deferred alert store close happens after worker teardown.
 
 ### Fixed
+- Daily-shard operator recovery now replays shard paths deterministically and
+  has direct committed-prefix regressions for a later-shard write failure and
+  active context cancellation, proving the complete recovery log remains the
+  retry authority without duplicate events or aggregate inflation.
 - C parser and UDS sender edge cases are covered by unit tests, ASan tests, and microbenchmarks.
 - UDS reconnect behavior is tested across listener restart and receiver reconnection paths.
 - Receiver shutdown closes single and multiple active Unix socket connections and removes the socket path.

@@ -2172,7 +2172,13 @@ func (s *Store) persistRecoveryAlerts(ctx context.Context, alerts []*model.Alert
 		path := s.shardPathFor(ts)
 		byPath[path] = append(byPath[path], alert)
 	}
-	for path, shardAlerts := range byPath {
+	paths := make([]string, 0, len(byPath))
+	for path := range byPath {
+		paths = append(paths, path)
+	}
+	sort.Strings(paths)
+	for _, path := range paths {
+		shardAlerts := byPath[path]
 		db := s.db
 		closeDB := false
 		if path != s.path {

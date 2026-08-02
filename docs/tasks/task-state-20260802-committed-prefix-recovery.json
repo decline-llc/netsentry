@@ -1,0 +1,50 @@
+{
+  "task": "r90-62-committed-prefix-multi-shard-recovery",
+  "timestamp": "2026-08-02T01:21:31-07:00",
+  "branch": "main",
+  "remote_baseline": "89806508802fd8d8165f9606995d19bba0ef6da0",
+  "risk_level": "High",
+  "current_checkpoint": "delivery_pending",
+  "completed": [
+    "Fetched origin/main and verified clean local and remote equality at 89806508802fd8d8165f9606995d19bba0ef6da0",
+    "Verified R90-61 feature and closure Git, task-state, exact Vault notes, index, MOC, and stable testing evidence",
+    "Reconciled 126 recent commits across three phases and found no new delivery-record or authority deviation",
+    "Parsed all 76 task-state JSON files and verified all 67 roadmap rows match one Definition",
+    "Selected R90-62 as the highest-priority ready correctness increment",
+    "Inspected the direct recovery code and tests and confirmed daily-shard replay currently iterates an unordered path map",
+    "Persisted scope, non-goals, risks, evidence mapping, validation, authority boundaries, and stop conditions",
+    "Sorted daily-shard recovery replay paths while retaining per-shard input order",
+    "Added a real locked-later-shard failure regression after an earlier committed shard",
+    "Added active-replay cancellation synchronized on an independently observed earlier committed event",
+    "Proved both failures retain exact log bytes and sticky replay failure before an idempotent explicit retry leaves one event and aggregate count one per input",
+    "Recorded and resolved the initial repeated-reader observation deviation with one pre-opened independent read-only observer",
+    "Passed five exploratory and twenty final uncached focused race repetitions",
+    "Passed the complete internal alert package under the race detector",
+    "Passed make test across the C tests and every Go package under the race detector",
+    "Passed make e2e-smoke with 6 packets processed, 5 alerts generated, and 8 rules loaded",
+    "Passed make docs-check, make evidence-check with 16 tests, and make knowledge-check with 33 tests",
+    "Parsed all 77 task-state JSON files and verified all 67 roadmap rows match one Definition",
+    "Passed git diff --check and the scoped credential-prefix, sensitive-path, and manual generic-keyword review"
+  ],
+  "in_progress": [
+    "Deliver the validated feature and reconcile exact remote and Vault evidence"
+  ],
+  "todo": [
+    "Commit, push, fetch-verify, synchronize the exact Vault range, and record delivery closure"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "remaining_risks": [
+    "Committed-prefix replay behavior remains unproved until both direct fault paths and explicit retries pass",
+    "R90-63 and R90-64 remain planned but unstarted",
+    "R90-59 publication remains unauthorized"
+  ],
+  "resume_instructions": "Resume R90-62 from clean fetched baseline 89806508802fd8d8165f9606995d19bba0ef6da0. Implement only deterministic daily-shard replay plus direct later-shard failure and active-replay cancellation regressions; do not start formatter fuzzing or publication work."
+}

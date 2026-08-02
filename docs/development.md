@@ -296,6 +296,14 @@ Repeated Go reliability runs must use `-count=1`. Every failure test that
 promises preservation must compare artifacts through independent read-only
 handles before any writable open.
 
+R90-62 exercises the committed-prefix boundary with real SQLite behavior. It
+orders daily-shard replay paths deterministically, holds the later compatible
+shard with an independent reserved writer, and observes the earlier committed
+event through a separate read-only handle. Direct failure and active-context
+cancellation cases both retain the complete log and sticky emergency state;
+after the lock is released, an explicit retry proves one event and aggregate
+count one per input.
+
 The primary startup check, non-current write preflight, and historical
 query/count paths share one URL-safe SQLite `mode=ro` helper. The helper
 resolves database symlinks before inspecting sidecars and constructing the URI,
@@ -575,7 +583,7 @@ Current validation baseline:
 - Receiver contract tests enforce strict IPv4 packet addresses, including
   ordinary and IPv4-mapped IPv6 rejection with one decode error and no queued
   packet.
-- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation including nanosecond timestamp aggregation/order/filter/pruning and query-plan coverage, daily shards, bounded recovery-log encoding/replay plus canonical-field-vocabulary, required-value-kind, duplicate-field, timestamp-encoding, event-identity, severity, rule-name, MITRE-tuple, protocol-name, and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, cross-process corrupt WAL/SHM three-file preservation, non-binary aggregation, generated-column, `CHECK`-constraint, and write-critical foreign-key rejection, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact alert filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple/IPv4-address rejection, direct and symlinked active WAL-backed read-only access without SHM mutation, clean no-sidecar reopen compatibility, storage degraded/emergency behavior, explicit recovery ownership/cancellation, preservation-safe multi-shard preflight, empty-log write probing, retained-log retry, authenticated API status mapping, recovering health observation, and redacted audit phase metadata.
+- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation including nanosecond timestamp aggregation/order/filter/pruning and query-plan coverage, daily shards, bounded recovery-log encoding/replay plus canonical-field-vocabulary, required-value-kind, duplicate-field, timestamp-encoding, event-identity, severity, rule-name, MITRE-tuple, protocol-name, and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, cross-process corrupt WAL/SHM three-file preservation, non-binary aggregation, generated-column, `CHECK`-constraint, and write-critical foreign-key rejection, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact alert filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple/IPv4-address rejection, direct and symlinked active WAL-backed read-only access without SHM mutation, clean no-sidecar reopen compatibility, storage degraded/emergency behavior, explicit recovery ownership/cancellation including committed-prefix later-shard failure and active-replay cancellation, preservation-safe multi-shard preflight, empty-log write probing, retained-log idempotent retry, authenticated API status mapping, recovering health observation, and redacted audit phase metadata.
 - Release-candidate checks run syntax checks, repository configuration validation, dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 
 The C-side JSON line formatter is intentionally kept as a bounded handwritten v0.1.0 implementation. It avoids a new C dependency, rejects truncation, escapes JSON strings, Base64-encodes packet payload previews, and is covered by the UDS sender tests and current smoke checks. A cJSON migration should be reopened only with a concrete defect or fuzzing result.

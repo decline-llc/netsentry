@@ -1829,3 +1829,13 @@ post-fetch knowledge gate. Exact range
 was synchronized idempotently to the single local Vault; the iteration note,
 full index, MOC link, and updated stable testing/release knowledge are
 verified. R90-62 is ready but was not started. R90-59 remains blocked.
+The next trigger fetched and verified the R90-61 closure plus exact Vault
+evidence, then selected R90-62 from clean baseline
+`89806508802fd8d8165f9606995d19bba0ef6da0`. Daily-shard recovery now sorts
+its serial replay paths, and direct real-SQLite regressions exercise a locked
+later shard plus active context cancellation after an independently observed
+earlier commit. Both retain the complete log and sticky emergency state before
+an explicit retry proves one event and aggregate count one per input. Twenty
+uncached focused race executions and the complete alert-package race run pass;
+the complete native race suite, E2E smoke, documentation, evidence, and
+knowledge gates also pass. R90-63 and R90-59 were not started.
