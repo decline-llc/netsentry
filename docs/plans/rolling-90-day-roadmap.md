@@ -122,8 +122,8 @@
 | R90-58 | Oct 3–21 | Complete early | Refresh the v0.1.1 candidate decision package. | R90-56 | Version, current candidate commit, gates, artifacts, checksums, platform, and hold decision are reconciled from fresh evidence without tagging or publishing. |
 | R90-59 | Oct 22–28 | Blocked | Execute the v0.1.1 publication gate. | R90-58; explicit publication authorization | Only an explicitly authorized version and commit may be tagged; GitHub Release and GHCR results must be verified directly, while absence of authority preserves the hold without mutation. |
 | R90-60 | Forecast Aug 1–Oct 30; waived | Complete early | Implement operator-triggered restart-free storage recovery. | R90-57 | One authenticated request serializes recovery against store lifecycle operations, preflights durable input before the writable boundary, replays or probes idempotently, exposes bounded health/audit outcomes, and leaves failures in sticky emergency without automatic cleanup or retry. |
-| R90-61 | Aug 2 | Ready | Audit post-recovery delivery and restore the forward queue. | R90-60 | A dated audit reconciles recent commits, plans/states, fetched remote and Vault evidence, records the committed-prefix test gap, and restores a complete evidence-grounded queue without runtime or publication changes. |
-| R90-62 | Aug 3–Sep 4 | Planned | Prove committed-prefix multi-shard recovery retry. | R90-61 | Deterministic direct regressions cancel or fail recovery after an earlier shard commit, retain the complete log and emergency state, and prove explicit retry completes every event once without aggregate inflation. |
+| R90-61 | Aug 2 | Complete | Audit post-recovery delivery and restore the forward queue. | R90-60 | A dated audit reconciles recent commits, plans/states, fetched remote and Vault evidence, records the committed-prefix test gap, and restores a complete evidence-grounded queue without runtime or publication changes. |
+| R90-62 | Aug 3–Sep 4 | Ready | Prove committed-prefix multi-shard recovery retry. | R90-61 | Deterministic direct regressions cancel or fail recovery after an earlier shard commit, retain the complete log and emergency state, and prove explicit retry completes every event once without aggregate inflation. |
 | R90-63 | Sep 5–Oct 9 | Planned | Add a dedicated C UDS JSON formatter fuzz boundary. | R90-62 | An ASan-capable deterministic harness covers packet, heartbeat, and hello formatting across escaping, payload, integer, and output-boundary inputs; valid output remains canonical JSONL and failures never overrun or expose partial buffers as success. |
 | R90-64 | Oct 10–31 | Planned | Record a sustained parser and formatter fuzz baseline. | R90-63 | Reproducible sustained ASan runs exercise both C harnesses with path-redacted corpus metadata, no crashes or sanitizer findings, and an honest local/synthetic evidence classification without a release or production-traffic claim. |
 
@@ -1821,4 +1821,11 @@ and development guidance but lacks a direct later-shard failure or
 active-replay cancellation regression. R90-62 is planned as the next
 correctness increment, followed by the documented C formatter and sustained
 fuzz gaps. R90-59 remains blocked; no runtime, tag, release, registry, or
-workflow action is authorized by this audit.
+workflow action is authorized by this audit. R90-61 completed at
+`99963311d80a279e532cf8b7d43a9945ada70b46`: its four-path documentation
+commit was pushed without force, fetched equal to `origin/main`, and passed the
+post-fetch knowledge gate. Exact range
+`3f3acbbb0b12046f1db7a7892c818a6d8f732649..99963311d80a279e532cf8b7d43a9945ada70b46`
+was synchronized idempotently to the single local Vault; the iteration note,
+full index, MOC link, and updated stable testing/release knowledge are
+verified. R90-62 is ready but was not started. R90-59 remains blocked.

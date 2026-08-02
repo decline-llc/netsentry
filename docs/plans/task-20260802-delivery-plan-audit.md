@@ -111,6 +111,22 @@ forward roadmap through the active 90-day horizon.
   guidance were not directly exercised. The audit preserves R90-60 history and
   makes that stronger boundary R90-62's explicit acceptance surface.
 
+## Delivery Results
+
+- Feature commit:
+  `99963311d80a279e532cf8b7d43a9945ada70b46` (`docs: refresh
+  post-recovery delivery plan`).
+- The four-path commit was pushed without force, fetched, and verified equal to
+  `origin/main`; the post-fetch 33-test knowledge gate passed.
+- Exact range
+  `3f3acbbb0b12046f1db7a7892c818a6d8f732649..99963311d80a279e532cf8b7d43a9945ada70b46`
+  was synchronized twice with identical iteration-note, full-index, and MOC
+  hashes to the single existing local Vault.
+- The generated note, full commit index, MOC link, and manually reconciled
+  stable testing/release note identify the audit and its direct-evidence rule.
+- R90-62 is ready but was not started; R90-59 publication, tags, releases,
+  images, and workflow dispatch remain outside authority.
+
 ## Authority Boundaries
 
 The rolling trigger authorizes this documentation-only queue repair and its
