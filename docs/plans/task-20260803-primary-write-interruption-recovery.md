@@ -126,6 +126,23 @@ behavior changed.
 - `make e2e-smoke` passed with 6 packets processed, 5 alerts generated, and 8
   rules loaded; documentation and the 33-test knowledge gate also passed.
 
+## Delivery Results
+
+- Feature commit:
+  `260d53d6b5804ca37dc83b083486d429a5e9c983` (`fix: preserve primary write
+  cancellation recovery`).
+- The exact eight-path feature was pushed without force, fetched, and verified
+  as both `HEAD` and `origin/main`; the post-fetch 33-test knowledge gate
+  passed.
+- Exact range
+  `667cedc72dec9ce58fc7c12aff3be2d37e9ab835..260d53d6b5804ca37dc83b083486d429a5e9c983`
+  was synchronized twice with identical hashes to the single local Vault.
+- The generated iteration note, full index, MOC link, and updated stable
+  SQLite/testing authority are verified; historical iteration notes were not
+  rewritten.
+- R90-67 is ready but was not started. R90-68 remains planned, and R90-59
+  publication remains blocked.
+
 ## Authority Boundaries
 
 This trigger authorizes only R90-66 direct primary write-interruption tests,

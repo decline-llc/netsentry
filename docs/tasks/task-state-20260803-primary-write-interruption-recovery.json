@@ -2,9 +2,9 @@
   "task": "r90-66-primary-write-interruption-recovery",
   "timestamp": "2026-08-03T05:04:12-07:00",
   "branch": "main",
-  "remote_baseline": "667cedc72dec9ce58fc7c12aff3be2d37e9ab835",
+  "remote_baseline": "260d53d6b5804ca37dc83b083486d429a5e9c983",
   "risk_level": "High",
-  "current_checkpoint": "reviewed_ready_for_feature_commit",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local and remote equality at 667cedc72dec9ce58fc7c12aff3be2d37e9ab835",
     "Verified the exact R90-65 feature and closure Git, task-state, Vault notes, index, MOC, and current stable authority",
@@ -31,14 +31,15 @@
     "Passed make docs-check and the 33-test make knowledge-check",
     "Parsed all 81 task-state JSON files and reverified all 71 roadmap rows match exactly one Definition",
     "Reviewed the complete staged source and documentation diff and confirmed the exact eight-file R90-66 scope",
-    "Passed final whitespace and scoped sensitive-information review"
+    "Passed final whitespace and scoped sensitive-information review",
+    "Committed the validated exact eight-path feature at 260d53d6b5804ca37dc83b083486d429a5e9c983",
+    "Pushed without force, fetched origin/main, verified exact equality, and passed the post-fetch knowledge gate",
+    "Synchronized exact range 667cedc72dec9ce58fc7c12aff3be2d37e9ab835..260d53d6b5804ca37dc83b083486d429a5e9c983 to the single local Vault",
+    "Verified idempotent synchronization, the iteration note, full index, MOC link, and updated stable SQLite and testing authority",
+    "Completed R90-66 and left R90-67 ready without starting it"
   ],
-  "in_progress": [
-    "Commit, push, fetch-verify, and synchronize the exact feature range to the Vault"
-  ],
-  "todo": [
-    "Record and deliver the docs-only R90-66 closure commit"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "No production failpoint, storage abstraction, recovery format, schema, or cross-process ownership change",
     "No R90-67 append lifecycle or R90-68 post-commit clearing implementation",
@@ -47,10 +48,20 @@
     "R90-59 remains blocked on exact publication authority"
   ],
   "remaining_risks": [
-    "The cancellation correction must preserve both context and SQLite error classification",
-    "Each read-only observer must open before the writer and be reused",
-    "Twenty reliability runs must disable the Go test cache",
-    "R90-67 and R90-68 remain planned but unstarted"
+    "R90-67 recovery-log append lifecycle fault injection is ready but unstarted",
+    "R90-68 post-commit recovery-log clearing hardening remains planned",
+    "R90-59 publication remains unauthorized"
   ],
-  "resume_instructions": "R90-66 implementation, complete validation, and final staged review are complete from baseline 667cedc72dec9ce58fc7c12aff3be2d37e9ab835. Deliver the exact eight-file feature commit, verify and synchronize its exact full-SHA range, then publish only the docs-only closure; do not start R90-67 or R90-59."
+  "delivery": {
+    "commit": "260d53d6b5804ca37dc83b083486d429a5e9c983",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "667cedc72dec9ce58fc7c12aff3be2d37e9ab835..260d53d6b5804ca37dc83b083486d429a5e9c983",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true
+  },
+  "resume_instructions": "R90-66 is complete at 260d53d6b5804ca37dc83b083486d429a5e9c983; do not repeat its implementation, validation, feature push, or feature-range Vault synchronization. On the next $netsentry-next trigger, fetch and verify origin/main plus this docs-only closure and its exact Vault evidence before selecting work. R90-67 is next ready, R90-68 remains planned, and R90-59 still requires explicit exact-version and exact-commit publication authority."
 }
