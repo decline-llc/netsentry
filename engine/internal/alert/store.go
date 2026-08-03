@@ -1392,12 +1392,14 @@ func (s *Store) WriteBatch(ctx context.Context, alerts []*model.Alert) error {
 func (s *Store) writeBatchToDB(ctx context.Context, db *sql.DB, alerts []*model.Alert, now time.Time) error {
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
+		err = contextAwareStorageError(ctx, err)
 		s.markStorageError(err)
 		return fmt.Errorf("begin alert transaction: %w", err)
 	}
 	stmt, err := tx.PrepareContext(ctx, upsertAlertSQL)
 	if err != nil {
 		_ = tx.Rollback()
+		err = contextAwareStorageError(ctx, err)
 		s.markStorageError(err)
 		return fmt.Errorf("prepare alert upsert: %w", err)
 	}
@@ -1405,6 +1407,7 @@ func (s *Store) writeBatchToDB(ctx context.Context, db *sql.DB, alerts []*model.
 	eventStmt, err := tx.PrepareContext(ctx, insertAlertEventSQL)
 	if err != nil {
 		_ = tx.Rollback()
+		err = contextAwareStorageError(ctx, err)
 		s.markStorageError(err)
 		return fmt.Errorf("prepare alert event insert: %w", err)
 	}
@@ -1418,12 +1421,14 @@ func (s *Store) writeBatchToDB(ctx context.Context, db *sql.DB, alerts []*model.
 		result, err := eventStmt.ExecContext(ctx, normalized.EventID, formatTime(now))
 		if err != nil {
 			_ = tx.Rollback()
+			err = contextAwareStorageError(ctx, err)
 			s.markStorageError(err)
 			return fmt.Errorf("insert alert event %s: %w", normalized.EventID, err)
 		}
 		inserted, err := result.RowsAffected()
 		if err != nil {
 			_ = tx.Rollback()
+			err = contextAwareStorageError(ctx, err)
 			s.markStorageError(err)
 			return fmt.Errorf("check alert event insert %s: %w", normalized.EventID, err)
 		}
@@ -1453,15 +1458,27 @@ func (s *Store) writeBatchToDB(ctx context.Context, db *sql.DB, alerts []*model.
 			formatTime(now),
 		); err != nil {
 			_ = tx.Rollback()
+			err = contextAwareStorageError(ctx, err)
 			s.markStorageError(err)
 			return fmt.Errorf("upsert alert %s: %w", normalized.RuleID, err)
 		}
 	}
 	if err := tx.Commit(); err != nil {
+		err = contextAwareStorageError(ctx, err)
 		s.markStorageError(err)
 		return fmt.Errorf("commit alert transaction: %w", err)
 	}
 	return nil
+}
+
+func contextAwareStorageError(ctx context.Context, err error) error {
+	if err == nil {
+		return nil
+	}
+	if ctxErr := ctx.Err(); ctxErr != nil && !errors.Is(err, ctxErr) {
+		return errors.Join(ctxErr, err)
+	}
+	return err
 }
 
 func normalizeAlerts(alerts []*model.Alert, now time.Time, window time.Duration) []*model.Alert {

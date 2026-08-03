@@ -1,0 +1,56 @@
+{
+  "task": "r90-66-primary-write-interruption-recovery",
+  "timestamp": "2026-08-03T05:04:12-07:00",
+  "branch": "main",
+  "remote_baseline": "667cedc72dec9ce58fc7c12aff3be2d37e9ab835",
+  "risk_level": "High",
+  "current_checkpoint": "reviewed_ready_for_feature_commit",
+  "completed": [
+    "Fetched origin/main and verified clean local and remote equality at 667cedc72dec9ce58fc7c12aff3be2d37e9ab835",
+    "Verified the exact R90-65 feature and closure Git, task-state, Vault notes, index, MOC, and current stable authority",
+    "Reviewed 141 commits across three recent delivery phases and found no new material delivery or authority deviation",
+    "Parsed all 80 task-state JSON files and verified all 71 roadmap rows match exactly one Definition",
+    "Audited the complete unfinished queue and selected dependency-ready R90-66 while leaving R90-59 blocked",
+    "Inspected ordinary WriteBatch, transaction, recovery-log, lock helper, pre-cancel, and active multi-shard recovery coverage",
+    "Confirmed ordinary primary contention and active cancellation after durable recovery append lack direct regressions",
+    "Persisted scope, non-goals, risks, acceptance evidence mapping, validation, authority boundaries, and stop conditions",
+    "Added direct real-SQLite contention and observable active-cancellation regressions with pre-opened read-only observers",
+    "Recorded and invalidated the first focused sequence because formatting used a repository-root path from inside the Go module",
+    "Reran formatting and the exact focused pair from the correct module-relative path",
+    "Confirmed the contention case passes and the active cancellation case reaches the promised boundary",
+    "Diagnosed that a driver interrupted error from transaction start loses context.Canceled classification",
+    "Preserved an active context error alongside every transaction-stage SQLite diagnostic",
+    "Passed the corrected exact focused race pair and five additional uncached exploratory race runs",
+    "Proved both failures retain exact canonical log bytes and expose zero event and aggregate rows through one pre-opened read-only observer",
+    "Proved one retry after lock release yields one event, one aggregate row with count one, an empty log, and healthy state",
+    "Updated architecture, development guidance, changelog, and the remaining R90-67/R90-68 boundary",
+    "Passed twenty final uncached focused race repetitions",
+    "Passed the complete internal alert package under uncached race",
+    "Passed make test across ordinary C tests and every Go package under uncached race",
+    "Passed make e2e-smoke with 6 packets processed, 5 alerts generated, and 8 rules loaded",
+    "Passed make docs-check and the 33-test make knowledge-check",
+    "Parsed all 81 task-state JSON files and reverified all 71 roadmap rows match exactly one Definition",
+    "Reviewed the complete staged source and documentation diff and confirmed the exact eight-file R90-66 scope",
+    "Passed final whitespace and scoped sensitive-information review"
+  ],
+  "in_progress": [
+    "Commit, push, fetch-verify, and synchronize the exact feature range to the Vault"
+  ],
+  "todo": [
+    "Record and deliver the docs-only R90-66 closure commit"
+  ],
+  "authority_boundaries": [
+    "No production failpoint, storage abstraction, recovery format, schema, or cross-process ownership change",
+    "No R90-67 append lifecycle or R90-68 post-commit clearing implementation",
+    "No private or external input",
+    "No tag, release, image, registry, or workflow mutation",
+    "R90-59 remains blocked on exact publication authority"
+  ],
+  "remaining_risks": [
+    "The cancellation correction must preserve both context and SQLite error classification",
+    "Each read-only observer must open before the writer and be reused",
+    "Twenty reliability runs must disable the Go test cache",
+    "R90-67 and R90-68 remain planned but unstarted"
+  ],
+  "resume_instructions": "R90-66 implementation, complete validation, and final staged review are complete from baseline 667cedc72dec9ce58fc7c12aff3be2d37e9ab835. Deliver the exact eight-file feature commit, verify and synchronize its exact full-SHA range, then publish only the docs-only closure; do not start R90-67 or R90-59."
+}

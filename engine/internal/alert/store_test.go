@@ -6097,6 +6097,180 @@ func TestStoreWriteBatchHonorsCanceledContext(t *testing.T) {
 	}
 }
 
+func TestStorePrimaryWriteContentionRetainsRecoveryLogForIdempotentRetry(t *testing.T) {
+	store, observer, alert, logBefore := preparePrimaryWriteInterruption(t, 25, "primary-contention")
+	defer store.Close()
+	defer observer.Close()
+
+	releaseLock := holdSQLiteWriteLock(t, store.path)
+	err := store.WriteBatch(context.Background(), []*model.Alert{alert})
+	if err == nil || (!strings.Contains(strings.ToLower(err.Error()), "locked") &&
+		!strings.Contains(strings.ToLower(err.Error()), "busy")) {
+		t.Fatalf("contended primary write error = %v, want SQLite busy/locked failure", err)
+	}
+	assertFileBytes(t, store.recoveryLogPath, logBefore)
+	assertPrimaryInterruptionState(t, observer, alert, store.aggregationWindow, 0)
+	assertDegradedPrimaryWriteHealth(t, store)
+
+	releaseLock()
+	if err := store.WriteBatch(context.Background(), []*model.Alert{alert}); err != nil {
+		t.Fatalf("retry contended primary write: %v", err)
+	}
+	assertPrimaryInterruptionState(t, observer, alert, store.aggregationWindow, 1)
+	assertFileBytes(t, store.recoveryLogPath, nil)
+	if health := store.Health(); health.Status != "ok" {
+		t.Fatalf("primary store health after contention retry = %+v, want ok", health)
+	}
+}
+
+func TestStorePrimaryWriteActiveCancellationRetainsRecoveryLogForIdempotentRetry(t *testing.T) {
+	store, observer, alert, logBefore := preparePrimaryWriteInterruption(t, 5000, "primary-active-cancel")
+	defer store.Close()
+	defer observer.Close()
+
+	releaseLock := holdSQLiteWriteLock(t, store.path)
+	writeCtx, cancel := context.WithCancel(context.Background())
+	done := make(chan error, 1)
+	go func() { done <- store.WriteBatch(writeCtx, []*model.Alert{alert}) }()
+	waitForPrimaryWriteAfterRecoveryAppend(t, store, logBefore, done)
+	cancel()
+
+	select {
+	case err := <-done:
+		if !errors.Is(err, context.Canceled) {
+			t.Fatalf("cancelled active primary write error = %v, want context.Canceled", err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("active primary write did not return after cancellation")
+	}
+	assertFileBytes(t, store.recoveryLogPath, logBefore)
+	assertPrimaryInterruptionState(t, observer, alert, store.aggregationWindow, 0)
+	assertDegradedPrimaryWriteHealth(t, store)
+
+	releaseLock()
+	if err := store.WriteBatch(context.Background(), []*model.Alert{alert}); err != nil {
+		t.Fatalf("retry cancelled primary write: %v", err)
+	}
+	assertPrimaryInterruptionState(t, observer, alert, store.aggregationWindow, 1)
+	assertFileBytes(t, store.recoveryLogPath, nil)
+	if health := store.Health(); health.Status != "ok" {
+		t.Fatalf("primary store health after cancellation retry = %+v, want ok", health)
+	}
+}
+
+func preparePrimaryWriteInterruption(
+	t *testing.T,
+	busyTimeoutMS int,
+	keyword string,
+) (*Store, *sql.DB, *model.Alert, []byte) {
+	t.Helper()
+	dir := t.TempDir()
+	now := time.Date(2026, 8, 3, 12, 0, 0, 0, time.UTC)
+	store, err := Open(context.Background(), Options{
+		Path:              filepath.Join(dir, "alerts.db"),
+		RecoveryLogPath:   filepath.Join(dir, "alerts-recovery.jsonl"),
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     busyTimeoutMS,
+		AggregationWindow: time.Minute,
+		Now:               func() time.Time { return now },
+	})
+	if err != nil {
+		t.Fatalf("open primary interruption store: %v", err)
+	}
+	observer, err := openReadOnlyDatabase(store.path)
+	if err != nil {
+		store.Close()
+		t.Fatalf("open primary interruption observer: %v", err)
+	}
+	alert := makeAlert(now, keyword)
+	records, err := encodeRecoveryRecords(normalizeAlerts(
+		[]*model.Alert{alert},
+		now,
+		store.aggregationWindow,
+	))
+	if err != nil {
+		observer.Close()
+		store.Close()
+		t.Fatalf("encode expected primary recovery record: %v", err)
+	}
+	return store, observer, alert, bytes.Join(records, nil)
+}
+
+func waitForPrimaryWriteAfterRecoveryAppend(
+	t *testing.T,
+	store *Store,
+	wantLog []byte,
+	writeDone <-chan error,
+) {
+	t.Helper()
+	deadline := time.Now().Add(5 * time.Second)
+	var lastLog []byte
+	var lastErr error
+	for time.Now().Before(deadline) {
+		select {
+		case err := <-writeDone:
+			t.Fatalf("primary write returned before active boundary was observed: %v", err)
+		default:
+		}
+		lastLog, lastErr = os.ReadFile(store.recoveryLogPath)
+		if lastErr == nil && bytes.Equal(lastLog, wantLog) && store.db.Stats().InUse == 1 {
+			return
+		}
+		runtime.Gosched()
+	}
+	t.Fatalf(
+		"primary write boundary not observed: log_bytes=%d want=%d log_err=%v in_use=%d",
+		len(lastLog),
+		len(wantLog),
+		lastErr,
+		store.db.Stats().InUse,
+	)
+}
+
+func assertPrimaryInterruptionState(
+	t *testing.T,
+	observer *sql.DB,
+	alert *model.Alert,
+	window time.Duration,
+	want int,
+) {
+	t.Helper()
+	normalized := normalizeAlert(alert, alert.Timestamp, window)
+	var events int
+	if err := observer.QueryRow(
+		`SELECT COUNT(*) FROM alert_events WHERE event_id = ?`,
+		normalized.EventID,
+	).Scan(&events); err != nil {
+		t.Fatalf("inspect primary interruption event: %v", err)
+	}
+	var rows, aggregate int
+	if err := observer.QueryRow(
+		`SELECT COUNT(*), COALESCE(MAX(aggregated_count), 0) FROM alerts WHERE id = ?`,
+		normalized.ID,
+	).Scan(&rows, &aggregate); err != nil {
+		t.Fatalf("inspect primary interruption aggregate: %v", err)
+	}
+	if events != want || rows != want || aggregate != want {
+		t.Fatalf(
+			"primary interruption state events=%d rows=%d aggregate=%d, want %d/%d/%d",
+			events,
+			rows,
+			aggregate,
+			want,
+			want,
+			want,
+		)
+	}
+}
+
+func assertDegradedPrimaryWriteHealth(t *testing.T, store *Store) {
+	t.Helper()
+	health := store.Health()
+	if health.Status != "degraded" || health.LastError == "" || health.LastErrorAt.IsZero() {
+		t.Fatalf("primary interruption health = %+v, want degraded error", health)
+	}
+}
+
 func TestStoreHealthMarksDegradedAndRecovers(t *testing.T) {
 	ctx := context.Background()
 	store := openTestStore(t, 60*time.Second)
@@ -6593,7 +6767,7 @@ func holdSQLiteWriteLock(t *testing.T, path string) func() {
 	t.Helper()
 	db, err := sql.Open("sqlite", path)
 	if err != nil {
-		t.Fatalf("open later shard lock: %v", err)
+		t.Fatalf("open SQLite write lock: %v", err)
 	}
 	db.SetMaxOpenConns(1)
 	if _, err := db.Exec("PRAGMA busy_timeout=0"); err != nil {
@@ -6602,7 +6776,7 @@ func holdSQLiteWriteLock(t *testing.T, path string) func() {
 	}
 	if _, err := db.Exec("BEGIN IMMEDIATE"); err != nil {
 		db.Close()
-		t.Fatalf("lock later shard for writes: %v", err)
+		t.Fatalf("lock SQLite database for writes: %v", err)
 	}
 	released := false
 	release := func() {
@@ -6611,10 +6785,10 @@ func holdSQLiteWriteLock(t *testing.T, path string) func() {
 		}
 		released = true
 		if _, err := db.Exec("ROLLBACK"); err != nil {
-			t.Errorf("release later shard lock: %v", err)
+			t.Errorf("release SQLite write lock: %v", err)
 		}
 		if err := db.Close(); err != nil {
-			t.Errorf("close later shard lock: %v", err)
+			t.Errorf("close SQLite write lock: %v", err)
 		}
 	}
 	t.Cleanup(release)

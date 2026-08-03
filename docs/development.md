@@ -305,6 +305,18 @@ cancellation cases both retain the complete log and sticky emergency state;
 after the lock is released, an explicit retry proves one event and aggregate
 count one per input.
 
+R90-66 applies the same direct-evidence rule to ordinary primary writes. Both
+cases open one read-only observer before the writer, reserve the primary
+database with an independent `BEGIN IMMEDIATE`, and compare the exact canonical
+recovery record after failure. The contention case waits for the real SQLite
+busy result; the active-cancellation case waits for both the complete synced
+log and an in-use store connection before cancelling. Neither case observes an
+event or aggregate before retry. Transaction failures preserve
+`context.Canceled` or the active deadline in the error chain alongside the
+driver diagnostic; after the reservation is released, one normal retry drains
+duplicate event records idempotently, leaves aggregate count one, clears the
+log, and restores healthy state.
+
 The primary startup check, non-current write preflight, and historical
 query/count paths share one URL-safe SQLite `mode=ro` helper. The helper
 resolves database symlinks before inspecting sidecars and constructing the URI,
@@ -599,7 +611,7 @@ Current validation baseline:
 - Receiver contract tests enforce strict IPv4 packet addresses, including
   ordinary and IPv4-mapped IPv6 rejection with one decode error and no queued
   packet.
-- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation including nanosecond timestamp aggregation/order/filter/pruning and query-plan coverage, daily shards, bounded recovery-log encoding/replay plus canonical-field-vocabulary, required-value-kind, duplicate-field, timestamp-encoding, event-identity, severity, rule-name, MITRE-tuple, protocol-name, and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, cross-process corrupt WAL/SHM three-file preservation, non-binary aggregation, generated-column, `CHECK`-constraint, and write-critical foreign-key rejection, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact alert filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple/IPv4-address rejection, direct and symlinked active WAL-backed read-only access without SHM mutation, clean no-sidecar reopen compatibility, storage degraded/emergency behavior, explicit recovery ownership/cancellation including committed-prefix later-shard failure and active-replay cancellation, preservation-safe multi-shard preflight, empty-log write probing, retained-log idempotent retry, authenticated API status mapping, recovering health observation, and redacted audit phase metadata.
+- Go tests cover receiver frame validation/lifecycle, connection caps and read-idle expiry, worker-pool shutdown, panic isolation, rule/MITRE semantics, API limits, SQLite aggregation including nanosecond timestamp aggregation/order/filter/pruning and query-plan coverage, daily shards, bounded recovery-log encoding/replay plus canonical-field-vocabulary, required-value-kind, duplicate-field, timestamp-encoding, event-identity, severity, rule-name, MITRE-tuple, protocol-name, and semantic validation, corrupt/truncated/write-blocking-schema startup and historical-shard preservation, cross-process corrupt WAL/SHM three-file preservation, non-binary aggregation, generated-column, `CHECK`-constraint, and write-critical foreign-key rejection, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact alert filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple/IPv4-address rejection, direct and symlinked active WAL-backed read-only access without SHM mutation, clean no-sidecar reopen compatibility, storage degraded/emergency behavior, ordinary primary contention and active cancellation after durable recovery append, explicit recovery ownership/cancellation including committed-prefix later-shard failure and active-replay cancellation, preservation-safe multi-shard preflight, empty-log write probing, retained-log idempotent retry, authenticated API status mapping, recovering health observation, and redacted audit phase metadata.
 - Release-candidate checks run syntax checks, repository configuration validation, dependency verification, C/Go tests, coverage snapshot, deterministic C parser fuzz smoke, e2e smoke, release archive checks, Docker image content smoke, and Docker runtime health smoke.
 
 The C-side JSON line formatter is intentionally kept as a bounded handwritten v0.1.0 implementation. It avoids a new C dependency, rejects truncation, escapes JSON strings, Base64-encodes packet payload previews, and is covered by the UDS sender tests and current smoke checks. A cJSON migration should be reopened only with a concrete defect or fuzzing result.
@@ -660,11 +672,11 @@ Remaining test gaps:
   query tuning, and alert-volume behavior. R90-04 already records one approved
   public real-traffic pressure run; new corpus work is an optional
   external-input diagnostic, not a release-gate prerequisite.
-- R90-66 through R90-68 narrow the remaining local storage-fault work to
-  primary SQLite interruption after durable recovery append, recovery-log
-  append open/write/sync/close failures, and post-commit recovery-log clearing
-  failures. Completed corruption, schema, sidecar, replay, committed-prefix,
-  and emergency-mode boundaries are not reopened.
+- R90-67 and R90-68 narrow the remaining local storage-fault work to
+  recovery-log append open/write/sync/close failures and post-commit
+  recovery-log clearing failures. Completed corruption, schema, sidecar,
+  replay, primary interruption, committed-prefix, and emergency-mode
+  boundaries are not reopened.
 
 The full-engine lifecycle regression now combines the real UDS receiver,
 pipeline worker, HTTP API, and SQLite store under active load. It verifies that

@@ -9,6 +9,10 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Ordinary primary SQLite writes now preserve context cancellation alongside
+  driver interruption diagnostics. Direct lock-contention and active-cancel
+  regressions prove the complete recovery log is retained before commit, no
+  partial event or aggregate is visible, and one retry persists the event once.
 - Authenticated `POST /api/storage/recovery` now provides one explicit,
   restart-free recovery attempt for sticky emergency storage. It serializes
   against ordinary store operations, preflights the complete recovery log and

@@ -127,7 +127,7 @@
 | R90-63 | Sep 5–Oct 9 | Complete early | Add a dedicated C UDS JSON formatter fuzz boundary. | R90-62 | An ASan-capable deterministic harness covers packet, heartbeat, and hello formatting across escaping, payload, integer, and output-boundary inputs; valid output remains canonical JSONL and failures never overrun or expose partial buffers as success. |
 | R90-64 | Oct 10–31 | Complete early | Record a sustained parser and formatter fuzz baseline. | R90-63 | Reproducible sustained ASan runs exercise both C harnesses with path-redacted corpus metadata, no crashes or sanitizer findings, and an honest local/synthetic evidence classification without a release or production-traffic claim. |
 | R90-65 | Aug 3–14 | Complete early | Audit the completed fuzz delivery and scope the next local hardening queue. | R90-64 | A dated audit reconciles the dual-harness evidence, public remaining-gap claims, code/tests, fetched remote, and exact Vault records; external-input gaps are separated from bounded local work, and every added increment has a complete dependency, window, risk, acceptance, validation, and stop definition. |
-| R90-66 | Aug 15–Sep 4 | Ready | Prove primary write interruption recovery. | R90-65 | Real SQLite contention and active cancellation after durable recovery append but before primary commit leave no partial database mutation, retain the complete log, and permit one explicit retry to persist each event once without aggregate inflation. |
+| R90-66 | Aug 15–Sep 4 | In progress | Prove primary write interruption recovery. | R90-65 | Real SQLite contention and active cancellation after durable recovery append but before primary commit leave no partial database mutation, retain the complete log, and permit one explicit retry to persist each event once without aggregate inflation. |
 | R90-67 | Sep 5–Oct 2 | Planned | Inject recovery-log append lifecycle faults. | R90-66 | Direct open, short-write, sync, and close failures occur before SQLite mutation, retain the exact pre-existing valid log prefix, expose the failing phase, and leave complete or incomplete appended evidence fail-closed without automatic deletion. |
 | R90-68 | Oct 3–31 | Planned | Harden post-commit recovery-log clearing. | R90-67 | Direct open/truncate, sync, and close failures after a primary or daily-shard commit cannot lose an alert or inflate an aggregate; every retained-log or already-cleared outcome remains explicit and one operator retry returns healthy. |
 
@@ -1267,6 +1267,12 @@
 - **Stop condition:** stop if deterministic proof needs a production failpoint,
   fixed sleeps, cross-process ownership support, automatic evidence cleanup,
   a storage-format migration, or publication authority.
+- **Selected plan:**
+  [`task-20260803-primary-write-interruption-recovery.md`](task-20260803-primary-write-interruption-recovery.md),
+  from clean fetched baseline
+  `667cedc72dec9ce58fc7c12aff3be2d37e9ab835`. Both direct cases use real
+  SQLite contention, one pre-opened read-only observer, and no production
+  failpoint or fixed sleep.
 
 ## R90-67 Definition
 
@@ -1990,3 +1996,19 @@ was synchronized idempotently to the single local Vault; the iteration note,
 full index, MOC link, and corrected stable fuzz/testing authority are verified.
 Historical iteration notes remain unchanged. R90-66 is ready but was not
 started, and R90-59 remains blocked on exact publication authority.
+The next Aug 3 trigger fetched and verified the R90-65 closure at
+`667cedc72dec9ce58fc7c12aff3be2d37e9ab835` plus exact Vault notes, index,
+MOC, and current stable authority. All 80 task states and 71 roadmap
+Definitions reconcile. R90-66 is selected as the sole dependency-ready item:
+it adds direct ordinary-primary contention and active-cancellation evidence
+after the durable recovery append and before commit, using a pre-opened
+read-only observer and observable SQLite connection readiness. R90-67, R90-68,
+and R90-59 were not started.
+The direct contention and active-cancellation cases now pass: each uses a real
+independent write reservation, retains the exact recovery log, proves zero
+event/aggregate rows before retry through one pre-opened observer, and proves
+one event plus aggregate count one after one retry. The active case exposed and
+corrected a lost `context.Canceled` classification while preserving the SQLite
+interruption diagnostic. Twenty final uncached focused race runs, the complete
+alert package, full native tests, E2E, documentation, and knowledge checks
+pass. R90-67, R90-68, and R90-59 remain unstarted.
