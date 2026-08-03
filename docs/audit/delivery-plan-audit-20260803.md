@@ -47,7 +47,7 @@ deviation changes the next priority.
 | Task recovery | Pass | The R90-64 state is complete and does not request repeated implementation, push, or feature-range synchronization. |
 | Evidence scope | Pass | The committed record proves 1,000,000 deterministic ASan mutations per harness, zero reported sanitizer findings, no external corpus, and no release or production claim. |
 | Exact Vault records | Pass | Both iteration notes, full-index entries, MOC links, and R90-64 stable fuzz/testing updates exist in the single local Vault. |
-| Current Vault authority | Reconciliation required | Stable Vault prose still calls external fuzz or production-derived PCAP a v0.1.0/v0.1.1 release blocker even though those statements were superseded by the verified v0.1.0 release and the global PCAP waiver. Historical iteration notes remain unchanged; current stable prose must be corrected after verified R90-65 delivery. |
+| Current Vault authority | Pass after reconciliation | Stable Vault prose no longer calls external fuzz or production-derived PCAP a v0.1.0/v0.1.1 release blocker. It records the verified v0.1.0 release, global PCAP waiver, R90-64 local scope, and R90-59 publication hold; historical iteration notes remain unchanged. |
 | Task-state and roadmap structure | Pass | All 79 pre-audit task-state JSON files parse; all 68 pre-audit rows match exactly one Definition. |
 
 ## Current Gap Reconciliation
@@ -92,8 +92,8 @@ this audit.
 ## Audit Conclusion
 
 R90-64 is delivered and recoverable from exact Git, state, evidence, remote,
-and Vault records. Its local synthetic scope is accurate. The material
-deviation is limited to superseded release-blocker wording in current stable
-Vault prose; the repository's release authority remains unambiguous. R90-65
-replaces one broad local storage-fault claim with R90-66 through R90-68 while
-leaving corpus-dependent work outside the ready queue and publication blocked.
+and Vault records. Its local synthetic scope is accurate. R90-65 corrected the
+superseded release-blocker wording in current stable Vault prose without
+rewriting historical notes, and replaced one broad local storage-fault claim
+with R90-66 through R90-68. Corpus-dependent work stays outside the ready
+queue, R90-66 is ready but unstarted, and publication remains blocked.

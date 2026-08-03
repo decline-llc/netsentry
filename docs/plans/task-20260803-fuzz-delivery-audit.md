@@ -127,6 +127,22 @@ remain separately input-dependent and are not inserted as ready work.
 - `make docs-check`, the 33-test `make knowledge-check`, and the initial
   `git diff --check` passed.
 
+## Delivery Results
+
+- Feature commit:
+  `84e83a17fa0560a8a0cc76e34701a730696c5f44` (`docs: refresh post-fuzz
+  hardening plan`).
+- The six-path documentation feature was pushed without force, fetched, and
+  verified as both `HEAD` and `origin/main`; the post-fetch 33-test knowledge
+  gate passed.
+- Exact range
+  `23983e1ac696b923a4595e7b97f0e7e1d935dc97..84e83a17fa0560a8a0cc76e34701a730696c5f44`
+  was synchronized twice with identical hashes to the single local Vault.
+- The generated iteration note, full index, MOC link, and stable fuzz/testing
+  notes are verified. Superseded fuzz/PCAP release-blocker prose was corrected
+  only in current stable knowledge; historical iteration notes were preserved.
+- R90-66 is ready but was not started. R90-59 publication remains blocked.
+
 ## Authority Boundaries
 
 This trigger authorizes the bounded R90-65 documentation audit, roadmap

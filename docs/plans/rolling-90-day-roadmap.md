@@ -126,8 +126,8 @@
 | R90-62 | Aug 3–Sep 4 | Complete early | Prove committed-prefix multi-shard recovery retry. | R90-61 | Deterministic direct regressions cancel or fail recovery after an earlier shard commit, retain the complete log and emergency state, and prove explicit retry completes every event once without aggregate inflation. |
 | R90-63 | Sep 5–Oct 9 | Complete early | Add a dedicated C UDS JSON formatter fuzz boundary. | R90-62 | An ASan-capable deterministic harness covers packet, heartbeat, and hello formatting across escaping, payload, integer, and output-boundary inputs; valid output remains canonical JSONL and failures never overrun or expose partial buffers as success. |
 | R90-64 | Oct 10–31 | Complete early | Record a sustained parser and formatter fuzz baseline. | R90-63 | Reproducible sustained ASan runs exercise both C harnesses with path-redacted corpus metadata, no crashes or sanitizer findings, and an honest local/synthetic evidence classification without a release or production-traffic claim. |
-| R90-65 | Aug 3–14 | In progress | Audit the completed fuzz delivery and scope the next local hardening queue. | R90-64 | A dated audit reconciles the dual-harness evidence, public remaining-gap claims, code/tests, fetched remote, and exact Vault records; external-input gaps are separated from bounded local work, and every added increment has a complete dependency, window, risk, acceptance, validation, and stop definition. |
-| R90-66 | Aug 15–Sep 4 | Planned | Prove primary write interruption recovery. | R90-65 | Real SQLite contention and active cancellation after durable recovery append but before primary commit leave no partial database mutation, retain the complete log, and permit one explicit retry to persist each event once without aggregate inflation. |
+| R90-65 | Aug 3–14 | Complete early | Audit the completed fuzz delivery and scope the next local hardening queue. | R90-64 | A dated audit reconciles the dual-harness evidence, public remaining-gap claims, code/tests, fetched remote, and exact Vault records; external-input gaps are separated from bounded local work, and every added increment has a complete dependency, window, risk, acceptance, validation, and stop definition. |
+| R90-66 | Aug 15–Sep 4 | Ready | Prove primary write interruption recovery. | R90-65 | Real SQLite contention and active cancellation after durable recovery append but before primary commit leave no partial database mutation, retain the complete log, and permit one explicit retry to persist each event once without aggregate inflation. |
 | R90-67 | Sep 5–Oct 2 | Planned | Inject recovery-log append lifecycle faults. | R90-66 | Direct open, short-write, sync, and close failures occur before SQLite mutation, retain the exact pre-existing valid log prefix, expose the failing phase, and leave complete or incomplete appended evidence fail-closed without automatic deletion. |
 | R90-68 | Oct 3–31 | Planned | Harden post-commit recovery-log clearing. | R90-67 | Direct open/truncate, sync, and close failures after a primary or daily-shard commit cannot lose an alert or inflate an aggregate; every retained-log or already-cleared outcome remains explicit and one operator retry returns healthy. |
 
@@ -1981,7 +1981,12 @@ traffic remain external-input diagnostics, not ready local work or R90-59
 prerequisites. The broad local storage-fault claim is narrowed to R90-66
 through R90-68: primary write interruption after durable log append,
 recovery-log append lifecycle faults, and post-commit log-clearing faults.
-R90-65 is in progress; no later implementation or publication work has
-started. Current stable Vault prose still contains superseded fuzz/PCAP
-release-blocker wording and must be reconciled after verified delivery without
-rewriting historical iteration notes.
+R90-65 completed early at
+`84e83a17fa0560a8a0cc76e34701a730696c5f44`: its six-path documentation
+feature was pushed without force, fetched equal to `origin/main`, and passed
+the post-fetch knowledge gate. Exact range
+`23983e1ac696b923a4595e7b97f0e7e1d935dc97..84e83a17fa0560a8a0cc76e34701a730696c5f44`
+was synchronized idempotently to the single local Vault; the iteration note,
+full index, MOC link, and corrected stable fuzz/testing authority are verified.
+Historical iteration notes remain unchanged. R90-66 is ready but was not
+started, and R90-59 remains blocked on exact publication authority.
