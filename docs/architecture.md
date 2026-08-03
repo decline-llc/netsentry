@@ -427,6 +427,14 @@ The v0.1.0 IPC serializer decision is to retain the current bounded handwritten 
 
 Remaining validation gaps:
 
-- Sustained external C fuzz campaigns with larger parser and formatter corpora.
-- Realistic pcap corpora for throughput, query tuning, and alert-volume behavior beyond synthetic repeat-pcap smoke runs.
-- Broader SQLite corruption and fault-injection scenarios beyond current disk-full, read-only, I/O, recovery replay, and emergency-mode tests.
+- Sustained parser and formatter campaigns with larger reviewed external
+  corpora. R90-64 closes the reproducible one-million-iteration local synthetic
+  dual-harness baseline only; external corpus access remains a separate input.
+- Additional diverse, alert-bearing realistic pcap corpora for throughput,
+  query tuning, and alert-volume behavior. R90-04 records one approved public
+  real-traffic pressure run; new corpus work remains an optional external-input
+  diagnostic under the global PCAP release-gate waiver.
+- Bounded local storage-fault coverage for primary SQLite interruption after a
+  durable recovery append, recovery-log append lifecycle failures, and
+  post-commit recovery-log clearing failures. These are tracked as R90-66
+  through R90-68 rather than as an unbounded corruption backlog.

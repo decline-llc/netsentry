@@ -653,9 +653,18 @@ release evidence record. Keep generated local evidence under
 
 Remaining test gaps:
 
-- Sustained external C fuzz campaign results from larger parser and formatter corpora.
-- Realistic pcap corpora for throughput and query tuning beyond repeat-pcap smoke runs.
-- Additional SQLite corruption/fault-injection scenarios beyond the current startup/runtime recovery integrity preflights, disk-full, read-only, I/O, recovery replay, and emergency-mode tests.
+- Sustained parser and formatter campaign results from larger reviewed external
+  corpora. The R90-64 one-million-iteration result is the accepted local
+  synthetic dual-harness baseline, not external corpus evidence.
+- Additional diverse, alert-bearing realistic pcap corpora for throughput,
+  query tuning, and alert-volume behavior. R90-04 already records one approved
+  public real-traffic pressure run; new corpus work is an optional
+  external-input diagnostic, not a release-gate prerequisite.
+- R90-66 through R90-68 narrow the remaining local storage-fault work to
+  primary SQLite interruption after durable recovery append, recovery-log
+  append open/write/sync/close failures, and post-commit recovery-log clearing
+  failures. Completed corruption, schema, sidecar, replay, committed-prefix,
+  and emergency-mode boundaries are not reopened.
 
 The full-engine lifecycle regression now combines the real UDS receiver,
 pipeline worker, HTTP API, and SQLite store under active load. It verifies that

@@ -126,7 +126,10 @@
 | R90-62 | Aug 3–Sep 4 | Complete early | Prove committed-prefix multi-shard recovery retry. | R90-61 | Deterministic direct regressions cancel or fail recovery after an earlier shard commit, retain the complete log and emergency state, and prove explicit retry completes every event once without aggregate inflation. |
 | R90-63 | Sep 5–Oct 9 | Complete early | Add a dedicated C UDS JSON formatter fuzz boundary. | R90-62 | An ASan-capable deterministic harness covers packet, heartbeat, and hello formatting across escaping, payload, integer, and output-boundary inputs; valid output remains canonical JSONL and failures never overrun or expose partial buffers as success. |
 | R90-64 | Oct 10–31 | Complete early | Record a sustained parser and formatter fuzz baseline. | R90-63 | Reproducible sustained ASan runs exercise both C harnesses with path-redacted corpus metadata, no crashes or sanitizer findings, and an honest local/synthetic evidence classification without a release or production-traffic claim. |
-| R90-65 | Aug 3–14 | Ready | Audit the completed fuzz delivery and scope the next local hardening queue. | R90-64 | A dated audit reconciles the dual-harness evidence, public remaining-gap claims, code/tests, fetched remote, and exact Vault records; external-input gaps are separated from bounded local work, and every added increment has a complete dependency, window, risk, acceptance, validation, and stop definition. |
+| R90-65 | Aug 3–14 | In progress | Audit the completed fuzz delivery and scope the next local hardening queue. | R90-64 | A dated audit reconciles the dual-harness evidence, public remaining-gap claims, code/tests, fetched remote, and exact Vault records; external-input gaps are separated from bounded local work, and every added increment has a complete dependency, window, risk, acceptance, validation, and stop definition. |
+| R90-66 | Aug 15–Sep 4 | Planned | Prove primary write interruption recovery. | R90-65 | Real SQLite contention and active cancellation after durable recovery append but before primary commit leave no partial database mutation, retain the complete log, and permit one explicit retry to persist each event once without aggregate inflation. |
+| R90-67 | Sep 5–Oct 2 | Planned | Inject recovery-log append lifecycle faults. | R90-66 | Direct open, short-write, sync, and close failures occur before SQLite mutation, retain the exact pre-existing valid log prefix, expose the failing phase, and leave complete or incomplete appended evidence fail-closed without automatic deletion. |
+| R90-68 | Oct 3–31 | Planned | Harden post-commit recovery-log clearing. | R90-67 | Direct open/truncate, sync, and close failures after a primary or daily-shard commit cannot lose an alert or inflate an aggregate; every retained-log or already-cleared outcome remains explicit and one operator retry returns healthy. |
 
 ## R90-01 Definition
 
@@ -1240,6 +1243,67 @@
 - **Stop condition:** stop without implementation if the next bounded queue
   requires private/external corpora, a product or release decision, historical
   evidence rewrite, publication authority, or starting a later increment.
+- **Selected plan:**
+  [`task-20260803-fuzz-delivery-audit.md`](task-20260803-fuzz-delivery-audit.md),
+  from clean fetched baseline
+  `23983e1ac696b923a4595e7b97f0e7e1d935dc97`. The audit treats historical
+  plans as immutable evidence, separates external-input gaps from ready local
+  work, and does not implement R90-66.
+
+## R90-66 Definition
+
+- **Goal:** directly prove ordinary primary-store writes are replay-safe when
+  SQLite contention or context cancellation interrupts work after the durable
+  recovery append but before transaction commit.
+- **Risk:** a test that cancels before `WriteBatch` starts or merely closes the
+  database does not reach the active transaction boundary; a timing-only test
+  can also pass without proving the log was durable first.
+- **Required validation:** real independent SQLite lock contention; active
+  cancellation synchronized on observation of the complete recovery record;
+  exact log preservation; independent read-only proof of no event or aggregate
+  mutation before retry; one explicit retry with one event and aggregate count
+  per input; twenty uncached focused race runs, full native, E2E,
+  documentation, and knowledge checks.
+- **Stop condition:** stop if deterministic proof needs a production failpoint,
+  fixed sleeps, cross-process ownership support, automatic evidence cleanup,
+  a storage-format migration, or publication authority.
+
+## R90-67 Definition
+
+- **Goal:** make every recovery-log append lifecycle failure directly
+  injectable and prove it cannot mutate SQLite or erase an earlier valid log
+  prefix.
+- **Risk:** broad filesystem simulation can alter production semantics, while
+  checking only open failure misses partial write, sync, and close outcomes
+  after bytes have reached the file.
+- **Required validation:** direct open, short-write, sync, and close failure
+  regressions; exact pre-existing-prefix preservation; independent read-only
+  SQLite non-mutation proof; precise phase diagnostics and health state;
+  complete appended records replay once while an incomplete suffix remains
+  fail-closed and preserved; successful-path compatibility, focused race, full
+  native, E2E, documentation, and knowledge checks.
+- **Stop condition:** stop if coverage requires privileged mounts, destructive
+  host faults, automatic truncation of failed evidence, a recovery-format
+  change, cross-process write ownership, or publication authority.
+
+## R90-68 Definition
+
+- **Goal:** make recovery-log clearing durable and directly prove every failure
+  after committed primary or daily-shard persistence remains lossless and
+  idempotently recoverable.
+- **Risk:** an injected error can occur before truncation, after the file is
+  already empty, or during durability/close handling; treating those states as
+  identical can overstate retained evidence or conceal a committed alert.
+- **Required validation:** direct open/truncate, sync, and close failure
+  regressions after observed database commit; exact classification of retained
+  versus already-cleared log state; independent read-only proof that every
+  event exists once with no aggregate inflation; explicit retry from each
+  outcome to healthy state; primary and encoded daily-shard paths, focused
+  race, full native, E2E, documentation, and knowledge checks.
+- **Stop condition:** stop if completion requires deleting an uncommitted log,
+  rolling back a committed SQLite transaction, weakening sticky emergency
+  semantics, filesystem-specific privileged infrastructure, a format
+  migration, or publication authority.
 
 ### R90-49 Validation Deviation
 
@@ -1731,7 +1795,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60 → R90-61 → R90-62 → R90-63 → R90-64 → R90-65`; `R90-56 → R90-58 → R90-59`, with R90-59 blocked on explicit publication authorization. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60 → R90-61 → R90-62 → R90-63 → R90-64 → R90-65 → R90-66 → R90-67 → R90-68`; `R90-56 → R90-58 → R90-59`, with R90-59 blocked on explicit publication authorization. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -1907,3 +1971,17 @@ range
 was synchronized idempotently to the single local Vault; its note, full index,
 MOC link, and stable fuzz/testing knowledge are verified. R90-65 is ready but
 was not started. R90-59 remains blocked on exact publication authority.
+The next Aug 3 trigger fetched and verified the R90-64 closure at
+`23983e1ac696b923a4595e7b97f0e7e1d935dc97` plus both exact Vault notes,
+index entries, MOC links, and stable fuzz/testing updates. The dated R90-65
+audit reviewed 139 commits across three phases and reconciled the public gap
+claims with code, direct tests, R90-04 traffic evidence, and the R90-64 local
+synthetic baseline. Larger reviewed fuzz corpora and more diverse alert-bearing
+traffic remain external-input diagnostics, not ready local work or R90-59
+prerequisites. The broad local storage-fault claim is narrowed to R90-66
+through R90-68: primary write interruption after durable log append,
+recovery-log append lifecycle faults, and post-commit log-clearing faults.
+R90-65 is in progress; no later implementation or publication work has
+started. Current stable Vault prose still contains superseded fuzz/PCAP
+release-blocker wording and must be reconciled after verified delivery without
+rewriting historical iteration notes.
