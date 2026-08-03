@@ -2,9 +2,9 @@
   "task": "r90-64-sustained-parser-formatter-fuzz-baseline",
   "timestamp": "2026-08-03T02:09:05-07:00",
   "branch": "main",
-  "remote_baseline": "33bc37d9ff71932d6e4ea49cf414f3ed0008415a",
+  "remote_baseline": "73ab39ef88245b01b3d3418f0d9aeb0f6db1d546",
   "risk_level": "Medium",
-  "current_checkpoint": "validated_ready_for_delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched origin/main and verified clean local and remote equality at 33bc37d9ff71932d6e4ea49cf414f3ed0008415a",
     "Verified R90-63 feature and closure Git, task-state, exact Vault note, index, MOC, and stable knowledge evidence",
@@ -19,14 +19,17 @@
     "Passed the accepted no-corpus local synthetic baseline at 1000000 iterations per harness with zero crashes or sanitizer findings",
     "Reviewed and recorded only sanitized baseline facts without production, release, tag, or publication claims",
     "Passed serial C ASan tests, then explicitly cleaned shared outputs and passed ordinary C plus every Go package under the race detector with count=1",
-    "Passed shell, Python, documentation, 22 evidence, and 33 knowledge tests"
+    "Passed shell, Python, documentation, 22 evidence, and 33 knowledge tests",
+    "Passed final task-state, roadmap-definition, diff, staged-scope, credential-prefix, sensitive-path, and manual generic-keyword review",
+    "Caught and restored the sustained shell executable bit before push, reran shell syntax, six focused tests, a direct executable dual-harness run, and the knowledge gate, then verified tree mode 100755",
+    "Committed the validated thirteen-path feature at 73ab39ef88245b01b3d3418f0d9aeb0f6db1d546",
+    "Pushed without force, fetched origin/main, verified exact equality, and passed the post-fetch knowledge gate",
+    "Synchronized exact range 33bc37d9ff71932d6e4ea49cf414f3ed0008415a..73ab39ef88245b01b3d3418f0d9aeb0f6db1d546 to the single local Vault",
+    "Verified idempotent synchronization, iteration note, full index, MOC link, and stable ASan-fuzz and testing knowledge",
+    "Completed R90-64 and left R90-65 ready without starting it"
   ],
-  "in_progress": [
-    "Run final diff, staged-scope, and sensitive-information review"
-  ],
-  "todo": [
-    "Commit, push, fetch-verify, synchronize the exact Vault range, and close R90-64"
-  ],
+  "in_progress": [],
+  "todo": [],
   "acceptance_evidence": {
     "dual_harness_execution": "pass: 1000000 deterministic iterations each",
     "fresh_asan_build": "pass: both ASan targets forcibly rebuilt immediately before execution",
@@ -42,9 +45,21 @@
     "R90-59 remains blocked on exact publication authority"
   ],
   "remaining_risks": [
-    "Both harnesses must be rebuilt and independently evidenced",
-    "Corpus paths must remain redacted from JSON and Markdown outputs",
-    "Any crash, sanitizer finding, or ambiguous iteration count stops delivery"
+    "R90-65 remaining-gap audit is ready but unstarted",
+    "External corpus work still requires separately reviewed external input",
+    "R90-59 publication remains unauthorized"
   ],
-  "resume_instructions": "R90-64 implementation and validation are complete but not yet committed. Review the intended diff and sensitive-information scan, deliver only the R90-64 paths, fetch-verify origin/main, synchronize the exact Vault range, and create the docs-only closure record. Do not start R90-59."
+  "delivery": {
+    "commit": "73ab39ef88245b01b3d3418f0d9aeb0f6db1d546",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "33bc37d9ff71932d6e4ea49cf414f3ed0008415a..73ab39ef88245b01b3d3418f0d9aeb0f6db1d546",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_fuzz_note_verified": true,
+    "vault_stable_testing_note_verified": true,
+    "vault_idempotent_replay_verified": true
+  },
+  "resume_instructions": "R90-64 is complete at 73ab39ef88245b01b3d3418f0d9aeb0f6db1d546; do not repeat implementation, validation, feature push, or feature-range Vault synchronization. On the next $netsentry-next trigger, fetch and verify origin/main plus this docs-only closure and its exact Vault evidence before selecting work. R90-65 is next ready. R90-59 still requires explicit exact-version and exact-commit publication authority."
 }

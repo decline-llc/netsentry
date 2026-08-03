@@ -122,6 +122,28 @@ explicitly cleaned, and the complete ordinary C plus uncached Go race suite
 was rerun successfully. No source change was required, and all independent
 repository-gate results remained valid.
 
+Pre-push commit inspection also found that replacing the sustained shell file
+had dropped its executable bit. No push had occurred. The mode was restored,
+shell syntax, six focused evidence tests, a direct executable 10-iteration
+dual-harness run, and the knowledge gate passed, then the still-local feature
+commit was amended. The verified commit tree retains mode `100755`.
+
+## Delivery Results
+
+- Feature commit:
+  `73ab39ef88245b01b3d3418f0d9aeb0f6db1d546` (`test: record
+  dual-harness sustained fuzz baseline`).
+- The thirteen-path commit was pushed without force, fetched, and verified as
+  both `HEAD` and `origin/main`; the post-fetch 33-test knowledge gate passed.
+- Exact range
+  `33bc37d9ff71932d6e4ea49cf414f3ed0008415a..73ab39ef88245b01b3d3418f0d9aeb0f6db1d546`
+  was synchronized twice with identical hashes to the single existing local
+  Vault.
+- The generated iteration note, full commit index, MOC link, and manually
+  reconciled stable ASan-fuzz and testing-gate notes are verified.
+- R90-65 is ready but was not started. R90-59 publication, tags, releases,
+  images, registries, and workflow dispatch remain outside authority.
+
 ## Authority Boundaries
 
 The rolling trigger authorizes the bounded R90-64 evidence tooling, local

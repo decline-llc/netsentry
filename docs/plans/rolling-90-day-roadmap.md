@@ -125,7 +125,8 @@
 | R90-61 | Aug 2 | Complete | Audit post-recovery delivery and restore the forward queue. | R90-60 | A dated audit reconciles recent commits, plans/states, fetched remote and Vault evidence, records the committed-prefix test gap, and restores a complete evidence-grounded queue without runtime or publication changes. |
 | R90-62 | Aug 3–Sep 4 | Complete early | Prove committed-prefix multi-shard recovery retry. | R90-61 | Deterministic direct regressions cancel or fail recovery after an earlier shard commit, retain the complete log and emergency state, and prove explicit retry completes every event once without aggregate inflation. |
 | R90-63 | Sep 5–Oct 9 | Complete early | Add a dedicated C UDS JSON formatter fuzz boundary. | R90-62 | An ASan-capable deterministic harness covers packet, heartbeat, and hello formatting across escaping, payload, integer, and output-boundary inputs; valid output remains canonical JSONL and failures never overrun or expose partial buffers as success. |
-| R90-64 | Oct 10–31 | In progress | Record a sustained parser and formatter fuzz baseline. | R90-63 | Reproducible sustained ASan runs exercise both C harnesses with path-redacted corpus metadata, no crashes or sanitizer findings, and an honest local/synthetic evidence classification without a release or production-traffic claim. |
+| R90-64 | Oct 10–31 | Complete early | Record a sustained parser and formatter fuzz baseline. | R90-63 | Reproducible sustained ASan runs exercise both C harnesses with path-redacted corpus metadata, no crashes or sanitizer findings, and an honest local/synthetic evidence classification without a release or production-traffic claim. |
+| R90-65 | Aug 3–14 | Ready | Audit the completed fuzz delivery and scope the next local hardening queue. | R90-64 | A dated audit reconciles the dual-harness evidence, public remaining-gap claims, code/tests, fetched remote, and exact Vault records; external-input gaps are separated from bounded local work, and every added increment has a complete dependency, window, risk, acceptance, validation, and stop definition. |
 
 ## R90-01 Definition
 
@@ -1223,6 +1224,23 @@
   built-in deterministic harnesses at 1,000,000 iterations each without an
   external corpus and records only path-redacted local synthetic evidence.
 
+## R90-65 Definition
+
+- **Goal:** reconcile the completed dual-harness fuzz delivery against current
+  public gap claims and restore a bounded dependency-ready local hardening
+  queue without inventing external evidence.
+- **Risk:** broad corruption/fault-injection language can produce speculative
+  or duplicate work, while external fuzz/traffic gaps can be incorrectly
+  treated as locally satisfiable.
+- **Required validation:** exact R90-64 feature/closure Git, task-state, remote,
+  and Vault evidence; code/test comparison for every public remaining-gap
+  claim; task-state JSON parsing; exact roadmap row/Definition coverage;
+  complete fields for each new unfinished increment; documentation, knowledge,
+  diff, and sensitive-information checks.
+- **Stop condition:** stop without implementation if the next bounded queue
+  requires private/external corpora, a product or release decision, historical
+  evidence rewrite, publication authority, or starting a later increment.
+
 ### R90-49 Validation Deviation
 
 - **Observed:** The first complete native race suite hit the existing
@@ -1713,7 +1731,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60 → R90-61 → R90-62 → R90-63 → R90-64`; `R90-56 → R90-58 → R90-59`, with R90-59 blocked on explicit publication authorization. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60 → R90-61 → R90-62 → R90-63 → R90-64 → R90-65`; `R90-56 → R90-58 → R90-59`, with R90-59 blocked on explicit publication authorization. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -1870,3 +1888,22 @@ post-fetch knowledge gate. Exact range
 was synchronized idempotently to the single local Vault; its iteration note,
 full index, MOC link, and updated stable testing/ASan-fuzz knowledge are
 verified. R90-64 is ready but was not started. R90-59 remains blocked.
+The Aug 3 trigger fetched and verified the R90-63 closure plus exact Vault
+evidence, audited all 78 prior task-state files and 67 roadmap definitions, and
+selected R90-64 from clean baseline
+`33bc37d9ff71932d6e4ea49cf414f3ed0008415a`. `make fuzz-sustained` now forces
+fresh ASan parser/formatter builds, runs both at one explicit budget, and uses
+a versioned validator for exact harness/iteration/status, sanitizer, corpus
+redaction, and evidence-class fields. The accepted no-corpus local synthetic
+run passed 1,000,000 mutations per harness with zero sanitizer findings in
+118.317 seconds; a separate path-bearing fixture proved JSON/Markdown
+redaction. Serial ASan C tests, an explicitly clean ordinary C rebuild, every
+Go package under uncached race, shell, Python, documentation, evidence, and
+knowledge gates passed. The feature completed early at
+`73ab39ef88245b01b3d3418f0d9aeb0f6db1d546`; it was pushed without force,
+fetched equal to `origin/main`, and passed the post-fetch knowledge gate. Exact
+range
+`33bc37d9ff71932d6e4ea49cf414f3ed0008415a..73ab39ef88245b01b3d3418f0d9aeb0f6db1d546`
+was synchronized idempotently to the single local Vault; its note, full index,
+MOC link, and stable fuzz/testing knowledge are verified. R90-65 is ready but
+was not started. R90-59 remains blocked on exact publication authority.
