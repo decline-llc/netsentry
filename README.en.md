@@ -116,7 +116,7 @@ make test-coverage
 make fuzz-parser
 make fuzz-uds-formatter
 FUZZ_LONG_ITERATIONS=1000000 make fuzz-parser-long
-make fuzz-sustained
+make fuzz-sustained # 1,000,000 local synthetic mutations per harness
 PCAP_CORPUS=/path/to/reviewed-corpus make e2e-corpus-pressure
 make rc-check
 ```

@@ -54,7 +54,7 @@ make bench         # C parser/UDS microbenchmarks + Go benchmarks
 make fuzz-parser   # deterministic ASan fuzz smoke for the C frame parser
 make fuzz-parser-long # longer deterministic ASan fuzz pass for the C frame parser
 make fuzz-uds-formatter # deterministic ASan fuzz smoke for C UDS JSON formatters
-make fuzz-sustained # sustained ASan parser fuzz evidence
+make fuzz-sustained # sustained ASan parser and formatter fuzz evidence
 make e2e-smoke     # deterministic pcap -> SQLite -> API smoke test
 make e2e-pressure  # repeat-pcap end-to-end throughput smoke test
 make e2e-corpus-pressure # local sanitized pcap corpus pressure evidence
@@ -488,9 +488,9 @@ make fuzz-parser
 make fuzz-uds-formatter
 # Longer local pass:
 FUZZ_LONG_ITERATIONS=1000000 make fuzz-parser-long
-# Evidence-producing sustained run:
+# Evidence-producing sustained run (both harnesses):
 make fuzz-sustained
-# Optional external corpus replay:
+# Optional external corpus replay for the byte-oriented parser only:
 FUZZ_CORPUS=/path/to/local-corpus make fuzz-sustained
 ```
 
@@ -501,12 +501,19 @@ packet, heartbeat, and hello inputs; it covers escaping, payload and integer
 edges, proves exact-fit success plus undersized-buffer rejection under ASan,
 and independently decodes representative JSONL frames with Python's standard
 library. `FUZZ_FORMATTER_ITERATIONS` controls its deterministic mutation count.
-`make fuzz-sustained` records JSON and Markdown evidence under
-`docs/evidence/local/` by default. That directory is ignored because external
-corpus paths may be sensitive. Corpus paths are redacted by default; set
+`make fuzz-sustained` forcibly rebuilds both ASan harnesses, runs them serially
+at the same `FUZZ_SUSTAINED_ITERATIONS` budget, and records independently
+validated parser/formatter statuses, elapsed times, exact iteration reports,
+and sanitizer finding counts. JSON and Markdown evidence defaults to
+`docs/evidence/local/`; that directory is ignored because external corpus paths
+may be sensitive. Optional corpus replay applies only to the byte-oriented
+parser. Corpus paths are redacted by default; set
 `NETSENTRY_EVIDENCE_INCLUDE_PATHS=1` only for private local debugging evidence.
-Use `FUZZ_SUSTAINED_ITERATIONS` and `FUZZ_OUTPUT_DIR` to tune duration and output
-location.
+Use `FUZZ_OUTPUT_DIR` to select another local output location. Generated
+evidence is explicitly `local_synthetic` and cannot establish production
+traffic, throughput, release, tag, or publication authority. The reviewed
+R90-64 baseline summary is in
+[`docs/evidence/r90-64-sustained-fuzz-20260803.md`](evidence/r90-64-sustained-fuzz-20260803.md).
 
 The current benchmark scope, local baseline, and pressure smoke behavior are documented in `docs/performance.md`.
 

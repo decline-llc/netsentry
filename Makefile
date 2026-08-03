@@ -97,11 +97,11 @@ shell-check:
 
 ## python-check — run Python script syntax checks
 python-check:
-	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("capture/tests/validate_formatter_json.py", "scripts/check_supply_chain.py", "scripts/gen_test_pcap.py", "scripts/gen_sanitized_corpus.py", "scripts/sanitize_pcap.py", "scripts/test_sanitize_pcap.py", "scripts/pcap_evidence.py", "scripts/test_pcap_evidence.py", "scripts/release_gate.py", "scripts/test_release_gate.py", "scripts/sync_knowledge.py", "scripts/post_push_sync.py", "scripts/test_sync_knowledge.py", "scripts/test_post_push_sync.py", "scripts/fixtures/__init__.py", "scripts/fixtures/post_push_fixture.py"))]'
+	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("capture/tests/validate_formatter_json.py", "scripts/check_supply_chain.py", "scripts/fuzz_evidence.py", "scripts/test_fuzz_evidence.py", "scripts/gen_test_pcap.py", "scripts/gen_sanitized_corpus.py", "scripts/sanitize_pcap.py", "scripts/test_sanitize_pcap.py", "scripts/pcap_evidence.py", "scripts/test_pcap_evidence.py", "scripts/release_gate.py", "scripts/test_release_gate.py", "scripts/sync_knowledge.py", "scripts/post_push_sync.py", "scripts/test_sync_knowledge.py", "scripts/test_post_push_sync.py", "scripts/fixtures/__init__.py", "scripts/fixtures/post_push_fixture.py"))]'
 
 ## evidence-check — run sanitizer, PCAP evidence, and release-gate regressions
 evidence-check:
-	@python3 -m unittest scripts.test_sanitize_pcap scripts.test_pcap_evidence scripts.test_release_gate
+	@python3 -m unittest scripts.test_fuzz_evidence scripts.test_sanitize_pcap scripts.test_pcap_evidence scripts.test_release_gate
 
 ## knowledge-check — test deterministic, idempotent Obsidian knowledge extraction
 knowledge-check:
@@ -140,7 +140,7 @@ fuzz-parser-long:
 fuzz-uds-formatter:
 	$(MAKE) -C capture fuzz-uds-formatter
 
-## fuzz-sustained — run sustained ASan parser fuzz evidence; optional FUZZ_CORPUS=/path
+## fuzz-sustained — run sustained ASan parser/formatter evidence; optional parser FUZZ_CORPUS=/path
 fuzz-sustained:
 	@bash scripts/fuzz_sustained.sh
 

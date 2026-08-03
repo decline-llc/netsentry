@@ -125,7 +125,7 @@
 | R90-61 | Aug 2 | Complete | Audit post-recovery delivery and restore the forward queue. | R90-60 | A dated audit reconciles recent commits, plans/states, fetched remote and Vault evidence, records the committed-prefix test gap, and restores a complete evidence-grounded queue without runtime or publication changes. |
 | R90-62 | Aug 3–Sep 4 | Complete early | Prove committed-prefix multi-shard recovery retry. | R90-61 | Deterministic direct regressions cancel or fail recovery after an earlier shard commit, retain the complete log and emergency state, and prove explicit retry completes every event once without aggregate inflation. |
 | R90-63 | Sep 5–Oct 9 | Complete early | Add a dedicated C UDS JSON formatter fuzz boundary. | R90-62 | An ASan-capable deterministic harness covers packet, heartbeat, and hello formatting across escaping, payload, integer, and output-boundary inputs; valid output remains canonical JSONL and failures never overrun or expose partial buffers as success. |
-| R90-64 | Oct 10–31 | Ready | Record a sustained parser and formatter fuzz baseline. | R90-63 | Reproducible sustained ASan runs exercise both C harnesses with path-redacted corpus metadata, no crashes or sanitizer findings, and an honest local/synthetic evidence classification without a release or production-traffic claim. |
+| R90-64 | Oct 10–31 | In progress | Record a sustained parser and formatter fuzz baseline. | R90-63 | Reproducible sustained ASan runs exercise both C harnesses with path-redacted corpus metadata, no crashes or sanitizer findings, and an honest local/synthetic evidence classification without a release or production-traffic claim. |
 
 ## R90-01 Definition
 
@@ -1216,6 +1216,12 @@
 - **Stop condition:** stop on a crash, sanitizer finding, ambiguous iteration
   count, sensitive path exposure, need for private corpus access, or an attempt
   to use the result as tag/publication or production-traffic authority.
+- **Selected plan:**
+  [`task-20260803-sustained-fuzz-baseline.md`](task-20260803-sustained-fuzz-baseline.md),
+  from clean fetched baseline
+  `33bc37d9ff71932d6e4ea49cf414f3ed0008415a`. The accepted run uses both
+  built-in deterministic harnesses at 1,000,000 iterations each without an
+  external corpus and records only path-redacted local synthetic evidence.
 
 ### R90-49 Validation Deviation
 
