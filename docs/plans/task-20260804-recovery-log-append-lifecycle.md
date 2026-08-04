@@ -134,6 +134,22 @@ complete or incomplete appended evidence fail-closed for explicit recovery.
   close leave exact complete bytes; one pre-opened observer sees zero SQLite
   rows; and only complete records replay once after restart.
 
+## Delivery Results
+
+- Feature commit:
+  `1a9732514d4cf061a52821f9b487fa10aebbf35e` (`fix: preserve recovery append
+  fault evidence`).
+- The exact eight-path feature was pushed without force, fetched, and verified
+  as both `HEAD` and `origin/main`; the post-fetch 33-test knowledge gate
+  passed.
+- Exact range
+  `2f62acf9025969a50dd0295f3881ce7cd2784ec6..1a9732514d4cf061a52821f9b487fa10aebbf35e`
+  was synchronized twice with identical hashes to the single local Vault.
+- The generated iteration note, full index, MOC link, and current stable
+  SQLite/testing/MOC authority are verified; historical iteration notes were
+  not rewritten.
+- R90-68 is ready but was not started. R90-59 publication remains blocked.
+
 ## Authority Boundaries
 
 This trigger authorizes only R90-67's store-local append fault seam,
