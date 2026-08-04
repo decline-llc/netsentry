@@ -1,0 +1,65 @@
+{
+  "task": "r90-68-recovery-log-clearing-lifecycle",
+  "timestamp": "2026-08-04T01:23:22-07:00",
+  "branch": "main",
+  "remote_baseline": "cac3178512a84356364f82261f2b7dffdfdf8e58",
+  "risk_level": "High",
+  "current_checkpoint": "reviewed_ready_for_feature_commit",
+  "completed": [
+    "Fetched origin/main and verified clean local and remote equality at cac3178512a84356364f82261f2b7dffdfdf8e58",
+    "Verified the exact R90-67 feature and closure Git, task-state, Vault notes, index, MOC, and current stable authority",
+    "Reviewed 145 commits across three recent delivery phases and found no material delivery, validation, or authority deviation",
+    "Parsed all 82 task-state JSON files and verified all 71 roadmap rows match exactly one Definition",
+    "Audited the unfinished queue and selected dependency-ready R90-68 while leaving R90-59 blocked",
+    "Inspected post-commit clear, recovery, health, primary, daily-shard, and existing idempotency coverage",
+    "Confirmed the clear path lacks an explicit file Sync and direct open/truncate, sync, and close fault regressions",
+    "Persisted scope, non-goals, risks, acceptance evidence mapping, validation, authority boundaries, and stop conditions",
+    "Added one unexported per-Store recovery-log clear opener with the production os.OpenFile path as its nil default",
+    "Added file Sync after successful O_TRUNC and before close while preserving phase diagnostics",
+    "Added six direct primary and encoded historical-shard open/truncate, sync, and close EIO regressions",
+    "Opened and reused one independent read-only SQLite observer before every writer",
+    "Proved each failure occurs after one committed event and aggregate count one and records phase-specific sticky emergency",
+    "Proved open/truncate retains the exact canonical record while sync and close classify an exact empty log",
+    "Proved one explicit Recover replays or probes without alert loss or aggregate inflation and returns healthy",
+    "Passed the first focused uncached race execution and existing replay/probe compatibility regression",
+    "Preflighted repository-required Go 1.25.12, GCC 13.3.0, GNU Make 4.3, Bash 5.2.21, and Python 3.12.3",
+    "Passed twenty final uncached focused race repetitions",
+    "Passed the complete internal alert package under uncached race in 61.850 seconds",
+    "Passed make test across ordinary C tests and every Go package under uncached race",
+    "Passed make e2e-smoke with 6 packets processed, 5 alerts generated, and 8 rules loaded",
+    "Passed make docs-check and the 33-test make knowledge-check",
+    "Parsed all 83 task-state JSON files and reverified all 71 roadmap rows match exactly one Definition",
+    "Reviewed the complete source and documentation diff and confirmed the exact eight-path R90-68 scope",
+    "Passed formatting, whitespace, and scoped sensitive-information review"
+  ],
+  "in_progress": [
+    "Commit, push, fetch-verify, and synchronize the exact feature range to the Vault"
+  ],
+  "todo": [
+    "Record and deliver the docs-only R90-68 closure commit"
+  ],
+  "authority_boundaries": [
+    "No append lifecycle, recovery format, SQLite schema, public API, event identity, aggregation, or cross-process ownership change",
+    "No deletion of uncommitted recovery input and no rollback of committed SQLite transactions",
+    "No automatic retry, background cleanup, or privileged filesystem infrastructure",
+    "No private or external input",
+    "No tag, release, image, registry, or workflow mutation",
+    "R90-59 remains blocked on exact publication authority"
+  ],
+  "remaining_risks": [
+    "The feature and docs-only closure still require push, fetch verification, and exact-range Vault synchronization",
+    "R90-59 publication remains unauthorized"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false,
+    "vault_stable_authority_reconciled": false,
+    "vault_idempotent_replay_verified": false
+  },
+  "resume_instructions": "R90-68 implementation, complete validation, and final diff review are complete from baseline cac3178512a84356364f82261f2b7dffdfdf8e58. Deliver the exact eight-path feature commit, verify and synchronize its exact full-SHA range, then publish only the docs-only closure. Do not start R90-59."
+}

@@ -9,6 +9,11 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Recovery-log clearing now syncs the empty file before close and has direct
+  post-commit open/truncate, sync, and close fault coverage for primary and
+  encoded historical-shard paths. Retained and already-cleared outcomes enter
+  sticky emergency without losing or inflating the committed alert, and one
+  explicit recovery returns healthy.
 - Recovery-log append open, short-write, sync, and close failures now have a
   store-local deterministic fault boundary. Short writes fail explicitly;
   every phase returns before SQLite mutation, preserves the prior valid log

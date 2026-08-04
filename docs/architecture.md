@@ -397,6 +397,15 @@ The store never rolls back appended bytes: a complete line remains eligible for
 idempotent replay, while an incomplete suffix fails the next preflight and is
 preserved for operator review. Health retains the exact failing lifecycle phase.
 
+Clearing occurs only after SQLite persistence and now follows
+`open(O_TRUNC) → Sync → Close`. A failure before open retains the complete log;
+a sync or close failure may leave it observably empty even though the operation
+reported failure. Both states enter sticky emergency with the exact clear phase.
+One explicit operator recovery idempotently replays retained records or runs a
+rolled-back writable probe for an empty log, then repeats the synced clear. It
+never rolls back the committed alert or treats an in-process empty read as proof
+of prior crash durability.
+
 Remaining v0.1.0 storage work:
 
 - Automatic disk cleanup remains intentionally unsupported.
@@ -428,7 +437,7 @@ v0.1.0 target:
 
 Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, engine worker shutdown orchestration, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
 
-Alert storage tests cover SQLite aggregation windows, nanosecond timestamp aggregation/order/filter/pruning, JSONL recovery-log replay idempotency and structural/semantic validation including model-derived canonical fields, required/optional status, JSON kinds, integral encoding policy, fail-closed unsupported model shapes, duplicate top-level fields, canonical timestamp encodings, severity, rule names, MITRE tuples, and protocol names with byte preservation, direct append open/short-write/sync/close fault preservation and replay, required-schema plus non-binary aggregation/write-blocking uniqueness/trigger/generated-column/constraint/foreign-key rejection with byte preservation, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple validation, optional query-index recreation and timestamp query plans, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, corrupt/truncated/incompatible historical-shard read/write preservation, cross-process corrupt WAL/SHM three-file preservation, active WAL-backed read-only access without SHM mutation, ordinary primary contention and active cancellation after durable recovery append with idempotent retry, deterministic committed-prefix recovery under later-shard failure and active cancellation with idempotent retry, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics alert counts backed by a real daily-shard SQLite store.
+Alert storage tests cover SQLite aggregation windows, nanosecond timestamp aggregation/order/filter/pruning, JSONL recovery-log replay idempotency and structural/semantic validation including model-derived canonical fields, required/optional status, JSON kinds, integral encoding policy, fail-closed unsupported model shapes, duplicate top-level fields, canonical timestamp encodings, severity, rule names, MITRE tuples, and protocol names with byte preservation, direct append and post-commit clear lifecycle fault preservation/replay across primary and encoded daily-shard paths, required-schema plus non-binary aggregation/write-blocking uniqueness/trigger/generated-column/constraint/foreign-key rejection with byte preservation, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple validation, optional query-index recreation and timestamp query plans, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, corrupt/truncated/incompatible historical-shard read/write preservation, cross-process corrupt WAL/SHM three-file preservation, active WAL-backed read-only access without SHM mutation, ordinary primary contention and active cancellation after durable recovery append with idempotent retry, deterministic committed-prefix recovery under later-shard failure and active cancellation with idempotent retry, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics alert counts backed by a real daily-shard SQLite store.
 
 The v0.1.0 IPC serializer decision is to retain the current bounded handwritten C JSON formatter instead of adding cJSON. The formatter is narrow, fails closed on buffer exhaustion, Base64-encodes payload previews, and is exercised through unit tests, microbenchmarks, a deterministic ASan boundary for packet/heartbeat/hello escaping, payload, integer, exact-fit, and undersized-buffer inputs, independent JSONL decoding, and e2e heartbeat assertions. Replacing it remains a future option only if sustained fuzzing or production evidence shows a concrete defect.
 
@@ -441,7 +450,6 @@ Remaining validation gaps:
   query tuning, and alert-volume behavior. R90-04 records one approved public
   real-traffic pressure run; new corpus work remains an optional external-input
   diagnostic under the global PCAP release-gate waiver.
-- Remaining bounded local storage-fault coverage is limited to post-commit
-  recovery-log clearing failures tracked as R90-68. R90-67 directly covers
-  append open, short-write, sync, and close failures; R90-66 covers primary
-  SQLite interruption after a durable recovery append.
+- R90-66 through R90-68 close the bounded local primary-interruption,
+  recovery-log append-lifecycle, and post-commit clear-lifecycle sequence. No
+  later local storage-fault increment is currently queued.

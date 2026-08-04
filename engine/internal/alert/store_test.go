@@ -6361,6 +6361,204 @@ func assertRecoveryLogAppendDatabaseEmpty(t *testing.T, observer *sql.DB) {
 	}
 }
 
+type recoveryLogClearFaultFile struct {
+	file     *os.File
+	syncErr  error
+	closeErr error
+}
+
+func (f *recoveryLogClearFaultFile) Sync() error {
+	if f.syncErr != nil {
+		return f.syncErr
+	}
+	return f.file.Sync()
+}
+
+func (f *recoveryLogClearFaultFile) Close() error {
+	return errors.Join(f.file.Close(), f.closeErr)
+}
+
+func TestStoreRecoveryLogClearFailuresPreserveCommittedAlerts(t *testing.T) {
+	modes := []struct {
+		name  string
+		daily bool
+	}{
+		{name: "primary"},
+		{name: "encoded daily shard", daily: true},
+	}
+	phases := []struct {
+		name     string
+		marker   string
+		retained bool
+	}{
+		{name: "open truncate", marker: "truncate alert recovery log", retained: true},
+		{name: "sync", marker: "sync truncated alert recovery log"},
+		{name: "close", marker: "close truncated alert recovery log"},
+	}
+
+	for _, mode := range modes {
+		for _, phase := range phases {
+			t.Run(mode.name+"/"+phase.name, func(t *testing.T) {
+				store, observer, alert, expectedLog := prepareRecoveryLogClearLifecycleFault(
+					t,
+					mode.name,
+					phase.name,
+					mode.daily,
+				)
+				defer store.Close()
+				defer observer.Close()
+
+				faultErr := fmt.Errorf("injected recovery clear %s failure: %w", phase.name, syscall.EIO)
+				store.openRecoveryClear = func(path string, flag int, perm os.FileMode) (recoveryLogDurabilityFile, error) {
+					if phase.retained {
+						return nil, faultErr
+					}
+					file, err := os.OpenFile(path, flag, perm)
+					if err != nil {
+						return nil, err
+					}
+					faultFile := &recoveryLogClearFaultFile{file: file}
+					switch phase.name {
+					case "sync":
+						faultFile.syncErr = faultErr
+					case "close":
+						faultFile.closeErr = faultErr
+					}
+					return faultFile, nil
+				}
+
+				err := store.WriteBatch(context.Background(), []*model.Alert{alert})
+				if !errors.Is(err, syscall.EIO) {
+					t.Fatalf("clear %s error = %v, want EIO", phase.name, err)
+				}
+				if !strings.Contains(err.Error(), phase.marker) {
+					t.Fatalf("clear %s error = %q, want phase marker %q", phase.name, err, phase.marker)
+				}
+				wantLog := []byte(nil)
+				if phase.retained {
+					wantLog = expectedLog
+				}
+				assertFileBytes(t, store.recoveryLogPath, wantLog)
+				assertRecoveryLogClearCommittedOnce(t, observer, alert, store.aggregationWindow)
+				health := store.Health()
+				if health.Status != "emergency" || health.LastError != err.Error() || health.LastErrorAt.IsZero() {
+					t.Fatalf("clear %s health = %+v, want phase-specific emergency", phase.name, health)
+				}
+
+				store.openRecoveryClear = nil
+				if recoverErr := store.Recover(context.Background()); recoverErr != nil {
+					t.Fatalf("recover after clear %s failure: %v", phase.name, recoverErr)
+				}
+				assertRecoveryLogClearCommittedOnce(t, observer, alert, store.aggregationWindow)
+				assertFileBytes(t, store.recoveryLogPath, nil)
+				health = store.Health()
+				if health.Status != "ok" || health.LastRecoveryResult != "succeeded" || health.LastRecoveryAt.IsZero() {
+					t.Fatalf("clear %s recovery health = %+v, want successful operator recovery", phase.name, health)
+				}
+			})
+		}
+	}
+}
+
+func prepareRecoveryLogClearLifecycleFault(
+	t *testing.T,
+	mode string,
+	phase string,
+	daily bool,
+) (*Store, *sql.DB, *model.Alert, []byte) {
+	t.Helper()
+	baseDir := t.TempDir()
+	now := time.Date(2026, 8, 4, 9, 0, 0, 0, time.UTC)
+	alertTime := now
+	opts := Options{
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now:               func() time.Time { return now },
+	}
+	if daily {
+		baseDir = filepath.Join(baseDir, "daily shards with spaces")
+		alertTime = now.AddDate(0, 0, -1)
+		opts.Dir = baseDir
+		opts.DailyShard = true
+		opts.RecoveryLogPath = filepath.Join(baseDir, "recovery log.jsonl")
+		seed, err := Open(context.Background(), Options{
+			Dir:               baseDir,
+			DailyShard:        true,
+			JournalMode:       "WAL",
+			BusyTimeoutMS:     1000,
+			AggregationWindow: time.Minute,
+			RecoveryLogPath:   opts.RecoveryLogPath,
+			Now:               func() time.Time { return alertTime },
+		})
+		if err != nil {
+			t.Fatalf("create encoded historical clear shard: %v", err)
+		}
+		if err := seed.Close(); err != nil {
+			t.Fatalf("close encoded historical clear shard: %v", err)
+		}
+	} else {
+		opts.Path = filepath.Join(baseDir, "alerts.db")
+		opts.RecoveryLogPath = filepath.Join(baseDir, "alerts-recovery.jsonl")
+	}
+
+	store, err := Open(context.Background(), opts)
+	if err != nil {
+		t.Fatalf("open %s clear lifecycle store: %v", mode, err)
+	}
+	targetPath := store.path
+	if daily {
+		targetPath = store.shardPathFor(alertTime)
+		if targetPath == store.path || !strings.Contains(targetPath, " ") {
+			_ = store.Close()
+			t.Fatalf("daily clear target %q is not a non-current encoded path", targetPath)
+		}
+	}
+	observer, err := openReadOnlyDatabase(targetPath)
+	if err != nil {
+		_ = store.Close()
+		t.Fatalf("open %s clear lifecycle observer: %v", mode, err)
+	}
+
+	name := strings.ReplaceAll(mode+"-"+phase, " ", "-")
+	alert := makeAlert(alertTime, "clear-"+name)
+	alert.RuleID = "clear-rule-" + name
+	alert.RuleName = "Recovery Clear Rule"
+	records, err := encodeRecoveryRecords(normalizeAlerts(
+		[]*model.Alert{alert},
+		now,
+		store.aggregationWindow,
+	))
+	if err != nil {
+		_ = observer.Close()
+		_ = store.Close()
+		t.Fatalf("encode %s clear recovery record: %v", mode, err)
+	}
+	return store, observer, alert, bytes.Join(records, nil)
+}
+
+func assertRecoveryLogClearCommittedOnce(
+	t *testing.T,
+	observer *sql.DB,
+	alert *model.Alert,
+	window time.Duration,
+) {
+	t.Helper()
+	assertPrimaryInterruptionState(t, observer, alert, window, 1)
+	var events, alerts, aggregate int
+	if err := observer.QueryRow(`SELECT COUNT(*) FROM alert_events`).Scan(&events); err != nil {
+		t.Fatalf("count clear lifecycle events: %v", err)
+	}
+	if err := observer.QueryRow(
+		`SELECT COUNT(*), COALESCE(SUM(aggregated_count), 0) FROM alerts`,
+	).Scan(&alerts, &aggregate); err != nil {
+		t.Fatalf("count clear lifecycle alerts: %v", err)
+	}
+	if events != 1 || alerts != 1 || aggregate != 1 {
+		t.Fatalf("clear lifecycle state events=%d alerts=%d aggregate=%d, want 1/1/1", events, alerts, aggregate)
+	}
+}
+
 func preparePrimaryWriteInterruption(
 	t *testing.T,
 	busyTimeoutMS int,

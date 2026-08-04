@@ -67,10 +67,14 @@ type Options struct {
 	Now               func() time.Time
 }
 
-type recoveryLogAppendFile interface {
-	Write([]byte) (int, error)
+type recoveryLogDurabilityFile interface {
 	Sync() error
 	Close() error
+}
+
+type recoveryLogAppendFile interface {
+	recoveryLogDurabilityFile
+	Write([]byte) (int, error)
 }
 
 // Store persists alerts and aggregates repeated hits in a fixed time window.
@@ -85,6 +89,7 @@ type Store struct {
 	retentionDays      int
 	recoveryLogPath    string
 	openRecoveryAppend func(string, int, os.FileMode) (recoveryLogAppendFile, error)
+	openRecoveryClear  func(string, int, os.FileMode) (recoveryLogDurabilityFile, error)
 	now                func() time.Time
 	lifecycle          *storeLifecycle
 	writeMu            sync.Mutex
@@ -2345,9 +2350,19 @@ func (s *Store) truncateRecoveryLog() error {
 	if err := os.MkdirAll(filepath.Dir(s.recoveryLogPath), 0o750); err != nil {
 		return fmt.Errorf("create alert recovery log dir: %w", err)
 	}
-	file, err := os.OpenFile(s.recoveryLogPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o600)
+	openFile := s.openRecoveryClear
+	if openFile == nil {
+		openFile = func(path string, flag int, perm os.FileMode) (recoveryLogDurabilityFile, error) {
+			return os.OpenFile(path, flag, perm)
+		}
+	}
+	file, err := openFile(s.recoveryLogPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o600)
 	if err != nil {
 		return fmt.Errorf("truncate alert recovery log: %w", err)
+	}
+	if err := file.Sync(); err != nil {
+		_ = file.Close()
+		return fmt.Errorf("sync truncated alert recovery log: %w", err)
 	}
 	if err := file.Close(); err != nil {
 		return fmt.Errorf("close truncated alert recovery log: %w", err)

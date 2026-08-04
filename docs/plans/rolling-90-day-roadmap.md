@@ -129,7 +129,7 @@
 | R90-65 | Aug 3–14 | Complete early | Audit the completed fuzz delivery and scope the next local hardening queue. | R90-64 | A dated audit reconciles the dual-harness evidence, public remaining-gap claims, code/tests, fetched remote, and exact Vault records; external-input gaps are separated from bounded local work, and every added increment has a complete dependency, window, risk, acceptance, validation, and stop definition. |
 | R90-66 | Aug 15–Sep 4 | Complete early | Prove primary write interruption recovery. | R90-65 | Real SQLite contention and active cancellation after durable recovery append but before primary commit leave no partial database mutation, retain the complete log, and permit one explicit retry to persist each event once without aggregate inflation. |
 | R90-67 | Sep 5–Oct 2 | Complete early | Inject recovery-log append lifecycle faults. | R90-66 | Direct open, short-write, sync, and close failures occur before SQLite mutation, retain the exact pre-existing valid log prefix, expose the failing phase, and leave complete or incomplete appended evidence fail-closed without automatic deletion. |
-| R90-68 | Oct 3–31 | Ready | Harden post-commit recovery-log clearing. | R90-67 | Direct open/truncate, sync, and close failures after a primary or daily-shard commit cannot lose an alert or inflate an aggregate; every retained-log or already-cleared outcome remains explicit and one operator retry returns healthy. |
+| R90-68 | Oct 3–31 | In progress | Harden post-commit recovery-log clearing. | R90-67 | Direct open/truncate, sync, and close failures after a primary or daily-shard commit cannot lose an alert or inflate an aggregate; every retained-log or already-cleared outcome remains explicit and one operator retry returns healthy. |
 
 ## R90-01 Definition
 
@@ -1316,6 +1316,12 @@
   rolling back a committed SQLite transaction, weakening sticky emergency
   semantics, filesystem-specific privileged infrastructure, a format
   migration, or publication authority.
+- **Selected plan:**
+  [`task-20260804-recovery-log-clearing-lifecycle.md`](task-20260804-recovery-log-clearing-lifecycle.md),
+  from clean fetched baseline
+  `cac3178512a84356364f82261f2b7dffdfdf8e58`. Every phase is exercised after
+  an independently observed commit for both an ordinary primary database and a
+  pre-existing non-current daily shard under an encoded filesystem path.
 
 ### R90-49 Validation Deviation
 
@@ -2049,3 +2055,21 @@ was synchronized idempotently to the single local Vault; its iteration note,
 full index, MOC link, and current stable SQLite/testing/MOC authority are
 verified. R90-68 is ready but was not started, and R90-59 remains blocked on
 exact publication authority.
+The next Aug 4 trigger fetched and verified the R90-67 docs-only closure at
+`cac3178512a84356364f82261f2b7dffdfdf8e58`, both exact Vault notes, the full
+index, MOC links, and current stable SQLite/testing/MOC authority. All 82 prior
+task states parse and all 71 roadmap rows match one Definition. R90-68 is
+selected as the sole dependency-ready increment with direct post-commit
+open/truncate, sync, and close evidence across primary and encoded daily-shard
+paths. R90-59 was not started.
+The clear path now syncs the truncated file before close, and its per-Store
+fault seam reaches all three phases. Six direct race cases prove independently
+observed post-commit cardinality, exact retained versus already-cleared log
+state, sticky phase-specific emergency, and one healthy explicit recovery for
+ordinary primary plus encoded historical-shard paths. Full validation remained
+the delivery boundary at that checkpoint; R90-59 was not started.
+Twenty uncached focused race executions, the complete alert package race suite,
+full native tests, E2E smoke, documentation, knowledge, JSON, definition,
+formatting, diff, and sensitive-information checks pass. R90-68 remains in
+progress until feature push, fetch verification, and exact-range Vault
+synchronization complete.
