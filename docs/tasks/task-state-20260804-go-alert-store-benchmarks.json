@@ -1,0 +1,72 @@
+{
+  "task": "r90-71-go-alert-store-microbenchmarks",
+  "timestamp": "2026-08-04T05:33:50-07:00",
+  "branch": "main",
+  "remote_baseline": "e853f8e22d10c98cc9363356272c6d847421514b",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills plus the complete rolling roadmap before selection",
+    "Fetched origin/main and verified clean local and remote equality at e853f8e22d10c98cc9363356272c6d847421514b",
+    "Verified the exact R90-70 feature and closure Git commits and intended paths",
+    "Verified both exact R90-70 Vault notes, index rows, MOC links, and current stable Makefile, matcher, rule-engine, testing, and MOC authority",
+    "Reviewed 151 first-parent commits across three recent delivery phases and found no material delivery, validation, or authority deviation",
+    "Parsed all 85 prior task-state JSON files and verified all 75 roadmap rows match exactly one Definition",
+    "Audited the unfinished queue and selected dependency-ready R90-71 while leaving R90-59 blocked and R90-72 planned",
+    "Inspected production store write/query/recovery paths, schema indexes, query-plan tests, benchmark conventions, root orchestration, and current performance claims",
+    "Persisted scope, non-goals, risks, acceptance evidence mapping, validation, authority boundaries, and stop conditions before benchmark or current-documentation edits",
+    "Added durable single-alert and 32-alert primary WriteBatch benchmarks with deterministic unique event identity and bounded out-of-timer row cleanup",
+    "Added fixed 512-row exact-rule and timestamp-range Query benchmarks seeded through WriteBatch with direct expected-index assertions",
+    "Kept database setup, fixture creation, query-plan inspection, cardinality checks, cleanup, and diagnostics outside timed regions",
+    "Passed a one-iteration direct discovery run for all four storage cases with allocation output",
+    "Reconciled current performance, development, architecture, changelog, and roadmap guidance without adding numeric threshold claims",
+    "Observed the first uncached alert-package run time out in the existing active primary-write cancellation regression; benchmark functions were excluded and no production source changed",
+    "Held delivery and recorded the deviation pending focused uncached reproducibility assessment plus clean package and full-suite reruns",
+    "Reproduced the equal-deadline active-cancellation timeout during a 20-count uncached race command",
+    "Reduced only the test fixture SQLite busy timeout from five seconds to one second while retaining the five-second outer bound and every active-boundary, context-cause, durable-state, and retry assertion",
+    "Passed twenty uncached race executions of the corrected exact cancellation regression",
+    "Passed clean uncached complete alert-package runs both normally and under the race detector",
+    "Passed a direct ten-iteration run that discovered all four storage benchmark cases with allocation output",
+    "Preflighted module-selected Go 1.25.12, GCC 13.3.0, GNU Make 4.3, Bash 5.2.21, Python 3.12.3, jq 1.7, and curl 8.5.0",
+    "Passed root make bench across every C case, all four storage cases, and all four existing ten-second Go matching cases",
+    "Passed make test across ordinary C tests and every Go package under uncached race",
+    "Passed make e2e-smoke with 6 packets processed, 5 alerts generated, and 8 rules loaded",
+    "Passed make docs-check and the 33-test make knowledge-check",
+    "Moved alerts-per-operation reporting after ResetTimer so the final root benchmark exposes 1.000 and 32.00 alerts/op without changing timed work",
+    "Reran the complete root make bench successfully on the final benchmark source",
+    "Parsed all 86 task-state JSON files and reverified all 75 roadmap rows match exactly one Definition",
+    "Passed gofmt, git diff --check, exact nine-path scope, credential, sensitive-path, generic-keyword, production-source, dependency, and evidence classification review"
+  ],
+  "in_progress": [
+    "Commit and deliver the exact validated R90-71 feature"
+  ],
+  "todo": [
+    "Commit and push the exact R90-71 feature, fetch and verify remote equality, and rerun the knowledge gate",
+    "Synchronize and verify the exact feature range in the single local Vault",
+    "Record, commit, push, fetch, and synchronize the docs-only delivery closure without starting R90-72"
+  ],
+  "authority_boundaries": [
+    "No production storage, SQLite schema/query, recovery durability, aggregation, lifecycle, sharding, API, receiver, pipeline, or configuration behavior change",
+    "No benchmark dependency, operator data, unbounded fixture growth, generated performance evidence, host-independent threshold, or production throughput claim",
+    "No R90-72 implementation",
+    "No tag, release, image, registry, or workflow mutation",
+    "R90-59 remains blocked on exact publication authority"
+  ],
+  "remaining_risks": [
+    "Feature push, fetched-remote verification, exact Vault synchronization, and docs-only closeout remain pending",
+    "R90-72 performance evidence audit remains planned behind R90-71",
+    "R90-59 publication remains unauthorized"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false,
+    "vault_stable_authority_reconciled": false,
+    "vault_idempotent_replay_verified": false
+  },
+  "resume_instructions": "R90-71 is fully validated as an exact nine-path feature from baseline e853f8e22d10c98cc9363356272c6d847421514b but is not yet committed. Review and deliver that exact scope, synchronize its Vault range, then record and deliver the docs-only closure. Do not start R90-72 or publication-blocked R90-59."
+}

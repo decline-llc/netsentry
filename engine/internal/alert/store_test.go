@@ -6124,7 +6124,7 @@ func TestStorePrimaryWriteContentionRetainsRecoveryLogForIdempotentRetry(t *test
 }
 
 func TestStorePrimaryWriteActiveCancellationRetainsRecoveryLogForIdempotentRetry(t *testing.T) {
-	store, observer, alert, logBefore := preparePrimaryWriteInterruption(t, 5000, "primary-active-cancel")
+	store, observer, alert, logBefore := preparePrimaryWriteInterruption(t, 1000, "primary-active-cancel")
 	defer store.Close()
 	defer observer.Close()
 

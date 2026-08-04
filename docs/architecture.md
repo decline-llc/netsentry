@@ -455,7 +455,10 @@ Remaining validation gaps:
   later local storage-fault increment is currently queued.
 - `make bench` runs C microbenchmarks plus deterministic Go Aho-Corasick and
   full rule-engine no-hit/multi-hit matching benchmarks with allocation
-  reporting. Its Go invocation excludes ordinary tests; those remain in the
-  separate `make test` correctness/race gate. R90-71 separately adds the
-  SQLite alert-store boundary; R90-72 audits the resulting local evidence
-  before any portable budget or threshold is proposed.
+  reporting, as well as bounded primary SQLite single/batched writes and
+  indexed filtered queries. Store writes retain the recovery-log durability
+  path, and query fixtures are seeded through production `WriteBatch`; setup,
+  validation, and cleanup stay outside timing. The Go invocation excludes
+  ordinary tests, which remain in the separate `make test` correctness/race
+  gate. R90-72 audits the resulting local evidence before any portable budget
+  or threshold is proposed.

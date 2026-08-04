@@ -132,7 +132,7 @@
 | R90-68 | Oct 3–31 | Complete early | Harden post-commit recovery-log clearing. | R90-67 | Direct open/truncate, sync, and close failures after a primary or daily-shard commit cannot lose an alert or inflate an aggregate; every retained-log or already-cleared outcome remains explicit and one operator retry returns healthy. |
 | R90-69 | Aug 4–14 | Complete early | Audit the completed local storage-fault sequence and restore the forward queue. | R90-68 | A dated audit reconciles R90-66 through R90-68 code, direct tests, task states, fetched remote, exact Vault evidence, and current public gap claims; it restores a complete evidence-grounded queue without runtime or publication changes. |
 | R90-70 | Aug 4–Sep 4 | Complete early | Add Go rule-matching microbenchmarks. | R90-69 | `make bench` executes deterministic Aho-Corasick and full rule-engine cases for no-hit and multi-hit payloads; setup and correctness checks remain outside timed regions, allocations are reported, and no host-independent or production threshold is claimed. |
-| R90-71 | Sep 5–Oct 2 | Ready | Add Go alert-store microbenchmarks. | R90-70 | `make bench` executes bounded primary SQLite write and filtered-query cases with unique event identity, production recovery durability intact, deterministic cardinality checks outside timed regions, and no operator data or production throughput claim. |
+| R90-71 | Sep 5–Oct 2 | In progress | Add Go alert-store microbenchmarks. | R90-70 | `make bench` executes bounded primary SQLite write and filtered-query cases with unique event identity, production recovery durability intact, deterministic cardinality checks outside timed regions, and no operator data or production throughput claim. |
 | R90-72 | Oct 3–31 | Planned | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
 
 ## R90-01 Definition
@@ -1392,6 +1392,12 @@
   durability, changing SQLite schema or behavior, persistent operator data,
   unbounded benchmark growth, host-independent thresholds, or a production
   throughput claim.
+- **Selected plan:**
+  [`task-20260804-go-alert-store-benchmarks.md`](task-20260804-go-alert-store-benchmarks.md),
+  from clean fetched baseline
+  `e853f8e22d10c98cc9363356272c6d847421514b`. The bounded cases keep real
+  primary recovery durability enabled, clear write rows only outside timing,
+  and seed one fixed indexed-query corpus through production `WriteBatch`.
 
 ## R90-72 Definition
 
@@ -1411,6 +1417,25 @@
   budget requires external traffic, multiple comparable environments, a
   product/SLO decision, private data, historical rewrite, publication
   authority, or starting a later increment.
+
+### R90-71 Validation Deviation
+
+- **Observed:** The first uncached complete alert-package run hit the existing
+  `TestStorePrimaryWriteActiveCancellationRetainsRecoveryLogForIdempotentRetry`
+  five-second return boundary after active cancellation.
+- **Impact:** Delivery is held pending focused uncached reproducibility review
+  and clean alert-package plus complete native reruns. The new benchmark
+  functions were excluded from the failing command, and no production storage
+  source changed.
+- **Reproduction and correction:** A 20-count uncached race command reproduced
+  the timeout. The fixture used an equal 5-second SQLite busy timeout and outer
+  return deadline; it now uses a 1-second driver timeout with the original
+  5-second assertion while preserving active-boundary, context-cause, exact
+  durable-state, and retry coverage. Production behavior is unchanged.
+- **Resolution evidence:** The corrected exact regression passed 20 uncached
+  race executions, followed by clean uncached complete alert-package runs both
+  normally and under the race detector. Full repository validation remains the
+  delivery boundary.
 
 ### R90-49 Validation Deviation
 
@@ -2234,3 +2259,19 @@ documented default Vault path and failed before writing; the same exact range
 succeeded with the sole discovered Vault supplied explicitly.
 R90-71 is ready but was not started, R90-72 remains planned, and R90-59 remains
 blocked on exact publication authority.
+The next Aug 4 trigger fetched and verified the R90-70 docs-only closure at
+`e853f8e22d10c98cc9363356272c6d847421514b`, both exact Vault notes, the full
+index, MOC links, and current stable benchmark/testing authority. All 85 prior
+task states parse and all 75 roadmap rows match one Definition. R90-71 is
+selected as the sole dependency-ready increment with durable single/batched
+primary writes and fixed-cardinality indexed filtered queries; R90-72 and
+R90-59 were not started.
+The four benchmark cases now execute with unique event identity, real recovery
+durability, bounded row cleanup, a fixed 512-row production-seeded query
+fixture, and direct rule/time index assertions. The equal-deadline cancellation
+deviation was corrected test-only and passed 20 uncached race executions plus
+clean normal/race alert-package runs. The final root benchmark exposes 1/32
+alerts per write operation; full native race, E2E, documentation, knowledge,
+JSON, definition, formatting, scope, and sensitive-information checks pass.
+R90-71 remains in progress until feature push, fetched verification, and exact
+Vault synchronization complete. R90-72 and R90-59 remain unstarted.

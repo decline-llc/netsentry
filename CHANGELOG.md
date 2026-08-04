@@ -9,6 +9,12 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- `make bench` now covers bounded primary SQLite alert-store writes and
+  filtered queries. Single and 32-alert write cases retain the production
+  recovery-log durability lifecycle with unique event identities and bounded
+  row cleanup; fixed-cardinality rule and timestamp queries assert their
+  SQLite indexes before timing. Setup and correctness checks remain outside
+  timed regions, and no portable or production threshold is claimed.
 - `make bench` now discovers deterministic Go Aho-Corasick and full
   rule-engine `Match` microbenchmarks for no-hit and multi-hit payloads. Fixture
   construction, Base64 preparation, and correctness checks stay outside timed

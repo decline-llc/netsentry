@@ -177,6 +177,13 @@ scripts/
 
 Empty future directories may exist locally; treat only directories with tracked source files as implemented.
 
+The Go portion of `make bench` excludes ordinary tests and discovers both the
+rule-matching and primary SQLite alert-store benchmark families. The store
+cases retain production recovery durability, bound write rows between timed
+operations, and seed their fixed query corpus through `WriteBatch`; they do
+not publish a portable or production throughput threshold. Use `make test`
+separately for the complete correctness and race gate.
+
 ---
 
 ## 6. Rule Files

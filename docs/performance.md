@@ -15,6 +15,9 @@ The current benchmark target measures the parts that already have stable standal
   multi-hit payloads.
 - Go full rule-engine `Match` microbenchmarks for deterministic no-hit and
   multi-hit packets across payload, IP, and port rules.
+- Go primary SQLite alert-store microbenchmarks for durable single and
+  32-alert writes plus indexed exact-rule and timestamp-range queries over a
+  fixed 512-row fixture.
 - A repeat-pcap end-to-end pressure smoke test across C capture, UDS, Go receiver, rule matching, SQLite aggregation, and API health/alerts checks.
 - An optional local corpus pressure evidence script for sanitized `.pcap` and `.pcapng` files supplied by the operator.
 
@@ -44,6 +47,23 @@ Both benchmark families build their matcher or immutable rule state and check
 the expected result set outside timed regions. The full-engine fixtures also
 prepare Base64 packet payloads before timing. Final results are kept local to
 the benchmark and retained explicitly, so no shared mutable sink is required.
+
+For bounded discovery and execution of only the alert-store cases:
+
+```bash
+cd engine
+go test -run '^$' -bench 'BenchmarkStore(WriteBatch|Query)$' \
+  -benchtime=10x -benchmem ./internal/alert
+```
+
+The write cases use the public primary-store `WriteBatch` path with the real
+recovery append, sync, SQLite commit, and recovery-log clear lifecycle. Each
+timed operation receives deterministic unique event identities, while direct
+cardinality checks and row cleanup run with the timer stopped so the store
+stays bounded at one aggregate row and at most 32 event rows. Query setup
+writes 512 deterministic rows through the same production path once; exact
+rule and timestamp-range plans must name their expected SQLite indexes before
+timing, and result cardinality is checked before and after timing.
 
 The C benchmark iteration count defaults to `100000` and can be overridden:
 
@@ -123,10 +143,10 @@ The C UDS sender reported:
 avg_json_serialize_us=0.24 write_errors=0
 ```
 
-R90-70 adds reproducible Go benchmark coverage but does not promote one
-machine's output into this historical C table or a cross-host threshold.
-R90-72 will audit the complete benchmark surface only after the separate
-SQLite benchmark boundary is delivered.
+R90-70 and R90-71 add reproducible Go matching and SQLite-store benchmark
+coverage but do not promote one machine's output into this historical C table
+or a cross-host threshold. R90-72 will audit the complete benchmark surface
+before proposing any evidence-supported baseline or budget increment.
 
 The end-to-end pressure smoke prints a result line like:
 
