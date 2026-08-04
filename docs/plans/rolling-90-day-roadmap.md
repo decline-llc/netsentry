@@ -132,8 +132,8 @@
 | R90-68 | Oct 3–31 | Complete early | Harden post-commit recovery-log clearing. | R90-67 | Direct open/truncate, sync, and close failures after a primary or daily-shard commit cannot lose an alert or inflate an aggregate; every retained-log or already-cleared outcome remains explicit and one operator retry returns healthy. |
 | R90-69 | Aug 4–14 | Complete early | Audit the completed local storage-fault sequence and restore the forward queue. | R90-68 | A dated audit reconciles R90-66 through R90-68 code, direct tests, task states, fetched remote, exact Vault evidence, and current public gap claims; it restores a complete evidence-grounded queue without runtime or publication changes. |
 | R90-70 | Aug 4–Sep 4 | Complete early | Add Go rule-matching microbenchmarks. | R90-69 | `make bench` executes deterministic Aho-Corasick and full rule-engine cases for no-hit and multi-hit payloads; setup and correctness checks remain outside timed regions, allocations are reported, and no host-independent or production threshold is claimed. |
-| R90-71 | Sep 5–Oct 2 | In progress | Add Go alert-store microbenchmarks. | R90-70 | `make bench` executes bounded primary SQLite write and filtered-query cases with unique event identity, production recovery durability intact, deterministic cardinality checks outside timed regions, and no operator data or production throughput claim. |
-| R90-72 | Oct 3–31 | Planned | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
+| R90-71 | Sep 5–Oct 2 | Complete early | Add Go alert-store microbenchmarks. | R90-70 | `make bench` executes bounded primary SQLite write and filtered-query cases with unique event identity, production recovery durability intact, deterministic cardinality checks outside timed regions, and no operator data or production throughput claim. |
+| R90-72 | Oct 3–31 | Ready | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
 
 ## R90-01 Definition
 
@@ -2275,3 +2275,12 @@ alerts per write operation; full native race, E2E, documentation, knowledge,
 JSON, definition, formatting, scope, and sensitive-information checks pass.
 R90-71 remains in progress until feature push, fetched verification, and exact
 Vault synchronization complete. R90-72 and R90-59 remain unstarted.
+R90-71 completed early at
+`9f29bf32cc3bbc446d03bd2185900c3dae4a84ef`: its exact nine-path feature was
+pushed without force, fetched equal to `origin/main`, and passed the post-fetch
+knowledge gate. Exact range
+`e853f8e22d10c98cc9363356272c6d847421514b..9f29bf32cc3bbc446d03bd2185900c3dae4a84ef`
+was synchronized idempotently to the single local Vault; its iteration note,
+full index, MOC link, and current SQLite, Makefile, testing, and MOC authority
+are verified. R90-72 is ready but was not started, and R90-59 remains blocked
+on exact publication authority.

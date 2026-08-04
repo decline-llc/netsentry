@@ -2,9 +2,9 @@
   "task": "r90-71-go-alert-store-microbenchmarks",
   "timestamp": "2026-08-04T05:33:50-07:00",
   "branch": "main",
-  "remote_baseline": "e853f8e22d10c98cc9363356272c6d847421514b",
+  "remote_baseline": "9f29bf32cc3bbc446d03bd2185900c3dae4a84ef",
   "risk_level": "Medium",
-  "current_checkpoint": "validated",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills plus the complete rolling roadmap before selection",
     "Fetched origin/main and verified clean local and remote equality at e853f8e22d10c98cc9363356272c6d847421514b",
@@ -35,16 +35,15 @@
     "Moved alerts-per-operation reporting after ResetTimer so the final root benchmark exposes 1.000 and 32.00 alerts/op without changing timed work",
     "Reran the complete root make bench successfully on the final benchmark source",
     "Parsed all 86 task-state JSON files and reverified all 75 roadmap rows match exactly one Definition",
-    "Passed gofmt, git diff --check, exact nine-path scope, credential, sensitive-path, generic-keyword, production-source, dependency, and evidence classification review"
+    "Passed gofmt, git diff --check, exact nine-path scope, credential, sensitive-path, generic-keyword, production-source, dependency, and evidence classification review",
+    "Committed the validated exact nine-path feature at 9f29bf32cc3bbc446d03bd2185900c3dae4a84ef",
+    "Pushed without force, fetched origin/main, verified exact equality, and passed the post-fetch knowledge gate",
+    "Synchronized exact range e853f8e22d10c98cc9363356272c6d847421514b..9f29bf32cc3bbc446d03bd2185900c3dae4a84ef to the single local Vault",
+    "Verified idempotent synchronization, the iteration note, full index, MOC link, and current SQLite-storage, Makefile, testing, and MOC authority",
+    "Completed R90-71 and left R90-72 ready without starting it"
   ],
-  "in_progress": [
-    "Commit and deliver the exact validated R90-71 feature"
-  ],
-  "todo": [
-    "Commit and push the exact R90-71 feature, fetch and verify remote equality, and rerun the knowledge gate",
-    "Synchronize and verify the exact feature range in the single local Vault",
-    "Record, commit, push, fetch, and synchronize the docs-only delivery closure without starting R90-72"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "No production storage, SQLite schema/query, recovery durability, aggregation, lifecycle, sharding, API, receiver, pipeline, or configuration behavior change",
     "No benchmark dependency, operator data, unbounded fixture growth, generated performance evidence, host-independent threshold, or production throughput claim",
@@ -53,20 +52,19 @@
     "R90-59 remains blocked on exact publication authority"
   ],
   "remaining_risks": [
-    "Feature push, fetched-remote verification, exact Vault synchronization, and docs-only closeout remain pending",
-    "R90-72 performance evidence audit remains planned behind R90-71",
+    "R90-72 performance evidence audit is ready but unstarted",
     "R90-59 publication remains unauthorized"
   ],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false,
-    "vault_stable_authority_reconciled": false,
-    "vault_idempotent_replay_verified": false
+    "commit": "9f29bf32cc3bbc446d03bd2185900c3dae4a84ef",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "e853f8e22d10c98cc9363356272c6d847421514b..9f29bf32cc3bbc446d03bd2185900c3dae4a84ef",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true
   },
-  "resume_instructions": "R90-71 is fully validated as an exact nine-path feature from baseline e853f8e22d10c98cc9363356272c6d847421514b but is not yet committed. Review and deliver that exact scope, synchronize its Vault range, then record and deliver the docs-only closure. Do not start R90-72 or publication-blocked R90-59."
+  "resume_instructions": "R90-71 is complete at 9f29bf32cc3bbc446d03bd2185900c3dae4a84ef; do not repeat its implementation, validation, feature push, or feature-range Vault synchronization. On the next $netsentry-next trigger, fetch and verify origin/main plus this docs-only closure and its exact Vault evidence before selecting work. R90-72 is next ready, and R90-59 still requires explicit exact-version and exact-commit publication authority."
 }

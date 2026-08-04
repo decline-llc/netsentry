@@ -181,6 +181,22 @@ behavior or claiming portable throughput.
   measured regions. No production source, schema, dependency, generated
   evidence, threshold, or operator data changed.
 
+## Delivery Results
+
+- Feature commit:
+  `9f29bf32cc3bbc446d03bd2185900c3dae4a84ef` (`test: add Go alert store
+  benchmarks`).
+- The exact nine-path feature was pushed without force, fetched, and verified
+  as both `HEAD` and `origin/main`; the post-fetch 33-test knowledge gate
+  passed.
+- Exact range
+  `e853f8e22d10c98cc9363356272c6d847421514b..9f29bf32cc3bbc446d03bd2185900c3dae4a84ef`
+  was synchronized repeatedly with identical hashes to the sole local Vault.
+  The iteration note, full index, MOC link, and current SQLite-storage,
+  Makefile, testing, and MOC authority are verified; historical iteration
+  notes were not rewritten.
+- R90-72 is ready but was not started. R90-59 publication remains blocked.
+
 ## Authority Boundaries
 
 This trigger authorizes only R90-71 benchmark test code, current public
