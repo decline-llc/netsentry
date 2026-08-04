@@ -435,7 +435,7 @@ v0.1.0 target:
 
 ## 10. Testing Target
 
-Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, engine worker shutdown orchestration, `internal/receiver`, and `internal/pipeline`, C parser tests for short frames, TCP, UDP, VLAN, Q-in-Q, fragments, malformed TCP data offsets, C UDS sender tests for JSON formatting, bounded connection failure, and reconnect lifecycle behavior, plus C microbenchmarks for parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
+Current build has Go tests for rule matching/Aho-Corasick including payload protocol/port/direction/depth/offset semantics, plus deterministic Aho-Corasick and full rule-engine no-hit/multi-hit microbenchmarks. The full-engine benchmark uses one immutable mixed payload/IP/port rule state and pre-encoded packet fixtures; matcher construction, rule reload, Base64 preparation, and correctness checks are excluded from timed regions. Go tests also cover engine worker shutdown orchestration, `internal/receiver`, and `internal/pipeline`; C parser tests cover short frames, TCP, UDP, VLAN, Q-in-Q, fragments, and malformed TCP data offsets; C UDS sender tests cover JSON formatting, bounded connection failure, and reconnect lifecycle behavior; and C microbenchmarks cover parser, JSON serialization, and UDS line writes. Receiver tests cover reconnects, blocked channel cancellation, single and multiple active connection shutdown, and package-level goroutine leak checks.
 
 Alert storage tests cover SQLite aggregation windows, nanosecond timestamp aggregation/order/filter/pruning, JSONL recovery-log replay idempotency and structural/semantic validation including model-derived canonical fields, required/optional status, JSON kinds, integral encoding policy, fail-closed unsupported model shapes, duplicate top-level fields, canonical timestamp encodings, severity, rule names, MITRE tuples, and protocol names with byte preservation, direct append and post-commit clear lifecycle fault preservation/replay across primary and encoded daily-shard paths, required-schema plus non-binary aggregation/write-blocking uniqueness/trigger/generated-column/constraint/foreign-key rejection with byte preservation, compatible case-variant required identifiers and ordinary column/index/unrelated-table extensions, collation-independent exact filters, persisted numeric/severity/timestamp-encoding/timestamp-order/aggregation-identity/required-text/MITRE-tuple validation, optional query-index recreation and timestamp query plans, SQL-backed filtering/pagination, daily-shard cross-file querying/counting, corrupt/truncated/incompatible historical-shard read/write preservation, cross-process corrupt WAL/SHM three-file preservation, active WAL-backed read-only access without SHM mutation, ordinary primary contention and active cancellation after durable recovery append with idempotent retry, deterministic committed-prefix recovery under later-shard failure and active cancellation with idempotent retry, out-of-order writes, aggregation key separation, canceled write contexts, emergency storage mode and restart replay, journal mode validation, daily shard pathing, row TTL pruning, and old daily shard cleanup. API tests also cover health and metrics alert counts backed by a real daily-shard SQLite store.
 
@@ -453,8 +453,9 @@ Remaining validation gaps:
 - R90-66 through R90-68 close the bounded local primary-interruption,
   recovery-log append-lifecycle, and post-commit clear-lifecycle sequence. No
   later local storage-fault increment is currently queued.
-- `make bench` currently runs the C microbenchmarks and invokes Go benchmark
-  discovery, but the Go module has no `Benchmark*` functions. R90-70 and
-  R90-71 separately add deterministic rule-matching and SQLite alert-store
-  boundaries; R90-72 audits the resulting local evidence before any portable
-  budget or threshold is proposed.
+- `make bench` runs C microbenchmarks plus deterministic Go Aho-Corasick and
+  full rule-engine no-hit/multi-hit matching benchmarks with allocation
+  reporting. Its Go invocation excludes ordinary tests; those remain in the
+  separate `make test` correctness/race gate. R90-71 separately adds the
+  SQLite alert-store boundary; R90-72 audits the resulting local evidence
+  before any portable budget or threshold is proposed.

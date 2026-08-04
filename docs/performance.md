@@ -11,7 +11,10 @@ The current benchmark target measures the parts that already have stable standal
 - C Ethernet/VLAN/Q-in-Q IPv4 TCP parser microbenchmarks.
 - C packet and heartbeat JSON formatting microbenchmarks.
 - C Unix Domain Socket line write microbenchmark against a local drain listener.
-- Go package benchmark command execution with `go test -bench=.`, although the current Go packages do not yet expose `Benchmark*` functions.
+- Go Aho-Corasick `Match` microbenchmarks for deterministic no-hit and
+  multi-hit payloads.
+- Go full rule-engine `Match` microbenchmarks for deterministic no-hit and
+  multi-hit packets across payload, IP, and port rules.
 - A repeat-pcap end-to-end pressure smoke test across C capture, UDS, Go receiver, rule matching, SQLite aggregation, and API health/alerts checks.
 - An optional local corpus pressure evidence script for sanitized `.pcap` and `.pcapng` files supplied by the operator.
 
@@ -24,6 +27,23 @@ The repeat-pcap pressure smoke is intended to catch obvious pipeline regressions
 ```bash
 make bench
 ```
+
+The root target runs each Go sub-benchmark for ten seconds and reports
+allocations. Its Go command uses `-run '^$'`, so ordinary tests remain in the
+separate `make test` correctness/race gate and do not run concurrently with
+long benchmark packages. For quick discovery and bounded local execution of
+only the rule-matching cases:
+
+```bash
+cd engine
+go test -run '^$' -bench 'Benchmark(Matcher|Engine)Match$' \
+  -benchtime=100x -benchmem ./internal/rule/...
+```
+
+Both benchmark families build their matcher or immutable rule state and check
+the expected result set outside timed regions. The full-engine fixtures also
+prepare Base64 packet payloads before timing. Final results are kept local to
+the benchmark and retained explicitly, so no shared mutable sink is required.
 
 The C benchmark iteration count defaults to `100000` and can be overridden:
 
@@ -102,6 +122,11 @@ The C UDS sender reported:
 ```text
 avg_json_serialize_us=0.24 write_errors=0
 ```
+
+R90-70 adds reproducible Go benchmark coverage but does not promote one
+machine's output into this historical C table or a cross-host threshold.
+R90-72 will audit the complete benchmark surface only after the separate
+SQLite benchmark boundary is delivered.
 
 The end-to-end pressure smoke prints a result line like:
 

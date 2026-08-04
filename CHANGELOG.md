@@ -9,6 +9,12 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- `make bench` now discovers deterministic Go Aho-Corasick and full
+  rule-engine `Match` microbenchmarks for no-hit and multi-hit payloads. Fixture
+  construction, Base64 preparation, and correctness checks stay outside timed
+  regions; the dedicated Go benchmark invocation skips ordinary tests, and
+  allocations are reported without publishing a portable or production
+  threshold.
 - Recovery-log clearing now syncs the empty file before close and has direct
   post-commit open/truncate, sync, and close fault coverage for primary and
   encoded historical-shard paths. Retained and already-cleared outcomes enter

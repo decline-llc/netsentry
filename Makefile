@@ -126,7 +126,7 @@ asan-test:
 bench:
 	$(MAKE) -C capture bench BENCH_ITERATIONS=$(BENCH_ITERATIONS)
 	@mkdir -p $(GOCACHE)
-	cd $(GO_MODULE) && GOCACHE=$(GOCACHE) GOPROXY=$(GOPROXY) $(GO) test -bench=. -benchtime=10s -benchmem ./...
+	cd $(GO_MODULE) && GOCACHE=$(GOCACHE) GOPROXY=$(GOPROXY) $(GO) test -run '^$$' -bench=. -benchtime=10s -benchmem ./...
 
 ## fuzz-parser — run deterministic ASan fuzz smoke for the C frame parser
 fuzz-parser:

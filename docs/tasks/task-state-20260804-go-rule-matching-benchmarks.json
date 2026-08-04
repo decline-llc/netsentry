@@ -1,0 +1,71 @@
+{
+  "task": "r90-70-go-rule-matching-microbenchmarks",
+  "timestamp": "2026-08-04T04:48:56-07:00",
+  "branch": "main",
+  "remote_baseline": "fffea8c7d030b84f836137fb22e94ae552a8e677",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills plus the complete rolling roadmap before selection",
+    "Fetched origin/main and verified clean local and remote equality at fffea8c7d030b84f836137fb22e94ae552a8e677",
+    "Verified the exact R90-69 feature and closure Git commits and intended paths",
+    "Verified both exact R90-69 Vault notes, index rows, MOC links, and current stable Makefile, testing, and MOC authority",
+    "Reviewed 149 commits across three recent delivery phases and found no material delivery, validation, or authority deviation",
+    "Parsed all 84 prior task-state JSON files and verified all 75 roadmap rows match exactly one Definition",
+    "Audited the unfinished queue and selected dependency-ready R90-70 while leaving R90-59 blocked and R90-71/R90-72 planned",
+    "Inspected the root benchmark target, Aho-Corasick matcher, full rule engine, models, focused tests, and current public performance claims",
+    "Confirmed no Go Benchmark function exists and no production-code change is required for the bounded benchmark surface",
+    "Persisted scope, non-goals, risks, acceptance evidence mapping, validation, authority boundaries, and stop conditions before benchmark or current-documentation edits",
+    "Added deterministic Aho-Corasick no-hit and multi-hit benchmarks with exact pattern-set validation outside timed regions",
+    "Added deterministic full-engine no-hit and multi-hit benchmarks across payload, IP, and port rules with pre-encoded packet fixtures",
+    "Kept construction, reload, Base64 preparation, correctness assertions, diagnostics, and result retention outside timed loops without package-global mutable sinks",
+    "Reported allocations and processed payload bytes for every benchmark case",
+    "Passed focused uncached rule tests and a bounded direct run that discovered and executed all four sub-benchmark names",
+    "Reconciled current performance, development, architecture, changelog, and roadmap guidance without adding numeric threshold claims",
+    "Observed two repeated root make bench failures because the existing all-package Go benchmark command also ran an unrelated timing-sensitive storage test",
+    "Confirmed the exact storage cancellation test passes alone and across twenty uncached race-detector repetitions",
+    "Recorded the validation deviation and bounded correction before changing benchmark orchestration",
+    "Added explicit ordinary-test exclusion to the dedicated Go benchmark command while preserving make test as the correctness and race gate",
+    "Passed the corrected root make bench target across every C case and all four ten-second Go sub-benchmarks with byte and allocation output",
+    "Passed focused uncached rule tests, focused uncached rule race tests, and direct 100-iteration benchmark discovery and execution",
+    "Preflighted module-selected Go 1.25.12, GCC 13.3.0, GNU Make 4.3, Bash 5.2.21, and Python 3.12.3",
+    "Passed make test across ordinary C tests and every Go package under uncached race on the final source",
+    "Passed make e2e-smoke with 6 packets processed, 5 alerts generated, and 8 rules loaded",
+    "Passed make docs-check and the 33-test make knowledge-check",
+    "Parsed all 85 task-state JSON files and reverified all 75 roadmap rows match exactly one Definition",
+    "Passed formatting, whitespace, exact ten-path scope, staged diff, credential, sensitive-path, generic-keyword, and production-source review",
+    "Confirmed no dependency, generated evidence, host-independent threshold, production throughput claim, or production Go source change"
+  ],
+  "in_progress": [
+    "Commit and deliver the exact validated R90-70 feature"
+  ],
+  "todo": [
+    "Commit and push the exact R90-70 feature, fetch and verify remote equality, and rerun the knowledge gate",
+    "Synchronize and verify the exact feature range in the single local Vault",
+    "Record, commit, push, fetch, and synchronize the docs-only delivery closure without starting R90-71"
+  ],
+  "authority_boundaries": [
+    "No production matcher, rule validation, Base64 decoding, alert construction, storage, API, receiver, pipeline, or configuration behavior change",
+    "No benchmark dependencies, external/private corpora, generated performance evidence, host-independent threshold, or production throughput claim",
+    "No SQLite alert-store benchmark work and no R90-71 or R90-72 implementation",
+    "No tag, release, image, registry, or workflow mutation",
+    "R90-59 remains blocked on exact publication authority"
+  ],
+  "remaining_risks": [
+    "Feature push, fetched-remote verification, exact Vault synchronization, and docs-only closeout remain pending",
+    "R90-71 alert-store benchmarks remain planned and unstarted",
+    "R90-59 publication remains unauthorized"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false,
+    "vault_stable_authority_reconciled": false,
+    "vault_idempotent_replay_verified": false
+  },
+  "resume_instructions": "R90-70 is fully validated as an exact ten-path feature from baseline fffea8c7d030b84f836137fb22e94ae552a8e677 but is not yet committed. Review and deliver that exact scope, synchronize its Vault range, then record and deliver the docs-only closure. Do not start R90-71, R90-72, or R90-59."
+}

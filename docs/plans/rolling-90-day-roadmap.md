@@ -131,7 +131,7 @@
 | R90-67 | Sep 5–Oct 2 | Complete early | Inject recovery-log append lifecycle faults. | R90-66 | Direct open, short-write, sync, and close failures occur before SQLite mutation, retain the exact pre-existing valid log prefix, expose the failing phase, and leave complete or incomplete appended evidence fail-closed without automatic deletion. |
 | R90-68 | Oct 3–31 | Complete early | Harden post-commit recovery-log clearing. | R90-67 | Direct open/truncate, sync, and close failures after a primary or daily-shard commit cannot lose an alert or inflate an aggregate; every retained-log or already-cleared outcome remains explicit and one operator retry returns healthy. |
 | R90-69 | Aug 4–14 | Complete early | Audit the completed local storage-fault sequence and restore the forward queue. | R90-68 | A dated audit reconciles R90-66 through R90-68 code, direct tests, task states, fetched remote, exact Vault evidence, and current public gap claims; it restores a complete evidence-grounded queue without runtime or publication changes. |
-| R90-70 | Aug 4–Sep 4 | Ready | Add Go rule-matching microbenchmarks. | R90-69 | `make bench` executes deterministic Aho-Corasick and full rule-engine cases for no-hit and multi-hit payloads; setup and correctness checks remain outside timed regions, allocations are reported, and no host-independent or production threshold is claimed. |
+| R90-70 | Aug 4–Sep 4 | In progress | Add Go rule-matching microbenchmarks. | R90-69 | `make bench` executes deterministic Aho-Corasick and full rule-engine cases for no-hit and multi-hit payloads; setup and correctness checks remain outside timed regions, allocations are reported, and no host-independent or production threshold is claimed. |
 | R90-71 | Sep 5–Oct 2 | Planned | Add Go alert-store microbenchmarks. | R90-70 | `make bench` executes bounded primary SQLite write and filtered-query cases with unique event identity, production recovery durability intact, deterministic cardinality checks outside timed regions, and no operator data or production throughput claim. |
 | R90-72 | Oct 3–31 | Planned | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
 
@@ -1368,6 +1368,12 @@
 - **Stop condition:** stop if completion requires changing matcher semantics,
   optimizing production code, adding a benchmark dependency, external corpus
   access, host-independent thresholds, or a production throughput claim.
+- **Selected plan:**
+  [`task-20260804-go-rule-matching-benchmarks.md`](task-20260804-go-rule-matching-benchmarks.md),
+  from clean fetched baseline
+  `fffea8c7d030b84f836137fb22e94ae552a8e677`. The bounded fixture set covers
+  Aho-Corasick plus immutable full-engine payload/IP/port matching without
+  production-code or dependency changes.
 
 ## R90-71 Definition
 
@@ -2192,3 +2198,27 @@ was synchronized idempotently to the single local Vault; its iteration note,
 full index, MOC link, and current stable Makefile/testing/MOC authority are
 verified. R90-70 is ready but was not started, and R90-59 remains blocked on
 exact publication authority.
+The next Aug 4 trigger fetched and verified the R90-69 docs-only closure at
+`fffea8c7d030b84f836137fb22e94ae552a8e677`, both exact Vault notes, the full
+index, MOC links, and current stable Makefile/testing/MOC authority. All 84
+prior task states parse and all 75 roadmap rows match one Definition. R90-70 is
+selected as the sole dependency-ready increment with deterministic
+Aho-Corasick and immutable full-engine no-hit/multi-hit matching benchmarks;
+R90-71/R90-72 were not started, and R90-59 remains blocked.
+The two benchmark families now execute with fixture construction, Base64
+preparation, correctness assertions, and diagnostics outside timed regions.
+Each case reports allocations and bytes, retains its local result against
+dead-code elimination without a shared mutable sink, and the multi-hit engine
+fixture traverses payload, IP, and port rules. Focused rule tests and bounded
+direct benchmark execution pass; full validation remains the delivery
+boundary.
+Two exact root benchmark reruns then exposed the same existing storage
+cancellation test timeout because the all-package Go benchmark command also
+ran ordinary tests concurrently with long benchmark packages. The exact test
+passed alone and across 20 uncached race repetitions. The dedicated benchmark
+command now uses `-run '^$'`; one final root run passes all C cases and all four
+ten-second Go cases, while `make test` separately passes the complete native
+race suite. E2E, documentation, knowledge, JSON, definition, formatting,
+scope, and sensitive-information checks pass. R90-70 remains in progress until
+feature push, fetch verification, and exact-range Vault synchronization
+complete.

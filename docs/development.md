@@ -529,11 +529,16 @@ R90-64 baseline summary is in
 
 The current benchmark scope, local baseline, and pressure smoke behavior are
 documented in `docs/performance.md`. `make bench` executes the existing C
-microbenchmarks and invokes `go test -bench=. -benchmem ./...`, but the Go
-module currently defines no `Benchmark*` functions. R90-70 and R90-71 queue
-rule-matching and SQLite alert-store benchmarks separately; R90-72 audits the
-resulting local evidence before defining any portable budget. These local
-synthetic measurements are not production throughput claims.
+microbenchmarks and invokes
+`go test -run '^$' -bench=. -benchtime=10s -benchmem ./...`. Disabling ordinary
+tests in this dedicated target prevents long all-package benchmarks from
+interfering with timing-sensitive tests; `make test` remains the separate
+correctness/race gate. The Go module defines deterministic Aho-Corasick and full
+rule-engine `Match` cases for no-hit and multi-hit payloads; setup and
+correctness checks remain outside the timed loops and every case reports
+allocations. R90-71 separately queues SQLite alert-store benchmarks, and
+R90-72 audits the combined evidence before defining any portable budget. These
+local synthetic measurements are not production throughput claims.
 
 For release-candidate checks, run:
 
