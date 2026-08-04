@@ -130,7 +130,10 @@
 | R90-66 | Aug 15–Sep 4 | Complete early | Prove primary write interruption recovery. | R90-65 | Real SQLite contention and active cancellation after durable recovery append but before primary commit leave no partial database mutation, retain the complete log, and permit one explicit retry to persist each event once without aggregate inflation. |
 | R90-67 | Sep 5–Oct 2 | Complete early | Inject recovery-log append lifecycle faults. | R90-66 | Direct open, short-write, sync, and close failures occur before SQLite mutation, retain the exact pre-existing valid log prefix, expose the failing phase, and leave complete or incomplete appended evidence fail-closed without automatic deletion. |
 | R90-68 | Oct 3–31 | Complete early | Harden post-commit recovery-log clearing. | R90-67 | Direct open/truncate, sync, and close failures after a primary or daily-shard commit cannot lose an alert or inflate an aggregate; every retained-log or already-cleared outcome remains explicit and one operator retry returns healthy. |
-| R90-69 | Aug 4–14 | Ready | Audit the completed local storage-fault sequence and restore the forward queue. | R90-68 | A dated audit reconciles R90-66 through R90-68 code, direct tests, task states, fetched remote, exact Vault evidence, and current public gap claims; it restores a complete evidence-grounded queue without runtime or publication changes. |
+| R90-69 | Aug 4–14 | In progress | Audit the completed local storage-fault sequence and restore the forward queue. | R90-68 | A dated audit reconciles R90-66 through R90-68 code, direct tests, task states, fetched remote, exact Vault evidence, and current public gap claims; it restores a complete evidence-grounded queue without runtime or publication changes. |
+| R90-70 | Aug 4–Sep 4 | Planned | Add Go rule-matching microbenchmarks. | R90-69 | `make bench` executes deterministic Aho-Corasick and full rule-engine cases for no-hit and multi-hit payloads; setup and correctness checks remain outside timed regions, allocations are reported, and no host-independent or production threshold is claimed. |
+| R90-71 | Sep 5–Oct 2 | Planned | Add Go alert-store microbenchmarks. | R90-70 | `make bench` executes bounded primary SQLite write and filtered-query cases with unique event identity, production recovery durability intact, deterministic cardinality checks outside timed regions, and no operator data or production throughput claim. |
+| R90-72 | Oct 3–31 | Planned | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
 
 ## R90-01 Definition
 
@@ -1342,6 +1345,66 @@
   queue requires private/external input, a product or release decision,
   historical evidence rewrite, publication authority, or starting a later
   increment.
+- **Selected plan:**
+  [`task-20260804-storage-fault-delivery-audit.md`](task-20260804-storage-fault-delivery-audit.md),
+  from clean fetched baseline
+  `159fcf92122b387b3b80ecc5853150a6de1450d0`. The audit treats all six
+  R90-66 through R90-68 commits and Vault notes as one delivered chain and
+  does not implement R90-70.
+
+## R90-70 Definition
+
+- **Goal:** make the existing Go half of `make bench` exercise stable
+  Aho-Corasick and full rule-engine matching hot paths instead of discovering
+  no Go benchmarks.
+- **Risk:** benchmark setup, Base64 preparation, mutable shared output, or
+  unverified dead-code elimination can make reported time and allocations
+  meaningless or flaky.
+- **Required validation:** deterministic no-hit and multi-hit benchmark
+  fixtures; construction/setup and correctness assertions outside timed
+  regions; allocation reporting; explicit benchmark discovery/execution from
+  the owning Go module and through `make bench`; focused rule tests, full
+  native, documentation, and knowledge checks.
+- **Stop condition:** stop if completion requires changing matcher semantics,
+  optimizing production code, adding a benchmark dependency, external corpus
+  access, host-independent thresholds, or a production throughput claim.
+
+## R90-71 Definition
+
+- **Goal:** add bounded Go microbenchmarks for primary SQLite alert writes and
+  filtered queries using the same durability and query paths as production.
+- **Risk:** timing database creation, reusing duplicate event IDs, unbounded
+  table growth, or weakening recovery durability can produce fast but invalid
+  results.
+- **Required validation:** deterministic single and batched write plus indexed
+  filtered-query cases; unique event identity and bounded fixture cardinality;
+  database setup/cleanup and correctness assertions outside timed regions;
+  allocation reporting; explicit execution through the module and
+  `make bench`; focused alert tests, full native, documentation, and knowledge
+  checks.
+- **Stop condition:** stop if completion requires disabling recovery-log
+  durability, changing SQLite schema or behavior, persistent operator data,
+  unbounded benchmark growth, host-independent thresholds, or a production
+  throughput claim.
+
+## R90-72 Definition
+
+- **Goal:** reconcile the complete local C/Go benchmark and repeat-pressure
+  surface, then define the smallest defensible performance evidence or budget
+  increment from comparable measurements.
+- **Risk:** a single host result, stale June baseline, or synthetic repeat-pcap
+  rate can be mislabeled as a portable regression threshold or production
+  capacity guarantee.
+- **Required validation:** exact R90-70/R90-71 feature and closure Git,
+  task-state, remote, note/index/MOC, and stable-knowledge evidence; direct
+  execution-path comparison for C, Go, metrics, and pressure tooling; current
+  public performance-claim review; task-state JSON parsing; exact roadmap
+  row/Definition coverage; documentation, knowledge, diff, and
+  sensitive-information checks.
+- **Stop condition:** stop without runtime or threshold changes if a portable
+  budget requires external traffic, multiple comparable environments, a
+  product/SLO decision, private data, historical rewrite, publication
+  authority, or starting a later increment.
 
 ### R90-49 Validation Deviation
 
@@ -1833,7 +1896,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60 → R90-61 → R90-62 → R90-63 → R90-64 → R90-65 → R90-66 → R90-67 → R90-68 → R90-69`; `R90-56 → R90-58 → R90-59`, with R90-59 blocked on explicit publication authorization. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60 → R90-61 → R90-62 → R90-63 → R90-64 → R90-65 → R90-66 → R90-67 → R90-68 → R90-69 → R90-70 → R90-71 → R90-72`; `R90-56 → R90-58 → R90-59`, with R90-59 blocked on explicit publication authorization. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -2102,3 +2165,21 @@ was synchronized idempotently to the single local Vault; its iteration note,
 full index, MOC link, and current stable SQLite/testing/MOC authority are
 verified. R90-69 is ready but was not started, and R90-59 remains blocked on
 exact publication authority.
+The next Aug 4 trigger fetched and verified the R90-68 docs-only closure at
+`159fcf92122b387b3b80ecc5853150a6de1450d0`, all six R90-66 through R90-68
+Vault notes, the full index, MOC links, and current stable SQLite/testing/MOC
+authority. All 83 prior task states parse and all 72 roadmap rows match one
+Definition. The direct test bodies match every promised storage-fault boundary,
+so the completed sequence is not reopened. R90-69 is selected as the sole
+dependency-ready documentation audit; R90-59 remains blocked.
+The dated audit reviews 147 commits across three phases and reconciles current
+public gaps with code, tests, and Make targets. External fuzz/traffic remains
+input-dependent, product-scale protocol and migration work remains outside
+this trigger, and the concrete local gap is that `make bench` invokes Go
+benchmark discovery while the module contains no `Benchmark*` function.
+R90-70 through R90-72 split matcher benchmarks, SQLite benchmarks, and a later
+performance evidence/budget audit through Oct 31. None was started.
+All 84 task-state JSON files parse, all 75 roadmap rows match one Definition,
+and documentation, knowledge, formatting, diff, staged-scope, and
+sensitive-information checks pass. R90-69 remains in progress until feature
+push, fetch verification, and exact-range Vault synchronization complete.

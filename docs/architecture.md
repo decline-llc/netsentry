@@ -453,3 +453,8 @@ Remaining validation gaps:
 - R90-66 through R90-68 close the bounded local primary-interruption,
   recovery-log append-lifecycle, and post-commit clear-lifecycle sequence. No
   later local storage-fault increment is currently queued.
+- `make bench` currently runs the C microbenchmarks and invokes Go benchmark
+  discovery, but the Go module has no `Benchmark*` functions. R90-70 and
+  R90-71 separately add deterministic rule-matching and SQLite alert-store
+  boundaries; R90-72 audits the resulting local evidence before any portable
+  budget or threshold is proposed.

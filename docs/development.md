@@ -527,7 +527,13 @@ traffic, throughput, release, tag, or publication authority. The reviewed
 R90-64 baseline summary is in
 [`docs/evidence/r90-64-sustained-fuzz-20260803.md`](evidence/r90-64-sustained-fuzz-20260803.md).
 
-The current benchmark scope, local baseline, and pressure smoke behavior are documented in `docs/performance.md`.
+The current benchmark scope, local baseline, and pressure smoke behavior are
+documented in `docs/performance.md`. `make bench` executes the existing C
+microbenchmarks and invokes `go test -bench=. -benchmem ./...`, but the Go
+module currently defines no `Benchmark*` functions. R90-70 and R90-71 queue
+rule-matching and SQLite alert-store benchmarks separately; R90-72 audits the
+resulting local evidence before defining any portable budget. These local
+synthetic measurements are not production throughput claims.
 
 For release-candidate checks, run:
 
