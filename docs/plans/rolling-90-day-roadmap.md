@@ -129,7 +129,8 @@
 | R90-65 | Aug 3–14 | Complete early | Audit the completed fuzz delivery and scope the next local hardening queue. | R90-64 | A dated audit reconciles the dual-harness evidence, public remaining-gap claims, code/tests, fetched remote, and exact Vault records; external-input gaps are separated from bounded local work, and every added increment has a complete dependency, window, risk, acceptance, validation, and stop definition. |
 | R90-66 | Aug 15–Sep 4 | Complete early | Prove primary write interruption recovery. | R90-65 | Real SQLite contention and active cancellation after durable recovery append but before primary commit leave no partial database mutation, retain the complete log, and permit one explicit retry to persist each event once without aggregate inflation. |
 | R90-67 | Sep 5–Oct 2 | Complete early | Inject recovery-log append lifecycle faults. | R90-66 | Direct open, short-write, sync, and close failures occur before SQLite mutation, retain the exact pre-existing valid log prefix, expose the failing phase, and leave complete or incomplete appended evidence fail-closed without automatic deletion. |
-| R90-68 | Oct 3–31 | In progress | Harden post-commit recovery-log clearing. | R90-67 | Direct open/truncate, sync, and close failures after a primary or daily-shard commit cannot lose an alert or inflate an aggregate; every retained-log or already-cleared outcome remains explicit and one operator retry returns healthy. |
+| R90-68 | Oct 3–31 | Complete early | Harden post-commit recovery-log clearing. | R90-67 | Direct open/truncate, sync, and close failures after a primary or daily-shard commit cannot lose an alert or inflate an aggregate; every retained-log or already-cleared outcome remains explicit and one operator retry returns healthy. |
+| R90-69 | Aug 4–14 | Ready | Audit the completed local storage-fault sequence and restore the forward queue. | R90-68 | A dated audit reconciles R90-66 through R90-68 code, direct tests, task states, fetched remote, exact Vault evidence, and current public gap claims; it restores a complete evidence-grounded queue without runtime or publication changes. |
 
 ## R90-01 Definition
 
@@ -1323,6 +1324,25 @@
   an independently observed commit for both an ordinary primary database and a
   pre-existing non-current daily shard under an encoded filesystem path.
 
+## R90-69 Definition
+
+- **Goal:** reconcile the completed R90-66 through R90-68 storage-fault
+  sequence and restore a bounded dependency-ready queue from current code,
+  direct tests, public gap claims, fetched remote, and exact Vault evidence.
+- **Risk:** inventing speculative fault work or treating broad historical gap
+  prose as current authority can reopen completed boundaries or create false
+  delivery commitments.
+- **Required validation:** exact R90-66/R90-67/R90-68 feature and closure Git,
+  task-state, remote, note/index/MOC, and stable-knowledge evidence; code/test
+  comparison for current public remaining-gap claims; task-state JSON parsing;
+  exact roadmap row/Definition coverage; complete fields for every new
+  unfinished increment; documentation, knowledge, diff, and
+  sensitive-information checks.
+- **Stop condition:** stop without runtime implementation if the next bounded
+  queue requires private/external input, a product or release decision,
+  historical evidence rewrite, publication authority, or starting a later
+  increment.
+
 ### R90-49 Validation Deviation
 
 - **Observed:** The first complete native race suite hit the existing
@@ -1813,7 +1833,7 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60 → R90-61 → R90-62 → R90-63 → R90-64 → R90-65 → R90-66 → R90-67 → R90-68`; `R90-56 → R90-58 → R90-59`, with R90-59 blocked on explicit publication authorization. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60 → R90-61 → R90-62 → R90-63 → R90-64 → R90-65 → R90-66 → R90-67 → R90-68 → R90-69`; `R90-56 → R90-58 → R90-59`, with R90-59 blocked on explicit publication authorization. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -2073,3 +2093,12 @@ full native tests, E2E smoke, documentation, knowledge, JSON, definition,
 formatting, diff, and sensitive-information checks pass. R90-68 remains in
 progress until feature push, fetch verification, and exact-range Vault
 synchronization complete.
+R90-68 completed early at
+`574dfd9e43959656e33373db82cb88dc2b3184f2`: its exact eight-path feature was
+pushed without force, fetched equal to `origin/main`, and passed the post-fetch
+knowledge gate. Exact range
+`cac3178512a84356364f82261f2b7dffdfdf8e58..574dfd9e43959656e33373db82cb88dc2b3184f2`
+was synchronized idempotently to the single local Vault; its iteration note,
+full index, MOC link, and current stable SQLite/testing/MOC authority are
+verified. R90-69 is ready but was not started, and R90-59 remains blocked on
+exact publication authority.

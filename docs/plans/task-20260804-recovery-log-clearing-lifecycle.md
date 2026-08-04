@@ -143,6 +143,22 @@ or already-cleared outcome to healthy state.
   exact bytes distinguish retained from already-cleared state; and one
   `Recover` preserves one event, one row, and aggregate count one.
 
+## Delivery Results
+
+- Feature commit:
+  `574dfd9e43959656e33373db82cb88dc2b3184f2` (`fix: harden recovery log
+  clearing`).
+- The exact eight-path feature was pushed without force, fetched, and verified
+  as both `HEAD` and `origin/main`; the post-fetch 33-test knowledge gate
+  passed.
+- Exact range
+  `cac3178512a84356364f82261f2b7dffdfdf8e58..574dfd9e43959656e33373db82cb88dc2b3184f2`
+  was synchronized twice with identical hashes to the single local Vault.
+- The generated iteration note, full index, MOC link, and current stable
+  SQLite/testing/MOC authority are verified; historical iteration notes were
+  not rewritten.
+- R90-69 is ready but was not started. R90-59 publication remains blocked.
+
 ## Authority Boundaries
 
 This trigger authorizes only R90-68's store-local clear fault seam, explicit
