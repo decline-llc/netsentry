@@ -130,8 +130,8 @@
 | R90-66 | Aug 15–Sep 4 | Complete early | Prove primary write interruption recovery. | R90-65 | Real SQLite contention and active cancellation after durable recovery append but before primary commit leave no partial database mutation, retain the complete log, and permit one explicit retry to persist each event once without aggregate inflation. |
 | R90-67 | Sep 5–Oct 2 | Complete early | Inject recovery-log append lifecycle faults. | R90-66 | Direct open, short-write, sync, and close failures occur before SQLite mutation, retain the exact pre-existing valid log prefix, expose the failing phase, and leave complete or incomplete appended evidence fail-closed without automatic deletion. |
 | R90-68 | Oct 3–31 | Complete early | Harden post-commit recovery-log clearing. | R90-67 | Direct open/truncate, sync, and close failures after a primary or daily-shard commit cannot lose an alert or inflate an aggregate; every retained-log or already-cleared outcome remains explicit and one operator retry returns healthy. |
-| R90-69 | Aug 4–14 | In progress | Audit the completed local storage-fault sequence and restore the forward queue. | R90-68 | A dated audit reconciles R90-66 through R90-68 code, direct tests, task states, fetched remote, exact Vault evidence, and current public gap claims; it restores a complete evidence-grounded queue without runtime or publication changes. |
-| R90-70 | Aug 4–Sep 4 | Planned | Add Go rule-matching microbenchmarks. | R90-69 | `make bench` executes deterministic Aho-Corasick and full rule-engine cases for no-hit and multi-hit payloads; setup and correctness checks remain outside timed regions, allocations are reported, and no host-independent or production threshold is claimed. |
+| R90-69 | Aug 4–14 | Complete early | Audit the completed local storage-fault sequence and restore the forward queue. | R90-68 | A dated audit reconciles R90-66 through R90-68 code, direct tests, task states, fetched remote, exact Vault evidence, and current public gap claims; it restores a complete evidence-grounded queue without runtime or publication changes. |
+| R90-70 | Aug 4–Sep 4 | Ready | Add Go rule-matching microbenchmarks. | R90-69 | `make bench` executes deterministic Aho-Corasick and full rule-engine cases for no-hit and multi-hit payloads; setup and correctness checks remain outside timed regions, allocations are reported, and no host-independent or production threshold is claimed. |
 | R90-71 | Sep 5–Oct 2 | Planned | Add Go alert-store microbenchmarks. | R90-70 | `make bench` executes bounded primary SQLite write and filtered-query cases with unique event identity, production recovery durability intact, deterministic cardinality checks outside timed regions, and no operator data or production throughput claim. |
 | R90-72 | Oct 3–31 | Planned | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
 
@@ -2183,3 +2183,12 @@ All 84 task-state JSON files parse, all 75 roadmap rows match one Definition,
 and documentation, knowledge, formatting, diff, staged-scope, and
 sensitive-information checks pass. R90-69 remains in progress until feature
 push, fetch verification, and exact-range Vault synchronization complete.
+R90-69 completed early at
+`1a612273dd49a216710441dc2eae9e0e2b4d16f7`: its exact six-path documentation
+feature was pushed without force, fetched equal to `origin/main`, and passed
+the post-fetch knowledge gate. Exact range
+`159fcf92122b387b3b80ecc5853150a6de1450d0..1a612273dd49a216710441dc2eae9e0e2b4d16f7`
+was synchronized idempotently to the single local Vault; its iteration note,
+full index, MOC link, and current stable Makefile/testing/MOC authority are
+verified. R90-70 is ready but was not started, and R90-59 remains blocked on
+exact publication authority.
