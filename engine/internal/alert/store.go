@@ -67,24 +67,31 @@ type Options struct {
 	Now               func() time.Time
 }
 
+type recoveryLogAppendFile interface {
+	Write([]byte) (int, error)
+	Sync() error
+	Close() error
+}
+
 // Store persists alerts and aggregates repeated hits in a fixed time window.
 type Store struct {
-	db                *sql.DB
-	path              string
-	dir               string
-	dailyShard        bool
-	journalMode       string
-	busyTimeoutMS     int
-	aggregationWindow time.Duration
-	retentionDays     int
-	recoveryLogPath   string
-	now               func() time.Time
-	lifecycle         *storeLifecycle
-	writeMu           sync.Mutex
-	healthMu          sync.RWMutex
-	health            StorageHealth
-	closing           bool
-	recoveryCancel    context.CancelFunc
+	db                 *sql.DB
+	path               string
+	dir                string
+	dailyShard         bool
+	journalMode        string
+	busyTimeoutMS      int
+	aggregationWindow  time.Duration
+	retentionDays      int
+	recoveryLogPath    string
+	openRecoveryAppend func(string, int, os.FileMode) (recoveryLogAppendFile, error)
+	now                func() time.Time
+	lifecycle          *storeLifecycle
+	writeMu            sync.Mutex
+	healthMu           sync.RWMutex
+	health             StorageHealth
+	closing            bool
+	recoveryCancel     context.CancelFunc
 }
 
 // StorageHealth describes the current alert storage state.
@@ -1539,12 +1546,22 @@ func (s *Store) appendRecoveryLog(alerts []*model.Alert) error {
 	if err := os.MkdirAll(filepath.Dir(s.recoveryLogPath), 0o750); err != nil {
 		return fmt.Errorf("create alert recovery log dir: %w", err)
 	}
-	file, err := os.OpenFile(s.recoveryLogPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o600)
+	openFile := s.openRecoveryAppend
+	if openFile == nil {
+		openFile = func(path string, flag int, perm os.FileMode) (recoveryLogAppendFile, error) {
+			return os.OpenFile(path, flag, perm)
+		}
+	}
+	file, err := openFile(s.recoveryLogPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o600)
 	if err != nil {
 		return fmt.Errorf("open alert recovery log: %w", err)
 	}
 	for _, record := range records {
-		if _, err := file.Write(record); err != nil {
+		written, err := file.Write(record)
+		if err == nil && written != len(record) {
+			err = io.ErrShortWrite
+		}
+		if err != nil {
 			_ = file.Close()
 			return fmt.Errorf("write alert recovery log: %w", err)
 		}

@@ -128,7 +128,7 @@
 | R90-64 | Oct 10–31 | Complete early | Record a sustained parser and formatter fuzz baseline. | R90-63 | Reproducible sustained ASan runs exercise both C harnesses with path-redacted corpus metadata, no crashes or sanitizer findings, and an honest local/synthetic evidence classification without a release or production-traffic claim. |
 | R90-65 | Aug 3–14 | Complete early | Audit the completed fuzz delivery and scope the next local hardening queue. | R90-64 | A dated audit reconciles the dual-harness evidence, public remaining-gap claims, code/tests, fetched remote, and exact Vault records; external-input gaps are separated from bounded local work, and every added increment has a complete dependency, window, risk, acceptance, validation, and stop definition. |
 | R90-66 | Aug 15–Sep 4 | Complete early | Prove primary write interruption recovery. | R90-65 | Real SQLite contention and active cancellation after durable recovery append but before primary commit leave no partial database mutation, retain the complete log, and permit one explicit retry to persist each event once without aggregate inflation. |
-| R90-67 | Sep 5–Oct 2 | Ready | Inject recovery-log append lifecycle faults. | R90-66 | Direct open, short-write, sync, and close failures occur before SQLite mutation, retain the exact pre-existing valid log prefix, expose the failing phase, and leave complete or incomplete appended evidence fail-closed without automatic deletion. |
+| R90-67 | Sep 5–Oct 2 | In progress | Inject recovery-log append lifecycle faults. | R90-66 | Direct open, short-write, sync, and close failures occur before SQLite mutation, retain the exact pre-existing valid log prefix, expose the failing phase, and leave complete or incomplete appended evidence fail-closed without automatic deletion. |
 | R90-68 | Oct 3–31 | Planned | Harden post-commit recovery-log clearing. | R90-67 | Direct open/truncate, sync, and close failures after a primary or daily-shard commit cannot lose an alert or inflate an aggregate; every retained-log or already-cleared outcome remains explicit and one operator retry returns healthy. |
 
 ## R90-01 Definition
@@ -1291,6 +1291,12 @@
 - **Stop condition:** stop if coverage requires privileged mounts, destructive
   host faults, automatic truncation of failed evidence, a recovery-format
   change, cross-process write ownership, or publication authority.
+- **Selected plan:**
+  [`task-20260804-recovery-log-append-lifecycle.md`](task-20260804-recovery-log-append-lifecycle.md),
+  from clean fetched baseline
+  `2f62acf9025969a50dd0295f3881ce7cd2784ec6`. Injection is store-local and
+  preserves the production `os.OpenFile` path by default; the direct evidence
+  uses a pre-opened read-only SQLite observer and real file bytes.
 
 ## R90-68 Definition
 
@@ -2021,3 +2027,16 @@ was synchronized idempotently to the single local Vault; its iteration note,
 full index, MOC link, and current SQLite/testing authority are verified.
 R90-67 is ready but was not started, R90-68 remains planned, and R90-59 remains
 blocked on exact publication authority.
+The Aug 4 trigger fetched and verified the R90-66 docs-only closure at
+`2f62acf9025969a50dd0295f3881ce7cd2784ec6`, both exact Vault iteration notes,
+the full index, MOC links, and current stable SQLite/testing authority. All 81
+prior task states parse and all 71 roadmap rows match one Definition. R90-67 is
+selected as the sole dependency-ready increment with a store-local append-file
+seam and direct open, short-write, sync, and close preservation evidence.
+R90-68 and R90-59 were not started.
+The store-local seam, explicit short-write rejection, and direct four-phase
+regression are implemented. Twenty uncached focused race executions, the
+complete alert package race suite, full native tests, E2E smoke, documentation,
+knowledge, JSON, definition, formatting, diff, and sensitive-information checks
+pass. R90-67 remains in progress until feature push, fetch verification, and
+exact-range Vault synchronization complete.

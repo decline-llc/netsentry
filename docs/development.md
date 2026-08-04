@@ -672,10 +672,11 @@ Remaining test gaps:
   query tuning, and alert-volume behavior. R90-04 already records one approved
   public real-traffic pressure run; new corpus work is an optional
   external-input diagnostic, not a release-gate prerequisite.
-- R90-67 and R90-68 narrow the remaining local storage-fault work to
-  recovery-log append open/write/sync/close failures and post-commit
-  recovery-log clearing failures. Completed corruption, schema, sidecar,
-  replay, primary interruption, committed-prefix, and emergency-mode
+- R90-67 directly covers recovery-log append open, short-write, sync, and close
+  failures with pre-SQLite preservation and complete/incomplete evidence
+  handling. R90-68 is the remaining local storage-fault boundary for
+  post-commit recovery-log clearing failures. Completed corruption, schema,
+  sidecar, replay, primary interruption, committed-prefix, and emergency-mode
   boundaries are not reopened.
 
 The full-engine lifecycle regression now combines the real UDS receiver,

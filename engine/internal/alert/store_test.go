@@ -6158,6 +6158,209 @@ func TestStorePrimaryWriteActiveCancellationRetainsRecoveryLogForIdempotentRetry
 	}
 }
 
+type recoveryLogAppendFaultFile struct {
+	file            *os.File
+	shortWriteBytes int
+	syncErr         error
+	closeErr        error
+}
+
+func (f *recoveryLogAppendFaultFile) Write(data []byte) (int, error) {
+	if f.shortWriteBytes > 0 {
+		limit := min(f.shortWriteBytes, len(data)-1)
+		f.shortWriteBytes = 0
+		return f.file.Write(data[:limit])
+	}
+	return f.file.Write(data)
+}
+
+func (f *recoveryLogAppendFaultFile) Sync() error {
+	if f.syncErr != nil {
+		return f.syncErr
+	}
+	return f.file.Sync()
+}
+
+func (f *recoveryLogAppendFaultFile) Close() error {
+	return errors.Join(f.file.Close(), f.closeErr)
+}
+
+func TestStoreRecoveryLogAppendLifecycleFailuresPreserveEvidence(t *testing.T) {
+	tests := []struct {
+		name       string
+		phase      string
+		shortWrite bool
+		complete   bool
+	}{
+		{name: "open", phase: "open"},
+		{name: "short write", phase: "write", shortWrite: true},
+		{name: "sync", phase: "sync", complete: true},
+		{name: "close", phase: "close", complete: true},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			store, observer, opts, prefixAlert, currentAlert, prefix, currentRecord :=
+				prepareRecoveryLogAppendLifecycleFault(t, test.name)
+			defer observer.Close()
+			defer func() { _ = store.Close() }()
+
+			faultErr := fmt.Errorf("injected recovery append %s failure", test.phase)
+			store.openRecoveryAppend = func(path string, flag int, perm os.FileMode) (recoveryLogAppendFile, error) {
+				if test.phase == "open" {
+					return nil, faultErr
+				}
+				file, err := os.OpenFile(path, flag, perm)
+				if err != nil {
+					return nil, err
+				}
+				faultFile := &recoveryLogAppendFaultFile{file: file}
+				switch test.phase {
+				case "write":
+					faultFile.shortWriteBytes = len(currentRecord) / 2
+				case "sync":
+					faultFile.syncErr = faultErr
+				case "close":
+					faultFile.closeErr = faultErr
+				}
+				return faultFile, nil
+			}
+
+			err := store.WriteBatch(context.Background(), []*model.Alert{currentAlert})
+			wantErr := faultErr
+			if test.shortWrite {
+				wantErr = io.ErrShortWrite
+			}
+			if !errors.Is(err, wantErr) {
+				t.Fatalf("append %s error = %v, want %v", test.phase, err, wantErr)
+			}
+			if marker := test.phase + " alert recovery log"; !strings.Contains(err.Error(), marker) {
+				t.Fatalf("append %s error = %q, want phase marker %q", test.phase, err, marker)
+			}
+
+			wantLog := append([]byte(nil), prefix...)
+			switch {
+			case test.shortWrite:
+				wantLog = append(wantLog, currentRecord[:len(currentRecord)/2]...)
+			case test.complete:
+				wantLog = append(wantLog, currentRecord...)
+			}
+			assertFileBytes(t, store.recoveryLogPath, wantLog)
+			assertRecoveryLogAppendDatabaseEmpty(t, observer)
+			health := store.Health()
+			if health.Status != "degraded" || health.LastError != err.Error() || health.LastErrorAt.IsZero() {
+				t.Fatalf("append %s health = %+v, want degraded phase error", test.phase, health)
+			}
+
+			if test.shortWrite {
+				if closeErr := store.Close(); closeErr != nil {
+					t.Fatalf("close short-write store: %v", closeErr)
+				}
+				failedStore, reopenErr := Open(context.Background(), opts)
+				if failedStore != nil {
+					_ = failedStore.Close()
+					t.Fatal("incomplete recovery suffix returned a usable store")
+				}
+				if !errors.Is(reopenErr, ErrRecoveryLogIntegrity) {
+					t.Fatalf("reopen incomplete recovery suffix error = %v, want ErrRecoveryLogIntegrity", reopenErr)
+				}
+				assertFileBytes(t, store.recoveryLogPath, wantLog)
+				assertRecoveryLogAppendDatabaseEmpty(t, observer)
+				return
+			}
+
+			if test.complete {
+				if closeErr := store.Close(); closeErr != nil {
+					t.Fatalf("close complete-evidence store: %v", closeErr)
+				}
+				reopened, reopenErr := Open(context.Background(), opts)
+				if reopenErr != nil {
+					t.Fatalf("reopen complete append evidence: %v", reopenErr)
+				}
+				store = reopened
+			} else {
+				store.openRecoveryAppend = nil
+				if retryErr := store.WriteBatch(context.Background(), []*model.Alert{currentAlert}); retryErr != nil {
+					t.Fatalf("retry after append open failure: %v", retryErr)
+				}
+			}
+
+			assertPrimaryInterruptionState(t, observer, prefixAlert, store.aggregationWindow, 1)
+			assertPrimaryInterruptionState(t, observer, currentAlert, store.aggregationWindow, 1)
+			assertFileBytes(t, store.recoveryLogPath, nil)
+			if health := store.Health(); health.Status != "ok" {
+				t.Fatalf("append %s recovery health = %+v, want ok", test.phase, health)
+			}
+		})
+	}
+}
+
+func prepareRecoveryLogAppendLifecycleFault(
+	t *testing.T,
+	name string,
+) (*Store, *sql.DB, Options, *model.Alert, *model.Alert, []byte, []byte) {
+	t.Helper()
+	dir := t.TempDir()
+	now := time.Date(2026, 8, 4, 8, 0, 0, 0, time.UTC)
+	opts := Options{
+		Path:              filepath.Join(dir, "alerts.db"),
+		RecoveryLogPath:   filepath.Join(dir, "alerts-recovery.jsonl"),
+		JournalMode:       "WAL",
+		BusyTimeoutMS:     1000,
+		AggregationWindow: time.Minute,
+		Now:               func() time.Time { return now },
+	}
+	store, err := Open(context.Background(), opts)
+	if err != nil {
+		t.Fatalf("open append lifecycle store: %v", err)
+	}
+	observer, err := openReadOnlyDatabase(store.path)
+	if err != nil {
+		_ = store.Close()
+		t.Fatalf("open append lifecycle observer: %v", err)
+	}
+
+	prefixAlert := makeAlert(now, "append-prefix-"+name)
+	prefixAlert.RuleID = "append-prefix-rule-" + strings.ReplaceAll(name, " ", "-")
+	prefixAlert.RuleName = "Append Prefix Rule"
+	currentAlert := makeAlert(now, "append-current-"+name)
+	currentAlert.RuleID = "append-current-rule-" + strings.ReplaceAll(name, " ", "-")
+	currentAlert.RuleName = "Append Current Rule"
+
+	normalizedPrefix := normalizeAlerts([]*model.Alert{prefixAlert}, now, store.aggregationWindow)
+	if err := store.appendRecoveryLog(normalizedPrefix); err != nil {
+		_ = observer.Close()
+		_ = store.Close()
+		t.Fatalf("seed append lifecycle recovery prefix: %v", err)
+	}
+	prefix := readFileBytes(t, store.recoveryLogPath)
+	currentRecords, err := encodeRecoveryRecords(normalizeAlerts(
+		[]*model.Alert{currentAlert},
+		now,
+		store.aggregationWindow,
+	))
+	if err != nil {
+		_ = observer.Close()
+		_ = store.Close()
+		t.Fatalf("encode append lifecycle current record: %v", err)
+	}
+	return store, observer, opts, prefixAlert, currentAlert, prefix, bytes.Join(currentRecords, nil)
+}
+
+func assertRecoveryLogAppendDatabaseEmpty(t *testing.T, observer *sql.DB) {
+	t.Helper()
+	var events, alerts int
+	if err := observer.QueryRow(`SELECT COUNT(*) FROM alert_events`).Scan(&events); err != nil {
+		t.Fatalf("count append lifecycle events: %v", err)
+	}
+	if err := observer.QueryRow(`SELECT COUNT(*) FROM alerts`).Scan(&alerts); err != nil {
+		t.Fatalf("count append lifecycle alerts: %v", err)
+	}
+	if events != 0 || alerts != 0 {
+		t.Fatalf("append lifecycle database events=%d alerts=%d, want 0/0", events, alerts)
+	}
+}
+
 func preparePrimaryWriteInterruption(
 	t *testing.T,
 	busyTimeoutMS int,

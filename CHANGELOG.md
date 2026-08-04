@@ -9,6 +9,11 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Recovery-log append open, short-write, sync, and close failures now have a
+  store-local deterministic fault boundary. Short writes fail explicitly;
+  every phase returns before SQLite mutation, preserves the prior valid log
+  prefix, and leaves complete records replayable or incomplete suffixes
+  fail-closed for operator-led recovery.
 - Ordinary primary SQLite writes now preserve context cancellation alongside
   driver interruption diagnostics. Direct lock-contention and active-cancel
   regressions prove the complete recovery log is retained before commit, no
