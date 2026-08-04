@@ -183,6 +183,24 @@ matching behavior or claiming a portable performance threshold.
   timed regions. No dependency, generated evidence, threshold, or production
   performance claim was added.
 
+## Delivery Results
+
+- Feature commit:
+  `388487da7205e98dd257ee54a1428673141c7457` (`test: add Go rule matching
+  benchmarks`).
+- The exact ten-path feature was pushed without force, fetched, and verified as
+  both `HEAD` and `origin/main`; the post-fetch 33-test knowledge gate passed.
+- The helper's first exact-range call failed before writing because its
+  documented default Vault path was stale. Repeating the unchanged range with
+  the sole discovered Vault supplied explicitly succeeded.
+- Exact range
+  `fffea8c7d030b84f836137fb22e94ae552a8e677..388487da7205e98dd257ee54a1428673141c7457`
+  was synchronized repeatedly with identical hashes. The iteration note, full
+  index, MOC link, and stable Makefile, Aho-Corasick, rule-engine, testing, and
+  MOC authority are verified; historical iteration notes were not rewritten.
+- R90-71 is ready but was not started. R90-72 remains planned, and R90-59
+  publication remains blocked.
+
 ## Authority Boundaries
 
 This trigger authorizes only R90-70 benchmark test files, current public
