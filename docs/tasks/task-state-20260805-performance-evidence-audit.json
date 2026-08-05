@@ -2,9 +2,9 @@
   "task": "r90-72-performance-evidence-portable-budget-audit",
   "timestamp": "2026-08-05T01:30:02-07:00",
   "branch": "main",
-  "remote_baseline": "323be1f38fca456a0d17a7801e18bc50c5212075",
+  "remote_baseline": "13b259f3779840a8a410803dfd209f19bbb71649",
   "risk_level": "Low",
-  "current_checkpoint": "validated",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills plus the complete rolling roadmap before selection",
     "Fetched origin/main and verified clean local and remote equality at 323be1f38fca456a0d17a7801e18bc50c5212075",
@@ -28,16 +28,18 @@
     "Passed exact eight-path staged-scope review with no source, test, benchmark, generator, config, workflow, or generated-evidence path",
     "Passed credential-prefix and operator-absolute-path scans and manually cleared the plan-only generic credential review label",
     "Confirmed no benchmark run, numeric evidence, threshold activation, runtime change, external input, publication action, or later increment start",
-    "Confirmed no repeatable workflow lesson requires a netsentry-next skill change"
+    "Confirmed no repeatable workflow lesson required a netsentry-next skill change before delivery",
+    "Committed the validated exact eight-path documentation feature at 13b259f3779840a8a410803dfd209f19bbb71649",
+    "Pushed without force and fetched origin/main equal to the feature commit",
+    "Discarded an initial post-fetch command that inferred the wrong full SHA and stopped before the knowledge gate",
+    "Reran the complete post-fetch sequence using git rev-parse HEAD and passed the 33-test knowledge gate",
+    "Synchronized exact range 323be1f38fca456a0d17a7801e18bc50c5212075..13b259f3779840a8a410803dfd209f19bbb71649 twice with identical Vault tree hashes",
+    "Verified the generated iteration note, full-index row, MOC link, and current stable MOC, Makefile, and testing authority",
+    "Updated the generic netsentry-next skill to require resolving rather than reconstructing a full commit SHA",
+    "Completed R90-72 and left R90-73 ready without starting it"
   ],
-  "in_progress": [
-    "Commit and deliver the exact validated R90-72 documentation feature"
-  ],
-  "todo": [
-    "Commit and push the exact R90-72 documentation feature, fetch and verify remote equality, and rerun the knowledge gate",
-    "Synchronize and verify the exact feature range in the single local Vault",
-    "Record, commit, push, fetch, and synchronize the docs-only delivery closure without starting the next increment"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "No runtime, test, benchmark, evidence-generator, threshold, release-gate, storage, or configuration behavior change",
     "No new benchmark or pressure evidence and no private or external input",
@@ -48,20 +50,21 @@
     "R90-59 remains blocked on exact publication authority"
   ],
   "remaining_risks": [
-    "The historical C and pressure samples are not matched repeated observations of the current complete benchmark surface",
-    "A portable regression budget may require comparable external environments or a product/SLO decision not authorized by this trigger",
+    "R90-73 versioned local benchmark evidence capture is ready but unstarted",
+    "R90-74 repeated single-host baseline remains planned behind R90-73",
+    "R90-75 remains blocked on comparable-environment evidence and explicit product/SLO budget scope",
     "R90-59 publication remains unauthorized"
   ],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false,
-    "vault_stable_authority_reconciled": false,
-    "vault_idempotent_replay_verified": false
+    "commit": "13b259f3779840a8a410803dfd209f19bbb71649",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "323be1f38fca456a0d17a7801e18bc50c5212075..13b259f3779840a8a410803dfd209f19bbb71649",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true
   },
-  "resume_instructions": "R90-72 is fully audited and validated as an exact eight-path documentation feature from clean fetched baseline 323be1f38fca456a0d17a7801e18bc50c5212075 but is not yet committed. Review and deliver that exact scope, synchronize its Vault range, then record and deliver the docs-only closure. Do not start R90-73 or publication-blocked R90-59."
+  "resume_instructions": "R90-72 is complete at 13b259f3779840a8a410803dfd209f19bbb71649; do not repeat its audit, validation, feature push, or feature-range Vault synchronization. On the next $netsentry-next trigger, fetch and verify origin/main plus this docs-only closure and its exact Vault evidence before selecting work. R90-73 is next ready; R90-75 and R90-59 remain blocked on their recorded external authority conditions."
 }

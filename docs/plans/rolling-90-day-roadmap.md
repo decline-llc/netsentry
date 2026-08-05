@@ -133,8 +133,8 @@
 | R90-69 | Aug 4–14 | Complete early | Audit the completed local storage-fault sequence and restore the forward queue. | R90-68 | A dated audit reconciles R90-66 through R90-68 code, direct tests, task states, fetched remote, exact Vault evidence, and current public gap claims; it restores a complete evidence-grounded queue without runtime or publication changes. |
 | R90-70 | Aug 4–Sep 4 | Complete early | Add Go rule-matching microbenchmarks. | R90-69 | `make bench` executes deterministic Aho-Corasick and full rule-engine cases for no-hit and multi-hit payloads; setup and correctness checks remain outside timed regions, allocations are reported, and no host-independent or production threshold is claimed. |
 | R90-71 | Sep 5–Oct 2 | Complete early | Add Go alert-store microbenchmarks. | R90-70 | `make bench` executes bounded primary SQLite write and filtered-query cases with unique event identity, production recovery durability intact, deterministic cardinality checks outside timed regions, and no operator data or production throughput claim. |
-| R90-72 | Oct 3–31 | In progress | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
-| R90-73 | Aug 5–Sep 4 | Planned | Add versioned local benchmark evidence capture. | R90-72 | One directly tested command captures every established C/Go benchmark with exact Git/tree state, environment/toolchain fingerprint, parameters, raw output, parsed metrics, path redaction, and local-synthetic classification without applying a threshold. |
+| R90-72 | Oct 3–31 | Complete early | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
+| R90-73 | Aug 5–Sep 4 | Ready | Add versioned local benchmark evidence capture. | R90-72 | One directly tested command captures every established C/Go benchmark with exact Git/tree state, environment/toolchain fingerprint, parameters, raw output, parsed metrics, path redaction, and local-synthetic classification without applying a threshold. |
 | R90-74 | Sep 5–Oct 2 | Planned | Record a repeated single-host benchmark baseline. | R90-73 | At least five uncached complete-surface samples from one clean pinned commit and unchanged environment retain every raw result plus median/IQR/variation summaries as observation-only local evidence. |
 | R90-75 | Oct 3–31 | Blocked | Decide portable performance-budget scope. | R90-74; comparable-environment evidence; explicit budget scope | Matched evidence and product/SLO authority decide whether a budget can be portable, same-host-only, or observation-only; current single-host data cannot activate a numeric gate. |
 
@@ -2373,3 +2373,15 @@ versioned evidence capture, a repeated single-host observation baseline, and a
 budget decision blocked on comparable-environment evidence plus explicit
 product/SLO scope. None was started; R90-72 remains in progress until its
 documentation feature is pushed, fetched, and synchronized.
+R90-72 completed early at
+`13b259f3779840a8a410803dfd209f19bbb71649`: its exact eight-path
+documentation feature was pushed without force, fetched equal to
+`origin/main`, and passed the complete rerun of the post-fetch 33-test
+knowledge gate. The first post-fetch command used an incorrectly inferred full
+SHA and stopped before the gate; the complete sequence was rerun with
+`git rev-parse HEAD` as authority. Exact range
+`323be1f38fca456a0d17a7801e18bc50c5212075..13b259f3779840a8a410803dfd209f19bbb71649`
+was synchronized idempotently to the single local Vault. Its iteration note,
+full index, MOC link, and reconciled stable MOC/Makefile/testing authority are
+verified. R90-73 is ready but was not started; R90-75 and R90-59 remain blocked
+on their recorded external authority conditions.

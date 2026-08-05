@@ -148,7 +148,30 @@ roadmap horizon without inventing portable or production thresholds.
   manual review confirms it contains no sensitive value.
 - No workflow deviation or reusable skill correction was identified; the
   existing trigger-audit, evidence-classification, and two-commit closeout
-  rules matched the work.
+  rules matched the work before delivery. During delivery, the first
+  post-fetch command incorrectly inferred a full SHA from abbreviated commit
+  output and stopped before the knowledge gate. The complete sequence was
+  rerun successfully with `git rev-parse HEAD`; the generic skill now requires
+  resolving rather than reconstructing full SHAs.
+
+## Delivery Results
+
+- Feature commit:
+  `13b259f3779840a8a410803dfd209f19bbb71649` (`docs: audit performance
+  evidence`).
+- The exact eight-path documentation feature was pushed without force,
+  fetched, and verified as both `HEAD` and `origin/main`; the complete
+  post-fetch 33-test knowledge gate passed on the authoritative full SHA.
+- Exact range
+  `323be1f38fca456a0d17a7801e18bc50c5212075..13b259f3779840a8a410803dfd209f19bbb71649`
+  was synchronized twice with identical Vault tree hashes. The generated
+  iteration note, full index, and MOC link are verified.
+- Stable MOC, Makefile/build, and testing/release knowledge now records the
+  completed R90-72 evidence boundary and R90-73/R90-74/R90-75 queue while
+  preserving historical iteration notes.
+- R90-73 is ready but was not started. R90-75 remains blocked on comparable
+  environment evidence plus product/SLO scope, and R90-59 publication remains
+  blocked.
 
 ## Authority Boundaries
 
