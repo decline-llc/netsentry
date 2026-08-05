@@ -460,5 +460,10 @@ Remaining validation gaps:
   path, and query fixtures are seeded through production `WriteBatch`; setup,
   validation, and cleanup stay outside timing. The Go invocation excludes
   ordinary tests, which remain in the separate `make test` correctness/race
-  gate. R90-72 audits the resulting local evidence before any portable budget
-  or threshold is proposed.
+  gate. The R90-72 audit confirms these are distinct local measurement
+  boundaries rather than one comparable baseline: numeric Go results are not
+  versioned, historical C and pressure samples are unmatched, and the recorded
+  synthetic pressure rate varies materially. R90-73 therefore adds a common
+  path-redacted evidence envelope, R90-74 records repeated same-host
+  observations, and R90-75 remains blocked before any portable threshold on
+  comparable-environment evidence plus explicit product/SLO scope.

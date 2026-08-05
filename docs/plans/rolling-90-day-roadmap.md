@@ -133,7 +133,10 @@
 | R90-69 | Aug 4–14 | Complete early | Audit the completed local storage-fault sequence and restore the forward queue. | R90-68 | A dated audit reconciles R90-66 through R90-68 code, direct tests, task states, fetched remote, exact Vault evidence, and current public gap claims; it restores a complete evidence-grounded queue without runtime or publication changes. |
 | R90-70 | Aug 4–Sep 4 | Complete early | Add Go rule-matching microbenchmarks. | R90-69 | `make bench` executes deterministic Aho-Corasick and full rule-engine cases for no-hit and multi-hit payloads; setup and correctness checks remain outside timed regions, allocations are reported, and no host-independent or production threshold is claimed. |
 | R90-71 | Sep 5–Oct 2 | Complete early | Add Go alert-store microbenchmarks. | R90-70 | `make bench` executes bounded primary SQLite write and filtered-query cases with unique event identity, production recovery durability intact, deterministic cardinality checks outside timed regions, and no operator data or production throughput claim. |
-| R90-72 | Oct 3–31 | Ready | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
+| R90-72 | Oct 3–31 | In progress | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
+| R90-73 | Aug 5–Sep 4 | Planned | Add versioned local benchmark evidence capture. | R90-72 | One directly tested command captures every established C/Go benchmark with exact Git/tree state, environment/toolchain fingerprint, parameters, raw output, parsed metrics, path redaction, and local-synthetic classification without applying a threshold. |
+| R90-74 | Sep 5–Oct 2 | Planned | Record a repeated single-host benchmark baseline. | R90-73 | At least five uncached complete-surface samples from one clean pinned commit and unchanged environment retain every raw result plus median/IQR/variation summaries as observation-only local evidence. |
+| R90-75 | Oct 3–31 | Blocked | Decide portable performance-budget scope. | R90-74; comparable-environment evidence; explicit budget scope | Matched evidence and product/SLO authority decide whether a budget can be portable, same-host-only, or observation-only; current single-host data cannot activate a numeric gate. |
 
 ## R90-01 Definition
 
@@ -1417,6 +1420,68 @@
   budget requires external traffic, multiple comparable environments, a
   product/SLO decision, private data, historical rewrite, publication
   authority, or starting a later increment.
+- **Audit record:**
+  [`performance-evidence-audit-20260805.md`](../audit/performance-evidence-audit-20260805.md).
+- **Selected plan:**
+  [`task-20260805-performance-evidence-audit.md`](task-20260805-performance-evidence-audit.md),
+  from clean fetched baseline
+  `323be1f38fca456a0d17a7801e18bc50c5212075`. The documentation-only audit
+  separates every measurement boundary and does not run a new benchmark,
+  activate a threshold, or start R90-73.
+
+## R90-73 Definition
+
+- **Goal:** give the established C and Go microbenchmarks one versioned,
+  machine-readable local evidence envelope without changing their measured
+  behavior.
+- **Risk:** permissive parsing can omit a benchmark or silently accept a
+  partial run, while environment collection or raw output can leak sensitive
+  host paths.
+- **Required validation:** fixture-driven parser tests for every named C/Go
+  case and malformed/partial output; exact clean/dirty Git state, OS/kernel/
+  architecture/toolchain and command-parameter capture; default path
+  redaction; one bounded direct complete-surface run; shell, Python, docs,
+  knowledge, and full native checks.
+- **Stop condition:** stop if completion requires changing benchmark/runtime
+  semantics, collecting private host data, accepting a partial surface,
+  applying a numeric threshold, external corpus input, or publication
+  authority.
+
+## R90-74 Definition
+
+- **Goal:** establish a repeated observation-only baseline for the complete
+  benchmark surface on one unchanged local environment and exact clean commit.
+- **Risk:** cached, thermally unstable, background-loaded, or environment-drift
+  samples can create a misleading variance summary, while an aggregate without
+  raw samples prevents later review.
+- **Required validation:** at least five uncached complete evidence captures;
+  identical commit/tree, environment, toolchain, fixture, and command
+  parameters; every raw sample retained; median, interquartile range, and
+  variation summaries recomputed by a tested versioned API; full native,
+  documentation, evidence, and knowledge checks.
+- **Stop condition:** stop on environment drift, incomplete or ambiguous
+  samples, excessive unexplained variance, sensitive metadata, pressure or
+  corpus substitution, threshold activation, or publication authority.
+
+## R90-75 Definition
+
+- **Goal:** decide from matched evidence and explicit product/SLO scope whether
+  NetSentry can support a portable, same-host-only, or observation-only
+  regression policy.
+- **Risk:** turning a single-host variance band into a universal gate can
+  create false failures and false production-capacity claims.
+- **Required validation:** completed R90-74 evidence; at least one independently
+  provisioned comparable-environment evidence set using the same schema and
+  exact benchmark commit; documented product/SLO scope; statistical and
+  fixture comparability review; direct threshold-policy tests if any gate is
+  proposed; documentation and knowledge checks.
+- **Blocker evidence:** this trigger contains neither a comparable-environment
+  evidence set nor authority to choose a product/SLO regression scope.
+- **Unblock condition:** supply the matched evidence and explicitly choose the
+  budget scope after R90-74 completes.
+- **Stop condition:** remain blocked without both inputs; stop on corpus,
+  commit, environment, metric, statistical, production-claim, or publication
+  ambiguity.
 
 ### R90-71 Validation Deviation
 
@@ -1927,7 +1992,15 @@
 
 ## Dependency and Priority Policy
 
-`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`; `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60 → R90-61 → R90-62 → R90-63 → R90-64 → R90-65 → R90-66 → R90-67 → R90-68 → R90-69 → R90-70 → R90-71 → R90-72`; `R90-56 → R90-58 → R90-59`, with R90-59 blocked on explicit publication authorization. R90-04a is an evidence-independent quality increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05 PCAP exceptions remain immutable historical delivery evidence. The later global PCAP waiver supersedes their restrictions for current and future release-gate decisions.
+`R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`;
+`R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60 → R90-61 → R90-62 → R90-63 → R90-64 → R90-65 → R90-66 → R90-67 → R90-68 → R90-69 → R90-70 → R90-71 → R90-72 → R90-73 → R90-74 → R90-75`;
+`R90-56 → R90-58 → R90-59`. R90-75 is blocked on comparable-environment
+evidence plus explicit product/SLO budget scope, and R90-59 is blocked on
+explicit publication authorization. R90-04a is an evidence-independent quality
+increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
+PCAP exceptions remain immutable historical delivery evidence. The later global
+PCAP waiver supersedes their restrictions for current and future release-gate
+decisions.
 
 ## R90-04 Scoped Evidence Exception
 
@@ -2284,3 +2357,19 @@ was synchronized idempotently to the single local Vault; its iteration note,
 full index, MOC link, and current SQLite, Makefile, testing, and MOC authority
 are verified. R90-72 is ready but was not started, and R90-59 remains blocked
 on exact publication authority.
+The Aug 5 trigger fetched and verified the R90-71 docs-only closure at
+`323be1f38fca456a0d17a7801e18bc50c5212075`, both exact R90-70/R90-71
+feature and closure pairs, all four Vault notes/index rows/MOC links, and
+current stable benchmark authority. All 86 prior task states parse and all 75
+roadmap rows match one Definition. R90-72 is selected as the sole
+dependency-ready documentation audit; R90-59 remains blocked.
+The audit reviews 153 commits across three phases and reconciles every C/Go
+microbenchmark, repeat-pcap and corpus-pressure path, runtime metric, public
+claim, and checked-in/local-only evidence boundary. Current numeric Go output
+is not versioned, the complete surface has no repeated matched-host sample set,
+and historical synthetic pressure varies from 552 to 1,402 pps, so no portable
+or 10% regression threshold is supportable. R90-73 through R90-75 now separate
+versioned evidence capture, a repeated single-host observation baseline, and a
+budget decision blocked on comparable-environment evidence plus explicit
+product/SLO scope. None was started; R90-72 remains in progress until its
+documentation feature is pushed, fetched, and synchronized.

@@ -1,0 +1,67 @@
+{
+  "task": "r90-72-performance-evidence-portable-budget-audit",
+  "timestamp": "2026-08-05T01:30:02-07:00",
+  "branch": "main",
+  "remote_baseline": "323be1f38fca456a0d17a7801e18bc50c5212075",
+  "risk_level": "Low",
+  "current_checkpoint": "validated",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills plus the complete rolling roadmap before selection",
+    "Fetched origin/main and verified clean local and remote equality at 323be1f38fca456a0d17a7801e18bc50c5212075",
+    "Reviewed the recent dependency-ordered delivery history and complete unfinished queue",
+    "Verified the R90-71 feature and docs-only closure notes, full-index rows, MOC links, and current stable authority in the single local Vault",
+    "Selected R90-72 as the sole dependency-ready increment while leaving R90-59 blocked",
+    "Read the prior performance-queue audit, current performance guidance, root and C Make targets, and direct Go benchmark inventory",
+    "Persisted scope, non-goals, risks, acceptance evidence mapping, validation, authority boundaries, and stop conditions before current audit or roadmap changes",
+    "Verified the exact R90-70 and R90-71 feature and closure Git chain, intended paths, completed plans, and task states",
+    "Inspected every named C and Go benchmark body against its documented measured boundary and root or module execution path",
+    "Compared repeat-pcap, corpus-pressure, health, and Prometheus measurement semantics with their public claims and local or checked-in evidence",
+    "Verified all four exact R90-70 and R90-71 Vault notes, full-index rows, MOC links, and current stable Aho-Corasick, rule, SQLite, Makefile, testing, and MOC authority",
+    "Reviewed 153 commits across three recent phases and recorded both resolved benchmark validation deviations plus the recovered Vault default-path deviation",
+    "Confirmed current Go numeric output is not versioned and the complete surface has no repeated matched-environment sample set",
+    "Recorded the 552 to 1402 pps historical synthetic-pressure spread and rejected the old 10 percent pps and 20 percent RSS planning figures as active gates",
+    "Added the dated R90-72 audit with the delivery reconciliation, complete measurement-surface inventory, comparability review, and bounded conclusion",
+    "Reconciled current architecture, development, performance, and audit guidance without rewriting historical plans, task evidence, samples, or Vault notes",
+    "Added R90-73 through R90-75 with complete dependencies, windows, risks, acceptance criteria, validation, blockers, and stop conditions",
+    "Parsed all 87 task-state JSON files and verified all 78 roadmap rows match exactly one Definition",
+    "Passed make docs-check, the 33-test make knowledge-check, and git diff --check",
+    "Passed exact eight-path staged-scope review with no source, test, benchmark, generator, config, workflow, or generated-evidence path",
+    "Passed credential-prefix and operator-absolute-path scans and manually cleared the plan-only generic credential review label",
+    "Confirmed no benchmark run, numeric evidence, threshold activation, runtime change, external input, publication action, or later increment start",
+    "Confirmed no repeatable workflow lesson requires a netsentry-next skill change"
+  ],
+  "in_progress": [
+    "Commit and deliver the exact validated R90-72 documentation feature"
+  ],
+  "todo": [
+    "Commit and push the exact R90-72 documentation feature, fetch and verify remote equality, and rerun the knowledge gate",
+    "Synchronize and verify the exact feature range in the single local Vault",
+    "Record, commit, push, fetch, and synchronize the docs-only delivery closure without starting the next increment"
+  ],
+  "authority_boundaries": [
+    "No runtime, test, benchmark, evidence-generator, threshold, release-gate, storage, or configuration behavior change",
+    "No new benchmark or pressure evidence and no private or external input",
+    "No production throughput or cross-host comparability claim",
+    "No historical plan, task evidence, audit, local sample, or generated Vault-note rewrite",
+    "No tag, release, image, registry, or workflow mutation",
+    "Do not start any increment planned by R90-72",
+    "R90-59 remains blocked on exact publication authority"
+  ],
+  "remaining_risks": [
+    "The historical C and pressure samples are not matched repeated observations of the current complete benchmark surface",
+    "A portable regression budget may require comparable external environments or a product/SLO decision not authorized by this trigger",
+    "R90-59 publication remains unauthorized"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false,
+    "vault_stable_authority_reconciled": false,
+    "vault_idempotent_replay_verified": false
+  },
+  "resume_instructions": "R90-72 is fully audited and validated as an exact eight-path documentation feature from clean fetched baseline 323be1f38fca456a0d17a7801e18bc50c5212075 but is not yet committed. Review and deliver that exact scope, synchronize its Vault range, then record and deliver the docs-only closure. Do not start R90-73 or publication-blocked R90-59."
+}

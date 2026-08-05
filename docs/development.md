@@ -543,9 +543,12 @@ interfering with timing-sensitive tests; `make test` remains the separate
 correctness/race gate. The Go module defines deterministic Aho-Corasick and full
 rule-engine `Match` cases for no-hit and multi-hit payloads; setup and
 correctness checks remain outside the timed loops and every case reports
-allocations. R90-71 separately queues SQLite alert-store benchmarks, and
-R90-72 audits the combined evidence before defining any portable budget. These
-local synthetic measurements are not production throughput claims.
+allocations. R90-71 adds production-durable primary SQLite single/32-alert
+write cases and indexed rule/time queries over a fixed fixture. The R90-72
+audit finds no versioned, repeated matched-environment complete-surface sample
+set, so R90-73/R90-74 build that local evidence before the separately blocked
+R90-75 budget decision. These local synthetic measurements are not production
+throughput claims.
 
 For release-candidate checks, run:
 
@@ -696,6 +699,13 @@ Remaining test gaps:
   Retained and already-cleared outcomes both have one explicit idempotent
   recovery proof. No later local storage-fault increment is currently queued;
   completed corruption, schema, sidecar, and replay boundaries are not reopened.
+- R90-70 and R90-71 complete the local C/Go microbenchmark inventory, but the
+  numeric Go results are not versioned and the historical C/pressure samples
+  are not repeated matched-environment observations. R90-72 therefore rejects
+  an immediate portable threshold: R90-73 will add tested evidence capture,
+  R90-74 will record a repeated single-host observation baseline, and R90-75
+  remains blocked on comparable-environment evidence plus explicit product/SLO
+  budget scope.
 
 The full-engine lifecycle regression now combines the real UDS receiver,
 pipeline worker, HTTP API, and SQLite store under active load. It verifies that

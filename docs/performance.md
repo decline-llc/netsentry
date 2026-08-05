@@ -1,6 +1,8 @@
-# NetSentry Performance Baseline
+# NetSentry Performance Evidence
 
-> Status: v0.1.0 development snapshot. These numbers are local microbenchmarks, not an end-to-end production throughput claim.
+> Status: local benchmark inventory and historical development snapshot. These
+> numbers are not an end-to-end production throughput claim or a portable
+> regression threshold.
 
 ---
 
@@ -144,9 +146,9 @@ avg_json_serialize_us=0.24 write_errors=0
 ```
 
 R90-70 and R90-71 add reproducible Go matching and SQLite-store benchmark
-coverage but do not promote one machine's output into this historical C table
-or a cross-host threshold. R90-72 will audit the complete benchmark surface
-before proposing any evidence-supported baseline or budget increment.
+coverage, but their numeric output is not checked in as a versioned baseline.
+The historical C table predates those cases and uses a different Go toolchain,
+so it cannot be combined with them as one matched complete-surface run.
 
 The end-to-end pressure smoke prints a result line like:
 
@@ -164,11 +166,43 @@ Local pressure-smoke samples for the current machine and configuration:
 
 ---
 
+## Evidence and Comparability
+
+The current surfaces measure different boundaries and must remain separate:
+
+- C parser, formatter, and local-drain UDS results are standalone custom
+  microbenchmarks.
+- Go Aho-Corasick, full-rule, durable-write, and indexed-query results use
+  `testing.B` with allocations and deliberately bounded fixtures.
+- `make e2e-pressure` measures one repeated six-packet synthetic pipeline mix,
+  including drain time; it is a functional pressure smoke, not a microbenchmark.
+- `make e2e-corpus-pressure` reports evidence for the exact supplied corpus,
+  rules, commit, and host. It is local-only by default and does not establish a
+  portable traffic model.
+- `/api/metrics` exposes process-lifetime rates, latency histograms, queue
+  depth, and error/state counters for observation. These values are not a
+  benchmark sample set by themselves.
+
+The three historical repeat-pcap samples range from 552 to 1,402 pps. That
+spread demonstrates that unmatched local runs cannot support the previously
+aspirational 10% portable regression figure. The R90-72 audit therefore queues
+versioned complete-surface evidence capture (R90-73) and a repeated single-host
+observation baseline (R90-74). A portable/same-host/observation-only budget
+decision remains blocked in R90-75 until comparable-environment evidence and
+explicit product/SLO scope exist.
+
+See
+[`performance-evidence-audit-20260805.md`](audit/performance-evidence-audit-20260805.md)
+for the execution-boundary and evidence-gap reconciliation.
+
 ## Current Interpretation
 
 Parser and JSON formatting costs are not the obvious bottleneck in the current microbenchmarks. The UDS line write benchmark is materially slower than parser-only and JSON-only paths, which is expected because it crosses the socket boundary.
 
-For v0.1.0, the remaining performance question is end-to-end throughput under more realistic rule sets and pcap corpora. The current pressure smoke reports:
+The remaining performance question is how the complete local benchmark surface
+varies across repeated matched runs and, separately, across comparable
+environments and representative authorized corpora. The current pressure smoke
+reports:
 
 - packets read from pcap
 - packets delivered over UDS and processed by the worker
@@ -177,7 +211,12 @@ For v0.1.0, the remaining performance question is end-to-end throughput under mo
 - SQLite aggregation rate
 - total pcap-to-alert runtime
 
-It now exposes worker match latency and alert write latency histograms, current and high-water packet queue depth, and process-lifetime packet/alert rate gauges through `/api/metrics`, but the current recorded baseline still does not include realistic pcap corpora. Until those results are recorded, the honest target remains functional correctness plus measured local benchmarks, not a published production PPS guarantee.
+It also exposes worker match latency and alert write latency histograms,
+current and high-water packet queue depth, and process-lifetime packet/alert
+rate gauges through `/api/metrics`. One approved public real-traffic pressure
+record exists, but it remains evidence for that exact corpus and environment.
+The honest target remains functional correctness plus explicitly classified
+local measurements, not a published production PPS guarantee.
 
 `make e2e-corpus-pressure` provides the release-candidate evidence path for those
 realistic corpora once sanitized samples are available. Corpus results should be

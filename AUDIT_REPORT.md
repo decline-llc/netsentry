@@ -197,7 +197,9 @@ Canonical 参考：
 
 - [ ] 告警/SQLite 支持多 MITRE technique、mapping confidence/evidence basis 和 ATT&CK catalog version。
 - [ ] 实现 TCP/IP fragment/stream reassembly 后再提升应用层 signature 可信度。
-- [ ] 建立性能回归预算（pps、p95 match latency、RSS、drop rate）。
+- [ ] 建立性能回归预算（pps、p95 match latency、RSS、drop rate）。R90-72
+  已确认当前单机、非配对样本不足以激活数值门禁；R90-73/R90-74 先补齐版本化采集与
+  重复单机基线，跨主机或产品 SLO 门禁留待 R90-75 的显式决策。
 
 ## 8. 无法在本地直接闭环的事项
 
@@ -233,7 +235,7 @@ Canonical 参考：
 | IPv6 基础解析 | Ethernet + VLAN 后支持 IPv6、TCP/UDP 基本 header 与扩展 header 上限 | IPv4 行为不回归；IPv6 good/malformed corpus + ASan fuzz 通过 |
 | UDS 并发治理 | 最大连接数、握手状态机、idle/read deadline、同 session 序列检查 | 同 UID 连接洪泛测试资源有界；shutdown 无 goroutine 泄漏 |
 | 可观测性与配置接线 | worker count、aggregation max、logging level/output、C heartbeat interval 全部生效 | 每项配置均有 contract test；health 暴露 effective config 摘要（不含 secret） |
-| 性能预算 | 固化 packet/s、p95 match/write latency、RSS、queue/drop 指标 | 标准 10k packet corpus：0 decode/write error；相对 v0.1.1 pps 不下降 >10%，RSS 不增长 >20% |
+| 性能预算 | 固化 packet/s、p95 match/write latency、RSS、queue/drop 指标 | 先完成 R90-73/R90-74 的同 commit、同环境重复证据；历史 `pps -10%` / `RSS +20%` 仅为规划假设，不是当前门禁，任何 portable 或 same-host threshold 由 R90-75 在可比环境证据和明确 SLO scope 下决定 |
 
 退出门禁：IPv4/IPv6 parser fuzz 每类至少 1,000,000 mutation；2/4/8 worker 压力矩阵；SQLite recovery 故障注入；跨平台 amd64/arm64 build。
 
