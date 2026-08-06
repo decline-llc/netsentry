@@ -10,6 +10,7 @@ import json
 import os
 import platform
 import re
+import statistics
 import subprocess
 import sys
 import tempfile
@@ -20,6 +21,9 @@ from typing import Any, Callable, Sequence
 
 SCHEMA_VERSION = 1
 EVIDENCE_CLASS = "local_synthetic_microbenchmark"
+BASELINE_SCHEMA_VERSION = 1
+BASELINE_EVIDENCE_CLASS = "observation_only_local_synthetic_microbenchmark"
+MINIMUM_BASELINE_SAMPLES = 5
 C_CASES = {
     "bench_parser/tcp_plain": ("iterations", "ns_per_packet", "pps"),
     "bench_parser/tcp_vlan": ("iterations", "ns_per_packet", "pps"),
@@ -467,6 +471,233 @@ def write_evidence(path: Path, evidence: dict[str, Any]) -> None:
     os.replace(temporary, path)
 
 
+def _rounded(value: int | float) -> int | float:
+    if isinstance(value, int):
+        return value
+    rounded = float(f"{value:.12g}")
+    return int(rounded) if rounded.is_integer() else rounded
+
+
+def _display_number(value: int | float) -> str:
+    if isinstance(value, int):
+        return str(value)
+    return f"{value:.6f}".rstrip("0").rstrip(".")
+
+
+def descriptive_statistics(values: Sequence[int | float]) -> dict[str, Any]:
+    if len(values) < MINIMUM_BASELINE_SAMPLES:
+        raise EvidenceError(
+            f"baseline metric requires at least {MINIMUM_BASELINE_SAMPLES} values"
+        )
+    numeric = [float(value) for value in values]
+    q1, _, q3 = statistics.quantiles(numeric, n=4, method="inclusive")
+    median = statistics.median(numeric)
+    mean = statistics.fmean(numeric)
+    deviation = statistics.stdev(numeric)
+    return {
+        "values": [_rounded(value) for value in values],
+        "count": len(values),
+        "minimum": _rounded(min(numeric)),
+        "maximum": _rounded(max(numeric)),
+        "median": _rounded(median),
+        "q1_inclusive": _rounded(q1),
+        "q3_inclusive": _rounded(q3),
+        "iqr_inclusive": _rounded(q3 - q1),
+        "mean": _rounded(mean),
+        "sample_standard_deviation": _rounded(deviation),
+        "coefficient_of_variation_percent": _rounded(
+            0 if mean == 0 else deviation / abs(mean) * 100
+        ),
+        "range_percent_of_median": _rounded(
+            0 if median == 0 else (max(numeric) - min(numeric)) / abs(median) * 100
+        ),
+    }
+
+
+def _sample_metric_values(samples: Sequence[dict[str, Any]]) -> dict[str, Any]:
+    metrics: dict[str, Any] = {"c": {}, "go": {}}
+    for case in sorted(C_CASES):
+        case_metrics: dict[str, Any] = {}
+        for metric in C_CASES[case][1:]:
+            case_metrics[metric] = descriptive_statistics(
+                [sample["commands"]["c"]["parsed"]["cases"][case][metric] for sample in samples]
+            )
+        metrics["c"][case] = case_metrics
+    metrics["c"]["bench_uds_sender/summary"] = {
+        "avg_json_serialize_us": descriptive_statistics(
+            [
+                sample["commands"]["c"]["parsed"]["summaries"]["uds_sender"]["avg_json_serialize_us"]
+                for sample in samples
+            ]
+        )
+    }
+    for case in sorted(GO_CASES):
+        metrics["go"][case] = {
+            metric: descriptive_statistics(
+                [sample["commands"]["go"]["parsed"]["cases"][case]["metrics"][metric] for sample in samples]
+            )
+            for metric in GO_CASES[case]
+        }
+    return metrics
+
+
+def aggregate_samples(paths: Sequence[Path]) -> dict[str, Any]:
+    if len(paths) < MINIMUM_BASELINE_SAMPLES:
+        raise EvidenceError(
+            f"baseline requires at least {MINIMUM_BASELINE_SAMPLES} samples"
+        )
+    ordered_paths = sorted((Path(path) for path in paths), key=lambda path: path.name)
+    names = [path.name for path in ordered_paths]
+    if len(names) != len(set(names)):
+        raise EvidenceError("baseline sample basenames must be unique")
+    samples: list[dict[str, Any]] = []
+    references: list[dict[str, Any]] = []
+    for path in ordered_paths:
+        try:
+            raw = path.read_bytes()
+            sample = json.loads(raw)
+        except (OSError, json.JSONDecodeError) as error:
+            raise EvidenceError(f"cannot read sample {path.name}: {error}") from error
+        errors = validation_errors(sample)
+        if errors:
+            raise EvidenceError(f"invalid sample {path.name}: {'; '.join(errors)}")
+        samples.append(sample)
+        references.append(
+            {
+                "file": path.name,
+                "sha256": hashlib.sha256(raw).hexdigest(),
+                "start": sample["start"],
+                "end": sample["end"],
+            }
+        )
+
+    reference = samples[0]
+    for index, sample in enumerate(samples, start=1):
+        name = references[index - 1]["file"]
+        if sample["git"]["clean"] is not True or sample["git"]["status_entry_count"] != 0:
+            raise EvidenceError(f"sample {name} must record a clean Git state")
+        for field in (
+            "head", "tree", "clean", "status_entry_count", "status_sha256",
+            "tracked_diff_sha256",
+        ):
+            if sample["git"][field] != reference["git"][field]:
+                raise EvidenceError(f"sample {name} Git {field} differs")
+        if sample["environment"] != reference["environment"]:
+            raise EvidenceError(f"sample {name} environment differs")
+        if sample["parameters"] != reference["parameters"]:
+            raise EvidenceError(f"sample {name} parameters differ")
+        for family in ("c", "go"):
+            if sample["commands"][family]["command"] != reference["commands"][family]["command"]:
+                raise EvidenceError(f"sample {name} {family} command differs")
+
+    return {
+        "schema_version": BASELINE_SCHEMA_VERSION,
+        "status": "observation_only",
+        "evidence_class": BASELINE_EVIDENCE_CLASS,
+        "production_derived": False,
+        "threshold_applied": False,
+        "portable_or_cross_host_claim": False,
+        "release_or_publication_authority": False,
+        "quartile_method": "inclusive",
+        "variation_method": "sample_standard_deviation_over_absolute_mean_percent",
+        "sampling_mode": "sequential_uncached_same_host",
+        "sample_count": len(samples),
+        "start": references[0]["start"],
+        "end": references[-1]["end"],
+        "git": {
+            "head": reference["git"]["head"],
+            "tree": reference["git"]["tree"],
+            "branch": reference["git"]["branch"],
+            "clean": True,
+        },
+        "environment": reference["environment"],
+        "parameters": reference["parameters"],
+        "commands": {
+            family: reference["commands"][family]["command"] for family in ("c", "go")
+        },
+        "samples": references,
+        "metrics": _sample_metric_values(samples),
+    }
+
+
+def baseline_validation_errors(
+    baseline: Any, sample_paths: Sequence[Path]
+) -> list[str]:
+    if not isinstance(baseline, dict):
+        return ["baseline must be an object"]
+    try:
+        expected = aggregate_samples(sample_paths)
+    except EvidenceError as error:
+        return [str(error)]
+    errors: list[str] = []
+    if baseline != expected:
+        errors.append("baseline does not match recomputation from raw samples")
+    rendered = json.dumps(baseline, sort_keys=True)
+    if SENSITIVE_PATH_RE.search(rendered):
+        errors.append("baseline contains an unredacted sensitive absolute path")
+    return errors
+
+
+def write_baseline_markdown(path: Path, baseline: dict[str, Any]) -> None:
+    lines = [
+        "# R90-74 Repeated Single-Host Benchmark Baseline",
+        "",
+        "## Evidence Boundary",
+        "",
+        f"- Status: `{baseline['status']}`",
+        f"- Evidence class: `{baseline['evidence_class']}`",
+        f"- Samples: {baseline['sample_count']} sequential uncached complete captures",
+        f"- Commit: `{baseline['git']['head']}`",
+        f"- Tree: `{baseline['git']['tree']}`",
+        f"- Environment fingerprint: `{baseline['environment']['fingerprint_sha256']}`",
+        f"- Parameters: C iterations `{baseline['parameters']['c_iterations']}`, Go benchtime `{baseline['parameters']['go_benchtime']}`",
+        "- Quartiles: inclusive method; variation: sample standard deviation / absolute mean.",
+        "- Threshold applied: false",
+        "- Production-derived or portable/cross-host claim: false",
+        "- Release, tag, or publication authority: false",
+        "",
+        "## Samples",
+        "",
+        "| File | SHA-256 | Start | End |",
+        "| --- | --- | --- | --- |",
+    ]
+    for sample in baseline["samples"]:
+        lines.append(
+            f"| `{sample['file']}` | `{sample['sha256']}` | {sample['start']} | {sample['end']} |"
+        )
+    lines.extend(["", "## Descriptive Results", ""])
+    for family, title in (("c", "C Benchmarks"), ("go", "Go Benchmarks")):
+        lines.extend(
+            [
+                f"### {title}",
+                "",
+                "| Case | Metric | Median | Inclusive IQR | CV % | Min | Max |",
+                "| --- | --- | ---: | ---: | ---: | ---: | ---: |",
+            ]
+        )
+        for case in sorted(baseline["metrics"][family]):
+            for metric in sorted(baseline["metrics"][family][case]):
+                summary = baseline["metrics"][family][case][metric]
+                lines.append(
+                    f"| `{case}` | `{metric}` | {_display_number(summary['median'])} | "
+                    f"{_display_number(summary['iqr_inclusive'])} | "
+                    f"{_display_number(summary['coefficient_of_variation_percent'])} | "
+                    f"{_display_number(summary['minimum'])} | {_display_number(summary['maximum'])} |"
+                )
+        lines.append("")
+    lines.extend(
+        [
+            "## Interpretation",
+            "",
+            "These values describe five sequential observations from one exact clean commit and one unchanged local environment. Every raw sample is retained beside this summary and the aggregate is independently recomputable from their SHA-256-bound contents.",
+            "",
+            "Variation is reported, not judged against a pass/fail budget. This baseline does not establish production capacity, cross-host portability, an SLO, a release gate, or publication authority.",
+        ]
+    )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def command_capture(args: argparse.Namespace) -> int:
     try:
         evidence = build_evidence(args.repo, args.c_iterations, args.go_benchtime)
@@ -497,6 +728,34 @@ def command_validate(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_aggregate(args: argparse.Namespace) -> int:
+    try:
+        baseline = aggregate_samples(args.samples)
+        write_evidence(args.json, baseline)
+        write_baseline_markdown(args.markdown, baseline)
+    except (EvidenceError, OSError) as error:
+        print(f"[benchmark-evidence] {error}", file=sys.stderr)
+        return 1
+    print(f"[benchmark-evidence] baseline ok: {args.json}")
+    print(f"[benchmark-evidence] baseline report: {args.markdown}")
+    return 0
+
+
+def command_validate_baseline(args: argparse.Namespace) -> int:
+    try:
+        baseline = json.loads(args.input.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        print(f"[benchmark-evidence] {error}", file=sys.stderr)
+        return 1
+    errors = baseline_validation_errors(baseline, args.samples)
+    if errors:
+        for error in errors:
+            print(f"[benchmark-evidence] {error}", file=sys.stderr)
+        return 1
+    print(f"[benchmark-evidence] baseline ok: {args.input}")
+    return 0
+
+
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
@@ -509,6 +768,15 @@ def parser() -> argparse.ArgumentParser:
     validate = commands.add_parser("validate")
     validate.add_argument("--input", type=Path, required=True)
     validate.set_defaults(func=command_validate)
+    aggregate = commands.add_parser("aggregate")
+    aggregate.add_argument("--samples", type=Path, nargs="+", required=True)
+    aggregate.add_argument("--json", type=Path, required=True)
+    aggregate.add_argument("--markdown", type=Path, required=True)
+    aggregate.set_defaults(func=command_aggregate)
+    validate_baseline = commands.add_parser("validate-baseline")
+    validate_baseline.add_argument("--input", type=Path, required=True)
+    validate_baseline.add_argument("--samples", type=Path, nargs="+", required=True)
+    validate_baseline.set_defaults(func=command_validate_baseline)
     return root
 
 

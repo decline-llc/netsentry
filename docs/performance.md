@@ -100,6 +100,20 @@ These captures are local synthetic microbenchmark evidence. A successful
 capture applies no numeric threshold and grants no production-throughput,
 cross-host, release, tag, or publication claim.
 
+The checked-in R90-74 same-host observation set can be independently
+recomputed from all five retained raw samples:
+
+```bash
+make benchmark-baseline-check
+```
+
+The versioned aggregation API requires at least five individually valid clean
+captures with identical commit/tree, environment, parameters, commands, and
+metric surfaces. It binds sample SHA-256 values and reports median, inclusive
+quartiles/IQR, arithmetic mean, sample standard deviation, coefficient of
+variation, and range relative to median for every reported metric. An edited
+raw sample, digest, or aggregate value fails revalidation.
+
 For an end-to-end pressure smoke:
 
 ```bash
@@ -170,10 +184,12 @@ The C UDS sender reported:
 avg_json_serialize_us=0.24 write_errors=0
 ```
 
-R90-70 and R90-71 add reproducible Go matching and SQLite-store benchmark
-coverage, but their numeric output is not checked in as a versioned baseline.
-The historical C table predates those cases and uses a different Go toolchain,
-so it cannot be combined with them as one matched complete-surface run.
+R90-70 and R90-71 added reproducible Go matching and SQLite-store benchmark
+coverage. R90-74 now retains their numeric output together with the C surface
+as five matched observations at exact clean commit
+`b3d4f8f82e8913093be518ffe426f1d6dc8eee7f`. The historical C table predates
+those cases and uses a different Go toolchain, so it remains separate from the
+current complete-surface record.
 
 The end-to-end pressure smoke prints a result line like:
 
@@ -210,11 +226,15 @@ The current surfaces measure different boundaries and must remain separate:
 
 The three historical repeat-pcap samples range from 552 to 1,402 pps. That
 spread demonstrates that unmatched local runs cannot support the previously
-aspirational 10% portable regression figure. The R90-72 audit therefore queues
-versioned complete-surface evidence capture (R90-73) and a repeated single-host
-observation baseline (R90-74). A portable/same-host/observation-only budget
-decision remains blocked in R90-75 until comparable-environment evidence and
-explicit product/SLO scope exist.
+aspirational 10% portable regression figure. R90-73 delivered versioned
+complete-surface capture, and R90-74 records five sequential default-parameter
+observations from one clean commit and unchanged environment under
+[`r90-74-single-host-benchmark-baseline/`](evidence/r90-74-single-host-benchmark-baseline/).
+The highest recorded coefficient of variation is 11.252396% for
+`BenchmarkMatcherMatch/no_hit` `ns/op`; this is an observation, not a failure
+or proposed budget. A portable/same-host/observation-only budget decision
+remains blocked in R90-75 until comparable-environment evidence and explicit
+product/SLO scope exist.
 
 See
 [`performance-evidence-audit-20260805.md`](audit/performance-evidence-audit-20260805.md)
@@ -224,10 +244,10 @@ for the execution-boundary and evidence-gap reconciliation.
 
 Parser and JSON formatting costs are not the obvious bottleneck in the current microbenchmarks. The UDS line write benchmark is materially slower than parser-only and JSON-only paths, which is expected because it crosses the socket boundary.
 
-The remaining performance question is how the complete local benchmark surface
-varies across repeated matched runs and, separately, across comparable
-environments and representative authorized corpora. The current pressure smoke
-reports:
+The complete local microbenchmark surface now has one five-sample matched-host
+observation record. Remaining questions concern repeatability across later
+same-host sessions and, separately, comparable environments and representative
+authorized corpora. The current pressure smoke reports:
 
 - packets read from pcap
 - packets delivered over UDS and processed by the worker

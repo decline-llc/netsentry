@@ -29,6 +29,16 @@ and sensitive paths, and explicitly deny production-traffic, release, tag, and
 publication authority. R90-64's reviewed dual-harness ASan summary is an
 example of that narrower evidence class.
 
+R90-74's
+[`r90-74-single-host-benchmark-baseline/`](r90-74-single-host-benchmark-baseline/)
+directory is a reviewed exception to the default local-only benchmark-output
+rule. It retains five path-redacted raw JSON envelopes from one exact clean
+commit and unchanged environment so the adjacent observation-only baseline can
+be recomputed. Verify the recorded sample hashes and every descriptive metric
+with `make benchmark-baseline-check`. The record applies no threshold and does
+not establish production capacity, cross-host portability, an SLO, release,
+tag, or publication authority.
+
 ## Global PCAP Gate Waiver
 
 The user cancelled every PCAP release-gate restriction on 2026-07-16. The gate

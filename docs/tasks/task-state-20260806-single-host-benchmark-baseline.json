@@ -1,0 +1,61 @@
+{
+  "task": "r90-74-repeated-single-host-benchmark-baseline",
+  "timestamp": "2026-08-06T01:48:39-07:00",
+  "branch": "main",
+  "remote_baseline": "b3d4f8f82e8913093be518ffe426f1d6dc8eee7f",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_pre_delivery",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills plus the complete active roadmap before selection",
+    "Fetched origin/main through SSH-over-443 and verified clean local and remote equality at b3d4f8f82e8913093be518ffe426f1d6dc8eee7f",
+    "Verified exact R90-73 feature and closure Git plus both Vault notes, index rows, MOC links, and current stable authority",
+    "Reviewed recent delivery phases and found no missing record, stale authority, or unresolved validation deviation",
+    "Parsed all 88 task states and verified all 78 roadmap rows match exactly one complete Definition",
+    "Selected R90-74 as the sole dependency-ready increment while leaving R90-75 and R90-59 blocked",
+    "Inspected the R90-73 capture API, tests, command parameters, evidence contract, performance audit, and current guidance",
+    "Persisted R90-74 scope, non-goals, risks, evidence map, validation, authority boundaries, and stop conditions before sampling",
+    "Preflighted one isolated clean detached worktree at the exact fetched R90-73 closure commit and tree with unchanged toolchain plus default benchmark parameters",
+    "Collected five sequential uncached default-parameter complete captures and immediately validated exact Git tree clean state environment parameters commands classification and 6-C plus 8-Go surface",
+    "Froze and reviewed all five distinct raw sample SHA-256 artifacts before removing the isolated sampling worktree",
+    "Added deterministic aggregation for 43 metric series with median inclusive quartiles and IQR mean sample deviation coefficient of variation and range relative to median",
+    "Added independent raw-sample recomputation and digest or aggregate tamper rejection plus the make benchmark-baseline-check gate",
+    "Added six aggregation test methods covering at least five samples duplicate names context drift metric drift tampering and path-safe observation-only reporting",
+    "Passed all 20 focused capture and aggregation tests plus direct checked-in baseline recomputation Python docs and diff checks",
+    "Recorded 11.252396 percent as the highest observed coefficient of variation without applying a threshold or causal claim",
+    "Confirmed no metric has an unexplained order-of-magnitude outlier and no later increment or publication action was started",
+    "Observed one unchanged receiver idle-timeout test failure during the first full native gate and held delivery for uncached reproducibility review",
+    "Passed the exact receiver test across 20 uncached race executions without changing unrelated source",
+    "Restarted and passed the complete fail-fast chain including 20 focused tests 42 evidence tests 33 knowledge tests C tests and every Go package under uncached race",
+    "Parsed all 89 task states and verified all 78 roadmap rows match exactly one complete Definition"
+  ],
+  "in_progress": [
+    "Complete final sensitive-information and staged-scope review then deliver the validated R90-74 increment"
+  ],
+  "todo": [
+    "Commit, push, fetch-verify, synchronize the exact Vault range, and record delivery",
+    "Refresh the future queue without starting R90-75"
+  ],
+  "authority_boundaries": [
+    "No benchmark fixture, timed boundary, runtime, storage, configuration, dependency, or release-gate semantic change",
+    "No external corpus, private operator input, hostname, username, credential, or sensitive absolute path",
+    "No numeric gate, portable or production claim, SLO decision, or comparable-host inference",
+    "No tag, release, image, registry, or workflow mutation",
+    "Do not start R90-75 or R90-59"
+  ],
+  "remaining_risks": [
+    "Exact feature delivery and remote or Vault evidence remain pending",
+    "R90-75 and R90-59 remain blocked on their recorded external conditions"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false,
+    "vault_stable_authority_reconciled": false,
+    "vault_idempotent_replay_verified": false
+  },
+  "resume_instructions": "Resume R90-74 at the validated pre-delivery checkpoint. Do not rerun the five accepted samples or complete validation unless a source evidence or documentation path changes. Review and stage only the intended aggregation/evidence/docs/task paths, then commit/push/fetch-verify and synchronize the exact Vault range before recording closure. Do not start R90-75 or R90-59."
+}

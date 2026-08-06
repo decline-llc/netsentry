@@ -135,7 +135,7 @@
 | R90-71 | Sep 5–Oct 2 | Complete early | Add Go alert-store microbenchmarks. | R90-70 | `make bench` executes bounded primary SQLite write and filtered-query cases with unique event identity, production recovery durability intact, deterministic cardinality checks outside timed regions, and no operator data or production throughput claim. |
 | R90-72 | Oct 3–31 | Complete early | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
 | R90-73 | Aug 5–Sep 4 | Complete early | Add versioned local benchmark evidence capture. | R90-72 | One directly tested command captures every established C/Go benchmark with exact Git/tree state, environment/toolchain fingerprint, parameters, raw output, parsed metrics, path redaction, and local-synthetic classification without applying a threshold. |
-| R90-74 | Sep 5–Oct 2 | Ready | Record a repeated single-host benchmark baseline. | R90-73 | At least five uncached complete-surface samples from one clean pinned commit and unchanged environment retain every raw result plus median/IQR/variation summaries as observation-only local evidence. |
+| R90-74 | Sep 5–Oct 2 | In progress | Record a repeated single-host benchmark baseline. | R90-73 | At least five uncached complete-surface samples from one clean pinned commit and unchanged environment retain every raw result plus median/IQR/variation summaries as observation-only local evidence. |
 | R90-75 | Oct 3–31 | Blocked | Decide portable performance-budget scope. | R90-74; comparable-environment evidence; explicit budget scope | Matched evidence and product/SLO authority decide whether a budget can be portable, same-host-only, or observation-only; current single-host data cannot activate a numeric gate. |
 
 ## R90-01 Definition
@@ -2413,3 +2413,23 @@ was synchronized idempotently to the sole local Vault. Its iteration note,
 full index, MOC link, and reconciled stable MOC/Makefile/testing authority are
 verified. R90-74 is ready but was not started; R90-75 and R90-59 remain blocked
 on their recorded external conditions.
+The next Aug 6 trigger fetched and verified the R90-73 docs-only closure at
+`b3d4f8f82e8913093be518ffe426f1d6dc8eee7f`, both exact R90-73 Vault notes,
+the full index, MOC links, and current stable benchmark authority. All 88 prior
+task states parse and all 78 roadmap rows match one Definition. R90-74 is
+selected as the sole dependency-ready increment; R90-75 and R90-59 remain
+blocked.
+Five sequential uncached default-parameter captures from one isolated clean
+detached worktree share exact commit/tree, environment/toolchain fingerprint,
+commands, and the complete six-C/eight-Go surface. Every raw JSON is retained
+and SHA-256-bound. A tested versioned API recomputes 43 metric-series median,
+inclusive IQR, sample deviation, coefficient-of-variation, and range summaries
+and rejects sample/context/metric/digest/aggregate drift. The largest observed
+CV is 11.252396% for matcher no-hit latency; no threshold or portable/
+production claim is applied. Focused aggregation, direct recomputation,
+Python, docs, and diff checks pass. The first full native gate exposed one
+unchanged receiver idle-timeout failure; its exact test passed 20 uncached race
+runs, no unrelated source changed, and the restarted complete fail-fast chain
+passed all native, evidence, knowledge, JSON/Definition, and diff checks.
+R90-74 remains in progress until push/fetch verification and exact-range Vault
+synchronization.

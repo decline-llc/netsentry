@@ -1,0 +1,203 @@
+{
+  "commands": {
+    "c": {
+      "command": [
+        "make",
+        "-s",
+        "-C",
+        "capture",
+        "--no-print-directory",
+        "bench",
+        "BENCH_ITERATIONS=100000"
+      ],
+      "elapsed_seconds": 7.265396,
+      "end": "2026-08-06T08:55:17.455747Z",
+      "exit_status": 0,
+      "parsed": {
+        "cases": {
+          "bench_parser/tcp_plain": {
+            "iterations": 100000,
+            "ns_per_packet": 275.67,
+            "pps": 3627550
+          },
+          "bench_parser/tcp_qinq": {
+            "iterations": 100000,
+            "ns_per_packet": 271.23,
+            "pps": 3686877
+          },
+          "bench_parser/tcp_vlan": {
+            "iterations": 100000,
+            "ns_per_packet": 268.62,
+            "pps": 3722691
+          },
+          "bench_uds_sender/format_heartbeat_json": {
+            "iterations": 100000,
+            "ns_per_op": 21883.81,
+            "ops_per_sec": 45696
+          },
+          "bench_uds_sender/format_packet_json": {
+            "iterations": 100000,
+            "ns_per_op": 21509.81,
+            "ops_per_sec": 46490
+          },
+          "bench_uds_sender/uds_send_line": {
+            "iterations": 100000,
+            "ns_per_op": 28042.1,
+            "ops_per_sec": 35661
+          }
+        },
+        "summaries": {
+          "uds_sender": {
+            "avg_json_serialize_us": 11.51,
+            "sink": 64488890,
+            "write_errors": 0
+          }
+        }
+      },
+      "start": "2026-08-06T08:55:10.188233Z",
+      "stderr": "",
+      "stdout": "bench_parser/tcp_plain iterations=100000 ns_per_packet=275.67 pps=3627550\nbench_parser/tcp_vlan iterations=100000 ns_per_packet=268.62 pps=3722691\nbench_parser/tcp_qinq iterations=100000 ns_per_packet=271.23 pps=3686877\nbench_parser/sink=53700000\nbench_uds_sender/format_packet_json iterations=100000 ns_per_op=21509.81 ops_per_sec=46490\nbench_uds_sender/format_heartbeat_json iterations=100000 ns_per_op=21883.81 ops_per_sec=45696\nbench_uds_sender/uds_send_line iterations=100000 ns_per_op=28042.10 ops_per_sec=35661\nbench_uds_sender/sink=64488890 avg_json_serialize_us=11.51 write_errors=0\n",
+      "working_directory": "<redacted-path>"
+    },
+    "go": {
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "-run",
+        "^$",
+        "-bench=.",
+        "-benchtime=10s",
+        "-benchmem",
+        "./..."
+      ],
+      "elapsed_seconds": 141.946942,
+      "end": "2026-08-06T08:57:39.407106Z",
+      "exit_status": 0,
+      "parsed": {
+        "cases": {
+          "BenchmarkEngineMatch/multi_hit": {
+            "cpu": 16,
+            "iterations": 1745396,
+            "metrics": {
+              "B/op": 3515,
+              "MB/s": 8.4,
+              "allocs/op": 32,
+              "ns/op": 7617
+            }
+          },
+          "BenchmarkEngineMatch/no_hit": {
+            "cpu": 16,
+            "iterations": 15396130,
+            "metrics": {
+              "B/op": 240,
+              "MB/s": 78.97,
+              "allocs/op": 3,
+              "ns/op": 823.1
+            }
+          },
+          "BenchmarkMatcherMatch/multi_hit": {
+            "cpu": 16,
+            "iterations": 1863988,
+            "metrics": {
+              "B/op": 2104,
+              "MB/s": 165.08,
+              "allocs/op": 5,
+              "ns/op": 6118
+            }
+          },
+          "BenchmarkMatcherMatch/no_hit": {
+            "cpu": 16,
+            "iterations": 2532672,
+            "metrics": {
+              "B/op": 1024,
+              "MB/s": 214.77,
+              "allocs/op": 1,
+              "ns/op": 4470
+            }
+          },
+          "BenchmarkStoreQuery/exact_rule": {
+            "cpu": 16,
+            "iterations": 21638,
+            "metrics": {
+              "B/op": 26796,
+              "allocs/op": 1144,
+              "ns/op": 550888
+            }
+          },
+          "BenchmarkStoreQuery/timestamp_range": {
+            "cpu": 16,
+            "iterations": 19446,
+            "metrics": {
+              "B/op": 29249,
+              "allocs/op": 1157,
+              "ns/op": 629831
+            }
+          },
+          "BenchmarkStoreWriteBatch/batch_32_alerts": {
+            "cpu": 16,
+            "iterations": 327,
+            "metrics": {
+              "B/op": 809964,
+              "alerts/op": 32,
+              "allocs/op": 14901,
+              "ns/op": 36426214
+            }
+          },
+          "BenchmarkStoreWriteBatch/single_alert": {
+            "cpu": 16,
+            "iterations": 1428,
+            "metrics": {
+              "B/op": 155251,
+              "alerts/op": 1,
+              "allocs/op": 506,
+              "ns/op": 7973508
+            }
+          }
+        }
+      },
+      "start": "2026-08-06T08:55:17.456732Z",
+      "stderr": "",
+      "stdout": "PASS\nok  \tgithub.com/decline-llc/netsentry/cmd/netsentry\t0.030s\ngoos: linux\ngoarch: amd64\npkg: github.com/decline-llc/netsentry/internal/alert\ncpu: AMD Ryzen 7 7840HS w/ Radeon 780M Graphics     \nBenchmarkStoreWriteBatch/single_alert-16         \t    1428\t   7973508 ns/op\t         1.000 alerts/op\t  155251 B/op\t     506 allocs/op\nBenchmarkStoreWriteBatch/batch_32_alerts-16      \t     327\t  36426214 ns/op\t        32.00 alerts/op\t  809964 B/op\t   14901 allocs/op\nBenchmarkStoreQuery/exact_rule-16                \t   21638\t    550888 ns/op\t   26796 B/op\t    1144 allocs/op\nBenchmarkStoreQuery/timestamp_range-16           \t   19446\t    629831 ns/op\t   29249 B/op\t    1157 allocs/op\nPASS\nok  \tgithub.com/decline-llc/netsentry/internal/alert\t72.100s\nPASS\nok  \tgithub.com/decline-llc/netsentry/internal/api\t0.030s\nPASS\nok  \tgithub.com/decline-llc/netsentry/internal/config\t0.027s\nPASS\nok  \tgithub.com/decline-llc/netsentry/internal/pipeline\t0.026s\nPASS\nok  \tgithub.com/decline-llc/netsentry/internal/receiver\t0.028s\ngoos: linux\ngoarch: amd64\npkg: github.com/decline-llc/netsentry/internal/rule\ncpu: AMD Ryzen 7 7840HS w/ Radeon 780M Graphics     \nBenchmarkEngineMatch/no_hit-16         \t15396130\t       823.1 ns/op\t  78.97 MB/s\t     240 B/op\t       3 allocs/op\nBenchmarkEngineMatch/multi_hit-16      \t 1745396\t      7617 ns/op\t   8.40 MB/s\t    3515 B/op\t      32 allocs/op\nPASS\nok  \tgithub.com/decline-llc/netsentry/internal/rule\t33.794s\ngoos: linux\ngoarch: amd64\npkg: github.com/decline-llc/netsentry/internal/rule/ahocorasick\ncpu: AMD Ryzen 7 7840HS w/ Radeon 780M Graphics     \nBenchmarkMatcherMatch/no_hit-16         \t 2532672\t      4470 ns/op\t 214.77 MB/s\t    1024 B/op\t       1 allocs/op\nBenchmarkMatcherMatch/multi_hit-16      \t 1863988\t      6118 ns/op\t 165.08 MB/s\t    2104 B/op\t       5 allocs/op\nPASS\nok  \tgithub.com/decline-llc/netsentry/internal/rule/ahocorasick\t34.124s\nPASS\nok  \tgithub.com/decline-llc/netsentry/internal/signal\t0.023s\nPASS\nok  \tgithub.com/decline-llc/netsentry/internal/stats\t0.022s\nPASS\nok  \tgithub.com/decline-llc/netsentry/pkg/model\t0.023s\n",
+      "working_directory": "<redacted-path>/engine"
+    }
+  },
+  "end": "2026-08-06T08:57:39.408265Z",
+  "environment": {
+    "architecture": "x86_64",
+    "fingerprint_sha256": "da131adb45948ce4689a537121c495009182dcee985edf7c6ce24f1a9ccdddbb",
+    "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "go": "go1.25.12",
+    "go_arch": "amd64",
+    "go_os": "linux",
+    "go_toolchain": "auto",
+    "kernel": "7.0.0-28-generic",
+    "make": "GNU Make 4.3",
+    "os": "Ubuntu 24.04.4 LTS",
+    "python": "3.12.3"
+  },
+  "evidence_class": "local_synthetic_microbenchmark",
+  "git": {
+    "branch": "detached",
+    "clean": true,
+    "head": "b3d4f8f82e8913093be518ffe426f1d6dc8eee7f",
+    "status_entry_count": 0,
+    "status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tree": "14aeceed857497b6c81a20b8cb06c9f187607a8f"
+  },
+  "parameters": {
+    "c_iterations": 100000,
+    "go_benchmark_selector": ".",
+    "go_benchmem": true,
+    "go_benchtime": "10s",
+    "go_count": 1,
+    "go_run_selector": "^$"
+  },
+  "production_derived": false,
+  "release_or_publication_authority": false,
+  "schema_version": 1,
+  "start": "2026-08-06T08:55:10.188193Z",
+  "status": "pass",
+  "threshold_applied": false
+}

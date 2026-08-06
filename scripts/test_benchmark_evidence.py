@@ -243,5 +243,131 @@ class BenchmarkEvidenceContractTest(unittest.TestCase):
         self.assertNotEqual(clean["tracked_diff_sha256"], dirty["tracked_diff_sha256"])
 
 
+class BenchmarkBaselineTest(unittest.TestCase):
+    def build_samples(self, root: Path):
+        paths = []
+        for index in range(5):
+            evidence = BenchmarkEvidenceContractTest().base_evidence()
+            evidence["start"] = f"2026-08-06T00:00:0{index}Z"
+            evidence["end"] = f"2026-08-06T00:00:1{index}Z"
+            c_case = evidence["commands"]["c"]["parsed"]["cases"]["bench_parser/tcp_plain"]
+            c_case["ns_per_packet"] = 10 * (index + 1)
+            c_case["pps"] = 1000 - 100 * index
+            evidence["commands"]["c"]["stdout"] = C_OUTPUT.replace(
+                "ns_per_packet=10.25 pps=97560976",
+                f"ns_per_packet={10 * (index + 1)} pps={1000 - 100 * index}",
+            )
+            go_case = evidence["commands"]["go"]["parsed"]["cases"]["BenchmarkMatcherMatch/no_hit"]
+            go_case["metrics"]["ns/op"] = 10 * (index + 1)
+            evidence["commands"]["go"]["stdout"] = GO_OUTPUT.replace(
+                "100 10.5 ns/op", f"100 {10 * (index + 1)} ns/op", 1
+            )
+            path = root / f"sample-{index + 1:02d}.json"
+            benchmark_evidence.write_evidence(path, evidence)
+            paths.append(path)
+        return paths
+
+    def test_five_matched_samples_produce_defined_statistics(self):
+        with tempfile.TemporaryDirectory() as directory:
+            paths = self.build_samples(Path(directory))
+            baseline = benchmark_evidence.aggregate_samples(paths)
+        stats = baseline["metrics"]["c"]["bench_parser/tcp_plain"]["ns_per_packet"]
+        self.assertEqual([10, 20, 30, 40, 50], stats["values"])
+        self.assertEqual(30, stats["median"])
+        self.assertEqual(20, stats["q1_inclusive"])
+        self.assertEqual(40, stats["q3_inclusive"])
+        self.assertEqual(20, stats["iqr_inclusive"])
+        self.assertEqual(5, stats["count"])
+        self.assertEqual(benchmark_evidence.BASELINE_EVIDENCE_CLASS, baseline["evidence_class"])
+        self.assertFalse(baseline["threshold_applied"])
+        self.assertFalse(baseline["portable_or_cross_host_claim"])
+
+    def test_fewer_than_five_and_duplicate_basenames_are_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            paths = self.build_samples(root)
+            with self.assertRaisesRegex(benchmark_evidence.EvidenceError, "at least 5"):
+                benchmark_evidence.aggregate_samples(paths[:4])
+            other = root / "other"
+            other.mkdir()
+            duplicate = other / paths[0].name
+            duplicate.write_bytes(paths[0].read_bytes())
+            with self.assertRaisesRegex(benchmark_evidence.EvidenceError, "basenames must be unique"):
+                benchmark_evidence.aggregate_samples(paths + [duplicate])
+
+    def test_context_and_contract_drift_are_rejected(self):
+        mutations = [
+            ("dirty", "clean Git state"),
+            ("head", "Git head differs"),
+            ("tree", "Git tree differs"),
+            ("parameters", "parameters differ"),
+            ("environment", "environment differs"),
+        ]
+        for mutation, message in mutations:
+            with self.subTest(mutation=mutation):
+                with tempfile.TemporaryDirectory() as directory:
+                    paths = self.build_samples(Path(directory))
+                    sample = json.loads(paths[-1].read_text())
+                    if mutation == "dirty":
+                        sample["git"]["clean"] = False
+                        sample["git"]["status_entry_count"] = 1
+                    elif mutation == "head":
+                        sample["git"]["head"] = "f" * 40
+                    elif mutation == "tree":
+                        sample["git"]["tree"] = "e" * 40
+                    elif mutation == "parameters":
+                        sample["parameters"]["go_benchtime"] = "1s"
+                        sample["commands"]["go"]["command"][6] = "-benchtime=1s"
+                    elif mutation == "environment":
+                        sample["environment"]["kernel"] = "different"
+                        fields = dict(sample["environment"])
+                        fields.pop("fingerprint_sha256")
+                        sample["environment"]["fingerprint_sha256"] = hashlib.sha256(
+                            json.dumps(fields, sort_keys=True, separators=(",", ":")).encode()
+                        ).hexdigest()
+                    paths[-1].write_text(json.dumps(sample), encoding="utf-8")
+                    with self.assertRaisesRegex(benchmark_evidence.EvidenceError, message):
+                        benchmark_evidence.aggregate_samples(paths)
+
+    def test_metric_surface_drift_is_rejected_by_raw_reparse(self):
+        with tempfile.TemporaryDirectory() as directory:
+            paths = self.build_samples(Path(directory))
+            sample = json.loads(paths[-1].read_text())
+            sample["commands"]["go"]["parsed"]["cases"]["BenchmarkStoreQuery/exact_rule"]["metrics"].pop("ns/op")
+            paths[-1].write_text(json.dumps(sample), encoding="utf-8")
+            with self.assertRaisesRegex(benchmark_evidence.EvidenceError, "parsed Go results do not match raw output"):
+                benchmark_evidence.aggregate_samples(paths)
+
+    def test_revalidation_detects_tampered_digest_and_aggregate_value(self):
+        with tempfile.TemporaryDirectory() as directory:
+            paths = self.build_samples(Path(directory))
+            baseline = benchmark_evidence.aggregate_samples(paths)
+            self.assertEqual([], benchmark_evidence.baseline_validation_errors(baseline, paths))
+            tampered = copy.deepcopy(baseline)
+            tampered["samples"][0]["sha256"] = "0" * 64
+            self.assertIn(
+                "baseline does not match recomputation from raw samples",
+                benchmark_evidence.baseline_validation_errors(tampered, paths),
+            )
+            tampered = copy.deepcopy(baseline)
+            tampered["metrics"]["c"]["bench_parser/tcp_plain"]["ns_per_packet"]["median"] = 1
+            self.assertIn(
+                "baseline does not match recomputation from raw samples",
+                benchmark_evidence.baseline_validation_errors(tampered, paths),
+            )
+
+    def test_markdown_is_observation_only_and_contains_no_sample_path(self):
+        with tempfile.TemporaryDirectory(prefix="private baseline ") as directory:
+            root = Path(directory)
+            paths = self.build_samples(root)
+            baseline = benchmark_evidence.aggregate_samples(paths)
+            report = root / "report.md"
+            benchmark_evidence.write_baseline_markdown(report, baseline)
+            rendered = report.read_text()
+        self.assertNotIn(str(root), rendered)
+        self.assertIn("Threshold applied: false", rendered)
+        self.assertIn("does not establish production capacity", rendered)
+
+
 if __name__ == "__main__":
     unittest.main()
