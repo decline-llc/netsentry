@@ -177,6 +177,29 @@ variation summaries without applying a performance threshold.
 - No sample, environment, metric, sensitive-data, evidence-classification, or
   authority deviation remains unresolved.
 
+## Delivery Results
+
+- Feature commit:
+  `77e1ec005e077e1e66049a5a4eb809afd87fa23c` (`test: record
+  single-host benchmark baseline`). Its exact 15 paths contain the aggregation
+  API/tests, five reviewed raw samples, aggregate/report, Make/docs, roadmap,
+  plan, and task state only.
+- The feature was pushed without force through GitHub SSH-over-443, fetched,
+  and verified as both `HEAD` and `origin/main`. The post-fetch 33-test
+  knowledge gate and checked-in raw-sample baseline recomputation passed.
+- Exact range
+  `b3d4f8f82e8913093be518ffe426f1d6dc8eee7f..77e1ec005e077e1e66049a5a4eb809afd87fa23c`
+  was synchronized repeatedly with identical generated note/index/MOC hashes
+  to the sole discovered local Vault.
+- The generated iteration note, full index, MOC link, and manually reconciled
+  stable MOC, Makefile/build, and testing/release notes identify the five-sample
+  observation boundary, 43 recomputable metric series, highest observed CV,
+  and absence of threshold or portable/production authority. Exact-range replay
+  preserved those stable edits and hashes.
+- R90-75 remains blocked on comparable-environment evidence plus explicit
+  product/SLO budget scope, and R90-59 remains blocked on exact publication
+  authority. No next increment is ready or started.
+
 ## Authority Boundaries
 
 This trigger authorizes only R90-74 clean local benchmark sampling, versioned

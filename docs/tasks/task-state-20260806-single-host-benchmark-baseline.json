@@ -2,9 +2,9 @@
   "task": "r90-74-repeated-single-host-benchmark-baseline",
   "timestamp": "2026-08-06T01:48:39-07:00",
   "branch": "main",
-  "remote_baseline": "b3d4f8f82e8913093be518ffe426f1d6dc8eee7f",
+  "remote_baseline": "77e1ec005e077e1e66049a5a4eb809afd87fa23c",
   "risk_level": "Medium",
-  "current_checkpoint": "validated_pre_delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills plus the complete active roadmap before selection",
     "Fetched origin/main through SSH-over-443 and verified clean local and remote equality at b3d4f8f82e8913093be518ffe426f1d6dc8eee7f",
@@ -26,15 +26,16 @@
     "Observed one unchanged receiver idle-timeout test failure during the first full native gate and held delivery for uncached reproducibility review",
     "Passed the exact receiver test across 20 uncached race executions without changing unrelated source",
     "Restarted and passed the complete fail-fast chain including 20 focused tests 42 evidence tests 33 knowledge tests C tests and every Go package under uncached race",
-    "Parsed all 89 task states and verified all 78 roadmap rows match exactly one complete Definition"
+    "Parsed all 89 task states and verified all 78 roadmap rows match exactly one complete Definition",
+    "Committed the validated exact 15-path feature at 77e1ec005e077e1e66049a5a4eb809afd87fa23c",
+    "Pushed without force through SSH-over-443 and fetched origin/main equal to the exact feature SHA",
+    "Passed the post-fetch 33-test knowledge gate and direct checked-in baseline recomputation",
+    "Synchronized exact range b3d4f8f82e8913093be518ffe426f1d6dc8eee7f..77e1ec005e077e1e66049a5a4eb809afd87fa23c idempotently to the sole local Vault",
+    "Verified the exact iteration note full-index row MOC link and reconciled stable MOC Makefile and testing authority",
+    "Completed R90-74 without starting R90-75 or R90-59"
   ],
-  "in_progress": [
-    "Complete final sensitive-information and staged-scope review then deliver the validated R90-74 increment"
-  ],
-  "todo": [
-    "Commit, push, fetch-verify, synchronize the exact Vault range, and record delivery",
-    "Refresh the future queue without starting R90-75"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "No benchmark fixture, timed boundary, runtime, storage, configuration, dependency, or release-gate semantic change",
     "No external corpus, private operator input, hostname, username, credential, or sensitive absolute path",
@@ -43,19 +44,18 @@
     "Do not start R90-75 or R90-59"
   ],
   "remaining_risks": [
-    "Exact feature delivery and remote or Vault evidence remain pending",
     "R90-75 and R90-59 remain blocked on their recorded external conditions"
   ],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false,
-    "vault_stable_authority_reconciled": false,
-    "vault_idempotent_replay_verified": false
+    "commit": "77e1ec005e077e1e66049a5a4eb809afd87fa23c",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "b3d4f8f82e8913093be518ffe426f1d6dc8eee7f..77e1ec005e077e1e66049a5a4eb809afd87fa23c",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true
   },
-  "resume_instructions": "Resume R90-74 at the validated pre-delivery checkpoint. Do not rerun the five accepted samples or complete validation unless a source evidence or documentation path changes. Review and stage only the intended aggregation/evidence/docs/task paths, then commit/push/fetch-verify and synchronize the exact Vault range before recording closure. Do not start R90-75 or R90-59."
+  "resume_instructions": "R90-74 is complete at 77e1ec005e077e1e66049a5a4eb809afd87fa23c; do not repeat sampling aggregation validation feature push or feature-range Vault synchronization. On the next $netsentry-next trigger fetch and verify origin/main plus this docs-only closure and its exact Vault evidence before selecting work. No increment is currently ready: R90-75 and R90-59 remain blocked on their recorded external conditions."
 }
