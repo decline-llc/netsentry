@@ -75,6 +75,31 @@ BENCH_ITERATIONS=1000000 make bench
 
 Some sandboxed environments block Unix socket `bind(2)` or tracing-sensitive sanitizer behavior. In that case, run the same command in a normal local shell.
 
+To capture the same complete C and Go surface in one machine-readable local
+evidence envelope, run:
+
+```bash
+make benchmark-evidence
+```
+
+The command records the full Git commit and tree IDs, clean/dirty state,
+OS/kernel/architecture and toolchain fingerprint, explicit C/Go parameters,
+redacted raw output, and parsed metrics for every named case. It fails closed
+on a missing, duplicate, unknown, malformed, or failed benchmark. Output
+defaults to ignored `docs/evidence/local/benchmark/`; override it with
+`BENCHMARK_EVIDENCE_OUTPUT=/safe/local/path/result.json`. Local repository,
+home, and temporary paths are redacted by default.
+
+Use `BENCH_ITERATIONS` and `GO_BENCHTIME` to select an explicit bounded run:
+
+```bash
+BENCH_ITERATIONS=10000 GO_BENCHTIME=100x make benchmark-evidence
+```
+
+These captures are local synthetic microbenchmark evidence. A successful
+capture applies no numeric threshold and grants no production-throughput,
+cross-host, release, tag, or publication claim.
+
 For an end-to-end pressure smoke:
 
 ```bash

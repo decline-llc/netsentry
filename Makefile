@@ -14,7 +14,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build build-asan test test-unit test-integration test-e2e test-stress test-coverage deps-check supply-chain-check workflow-check docs-check shell-check python-check evidence-check knowledge-check config-check asan-test bench fuzz-parser fuzz-parser-long fuzz-uds-formatter fuzz-sustained gen-sanitized-corpus e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap pcap-evidence pcap-evidence-check dist release-artifacts docker-build release-gate rc-check lint clean quickstart help
+.PHONY: all build-c build-go build build-asan test test-unit test-integration test-e2e test-stress test-coverage deps-check supply-chain-check workflow-check docs-check shell-check python-check evidence-check knowledge-check config-check asan-test bench benchmark-evidence fuzz-parser fuzz-parser-long fuzz-uds-formatter fuzz-sustained gen-sanitized-corpus e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap pcap-evidence pcap-evidence-check dist release-artifacts docker-build release-gate rc-check lint clean quickstart help
 
 all: build
 
@@ -97,11 +97,11 @@ shell-check:
 
 ## python-check — run Python script syntax checks
 python-check:
-	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("capture/tests/validate_formatter_json.py", "scripts/check_supply_chain.py", "scripts/fuzz_evidence.py", "scripts/test_fuzz_evidence.py", "scripts/gen_test_pcap.py", "scripts/gen_sanitized_corpus.py", "scripts/sanitize_pcap.py", "scripts/test_sanitize_pcap.py", "scripts/pcap_evidence.py", "scripts/test_pcap_evidence.py", "scripts/release_gate.py", "scripts/test_release_gate.py", "scripts/sync_knowledge.py", "scripts/post_push_sync.py", "scripts/test_sync_knowledge.py", "scripts/test_post_push_sync.py", "scripts/fixtures/__init__.py", "scripts/fixtures/post_push_fixture.py"))]'
+	@python3 -c 'import ast, pathlib; [ast.parse(path.read_text(), filename=str(path)) for path in map(pathlib.Path, ("capture/tests/validate_formatter_json.py", "scripts/check_supply_chain.py", "scripts/benchmark_evidence.py", "scripts/test_benchmark_evidence.py", "scripts/fuzz_evidence.py", "scripts/test_fuzz_evidence.py", "scripts/gen_test_pcap.py", "scripts/gen_sanitized_corpus.py", "scripts/sanitize_pcap.py", "scripts/test_sanitize_pcap.py", "scripts/pcap_evidence.py", "scripts/test_pcap_evidence.py", "scripts/release_gate.py", "scripts/test_release_gate.py", "scripts/sync_knowledge.py", "scripts/post_push_sync.py", "scripts/test_sync_knowledge.py", "scripts/test_post_push_sync.py", "scripts/fixtures/__init__.py", "scripts/fixtures/post_push_fixture.py"))]'
 
 ## evidence-check — run sanitizer, PCAP evidence, and release-gate regressions
 evidence-check:
-	@python3 -m unittest scripts.test_fuzz_evidence scripts.test_sanitize_pcap scripts.test_pcap_evidence scripts.test_release_gate
+	@python3 -m unittest scripts.test_benchmark_evidence scripts.test_fuzz_evidence scripts.test_sanitize_pcap scripts.test_pcap_evidence scripts.test_release_gate
 
 ## knowledge-check — test deterministic, idempotent Obsidian knowledge extraction
 knowledge-check:
@@ -127,6 +127,13 @@ bench:
 	$(MAKE) -C capture bench BENCH_ITERATIONS=$(BENCH_ITERATIONS)
 	@mkdir -p $(GOCACHE)
 	cd $(GO_MODULE) && GOCACHE=$(GOCACHE) GOPROXY=$(GOPROXY) $(GO) test -run '^$$' -bench=. -benchtime=10s -benchmem ./...
+
+## benchmark-evidence — capture complete path-redacted local C/Go benchmark evidence
+benchmark-evidence:
+	@python3 scripts/benchmark_evidence.py capture --repo . \
+	    --c-iterations "$(BENCH_ITERATIONS)" \
+	    --go-benchtime "$(if $(GO_BENCHTIME),$(GO_BENCHTIME),10s)" \
+	    $(if $(BENCHMARK_EVIDENCE_OUTPUT),--output "$(BENCHMARK_EVIDENCE_OUTPUT)",)
 
 ## fuzz-parser — run deterministic ASan fuzz smoke for the C frame parser
 fuzz-parser:
