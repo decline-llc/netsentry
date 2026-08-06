@@ -2,9 +2,9 @@
   "task": "r90-73-versioned-local-benchmark-evidence-capture",
   "timestamp": "2026-08-06T00:47:16-07:00",
   "branch": "main",
-  "remote_baseline": "b20845a8b7b4584e9cfa49aadc5ee663c17a2fe2",
+  "remote_baseline": "e9fc0dc39fb08f4a5d667732bf594bd3edeb7120",
   "risk_level": "Medium",
-  "current_checkpoint": "validated_pre_delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills plus the complete active roadmap before selection",
     "Fetched origin/main and verified clean local and remote equality at b20845a8b7b4584e9cfa49aadc5ee663c17a2fe2",
@@ -22,15 +22,16 @@
     "Verified the temporary real artifact recorded the dirty implementation tree and contained no unredacted home or temporary path",
     "Passed shell, Python, docs, 34-test evidence, 33-test knowledge, complete native uncached race, and diff checks",
     "Parsed all 88 task states and verified all 78 roadmap rows match exactly one complete Definition",
-    "Confirmed no numeric result was committed and no threshold, runtime, private input, production claim, release, or later increment was started"
+    "Confirmed no numeric result was committed and no threshold, runtime, private input, production claim, release, or later increment was started",
+    "Committed the validated exact eight-path feature at e9fc0dc39fb08f4a5d667732bf594bd3edeb7120",
+    "Pushed without force and recovered the immediate port-22 verification-fetch disconnect through a non-mutating SSH-over-443 fetch",
+    "Verified fetched origin/main and HEAD equal the exact feature SHA and passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range b20845a8b7b4584e9cfa49aadc5ee663c17a2fe2..e9fc0dc39fb08f4a5d667732bf594bd3edeb7120 idempotently to the sole local Vault",
+    "Verified the exact iteration note, full-index row, MOC link, and reconciled stable MOC, Makefile, and testing authority",
+    "Completed R90-73 and left R90-74 ready without starting it"
   ],
-  "in_progress": [
-    "Complete pre-commit review and deliver the validated R90-73 feature"
-  ],
-  "todo": [
-    "Commit, push, fetch-verify, synchronize the exact Vault range, and record delivery",
-    "Refresh the future queue without starting R90-74"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "No C or Go benchmark fixture, measured boundary, runtime, storage, configuration, dependency, or release-gate semantic change",
     "No external corpus, private operator input, hostname, username, credential, or sensitive absolute path",
@@ -39,20 +40,19 @@
     "Do not start R90-74, R90-75, or R90-59"
   ],
   "remaining_risks": [
-    "Feature delivery and exact remote or Vault evidence remain pending",
-    "R90-74 remains planned behind this increment",
+    "R90-74 is ready but remains unstarted",
     "R90-75 and R90-59 remain blocked on their recorded external conditions"
   ],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "post_fetch_knowledge_check": "pending",
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false,
-    "vault_stable_authority_reconciled": false,
-    "vault_idempotent_replay_verified": false
+    "commit": "e9fc0dc39fb08f4a5d667732bf594bd3edeb7120",
+    "origin_main_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "b20845a8b7b4584e9cfa49aadc5ee663c17a2fe2..e9fc0dc39fb08f4a5d667732bf594bd3edeb7120",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true
   },
-  "resume_instructions": "Resume R90-73 at the validated pre-delivery checkpoint. Review and stage only the eight intended paths, rerun any check affected by further edits, commit and push the feature, fetch-verify origin/main, synchronize the exact full-SHA range to the sole local Vault, then record the docs-only closure. Do not repeat implementation or start R90-74, R90-75, or R90-59."
+  "resume_instructions": "R90-73 is complete at e9fc0dc39fb08f4a5d667732bf594bd3edeb7120; do not repeat implementation, validation, feature push, or feature-range Vault synchronization. On the next $netsentry-next trigger, fetch and verify origin/main plus this docs-only closure and its exact Vault evidence before selecting work. R90-74 is next ready; R90-75 and R90-59 remain blocked on their recorded external conditions."
 }

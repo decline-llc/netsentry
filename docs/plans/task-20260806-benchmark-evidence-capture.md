@@ -150,6 +150,30 @@ local-synthetic classification without changing any measured benchmark.
 - No benchmark execution, delivery, authority, or evidence-classification
   deviation remains unresolved.
 
+## Delivery Results
+
+- Feature commit:
+  `e9fc0dc39fb08f4a5d667732bf594bd3edeb7120` (`feat: capture local
+  benchmark evidence`). Its exact eight paths contain only the versioned
+  capture/validation API, 14 focused tests, root orchestration, current docs,
+  plan/state, and roadmap checkpoint.
+- The feature was pushed without force. The immediate verification fetch
+  disconnected on GitHub SSH port 22 after push success; no push retry or Vault
+  write occurred from that ambiguous fetch. A non-mutating SSH-over-443 fetch
+  then verified both `HEAD` and fetched `origin/main` at the exact feature SHA,
+  and the post-fetch 33-test knowledge gate passed.
+- Exact range
+  `b20845a8b7b4584e9cfa49aadc5ee663c17a2fe2..e9fc0dc39fb08f4a5d667732bf594bd3edeb7120`
+  was synchronized repeatedly with identical generated-note/index/MOC hashes
+  to the sole discovered local Vault.
+- The generated iteration note, full index, MOC link, and manually reconciled
+  stable MOC, Makefile/build, and testing/release notes identify R90-73 as
+  complete while retaining R90-74 as unstarted same-host observation work.
+  Replay of the same exact range preserved those stable edits and hashes.
+- R90-74 is ready but was not started. R90-75 remains blocked on comparable
+  environment evidence plus explicit product/SLO scope; R90-59 remains blocked
+  on exact publication authority.
+
 ## Authority Boundaries
 
 This trigger authorizes only R90-73 benchmark-evidence tooling, tests,
