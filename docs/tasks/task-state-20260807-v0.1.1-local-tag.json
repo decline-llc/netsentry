@@ -1,0 +1,73 @@
+{
+  "task": "r90-59a-authorized-local-v0.1.1-tag",
+  "timestamp": "2026-08-07T01:57:16-07:00",
+  "branch": "main",
+  "remote_baseline": "c19067172f1c626a59ba11b3201b276092721192",
+  "risk_level": "High",
+  "current_checkpoint": "validated_local_tag_pre_delivery",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap workflows and reconciled the current roadmap",
+    "Fetched origin/main and tags and verified clean local and remote equality at c19067172f1c626a59ba11b3201b276092721192",
+    "Verified the latest feature and closure Git plus exact Vault note index MOC and stable authority",
+    "Parsed all 89 prior task states and verified all 78 roadmap rows match one Definition",
+    "Recorded R90-75 as pending evidence and non-blocking without inventing data or an SLO",
+    "Matched the user authorization to exact tag v0.1.1 and candidate 78cd78574e03c8f73ff68248eed2c409d6bca406",
+    "Confirmed both tag push workflows would publish unauthorized GitHub Release and GHCR outputs",
+    "Selected the bounded local signed tag subincrement while preserving the remote publication block",
+    "Persisted scope non-goals risks evidence mapping validation authority boundaries and stop conditions",
+    "Validated the exact clean detached candidate and reviewed its changelog and release evidence hashes",
+    "Passed full VERSION 0.1.1 RC with 78.3 percent Go coverage ASan fuzz E2E archive Docker image and runtime health smoke",
+    "Passed the v0.1.1 release gate against the checked-in reviewed evidence",
+    "Recorded the fresh 9760151 byte archive digest fd91e8f3afd7fbbfc5098a8a12c8a13285471b71d176ba2169d63f487509e07e as distinct from R90-58 history",
+    "Created signed annotated local tag object f1a38ecb82b9c63e8411f3df040bdea84e985dd8",
+    "Verified the SSH signature and exact peeled candidate target",
+    "Reverified that origin has no v0.1.1 tag and no publication workflow was triggered"
+  ],
+  "in_progress": [
+    "Deliver the repository plan state and roadmap record without pushing the tag"
+  ],
+  "todo": [
+    "Reconcile repository and Vault evidence without pushing the tag or publishing outputs"
+  ],
+  "authority_boundaries": [
+    "Only create local signed annotated tag v0.1.1 at exact candidate 78cd78574e03c8f73ff68248eed2c409d6bca406",
+    "Do not push any tag create a GitHub Release publish GHCR or dispatch a workflow",
+    "Do not modify the candidate workflows runtime or release policy",
+    "Do not invent comparable benchmark evidence infer an SLO budget or start R90-75"
+  ],
+  "remaining_risks": [
+    "Candidate changelog content remains under Unreleased and needs explicit approval before remote publication",
+    "Pushing v0.1.1 would automatically trigger both prohibited publication workflows",
+    "R90-75 remains blocked pending comparable evidence and an explicit product SLO scope"
+  ],
+  "tag": {
+    "name": "v0.1.1",
+    "candidate": "78cd78574e03c8f73ff68248eed2c409d6bca406",
+    "object": "f1a38ecb82b9c63e8411f3df040bdea84e985dd8",
+    "local_created": true,
+    "signed": true,
+    "signature_verified": true,
+    "remote_present": false,
+    "pushed": false
+  },
+  "publication": {
+    "github_release_authorized": false,
+    "github_release_created": false,
+    "ghcr_authorized": false,
+    "ghcr_published": false,
+    "workflow_dispatched": false
+  },
+  "validation": {
+    "candidate_rc": "pass",
+    "go_statement_coverage": "78.3%",
+    "e2e_smoke": "pass",
+    "docker_image_smoke": "pass",
+    "docker_runtime_health_smoke": "pass",
+    "release_gate": "pass",
+    "candidate_changelog_has_v0.1.1_heading": false,
+    "fresh_artifact_bytes": 9760151,
+    "fresh_artifact_sha256": "fd91e8f3afd7fbbfc5098a8a12c8a13285471b71d176ba2169d63f487509e07e",
+    "historical_artifact_match": false
+  },
+  "resume_instructions": "R90-59a has a validated signed local v0.1.1 tag at the exact candidate. Deliver only the plan state and roadmap record, then verify branch and Vault evidence. Never push the tag because current tag triggers publish both GitHub Release and GHCR. R90-59 stays blocked pending changelog approval, artifact reconciliation, and explicit remote publication authority. Do not start R90-75 or infer evidence or an SLO."
+}

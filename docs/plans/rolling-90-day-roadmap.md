@@ -120,7 +120,8 @@
 | R90-56 | Aug 22–Sep 18 | Complete early | Preserve corrupt SQLite sidecars during preflight. | R90-55 | Deterministic primary and historical fixtures with corrupt or inconsistent WAL/SHM state fail read-only preflight clearly and preserve the database plus sidecar bytes; healthy active-WAL reads remain compatible. |
 | R90-57 | Forecast Sep 19–Oct 2; waived | Complete early | Define restart-free emergency recovery semantics. | R90-56 | An operator-triggered, fail-closed state machine defines probe, recovery, retry, concurrency, and evidence-preservation boundaries without duplicate writes or automatic cleanup; implementation remains a separate increment. |
 | R90-58 | Oct 3–21 | Complete early | Refresh the v0.1.1 candidate decision package. | R90-56 | Version, current candidate commit, gates, artifacts, checksums, platform, and hold decision are reconciled from fresh evidence without tagging or publishing. |
-| R90-59 | Oct 22–28 | Blocked | Execute the v0.1.1 publication gate. | R90-58; explicit publication authorization | Only an explicitly authorized version and commit may be tagged; GitHub Release and GHCR results must be verified directly, while absence of authority preserves the hold without mutation. |
+| R90-59a | Aug 7 | Validated; delivery pending | Create the authorized local v0.1.1 tag without remote publication. | R90-58; exact tag-only authorization | A signed annotated local `v0.1.1` tag resolves exactly to the authorized candidate after candidate changelog/evidence review and smoke validation; the remote tag remains absent and no workflow, GitHub Release, or GHCR action occurs. |
+| R90-59 | Oct 22–28 | Blocked on remote-publication authority | Execute the remote v0.1.1 publication gate. | R90-59a; explicit tag-push, GitHub Release, and GHCR authorization | Only an explicitly authorized tag may be pushed; GitHub Release and GHCR results must be verified directly, while absence of the remaining authority preserves the local-only tag without external mutation. |
 | R90-60 | Forecast Aug 1–Oct 30; waived | Complete early | Implement operator-triggered restart-free storage recovery. | R90-57 | One authenticated request serializes recovery against store lifecycle operations, preflights durable input before the writable boundary, replays or probes idempotently, exposes bounded health/audit outcomes, and leaves failures in sticky emergency without automatic cleanup or retry. |
 | R90-61 | Aug 2 | Complete | Audit post-recovery delivery and restore the forward queue. | R90-60 | A dated audit reconciles recent commits, plans/states, fetched remote and Vault evidence, records the committed-prefix test gap, and restores a complete evidence-grounded queue without runtime or publication changes. |
 | R90-62 | Aug 3–Sep 4 | Complete early | Prove committed-prefix multi-shard recovery retry. | R90-61 | Deterministic direct regressions cancel or fail recovery after an earlier shard commit, retain the complete log and emergency state, and prove explicit retry completes every event once without aggregate inflation. |
@@ -136,7 +137,7 @@
 | R90-72 | Oct 3–31 | Complete early | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
 | R90-73 | Aug 5–Sep 4 | Complete early | Add versioned local benchmark evidence capture. | R90-72 | One directly tested command captures every established C/Go benchmark with exact Git/tree state, environment/toolchain fingerprint, parameters, raw output, parsed metrics, path redaction, and local-synthetic classification without applying a threshold. |
 | R90-74 | Sep 5–Oct 2 | Complete early | Record a repeated single-host benchmark baseline. | R90-73 | At least five uncached complete-surface samples from one clean pinned commit and unchanged environment retain every raw result plus median/IQR/variation summaries as observation-only local evidence. |
-| R90-75 | Oct 3–31 | Blocked | Decide portable performance-budget scope. | R90-74; comparable-environment evidence; explicit budget scope | Matched evidence and product/SLO authority decide whether a budget can be portable, same-host-only, or observation-only; current single-host data cannot activate a numeric gate. |
+| R90-75 | Oct 3–31 | Blocked / pending evidence; non-blocking | Decide portable performance-budget scope. | R90-74; comparable-environment evidence; explicit budget scope | Matched evidence and product/SLO authority decide whether a budget can be portable, same-host-only, or observation-only; current single-host data cannot activate a numeric gate or prevent unrelated dependency-ready roadmap work. |
 
 ## R90-01 Definition
 
@@ -1136,20 +1137,59 @@
 
 ## R90-59 Definition
 
-- **Goal:** execute a separately authorized v0.1.1 publication decision and
-  verify immutable external outcomes.
+- **Goal:** execute separately authorized remote v0.1.1 publication and verify
+  immutable external outcomes after the local tag boundary is complete.
 - **Risk:** tagging the wrong commit or inferring workflow/registry success can
   create an unrecoverable public release mismatch.
-- **Required validation:** exact authorization/version/SHA match, annotated tag
-  and signature checks, GitHub Release assets/checksums, GHCR digest/platform,
-  workflow result, documentation, remote, and Vault evidence.
-- **Blocker evidence:** the v0.1.1 decision package records publication status
-  as hold and states that tag, GitHub Release, and GHCR publication are not
-  authorized.
-- **Unblock condition:** the user explicitly authorizes the exact version and
-  candidate commit after R90-58 evidence is complete.
+- **Required validation:** exact remaining authorization/version/SHA match,
+  local tag and signature revalidation before push, GitHub Release
+  assets/checksums, GHCR digest/platform, workflow result, documentation,
+  remote, and Vault evidence.
+- **Blocker evidence:** On Aug 7 the user authorized only creation of local tag
+  `v0.1.1` at candidate
+  `78cd78574e03c8f73ff68248eed2c409d6bca406`; GitHub Release and GHCR remain
+  unauthorized. The current tag-push workflows would trigger both outputs.
+- **Unblock condition:** after changelog and smoke review, the user explicitly
+  authorizes pushing the exact tag and the tag-triggered GitHub Release and
+  GHCR actions.
 - **Stop condition:** remain blocked without explicit publication authority;
   stop on any SHA, tag, digest, platform, workflow, or artifact ambiguity.
+
+## R90-59a Definition
+
+- **Goal:** create an authenticated local release reference for the exact
+  authorized v0.1.1 candidate without crossing the remote publication boundary.
+- **Risk:** pushing the tag would immediately trigger both currently
+  unauthorized publication workflows, while an unsigned or mistargeted local
+  tag would not provide an acceptable immutable release reference.
+- **Required validation:** exact user authorization/version/SHA reconciliation;
+  candidate changelog and release-evidence review; isolated clean candidate RC,
+  E2E/archive smoke, and release gate; annotated tag signature and peeled-target
+  verification; direct remote-tag absence; documentation, knowledge, remote
+  branch, and Vault checks.
+- **Stop condition:** stop on candidate, changelog, smoke, tag, or signature
+  ambiguity; inability to keep the tag local; any request to push a tag,
+  dispatch a workflow, create a GitHub Release, publish GHCR, change the
+  candidate/workflows, access private data, or start R90-75.
+- **Selected plan:**
+  [`task-20260807-v0.1.1-local-tag.md`](task-20260807-v0.1.1-local-tag.md),
+  from clean fetched baseline
+  `c19067172f1c626a59ba11b3201b276092721192`. The tag remains local because
+  both checked-in tag-push workflows perform external publication.
+
+### R90-59a Publication Boundary Observation
+
+- **Changelog:** Candidate `CHANGELOG.md` has no versioned `0.1.1` heading;
+  the release content remains under `[Unreleased]`. This does not alter the
+  explicitly authorized local tag target, but remote publication remains
+  blocked pending the user's changelog approval.
+- **Fresh artifact:** The accepted fresh smoke build produced a 9,760,151-byte
+  archive with SHA-256 `fd91e8f3...`, distinct from the historical R90-58
+  9,760,241-byte archive with SHA-256 `c68e09df...`. The artifacts are not
+  treated as equivalent; later publication must reconcile its exact output.
+- **Tag:** Local signed annotated tag object `f1a38ecb82b9c63e8411f3df040bdea84e985dd8`
+  peels exactly to the authorized candidate and verifies with the expected SSH
+  signer. The remote tag remains absent, so neither publication workflow ran.
 
 ## R90-60 Definition
 
@@ -1994,9 +2034,11 @@
 
 `R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`;
 `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60 → R90-61 → R90-62 → R90-63 → R90-64 → R90-65 → R90-66 → R90-67 → R90-68 → R90-69 → R90-70 → R90-71 → R90-72 → R90-73 → R90-74 → R90-75`;
-`R90-56 → R90-58 → R90-59`. R90-75 is blocked on comparable-environment
-evidence plus explicit product/SLO budget scope, and R90-59 is blocked on
-explicit publication authorization. R90-04a is an evidence-independent quality
+`R90-56 → R90-58 → R90-59a → R90-59`. R90-75 is blocked on
+comparable-environment evidence plus explicit product/SLO budget scope but is
+not a dependency for unrelated future work. R90-59 is blocked on explicit
+remote tag-push, GitHub Release, and GHCR authorization after R90-59a. R90-04a
+is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
 PCAP exceptions remain immutable historical delivery evidence. The later global
 PCAP waiver supersedes their restrictions for current and future release-gate
@@ -2444,3 +2486,19 @@ full index, MOC link, and reconciled stable MOC/Makefile/testing authority are
 verified. R90-75 remains blocked on comparable-environment evidence plus an
 explicit product/SLO budget decision; R90-59 remains blocked on exact
 publication authority. No next increment is dependency-ready.
+The Aug 7 trigger keeps R90-75 blocked as pending evidence and explicitly
+non-blocking; no comparable-environment data or product/SLO budget is inferred.
+The user authorized only a local `v0.1.1` tag at exact candidate
+`78cd78574e03c8f73ff68248eed2c409d6bca406` and withheld GitHub Release and
+GHCR authority. Direct workflow review proves that pushing a `v*` tag would
+trigger both external publications, so R90-59a is selected as a bounded local
+signed-tag increment. R90-59 remains blocked on later tag-push and publication
+authority; R90-75 is not started.
+The exact candidate then passed the full v0.1.1 RC and release gate, including
+native race, 78.3% coverage, ASan fuzz, E2E, archive, Docker image, and runtime
+health smoke. Signed annotated local tag `v0.1.1` was created and verified at
+the exact candidate; the remote tag remains absent. Candidate changelog review
+found no `0.1.1` heading, and the fresh archive digest differs from R90-58, so
+both facts remain explicit R90-59 remote-publication blockers. R90-59a awaits
+repository delivery only; no workflow, GitHub Release, GHCR, or R90-75 work
+started.
