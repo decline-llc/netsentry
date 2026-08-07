@@ -120,7 +120,7 @@
 | R90-56 | Aug 22–Sep 18 | Complete early | Preserve corrupt SQLite sidecars during preflight. | R90-55 | Deterministic primary and historical fixtures with corrupt or inconsistent WAL/SHM state fail read-only preflight clearly and preserve the database plus sidecar bytes; healthy active-WAL reads remain compatible. |
 | R90-57 | Forecast Sep 19–Oct 2; waived | Complete early | Define restart-free emergency recovery semantics. | R90-56 | An operator-triggered, fail-closed state machine defines probe, recovery, retry, concurrency, and evidence-preservation boundaries without duplicate writes or automatic cleanup; implementation remains a separate increment. |
 | R90-58 | Oct 3–21 | Complete early | Refresh the v0.1.1 candidate decision package. | R90-56 | Version, current candidate commit, gates, artifacts, checksums, platform, and hold decision are reconciled from fresh evidence without tagging or publishing. |
-| R90-59a | Aug 7 | Validated; delivery pending | Create the authorized local v0.1.1 tag without remote publication. | R90-58; exact tag-only authorization | A signed annotated local `v0.1.1` tag resolves exactly to the authorized candidate after candidate changelog/evidence review and smoke validation; the remote tag remains absent and no workflow, GitHub Release, or GHCR action occurs. |
+| R90-59a | Aug 7 | Complete | Create the authorized local v0.1.1 tag without remote publication. | R90-58; exact tag-only authorization | A signed annotated local `v0.1.1` tag resolves exactly to the authorized candidate after candidate changelog/evidence review and smoke validation; the remote tag remains absent and no workflow, GitHub Release, or GHCR action occurs. |
 | R90-59 | Oct 22–28 | Blocked on remote-publication authority | Execute the remote v0.1.1 publication gate. | R90-59a; explicit tag-push, GitHub Release, and GHCR authorization | Only an explicitly authorized tag may be pushed; GitHub Release and GHCR results must be verified directly, while absence of the remaining authority preserves the local-only tag without external mutation. |
 | R90-60 | Forecast Aug 1–Oct 30; waived | Complete early | Implement operator-triggered restart-free storage recovery. | R90-57 | One authenticated request serializes recovery against store lifecycle operations, preflights durable input before the writable boundary, replays or probes idempotently, exposes bounded health/audit outcomes, and leaves failures in sticky emergency without automatic cleanup or retry. |
 | R90-61 | Aug 2 | Complete | Audit post-recovery delivery and restore the forward queue. | R90-60 | A dated audit reconciles recent commits, plans/states, fetched remote and Vault evidence, records the committed-prefix test gap, and restores a complete evidence-grounded queue without runtime or publication changes. |
@@ -2502,3 +2502,13 @@ found no `0.1.1` heading, and the fresh archive digest differs from R90-58, so
 both facts remain explicit R90-59 remote-publication blockers. R90-59a awaits
 repository delivery only; no workflow, GitHub Release, GHCR, or R90-75 work
 started.
+R90-59a completed at branch evidence commit
+`afb435ce8c4e708c8b7b52c5b609d1f07e232891`: `main` was pushed with
+`--no-follow-tags`, fetched equal to `origin/main`, and passed the post-fetch
+knowledge gate while direct remote lookup continued to show no `v0.1.1` tag.
+Exact branch range
+`c19067172f1c626a59ba11b3201b276092721192..afb435ce8c4e708c8b7b52c5b609d1f07e232891`
+was synchronized idempotently to the sole local Vault; its note, full index,
+MOC link, and stable release authority are verified. R90-59 remains blocked on
+the recorded changelog, artifact, and explicit remote-publication conditions.
+R90-75 remains pending-evidence and non-blocking. No next increment is ready.

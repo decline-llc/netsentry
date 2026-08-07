@@ -2,9 +2,9 @@
   "task": "r90-59a-authorized-local-v0.1.1-tag",
   "timestamp": "2026-08-07T01:57:16-07:00",
   "branch": "main",
-  "remote_baseline": "c19067172f1c626a59ba11b3201b276092721192",
+  "remote_baseline": "afb435ce8c4e708c8b7b52c5b609d1f07e232891",
   "risk_level": "High",
-  "current_checkpoint": "validated_local_tag_pre_delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap workflows and reconciled the current roadmap",
     "Fetched origin/main and tags and verified clean local and remote equality at c19067172f1c626a59ba11b3201b276092721192",
@@ -21,14 +21,17 @@
     "Recorded the fresh 9760151 byte archive digest fd91e8f3afd7fbbfc5098a8a12c8a13285471b71d176ba2169d63f487509e07e as distinct from R90-58 history",
     "Created signed annotated local tag object f1a38ecb82b9c63e8411f3df040bdea84e985dd8",
     "Verified the SSH signature and exact peeled candidate target",
-    "Reverified that origin has no v0.1.1 tag and no publication workflow was triggered"
+    "Reverified that origin has no v0.1.1 tag and no publication workflow was triggered",
+    "Committed the exact three-path documentation feature at afb435ce8c4e708c8b7b52c5b609d1f07e232891",
+    "Pushed only main with no-follow-tags and an explicit main refspec",
+    "Fetched origin/main equal to the feature SHA while the remote tag remained absent",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact branch range c19067172f1c626a59ba11b3201b276092721192..afb435ce8c4e708c8b7b52c5b609d1f07e232891 to the sole local Vault",
+    "Verified idempotent note index MOC links and reconciled stable release authority",
+    "Completed R90-59a without tag push GitHub Release GHCR workflow dispatch or R90-75 work"
   ],
-  "in_progress": [
-    "Deliver the repository plan state and roadmap record without pushing the tag"
-  ],
-  "todo": [
-    "Reconcile repository and Vault evidence without pushing the tag or publishing outputs"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Only create local signed annotated tag v0.1.1 at exact candidate 78cd78574e03c8f73ff68248eed2c409d6bca406",
     "Do not push any tag create a GitHub Release publish GHCR or dispatch a workflow",
@@ -57,6 +60,18 @@
     "ghcr_published": false,
     "workflow_dispatched": false
   },
+  "delivery": {
+    "commit": "afb435ce8c4e708c8b7b52c5b609d1f07e232891",
+    "origin_main_verified": true,
+    "branch_push_no_follow_tags": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "c19067172f1c626a59ba11b3201b276092721192..afb435ce8c4e708c8b7b52c5b609d1f07e232891",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_release_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true
+  },
   "validation": {
     "candidate_rc": "pass",
     "go_statement_coverage": "78.3%",
@@ -69,5 +84,5 @@
     "fresh_artifact_sha256": "fd91e8f3afd7fbbfc5098a8a12c8a13285471b71d176ba2169d63f487509e07e",
     "historical_artifact_match": false
   },
-  "resume_instructions": "R90-59a has a validated signed local v0.1.1 tag at the exact candidate. Deliver only the plan state and roadmap record, then verify branch and Vault evidence. Never push the tag because current tag triggers publish both GitHub Release and GHCR. R90-59 stays blocked pending changelog approval, artifact reconciliation, and explicit remote publication authority. Do not start R90-75 or infer evidence or an SLO."
+  "resume_instructions": "R90-59a is complete with signed local tag object f1a38ecb82b9c63e8411f3df040bdea84e985dd8 at exact candidate 78cd78574e03c8f73ff68248eed2c409d6bca406 and feature delivery afb435ce8c4e708c8b7b52c5b609d1f07e232891. Do not repeat candidate validation tag creation branch push or feature-range Vault sync. Never push the tag because current triggers publish both GitHub Release and GHCR. R90-59 stays blocked pending changelog approval exact fresh-artifact reconciliation and explicit remote publication authority. R90-75 remains pending-evidence and non-blocking; do not infer evidence or an SLO."
 }
