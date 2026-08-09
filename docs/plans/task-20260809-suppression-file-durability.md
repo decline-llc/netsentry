@@ -171,6 +171,29 @@ leave the canonical file and filter describing different suppression sets.
   publication reviews pass. No dependency, suppression schema, configuration,
   workflow, release artifact, or external mutation was added.
 
+## Delivery Results
+
+- Feature commit:
+  `8c621a926ac7ecbd1d730884a1afbc1ebb5e101e` (`fix: harden suppression file
+  replacement durability`). It contains exactly the eleven validated source,
+  test, documentation, roadmap, plan, and task-state paths.
+- `main` was pushed without force or tags, then a fresh fetch verified
+  `HEAD == origin/main == 8c621a926ac7ecbd1d730884a1afbc1ebb5e101e`
+  with fast-forward ancestry from the recorded baseline. The post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `17a5809f83959714f8801fdfa7e613520e06dd14..8c621a926ac7ecbd1d730884a1afbc1ebb5e101e`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC/config/suppression/API prose left stale by deterministic
+  synchronization was reconciled to the delivered pre-rename preservation and
+  post-rename committed-but-durability-uncertain boundary without rewriting
+  immutable iteration notes. Replaying the identical feature range preserved
+  the exact reconciled Vault tree hash
+  `42df9837208932ea74aca96153e394380b617fca0e4ad6ad2081326868c73268`.
+- R90-79 is complete. R90-80 is ready but unstarted; R90-59 and R90-75 retain
+  their recorded external blockers.
+
 ## Authority Boundaries
 
 This trigger authorizes only R90-79 suppression-file replacement durability,

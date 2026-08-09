@@ -141,8 +141,8 @@
 | R90-76 | Aug 9 | Complete | Audit post-tag delivery and restore the forward queue. | R90-59a; R90-74 | A dated audit reconciles the local-tag feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current code/tests, and blocked authorities, then restores only evidence-grounded local work without runtime or publication changes. |
 | R90-77 | Aug 10–Sep 4 | Complete early | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
 | R90-78 | Sep 5–25 | Complete early | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
-| R90-79 | Sep 26–Oct 16 | Validated; delivery pending | Harden suppression-file replacement durability. | R90-78 | Suppression replacement directly proves the same lifecycle boundaries while retaining serialized mutation, exact prior-file preservation before rename, and active-filter agreement with every reported outcome. |
-| R90-80 | Oct 17–31 | Planned | Audit management-plane persistence and future compatibility scope. | R90-79 | A dated audit reconciles the rule/suppression transaction and durability sequence, current public claims, Git/task-state/remote/Vault evidence, and classifies remaining migration or product work without silently selecting a compatibility policy. |
+| R90-79 | Sep 26–Oct 16 | Complete early | Harden suppression-file replacement durability. | R90-78 | Suppression replacement directly proves the same lifecycle boundaries while retaining serialized mutation, exact prior-file preservation before rename, and active-filter agreement with every reported outcome. |
+| R90-80 | Oct 17–31 | Ready | Audit management-plane persistence and future compatibility scope. | R90-79 | A dated audit reconciles the rule/suppression transaction and durability sequence, current public claims, Git/task-state/remote/Vault evidence, and classifies remaining migration or product work without silently selecting a compatibility policy. |
 
 ## R90-01 Definition
 
@@ -2738,3 +2738,12 @@ complete selection fields, and formatting, exact eleven-path scope,
 credential/sensitive-path, dependency, schema, config, workflow, release, and
 publication reviews pass. R90-79 is validated and awaits only feature delivery;
 R90-80 remains unstarted.
+R90-79 completed early at
+`8c621a926ac7ecbd1d730884a1afbc1ebb5e101e`: its exact eleven-path feature was
+pushed without force or tags, fetched equal to `origin/main`, and passed the
+post-fetch 33-test knowledge gate. Exact range
+`17a5809f83959714f8801fdfa7e613520e06dd14..8c621a926ac7ecbd1d730884a1afbc1ebb5e101e`
+was synchronized idempotently to the sole local Vault. Its iteration note,
+full-index row, MOC link, and reconciled stable MOC/config/suppression/API
+authority are verified. R90-80 is ready but was not started; R90-59 and R90-75
+retain their external blockers.

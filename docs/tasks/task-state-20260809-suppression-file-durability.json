@@ -2,9 +2,9 @@
   "task": "r90-79-suppression-file-replacement-durability",
   "timestamp": "2026-08-09T06:05:06-07:00",
   "branch": "main",
-  "remote_baseline": "17a5809f83959714f8801fdfa7e613520e06dd14",
+  "remote_baseline": "8c621a926ac7ecbd1d730884a1afbc1ebb5e101e",
   "risk_level": "Medium",
-  "current_checkpoint": "validated_pre_delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
     "Fetched origin/main and verified clean local and remote equality at 17a5809f83959714f8801fdfa7e613520e06dd14",
@@ -31,15 +31,18 @@
     "Passed make config-check make docs-check and the 33-test make knowledge-check",
     "Reconciled current API architecture development changelog roadmap plan and task-state claims without starting R90-80",
     "Parsed all 94 task-state JSON files and verified all 84 roadmap rows match one Definition with complete unfinished-item fields",
-    "Passed gofmt git diff check exact eleven-path scope credential sensitive-path dependency schema config workflow release and publication review"
+    "Passed gofmt git diff check exact eleven-path scope credential sensitive-path dependency schema config workflow release and publication review",
+    "Committed the validated exact eleven-path feature at 8c621a926ac7ecbd1d730884a1afbc1ebb5e101e",
+    "Pushed main without force and without tags then fetched HEAD equal to origin/main at the feature commit with fast-forward ancestry",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range 17a5809f83959714f8801fdfa7e613520e06dd14..8c621a926ac7ecbd1d730884a1afbc1ebb5e101e to the sole local Vault",
+    "Verified the generated iteration note full-index row and MOC link",
+    "Reconciled stale stable MOC config suppression and API prose without rewriting immutable iteration notes",
+    "Replayed the identical feature range and verified the reconciled Vault tree hash remained 42df9837208932ea74aca96153e394380b617fca0e4ad6ad2081326868c73268",
+    "Completed R90-79 and left R90-80 ready without starting it"
   ],
-  "in_progress": [
-    "Deliver the validated exact R90-79 increment"
-  ],
-  "todo": [
-    "Commit push fetch-verify and synchronize the exact range to the sole local Vault",
-    "Record verified delivery facts in a docs-only closure"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Only R90-79 suppression-file durability phase classification direct tests and current documentation",
     "No suppression schema matching reload authentication or success-payload changes",
@@ -49,8 +52,22 @@
   "remaining_risks": [
     "Post-rename durability failure must report a committed outcome while active rules filter and canonical disk agree",
     "Every pre-rename persistence fault must preserve exact prior bytes and active state and remove the temporary file",
-    "R90-80 remains planned behind R90-79",
+    "R90-80 is ready but remains unstarted",
     "R90-59 and R90-75 remain externally blocked"
   ],
-  "resume_instructions": "Resume R90-79 from clean fetched baseline 17a5809f83959714f8801fdfa7e613520e06dd14 using docs/plans/task-20260809-suppression-file-durability.md. Do not start R90-80 R90-59 or R90-75."
+  "delivery": {
+    "commit": "8c621a926ac7ecbd1d730884a1afbc1ebb5e101e",
+    "origin_main_verified": true,
+    "branch_push_no_follow_tags": true,
+    "fast_forward_ancestry_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "17a5809f83959714f8801fdfa7e613520e06dd14..8c621a926ac7ecbd1d730884a1afbc1ebb5e101e",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true,
+    "vault_reconciled_tree_hash": "42df9837208932ea74aca96153e394380b617fca0e4ad6ad2081326868c73268"
+  },
+  "resume_instructions": "R90-79 is complete at 8c621a926ac7ecbd1d730884a1afbc1ebb5e101e; do not repeat its implementation validation feature delivery or feature-range Vault synchronization. On the next netsentry-next trigger fetch and verify this docs-only closure and its exact Vault evidence before selecting R90-80. R90-59 and R90-75 remain externally blocked."
 }
