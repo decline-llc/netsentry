@@ -171,6 +171,30 @@ portable crash guarantee.
   and publication reviews pass. No dependency, rule schema, configuration,
   workflow, release artifact, or external mutation was added.
 
+## Delivery Results
+
+- Feature commit:
+  `8d053d1d3c4e390151c224aa8f86852312506eb8` (`fix: harden rule file
+  replacement durability`). It contains exactly the eleven validated source,
+  test, documentation, roadmap, plan, and task-state paths.
+- The origin reflog records the feature as an update by push, and a fresh fetch
+  verified `HEAD == origin/main == 8d053d1d3c4e390151c224aa8f86852312506eb8`
+  with fast-forward ancestry from the recorded baseline. The post-fetch
+  33-test knowledge gate passed; direct remote lookup still finds no
+  `v0.1.1` tag.
+- Exact range
+  `4b5b199f37531e69c08cb7fa7b1d814f83047a37..8d053d1d3c4e390151c224aa8f86852312506eb8`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC/rule/config/API prose left by deterministic synchronization was
+  reconciled to the delivered pre-rename preservation and post-rename
+  committed-but-durability-uncertain boundaries without rewriting immutable
+  iteration notes. Replaying the identical feature range preserved the exact
+  reconciled Vault tree hash
+  `935666c74019fd6a404d2d930ced262c05e825548fa9c7d160bcfdf97a221e3c`.
+- R90-78 is complete. R90-79 is ready but unstarted; R90-59 and R90-75 retain
+  their recorded external blockers.
+
 ## Authority Boundaries
 
 This trigger authorizes only R90-78 rule-file replacement durability,
