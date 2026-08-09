@@ -143,6 +143,8 @@
 | R90-78 | Sep 5–25 | Complete early | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
 | R90-79 | Sep 26–Oct 16 | Complete early | Harden suppression-file replacement durability. | R90-78 | Suppression replacement directly proves the same lifecycle boundaries while retaining serialized mutation, exact prior-file preservation before rename, and active-filter agreement with every reported outcome. |
 | R90-80 | Oct 17–31 | Complete early | Audit management-plane persistence and future compatibility scope. | R90-79 | A dated audit reconciles the rule/suppression transaction and durability sequence, current public claims, Git/task-state/remote/Vault evidence, and classifies remaining migration or product work without silently selecting a compatibility policy. |
+| R90-81 | Aug 9 | In progress | Audit post-management-plane delivery and restore the local reliability queue. | R90-80 | A dated audit reconciles the R90-80 feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current tests, and recurring validation deviations, then restores only evidence-grounded local reliability work without runtime or publication changes. |
+| R90-82 | Aug 10–Sep 4 | Planned | Stabilize receiver idle-capacity release evidence. | R90-81 | Direct receiver tests synchronize on an observable handler-capacity boundary rather than a shared heartbeat/session poll, prove timeout-driven slot release and replacement acceptance, and pass repeated uncached race execution without changing production timeout semantics. |
 
 ## R90-01 Definition
 
@@ -199,6 +201,23 @@
   scoped exception.
 - **Stop condition:** stop on unapproved traffic, private paths, failed review,
   digest drift, or an attempt to reuse the exception outside R90-04.
+
+## R90-04a Definition
+
+- **Goal:** record a current v0.1.1 code-quality baseline independently of any
+  production-derived or public real-traffic evidence.
+- **Risk:** a passing non-Docker quality baseline can be misrepresented as
+  traffic evidence, release readiness, or publication approval.
+- **Required validation:** repository-pinned supply-chain checks; non-Docker RC
+  quality, race, coverage, fuzz, E2E, and archive checks; documentation,
+  knowledge, and diff checks; explicit evidence and publication boundary review.
+- **Stop condition:** stop if completion requires traffic acquisition or review,
+  corpus-pressure evidence, private input, release approval, tagging, or
+  publication; do not treat R90-04a as satisfying R90-04, R90-05, or R90-06.
+- **Selected plan:**
+  [`task-20260715-090000-r90-04a.md`](task-20260715-090000-r90-04a.md),
+  from recorded remote baseline
+  `b3d143ba6ee714f5518f32684fd96b9ea0925a0a`.
 
 ## R90-04b Definition
 
@@ -1631,6 +1650,46 @@
   from clean fetched baseline
   `de949bda14a66a407391671f92f0c7b938fb2da5`.
 
+## R90-81 Definition
+
+- **Goal:** reconcile the completed R90-80 delivery closure and restore the
+  empty local queue from recurring, directly verifiable validation evidence.
+- **Risk:** treating isolated clean-rerun deviations as either a proven runtime
+  defect or harmless noise can respectively broaden scope or preserve a weak
+  release gate; speculative queue filling can cross product boundaries.
+- **Required validation:** exact R90-80 feature/closure/remote/task/Vault
+  evidence; dated phase-level history and recurring-deviation review; direct
+  source-to-test boundary review; all task-state JSON parsing; exact roadmap
+  row/Definition coverage; documentation, knowledge, diff, staged-scope, and
+  sensitive-information checks.
+- **Stop condition:** stop if completion requires source/test behavior changes,
+  a runtime diagnosis unsupported by direct evidence, private/external input,
+  product or compatibility policy, publication mutation, immutable-evidence
+  rewrite, or starting R90-82.
+- **Audit record:**
+  [`post-management-plane-delivery-audit-20260809.md`](../audit/post-management-plane-delivery-audit-20260809.md).
+- **Selected plan:**
+  [`task-20260809-post-management-plane-delivery-audit.md`](task-20260809-post-management-plane-delivery-audit.md),
+  from clean fetched baseline
+  `49ae9eb95c6ff500e3c525bff30d7a13a43b6938`.
+
+## R90-82 Definition
+
+- **Goal:** make the receiver idle-timeout capacity-release regression observe
+  the actual handler-slot boundary deterministically instead of inferring it
+  through the process-wide latest-session snapshot.
+- **Risk:** a test-only synchronization seam can accidentally change receiver
+  behavior or mask a real timeout/capacity liveness defect; a fixed sleep or
+  broad retry loop can preserve the same ambiguity under a different bound.
+- **Required validation:** direct timeout-driven first-handler exit and slot
+  release observation; replacement acceptance without shared-session polling;
+  existing protocol-violation and ordinary disconnect capacity reuse; repeated
+  uncached receiver race runs; full native, E2E, documentation, and knowledge
+  checks.
+- **Stop condition:** stop if deterministic proof requires a public runtime API,
+  protocol/configuration change, relaxed timeout semantics, production traffic,
+  external services, or publication authority.
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -2142,7 +2201,7 @@
 
 `R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`;
 `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60 → R90-61 → R90-62 → R90-63 → R90-64 → R90-65 → R90-66 → R90-67 → R90-68 → R90-69 → R90-70 → R90-71 → R90-72 → R90-73 → R90-74 → R90-75`;
-`(R90-59a + R90-74) → R90-76 → R90-77 → R90-78 → R90-79 → R90-80`;
+`(R90-59a + R90-74) → R90-76 → R90-77 → R90-78 → R90-79 → R90-80 → R90-81 → R90-82`;
 `R90-56 → R90-58 → R90-59a → R90-59`. R90-75 is blocked on
 comparable-environment evidence plus explicit product/SLO budget scope but is
 not a dependency for unrelated future work. R90-59 is blocked on explicit
@@ -2790,3 +2849,32 @@ identical-range replay preserved Vault content hash
 `baed830f8a62bf5e0d732f1f93d9dd276e137c6ec2faa151eb36d065ba3bf51e`.
 No dependency-ready local increment remains. R90-59 and R90-75 retain their
 recorded external blockers.
+The next Aug 9 trigger fetched and verified the R90-80 docs-only closure at
+`49ae9eb95c6ff500e3c525bff30d7a13a43b6938`, both exact R90-80 Vault notes,
+full-index rows, MOC links, and current stable management-plane authority. The
+Jul 20 through Aug 9 phase review found no missing delivery record or unresolved
+behavioral validation result, but direct history and test review confirmed
+receiver timing deviations in three separate full validation runs before
+focused uncached reruns passed. Only the Aug 6 record names
+`TestStartIdleTimeoutReleasesConnectionCapacity` exactly; Jul 29 records the
+idle-timeout family with a broken-pipe symptom and Jul 23 records only a receiver
+timing boundary. Because no local increment was ready, R90-81 is selected as the
+documentation-only smallest safe queue unblocker. R90-82 records the bounded
+direct-test evidence gap but is not started; R90-59 and R90-75 retain their
+external blockers.
+The R90-81 audit preserves the different specificity of the three historical
+receiver timing records, verifies R90-80's exact feature/closure/remote/Vault
+chain, and maps the exact Aug 6 idle-capacity failure to the current indirect
+shared-session polling boundary. It restores R90-82 as a bounded test-evidence
+increment without claiming a production defect or starting runtime/test work.
+Repository validation and R90-81 delivery remain pending.
+The first structural prevalidation found that completed historical row R90-04a
+lacked its own Definition, contradicting prior row/Definition coverage claims.
+R90-81 restored the missing definition directly from the completed plan/state
+and preserved its non-traffic, non-release boundary; no historical delivery
+record or immutable evidence was rewritten. Complete validation remains pending.
+All 96 task-state JSON files parse and all 86 roadmap rows now match exactly one
+Definition. The first structural check exposed the missing completed R90-04a
+Definition; after evidence-grounded repair, documentation, the 33-test knowledge
+gate, and formatting checks pass. Exact documentation scope and sensitive-data
+review remain the pre-commit delivery boundary; R90-82 remains unstarted.
