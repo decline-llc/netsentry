@@ -477,11 +477,7 @@ func (s *Server) handleSuppressions(w http.ResponseWriter, r *http.Request) {
 				writeError(w, r, http.StatusConflict, "SUPPRESSION_ALREADY_EXISTS", "Suppression already exists")
 				return
 			}
-			if strings.HasPrefix(err.Error(), "persist suppressions:") {
-				writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not persist suppression", err.Error())
-				return
-			}
-			writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid suppression request", err.Error())
+			s.writeSuppressionMutationError(w, r, err)
 			return
 		}
 		writeJSON(w, http.StatusCreated, suppression)
@@ -574,6 +570,8 @@ func (s *Server) writeSuppressionMutationError(w http.ResponseWriter, r *http.Re
 	switch {
 	case strings.Contains(err.Error(), "not found"):
 		writeError(w, r, http.StatusNotFound, "SUPPRESSION_NOT_FOUND", "Suppression not found")
+	case alert.SuppressionReplacementCommitted(err):
+		writeError(w, r, http.StatusInternalServerError, "SUPPRESSIONS_DURABILITY_UNCERTAIN", "Suppression mutation was applied but durability could not be confirmed", err.Error())
 	case strings.HasPrefix(err.Error(), "persist suppressions:"):
 		writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not persist suppression", err.Error())
 	default:

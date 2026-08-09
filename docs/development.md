@@ -241,12 +241,19 @@ proof.
 }
 ```
 
-The engine loads this file at startup. Suppression create, update, and delete requests persist the full file before swapping the active in-memory filter. `POST /api/suppressions/reload` reloads the file from disk and swaps the active filter after validation succeeds.
-
-The suppression manager already serializes mutations, but its temporary-file
-replacement has no direct short-write, file-sync, rename, or parent-directory
-sync fault evidence. R90-79 keeps that durability work separate from the rule
-transaction fix so each active-memory and on-disk outcome remains reviewable.
+The engine loads this file at startup. Suppression create, update, and delete
+requests hold the manager mutation lock while compiling the candidate,
+replacing the canonical file, and swapping the active in-memory rules and
+filter. Replacement requires an exact temporary-file write, preserved mode,
+file sync/close, atomic rename, and parent-directory sync/close. Failures
+through rename preserve prior canonical bytes and active state. If rename
+commits but the directory durability boundary fails, the candidate rules and
+filter are published and the API returns `SUPPRESSIONS_DURABILITY_UNCERTAIN`;
+an operator must treat that error as applied but not
+crash-durability-confirmed. This is not cross-process locking, automatic retry,
+backup, migration, or portable crash proof. `POST /api/suppressions/reload`
+reloads the file from disk and swaps the active filter after validation
+succeeds.
 
 ### SQLite startup integrity and recovery
 

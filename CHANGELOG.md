@@ -106,6 +106,10 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 - Prometheus text metrics for current packet, process-lifetime packet/alert rates, alert, current/high-water queue depth, rule latency, alert write latency, storage, worker, and capture heartbeat counters, with HELP text for exported gauges.
 - Alert storage health tracking after SQLite write/query errors, including sticky emergency mode for disk-full, quota, read-only filesystem, and disk I/O failures, surfaced through verbose health with storage available bytes and `netsentry_storage_healthy`.
 - Suppression rules can load from `engine.suppressions_file`; suppression create, update, delete, and reload operations persist or reload that file before updating the active filter.
+- Suppression-file mutations now require exact temporary writes, preserved
+  mode, file sync/close, atomic rename, and parent-directory sync/close;
+  post-rename durability failures publish the committed active filter and
+  return `SUPPRESSIONS_DURABILITY_UNCERTAIN`.
 - Deterministic synthetic pcap generator with a Python stdlib fallback when Scapy is unavailable.
 - Non-interactive end-to-end smoke test via `make e2e-smoke`, including capture heartbeat and process rate metrics assertions.
 - Repeat-pcap end-to-end throughput smoke test via `make e2e-pressure`.

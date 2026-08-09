@@ -183,7 +183,12 @@ Current build:
 - `internal/alert` includes a CIDR/exact-IP suppressor component and in-memory suppression manager.
 - Suppressions can be scoped by rule ID and source, destination, or either-side IP ranges.
 - Suppressions load from `engine.suppressions_file` at startup.
-- `/api/suppressions` can list, add, replace, and delete suppressions that apply to newly generated alerts; mutations are persisted to `engine.suppressions_file` when configured.
+- `/api/suppressions` can list, add, replace, and delete suppressions that apply
+  to newly generated alerts. Configured persistence uses an exact temporary
+  write, mode preservation, file sync/close, atomic rename, and parent-directory
+  sync/close while the manager mutation lock is held. Pre-rename failure keeps
+  prior disk/filter state; post-rename durability failure publishes the
+  committed candidate filter and reports `SUPPRESSIONS_DURABILITY_UNCERTAIN`.
 - `/api/suppressions/reload` hot reloads suppressions from disk and swaps the active filter after validation succeeds.
 
 ---

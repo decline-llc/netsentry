@@ -2,7 +2,9 @@ package alert
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/netip"
 	"os"
 	"path/filepath"
@@ -24,14 +26,80 @@ type Suppression struct {
 
 // SuppressionManager owns the active in-memory suppression rules and compiled filter.
 type SuppressionManager struct {
-	mu         sync.RWMutex
-	rules      []Suppression
-	suppressor *Suppressor
-	filePath   string
+	mu             sync.RWMutex
+	rules          []Suppression
+	suppressor     *Suppressor
+	filePath       string
+	replacementOps suppressionReplacementOps
 }
 
 type suppressionsFile struct {
 	Suppressions []Suppression `json:"suppressions"`
+}
+
+type suppressionReplacementFile interface {
+	Name() string
+	Write([]byte) (int, error)
+	Chmod(os.FileMode) error
+	Sync() error
+	Close() error
+}
+
+type suppressionReplacementDirectory interface {
+	Sync() error
+	Close() error
+}
+
+type suppressionReplacementOps struct {
+	stat       func(string) (os.FileInfo, error)
+	mkdirAll   func(string, os.FileMode) error
+	createTemp func(string, string) (suppressionReplacementFile, error)
+	rename     func(string, string) error
+	openDir    func(string) (suppressionReplacementDirectory, error)
+	remove     func(string) error
+}
+
+var osSuppressionReplacementOps = suppressionReplacementOps{
+	stat:     os.Stat,
+	mkdirAll: os.MkdirAll,
+	createTemp: func(dir, pattern string) (suppressionReplacementFile, error) {
+		return os.CreateTemp(dir, pattern)
+	},
+	rename: os.Rename,
+	openDir: func(path string) (suppressionReplacementDirectory, error) {
+		return os.Open(path)
+	},
+	remove: os.Remove,
+}
+
+type suppressionReplacementError struct {
+	phase     string
+	committed bool
+	err       error
+}
+
+func (e *suppressionReplacementError) Error() string {
+	if e.committed {
+		return fmt.Sprintf("suppressions file replacement committed but %s failed: %v", e.phase, e.err)
+	}
+	return fmt.Sprintf("%s suppressions file: %v", e.phase, e.err)
+}
+
+func (e *suppressionReplacementError) Unwrap() error {
+	return e.err
+}
+
+func (e *suppressionReplacementError) ReplacementCommitted() bool {
+	return e.committed
+}
+
+// SuppressionReplacementCommitted reports whether err describes a suppression
+// file replacement that already crossed the atomic rename boundary.
+func SuppressionReplacementCommitted(err error) bool {
+	var classified interface {
+		ReplacementCommitted() bool
+	}
+	return errors.As(err, &classified) && classified.ReplacementCommitted()
 }
 
 // NewSuppressionManager constructs an in-memory suppression manager.
@@ -49,7 +117,12 @@ func NewSuppressionManagerWithFile(rules []Suppression, path string) (*Suppressi
 	if err != nil {
 		return nil, err
 	}
-	return &SuppressionManager{rules: cloneSuppressions(rules), suppressor: suppressor, filePath: path}, nil
+	return &SuppressionManager{
+		rules:          cloneSuppressions(rules),
+		suppressor:     suppressor,
+		filePath:       path,
+		replacementOps: osSuppressionReplacementOps,
+	}, nil
 }
 
 // LoadSuppressionsFromFile reads suppression rules from a canonical JSON file.
@@ -77,6 +150,10 @@ func LoadSuppressionsFromFile(path string) ([]Suppression, error) {
 
 // SaveSuppressionsToFile writes suppression rules using the canonical wrapped schema.
 func SaveSuppressionsToFile(path string, rules []Suppression) error {
+	return saveSuppressionsToFile(path, rules, osSuppressionReplacementOps)
+}
+
+func saveSuppressionsToFile(path string, rules []Suppression, ops suppressionReplacementOps) (result error) {
 	if path == "" {
 		return nil
 	}
@@ -90,36 +167,77 @@ func SaveSuppressionsToFile(path string, rules []Suppression) error {
 	data = append(data, '\n')
 
 	mode := os.FileMode(0o644)
-	if info, err := os.Stat(path); err == nil {
+	info, err := ops.stat(path)
+	if err == nil {
 		mode = info.Mode().Perm()
+	} else if !errors.Is(err, os.ErrNotExist) {
+		return &suppressionReplacementError{phase: "stat", err: err}
 	}
 	dir := filepath.Dir(path)
-	if err := os.MkdirAll(dir, 0o750); err != nil {
-		return fmt.Errorf("create suppressions dir: %w", err)
+	if err := ops.mkdirAll(dir, 0o750); err != nil {
+		return &suppressionReplacementError{phase: "create parent directory", err: err}
 	}
-	tmp, err := os.CreateTemp(dir, ".suppressions-*.json")
+	tmp, err := ops.createTemp(dir, ".suppressions-*.json")
 	if err != nil {
-		return fmt.Errorf("create temp suppressions file: %w", err)
+		return &suppressionReplacementError{phase: "create temporary", err: err}
 	}
 	tmpName := tmp.Name()
+	committed := false
 	defer func() {
-		_ = os.Remove(tmpName)
+		if err := ops.remove(tmpName); err != nil && !errors.Is(err, os.ErrNotExist) {
+			result = errors.Join(result, &suppressionReplacementError{
+				phase:     "remove temporary",
+				committed: committed,
+				err:       err,
+			})
+		}
 	}()
-	if _, err := tmp.Write(data); err != nil {
-		_ = tmp.Close()
-		return fmt.Errorf("write temp suppressions file: %w", err)
+	written, err := tmp.Write(data)
+	if err == nil && written != len(data) {
+		err = io.ErrShortWrite
+	}
+	if err != nil {
+		return closeSuppressionReplacementAfterFailure(tmp, &suppressionReplacementError{phase: "write temporary", err: err})
 	}
 	if err := tmp.Chmod(mode); err != nil {
-		_ = tmp.Close()
-		return fmt.Errorf("chmod temp suppressions file: %w", err)
+		return closeSuppressionReplacementAfterFailure(tmp, &suppressionReplacementError{phase: "chmod temporary", err: err})
+	}
+	if err := tmp.Sync(); err != nil {
+		return closeSuppressionReplacementAfterFailure(tmp, &suppressionReplacementError{phase: "sync temporary", err: err})
 	}
 	if err := tmp.Close(); err != nil {
-		return fmt.Errorf("close temp suppressions file: %w", err)
+		return &suppressionReplacementError{phase: "close temporary", err: err}
 	}
-	if err := os.Rename(tmpName, path); err != nil {
-		return fmt.Errorf("replace suppressions file: %w", err)
+	if err := ops.rename(tmpName, path); err != nil {
+		return &suppressionReplacementError{phase: "rename temporary", err: err}
+	}
+	committed = true
+
+	parent, err := ops.openDir(dir)
+	if err != nil {
+		return &suppressionReplacementError{phase: "open parent directory", committed: true, err: err}
+	}
+	if err := parent.Sync(); err != nil {
+		return closeSuppressionDirectoryAfterFailure(parent, &suppressionReplacementError{phase: "sync parent directory", committed: true, err: err})
+	}
+	if err := parent.Close(); err != nil {
+		return &suppressionReplacementError{phase: "close parent directory", committed: true, err: err}
 	}
 	return nil
+}
+
+func closeSuppressionReplacementAfterFailure(file suppressionReplacementFile, primary error) error {
+	if err := file.Close(); err != nil {
+		return errors.Join(primary, &suppressionReplacementError{phase: "close temporary after failure", err: err})
+	}
+	return primary
+}
+
+func closeSuppressionDirectoryAfterFailure(dir suppressionReplacementDirectory, primary error) error {
+	if err := dir.Close(); err != nil {
+		return errors.Join(primary, &suppressionReplacementError{phase: "close parent directory after failure", committed: true, err: err})
+	}
+	return primary
 }
 
 // List returns the configured suppression rules in insertion order.
@@ -216,7 +334,12 @@ func (m *SuppressionManager) replaceLocked(candidate []Suppression, persist bool
 		return err
 	}
 	if persist && m.filePath != "" {
-		if err := SaveSuppressionsToFile(m.filePath, candidate); err != nil {
+		if err := saveSuppressionsToFile(m.filePath, candidate, m.replacementOps); err != nil {
+			if !SuppressionReplacementCommitted(err) {
+				return fmt.Errorf("persist suppressions: %w", err)
+			}
+			m.rules = cloneSuppressions(candidate)
+			m.suppressor = suppressor
 			return fmt.Errorf("persist suppressions: %w", err)
 		}
 	}

@@ -178,6 +178,14 @@ Reloads suppressions from `engine.suppressions_file` and atomically swaps the ac
 }
 ```
 
+When configured, suppression create, update, and delete replace the canonical
+file using an exact temporary write, mode preservation, file sync/close,
+atomic rename, and parent-directory sync/close before reporting success. A
+failure through rename returns `INTERNAL_ERROR` and preserves the prior file
+and active filter. A parent-directory durability failure after rename returns
+`SUPPRESSIONS_DURABILITY_UNCERTAIN`; the mutation is already applied to the
+canonical file and active filter, but crash durability was not confirmed.
+
 ### `POST /api/rules`
 
 Creates a rule, writes the canonical wrapped rules file, reloads the saved file, and atomically swaps the active rule snapshot. The request body is a single rule object using the schema below. Duplicate IDs return `RULE_ALREADY_EXISTS`.

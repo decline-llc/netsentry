@@ -141,7 +141,7 @@
 | R90-76 | Aug 9 | Complete | Audit post-tag delivery and restore the forward queue. | R90-59a; R90-74 | A dated audit reconciles the local-tag feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current code/tests, and blocked authorities, then restores only evidence-grounded local work without runtime or publication changes. |
 | R90-77 | Aug 10–Sep 4 | Complete early | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
 | R90-78 | Sep 5–25 | Complete early | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
-| R90-79 | Sep 26–Oct 16 | Ready | Harden suppression-file replacement durability. | R90-78 | Suppression replacement directly proves the same lifecycle boundaries while retaining serialized mutation, exact prior-file preservation before rename, and active-filter agreement with every reported outcome. |
+| R90-79 | Sep 26–Oct 16 | Validated; delivery pending | Harden suppression-file replacement durability. | R90-78 | Suppression replacement directly proves the same lifecycle boundaries while retaining serialized mutation, exact prior-file preservation before rename, and active-filter agreement with every reported outcome. |
 | R90-80 | Oct 17–31 | Planned | Audit management-plane persistence and future compatibility scope. | R90-79 | A dated audit reconciles the rule/suppression transaction and durability sequence, current public claims, Git/task-state/remote/Vault evidence, and classifies remaining migration or product work without silently selecting a compatibility policy. |
 
 ## R90-01 Definition
@@ -2708,3 +2708,33 @@ is synchronized idempotently to the sole local Vault; its iteration note,
 full-index row, MOC link, and current MOC/rule/config/API stable authority are
 verified. The signed local `v0.1.1` tag remains absent remotely. R90-79 is ready
 but was not started; R90-59 and R90-75 retain their external blockers.
+The next trigger fetched and verified the R90-78 docs-only closure at
+`17a5809f83959714f8801fdfa7e613520e06dd14`, both exact R90-78 Vault notes,
+full-index rows, MOC links, and current stable rule/config/API authority. The
+Jul 20 through Aug 9 phase audit found no new unresolved validation deviation,
+stale stable authority, or missing delivery record; all 93 prior task states
+parse and all 84 roadmap rows match one Definition. R90-79 is selected as the
+sole dependency-ready local increment with a persisted suppression lifecycle
+outcome contract and direct fault-evidence map. R90-80 remains
+dependency-planned; R90-59 and R90-75 retain their external blockers. No later
+increment or publication action is started.
+R90-79 now requires exact-length temporary writes, preserved mode, file sync,
+file close, atomic rename, and containing-directory sync and close before a
+successful suppression mutation response. Direct faults cover stat, parent
+creation, temp creation, short write, write, chmod, file-sync, temp-close,
+rename, directory-open, directory-sync, and directory-close boundaries with
+exact prior/new bytes and temporary cleanup. Post-rename durability errors
+publish the committed candidate rules/filter and return
+`SUPPRESSIONS_DURABILITY_UNCERTAIN`; pre-rename errors retain prior file/filter
+state and permit retry. Complete focused ordinary/race tests and twenty
+uncached direct race repetitions pass; full repository validation remains the
+delivery boundary. R90-80 remains unstarted.
+The complete repository validation boundary passes: C tests and every Go
+package pass uncached under the race detector; E2E smoke processes six packets,
+generates five alerts, and loads eight rules; repository config/suppression,
+documentation, and all 33 knowledge tests pass. All 94 task-state JSON files
+parse, all 84 roadmap rows match one Definition, every unfinished record has
+complete selection fields, and formatting, exact eleven-path scope,
+credential/sensitive-path, dependency, schema, config, workflow, release, and
+publication reviews pass. R90-79 is validated and awaits only feature delivery;
+R90-80 remains unstarted.

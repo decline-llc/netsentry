@@ -1,0 +1,56 @@
+{
+  "task": "r90-79-suppression-file-replacement-durability",
+  "timestamp": "2026-08-09T06:05:06-07:00",
+  "branch": "main",
+  "remote_baseline": "17a5809f83959714f8801fdfa7e613520e06dd14",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_pre_delivery",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
+    "Fetched origin/main and verified clean local and remote equality at 17a5809f83959714f8801fdfa7e613520e06dd14",
+    "Verified the exact R90-78 feature and docs-only closure plus both exact Vault notes full-index rows MOC links and current stable authority",
+    "Reviewed the Jul 20 through Aug 9 phase history and found no new unresolved validation deviation stale authority or missing delivery record",
+    "Parsed all 93 prior task-state JSON files and verified all 84 roadmap rows match one Definition",
+    "Audited every unfinished item and selected R90-79 as the sole dependency-ready local increment",
+    "Confirmed R90-59 and R90-75 retain their external blockers and R90-80 retains its complete dependency-planned definition",
+    "Inspected suppression persistence manager API integration direct tests and current public claims",
+    "Confirmed suppression replacement lacks complete-write detection file sync parent-directory sync and post-rename classification",
+    "Persisted scope non-goals risks exact outcome contract evidence mapping validation authority boundaries and stop conditions before behavior changes",
+    "Added exact-length write mode preservation file sync close atomic rename parent-directory sync close missing-parent creation and temporary cleanup",
+    "Added directly injected stat directory-create temp-create short-write write chmod file-sync temp-close rename directory-open directory-sync and directory-close lifecycle faults without package-global state",
+    "Classified replacement failures by whether atomic rename committed while preserving underlying error causes",
+    "Preserved exact prior bytes rules and filter for every pre-rename persistence failure and exact new canonical bytes for every post-rename durability failure",
+    "Published committed candidate rules and filter before returning a classified post-rename durability error",
+    "Retained prior active state exact bytes INTERNAL_ERROR mapping and later retry for pre-rename rejection",
+    "Mapped classified create update and delete API failures to SUPPRESSIONS_DURABILITY_UNCERTAIN",
+    "Passed complete focused ordinary and race alert and API tests",
+    "Passed twenty uncached race repetitions of every direct R90-79 lifecycle missing-parent manager-outcome and API-mapping regression",
+    "Preflighted module-selected Go 1.25.12 GCC 13.3.0 GNU Make 4.3 Bash 5.2.21 Python 3.12.3 curl timeout jq pkg-config and libpcap 1.10.4",
+    "Passed make test across C tests and every Go package uncached under the race detector",
+    "Passed make e2e-smoke with six packets processed five alerts generated and eight rules loaded",
+    "Passed make config-check make docs-check and the 33-test make knowledge-check",
+    "Reconciled current API architecture development changelog roadmap plan and task-state claims without starting R90-80",
+    "Parsed all 94 task-state JSON files and verified all 84 roadmap rows match one Definition with complete unfinished-item fields",
+    "Passed gofmt git diff check exact eleven-path scope credential sensitive-path dependency schema config workflow release and publication review"
+  ],
+  "in_progress": [
+    "Deliver the validated exact R90-79 increment"
+  ],
+  "todo": [
+    "Commit push fetch-verify and synchronize the exact range to the sole local Vault",
+    "Record verified delivery facts in a docs-only closure"
+  ],
+  "authority_boundaries": [
+    "Only R90-79 suppression-file durability phase classification direct tests and current documentation",
+    "No suppression schema matching reload authentication or success-payload changes",
+    "No rule persistence cross-process locking retry backup migration or automatic repair",
+    "No private or external data performance policy tag release image registry or workflow mutation"
+  ],
+  "remaining_risks": [
+    "Post-rename durability failure must report a committed outcome while active rules filter and canonical disk agree",
+    "Every pre-rename persistence fault must preserve exact prior bytes and active state and remove the temporary file",
+    "R90-80 remains planned behind R90-79",
+    "R90-59 and R90-75 remain externally blocked"
+  ],
+  "resume_instructions": "Resume R90-79 from clean fetched baseline 17a5809f83959714f8801fdfa7e613520e06dd14 using docs/plans/task-20260809-suppression-file-durability.md. Do not start R90-80 R90-59 or R90-75."
+}

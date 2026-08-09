@@ -106,6 +106,40 @@ type fakeRules struct {
 	reloaded  []*model.Rule
 }
 
+type faultSuppressions struct {
+	err error
+}
+
+func (s *faultSuppressions) List() []alert.Suppression {
+	return nil
+}
+
+func (s *faultSuppressions) Add(alert.Suppression) error {
+	return s.err
+}
+
+func (s *faultSuppressions) Update(string, alert.Suppression) error {
+	return s.err
+}
+
+func (s *faultSuppressions) Delete(string) error {
+	return s.err
+}
+
+func (s *faultSuppressions) ReloadFromFile() error {
+	return s.err
+}
+
+type committedSuppressionPersistenceError struct{}
+
+func (committedSuppressionPersistenceError) Error() string {
+	return "injected committed suppression persistence failure"
+}
+
+func (committedSuppressionPersistenceError) ReplacementCommitted() bool {
+	return true
+}
+
 type synchronizedRules struct {
 	mu                sync.RWMutex
 	rules             []*model.Rule
@@ -985,6 +1019,46 @@ func TestSuppressionsReloadFromFile(t *testing.T) {
 	}
 	if !strings.Contains(rec.Body.String(), `"reloaded":1`) {
 		t.Fatalf("unexpected body: %s", rec.Body.String())
+	}
+}
+
+func TestSuppressionMutationsReportCommittedDurabilityFailure(t *testing.T) {
+	err := fmt.Errorf("persist suppressions: %w", committedSuppressionPersistenceError{})
+	manager := &faultSuppressions{err: err}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{Suppressions: manager})
+	tests := []struct {
+		name   string
+		method string
+		path   string
+		body   string
+	}{
+		{name: "create", method: http.MethodPost, path: "/api/suppressions", body: `{"id":"new","enabled":true,"any_cidrs":["192.0.2.0/24"]}`},
+		{name: "update", method: http.MethodPut, path: "/api/suppressions/existing", body: `{"enabled":true,"any_cidrs":["192.0.2.0/24"]}`},
+		{name: "delete", method: http.MethodDelete, path: "/api/suppressions/existing"},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			rec := httptest.NewRecorder()
+			req := httptest.NewRequest(tc.method, tc.path, strings.NewReader(tc.body))
+			server.Handler().ServeHTTP(rec, req)
+			if rec.Code != http.StatusInternalServerError {
+				t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+			}
+			if !strings.Contains(rec.Body.String(), `"code":"SUPPRESSIONS_DURABILITY_UNCERTAIN"`) {
+				t.Fatalf("unexpected body: %s", rec.Body.String())
+			}
+		})
+	}
+}
+
+func TestSuppressionMutationPreRenamePersistenceFailureRemainsInternalError(t *testing.T) {
+	manager := &faultSuppressions{err: errors.New("persist suppressions: injected pre-rename failure")}
+	server := NewServerWithOptions(&fakeStore{}, fakeQueue{}, &fakeRules{}, stats.New(), Options{Suppressions: manager})
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/api/suppressions", strings.NewReader(`{"id":"new","enabled":true,"any_cidrs":["192.0.2.0/24"]}`))
+	server.Handler().ServeHTTP(rec, req)
+	if rec.Code != http.StatusInternalServerError || !strings.Contains(rec.Body.String(), `"code":"INTERNAL_ERROR"`) {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
 	}
 }
 
