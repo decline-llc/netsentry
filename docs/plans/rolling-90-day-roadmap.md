@@ -138,6 +138,11 @@
 | R90-73 | Aug 5–Sep 4 | Complete early | Add versioned local benchmark evidence capture. | R90-72 | One directly tested command captures every established C/Go benchmark with exact Git/tree state, environment/toolchain fingerprint, parameters, raw output, parsed metrics, path redaction, and local-synthetic classification without applying a threshold. |
 | R90-74 | Sep 5–Oct 2 | Complete early | Record a repeated single-host benchmark baseline. | R90-73 | At least five uncached complete-surface samples from one clean pinned commit and unchanged environment retain every raw result plus median/IQR/variation summaries as observation-only local evidence. |
 | R90-75 | Oct 3–31 | Blocked / pending evidence; non-blocking | Decide portable performance-budget scope. | R90-74; comparable-environment evidence; explicit budget scope | Matched evidence and product/SLO authority decide whether a budget can be portable, same-host-only, or observation-only; current single-host data cannot activate a numeric gate or prevent unrelated dependency-ready roadmap work. |
+| R90-76 | Aug 9 | Validated; delivery pending | Audit post-tag delivery and restore the forward queue. | R90-59a; R90-74 | A dated audit reconciles the local-tag feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current code/tests, and blocked authorities, then restores only evidence-grounded local work without runtime or publication changes. |
+| R90-77 | Aug 10–Sep 4 | Planned | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
+| R90-78 | Sep 5–25 | Planned | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
+| R90-79 | Sep 26–Oct 16 | Planned | Harden suppression-file replacement durability. | R90-78 | Suppression replacement directly proves the same lifecycle boundaries while retaining serialized mutation, exact prior-file preservation before rename, and active-filter agreement with every reported outcome. |
+| R90-80 | Oct 17–31 | Planned | Audit management-plane persistence and future compatibility scope. | R90-79 | A dated audit reconciles the rule/suppression transaction and durability sequence, current public claims, Git/task-state/remote/Vault evidence, and classifies remaining migration or product work without silently selecting a compatibility policy. |
 
 ## R90-01 Definition
 
@@ -1523,6 +1528,95 @@
   commit, environment, metric, statistical, production-claim, or publication
   ambiguity.
 
+## R90-76 Definition
+
+- **Goal:** reconcile the completed local-tag boundary and recent delivery,
+  then restore the empty dependency-ready queue from current repository
+  evidence without runtime or external mutation.
+- **Risk:** stale feature-only resume authority can obscure the fetched closure,
+  while speculative queue filling can reopen completed work or cross product,
+  publication, performance-budget, or compatibility boundaries.
+- **Required validation:** exact R90-59a feature/closure/tag/remote/task/Vault
+  evidence; dated phase-level history and current code/test gap review; all
+  task-state JSON parsing; exact roadmap row/Definition coverage;
+  documentation, knowledge, diff, staged-scope, and sensitive-information
+  checks.
+- **Stop condition:** stop if completion requires source/test behavior changes,
+  private or external input, a product/compatibility decision, changelog or
+  artifact approval, a performance threshold, tag/publication mutation,
+  immutable-evidence rewrite, or starting a later increment.
+- **Audit record:**
+  [`delivery-plan-audit-20260809.md`](../audit/delivery-plan-audit-20260809.md).
+- **Selected plan:**
+  [`task-20260809-delivery-queue-audit.md`](task-20260809-delivery-queue-audit.md),
+  from clean fetched baseline
+  `5f6bf2ab4ae211e64f005b930de2ad3e84ee15fc`.
+
+## R90-77 Definition
+
+- **Goal:** serialize the complete file-backed rule create, update, delete, and
+  explicit reload transaction without blocking concurrent packet matching.
+- **Risk:** an incomplete lock boundary can still lose an accepted mutation,
+  deadlock a handler, or let disk and the immutable active snapshot diverge.
+- **Required validation:** synchronized create/create, update/delete, and
+  mutation/reload interleavings; successful-response, canonical-file, and
+  active-snapshot agreement; validation/persistence failure preservation;
+  focused repeated race, complete API/rule, full native, E2E, documentation,
+  and knowledge checks.
+- **Stop condition:** stop if completion requires changing public rule
+  semantics/schema, cross-process file locking, migration policy, disabling hot
+  reload, private data, or publication authority.
+
+## R90-78 Definition
+
+- **Goal:** make successful rule seed-file replacement durability-explicit and
+  make every failure phase preservation-safe and observable to the API layer.
+- **Risk:** a short write or missing file/directory sync can acknowledge an
+  incomplete or crash-volatile mutation; an error after rename can create a
+  disk/memory split if commit state is not classified.
+- **Required validation:** direct short-write, chmod, file-sync, close, rename,
+  and parent-directory-sync fault injection; byte-for-byte pre-rename
+  preservation; exact temporary-file cleanup; explicit post-rename committed
+  outcome; canonical reload and active-state agreement; focused repeated race,
+  complete API/rule, full native, E2E, documentation, and knowledge checks.
+- **Stop condition:** stop on ambiguous post-rename state, platform semantics
+  that require a product portability decision, rule-schema change, migration,
+  external data, or publication authority.
+
+## R90-79 Definition
+
+- **Goal:** apply an independently tested durability and preservation contract
+  to suppression-file replacement while retaining its serialized in-memory
+  filter swap.
+- **Risk:** reusing rule-file assumptions without direct suppression coverage
+  can acknowledge crash-volatile state, expose a disk/filter split, or weaken
+  the manager's existing mutation lock.
+- **Required validation:** direct short-write, chmod, file-sync, close, rename,
+  and parent-directory-sync faults; prior-file and temporary-file evidence;
+  explicit post-rename outcome; active filter/file agreement; focused repeated
+  race, complete alert/API, full native, E2E, documentation, and knowledge
+  checks.
+- **Stop condition:** stop if completion broadens suppression semantics, changes
+  config schema, requires cross-process locking or migration policy, accesses
+  private data, or needs publication authority.
+
+## R90-80 Definition
+
+- **Goal:** reconcile the completed management-plane concurrency/durability
+  sequence and identify only evidence-supported follow-on work through the end
+  of the active horizon.
+- **Risk:** treating legacy schema support or broad protocol limitations as
+  defects can silently choose compatibility or product policy; treating fault
+  tests as production evidence can overstate reliability.
+- **Required validation:** exact R90-77 through R90-79 code, direct tests,
+  feature/closure, task-state, fetched remote, and Vault evidence; current API,
+  architecture, development, and limitation review; task-state JSON and
+  roadmap coverage; documentation, knowledge, diff, and sensitive-information
+  checks.
+- **Stop condition:** stop if completion requires choosing legacy-schema
+  removal, migration or product scope, changing runtime/tests, external input,
+  performance policy, or publication authority.
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -2034,6 +2128,7 @@
 
 `R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`;
 `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60 → R90-61 → R90-62 → R90-63 → R90-64 → R90-65 → R90-66 → R90-67 → R90-68 → R90-69 → R90-70 → R90-71 → R90-72 → R90-73 → R90-74 → R90-75`;
+`(R90-59a + R90-74) → R90-76 → R90-77 → R90-78 → R90-79 → R90-80`;
 `R90-56 → R90-58 → R90-59a → R90-59`. R90-75 is blocked on
 comparable-environment evidence plus explicit product/SLO budget scope but is
 not a dependency for unrelated future work. R90-59 is blocked on explicit
@@ -2512,3 +2607,26 @@ was synchronized idempotently to the sole local Vault; its note, full index,
 MOC link, and stable release authority are verified. R90-59 remains blocked on
 the recorded changelog, artifact, and explicit remote-publication conditions.
 R90-75 remains pending-evidence and non-blocking. No next increment is ready.
+The Aug 9 trigger fetched and verified the R90-59a docs-only closure at
+`5f6bf2ab4ae211e64f005b930de2ad3e84ee15fc`, both exact R90-59a Vault notes,
+full-index rows, MOC links, current stable release authority, the unchanged
+signed local tag, and continued remote tag/GitHub Release/GHCR absence. All 90
+prior task states parse and all 79 prior roadmap rows match one Definition.
+R90-59 and R90-75 remain blocked on their recorded external conditions, so
+R90-76 is selected as the documentation-only smallest safe queue unblocker.
+The 161-commit phase audit found no missing recent delivery record or unresolved
+validation deviation. Direct source and test review identified one bounded
+local correctness gap: rule create/update/delete/reload transactions are not
+serialized even though each replaces the full file and active snapshot. The
+rule and suppression temporary-file paths also lack direct short-write,
+file-sync, rename, and parent-directory-sync lifecycle evidence. R90-77 through
+R90-80 now sequence transaction serialization, separately reviewable rule and
+suppression durability, and a final management-plane audit through Oct 31.
+None was started; R90-76 remains in progress until its documentation feature is
+pushed, fetched, and synchronized.
+All 91 task-state JSON files parse, all 84 roadmap rows match one Definition,
+and every unfinished item has a complete status, dependency, window, risk,
+acceptance, validation, and stop record. Documentation, the 33-test knowledge
+gate, formatting, exact six-path scope, credential-prefix, sensitive-path, and
+local/remote tag-state checks pass. R90-76 is validated and awaits only its
+documentation feature delivery; R90-77 remains unstarted.

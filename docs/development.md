@@ -208,6 +208,13 @@ separately for the complete correctness and race gate.
 
 The loader still accepts legacy top-level arrays and legacy `payload_match`, `ip_blacklist`, and MITRE scalar fields while old files are migrated. Reload rejects null or duplicate rules, empty enabled match sets, unsupported types/severities, and non-canonical MITRE tuples. The v0.1 alert schema permits at most one MITRE technique per rule.
 
+Rule CRUD and explicit reload each build and atomically publish a complete
+engine snapshot, but their full file-backed transactions are not currently
+serialized with each other. Two handlers can derive candidates from the same
+old snapshot and a later full-file replacement can lose an earlier successful
+mutation. R90-77 is the direct concurrency boundary; R90-78 separately covers
+short-write, sync, close, rename, and parent-directory durability outcomes.
+
 `configs/suppressions.json` uses the canonical wrapped schema:
 
 ```json
@@ -226,6 +233,11 @@ The loader still accepts legacy top-level arrays and legacy `payload_match`, `ip
 ```
 
 The engine loads this file at startup. Suppression create, update, and delete requests persist the full file before swapping the active in-memory filter. `POST /api/suppressions/reload` reloads the file from disk and swaps the active filter after validation succeeds.
+
+The suppression manager already serializes mutations, but its temporary-file
+replacement has no direct short-write, file-sync, rename, or parent-directory
+sync fault evidence. R90-79 keeps that durability work separate from the rule
+transaction fix so each active-memory and on-disk outcome remains reviewable.
 
 ### SQLite startup integrity and recovery
 
