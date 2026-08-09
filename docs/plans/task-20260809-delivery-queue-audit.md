@@ -145,6 +145,28 @@ the blocked publication or performance-budget authorities.
   audit, one-increment, validation, delivery, and two-commit closeout rules
   matched the work, so the `netsentry-next` skill is unchanged.
 
+## Delivery Results
+
+- Documentation feature commit:
+  `f3ddeda97375b5b92fbf0b0cdd08b21095e38fc0` (`docs: audit post-tag
+  delivery queue`). It contains exactly the six validated documentation,
+  roadmap, plan, and task-state paths.
+- The feature was pushed without force and without tags. A fresh fetch verified
+  `HEAD == origin/main == f3ddeda97375b5b92fbf0b0cdd08b21095e38fc0`;
+  the post-fetch 33-test knowledge gate passed and the remote `v0.1.1` tag
+  remained absent.
+- Exact range
+  `5f6bf2ab4ae211e64f005b930de2ad3e84ee15fc..f3ddeda97375b5b92fbf0b0cdd08b21095e38fc0`
+  was synchronized repeatedly with an identical Vault tree hash. The generated
+  iteration note, full-index row, and MOC link are verified.
+- Stable MOC, Go rule-engine, configuration/rule-management, and HTTP API
+  knowledge now records the R90-77 through R90-80 queue and explicitly
+  distinguishes atomic match snapshots from unimplemented management-
+  transaction serialization and crash-durability evidence. Historical
+  iteration notes remain unchanged.
+- R90-76 is complete. R90-77 is ready but unstarted; R90-59 and R90-75 remain
+  blocked on their recorded external conditions.
+
 ## Authority Boundaries
 
 This trigger authorizes only the R90-76 documentation audit, active-state and
