@@ -54,6 +54,7 @@ type Receiver struct {
 	ln      net.Listener
 	stats   *stats.Stats
 	wg      sync.WaitGroup
+	slots   chan struct{}
 }
 
 // New constructs a receiver. Start must be called before packets arrive.
@@ -116,6 +117,10 @@ func (r *Receiver) Start(ctx context.Context) error {
 		return fmt.Errorf("start uds listener %q: %w", r.cfg.Path, err)
 	}
 	r.ln = ln
+	r.slots = make(chan struct{}, r.cfg.MaxConnections)
+	for i := 0; i < r.cfg.MaxConnections; i++ {
+		r.slots <- struct{}{}
+	}
 	if err := os.Chmod(r.cfg.Path, r.cfg.SocketMode); err != nil {
 		r.logger.Warn("chmod uds socket", zap.Error(err))
 	}
@@ -128,14 +133,13 @@ func (r *Receiver) Start(ctx context.Context) error {
 	r.wg.Add(1)
 	go func() {
 		defer r.wg.Done()
-		r.acceptLoop(ctx, ln)
+		r.acceptLoop(ctx, ln, r.slots)
 	}()
 	return nil
 }
 
-func (r *Receiver) acceptLoop(ctx context.Context, ln net.Listener) {
+func (r *Receiver) acceptLoop(ctx context.Context, ln net.Listener, slots chan struct{}) {
 	r.logger.Info("uds listener started", zap.String("path", r.cfg.Path))
-	connectionSlots := make(chan struct{}, r.cfg.MaxConnections)
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
@@ -146,11 +150,11 @@ func (r *Receiver) acceptLoop(ctx context.Context, ln net.Listener) {
 			continue
 		}
 		select {
-		case connectionSlots <- struct{}{}:
+		case <-slots:
 			r.wg.Add(1)
 			go func() {
 				defer r.wg.Done()
-				defer func() { <-connectionSlots }()
+				defer func() { slots <- struct{}{} }()
 				r.handleConn(ctx, conn)
 			}()
 		default:

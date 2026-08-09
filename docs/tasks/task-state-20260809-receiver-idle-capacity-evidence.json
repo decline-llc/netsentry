@@ -1,0 +1,47 @@
+{
+  "task": "r90-82-receiver-idle-capacity-evidence",
+  "timestamp": "2026-08-09T07:32:58-07:00",
+  "branch": "main",
+  "remote_baseline": "9541d44db18b9c13e521b83be8aae79a9e5068be",
+  "risk_level": "Medium",
+  "current_checkpoint": "ready_to_commit",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
+    "Fetched origin/main and verified a clean local and remote baseline at 9541d44db18b9c13e521b83be8aae79a9e5068be",
+    "Verified the R90-81 docs-only closure Vault note full-index row MOC link and current stable receiver test authority",
+    "Reviewed the Jul 20 through Aug 9 delivery phases and found no newer missing record stale stable authority or unresolved validation result that changes priority",
+    "Audited the blocked forward queue and selected R90-82 as the sole dependency-ready increment",
+    "Persisted R90-82 scope non-goals risks evidence mapping validation authority boundaries and stop conditions before receiver or test changes",
+    "Refactored the internal limiter into per-start available tokens claimed once per accepted handler and returned once after handler exit while retaining the same channel for package-test observation",
+    "Updated protocol-violation ordinary-disconnect and idle-timeout regressions to claim the actual released slot and prove replacement packet delivery without shared-session polling",
+    "Preserved direct excess-rejection receiver-close and decode-error assertions without exported API configuration protocol timeout or shutdown changes",
+    "Recorded one module-relative setup error that stopped before formatting or testing then reran the corrected focused sequence successfully",
+    "Passed the three direct capacity regressions once normally and twenty times uncached under the race detector",
+    "Detected 86 roadmap rows but 87 Definition headings because R90-81 added a complete R90-04a Definition without removing its older policy-section definition",
+    "Traced the duplicate to Git history retained the newer complete active definition and removed only the redundant older heading and prose without rewriting completed R90-04a or immutable R90-81 records",
+    "Verified all 86 roadmap rows match exactly one Definition all three unfinished items retain complete fields all 97 task-state JSON files parse and git diff check passes",
+    "Passed the complete repository rerun with both C tests every Go package uncached under race E2E smoke documentation and all 33 knowledge tests",
+    "Compared completed evidence to every acceptance criterion and found only the recorded stopped setup command and evidence-grounded duplicate Definition reconciliation deviations",
+    "Tightened per-start limiter ownership during staged review then passed the focused normal twenty-count uncached race and complete repository validation chains again",
+    "Passed exact five-path staged-scope credential-prefix operator-sensitive-path private-traffic configuration dependency workflow generated-evidence release-artifact and publication-mutation review"
+  ],
+  "in_progress": ["Commit and push the validated R90-82 increment"],
+  "todo": [
+    "Fetch and verify origin main then rerun the knowledge gate",
+    "Synchronize and verify the exact Vault range",
+    "Persist verified delivery facts in the docs-only closure"
+  ],
+  "authority_boundaries": [
+    "Only R90-82 internal limiter observability direct capacity-reuse tests and required plan state roadmap documentation",
+    "No public API configuration protocol timeout overload metric or shutdown semantics change",
+    "No production defect or production-traffic claim private external input performance policy or compatibility decision",
+    "No tag release image registry workflow or other publication mutation",
+    "Do not start any later roadmap increment in this trigger"
+  ],
+  "remaining_risks": [
+    "Limiter token refactoring must preserve exact nonblocking acquisition and paired release behavior",
+    "Connection close alone does not prove slot release so every direct regression must claim the actual available token",
+    "R90-59 and R90-75 remain externally blocked"
+  ],
+  "resume_instructions": "Continue only R90-82 from clean baseline 9541d44db18b9c13e521b83be8aae79a9e5068be. All acceptance validation and exact five-path staged-scope reviews pass; commit and push the validated increment next then fetch verify and synchronize its exact Vault range. Do not start another increment or publication action."
+}

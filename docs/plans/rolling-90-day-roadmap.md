@@ -144,7 +144,7 @@
 | R90-79 | Sep 26–Oct 16 | Complete early | Harden suppression-file replacement durability. | R90-78 | Suppression replacement directly proves the same lifecycle boundaries while retaining serialized mutation, exact prior-file preservation before rename, and active-filter agreement with every reported outcome. |
 | R90-80 | Oct 17–31 | Complete early | Audit management-plane persistence and future compatibility scope. | R90-79 | A dated audit reconciles the rule/suppression transaction and durability sequence, current public claims, Git/task-state/remote/Vault evidence, and classifies remaining migration or product work without silently selecting a compatibility policy. |
 | R90-81 | Aug 9 | Complete | Audit post-management-plane delivery and restore the local reliability queue. | R90-80 | A dated audit reconciles the R90-80 feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current tests, and recurring validation deviations, then restores only evidence-grounded local reliability work without runtime or publication changes. |
-| R90-82 | Aug 10–Sep 4 | Ready | Stabilize receiver idle-capacity release evidence. | R90-81 | Direct receiver tests synchronize on an observable handler-capacity boundary rather than a shared heartbeat/session poll, prove timeout-driven slot release and replacement acceptance, and pass repeated uncached race execution without changing production timeout semantics. |
+| R90-82 | Aug 10–Sep 4 | In progress | Stabilize receiver idle-capacity release evidence. | R90-81 | Direct receiver tests synchronize on an observable handler-capacity boundary rather than a shared heartbeat/session poll, prove timeout-driven slot release and replacement acceptance, and pass repeated uncached race execution without changing production timeout semantics. |
 
 ## R90-01 Definition
 
@@ -1689,6 +1689,10 @@
 - **Stop condition:** stop if deterministic proof requires a public runtime API,
   protocol/configuration change, relaxed timeout semantics, production traffic,
   external services, or publication authority.
+- **Selected plan:**
+  [`task-20260809-receiver-idle-capacity-evidence.md`](task-20260809-receiver-idle-capacity-evidence.md),
+  from clean fetched baseline
+  `9541d44db18b9c13e521b83be8aae79a9e5068be`.
 
 ### R90-71 Validation Deviation
 
@@ -2218,14 +2222,6 @@ decisions.
 - **Allowed evidence:** anonymized, publicly released, real network traffic only. Synthetic or generated traffic is permanently prohibited.
 - **Required controls:** approve dedicated privacy review, provenance validation, sanitization review, and sensitive-metadata screening before corpus-pressure validation or official-evidence use.
 - **Boundary:** this exception expires when R90-04 completes and does not amend R90-05, R90-06, or future increment requirements.
-
-## R90-04a Definition
-
-- **Goal:** establish a current, reproducible v0.1.1 code-quality baseline while the privacy-controlled traffic-evidence process is unavailable.
-- **Window:** Jul 15–Aug 21, 2026; selected as the next ready increment by explicit user direction on Jul 15.
-- **Risk:** a passing quality suite could be misread as release approval or as replacement traffic evidence.
-- **Required validation:** run the applicable non-evidence quality, dependency, workflow, and release-candidate checks; record any unavailable check precisely.
-- **Stop condition:** stop without starting R90-04 if a required check is ambiguous or if continuation would require private traffic, privacy-review authority, a release decision, tagging, or publication.
 
 ## R90-05 Authorized Schedule Deviation
 
@@ -2893,3 +2889,39 @@ mutation because the thin hook resolves its versioned script from the repository
 working directory; replay from the repository root passed and remained
 content-stable. R90-82 is ready but was not started; R90-59 and R90-75 retain
 their external blockers.
+The Aug 9 R90-82 trigger fetched and verified the R90-81 docs-only closure at
+`9541d44db18b9c13e521b83be8aae79a9e5068be`, its exact Vault iteration note,
+full-index row, MOC link, and current stable receiver test authority. The Jul 20
+through Aug 9 phase review found no newer missing delivery record, stale stable
+authority, or unresolved validation result that changes priority. R90-59 and
+R90-75 retain their recorded external blockers, and every unfinished item keeps
+a complete dependency, window, risk, acceptance, validation, and stop record.
+R90-82 is selected as the sole dependency-ready increment with a persisted
+plan/state and direct evidence map before receiver or test changes; no later
+increment or publication action is started.
+R90-82 now exposes the existing internal limiter to package tests as available
+tokens without adding a public seam: each handler claims one token and returns
+one only after exit. The protocol-violation, ordinary-disconnect, and idle-timeout
+regressions directly claim that released token, then prove replacement packet
+delivery without shared latest-session polling. The first focused command used
+repository-relative source paths from the Go module and stopped before formatting
+or tests; the corrected full focused sequence passed, followed by twenty
+uncached race executions of all three direct regressions. Complete repository
+validation remains the delivery boundary; no later increment is started.
+R90-82's exact structural gate then found 86 roadmap rows but 87 Definition
+headings: R90-81 had added a complete R90-04a Definition near the queue while an
+older R90-04a Definition remained under the global policy history. The prior
+R90-81 closure's exact-one claim was therefore incorrect. Delivery stayed
+blocked while the duplicate was traced to Git history; the newer complete
+definition remains active and the redundant older heading/prose was removed
+without changing the completed R90-04a row or immutable R90-81 evidence. The
+full structural and repository validation sequences must be rerun before
+delivery.
+The corrected structural gate proves 86 queue rows map one-to-one to 86
+Definitions, all three unfinished records are complete, all 97 task-state JSON
+files parse, and the diff is clean. The complete fail-fast repository rerun then
+passes both C tests, every Go package uncached under race, E2E smoke, docs, and
+all 33 knowledge tests. R90-82 satisfies its local acceptance evidence and
+remains in progress only for exact staged-scope review, feature delivery,
+fetched remote verification, and exact-range Vault synchronization; no later
+increment is started.

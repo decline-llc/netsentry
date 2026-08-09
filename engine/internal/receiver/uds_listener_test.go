@@ -314,25 +314,26 @@ func TestStartProtocolViolationReleasesConnectionCapacity(t *testing.T) {
 	}
 	_ = offender.Close()
 
-	var replacement net.Conn
-	accepted := false
-	deadline := time.Now().Add(time.Second)
-	for time.Now().Before(deadline) {
-		replacement, err = net.Dial("unix", path)
-		if err == nil {
-			err = writeJSONFrame(replacement, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "replacement", PID: 2, Hostname: "host", MaxPayloadLen: 4096})
-			if err == nil && waitForSessionWithin(r, "replacement", 50*time.Millisecond) {
-				accepted = true
-				break
-			}
-			_ = replacement.Close()
-		}
-		time.Sleep(10 * time.Millisecond)
-	}
-	if !accepted {
-		t.Fatalf("replacement was not accepted after protocol violation: %v", err)
+	releaseCapacity := claimReleasedConnectionCapacity(t, r)
+	releaseCapacity()
+
+	replacement, err := dialUnix(path)
+	if err != nil {
+		t.Fatalf("dial replacement connection: %v", err)
 	}
 	defer replacement.Close()
+	if err := writeJSONFrame(replacement, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "replacement", PID: 2, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
+		t.Fatalf("write replacement hello: %v", err)
+	}
+	if err := writeJSONFrame(replacement, testPacketFrame(443)); err != nil {
+		t.Fatalf("write replacement packet: %v", err)
+	}
+	packetCtx, packetCancel := context.WithTimeout(context.Background(), time.Second)
+	pkt, err := WaitForPacket(packetCtx, r.Packets())
+	packetCancel()
+	if err != nil || pkt.DstPort != 443 {
+		t.Fatalf("replacement packet=%+v err=%v", pkt, err)
+	}
 	if got := metrics.Snapshot().DecodeErrors; got != 1 {
 		t.Fatalf("decode errors = %d, want exactly 1", got)
 	}
@@ -511,7 +512,15 @@ func TestStartRejectsConnectionsAboveLimitAndReusesCapacity(t *testing.T) {
 	if err := writeJSONFrame(first, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "first", PID: 1, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
 		t.Fatalf("write first hello: %v", err)
 	}
-	waitForSession(t, r, "first")
+	if err := writeJSONFrame(first, testPacketFrame(80)); err != nil {
+		t.Fatalf("write first packet: %v", err)
+	}
+	firstPacketCtx, firstPacketCancel := context.WithTimeout(context.Background(), time.Second)
+	firstPacket, err := WaitForPacket(firstPacketCtx, r.Packets())
+	firstPacketCancel()
+	if err != nil || firstPacket.DstPort != 80 {
+		t.Fatalf("first packet=%+v err=%v", firstPacket, err)
+	}
 
 	excess, err := dialUnix(path)
 	if err != nil {
@@ -529,24 +538,26 @@ func TestStartRejectsConnectionsAboveLimitAndReusesCapacity(t *testing.T) {
 		t.Fatalf("close first receiver connection: %v", err)
 	}
 
-	var replacement net.Conn
-	accepted := false
-	deadline := time.Now().Add(time.Second)
-	for time.Now().Before(deadline) {
-		replacement, err = net.Dial("unix", path)
-		if err == nil {
-			if err = writeJSONFrame(replacement, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "replacement", PID: 2, Hostname: "host", MaxPayloadLen: 4096}); err == nil && waitForSessionWithin(r, "replacement", 50*time.Millisecond) {
-				accepted = true
-				break
-			}
-			_ = replacement.Close()
-		}
-		time.Sleep(10 * time.Millisecond)
-	}
-	if !accepted {
-		t.Fatalf("replacement connection was not accepted after capacity release: %v", err)
+	releaseCapacity := claimReleasedConnectionCapacity(t, r)
+	releaseCapacity()
+
+	replacement, err := dialUnix(path)
+	if err != nil {
+		t.Fatalf("dial replacement connection: %v", err)
 	}
 	defer replacement.Close()
+	if err := writeJSONFrame(replacement, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "replacement", PID: 2, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
+		t.Fatalf("write replacement hello: %v", err)
+	}
+	if err := writeJSONFrame(replacement, testPacketFrame(443)); err != nil {
+		t.Fatalf("write replacement packet: %v", err)
+	}
+	replacementPacketCtx, replacementPacketCancel := context.WithTimeout(context.Background(), time.Second)
+	replacementPacket, err := WaitForPacket(replacementPacketCtx, r.Packets())
+	replacementPacketCancel()
+	if err != nil || replacementPacket.DstPort != 443 {
+		t.Fatalf("replacement packet=%+v err=%v", replacementPacket, err)
+	}
 }
 
 func TestHandleConnTimesOutBeforeFirstCompleteFrame(t *testing.T) {
@@ -626,7 +637,15 @@ func TestStartIdleTimeoutReleasesConnectionCapacity(t *testing.T) {
 	if err := writeJSONFrame(first, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "idle-first", PID: 1, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
 		t.Fatalf("write first hello: %v", err)
 	}
-	waitForSession(t, r, "idle-first")
+	if err := writeJSONFrame(first, testPacketFrame(80)); err != nil {
+		t.Fatalf("write first packet: %v", err)
+	}
+	firstPacketCtx, firstPacketCancel := context.WithTimeout(context.Background(), time.Second)
+	firstPacket, err := WaitForPacket(firstPacketCtx, r.Packets())
+	firstPacketCancel()
+	if err != nil || firstPacket.DstPort != 80 {
+		t.Fatalf("first packet=%+v err=%v", firstPacket, err)
+	}
 	if err := first.SetReadDeadline(time.Now().Add(time.Second)); err != nil {
 		t.Fatalf("set client read deadline: %v", err)
 	}
@@ -640,6 +659,9 @@ func TestStartIdleTimeoutReleasesConnectionCapacity(t *testing.T) {
 	}
 	_ = first.Close()
 
+	releaseCapacity := claimReleasedConnectionCapacity(t, r)
+	releaseCapacity()
+
 	replacement, err := dialUnix(path)
 	if err != nil {
 		t.Fatalf("dial replacement connection: %v", err)
@@ -648,7 +670,15 @@ func TestStartIdleTimeoutReleasesConnectionCapacity(t *testing.T) {
 	if err := writeJSONFrame(replacement, HelloFrame{Type: "hello", Version: "0.1.0", SessionID: "idle-replacement", PID: 2, Hostname: "host", MaxPayloadLen: 4096}); err != nil {
 		t.Fatalf("write replacement hello: %v", err)
 	}
-	waitForSession(t, r, "idle-replacement")
+	if err := writeJSONFrame(replacement, testPacketFrame(443)); err != nil {
+		t.Fatalf("write replacement packet: %v", err)
+	}
+	replacementPacketCtx, replacementPacketCancel := context.WithTimeout(context.Background(), time.Second)
+	replacementPacket, err := WaitForPacket(replacementPacketCtx, r.Packets())
+	replacementPacketCancel()
+	if err != nil || replacementPacket.DstPort != 443 {
+		t.Fatalf("replacement packet=%+v err=%v", replacementPacket, err)
+	}
 	if got := metrics.Snapshot().DecodeErrors; got != 0 {
 		t.Fatalf("idle expiry incremented decode errors: %d", got)
 	}
@@ -794,6 +824,20 @@ func waitForSessionWithin(r *Receiver, sessionID string, timeout time.Duration) 
 		time.Sleep(10 * time.Millisecond)
 	}
 	return false
+}
+
+func claimReleasedConnectionCapacity(t *testing.T, r *Receiver) func() {
+	t.Helper()
+	if r.slots == nil {
+		t.Fatal("receiver connection slots are not initialized")
+	}
+	select {
+	case <-r.slots:
+		return func() { r.slots <- struct{}{} }
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for released receiver connection capacity")
+		return func() {}
+	}
 }
 
 func establishedSession(sessionID string) *connectionSession {
