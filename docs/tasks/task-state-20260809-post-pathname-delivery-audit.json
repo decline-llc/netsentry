@@ -1,0 +1,51 @@
+{
+  "task": "r90-85-post-pathname-delivery-audit",
+  "timestamp": "2026-08-09T12:36:37-07:00",
+  "branch": "main",
+  "remote_baseline": "79f6250de30c3128ecaec31e81ae19eecc9109d8",
+  "risk_level": "Low",
+  "current_checkpoint": "ready_to_commit",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
+    "Fetched origin main and verified a clean local and remote baseline at 79f6250de30c3128ecaec31e81ae19eecc9109d8",
+    "Verified the exact R90-84 feature and docs-only closure parents intended paths completed state both Vault notes full-index rows MOC links and current stable authority",
+    "Parsed all 99 prior task-state JSON files and verified all 88 roadmap rows and Definitions match as complete multisets without duplicates",
+    "Confirmed R90-59 and R90-75 retain their complete external blockers and no dependency-ready local row exists",
+    "Selected R90-85 as the documentation-only smallest safe unblocker",
+    "Found the R90-84 completion paragraph before R90-82 completion while the roadmap tail still ends at the R90-84 pre-delivery checkpoint",
+    "Confirmed Receiver Start installs listener state before launching its context watcher while all direct cancellation tests cancel only after successful Start",
+    "Persisted R90-85 scope non-goals risks evidence mapping validation authority boundaries and stop conditions before audit documentation changes",
+    "Verified the exact R90-84 feature and closure chain intended paths completed plan state fetched remote and both Vault records",
+    "Reviewed 141 Jul 20 through Aug 9 commits across four phases and found no unresolved behavioral validation result or missing delivery record",
+    "Moved the unchanged R90-84 completion paragraph after its successful validation checkpoint without changing delivery facts or immutable evidence",
+    "Mapped current Start ordering all checked callers and direct receiver cancellation tests to the untested already-canceled readiness boundary",
+    "Restored only R90-86 as a planned pre-canceled receiver-start preservation increment and left it unstarted",
+    "Created the dated post-pathname delivery audit record",
+    "Parsed all 100 task-state JSON files and verified all 90 roadmap rows and Definitions match as complete multisets without duplicates",
+    "Verified chronological marker order from R90-82 completion through R90-85 selection",
+    "Passed documentation all 33 knowledge tests and git diff check",
+    "Compared every R90-85 acceptance criterion with the completed evidence and found no deviation",
+    "Passed exact four-path staged scope credential sensitive-path source test config workflow generated-evidence release and publication review"
+  ],
+  "in_progress": [
+    "Commit and push the validated exact four-path R90-85 audit"
+  ],
+  "todo": [
+    "Fetch and verify origin main then rerun the knowledge gate",
+    "Synchronize and verify the exact Vault range",
+    "Persist verified delivery facts in the docs-only closure"
+  ],
+  "authority_boundaries": [
+    "Only R90-85 delivery audit roadmap chronology repair and forward queue reconciliation",
+    "No receiver runtime test configuration protocol public API workflow release-gate or generated-evidence change",
+    "No active or stale peer policy cross-process locking private or external input performance policy or compatibility decision",
+    "No tag release image registry workflow or other publication mutation",
+    "Do not start the follow-on increment in this trigger"
+  ],
+  "remaining_risks": [
+    "The mutable roadmap chronology currently places R90-84 completion before earlier prerequisite history",
+    "Cancellation before receiver readiness lacks a direct regression but is not yet a proven runtime defect",
+    "R90-59 and R90-75 remain externally blocked"
+  ],
+  "resume_instructions": "R90-85 satisfies its local audit and validation evidence from baseline 79f6250de30c3128ecaec31e81ae19eecc9109d8. Continue only exact four-path staged review feature commit push fetched-remote verification Vault synchronization and docs-only closure without starting R90-86."
+}
