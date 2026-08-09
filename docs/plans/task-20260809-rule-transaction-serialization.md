@@ -143,6 +143,27 @@ snapshot disagreeing, while packet matching remains lock-free.
   publication reviews pass. No dependency, rule schema, configuration,
   workflow, release artifact, or external mutation was added.
 
+## Delivery Results
+
+- Feature commit:
+  `0ae76e167928f0ab1dafe015a997ccd1f61c664f` (`fix: serialize rule
+  management transactions`). It contains exactly the nine validated source,
+  test, documentation, roadmap, plan, and task-state paths.
+- The feature was pushed without force and without tags. A fresh fetch verified
+  `HEAD == origin/main == 0ae76e167928f0ab1dafe015a997ccd1f61c664f`;
+  the post-fetch 33-test knowledge gate passed.
+- Exact range
+  `40798847be8e7bb9270b5c5d7675c27f7addf7b1..0ae76e167928f0ab1dafe015a997ccd1f61c664f`
+  was synchronized repeatedly with identical Vault tree hashes. The generated
+  iteration note, full-index row, and MOC link are verified.
+- The first sync correctly preserved immutable delivery records but left
+  stable MOC/rule/config/API prose describing R90-77 as unimplemented. Those
+  four current notes were reconciled to the delivered in-process transaction
+  boundary, cross-process/crash-durability non-claims, and R90-78 readiness;
+  replaying the exact range preserved the reconciled tree hash.
+- R90-77 is complete. R90-78 is ready but unstarted; R90-59 and R90-75 retain
+  their recorded external blockers.
+
 ## Authority Boundaries
 
 This trigger authorizes only R90-77 in-process rule-management serialization,

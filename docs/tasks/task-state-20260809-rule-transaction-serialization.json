@@ -2,9 +2,9 @@
   "task": "r90-77-rule-management-transaction-serialization",
   "timestamp": "2026-08-09T05:04:52-07:00",
   "branch": "main",
-  "remote_baseline": "40798847be8e7bb9270b5c5d7675c27f7addf7b1",
+  "remote_baseline": "0ae76e167928f0ab1dafe015a997ccd1f61c664f",
   "risk_level": "Medium",
-  "current_checkpoint": "validated_pre_delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
     "Fetched origin/main and verified clean local and remote equality at 40798847be8e7bb9270b5c5d7675c27f7addf7b1",
@@ -30,15 +30,18 @@
     "Passed make e2e-smoke with six packets processed five alerts generated and eight rules loaded",
     "Passed make docs-check and the 33-test make knowledge-check",
     "Parsed every task-state JSON and verified exact roadmap row Definition coverage plus complete unfinished-item fields",
-    "Passed gofmt git diff check exact nine-path scope staged diff credential sensitive-path dependency schema config workflow release and publication review"
+    "Passed gofmt git diff check exact nine-path scope staged diff credential sensitive-path dependency schema config workflow release and publication review",
+    "Committed the validated exact nine-path feature at 0ae76e167928f0ab1dafe015a997ccd1f61c664f",
+    "Pushed main without force and without tags then fetched origin/main equal to the feature commit",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range 40798847be8e7bb9270b5c5d7675c27f7addf7b1..0ae76e167928f0ab1dafe015a997ccd1f61c664f idempotently to the sole local Vault",
+    "Verified the generated iteration note full-index row and MOC link",
+    "Reconciled stale stable MOC rule config and API prose to the delivered single-process transaction boundary without rewriting immutable iteration notes",
+    "Replayed the identical feature range and verified the reconciled Vault tree remained identical",
+    "Completed R90-77 and left R90-78 ready without starting it"
   ],
-  "in_progress": [
-    "Deliver the validated exact R90-77 increment"
-  ],
-  "todo": [
-    "Commit push fetch-verify and synchronize the exact range to the sole local Vault",
-    "Record verified delivery facts in a docs-only closure without starting R90-78"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Only in-process rule-management transaction serialization and its direct tests and current documentation",
     "No rule schema validation ordering response authentication or packet-matching semantic change",
@@ -46,10 +49,22 @@
     "No suppression management private or external data performance policy tag release image registry or workflow mutation"
   ],
   "remaining_risks": [
-    "R90-78 rule-file durability remains planned and unstarted behind this increment",
+    "R90-78 rule-file durability is ready but remains unstarted",
     "R90-79 and R90-80 remain planned behind their recorded dependencies",
     "R90-59 remains blocked on remote-publication authority",
     "R90-75 remains blocked on comparable-environment evidence and product SLO scope"
   ],
-  "resume_instructions": "Resume R90-77 implementation from clean fetched baseline 40798847be8e7bb9270b5c5d7675c27f7addf7b1 using docs/plans/task-20260809-rule-transaction-serialization.md. Do not repeat the completed audit or start R90-78 R90-59 or R90-75."
+  "delivery": {
+    "commit": "0ae76e167928f0ab1dafe015a997ccd1f61c664f",
+    "origin_main_verified": true,
+    "branch_push_no_follow_tags": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "40798847be8e7bb9270b5c5d7675c27f7addf7b1..0ae76e167928f0ab1dafe015a997ccd1f61c664f",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true
+  },
+  "resume_instructions": "R90-77 is complete at 0ae76e167928f0ab1dafe015a997ccd1f61c664f; do not repeat its implementation validation feature push or feature-range Vault synchronization. On the next netsentry-next trigger fetch and verify this docs-only closure and its exact Vault evidence before selecting R90-78. R90-59 and R90-75 remain externally blocked."
 }

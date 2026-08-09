@@ -139,8 +139,8 @@
 | R90-74 | Sep 5–Oct 2 | Complete early | Record a repeated single-host benchmark baseline. | R90-73 | At least five uncached complete-surface samples from one clean pinned commit and unchanged environment retain every raw result plus median/IQR/variation summaries as observation-only local evidence. |
 | R90-75 | Oct 3–31 | Blocked / pending evidence; non-blocking | Decide portable performance-budget scope. | R90-74; comparable-environment evidence; explicit budget scope | Matched evidence and product/SLO authority decide whether a budget can be portable, same-host-only, or observation-only; current single-host data cannot activate a numeric gate or prevent unrelated dependency-ready roadmap work. |
 | R90-76 | Aug 9 | Complete | Audit post-tag delivery and restore the forward queue. | R90-59a; R90-74 | A dated audit reconciles the local-tag feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current code/tests, and blocked authorities, then restores only evidence-grounded local work without runtime or publication changes. |
-| R90-77 | Aug 10–Sep 4 | Validated; delivery pending | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
-| R90-78 | Sep 5–25 | Planned | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
+| R90-77 | Aug 10–Sep 4 | Complete early | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
+| R90-78 | Sep 5–25 | Ready | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
 | R90-79 | Sep 26–Oct 16 | Planned | Harden suppression-file replacement durability. | R90-78 | Suppression replacement directly proves the same lifecycle boundaries while retaining serialized mutation, exact prior-file preservation before rename, and active-filter agreement with every reported outcome. |
 | R90-80 | Oct 17–31 | Planned | Audit management-plane persistence and future compatibility scope. | R90-79 | A dated audit reconciles the rule/suppression transaction and durability sequence, current public claims, Git/task-state/remote/Vault evidence, and classifies remaining migration or product work without silently selecting a compatibility policy. |
 
@@ -2663,3 +2663,13 @@ later valid request. Twenty uncached focused race repetitions, complete focused
 ordinary/race tests, full native tests, E2E smoke, documentation, and the
 33-test knowledge gate pass. The exact nine-path increment is validated and
 awaits delivery; R90-78 remains unstarted.
+R90-77 completed early at
+`0ae76e167928f0ab1dafe015a997ccd1f61c664f`: its exact nine-path feature was
+pushed without force or tags, fetched equal to `origin/main`, and passed the
+post-fetch 33-test knowledge gate. Exact range
+`40798847be8e7bb9270b5c5d7675c27f7addf7b1..0ae76e167928f0ab1dafe015a997ccd1f61c664f`
+was synchronized idempotently to the sole local Vault. Its iteration note,
+full-index row, MOC link, and current MOC/rule/config/API stable authority are
+verified; stale pre-delivery stable prose was reconciled without rewriting
+immutable iteration notes. R90-78 is ready but was not started; R90-59 and
+R90-75 retain their external blockers.
