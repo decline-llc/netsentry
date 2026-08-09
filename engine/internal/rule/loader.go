@@ -2,7 +2,9 @@ package rule
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 
@@ -11,6 +13,69 @@ import (
 
 type rulesFile struct {
 	Rules []*model.Rule `json:"rules"`
+}
+
+type replacementFile interface {
+	Name() string
+	Write([]byte) (int, error)
+	Chmod(os.FileMode) error
+	Sync() error
+	Close() error
+}
+
+type replacementDirectory interface {
+	Sync() error
+	Close() error
+}
+
+type replacementOps struct {
+	stat       func(string) (os.FileInfo, error)
+	createTemp func(string, string) (replacementFile, error)
+	rename     func(string, string) error
+	openDir    func(string) (replacementDirectory, error)
+	remove     func(string) error
+}
+
+var osReplacementOps = replacementOps{
+	stat: os.Stat,
+	createTemp: func(dir, pattern string) (replacementFile, error) {
+		return os.CreateTemp(dir, pattern)
+	},
+	rename: os.Rename,
+	openDir: func(path string) (replacementDirectory, error) {
+		return os.Open(path)
+	},
+	remove: os.Remove,
+}
+
+type replacementError struct {
+	phase     string
+	committed bool
+	err       error
+}
+
+func (e *replacementError) Error() string {
+	if e.committed {
+		return fmt.Sprintf("rules file replacement committed but %s failed: %v", e.phase, e.err)
+	}
+	return fmt.Sprintf("%s rules file: %v", e.phase, e.err)
+}
+
+func (e *replacementError) Unwrap() error {
+	return e.err
+}
+
+func (e *replacementError) ReplacementCommitted() bool {
+	return e.committed
+}
+
+// ReplacementCommitted reports whether err describes a replacement that
+// already crossed the atomic rename boundary.
+func ReplacementCommitted(err error) bool {
+	var classified interface {
+		ReplacementCommitted() bool
+	}
+	return errors.As(err, &classified) && classified.ReplacementCommitted()
 }
 
 type rawRule struct {
@@ -47,36 +112,81 @@ func SaveToFile(path string, rules []*model.Rule) error {
 	}
 	data = append(data, '\n')
 
+	return replaceRulesFile(path, data, osReplacementOps)
+}
+
+func replaceRulesFile(path string, data []byte, ops replacementOps) (result error) {
 	mode := os.FileMode(0o644)
-	if info, err := os.Stat(path); err == nil {
+	info, err := ops.stat(path)
+	if err == nil {
 		mode = info.Mode().Perm()
+	} else if !errors.Is(err, os.ErrNotExist) {
+		return &replacementError{phase: "stat", err: err}
 	}
 
 	dir := filepath.Dir(path)
-	tmp, err := os.CreateTemp(dir, ".rules-*.json")
+	tmp, err := ops.createTemp(dir, ".rules-*.json")
 	if err != nil {
-		return fmt.Errorf("create temp rules file: %w", err)
+		return &replacementError{phase: "create temporary", err: err}
 	}
 	tmpName := tmp.Name()
+	committed := false
 	defer func() {
-		_ = os.Remove(tmpName)
+		if err := ops.remove(tmpName); err != nil && !errors.Is(err, os.ErrNotExist) {
+			result = errors.Join(result, &replacementError{
+				phase:     "remove temporary",
+				committed: committed,
+				err:       err,
+			})
+		}
 	}()
 
-	if _, err := tmp.Write(data); err != nil {
-		_ = tmp.Close()
-		return fmt.Errorf("write temp rules file: %w", err)
+	written, err := tmp.Write(data)
+	if err == nil && written != len(data) {
+		err = io.ErrShortWrite
+	}
+	if err != nil {
+		return closeReplacementAfterFailure(tmp, &replacementError{phase: "write temporary", err: err})
 	}
 	if err := tmp.Chmod(mode); err != nil {
-		_ = tmp.Close()
-		return fmt.Errorf("chmod temp rules file: %w", err)
+		return closeReplacementAfterFailure(tmp, &replacementError{phase: "chmod temporary", err: err})
+	}
+	if err := tmp.Sync(); err != nil {
+		return closeReplacementAfterFailure(tmp, &replacementError{phase: "sync temporary", err: err})
 	}
 	if err := tmp.Close(); err != nil {
-		return fmt.Errorf("close temp rules file: %w", err)
+		return &replacementError{phase: "close temporary", err: err}
 	}
-	if err := os.Rename(tmpName, path); err != nil {
-		return fmt.Errorf("replace rules file: %w", err)
+	if err := ops.rename(tmpName, path); err != nil {
+		return &replacementError{phase: "rename temporary", err: err}
+	}
+	committed = true
+
+	parent, err := ops.openDir(dir)
+	if err != nil {
+		return &replacementError{phase: "open parent directory", committed: true, err: err}
+	}
+	if err := parent.Sync(); err != nil {
+		return closeDirectoryAfterFailure(parent, &replacementError{phase: "sync parent directory", committed: true, err: err})
+	}
+	if err := parent.Close(); err != nil {
+		return &replacementError{phase: "close parent directory", committed: true, err: err}
 	}
 	return nil
+}
+
+func closeReplacementAfterFailure(file replacementFile, primary error) error {
+	if err := file.Close(); err != nil {
+		return errors.Join(primary, &replacementError{phase: "close temporary after failure", err: err})
+	}
+	return primary
+}
+
+func closeDirectoryAfterFailure(dir replacementDirectory, primary error) error {
+	if err := dir.Close(); err != nil {
+		return errors.Join(primary, &replacementError{phase: "close parent directory after failure", committed: true, err: err})
+	}
+	return primary
 }
 
 func parseRules(data []byte) ([]*model.Rule, error) {

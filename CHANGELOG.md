@@ -9,6 +9,12 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Rule seed-file replacement now rejects short writes, preserves file mode,
+  syncs and closes the temporary file before rename, and syncs and closes the
+  containing directory before success. Direct lifecycle faults prove exact
+  prior-file and temporary-file preservation through rename; a post-rename
+  durability failure publishes the committed canonical rules to active memory
+  and returns `RULES_DURABILITY_UNCERTAIN` instead of implying rollback.
 - File-backed rule create, update, delete, and explicit reload now share one
   in-process management transaction order from authoritative read through
   canonical file handling and atomic snapshot publication. Synchronized race

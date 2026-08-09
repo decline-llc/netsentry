@@ -1422,6 +1422,124 @@ func TestRejectedRuleTransactionsPreserveStateAndReleaseSerialization(t *testing
 	})
 }
 
+type committedRuleSaveError struct {
+	err error
+}
+
+func (e *committedRuleSaveError) Error() string {
+	return "rules file replacement committed but sync parent directory failed: " + e.err.Error()
+}
+
+func (e *committedRuleSaveError) Unwrap() error {
+	return e.err
+}
+
+func (e *committedRuleSaveError) ReplacementCommitted() bool {
+	return true
+}
+
+func TestRuleMutationPostRenameDurabilityFailurePublishesCommittedFile(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "rules.json")
+	initial := []*model.Rule{testPayloadRule("rule-existing", "Existing", "existing")}
+	if err := rule.SaveToFile(path, initial); err != nil {
+		t.Fatalf("write rules seed: %v", err)
+	}
+	manager := &fakeRules{rules: cloneRules(initial), count: len(initial)}
+	opts := Options{RulesSeedFile: path}
+	opts.saveRules = func(path string, rules []*model.Rule) error {
+		if err := rule.SaveToFile(path, rules); err != nil {
+			return err
+		}
+		return &committedRuleSaveError{err: errors.New("injected directory sync failure")}
+	}
+	handler := NewServerWithOptions(&fakeStore{}, fakeQueue{}, manager, stats.New(), opts).Handler()
+
+	created := testPayloadRule("rule-created", "Created", "created")
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/api/rules", strings.NewReader(ruleRequestBody(t, created))))
+	if rec.Code != http.StatusInternalServerError || !strings.Contains(rec.Body.String(), `"code":"RULES_DURABILITY_UNCERTAIN"`) {
+		t.Fatalf("post-rename failure status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	if !strings.Contains(rec.Body.String(), "applied but crash durability could not be confirmed") {
+		t.Fatalf("post-rename response does not report committed outcome: %s", rec.Body.String())
+	}
+	assertFakeRuleState(t, path, manager, map[string]string{
+		"rule-existing": "Existing",
+		"rule-created":  "Created",
+	})
+}
+
+func TestRuleMutationPreRenameFailurePreservesStateAndAllowsRetry(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "rules.json")
+	initial := []*model.Rule{testPayloadRule("rule-existing", "Existing", "existing")}
+	if err := rule.SaveToFile(path, initial); err != nil {
+		t.Fatalf("write rules seed: %v", err)
+	}
+	before, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read rules seed: %v", err)
+	}
+	manager := &fakeRules{rules: cloneRules(initial), count: len(initial)}
+	failNext := true
+	opts := Options{RulesSeedFile: path}
+	opts.saveRules = func(path string, rules []*model.Rule) error {
+		if failNext {
+			failNext = false
+			return errors.New("injected pre-rename failure")
+		}
+		return rule.SaveToFile(path, rules)
+	}
+	handler := NewServerWithOptions(&fakeStore{}, fakeQueue{}, manager, stats.New(), opts).Handler()
+	created := testPayloadRule("rule-created", "Created", "created")
+
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/api/rules", strings.NewReader(ruleRequestBody(t, created))))
+	if rec.Code != http.StatusInternalServerError || !strings.Contains(rec.Body.String(), `"code":"INTERNAL_ERROR"`) {
+		t.Fatalf("pre-rename failure status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	after, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read rules seed after rejection: %v", err)
+	}
+	if string(after) != string(before) {
+		t.Fatalf("pre-rename failure changed canonical bytes: got %q want %q", after, before)
+	}
+	assertFakeRuleState(t, path, manager, map[string]string{"rule-existing": "Existing"})
+
+	rec = httptest.NewRecorder()
+	handler.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/api/rules", strings.NewReader(ruleRequestBody(t, created))))
+	if rec.Code != http.StatusCreated {
+		t.Fatalf("retry status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	assertFakeRuleState(t, path, manager, map[string]string{
+		"rule-existing": "Existing",
+		"rule-created":  "Created",
+	})
+}
+
+func assertFakeRuleState(t *testing.T, path string, manager *fakeRules, want map[string]string) {
+	t.Helper()
+	persisted, err := rule.LoadFromFile(path)
+	if err != nil {
+		t.Fatalf("load persisted rules: %v", err)
+	}
+	for label, rules := range map[string][]*model.Rule{
+		"persisted": persisted,
+		"active":    manager.rules,
+	} {
+		if len(rules) != len(want) {
+			t.Fatalf("%s rule count = %d, want %d: %+v", label, len(rules), len(want), rules)
+		}
+		for _, got := range rules {
+			if got == nil || want[got.ID] != got.Name {
+				t.Fatalf("unexpected %s rule: %+v, want %+v", label, got, want)
+			}
+		}
+	}
+}
+
 func TestStoreErrorUsesErrorEnvelope(t *testing.T) {
 	server := NewServer(&fakeStore{err: errors.New("disk offline")}, fakeQueue{}, &fakeRules{}, stats.New())
 	rec := httptest.NewRecorder()

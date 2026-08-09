@@ -206,8 +206,16 @@ File-backed rule create, update, delete, and explicit reload requests are
 serialized as complete in-process management transactions. A successful
 response therefore agrees with both the canonical seed file and the active
 snapshot after all earlier successful rule transactions. Packet matching stays
-lock-free. This does not coordinate a second NetSentry process writing the same
-file or claim crash durability for the file replacement lifecycle.
+lock-free. Rule mutations require a complete temporary-file write, preserve the
+existing file mode, sync and close the temporary file, atomically rename it,
+and sync and close the containing directory before returning success. A failure
+through rename leaves both the prior canonical bytes and active snapshot
+unchanged. If rename commits but containing-directory durability cannot be
+confirmed, the server loads the new canonical file into the active snapshot and
+returns `500 RULES_DURABILITY_UNCERTAIN`; the mutation was applied and must not
+be treated as a safe rejection. This does not coordinate a second NetSentry
+process writing the same file or claim portability beyond the checked local
+filesystem lifecycle.
 
 Current limitations:
 
@@ -215,6 +223,9 @@ Current limitations:
 - Alert storage is SQLite-backed with JSONL recovery-log replay, startup TTL pruning, old daily shard file cleanup, and sticky emergency mode for disk-full/read-only/I/O failures. Emergency mode remains sticky until restart or a successful authenticated operator recovery request. When `engine.db_shard_daily` is enabled, alert writes use each alert timestamp to select `netsentry-YYYY-MM-DD.db`, alert queries scan matching shards and apply the same filters, ordering, and pagination across shards, and health and metrics alert counts also sum matching shard files.
 - Validation, unsupported method, and internal API errors use the unified error envelope.
 - Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk. File-backed mutations and explicit reload are serialized within one API server; cross-process writers remain outside that boundary.
+- A rule mutation whose rename commits but parent-directory durability cannot
+  be confirmed returns `RULES_DURABILITY_UNCERTAIN`; canonical disk and active
+  memory contain the committed mutation even though the response is an error.
 - Optional PSK Bearer authentication protects modifying rule and suppression endpoints when `engine.api_auth_enabled` is true.
 - The HTTP listener has explicit read/header/write/idle timeouts, a 16 KiB header limit, and loopback-only defaults.
 - Non-GET API requests emit structured zap audit logs with request ID, method, path, status, authorization outcome, target, remote address, and duration.

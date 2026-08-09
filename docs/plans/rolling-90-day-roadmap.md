@@ -140,7 +140,7 @@
 | R90-75 | Oct 3–31 | Blocked / pending evidence; non-blocking | Decide portable performance-budget scope. | R90-74; comparable-environment evidence; explicit budget scope | Matched evidence and product/SLO authority decide whether a budget can be portable, same-host-only, or observation-only; current single-host data cannot activate a numeric gate or prevent unrelated dependency-ready roadmap work. |
 | R90-76 | Aug 9 | Complete | Audit post-tag delivery and restore the forward queue. | R90-59a; R90-74 | A dated audit reconciles the local-tag feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current code/tests, and blocked authorities, then restores only evidence-grounded local work without runtime or publication changes. |
 | R90-77 | Aug 10–Sep 4 | Complete early | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
-| R90-78 | Sep 5–25 | Ready | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
+| R90-78 | Sep 5–25 | Validated; delivery pending | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
 | R90-79 | Sep 26–Oct 16 | Planned | Harden suppression-file replacement durability. | R90-78 | Suppression replacement directly proves the same lifecycle boundaries while retaining serialized mutation, exact prior-file preservation before rename, and active-filter agreement with every reported outcome. |
 | R90-80 | Oct 17–31 | Planned | Audit management-plane persistence and future compatibility scope. | R90-79 | A dated audit reconciles the rule/suppression transaction and durability sequence, current public claims, Git/task-state/remote/Vault evidence, and classifies remaining migration or product work without silently selecting a compatibility policy. |
 
@@ -1586,6 +1586,10 @@
 - **Stop condition:** stop on ambiguous post-rename state, platform semantics
   that require a product portability decision, rule-schema change, migration,
   external data, or publication authority.
+- **Selected plan:**
+  [`task-20260809-rule-file-durability.md`](task-20260809-rule-file-durability.md),
+  from clean fetched baseline
+  `4b5b199f37531e69c08cb7fa7b1d814f83047a37`.
 
 ## R90-79 Definition
 
@@ -2673,3 +2677,25 @@ full-index row, MOC link, and current MOC/rule/config/API stable authority are
 verified; stale pre-delivery stable prose was reconciled without rewriting
 immutable iteration notes. R90-78 is ready but was not started; R90-59 and
 R90-75 retain their external blockers.
+The next trigger fetched and verified the R90-77 docs-only closure at
+`4b5b199f37531e69c08cb7fa7b1d814f83047a37`, both exact R90-77 Vault notes,
+full-index rows, MOC links, and current stable rule/config/API authority. The
+Jul 20 through Aug 9 phase audit found no unresolved validation deviation or
+missing delivery record; all 92 prior task states parse and all 84 roadmap
+rows match one Definition. R90-78 is selected as the sole dependency-ready
+local increment with a persisted lifecycle outcome contract and direct fault
+evidence map. R90-79 and R90-80 remain dependency-planned; R90-59 and R90-75
+retain their external blockers. No later increment or publication action is
+started.
+R90-78 now requires exact-length temporary writes, preserved mode, file sync,
+file close, atomic rename, and containing-directory sync and close before a
+successful rule mutation response. Direct faults cover stat, create,
+short-write, write, chmod, file-sync, temp-close, rename, directory-open,
+directory-sync, and directory-close boundaries with exact prior/new bytes and
+temporary cleanup. Post-rename durability errors publish the committed
+canonical rules to active memory and return
+`RULES_DURABILITY_UNCERTAIN`; pre-rename errors retain prior file/state and
+permit retry. Twenty uncached direct race repetitions, complete focused
+ordinary/race tests, full native tests, E2E smoke, documentation, and the
+33-test knowledge gate pass. The exact increment is validated and awaits
+delivery; R90-79 remains unstarted.

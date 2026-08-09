@@ -213,9 +213,16 @@ their authoritative state or file read through validation, canonical file
 replacement when applicable, and atomic publication of the complete engine
 snapshot. Concurrent successful create/update/delete/reload requests therefore
 have one in-process order and cannot overwrite an accepted mutation derived
-from a stale snapshot. Packet matching does not acquire this lock. This is not
-cross-process locking or crash-durability evidence; R90-78 separately covers
-short-write, sync, close, rename, and parent-directory durability outcomes.
+from a stale snapshot. Packet matching does not acquire this lock. Canonical
+rule replacement requires a complete temporary-file write, preserved mode,
+file sync, file close, atomic rename, and containing-directory sync and close.
+Fault injection directly covers every phase and temporary cleanup. Failures
+through rename preserve prior bytes and active rules. If rename commits but the
+directory durability boundary fails, the new canonical rules are loaded into
+active memory and the API returns `RULES_DURABILITY_UNCERTAIN`; an operator
+must treat that error as applied but not crash-durability-confirmed. This is not
+cross-process locking, automatic retry, backup, migration, or portable crash
+proof.
 
 `configs/suppressions.json` uses the canonical wrapped schema:
 

@@ -74,6 +74,7 @@ type Options struct {
 	HealthFreshnessLimit time.Duration
 	Suppressions         SuppressionManager
 	AuditLogger          *zap.Logger
+	saveRules            func(string, []*model.Rule) error
 }
 
 type Server struct {
@@ -830,15 +831,35 @@ func (s *Server) persistAndReloadRules(rules []*model.Rule) error {
 	if err := validator.Reload(rules); err != nil {
 		return fmt.Errorf("validate rules: %w", err)
 	}
-	if err := rule.SaveToFile(s.opts.RulesSeedFile, rules); err != nil {
-		return fmt.Errorf("save rules: %w", err)
+	saveRules := s.opts.saveRules
+	if saveRules == nil {
+		saveRules = rule.SaveToFile
+	}
+	saveErr := saveRules(s.opts.RulesSeedFile, rules)
+	if saveErr != nil && !rule.ReplacementCommitted(saveErr) {
+		return fmt.Errorf("save rules: %w", saveErr)
 	}
 	loaded, err := rule.LoadFromFile(s.opts.RulesSeedFile)
 	if err != nil {
+		if saveErr != nil {
+			return errors.Join(
+				fmt.Errorf("save rules: %w", saveErr),
+				fmt.Errorf("reload saved rules: %w", err),
+			)
+		}
 		return fmt.Errorf("reload saved rules: %w", err)
 	}
 	if err := s.rules.Reload(loaded); err != nil {
+		if saveErr != nil {
+			return errors.Join(
+				fmt.Errorf("save rules: %w", saveErr),
+				fmt.Errorf("reload rules: %w", err),
+			)
+		}
 		return fmt.Errorf("reload rules: %w", err)
+	}
+	if saveErr != nil {
+		return fmt.Errorf("save rules: %w", saveErr)
 	}
 	return nil
 }
@@ -846,6 +867,10 @@ func (s *Server) persistAndReloadRules(rules []*model.Rule) error {
 func writeRuleMutationError(w http.ResponseWriter, r *http.Request, err error) {
 	if strings.HasPrefix(err.Error(), "validate rules:") {
 		writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid rule request", err.Error())
+		return
+	}
+	if rule.ReplacementCommitted(err) {
+		writeError(w, r, http.StatusInternalServerError, "RULES_DURABILITY_UNCERTAIN", "Rules were applied but crash durability could not be confirmed", err.Error())
 		return
 	}
 	writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not persist rules", err.Error())

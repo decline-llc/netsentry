@@ -112,9 +112,16 @@ Current rule management:
   replacement or reload read and atomic snapshot publication. Packet matching
   never enters that lock and continues to read immutable snapshots through
   `atomic.Pointer`.
-- This is an in-process lost-update boundary, not cross-process coordination or
-  crash-durability evidence. R90-78 separately covers temporary-file short
-  writes, file/directory sync, close, and rename outcomes.
+- Rule replacement rejects short writes, preserves the existing file mode,
+  syncs and closes the temporary file before atomic rename, then syncs and
+  closes the containing directory. Every failure through rename preserves the
+  prior canonical file and active snapshot. A post-rename directory durability
+  failure is classified as committed: the new canonical file is loaded into
+  active memory and the API reports `RULES_DURABILITY_UNCERTAIN` instead of
+  claiming rollback or durable success.
+- This is an in-process lost-update and checked local-filesystem durability
+  boundary, not cross-process coordination, retry, backup, migration, or a
+  portable crash-proof guarantee.
 
 ---
 
