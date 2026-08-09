@@ -142,7 +142,7 @@
 | R90-77 | Aug 10–Sep 4 | Complete early | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
 | R90-78 | Sep 5–25 | Complete early | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
 | R90-79 | Sep 26–Oct 16 | Complete early | Harden suppression-file replacement durability. | R90-78 | Suppression replacement directly proves the same lifecycle boundaries while retaining serialized mutation, exact prior-file preservation before rename, and active-filter agreement with every reported outcome. |
-| R90-80 | Oct 17–31 | Validated; delivery pending | Audit management-plane persistence and future compatibility scope. | R90-79 | A dated audit reconciles the rule/suppression transaction and durability sequence, current public claims, Git/task-state/remote/Vault evidence, and classifies remaining migration or product work without silently selecting a compatibility policy. |
+| R90-80 | Oct 17–31 | Complete early | Audit management-plane persistence and future compatibility scope. | R90-79 | A dated audit reconciles the rule/suppression transaction and durability sequence, current public claims, Git/task-state/remote/Vault evidence, and classifies remaining migration or product work without silently selecting a compatibility policy. |
 
 ## R90-01 Definition
 
@@ -2778,3 +2778,15 @@ Documentation, the 33-test knowledge gate, formatting, exact six-path scope,
 credential/sensitive-path, source/test/config/workflow/generated-evidence,
 release, and publication reviews pass. R90-80 is validated and awaits only its
 documentation delivery; no later increment is started.
+R90-80 completed early at
+`7d0d7884a9ba18e51113a74081b9bb1ae6206fa3`: its exact six-path
+documentation audit was pushed without force or tags, fetched equal to
+`origin/main`, and passed the post-fetch 33-test knowledge gate. Exact range
+`de949bda14a66a407391671f92f0c7b938fb2da5..7d0d7884a9ba18e51113a74081b9bb1ae6206fa3`
+was synchronized idempotently to the sole local Vault; its iteration note,
+full-index row, and MOC link are verified. Stable MOC/config/API prose was
+reconciled to the completed audit without changing immutable iteration notes;
+identical-range replay preserved Vault content hash
+`baed830f8a62bf5e0d732f1f93d9dd276e137c6ec2faa151eb36d065ba3bf51e`.
+No dependency-ready local increment remains. R90-59 and R90-75 retain their
+recorded external blockers.
