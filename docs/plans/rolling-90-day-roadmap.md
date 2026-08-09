@@ -144,7 +144,7 @@
 | R90-79 | Sep 26–Oct 16 | Complete early | Harden suppression-file replacement durability. | R90-78 | Suppression replacement directly proves the same lifecycle boundaries while retaining serialized mutation, exact prior-file preservation before rename, and active-filter agreement with every reported outcome. |
 | R90-80 | Oct 17–31 | Complete early | Audit management-plane persistence and future compatibility scope. | R90-79 | A dated audit reconciles the rule/suppression transaction and durability sequence, current public claims, Git/task-state/remote/Vault evidence, and classifies remaining migration or product work without silently selecting a compatibility policy. |
 | R90-81 | Aug 9 | Complete | Audit post-management-plane delivery and restore the local reliability queue. | R90-80 | A dated audit reconciles the R90-80 feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current tests, and recurring validation deviations, then restores only evidence-grounded local reliability work without runtime or publication changes. |
-| R90-82 | Aug 10–Sep 4 | In progress | Stabilize receiver idle-capacity release evidence. | R90-81 | Direct receiver tests synchronize on an observable handler-capacity boundary rather than a shared heartbeat/session poll, prove timeout-driven slot release and replacement acceptance, and pass repeated uncached race execution without changing production timeout semantics. |
+| R90-82 | Aug 10–Sep 4 | Complete early | Stabilize receiver idle-capacity release evidence. | R90-81 | Direct receiver tests synchronize on an observable handler-capacity boundary rather than a shared heartbeat/session poll, prove timeout-driven slot release and replacement acceptance, and pass repeated uncached race execution without changing production timeout semantics. |
 
 ## R90-01 Definition
 
@@ -2925,3 +2925,16 @@ all 33 knowledge tests. R90-82 satisfies its local acceptance evidence and
 remains in progress only for exact staged-scope review, feature delivery,
 fetched remote verification, and exact-range Vault synchronization; no later
 increment is started.
+R90-82 completed early at
+`6118a0fb628a2a0ae0527c0783f436f96314a353`: its exact five-path feature was
+pushed without force or tags, fetched equal to `origin/main`, and passed the
+post-fetch 33-test knowledge gate. Exact range
+`9541d44db18b9c13e521b83be8aae79a9e5068be..6118a0fb628a2a0ae0527c0783f436f96314a353`
+was synchronized idempotently to the sole local Vault; its iteration note,
+full-index row, and MOC link are verified. Stable MOC, test-gate, and UDS prose
+now records the delivered available-token boundary plus the corrected R90-04a
+duplicate-definition authority without rewriting immutable iteration notes;
+identical-range replay preserved Vault content hash
+`bdacddb75b810a02a1d87373646989491f0c47e4327b351ca9908d4c3e442a00`.
+No dependency-ready local increment remains. R90-59 and R90-75 retain their
+recorded external blockers, and neither was started.

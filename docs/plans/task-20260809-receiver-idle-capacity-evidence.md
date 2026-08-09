@@ -157,6 +157,28 @@ Vault synchronization. It does not authorize public API/configuration/protocol
 changes, production-traffic claims, private input, performance policy, tag or
 release publication, image/registry mutation, or workflow dispatch.
 
+## Delivery Results
+
+- Feature commit:
+  `6118a0fb628a2a0ae0527c0783f436f96314a353` (`test: stabilize receiver
+  capacity release evidence`). It contains exactly the five validated roadmap,
+  plan, task-state, receiver source, and receiver test paths.
+- `main` was pushed without force or tags. A fresh fetch verified
+  `HEAD == origin/main == 6118a0fb628a2a0ae0527c0783f436f96314a353`
+  with fast-forward ancestry from the recorded baseline, and the post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `9541d44db18b9c13e521b83be8aae79a9e5068be..6118a0fb628a2a0ae0527c0783f436f96314a353`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC, test-gate, and UDS protocol prose was reconciled to the delivered
+  available-token capacity boundary and the corrected R90-04a duplicate
+  Definition authority without rewriting immutable iteration notes. Replaying
+  the identical range preserved exact Vault content hash
+  `bdacddb75b810a02a1d87373646989491f0c47e4327b351ca9908d4c3e442a00`.
+- R90-82 is complete. R90-59 and R90-75 retain their exact external blockers;
+  no dependency-ready local increment remains and no later work was started.
+
 ## Stop Conditions
 
 Stop if deterministic evidence requires a public runtime seam, changes timeout

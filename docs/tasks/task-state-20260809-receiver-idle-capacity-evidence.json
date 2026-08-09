@@ -2,9 +2,9 @@
   "task": "r90-82-receiver-idle-capacity-evidence",
   "timestamp": "2026-08-09T07:32:58-07:00",
   "branch": "main",
-  "remote_baseline": "9541d44db18b9c13e521b83be8aae79a9e5068be",
+  "remote_baseline": "6118a0fb628a2a0ae0527c0783f436f96314a353",
   "risk_level": "Medium",
-  "current_checkpoint": "ready_to_commit",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
     "Fetched origin/main and verified a clean local and remote baseline at 9541d44db18b9c13e521b83be8aae79a9e5068be",
@@ -23,14 +23,18 @@
     "Passed the complete repository rerun with both C tests every Go package uncached under race E2E smoke documentation and all 33 knowledge tests",
     "Compared completed evidence to every acceptance criterion and found only the recorded stopped setup command and evidence-grounded duplicate Definition reconciliation deviations",
     "Tightened per-start limiter ownership during staged review then passed the focused normal twenty-count uncached race and complete repository validation chains again",
-    "Passed exact five-path staged-scope credential-prefix operator-sensitive-path private-traffic configuration dependency workflow generated-evidence release-artifact and publication-mutation review"
+    "Passed exact five-path staged-scope credential-prefix operator-sensitive-path private-traffic configuration dependency workflow generated-evidence release-artifact and publication-mutation review",
+    "Committed the validated exact five-path feature at 6118a0fb628a2a0ae0527c0783f436f96314a353",
+    "Pushed main without force or tags then fetched HEAD equal to origin main at the feature commit with fast-forward ancestry",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range 9541d44db18b9c13e521b83be8aae79a9e5068be..6118a0fb628a2a0ae0527c0783f436f96314a353 to the sole local Vault",
+    "Verified the generated iteration note full-index row and MOC link",
+    "Reconciled stable MOC test-gate and UDS authority to the delivered token boundary and corrected duplicate-definition authority without rewriting immutable iteration notes",
+    "Replayed the identical feature range and verified Vault content hash bdacddb75b810a02a1d87373646989491f0c47e4327b351ca9908d4c3e442a00 remained unchanged",
+    "Completed R90-82 and left R90-59 and R90-75 externally blocked with no dependency-ready local increment"
   ],
-  "in_progress": ["Commit and push the validated R90-82 increment"],
-  "todo": [
-    "Fetch and verify origin main then rerun the knowledge gate",
-    "Synchronize and verify the exact Vault range",
-    "Persist verified delivery facts in the docs-only closure"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Only R90-82 internal limiter observability direct capacity-reuse tests and required plan state roadmap documentation",
     "No public API configuration protocol timeout overload metric or shutdown semantics change",
@@ -43,5 +47,19 @@
     "Connection close alone does not prove slot release so every direct regression must claim the actual available token",
     "R90-59 and R90-75 remain externally blocked"
   ],
-  "resume_instructions": "Continue only R90-82 from clean baseline 9541d44db18b9c13e521b83be8aae79a9e5068be. All acceptance validation and exact five-path staged-scope reviews pass; commit and push the validated increment next then fetch verify and synchronize its exact Vault range. Do not start another increment or publication action."
+  "delivery": {
+    "commit": "6118a0fb628a2a0ae0527c0783f436f96314a353",
+    "origin_main_verified": true,
+    "branch_push_no_follow_tags": true,
+    "fast_forward_ancestry_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "9541d44db18b9c13e521b83be8aae79a9e5068be..6118a0fb628a2a0ae0527c0783f436f96314a353",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true,
+    "vault_reconciled_content_hash": "bdacddb75b810a02a1d87373646989491f0c47e4327b351ca9908d4c3e442a00"
+  },
+  "resume_instructions": "R90-82 is complete at 6118a0fb628a2a0ae0527c0783f436f96314a353; do not repeat its implementation validation feature delivery or feature-range Vault synchronization. On the next netsentry-next trigger fetch and verify this docs-only closure plus its exact Vault evidence before selecting work. No dependency-ready local increment remains. Do not start R90-59 or R90-75 without their recorded external inputs and authority."
 }
