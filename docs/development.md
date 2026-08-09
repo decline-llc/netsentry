@@ -208,11 +208,13 @@ separately for the complete correctness and race gate.
 
 The loader still accepts legacy top-level arrays and legacy `payload_match`, `ip_blacklist`, and MITRE scalar fields while old files are migrated. Reload rejects null or duplicate rules, empty enabled match sets, unsupported types/severities, and non-canonical MITRE tuples. The v0.1 alert schema permits at most one MITRE technique per rule.
 
-Rule CRUD and explicit reload each build and atomically publish a complete
-engine snapshot, but their full file-backed transactions are not currently
-serialized with each other. Two handlers can derive candidates from the same
-old snapshot and a later full-file replacement can lose an earlier successful
-mutation. R90-77 is the direct concurrency boundary; R90-78 separately covers
+Rule CRUD and explicit reload each hold one API-server transaction lock from
+their authoritative state or file read through validation, canonical file
+replacement when applicable, and atomic publication of the complete engine
+snapshot. Concurrent successful create/update/delete/reload requests therefore
+have one in-process order and cannot overwrite an accepted mutation derived
+from a stale snapshot. Packet matching does not acquire this lock. This is not
+cross-process locking or crash-durability evidence; R90-78 separately covers
 short-write, sync, close, rename, and parent-directory durability outcomes.
 
 `configs/suppressions.json` uses the canonical wrapped schema:

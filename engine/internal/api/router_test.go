@@ -10,11 +10,13 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
 	"github.com/decline-llc/netsentry/internal/alert"
 	"github.com/decline-llc/netsentry/internal/receiver"
+	"github.com/decline-llc/netsentry/internal/rule"
 	"github.com/decline-llc/netsentry/internal/stats"
 	"github.com/decline-llc/netsentry/pkg/model"
 	"go.uber.org/zap"
@@ -102,6 +104,133 @@ type fakeRules struct {
 	rules     []*model.Rule
 	reloadErr error
 	reloaded  []*model.Rule
+}
+
+type synchronizedRules struct {
+	mu                sync.RWMutex
+	rules             []*model.Rule
+	firstRulesEntered chan struct{}
+	releaseFirstRules chan struct{}
+	blockFirstRules   sync.Once
+	rulesCalls        chan struct{}
+	reloadCalls       chan struct{}
+}
+
+func newSynchronizedRules(rules []*model.Rule) *synchronizedRules {
+	return &synchronizedRules{
+		rules:             cloneRules(rules),
+		firstRulesEntered: make(chan struct{}),
+		releaseFirstRules: make(chan struct{}),
+		rulesCalls:        make(chan struct{}, 8),
+		reloadCalls:       make(chan struct{}, 8),
+	}
+}
+
+func (r *synchronizedRules) RuleCount() int {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	return len(r.rules)
+}
+
+func (r *synchronizedRules) Rules() []*model.Rule {
+	r.rulesCalls <- struct{}{}
+	r.blockFirstRules.Do(func() {
+		close(r.firstRulesEntered)
+		<-r.releaseFirstRules
+	})
+	return r.snapshot()
+}
+
+func (r *synchronizedRules) Reload(rules []*model.Rule) error {
+	r.mu.Lock()
+	r.rules = cloneRules(rules)
+	r.mu.Unlock()
+	r.reloadCalls <- struct{}{}
+	return nil
+}
+
+func (r *synchronizedRules) snapshot() []*model.Rule {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	return cloneRules(r.rules)
+}
+
+type asyncHTTPResult struct {
+	status int
+	body   string
+}
+
+func serveAsync(handler http.Handler, req *http.Request) (<-chan struct{}, <-chan asyncHTTPResult) {
+	started := make(chan struct{})
+	done := make(chan asyncHTTPResult, 1)
+	go func() {
+		close(started)
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, req)
+		done <- asyncHTTPResult{status: rec.Code, body: rec.Body.String()}
+	}()
+	return started, done
+}
+
+func waitHTTPResult(t *testing.T, done <-chan asyncHTTPResult) asyncHTTPResult {
+	t.Helper()
+	select {
+	case result := <-done:
+		return result
+	case <-time.After(5 * time.Second):
+		t.Fatal("timed out waiting for rule-management request")
+		return asyncHTTPResult{}
+	}
+}
+
+func assertTransactionBlocked(t *testing.T, crossed <-chan struct{}) {
+	t.Helper()
+	select {
+	case <-crossed:
+		t.Fatal("concurrent rule transaction crossed the blocked transaction boundary")
+	case <-time.After(200 * time.Millisecond):
+	}
+}
+
+func testPayloadRule(id, name, keyword string) *model.Rule {
+	return &model.Rule{
+		ID:       id,
+		Name:     name,
+		Type:     model.RuleTypePayloadMatch,
+		Severity: model.SeverityHigh,
+		Enabled:  true,
+		Config:   json.RawMessage(fmt.Sprintf(`{"keywords":[%q]}`, keyword)),
+	}
+}
+
+func ruleRequestBody(t *testing.T, rule *model.Rule) string {
+	t.Helper()
+	data, err := json.Marshal(rule)
+	if err != nil {
+		t.Fatalf("marshal rule request: %v", err)
+	}
+	return string(data)
+}
+
+func assertRuleState(t *testing.T, path string, manager *synchronizedRules, want map[string]string) {
+	t.Helper()
+	persisted, err := rule.LoadFromFile(path)
+	if err != nil {
+		t.Fatalf("load persisted rules: %v", err)
+	}
+	for label, rules := range map[string][]*model.Rule{
+		"persisted": persisted,
+		"active":    manager.snapshot(),
+	} {
+		if len(rules) != len(want) {
+			t.Fatalf("%s rule count = %d, want %d: %+v", label, len(rules), len(want), rules)
+		}
+		for _, got := range rules {
+			if got == nil || want[got.ID] != got.Name {
+				t.Fatalf("unexpected %s rule: %+v, want %+v", label, got, want)
+			}
+		}
+	}
 }
 
 func (r *fakeRules) RuleCount() int { return r.count }
@@ -1108,6 +1237,189 @@ func TestRulesDeletePersistsAndReloads(t *testing.T) {
 	if strings.Contains(string(written), "rule-1") || !strings.Contains(string(written), "rule-2") {
 		t.Fatalf("rules file was not updated: %s", string(written))
 	}
+}
+
+func TestConcurrentRuleCreatesSerializeCompleteTransactions(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "rules.json")
+	if err := rule.SaveToFile(path, nil); err != nil {
+		t.Fatalf("write rules seed: %v", err)
+	}
+	manager := newSynchronizedRules(nil)
+	handler := NewServerWithOptions(&fakeStore{}, fakeQueue{}, manager, stats.New(), Options{RulesSeedFile: path}).Handler()
+
+	firstRule := testPayloadRule("rule-first", "First", "first")
+	_, firstDone := serveAsync(handler, httptest.NewRequest(http.MethodPost, "/api/rules", strings.NewReader(ruleRequestBody(t, firstRule))))
+	<-manager.firstRulesEntered
+	<-manager.rulesCalls
+
+	secondRule := testPayloadRule("rule-second", "Second", "second")
+	secondStarted, secondDone := serveAsync(handler, httptest.NewRequest(http.MethodPost, "/api/rules", strings.NewReader(ruleRequestBody(t, secondRule))))
+	<-secondStarted
+	assertTransactionBlocked(t, manager.rulesCalls)
+	close(manager.releaseFirstRules)
+
+	for label, result := range map[string]asyncHTTPResult{
+		"first":  waitHTTPResult(t, firstDone),
+		"second": waitHTTPResult(t, secondDone),
+	} {
+		if result.status != http.StatusCreated {
+			t.Fatalf("%s create status = %d, body = %s", label, result.status, result.body)
+		}
+	}
+	assertRuleState(t, path, manager, map[string]string{
+		"rule-first":  "First",
+		"rule-second": "Second",
+	})
+}
+
+func TestConcurrentRuleUpdateDeleteSerializeCompleteTransactions(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "rules.json")
+	initial := []*model.Rule{
+		testPayloadRule("rule-update", "Before", "before"),
+		testPayloadRule("rule-delete", "Delete", "delete"),
+	}
+	if err := rule.SaveToFile(path, initial); err != nil {
+		t.Fatalf("write rules seed: %v", err)
+	}
+	manager := newSynchronizedRules(initial)
+	handler := NewServerWithOptions(&fakeStore{}, fakeQueue{}, manager, stats.New(), Options{RulesSeedFile: path}).Handler()
+
+	updated := testPayloadRule("rule-update", "After", "after")
+	_, updateDone := serveAsync(handler, httptest.NewRequest(http.MethodPut, "/api/rules/rule-update", strings.NewReader(ruleRequestBody(t, updated))))
+	<-manager.firstRulesEntered
+	<-manager.rulesCalls
+
+	deleteStarted, deleteDone := serveAsync(handler, httptest.NewRequest(http.MethodDelete, "/api/rules/rule-delete", nil))
+	<-deleteStarted
+	assertTransactionBlocked(t, manager.rulesCalls)
+	close(manager.releaseFirstRules)
+
+	updateResult := waitHTTPResult(t, updateDone)
+	if updateResult.status != http.StatusOK {
+		t.Fatalf("update status = %d, body = %s", updateResult.status, updateResult.body)
+	}
+	deleteResult := waitHTTPResult(t, deleteDone)
+	if deleteResult.status != http.StatusNoContent {
+		t.Fatalf("delete status = %d, body = %s", deleteResult.status, deleteResult.body)
+	}
+	assertRuleState(t, path, manager, map[string]string{"rule-update": "After"})
+}
+
+func TestConcurrentRuleMutationReloadSerializeCompleteTransactions(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "rules.json")
+	initial := []*model.Rule{testPayloadRule("rule-existing", "Existing", "existing")}
+	if err := rule.SaveToFile(path, initial); err != nil {
+		t.Fatalf("write rules seed: %v", err)
+	}
+	manager := newSynchronizedRules(initial)
+	handler := NewServerWithOptions(&fakeStore{}, fakeQueue{}, manager, stats.New(), Options{RulesSeedFile: path}).Handler()
+
+	created := testPayloadRule("rule-created", "Created", "created")
+	_, createDone := serveAsync(handler, httptest.NewRequest(http.MethodPost, "/api/rules", strings.NewReader(ruleRequestBody(t, created))))
+	<-manager.firstRulesEntered
+	<-manager.rulesCalls
+
+	reloadStarted, reloadDone := serveAsync(handler, httptest.NewRequest(http.MethodPost, "/api/rules/reload", nil))
+	<-reloadStarted
+	assertTransactionBlocked(t, manager.reloadCalls)
+	close(manager.releaseFirstRules)
+
+	createResult := waitHTTPResult(t, createDone)
+	if createResult.status != http.StatusCreated {
+		t.Fatalf("create status = %d, body = %s", createResult.status, createResult.body)
+	}
+	reloadResult := waitHTTPResult(t, reloadDone)
+	if reloadResult.status != http.StatusOK {
+		t.Fatalf("reload status = %d, body = %s", reloadResult.status, reloadResult.body)
+	}
+	assertRuleState(t, path, manager, map[string]string{
+		"rule-existing": "Existing",
+		"rule-created":  "Created",
+	})
+}
+
+func TestRejectedRuleTransactionsPreserveStateAndReleaseSerialization(t *testing.T) {
+	t.Run("validation", func(t *testing.T) {
+		dir := t.TempDir()
+		path := filepath.Join(dir, "rules.json")
+		initial := []*model.Rule{testPayloadRule("rule-existing", "Existing", "existing")}
+		if err := rule.SaveToFile(path, initial); err != nil {
+			t.Fatalf("write rules seed: %v", err)
+		}
+		before, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatalf("read rules seed: %v", err)
+		}
+		manager := &fakeRules{rules: cloneRules(initial)}
+		handler := NewServerWithOptions(&fakeStore{}, fakeQueue{}, manager, stats.New(), Options{RulesSeedFile: path}).Handler()
+
+		invalid := testPayloadRule("rule-invalid", "Invalid", "")
+		invalid.Config = json.RawMessage(`{"keywords":[]}`)
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/api/rules", strings.NewReader(ruleRequestBody(t, invalid))))
+		if rec.Code != http.StatusBadRequest {
+			t.Fatalf("invalid create status = %d, body = %s", rec.Code, rec.Body.String())
+		}
+		after, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatalf("read rules seed after rejection: %v", err)
+		}
+		if string(after) != string(before) || len(manager.rules) != 1 || manager.rules[0].ID != "rule-existing" {
+			t.Fatalf("validation rejection changed file or active state: file=%s rules=%+v", after, manager.rules)
+		}
+
+		valid := testPayloadRule("rule-valid", "Valid", "valid")
+		rec = httptest.NewRecorder()
+		handler.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/api/rules", strings.NewReader(ruleRequestBody(t, valid))))
+		if rec.Code != http.StatusCreated || len(manager.rules) != 2 {
+			t.Fatalf("valid create after rejection status = %d, body = %s, rules = %+v", rec.Code, rec.Body.String(), manager.rules)
+		}
+	})
+
+	t.Run("persistence", func(t *testing.T) {
+		dir := t.TempDir()
+		path := filepath.Join(dir, "rules.json")
+		initial := []*model.Rule{testPayloadRule("rule-existing", "Existing", "existing")}
+		if err := rule.SaveToFile(path, initial); err != nil {
+			t.Fatalf("write rules seed: %v", err)
+		}
+		before, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatalf("read rules seed: %v", err)
+		}
+		manager := &fakeRules{rules: cloneRules(initial)}
+		handler := NewServerWithOptions(&fakeStore{}, fakeQueue{}, manager, stats.New(), Options{RulesSeedFile: path}).Handler()
+		if err := os.Chmod(dir, 0o500); err != nil {
+			t.Fatalf("make seed directory read-only: %v", err)
+		}
+		defer func() { _ = os.Chmod(dir, 0o700) }()
+
+		created := testPayloadRule("rule-created", "Created", "created")
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/api/rules", strings.NewReader(ruleRequestBody(t, created))))
+		if rec.Code != http.StatusInternalServerError {
+			t.Fatalf("unwritable create status = %d, body = %s", rec.Code, rec.Body.String())
+		}
+		after, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatalf("read rules seed after persistence failure: %v", err)
+		}
+		if string(after) != string(before) || len(manager.rules) != 1 || manager.rules[0].ID != "rule-existing" {
+			t.Fatalf("persistence failure changed file or active state: file=%s rules=%+v", after, manager.rules)
+		}
+
+		if err := os.Chmod(dir, 0o700); err != nil {
+			t.Fatalf("restore seed directory permissions: %v", err)
+		}
+		rec = httptest.NewRecorder()
+		handler.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/api/rules", strings.NewReader(ruleRequestBody(t, created))))
+		if rec.Code != http.StatusCreated || len(manager.rules) != 2 {
+			t.Fatalf("valid create after persistence failure status = %d, body = %s, rules = %+v", rec.Code, rec.Body.String(), manager.rules)
+		}
+	})
 }
 
 func TestStoreErrorUsesErrorEnvelope(t *testing.T) {

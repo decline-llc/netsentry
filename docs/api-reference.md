@@ -202,12 +202,19 @@ Reloads rules from `engine.rules_seed_file` and atomically swaps the active rule
 }
 ```
 
+File-backed rule create, update, delete, and explicit reload requests are
+serialized as complete in-process management transactions. A successful
+response therefore agrees with both the canonical seed file and the active
+snapshot after all earlier successful rule transactions. Packet matching stays
+lock-free. This does not coordinate a second NetSentry process writing the same
+file or claim crash durability for the file replacement lifecycle.
+
 Current limitations:
 
 - Alert pagination, the stable list envelope, exact-match filters, time range filters, MITRE filters, matched-keyword substring filtering, and minimum aggregate-count filtering exist. The SQLite-backed store pins rule, severity, source, and destination exact matches to binary comparison regardless of a compatible database's declared column collation, while protocol and MITRE filters remain case-insensitive. It applies those filters and pagination in SQL, with indexes for common exact/range filters; matched-keyword substring filtering remains a regular SQL substring predicate.
 - Alert storage is SQLite-backed with JSONL recovery-log replay, startup TTL pruning, old daily shard file cleanup, and sticky emergency mode for disk-full/read-only/I/O failures. Emergency mode remains sticky until restart or a successful authenticated operator recovery request. When `engine.db_shard_daily` is enabled, alert writes use each alert timestamp to select `netsentry-YYYY-MM-DD.db`, alert queries scan matching shards and apply the same filters, ordering, and pagination across shards, and health and metrics alert counts also sum matching shard files.
 - Validation, unsupported method, and internal API errors use the unified error envelope.
-- Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk.
+- Rules can be listed, created, replaced, deleted, persisted to the configured seed file, and reloaded from disk. File-backed mutations and explicit reload are serialized within one API server; cross-process writers remain outside that boundary.
 - Optional PSK Bearer authentication protects modifying rule and suppression endpoints when `engine.api_auth_enabled` is true.
 - The HTTP listener has explicit read/header/write/idle timeouts, a 16 KiB header limit, and loopback-only defaults.
 - Non-GET API requests emit structured zap audit logs with request ID, method, path, status, authorization outcome, target, remote address, and duration.

@@ -9,6 +9,11 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- File-backed rule create, update, delete, and explicit reload now share one
+  in-process management transaction order from authoritative read through
+  canonical file handling and atomic snapshot publication. Synchronized race
+  regressions cover create/create, update/delete, and mutation/reload without
+  blocking the rule engine's lock-free packet-matching path.
 - `make bench` now covers bounded primary SQLite alert-store writes and
   filtered queries. Single and 32-alert write cases retain the production
   recovery-log durability lifecycle with unique event identities and bounded

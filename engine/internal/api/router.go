@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
@@ -81,6 +82,9 @@ type Server struct {
 	rules RuleManager
 	stats *stats.Stats
 	opts  Options
+	// ruleTransactionMu serializes file-backed management without entering the
+	// rule engine's lock-free packet-matching path.
+	ruleTransactionMu sync.Mutex
 }
 
 func NewServer(store AlertStore, queue QueueDepthProvider, rules RuleManager, metrics *stats.Stats) *Server {
@@ -691,6 +695,8 @@ func (s *Server) handleRuleCreate(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid rule request", err.Error())
 		return
 	}
+	s.ruleTransactionMu.Lock()
+	defer s.ruleTransactionMu.Unlock()
 	rules := s.rules.Rules()
 	if findRuleIndex(rules, newRule.ID) >= 0 {
 		writeError(w, r, http.StatusConflict, "RULE_ALREADY_EXISTS", "Rule already exists")
@@ -725,6 +731,8 @@ func (s *Server) handleRuleUpdate(w http.ResponseWriter, r *http.Request, id str
 		writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid rule request", err.Error())
 		return
 	}
+	s.ruleTransactionMu.Lock()
+	defer s.ruleTransactionMu.Unlock()
 	rules := cloneRules(s.rules.Rules())
 	idx := findRuleIndex(rules, id)
 	if idx < 0 {
@@ -744,6 +752,8 @@ func (s *Server) handleRuleDelete(w http.ResponseWriter, r *http.Request, id str
 		writeError(w, r, http.StatusConflict, "RULES_WRITE_UNAVAILABLE", "Rules seed file is not configured")
 		return
 	}
+	s.ruleTransactionMu.Lock()
+	defer s.ruleTransactionMu.Unlock()
 	rules := cloneRules(s.rules.Rules())
 	idx := findRuleIndex(rules, id)
 	if idx < 0 {
@@ -876,6 +886,8 @@ func (s *Server) handleRulesReload(w http.ResponseWriter, r *http.Request) {
 		writeError(w, r, http.StatusConflict, "RULES_RELOAD_UNAVAILABLE", "Rules seed file is not configured")
 		return
 	}
+	s.ruleTransactionMu.Lock()
+	defer s.ruleTransactionMu.Unlock()
 	rules, err := rule.LoadFromFile(s.opts.RulesSeedFile)
 	if err != nil {
 		writeError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Could not load rules", err.Error())

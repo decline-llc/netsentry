@@ -107,11 +107,14 @@ Current rule semantics:
 Current rule management:
 
 - Rule management can list the active snapshot, create/update/delete rules with seed-file persistence, and hot reload from the configured seed file.
-- The snapshot swap itself is atomic, but the current API does not yet
-  serialize the complete read-modify-write-reload transaction across concurrent
-  rule mutations and explicit reload. R90-77 tracks the bounded lost-update
-  boundary; the later R90-78 durability increment covers temporary-file and
-  directory-sync lifecycle evidence without changing rule semantics.
+- One API-server transaction lock serializes each file-backed create, update,
+  delete, and explicit reload from its authoritative state read through file
+  replacement or reload read and atomic snapshot publication. Packet matching
+  never enters that lock and continues to read immutable snapshots through
+  `atomic.Pointer`.
+- This is an in-process lost-update boundary, not cross-process coordination or
+  crash-durability evidence. R90-78 separately covers temporary-file short
+  writes, file/directory sync, close, and rename outcomes.
 
 ---
 
