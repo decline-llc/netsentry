@@ -52,6 +52,7 @@ type Receiver struct {
 	packets chan *model.PacketInfo
 	state   *heartbeatState
 	ln      net.Listener
+	socket  os.FileInfo
 	stats   *stats.Stats
 	wg      sync.WaitGroup
 	slots   chan struct{}
@@ -95,13 +96,15 @@ func (r *Receiver) QueueDepth() int { return len(r.packets) }
 // State returns the latest capture control-frame state.
 func (r *Receiver) State() State { return r.state.Snapshot() }
 
-// Stop closes the listening socket and removes the socket path. Existing
+// Stop closes the listening socket and removes its owned socket path. Existing
 // connections also stop when the context passed to Start is cancelled.
 func (r *Receiver) Stop() {
+	if err := removeOwnedSocket(r.cfg.Path, r.socket); err != nil {
+		r.logger.Warn("remove owned uds socket", zap.Error(err))
+	}
 	if r.ln != nil {
 		_ = r.ln.Close()
 	}
-	_ = os.Remove(r.cfg.Path)
 }
 
 // Wait blocks until the receiver accept loop and connection handlers exit.
@@ -111,12 +114,30 @@ func (r *Receiver) Wait() {
 
 // Start begins accepting UDS connections until ctx is cancelled.
 func (r *Receiver) Start(ctx context.Context) error {
-	_ = os.Remove(r.cfg.Path)
+	if err := removeExistingSocket(r.cfg.Path); err != nil {
+		return fmt.Errorf("prepare uds listener %q: %w", r.cfg.Path, err)
+	}
 	ln, err := net.Listen("unix", r.cfg.Path)
 	if err != nil {
 		return fmt.Errorf("start uds listener %q: %w", r.cfg.Path, err)
 	}
+	unixListener, ok := ln.(*net.UnixListener)
+	if !ok {
+		_ = ln.Close()
+		return fmt.Errorf("start uds listener %q: unexpected listener type %T", r.cfg.Path, ln)
+	}
+	unixListener.SetUnlinkOnClose(false)
+	socket, err := os.Lstat(r.cfg.Path)
+	if err != nil {
+		_ = ln.Close()
+		return fmt.Errorf("inspect started uds listener %q: %w", r.cfg.Path, err)
+	}
+	if socket.Mode()&os.ModeSocket == 0 {
+		_ = ln.Close()
+		return fmt.Errorf("inspect started uds listener %q: path is not a Unix socket", r.cfg.Path)
+	}
 	r.ln = ln
+	r.socket = socket
 	r.slots = make(chan struct{}, r.cfg.MaxConnections)
 	for i := 0; i < r.cfg.MaxConnections; i++ {
 		r.slots <- struct{}{}
@@ -135,6 +156,43 @@ func (r *Receiver) Start(ctx context.Context) error {
 		defer r.wg.Done()
 		r.acceptLoop(ctx, ln, r.slots)
 	}()
+	return nil
+}
+
+func removeExistingSocket(path string) error {
+	info, err := os.Lstat(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("inspect existing path: %w", err)
+	}
+	if info.Mode()&os.ModeSocket == 0 {
+		return fmt.Errorf("existing path is not a Unix socket")
+	}
+	if err := os.Remove(path); err != nil {
+		return fmt.Errorf("remove existing Unix socket: %w", err)
+	}
+	return nil
+}
+
+func removeOwnedSocket(path string, owned os.FileInfo) error {
+	if owned == nil {
+		return nil
+	}
+	current, err := os.Lstat(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("inspect socket path: %w", err)
+	}
+	if current.Mode()&os.ModeSocket == 0 || !os.SameFile(current, owned) {
+		return nil
+	}
+	if err := os.Remove(path); err != nil {
+		return fmt.Errorf("remove socket path: %w", err)
+	}
 	return nil
 }
 

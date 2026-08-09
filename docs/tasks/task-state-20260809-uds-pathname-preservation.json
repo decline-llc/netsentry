@@ -1,0 +1,53 @@
+{
+  "task": "r90-84-uds-pathname-preservation",
+  "timestamp": "2026-08-09T12:16:37-07:00",
+  "branch": "main",
+  "remote_baseline": "5c4253d18283c80ec27b7c2c1f383616eac2a89e",
+  "risk_level": "Medium",
+  "current_checkpoint": "ready_to_commit",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
+    "Fetched origin main and verified a clean local and remote baseline at 5c4253d18283c80ec27b7c2c1f383616eac2a89e",
+    "Verified the exact R90-83 feature and docs-only closure chain completed state closure Vault note full-index row MOC link and current stable UDS authority",
+    "Reviewed the Jul 20 through Aug 9 delivery phases and found no newer missing record stale stable authority or unresolved validation result that changes priority",
+    "Parsed all 98 prior task-state JSON files and verified all 88 roadmap rows match exactly one Definition with no duplicates",
+    "Confirmed R90-59 and R90-75 retain their exact external blockers and R90-84 is the sole dependency-ready increment",
+    "Mapped unconditional startup and shutdown removal plus listener auto-unlink behavior to the missing direct pathname preservation regressions",
+    "Recorded two non-mutating structural-audit setup errors and passed the corrected repository-root multiset audit",
+    "Persisted R90-84 scope non-goals risks evidence mapping validation authority boundaries and stop conditions before behavior changes",
+    "Implemented Lstat startup classification listener auto-unlink disablement and created-socket identity-bound cleanup",
+    "Added direct regular-file symlink stale-socket owned-cleanup and replacement-path regressions",
+    "Recorded a repeated-race failure where Wait could observe accept-loop completion before post-close explicit unlink and moved identity-bound cleanup before listener close",
+    "Strengthened symlink rejection evidence with a link to an active Unix socket so following the link would fail the regression",
+    "Passed the corrected five direct regressions normally and twenty times uncached under the race detector",
+    "Passed the complete receiver package uncached under the race detector",
+    "Preflighted module-selected Go 1.25.12 GCC 13.3.0 GNU Make 4.3 Bash 5.2.21 Python 3.12.3 curl 8.5.0 timeout 9.4 jq 1.7 pkg-config and libpcap 1.10.4",
+    "Passed make test across both C tests and every Go package uncached under race",
+    "Passed E2E smoke with six packets processed five alerts generated and eight rules loaded",
+    "Passed documentation and all 33 knowledge tests",
+    "Parsed all 99 task-state JSON files and verified all 88 roadmap rows and Definitions match as complete multisets without duplicates",
+    "Compared completed local evidence to every acceptance criterion and found only the recorded corrected cleanup-order deviation and two non-mutating setup errors",
+    "Passed gofmt git diff check exact eight-path staged scope credential sensitive-path dependency configuration protocol public API release and publication review"
+  ],
+  "in_progress": [
+    "Commit and push the validated exact eight-path feature"
+  ],
+  "todo": [
+    "Fetch and verify origin main then rerun the knowledge gate",
+    "Synchronize and verify the exact Vault range and stable UDS authority",
+    "Persist verified delivery facts in the docs-only closure"
+  ],
+  "authority_boundaries": [
+    "Only R90-84 bounded UDS pathname classification created-socket identity cleanup direct tests and current documentation",
+    "No active or stale peer classification dialing authentication cross-process locking or platform ownership guarantee",
+    "No configuration protocol public API timeout capacity or packet handling change",
+    "No private external data performance policy tag release image registry workflow or other publication mutation",
+    "Do not start a later roadmap increment in this trigger"
+  ],
+  "remaining_risks": [
+    "Unix listener automatic close-time unlink must be disabled before replacement-path preservation can be meaningful",
+    "Startup Lstat and stale-socket removal remain non-atomic under the explicitly excluded cross-process race",
+    "R90-59 and R90-75 remain externally blocked"
+  ],
+  "resume_instructions": "R90-84 satisfies its local behavior and validation evidence from baseline 5c4253d18283c80ec27b7c2c1f383616eac2a89e. Continue only exact staged review feature commit push fetched-remote verification Vault synchronization and docs-only delivery closure without starting another increment."
+}

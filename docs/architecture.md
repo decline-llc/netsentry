@@ -171,6 +171,12 @@ Target behavior:
   `engine.uds_read_timeout_seconds` deadline before its first frame. Every
   complete frame refreshes the deadline; idle expiry closes the handler and
   releases its slot without counting a protocol decode failure.
+- Receiver startup inspects the configured UDS pathname without following
+  symlinks: regular files and symlinks are rejected unchanged, while the
+  established pre-existing Unix-socket reclamation behavior is retained.
+  Shutdown disables listener auto-unlink and removes the pathname only while it
+  still identifies that receiver's created socket, preserving a replacement
+  file or symlink.
 - C reconnect uses exponential backoff, can bound initial offline connection attempts, and counts write errors/dropped frames while disconnected.
 - HTTP API bind failures are returned synchronously during startup. Engine
   shutdown waits for the UDS receiver accept loop/connection handlers, every

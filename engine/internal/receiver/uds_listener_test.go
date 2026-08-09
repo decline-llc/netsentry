@@ -130,6 +130,178 @@ func TestHandleLineRejectsNonIPv4PacketAddresses(t *testing.T) {
 	}
 }
 
+func TestStartPreservesPreExistingRegularFile(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	want := []byte("operator data\n")
+	if err := os.WriteFile(path, want, 0o640); err != nil {
+		t.Fatalf("write regular file: %v", err)
+	}
+	if err := os.Chmod(path, 0o640); err != nil {
+		t.Fatalf("chmod regular file: %v", err)
+	}
+
+	r := New(Config{Path: path}, zap.NewNop())
+	err := r.Start(context.Background())
+	if err == nil || !strings.Contains(err.Error(), "existing path is not a Unix socket") {
+		t.Fatalf("start error = %v, want non-socket rejection", err)
+	}
+	if r.ln != nil {
+		t.Fatal("receiver installed a listener after rejecting a regular file")
+	}
+	got, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read preserved regular file: %v", err)
+	}
+	if string(got) != string(want) {
+		t.Fatalf("regular file bytes = %q, want %q", got, want)
+	}
+	info, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat preserved regular file: %v", err)
+	}
+	if gotMode := info.Mode().Perm(); gotMode != 0o640 {
+		t.Fatalf("regular file mode = %o, want 640", gotMode)
+	}
+}
+
+func TestStartPreservesPreExistingSymlink(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "netsentry.sock")
+	targetName := "operator.sock"
+	targetPath := filepath.Join(dir, targetName)
+	target, err := net.Listen("unix", targetPath)
+	if err != nil {
+		t.Fatalf("create symlink target socket: %v", err)
+	}
+	defer target.Close()
+	if err := os.Symlink(targetName, path); err != nil {
+		t.Fatalf("create symlink: %v", err)
+	}
+
+	r := New(Config{Path: path}, zap.NewNop())
+	err = r.Start(context.Background())
+	if err == nil || !strings.Contains(err.Error(), "existing path is not a Unix socket") {
+		t.Fatalf("start error = %v, want symlink rejection", err)
+	}
+	if r.ln != nil {
+		t.Fatal("receiver installed a listener after rejecting a symlink")
+	}
+	gotTarget, err := os.Readlink(path)
+	if err != nil {
+		t.Fatalf("read preserved symlink: %v", err)
+	}
+	if gotTarget != targetName {
+		t.Fatalf("symlink target = %q, want %q", gotTarget, targetName)
+	}
+	targetInfo, err := os.Lstat(targetPath)
+	if err != nil {
+		t.Fatalf("stat symlink target socket: %v", err)
+	}
+	if targetInfo.Mode()&os.ModeSocket == 0 {
+		t.Fatalf("symlink target mode = %v, want Unix socket", targetInfo.Mode())
+	}
+}
+
+func TestStartReclaimsPreExistingUnixSocket(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	stale, err := net.Listen("unix", path)
+	if err != nil {
+		t.Fatalf("create stale Unix socket: %v", err)
+	}
+	stale.(*net.UnixListener).SetUnlinkOnClose(false)
+	if err := stale.Close(); err != nil {
+		t.Fatalf("close stale Unix socket: %v", err)
+	}
+
+	r := New(Config{Path: path}, zap.NewNop())
+	if err := r.Start(ctx); err != nil {
+		t.Fatalf("start receiver over stale Unix socket: %v", err)
+	}
+	t.Cleanup(func() {
+		cancel()
+		r.Wait()
+	})
+	cancel()
+	waitForReceiverShutdown(t, r)
+	if _, err := os.Lstat(path); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("owned socket path remains after shutdown: %v", err)
+	}
+}
+
+func TestStopPreservesReplacementRegularFile(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	r := New(Config{Path: path}, zap.NewNop())
+	if err := r.Start(ctx); err != nil {
+		t.Fatalf("start receiver: %v", err)
+	}
+	t.Cleanup(func() {
+		cancel()
+		r.Wait()
+	})
+	want := []byte("replacement data\n")
+	if err := os.Remove(path); err != nil {
+		t.Fatalf("displace owned socket: %v", err)
+	}
+	if err := os.WriteFile(path, want, 0o640); err != nil {
+		t.Fatalf("write replacement regular file: %v", err)
+	}
+
+	cancel()
+	waitForReceiverShutdown(t, r)
+	got, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read replacement regular file: %v", err)
+	}
+	if string(got) != string(want) {
+		t.Fatalf("replacement bytes = %q, want %q", got, want)
+	}
+}
+
+func TestStopPreservesReplacementSymlink(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	dir := t.TempDir()
+	path := filepath.Join(dir, "netsentry.sock")
+	r := New(Config{Path: path}, zap.NewNop())
+	if err := r.Start(ctx); err != nil {
+		t.Fatalf("start receiver: %v", err)
+	}
+	t.Cleanup(func() {
+		cancel()
+		r.Wait()
+	})
+	targetName := "replacement-target"
+	targetPath := filepath.Join(dir, targetName)
+	want := []byte("replacement target data\n")
+	if err := os.WriteFile(targetPath, want, 0o600); err != nil {
+		t.Fatalf("write replacement target: %v", err)
+	}
+	if err := os.Remove(path); err != nil {
+		t.Fatalf("displace owned socket: %v", err)
+	}
+	if err := os.Symlink(targetName, path); err != nil {
+		t.Fatalf("create replacement symlink: %v", err)
+	}
+
+	cancel()
+	waitForReceiverShutdown(t, r)
+	gotTarget, err := os.Readlink(path)
+	if err != nil {
+		t.Fatalf("read replacement symlink: %v", err)
+	}
+	if gotTarget != targetName {
+		t.Fatalf("replacement symlink target = %q, want %q", gotTarget, targetName)
+	}
+	got, err := os.ReadFile(targetPath)
+	if err != nil {
+		t.Fatalf("read replacement target file: %v", err)
+	}
+	if string(got) != string(want) {
+		t.Fatalf("replacement target bytes = %q, want %q", got, want)
+	}
+}
+
 func TestWaitForPacketReturnsEOFForClosedChannel(t *testing.T) {
 	packets := make(chan *model.PacketInfo)
 	close(packets)
@@ -770,6 +942,20 @@ type readDeadlineRecordingConn struct {
 	net.Conn
 	mu        sync.Mutex
 	deadlines []time.Time
+}
+
+func waitForReceiverShutdown(t *testing.T, r *Receiver) {
+	t.Helper()
+	done := make(chan struct{})
+	go func() {
+		r.Wait()
+		close(done)
+	}()
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("receiver did not stop")
+	}
 }
 
 func (c *readDeadlineRecordingConn) SetReadDeadline(deadline time.Time) error {

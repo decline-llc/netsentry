@@ -1734,6 +1734,10 @@
   socket reclamation, dialing or authenticating an existing peer,
   cross-process locking, platform-specific ownership promises, operator data,
   or tag/publication authority.
+- **Selected plan:**
+  [`task-20260809-uds-pathname-preservation.md`](task-20260809-uds-pathname-preservation.md),
+  from clean fetched baseline
+  `5c4253d18283c80ec27b7c2c1f383616eac2a89e`.
 
 ### R90-71 Validation Deviation
 
@@ -3013,3 +3017,31 @@ rewriting immutable iteration notes; identical-range replay preserved Vault
 content hash `693eb7097cb835c549ed6d3ac4dca503d2b87d2d059e1d0921d53809ecd51f43`.
 R90-84 is ready but was not started; R90-59 and R90-75 retain their external
 blockers.
+The Aug 9 R90-84 trigger fetched and verified the R90-83 docs-only closure at
+`5c4253d18283c80ec27b7c2c1f383616eac2a89e`, its exact Vault iteration note,
+full-index row, MOC link, and current stable UDS pathname authority. The Jul 20
+through Aug 9 phase review found no newer missing delivery record, stale stable
+authority, or unresolved validation result that changes priority. All 98 prior
+task states parse and all 88 roadmap row and Definition multisets match exactly
+without duplicate identifiers. R90-59 and R90-75 retain their external
+blockers; R90-84 is selected as the sole dependency-ready increment with a
+persisted ownership contract and direct evidence map before receiver or test
+changes. No active/stale peer policy, cross-process locking, protocol change,
+or publication action is started.
+R90-84 now rejects pre-existing regular files and symlinks through non-following
+pathname classification, retains pre-existing Unix-socket reclamation, disables
+listener auto-unlink, and removes the pathname only when it matches the captured
+created-socket identity. Five direct regressions cover every promised startup,
+stale-socket, owned-cleanup, and replacement-path boundary. The first repeated
+race run exposed that accept-loop completion could precede explicit cleanup
+when unlink followed listener close; cleanup now occurs before close and the
+complete focused sequence must be rerun. No later increment is started.
+The corrected five direct pathname regressions pass once normally and twenty
+times uncached under the race detector, followed by the complete receiver race
+package. The complete fail-fast repository chain passes both C tests, every Go
+package uncached under race, E2E smoke, documentation, and all 33 knowledge
+tests. All 99 task states parse and all 88 roadmap rows match the complete
+Definition multiset without duplicates. R90-84 satisfies its local acceptance
+evidence and exact eight-path staged review; it awaits only feature delivery,
+fetched remote verification, and exact-range Vault synchronization. No later
+increment is started.

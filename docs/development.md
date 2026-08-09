@@ -748,6 +748,12 @@ pipeline worker, HTTP API, and SQLite store under active load. It verifies that
 shutdown waits for an in-flight match and closes receiver and API listeners
 before the store-close boundary.
 
+Receiver lifecycle tests also cover the configured UDS pathname as a
+filesystem ownership boundary. Startup preserves and rejects a pre-existing
+regular file or symlink, retains existing Unix-socket reclamation behavior,
+and shutdown removes only the socket identity created by that receiver while
+preserving a replacement regular file or symlink.
+
 ---
 
 ## 8. Development Roadmap
