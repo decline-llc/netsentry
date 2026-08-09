@@ -142,6 +142,32 @@ queue without changing runtime or tests.
   package/family deviations cannot be promoted to an identical exact-test claim
   without direct records naming it.
 
+## Delivery Results
+
+- Documentation feature commit:
+  `669e49965b5c76e659290469fea026af6c003c09` (`docs: audit
+  post-management-plane delivery`). It contains exactly the four validated
+  audit, roadmap, plan, and task-state paths.
+- `main` was pushed without force or tags. A fresh fetch verified
+  `HEAD == origin/main == 669e49965b5c76e659290469fea026af6c003c09`
+  with fast-forward ancestry from the recorded baseline, and the post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `49ae9eb95c6ff500e3c525bff30d7a13a43b6938..669e49965b5c76e659290469fea026af6c003c09`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC and test-gate prose was reconciled to the R90-04a structural repair,
+  evidence-specificity boundary, and planned/unstarted R90-82 scope without
+  rewriting immutable iteration notes. Replaying the identical range preserved
+  exact Vault content hash
+  `c030352a5d46d54eb18c4a03d369149a1194136ea3cdfbc592c204f226bafbe8`.
+- The first idempotency replay was invoked while the shell was inside the Vault
+  and failed before mutation because the thin repository hook could not resolve
+  its versioned script from that working directory. The identical replay from
+  the repository root passed; no Vault content or delivery claim was lost.
+- R90-81 is complete. R90-82 is the next ready local increment and remains
+  unstarted; R90-59 and R90-75 retain their external blockers.
+
 ## Authority Boundaries
 
 This trigger authorizes only the R90-81 documentation audit, forward roadmap
