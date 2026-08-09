@@ -9,6 +9,10 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- The Go UDS receiver now rejects an already-canceled startup before
+  inspecting or modifying its configured pathname or creating a listener. The
+  returned error preserves the context cancellation sentinel, while absent
+  paths and pre-existing Unix-socket identities remain unchanged.
 - The Go UDS receiver now rejects pre-existing regular files and symlinks at
   its configured socket pathname without modifying them. Listener auto-unlink
   is disabled so shutdown removes only the socket identity created by that

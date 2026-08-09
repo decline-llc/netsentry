@@ -1779,6 +1779,10 @@
   classification, cross-process path locking, changing post-readiness cleanup,
   protocol/configuration/public API changes, private data, or publication
   authority.
+- **Selected plan:**
+  [`task-20260809-receiver-pre-canceled-start.md`](task-20260809-receiver-pre-canceled-start.md),
+  from clean fetched baseline
+  `ab63ee3ef53fdb7a764ca0863dac36580d0318fa`.
 
 ### R90-71 Validation Deviation
 
@@ -3138,3 +3142,28 @@ rewriting immutable iteration notes; identical-range replay preserved Vault
 content hash `8b9cb2e84a8335f7f9f025ca63234577a36580639b18c3459fb77c3fae09dda8`.
 R90-86 is ready but was not started; R90-59 and R90-75 retain their external
 blockers.
+The next Aug 9 trigger fetched and verified the R90-85 docs-only closure at
+`ab63ee3ef53fdb7a764ca0863dac36580d0318fa`, both exact R90-85 Vault notes,
+full-index rows, MOC links, and current stable MOC/UDS authority. All 100 prior
+task states parse and all 90 roadmap row and Definition multisets match exactly
+without duplicate or asymmetric identifiers. Recent delivery review found no
+missing closure, stale stable authority, or unresolved validation result that
+changes priority. R90-59 and R90-75 retain their external blockers; R90-86 is
+selected as the sole dependency-ready increment with a persisted ownership and
+evidence contract before receiver or test changes. No later increment or
+publication action is started.
+R90-86 now rejects an already-canceled context before pathname inspection,
+stale-socket removal, or listener creation and wraps the original cancellation
+sentinel. Two direct regressions prove an absent path remains absent and a
+pre-existing Unix socket keeps the same filesystem identity with no receiver
+listener installed. The corrected focused sequence passes once normally,
+twenty times uncached under race, and as part of the complete receiver race
+package; established live startup and post-readiness cancellation remain
+compatible.
+The complete fail-fast repository chain passes both C tests, every Go package
+uncached under race, E2E smoke, documentation, and all 33 knowledge tests. All
+101 task states parse and all 90 roadmap row and Definition multisets match
+without duplicate or asymmetric identifiers. R90-86 satisfies its local
+acceptance evidence and exact eight-path scope review; it awaits only feature
+delivery, fetched remote verification, and exact-range Vault synchronization.
+No later increment is started.

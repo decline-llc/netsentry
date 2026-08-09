@@ -202,6 +202,62 @@ func TestStartPreservesPreExistingSymlink(t *testing.T) {
 	}
 }
 
+func TestStartCanceledContextPreservesAbsentPath(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	r := New(Config{Path: path}, zap.NewNop())
+	err := r.Start(ctx)
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("start error = %v, want context.Canceled", err)
+	}
+	if r.ln != nil {
+		t.Fatal("receiver installed a listener for an already-canceled context")
+	}
+	if _, err := os.Lstat(path); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("socket path after rejected startup: %v, want absent", err)
+	}
+}
+
+func TestStartCanceledContextPreservesExistingUnixSocket(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	existing, err := net.Listen("unix", path)
+	if err != nil {
+		t.Fatalf("create existing Unix socket: %v", err)
+	}
+	existing.(*net.UnixListener).SetUnlinkOnClose(false)
+	t.Cleanup(func() {
+		_ = existing.Close()
+		_ = os.Remove(path)
+	})
+	before, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat existing Unix socket: %v", err)
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	r := New(Config{Path: path}, zap.NewNop())
+	err = r.Start(ctx)
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("start error = %v, want context.Canceled", err)
+	}
+	if r.ln != nil {
+		t.Fatal("receiver installed a listener for an already-canceled context")
+	}
+	after, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat preserved Unix socket: %v", err)
+	}
+	if after.Mode()&os.ModeSocket == 0 {
+		t.Fatalf("preserved path mode = %v, want Unix socket", after.Mode())
+	}
+	if !os.SameFile(before, after) {
+		t.Fatal("already-canceled startup replaced the existing Unix socket identity")
+	}
+}
+
 func TestStartReclaimsPreExistingUnixSocket(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	path := filepath.Join(t.TempDir(), "netsentry.sock")

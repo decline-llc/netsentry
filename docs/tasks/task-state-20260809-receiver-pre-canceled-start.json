@@ -1,0 +1,51 @@
+{
+  "task": "r90-86-receiver-pre-canceled-start",
+  "timestamp": "2026-08-09T12:49:10-07:00",
+  "branch": "main",
+  "remote_baseline": "ab63ee3ef53fdb7a764ca0863dac36580d0318fa",
+  "risk_level": "Medium",
+  "current_checkpoint": "delivery",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
+    "Fetched origin main and verified a clean local and remote baseline at ab63ee3ef53fdb7a764ca0863dac36580d0318fa",
+    "Verified the R90-85 feature and docs-only closure records completed state both exact Vault notes full-index rows MOC links and current stable authority",
+    "Parsed all 100 prior task-state JSON files and verified all 90 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
+    "Reviewed recent delivery history and found no missing closure stale stable authority or unresolved validation result that changes priority",
+    "Confirmed R90-59 and R90-75 retain their exact external blockers and R90-86 is the sole dependency-ready increment",
+    "Mapped pre-readiness filesystem and listener work plus post-readiness context watcher ordering to the missing already-canceled direct regressions",
+    "Persisted R90-86 scope non-goals risks evidence mapping validation authority boundaries and stop conditions before behavior changes",
+    "Implemented a context sentinel check before pathname inspection removal or listener creation",
+    "Added direct absent-path and existing Unix-socket identity preservation regressions with context sentinel checks and no installed listener",
+    "Recorded a non-mutating focused-command working-directory setup error and passed the corrected module-relative command",
+    "Passed both direct regressions normally and twenty times uncached under the race detector",
+    "Passed the complete receiver package uncached under the race detector",
+    "Preflighted module-selected Go 1.25.12 GCC 13.3.0 GNU Make 4.3 Bash 5.2.21 Python 3.12.3 curl 8.5.0 timeout 9.4 jq 1.7 pkg-config 1.8.1 and libpcap 1.10.4",
+    "Passed make test across both C tests and every Go package uncached under race",
+    "Passed E2E smoke with six packets processed five alerts generated and eight rules loaded",
+    "Passed documentation and all 33 knowledge tests",
+    "Parsed all 101 task-state JSON files and verified all 90 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
+    "Compared completed local evidence to every acceptance criterion and found only the recorded non-mutating command setup deviation",
+    "Passed gofmt git diff check exact eight-path credential sensitive-path dependency configuration protocol public API release and publication review"
+  ],
+  "in_progress": [
+    "Commit and deliver the validated exact eight-path feature"
+  ],
+  "todo": [
+    "Commit and push without force or tags then fetch and verify exact origin main",
+    "Run the post-fetch knowledge gate and synchronize the exact feature range to the sole local Vault",
+    "Create and deliver a docs-only closure with exact closure-range Vault synchronization"
+  ],
+  "authority_boundaries": [
+    "Only R90-86 pre-filesystem cancellation rejection direct receiver tests and current documentation",
+    "No active or stale peer classification dialing authentication cross-process locking or post-readiness lifecycle change",
+    "No configuration protocol public API timeout capacity cleanup ownership or packet handling change",
+    "No private external data performance policy tag release image registry workflow or other publication mutation",
+    "Do not start a later roadmap increment in this trigger"
+  ],
+  "remaining_risks": [
+    "The cancellation check must precede both pathname classification and listener creation",
+    "Existing live startup and post-readiness cancellation behavior must remain unchanged",
+    "R90-59 and R90-75 remain externally blocked"
+  ],
+  "resume_instructions": "Resume R90-86 only from clean baseline ab63ee3ef53fdb7a764ca0863dac36580d0318fa. Implement and validate the bounded pre-canceled startup rejection without changing active or stale socket policy post-readiness cleanup protocol configuration public API or publication state. Do not start R90-59 or R90-75 without their recorded external inputs and authority."
+}

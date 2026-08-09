@@ -114,6 +114,9 @@ func (r *Receiver) Wait() {
 
 // Start begins accepting UDS connections until ctx is cancelled.
 func (r *Receiver) Start(ctx context.Context) error {
+	if err := ctx.Err(); err != nil {
+		return fmt.Errorf("start uds listener %q: %w", r.cfg.Path, err)
+	}
 	if err := removeExistingSocket(r.cfg.Path); err != nil {
 		return fmt.Errorf("prepare uds listener %q: %w", r.cfg.Path, err)
 	}

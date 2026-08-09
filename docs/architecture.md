@@ -174,6 +174,8 @@ Target behavior:
 - Receiver startup inspects the configured UDS pathname without following
   symlinks: regular files and symlinks are rejected unchanged, while the
   established pre-existing Unix-socket reclamation behavior is retained.
+  An already-canceled startup returns before this inspection or any listener
+  creation and preserves the context cancellation sentinel.
   Shutdown disables listener auto-unlink and removes the pathname only while it
   still identifies that receiver's created socket, preserving a replacement
   file or symlink.
