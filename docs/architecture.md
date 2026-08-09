@@ -123,6 +123,14 @@ Current rule management:
   boundary, not cross-process coordination, retry, backup, migration, or a
   portable crash-proof guarantee.
 
+The R90-80 management-plane audit reconciles this rule boundary with the
+independently tested suppression path, exact Git/task/Vault delivery records,
+and current public claims. The bounded sequence is complete for one API-server
+process and the checked local POSIX lifecycle. Legacy rule-schema removal,
+cross-process writers, portable crash guarantees, and broader product protocol
+work are not queued as defects; each requires separate product, migration, or
+external-evidence authority.
+
 ---
 
 ## 5. Planned v0.1.0 Architecture
@@ -473,6 +481,11 @@ Remaining validation gaps:
 - R90-66 through R90-68 close the bounded local primary-interruption,
   recovery-log append-lifecycle, and post-commit clear-lifecycle sequence. No
   later local storage-fault increment is currently queued.
+- R90-77 through R90-80 close the bounded in-process rule transaction plus rule
+  and suppression replacement-lifecycle sequence. Direct fault tests are local
+  synthetic evidence, not production crash proof. Legacy schema removal,
+  cross-process writer coordination, and filesystem portability remain
+  product/migration/evidence decisions rather than dependency-ready local work.
 - `make bench` runs C microbenchmarks plus deterministic Go Aho-Corasick and
   full rule-engine no-hit/multi-hit matching benchmarks with allocation
   reporting, as well as bounded primary SQLite single/batched writes and

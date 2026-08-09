@@ -142,7 +142,7 @@
 | R90-77 | Aug 10–Sep 4 | Complete early | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
 | R90-78 | Sep 5–25 | Complete early | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
 | R90-79 | Sep 26–Oct 16 | Complete early | Harden suppression-file replacement durability. | R90-78 | Suppression replacement directly proves the same lifecycle boundaries while retaining serialized mutation, exact prior-file preservation before rename, and active-filter agreement with every reported outcome. |
-| R90-80 | Oct 17–31 | Ready | Audit management-plane persistence and future compatibility scope. | R90-79 | A dated audit reconciles the rule/suppression transaction and durability sequence, current public claims, Git/task-state/remote/Vault evidence, and classifies remaining migration or product work without silently selecting a compatibility policy. |
+| R90-80 | Oct 17–31 | Validated; delivery pending | Audit management-plane persistence and future compatibility scope. | R90-79 | A dated audit reconciles the rule/suppression transaction and durability sequence, current public claims, Git/task-state/remote/Vault evidence, and classifies remaining migration or product work without silently selecting a compatibility policy. |
 
 ## R90-01 Definition
 
@@ -1624,6 +1624,12 @@
 - **Stop condition:** stop if completion requires choosing legacy-schema
   removal, migration or product scope, changing runtime/tests, external input,
   performance policy, or publication authority.
+- **Audit record:**
+  [`management-plane-persistence-audit-20260809.md`](../audit/management-plane-persistence-audit-20260809.md).
+- **Selected plan:**
+  [`task-20260809-management-plane-persistence-audit.md`](task-20260809-management-plane-persistence-audit.md),
+  from clean fetched baseline
+  `de949bda14a66a407391671f92f0c7b938fb2da5`.
 
 ### R90-71 Validation Deviation
 
@@ -2747,3 +2753,28 @@ was synchronized idempotently to the sole local Vault. Its iteration note,
 full-index row, MOC link, and reconciled stable MOC/config/suppression/API
 authority are verified. R90-80 is ready but was not started; R90-59 and R90-75
 retain their external blockers.
+The next trigger fetched and verified the R90-79 docs-only closure at
+`de949bda14a66a407391671f92f0c7b938fb2da5`, both exact R90-79 Vault notes,
+full-index rows, MOC links, and current stable rule/config/suppression/API
+authority. The Jul 20 through Aug 9 phase review found no unresolved validation
+result, stale current stable authority, or missing delivery record; all 94
+prior task states parse and all 84 roadmap rows match one Definition. R90-80
+is selected as the sole dependency-ready documentation audit. R90-59 and
+R90-75 retain their external blockers; no runtime, policy, or publication work
+is started.
+The audit verifies the exact R90-77 through R90-79 feature/closure parent
+chain, intended paths, direct synchronized/lifecycle/API regressions, completed
+states, fetched remote, and all six Vault notes/index rows/MOC links. Current
+API, architecture, development, changelog, and stable Vault claims correctly
+limit the delivered behavior to one API-server process and the checked local
+POSIX lifecycle. Legacy schema removal, cross-process writers, portable crash
+evidence, and broader protocol work each require product, migration, platform,
+or external-input authority and are not converted into speculative ready work.
+R90-80's documentation audit is complete; repository validation and delivery
+remain pending.
+All 95 task-state JSON files parse, all 84 roadmap rows match one Definition,
+and R90-59, R90-75, and R90-80 retain complete unfinished-item fields.
+Documentation, the 33-test knowledge gate, formatting, exact six-path scope,
+credential/sensitive-path, source/test/config/workflow/generated-evidence,
+release, and publication reviews pass. R90-80 is validated and awaits only its
+documentation delivery; no later increment is started.

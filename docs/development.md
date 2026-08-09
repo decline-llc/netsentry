@@ -255,6 +255,14 @@ backup, migration, or portable crash proof. `POST /api/suppressions/reload`
 reloads the file from disk and swaps the active filter after validation
 succeeds.
 
+The dated R90-80 audit verifies that the rule transaction and both replacement
+lifecycles are directly covered and that API, architecture, changelog, task,
+remote, and Vault claims agree. This closes the bounded single-process/local
+POSIX management-plane sequence. Do not infer a legacy-schema removal plan,
+cross-process writer contract, portable power-loss guarantee, or broader
+protocol roadmap from those tests; each requires separate product, migration,
+or external-evidence authority.
+
 ### SQLite startup integrity and recovery
 
 An existing non-empty primary alerts database receives a read-only SQLite
