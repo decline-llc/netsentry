@@ -2,9 +2,9 @@
   "task": "r90-85-post-pathname-delivery-audit",
   "timestamp": "2026-08-09T12:36:37-07:00",
   "branch": "main",
-  "remote_baseline": "79f6250de30c3128ecaec31e81ae19eecc9109d8",
+  "remote_baseline": "73a5f03ab685408d802084ce5864d33cfa3bf03b",
   "risk_level": "Low",
-  "current_checkpoint": "ready_to_commit",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
     "Fetched origin main and verified a clean local and remote baseline at 79f6250de30c3128ecaec31e81ae19eecc9109d8",
@@ -25,16 +25,18 @@
     "Verified chronological marker order from R90-82 completion through R90-85 selection",
     "Passed documentation all 33 knowledge tests and git diff check",
     "Compared every R90-85 acceptance criterion with the completed evidence and found no deviation",
-    "Passed exact four-path staged scope credential sensitive-path source test config workflow generated-evidence release and publication review"
+    "Passed exact four-path staged scope credential sensitive-path source test config workflow generated-evidence release and publication review",
+    "Committed the validated exact four-path documentation audit at 73a5f03ab685408d802084ce5864d33cfa3bf03b",
+    "Pushed main without force or tags then fetched HEAD equal to origin main at the feature commit with fast-forward ancestry",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range 79f6250de30c3128ecaec31e81ae19eecc9109d8..73a5f03ab685408d802084ce5864d33cfa3bf03b to the sole local Vault",
+    "Verified the generated iteration note full-index row and MOC link",
+    "Reconciled stable MOC and UDS prose to the corrected chronology and planned unstarted R90-86 boundary without rewriting immutable iteration notes",
+    "Replayed the identical feature range and verified Vault content hash 8b9cb2e84a8335f7f9f025ca63234577a36580639b18c3459fb77c3fae09dda8 remained unchanged",
+    "Completed R90-85 and left R90-86 ready but unstarted with R90-59 and R90-75 externally blocked"
   ],
-  "in_progress": [
-    "Commit and push the validated exact four-path R90-85 audit"
-  ],
-  "todo": [
-    "Fetch and verify origin main then rerun the knowledge gate",
-    "Synchronize and verify the exact Vault range",
-    "Persist verified delivery facts in the docs-only closure"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Only R90-85 delivery audit roadmap chronology repair and forward queue reconciliation",
     "No receiver runtime test configuration protocol public API workflow release-gate or generated-evidence change",
@@ -47,5 +49,19 @@
     "Cancellation before receiver readiness lacks a direct regression but is not yet a proven runtime defect",
     "R90-59 and R90-75 remain externally blocked"
   ],
-  "resume_instructions": "R90-85 satisfies its local audit and validation evidence from baseline 79f6250de30c3128ecaec31e81ae19eecc9109d8. Continue only exact four-path staged review feature commit push fetched-remote verification Vault synchronization and docs-only closure without starting R90-86."
+  "delivery": {
+    "commit": "73a5f03ab685408d802084ce5864d33cfa3bf03b",
+    "origin_main_verified": true,
+    "branch_push_no_follow_tags": true,
+    "fast_forward_ancestry_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "79f6250de30c3128ecaec31e81ae19eecc9109d8..73a5f03ab685408d802084ce5864d33cfa3bf03b",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true,
+    "vault_reconciled_content_hash": "8b9cb2e84a8335f7f9f025ca63234577a36580639b18c3459fb77c3fae09dda8"
+  },
+  "resume_instructions": "R90-85 is complete at 73a5f03ab685408d802084ce5864d33cfa3bf03b; do not repeat its audit validation feature delivery or feature-range Vault synchronization. On the next netsentry-next trigger fetch and verify this docs-only closure plus its exact Vault evidence before selecting R90-86. Do not start R90-59 or R90-75 without their recorded external inputs and authority."
 }

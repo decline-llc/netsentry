@@ -147,8 +147,8 @@
 | R90-82 | Aug 10–Sep 4 | Complete early | Stabilize receiver idle-capacity release evidence. | R90-81 | Direct receiver tests synchronize on an observable handler-capacity boundary rather than a shared heartbeat/session poll, prove timeout-driven slot release and replacement acceptance, and pass repeated uncached race execution without changing production timeout semantics. |
 | R90-83 | Aug 9 | Complete | Audit post-receiver delivery and restore the local filesystem-lifecycle queue. | R90-82 | A dated audit reconciles the R90-82 feature/closure, recent phases, fetched remote, exact Vault evidence, and the current UDS pathname lifecycle, then restores only a directly evidenced preservation increment without runtime or publication changes. |
 | R90-84 | Aug 10–Sep 5 | Complete early | Preserve non-socket UDS pathname occupants. | R90-83 | Receiver startup rejects a pre-existing non-socket or symlink pathname without modifying it, and shutdown removes only the socket identity created by that receiver while preserving a replacement path; stale/active socket policy remains unchanged. |
-| R90-85 | Aug 9 | Ready | Audit post-pathname delivery and repair roadmap chronology. | R90-84 | A dated audit reconciles the R90-84 feature/closure, recent phases, fetched remote, exact Vault evidence, corrects mutable delivery-history ordering, and restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-86 | Aug 10–Sep 5 | Planned | Reject receiver startup with an already-canceled context. | R90-85 | `Start` returns an error matching `context.Canceled` before pathname mutation or listener creation; direct absent-path and pre-existing Unix-socket preservation regressions pass while live startup and post-readiness cancellation remain compatible. |
+| R90-85 | Aug 9 | Complete | Audit post-pathname delivery and repair roadmap chronology. | R90-84 | A dated audit reconciles the R90-84 feature/closure, recent phases, fetched remote, exact Vault evidence, corrects mutable delivery-history ordering, and restores at most one directly evidenced local follow-on without runtime or publication changes. |
+| R90-86 | Aug 10–Sep 5 | Ready | Reject receiver startup with an already-canceled context. | R90-85 | `Start` returns an error matching `context.Canceled` before pathname mutation or listener creation; direct absent-path and pre-existing Unix-socket preservation regressions pass while live startup and post-readiness cancellation remain compatible. |
 
 ## R90-01 Definition
 
@@ -3126,3 +3126,15 @@ R90-85 delivery history is chronological. Documentation, all 33 knowledge
 tests, and formatting pass. R90-85 satisfies its local acceptance evidence and
 exact four-path staged-scope and sensitive-information review; it awaits only
 delivery. R90-86 remains unstarted.
+R90-85 completed at
+`73a5f03ab685408d802084ce5864d33cfa3bf03b`: its exact four-path
+documentation audit was pushed without force or tags, fetched equal to
+`origin/main`, and passed the post-fetch 33-test knowledge gate. Exact range
+`79f6250de30c3128ecaec31e81ae19eecc9109d8..73a5f03ab685408d802084ce5864d33cfa3bf03b`
+was synchronized idempotently to the sole local Vault; its iteration note,
+full-index row, and MOC link are verified. Stable MOC and UDS prose now records
+the corrected chronology and planned/unstarted R90-86 boundary without
+rewriting immutable iteration notes; identical-range replay preserved Vault
+content hash `8b9cb2e84a8335f7f9f025ca63234577a36580639b18c3459fb77c3fae09dda8`.
+R90-86 is ready but was not started; R90-59 and R90-75 retain their external
+blockers.

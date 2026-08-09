@@ -145,6 +145,27 @@ publication, workflow dispatch, or starting the follow-on.
   no runtime, test, configuration, workflow, generated evidence, release
   artifact, private-data access, or external mutation was added.
 
+## Delivery Results
+
+- Documentation feature commit:
+  `73a5f03ab685408d802084ce5864d33cfa3bf03b` (`docs: audit post-pathname
+  delivery`). It contains exactly the four validated audit, roadmap, plan, and
+  task-state paths.
+- `main` was pushed without force or tags. A fresh fetch verified
+  `HEAD == origin/main == 73a5f03ab685408d802084ce5864d33cfa3bf03b`
+  with fast-forward ancestry from the recorded baseline, and the post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `79f6250de30c3128ecaec31e81ae19eecc9109d8..73a5f03ab685408d802084ce5864d33cfa3bf03b`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC and UDS prose was reconciled to the corrected delivery chronology
+  and planned/unstarted R90-86 boundary without rewriting immutable iteration
+  notes. Replaying the identical range preserved exact Vault content hash
+  `8b9cb2e84a8335f7f9f025ca63234577a36580639b18c3459fb77c3fae09dda8`.
+- R90-85 is complete. R90-86 is the next ready local increment and remains
+  unstarted; R90-59 and R90-75 retain their external blockers.
+
 ## Stop Conditions
 
 Stop if R90-84 evidence is missing or contradictory, the chronology cannot be
