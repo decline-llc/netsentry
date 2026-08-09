@@ -145,8 +145,8 @@
 | R90-80 | Oct 17–31 | Complete early | Audit management-plane persistence and future compatibility scope. | R90-79 | A dated audit reconciles the rule/suppression transaction and durability sequence, current public claims, Git/task-state/remote/Vault evidence, and classifies remaining migration or product work without silently selecting a compatibility policy. |
 | R90-81 | Aug 9 | Complete | Audit post-management-plane delivery and restore the local reliability queue. | R90-80 | A dated audit reconciles the R90-80 feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current tests, and recurring validation deviations, then restores only evidence-grounded local reliability work without runtime or publication changes. |
 | R90-82 | Aug 10–Sep 4 | Complete early | Stabilize receiver idle-capacity release evidence. | R90-81 | Direct receiver tests synchronize on an observable handler-capacity boundary rather than a shared heartbeat/session poll, prove timeout-driven slot release and replacement acceptance, and pass repeated uncached race execution without changing production timeout semantics. |
-| R90-83 | Aug 9 | In progress | Audit post-receiver delivery and restore the local filesystem-lifecycle queue. | R90-82 | A dated audit reconciles the R90-82 feature/closure, recent phases, fetched remote, exact Vault evidence, and the current UDS pathname lifecycle, then restores only a directly evidenced preservation increment without runtime or publication changes. |
-| R90-84 | Aug 10–Sep 5 | Planned | Preserve non-socket UDS pathname occupants. | R90-83 | Receiver startup rejects a pre-existing non-socket or symlink pathname without modifying it, and shutdown removes only the socket identity created by that receiver while preserving a replacement path; stale/active socket policy remains unchanged. |
+| R90-83 | Aug 9 | Complete | Audit post-receiver delivery and restore the local filesystem-lifecycle queue. | R90-82 | A dated audit reconciles the R90-82 feature/closure, recent phases, fetched remote, exact Vault evidence, and the current UDS pathname lifecycle, then restores only a directly evidenced preservation increment without runtime or publication changes. |
+| R90-84 | Aug 10–Sep 5 | Ready | Preserve non-socket UDS pathname occupants. | R90-83 | Receiver startup rejects a pre-existing non-socket or symlink pathname without modifying it, and shutdown removes only the socket identity created by that receiver while preserving a replacement path; stale/active socket policy remains unchanged. |
 
 ## R90-01 Definition
 
@@ -2998,3 +2998,18 @@ knowledge gate, formatting, exact four-path scope, credential/sensitive-path,
 source/test/config/workflow/generated-evidence, release, and publication
 reviews pass. R90-83 satisfies its local acceptance evidence and awaits only
 documentation delivery; R90-84 remains unstarted.
+R90-83 completed at
+`658bda36a75f8b0b5a5ed9ec7fec65087f1c9afc`: its exact four-path
+documentation audit was pushed without force or tags, fetched equal to
+`origin/main`, and passed the post-fetch 33-test knowledge gate. The first push
+attempt returned without useful transport output and direct ref verification
+showed the remote still at the recorded baseline; one retry was performed only
+after that evidence and succeeded. Exact range
+`49c31cf5682c232d1bc66d830b366d36603b7048..658bda36a75f8b0b5a5ed9ec7fec65087f1c9afc`
+was synchronized idempotently to the sole local Vault; its iteration note,
+full-index row, and MOC link are verified. Stable MOC and UDS prose now records
+the bounded pathname-preservation gap and planned/unstarted R90-84 without
+rewriting immutable iteration notes; identical-range replay preserved Vault
+content hash `693eb7097cb835c549ed6d3ac4dca503d2b87d2d059e1d0921d53809ecd51f43`.
+R90-84 is ready but was not started; R90-59 and R90-75 retain their external
+blockers.

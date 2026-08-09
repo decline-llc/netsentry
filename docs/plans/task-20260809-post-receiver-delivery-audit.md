@@ -131,6 +131,29 @@ filesystem-lifecycle queue without changing runtime or tests.
   synchronization, and its docs-only delivery closure; R90-84 remains
   unstarted.
 
+## Delivery Results
+
+- Documentation feature commit:
+  `658bda36a75f8b0b5a5ed9ec7fec65087f1c9afc` (`docs: audit post-receiver
+  delivery`). It contains exactly the four validated audit, roadmap, plan, and
+  task-state paths.
+- The first push attempt returned no useful transport output; direct ref
+  verification proved `origin/main` remained at the recorded baseline, so the
+  same non-force branch push was retried once and succeeded without tags. A
+  fresh fetch then verified
+  `HEAD == origin/main == 658bda36a75f8b0b5a5ed9ec7fec65087f1c9afc`
+  with fast-forward ancestry, and the post-fetch 33-test knowledge gate passed.
+- Exact range
+  `49c31cf5682c232d1bc66d830b366d36603b7048..658bda36a75f8b0b5a5ed9ec7fec65087f1c9afc`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC and UDS prose was reconciled to the bounded pathname-preservation
+  gap and planned/unstarted R90-84 without rewriting immutable iteration notes.
+  Replaying the identical range preserved exact Vault content hash
+  `693eb7097cb835c549ed6d3ac4dca503d2b87d2d059e1d0921d53809ecd51f43`.
+- R90-83 is complete. R90-84 is the next ready local increment and remains
+  unstarted; R90-59 and R90-75 retain their external blockers.
+
 ## Authority Boundaries
 
 This trigger authorizes only the R90-83 documentation audit, forward roadmap

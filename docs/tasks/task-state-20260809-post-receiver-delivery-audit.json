@@ -2,9 +2,9 @@
   "task": "r90-83-post-receiver-delivery-audit",
   "timestamp": "2026-08-09T08:21:45-07:00",
   "branch": "main",
-  "remote_baseline": "49c31cf5682c232d1bc66d830b366d36603b7048",
+  "remote_baseline": "658bda36a75f8b0b5a5ed9ec7fec65087f1c9afc",
   "risk_level": "Low",
-  "current_checkpoint": "ready_to_commit",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
     "Fetched origin/main and verified a clean local and remote baseline at 49c31cf5682c232d1bc66d830b366d36603b7048",
@@ -25,14 +25,18 @@
     "Parsed all 98 task-state JSON files and verified all 88 roadmap rows match exactly one Definition with no duplicate identifiers and complete unfinished-item fields",
     "Passed make docs-check the 33-test make knowledge-check and git diff check",
     "Passed exact four-path scope credential sensitive-path source test config workflow generated-evidence release and publication review",
-    "Compared every acceptance criterion with the completed evidence and found no deviation"
+    "Compared every acceptance criterion with the completed evidence and found no deviation",
+    "Committed the validated exact four-path documentation audit at 658bda36a75f8b0b5a5ed9ec7fec65087f1c9afc",
+    "Observed one push attempt without useful output verified origin main remained behind then retried the same non-force branch push once successfully",
+    "Fetched and verified HEAD equal to origin main at the feature commit with fast-forward ancestry and passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range 49c31cf5682c232d1bc66d830b366d36603b7048..658bda36a75f8b0b5a5ed9ec7fec65087f1c9afc to the sole local Vault",
+    "Verified the generated iteration note full-index row and MOC link",
+    "Reconciled stable MOC and UDS prose to the bounded pathname preservation gap and planned unstarted R90-84 without rewriting immutable iteration notes",
+    "Replayed the identical feature range and verified Vault content hash 693eb7097cb835c549ed6d3ac4dca503d2b87d2d059e1d0921d53809ecd51f43 remained unchanged",
+    "Completed R90-83 and left R90-84 ready but unstarted with R90-59 and R90-75 externally blocked"
   ],
-  "in_progress": ["Commit and push the validated R90-83 documentation audit"],
-  "todo": [
-    "Fetch and verify origin main then rerun the knowledge gate",
-    "Synchronize and verify the exact Vault range",
-    "Persist verified delivery facts in the docs-only closure"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Only the R90-83 documentation audit forward roadmap and task-state reconciliation",
     "No runtime test configuration protocol workflow release-gate or generated-evidence changes",
@@ -45,5 +49,20 @@
     "R90-59 and R90-75 remain externally blocked",
     "Active and stale socket handling requires a separate compatibility boundary and is not selected here"
   ],
-  "resume_instructions": "Continue only the R90-83 documentation audit from clean fetched baseline 49c31cf5682c232d1bc66d830b366d36603b7048. Complete the exact evidence and queue reconciliation without runtime or test changes and without starting the follow-on increment."
+  "delivery": {
+    "commit": "658bda36a75f8b0b5a5ed9ec7fec65087f1c9afc",
+    "origin_main_verified": true,
+    "branch_push_no_follow_tags": true,
+    "fast_forward_ancestry_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "49c31cf5682c232d1bc66d830b366d36603b7048..658bda36a75f8b0b5a5ed9ec7fec65087f1c9afc",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true,
+    "vault_reconciled_content_hash": "693eb7097cb835c549ed6d3ac4dca503d2b87d2d059e1d0921d53809ecd51f43",
+    "push_retry_after_remote_behind_verification": true
+  },
+  "resume_instructions": "R90-83 is complete at 658bda36a75f8b0b5a5ed9ec7fec65087f1c9afc; do not repeat its audit validation feature delivery or feature-range Vault synchronization. On the next netsentry-next trigger fetch and verify this docs-only closure plus its exact Vault evidence before selecting R90-84. Do not start R90-59 or R90-75 without their recorded external inputs and authority."
 }
