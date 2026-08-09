@@ -148,7 +148,7 @@
 | R90-83 | Aug 9 | Complete | Audit post-receiver delivery and restore the local filesystem-lifecycle queue. | R90-82 | A dated audit reconciles the R90-82 feature/closure, recent phases, fetched remote, exact Vault evidence, and the current UDS pathname lifecycle, then restores only a directly evidenced preservation increment without runtime or publication changes. |
 | R90-84 | Aug 10–Sep 5 | Complete early | Preserve non-socket UDS pathname occupants. | R90-83 | Receiver startup rejects a pre-existing non-socket or symlink pathname without modifying it, and shutdown removes only the socket identity created by that receiver while preserving a replacement path; stale/active socket policy remains unchanged. |
 | R90-85 | Aug 9 | Complete | Audit post-pathname delivery and repair roadmap chronology. | R90-84 | A dated audit reconciles the R90-84 feature/closure, recent phases, fetched remote, exact Vault evidence, corrects mutable delivery-history ordering, and restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-86 | Aug 10–Sep 5 | Ready | Reject receiver startup with an already-canceled context. | R90-85 | `Start` returns an error matching `context.Canceled` before pathname mutation or listener creation; direct absent-path and pre-existing Unix-socket preservation regressions pass while live startup and post-readiness cancellation remain compatible. |
+| R90-86 | Aug 10–Sep 5 | Complete early | Reject receiver startup with an already-canceled context. | R90-85 | `Start` returns an error matching `context.Canceled` before pathname mutation or listener creation; direct absent-path and pre-existing Unix-socket preservation regressions pass while live startup and post-readiness cancellation remain compatible. |
 
 ## R90-01 Definition
 
@@ -3167,3 +3167,14 @@ without duplicate or asymmetric identifiers. R90-86 satisfies its local
 acceptance evidence and exact eight-path scope review; it awaits only feature
 delivery, fetched remote verification, and exact-range Vault synchronization.
 No later increment is started.
+R90-86 completed early at
+`97ef7c12b2ce254d2a6a57b8d5cf084f6e8ee4a3`: its exact eight-path feature was
+pushed without force or tags, fetched equal to `origin/main`, and passed the
+post-fetch 33-test knowledge gate. Exact range
+`ab63ee3ef53fdb7a764ca0863dac36580d0318fa..97ef7c12b2ce254d2a6a57b8d5cf084f6e8ee4a3`
+was synchronized idempotently to the sole local Vault; its iteration note,
+full-index row, MOC link, and current stable MOC/UDS authority are verified.
+Identical-range replay preserved Vault content hash
+`41b42418edb5033763e8aa923f9f000765f6bac6cce27270f3c039c1884bc639`.
+No dependency-ready local increment remains. R90-59 and R90-75 retain their
+recorded external blockers, and neither was started.

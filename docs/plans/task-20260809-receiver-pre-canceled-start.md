@@ -148,6 +148,27 @@ publication, or workflow dispatch.
   workflow, release artifact, private-data access, or external mutation was
   added.
 
+## Delivery Results
+
+- Feature commit:
+  `97ef7c12b2ce254d2a6a57b8d5cf084f6e8ee4a3` (`fix: reject pre-canceled
+  receiver startup`). It contains exactly the eight validated source, test,
+  documentation, roadmap, plan, and task-state paths.
+- `main` was pushed without force or tags. A fresh fetch verified
+  `HEAD == origin/main == 97ef7c12b2ce254d2a6a57b8d5cf084f6e8ee4a3`
+  with fast-forward ancestry from the recorded baseline, and the post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `ab63ee3ef53fdb7a764ca0863dac36580d0318fa..97ef7c12b2ce254d2a6a57b8d5cf084f6e8ee4a3`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC and UDS prose was reconciled to the delivered pre-readiness
+  cancellation boundary without rewriting immutable iteration notes.
+  Replaying the identical range preserved exact Vault content hash
+  `41b42418edb5033763e8aa923f9f000765f6bac6cce27270f3c039c1884bc639`.
+- R90-86 is complete. R90-59 and R90-75 retain their exact external blockers;
+  no dependency-ready local increment remains and no later work was started.
+
 ## Stop Conditions
 
 Stop if safe completion requires active/stale peer classification,

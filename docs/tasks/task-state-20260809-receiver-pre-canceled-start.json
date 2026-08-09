@@ -2,9 +2,9 @@
   "task": "r90-86-receiver-pre-canceled-start",
   "timestamp": "2026-08-09T12:49:10-07:00",
   "branch": "main",
-  "remote_baseline": "ab63ee3ef53fdb7a764ca0863dac36580d0318fa",
+  "remote_baseline": "97ef7c12b2ce254d2a6a57b8d5cf084f6e8ee4a3",
   "risk_level": "Medium",
-  "current_checkpoint": "delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
     "Fetched origin main and verified a clean local and remote baseline at ab63ee3ef53fdb7a764ca0863dac36580d0318fa",
@@ -25,16 +25,18 @@
     "Passed documentation and all 33 knowledge tests",
     "Parsed all 101 task-state JSON files and verified all 90 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
     "Compared completed local evidence to every acceptance criterion and found only the recorded non-mutating command setup deviation",
-    "Passed gofmt git diff check exact eight-path credential sensitive-path dependency configuration protocol public API release and publication review"
+    "Passed gofmt git diff check exact eight-path credential sensitive-path dependency configuration protocol public API release and publication review",
+    "Committed the validated exact eight-path feature at 97ef7c12b2ce254d2a6a57b8d5cf084f6e8ee4a3",
+    "Pushed main without force or tags then fetched HEAD equal to origin main at the feature commit with fast-forward ancestry",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range ab63ee3ef53fdb7a764ca0863dac36580d0318fa..97ef7c12b2ce254d2a6a57b8d5cf084f6e8ee4a3 to the sole local Vault",
+    "Verified the generated iteration note full-index row and MOC link",
+    "Reconciled stable MOC and UDS prose to the delivered pre-readiness cancellation boundary without rewriting immutable iteration notes",
+    "Replayed the identical feature range and verified Vault content hash 41b42418edb5033763e8aa923f9f000765f6bac6cce27270f3c039c1884bc639 remained unchanged",
+    "Completed R90-86 and left R90-59 and R90-75 externally blocked with no dependency-ready local increment"
   ],
-  "in_progress": [
-    "Commit and deliver the validated exact eight-path feature"
-  ],
-  "todo": [
-    "Commit and push without force or tags then fetch and verify exact origin main",
-    "Run the post-fetch knowledge gate and synchronize the exact feature range to the sole local Vault",
-    "Create and deliver a docs-only closure with exact closure-range Vault synchronization"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Only R90-86 pre-filesystem cancellation rejection direct receiver tests and current documentation",
     "No active or stale peer classification dialing authentication cross-process locking or post-readiness lifecycle change",
@@ -43,9 +45,21 @@
     "Do not start a later roadmap increment in this trigger"
   ],
   "remaining_risks": [
-    "The cancellation check must precede both pathname classification and listener creation",
-    "Existing live startup and post-readiness cancellation behavior must remain unchanged",
     "R90-59 and R90-75 remain externally blocked"
   ],
-  "resume_instructions": "Resume R90-86 only from clean baseline ab63ee3ef53fdb7a764ca0863dac36580d0318fa. Implement and validate the bounded pre-canceled startup rejection without changing active or stale socket policy post-readiness cleanup protocol configuration public API or publication state. Do not start R90-59 or R90-75 without their recorded external inputs and authority."
+  "delivery": {
+    "commit": "97ef7c12b2ce254d2a6a57b8d5cf084f6e8ee4a3",
+    "origin_main_verified": true,
+    "branch_push_no_follow_tags": true,
+    "fast_forward_ancestry_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "ab63ee3ef53fdb7a764ca0863dac36580d0318fa..97ef7c12b2ce254d2a6a57b8d5cf084f6e8ee4a3",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true,
+    "vault_reconciled_content_hash": "41b42418edb5033763e8aa923f9f000765f6bac6cce27270f3c039c1884bc639"
+  },
+  "resume_instructions": "R90-86 is complete at 97ef7c12b2ce254d2a6a57b8d5cf084f6e8ee4a3; do not repeat its implementation validation feature delivery or feature-range Vault synchronization. On the next netsentry-next trigger fetch and verify this docs-only closure plus its exact Vault evidence before selecting work. No dependency-ready local increment remains. Do not start R90-59 or R90-75 without their recorded external inputs and authority."
 }
