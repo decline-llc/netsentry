@@ -164,6 +164,27 @@ publication, or workflow dispatch.
   workflow, release artifact, private-data access, or external mutation was
   added.
 
+## Delivery Results
+
+- Feature commit:
+  `8fc16241921dcb2817e2c138e59e36a6ab774b02` (`fix: preserve UDS pathname
+  occupants`). It contains exactly the eight validated source, test,
+  documentation, roadmap, plan, and task-state paths.
+- `main` was pushed without force or tags. A fresh fetch verified
+  `HEAD == origin/main == 8fc16241921dcb2817e2c138e59e36a6ab774b02`
+  with fast-forward ancestry from the recorded baseline, and the post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `5c4253d18283c80ec27b7c2c1f383616eac2a89e..8fc16241921dcb2817e2c138e59e36a6ab774b02`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC and UDS prose was reconciled to the delivered startup and shutdown
+  pathname-identity boundary without rewriting immutable iteration notes.
+  Replaying the identical range preserved exact Vault content hash
+  `2eea69c66524a2c9664f896036e9e24fdd8d0269878bffe8a8f7162f2b7fe4a1`.
+- R90-84 is complete. R90-59 and R90-75 retain their exact external blockers;
+  no dependency-ready local increment remains and no later work was started.
+
 ## Stop Conditions
 
 Stop if safe completion requires changing active/stale socket reclamation,

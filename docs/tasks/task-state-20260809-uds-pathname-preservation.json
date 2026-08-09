@@ -2,9 +2,9 @@
   "task": "r90-84-uds-pathname-preservation",
   "timestamp": "2026-08-09T12:16:37-07:00",
   "branch": "main",
-  "remote_baseline": "5c4253d18283c80ec27b7c2c1f383616eac2a89e",
+  "remote_baseline": "8fc16241921dcb2817e2c138e59e36a6ab774b02",
   "risk_level": "Medium",
-  "current_checkpoint": "ready_to_commit",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
     "Fetched origin main and verified a clean local and remote baseline at 5c4253d18283c80ec27b7c2c1f383616eac2a89e",
@@ -27,16 +27,18 @@
     "Passed documentation and all 33 knowledge tests",
     "Parsed all 99 task-state JSON files and verified all 88 roadmap rows and Definitions match as complete multisets without duplicates",
     "Compared completed local evidence to every acceptance criterion and found only the recorded corrected cleanup-order deviation and two non-mutating setup errors",
-    "Passed gofmt git diff check exact eight-path staged scope credential sensitive-path dependency configuration protocol public API release and publication review"
+    "Passed gofmt git diff check exact eight-path staged scope credential sensitive-path dependency configuration protocol public API release and publication review",
+    "Committed the validated exact eight-path feature at 8fc16241921dcb2817e2c138e59e36a6ab774b02",
+    "Pushed main without force or tags then fetched HEAD equal to origin main at the feature commit with fast-forward ancestry",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range 5c4253d18283c80ec27b7c2c1f383616eac2a89e..8fc16241921dcb2817e2c138e59e36a6ab774b02 to the sole local Vault",
+    "Verified the generated iteration note full-index row and MOC link",
+    "Reconciled stable MOC and UDS prose to the delivered pathname ownership boundary without rewriting immutable iteration notes",
+    "Replayed the identical feature range and verified Vault content hash 2eea69c66524a2c9664f896036e9e24fdd8d0269878bffe8a8f7162f2b7fe4a1 remained unchanged",
+    "Completed R90-84 and left R90-59 and R90-75 externally blocked with no dependency-ready local increment"
   ],
-  "in_progress": [
-    "Commit and push the validated exact eight-path feature"
-  ],
-  "todo": [
-    "Fetch and verify origin main then rerun the knowledge gate",
-    "Synchronize and verify the exact Vault range and stable UDS authority",
-    "Persist verified delivery facts in the docs-only closure"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Only R90-84 bounded UDS pathname classification created-socket identity cleanup direct tests and current documentation",
     "No active or stale peer classification dialing authentication cross-process locking or platform ownership guarantee",
@@ -45,9 +47,22 @@
     "Do not start a later roadmap increment in this trigger"
   ],
   "remaining_risks": [
-    "Unix listener automatic close-time unlink must be disabled before replacement-path preservation can be meaningful",
     "Startup Lstat and stale-socket removal remain non-atomic under the explicitly excluded cross-process race",
     "R90-59 and R90-75 remain externally blocked"
   ],
-  "resume_instructions": "R90-84 satisfies its local behavior and validation evidence from baseline 5c4253d18283c80ec27b7c2c1f383616eac2a89e. Continue only exact staged review feature commit push fetched-remote verification Vault synchronization and docs-only delivery closure without starting another increment."
+  "delivery": {
+    "commit": "8fc16241921dcb2817e2c138e59e36a6ab774b02",
+    "origin_main_verified": true,
+    "branch_push_no_follow_tags": true,
+    "fast_forward_ancestry_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "5c4253d18283c80ec27b7c2c1f383616eac2a89e..8fc16241921dcb2817e2c138e59e36a6ab774b02",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true,
+    "vault_reconciled_content_hash": "2eea69c66524a2c9664f896036e9e24fdd8d0269878bffe8a8f7162f2b7fe4a1"
+  },
+  "resume_instructions": "R90-84 is complete at 8fc16241921dcb2817e2c138e59e36a6ab774b02; do not repeat its implementation validation feature delivery or feature-range Vault synchronization. On the next netsentry-next trigger fetch and verify this docs-only closure plus its exact Vault evidence before selecting work. No dependency-ready local increment remains. Do not start R90-59 or R90-75 without their recorded external inputs and authority."
 }

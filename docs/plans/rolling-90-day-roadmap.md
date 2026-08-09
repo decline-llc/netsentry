@@ -146,7 +146,7 @@
 | R90-81 | Aug 9 | Complete | Audit post-management-plane delivery and restore the local reliability queue. | R90-80 | A dated audit reconciles the R90-80 feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current tests, and recurring validation deviations, then restores only evidence-grounded local reliability work without runtime or publication changes. |
 | R90-82 | Aug 10–Sep 4 | Complete early | Stabilize receiver idle-capacity release evidence. | R90-81 | Direct receiver tests synchronize on an observable handler-capacity boundary rather than a shared heartbeat/session poll, prove timeout-driven slot release and replacement acceptance, and pass repeated uncached race execution without changing production timeout semantics. |
 | R90-83 | Aug 9 | Complete | Audit post-receiver delivery and restore the local filesystem-lifecycle queue. | R90-82 | A dated audit reconciles the R90-82 feature/closure, recent phases, fetched remote, exact Vault evidence, and the current UDS pathname lifecycle, then restores only a directly evidenced preservation increment without runtime or publication changes. |
-| R90-84 | Aug 10–Sep 5 | Ready | Preserve non-socket UDS pathname occupants. | R90-83 | Receiver startup rejects a pre-existing non-socket or symlink pathname without modifying it, and shutdown removes only the socket identity created by that receiver while preserving a replacement path; stale/active socket policy remains unchanged. |
+| R90-84 | Aug 10–Sep 5 | Complete early | Preserve non-socket UDS pathname occupants. | R90-83 | Receiver startup rejects a pre-existing non-socket or symlink pathname without modifying it, and shutdown removes only the socket identity created by that receiver while preserving a replacement path; stale/active socket policy remains unchanged. |
 
 ## R90-01 Definition
 
@@ -2970,6 +2970,18 @@ all 33 knowledge tests. R90-82 satisfies its local acceptance evidence and
 remains in progress only for exact staged-scope review, feature delivery,
 fetched remote verification, and exact-range Vault synchronization; no later
 increment is started.
+R90-84 completed early at
+`8fc16241921dcb2817e2c138e59e36a6ab774b02`: its exact eight-path feature was
+pushed without force or tags, fetched equal to `origin/main`, and passed the
+post-fetch 33-test knowledge gate. Exact range
+`5c4253d18283c80ec27b7c2c1f383616eac2a89e..8fc16241921dcb2817e2c138e59e36a6ab774b02`
+was synchronized idempotently to the sole local Vault; its iteration note,
+full-index row, and MOC link are verified. Stable MOC and UDS prose now records
+the delivered pathname ownership boundary without rewriting immutable
+iteration notes; identical-range replay preserved Vault content hash
+`2eea69c66524a2c9664f896036e9e24fdd8d0269878bffe8a8f7162f2b7fe4a1`.
+No dependency-ready local increment remains. R90-59 and R90-75 retain their
+recorded external blockers, and neither was started.
 R90-82 completed early at
 `6118a0fb628a2a0ae0527c0783f436f96314a353`: its exact five-path feature was
 pushed without force or tags, fetched equal to `origin/main`, and passed the
