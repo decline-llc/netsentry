@@ -2,9 +2,9 @@
   "task": "r90-88-uds-active-listener-preservation",
   "timestamp": "2026-08-10T19:26:16-07:00",
   "branch": "main",
-  "remote_baseline": "1dcda25ce728336a984892ae849dffeb1d01b4d6",
+  "remote_baseline": "b551b71ebb7cf4d6cdee0d249a68490412e925eb",
   "risk_level": "Medium",
-  "current_checkpoint": "planned",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
     "Fetched origin main through SSH over 443 and verified FETCH_HEAD HEAD and origin main at 1dcda25ce728336a984892ae849dffeb1d01b4d6 with a clean worktree",
@@ -27,16 +27,19 @@
     "Passed documentation and all 33 knowledge tests",
     "Parsed all 103 task-state JSON files and verified all 92 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
     "Compared completed evidence to every acceptance criterion and confirmed the strengthened identity check resolves the recorded inode-reuse deviation",
-    "Passed gofmt git diff check exact eight-path credential sensitive-path dependency configuration protocol public API release and publication review"
+    "Passed gofmt git diff check exact eight-path credential sensitive-path dependency configuration protocol public API release and publication review",
+    "Committed the validated exact eight-path feature at b551b71ebb7cf4d6cdee0d249a68490412e925eb",
+    "Pushed main without force or tags and kept Vault synchronization blocked when the first verification fetch returned no usable exit or ref evidence",
+    "Retried the identical fetch and verified FETCH_HEAD HEAD and origin main equal to the feature commit with fast-forward ancestry",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range 1dcda25ce728336a984892ae849dffeb1d01b4d6..b551b71ebb7cf4d6cdee0d249a68490412e925eb to the sole local Vault",
+    "Verified the generated iteration note full-index row and MOC link",
+    "Reconciled stable MOC and UDS prose to the delivered active-listener refusal-only stale classification and change-time identity boundary",
+    "Replayed the identical feature range and verified Vault content hash aab59bbf7fa2486f302e4eaa0bfbe35cc68bce955f3f85ef34cff52b989e565e remained unchanged",
+    "Completed R90-88 and left R90-59 and R90-75 externally blocked with no dependency-ready local increment"
   ],
-  "in_progress": [
-    "Commit and push the validated exact eight-path R90-88 feature"
-  ],
-  "todo": [
-    "Commit and push without force or tags then fetch and verify exact origin main",
-    "Synchronize and verify the exact feature Vault range",
-    "Persist verified delivery facts in the docs-only closure without starting later work"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Only R90-88 bounded Unix-socket liveness probe identity-bound stale removal receiver-local test seam direct regressions and current documentation",
     "No peer authentication trust protocol configuration public API capture sender or non-Unix policy change",
@@ -45,9 +48,22 @@
     "Do not start a later roadmap increment in this trigger"
   ],
   "remaining_risks": [
-    "Only connection refusal may authorize stale removal and the original device inode plus change timestamp must still be current",
-    "The active-peer probe must close immediately and preserve continued peer service",
     "R90-59 and R90-75 remain externally blocked"
   ],
-  "resume_instructions": "Resume R90-88 only from fetched clean baseline 1dcda25ce728336a984892ae849dffeb1d01b4d6. Implement and validate the bounded active-listener and identity-bound stale-removal behavior without changing peer trust protocol configuration public API capture sender cleanup or publication state. Do not start later roadmap work."
+  "delivery": {
+    "commit": "b551b71ebb7cf4d6cdee0d249a68490412e925eb",
+    "origin_main_verified": true,
+    "branch_push_no_follow_tags": true,
+    "fast_forward_ancestry_verified": true,
+    "verification_fetch_retry": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "1dcda25ce728336a984892ae849dffeb1d01b4d6..b551b71ebb7cf4d6cdee0d249a68490412e925eb",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true,
+    "vault_reconciled_content_hash": "aab59bbf7fa2486f302e4eaa0bfbe35cc68bce955f3f85ef34cff52b989e565e"
+  },
+  "resume_instructions": "R90-88 is complete at b551b71ebb7cf4d6cdee0d249a68490412e925eb; do not repeat its implementation validation feature delivery or feature-range Vault synchronization. On the next netsentry-next trigger fetch and verify this docs-only closure plus its exact Vault evidence before selecting work. No dependency-ready local increment remains. Do not start R90-59 or R90-75 without their recorded external inputs and authority."
 }

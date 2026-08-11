@@ -166,6 +166,30 @@ current.
   public API, workflow, release artifact, private-data access, or external
   mutation was added.
 
+## Delivery Results
+
+- Feature commit:
+  `b551b71ebb7cf4d6cdee0d249a68490412e925eb` (`fix: preserve active UDS
+  listeners`). It contains exactly the eight validated source, test,
+  documentation, roadmap, plan, and task-state paths.
+- `main` was pushed without force or tags. The first verification fetch
+  returned only its start marker and no exit/ref evidence, so Vault work stayed
+  blocked; the identical retry then verified
+  `FETCH_HEAD == HEAD == origin/main == b551b71ebb7cf4d6cdee0d249a68490412e925eb`
+  with fast-forward ancestry from the recorded baseline. The post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `1dcda25ce728336a984892ae849dffeb1d01b4d6..b551b71ebb7cf4d6cdee0d249a68490412e925eb`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC and UDS prose was reconciled to the delivered active-listener,
+  refusal-only stale classification, and change-time identity boundary without
+  rewriting immutable iteration notes. Replaying the identical range preserved
+  exact Vault content hash
+  `aab59bbf7fa2486f302e4eaa0bfbe35cc68bce955f3f85ef34cff52b989e565e`.
+- R90-88 is complete. R90-59 and R90-75 retain their external blockers; no
+  dependency-ready local increment remains and no later work was started.
+
 ## Authority Boundaries
 
 This trigger authorizes only R90-88's bounded Unix-socket liveness probe,
