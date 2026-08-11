@@ -151,6 +151,8 @@
 | R90-86 | Aug 10–Sep 5 | Complete early | Reject receiver startup with an already-canceled context. | R90-85 | `Start` returns an error matching `context.Canceled` before pathname mutation or listener creation; direct absent-path and pre-existing Unix-socket preservation regressions pass while live startup and post-readiness cancellation remain compatible. |
 | R90-87 | Aug 10 | Complete | Audit post-cancellation delivery and restore the active-socket lifecycle queue. | R90-86 | A dated audit reconciles the R90-86 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-existing-socket behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-88 | Aug 11–Sep 12 | Complete early | Preserve an active UDS listener during receiver startup. | R90-87 | Startup rejects a currently connectable existing Unix listener without replacing its pathname identity or breaking its service, still reclaims a stale socket, and preserves a replacement identity if the pathname changes during classification. |
+| R90-89 | Aug 11 | In progress | Audit post-listener delivery and restore the cancellation-aware startup queue. | R90-88 | A dated audit reconciles the R90-88 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-readiness probe cancellation behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
+| R90-90 | Aug 12–Sep 12 | Planned | Make the existing-socket probe context-aware. | R90-89 | Cancellation during a blocked pre-readiness Unix-socket probe returns an error matching the context sentinel promptly, preserves the captured pathname identity, and installs no receiver listener while active/stale classification remains compatible. |
 
 ## R90-01 Definition
 
@@ -1825,6 +1827,48 @@
   locking beyond identity-bound pathname handling, private data, or
   publication authority.
 
+## R90-89 Definition
+
+- **Goal:** reconcile R90-88 delivery and restore only the directly evidenced
+  cancellation-aware local startup work after the dependency-ready queue
+  emptied.
+- **Risk:** treating a fixed one-second probe bound as context cancellation can
+  overstate shutdown responsiveness, while speculative queue filling can turn
+  a missing direct regression into an unsupported production-defect claim.
+- **Required validation:** exact R90-88 feature/closure Git, task-state,
+  fetched-remote, and dual-Vault reconciliation; Jul 20 through Aug 11 phase
+  review; direct receiver startup, probe, cancellation, test, and public-doc
+  mapping; complete unfinished-item fields; exact row/Definition multiset
+  comparison; task-state JSON, documentation, knowledge, formatting, scope,
+  and sensitive-information checks.
+- **Stop condition:** stop if exact R90-88 evidence is missing or contradictory,
+  a follow-on needs protocol/configuration/public API, private/external,
+  performance, or publication authority, validation is ambiguous, or
+  completion would start runtime/test work.
+- **Selected plan:**
+  [`task-20260811-post-listener-delivery-audit.md`](task-20260811-post-listener-delivery-audit.md),
+  from clean fetched baseline
+  `56d7d0b8005601299292b47d49bee7fc1e651753`.
+
+## R90-90 Definition
+
+- **Goal:** make cancellation during the bounded existing-socket liveness probe
+  terminate receiver startup promptly before listener readiness.
+- **Risk:** retaining `net.DialTimeout` can delay cancellation for the complete
+  fixed probe bound, while changing probe error classification can accidentally
+  reclaim an ambiguous or active pathname.
+- **Required validation:** a direct receiver-local synchronized probe regression
+  cancels after probe entry and checks prompt `errors.Is` context-sentinel
+  return, original pathname identity, and absent receiver listener; direct
+  active-listener, ambiguous-probe, replacement-identity, stale-reclamation,
+  pre-canceled, ordinary startup, and post-readiness cancellation compatibility;
+  repeated uncached receiver race, full native, E2E, documentation, and
+  knowledge checks.
+- **Stop condition:** stop if deterministic cancellation requires sleeps or a
+  public test seam, if probe cancellation cannot preserve refusal-only stale
+  classification and pathname identity, or if completion needs protocol,
+  configuration, public API, private data, or publication authority.
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -3298,3 +3342,38 @@ Identical-range replay preserved Vault content hash
 `aab59bbf7fa2486f302e4eaa0bfbe35cc68bce955f3f85ef34cff52b989e565e`.
 No dependency-ready local increment remains. R90-59 and R90-75 retain their
 recorded external blockers, and neither was started.
+The Aug 11 trigger fetched and verified the clean R90-88 docs-only closure at
+`56d7d0b8005601299292b47d49bee7fc1e651753`, both exact R90-88 Vault notes,
+full-index rows, MOC links, and current stable MOC/UDS authority. All 103 prior
+task states parse and all 92 prior roadmap row and Definition multisets match
+without duplicates or asymmetry. The 149-commit Jul 20 through Aug 11 phase
+review found no missing closure, stale stable authority, or unresolved
+validation result that changes priority. R90-59 and R90-75 retain their
+external blockers and no local row is ready, so R90-89 is selected as the
+documentation-only smallest safe queue unblocker with a persisted plan/state.
+Current `Start` checks only an already-canceled context before a fixed
+one-second `net.DialTimeout` probe that cannot observe later cancellation;
+direct tests cover pre-canceled startup and post-readiness shutdown but not
+cancellation synchronized during that pre-readiness probe. R90-90 records only
+that bounded prompt-cancellation and pathname-preservation outcome and remains
+unstarted.
+The R90-89 audit reconciles the exact R90-88 feature/closure parent chain,
+intended paths, completed state, fetched remote, both immutable Vault notes,
+and current stable authority. It records 149 commits across four recent phases:
+60 behavior-like changes, 76 delivery closures, and 13 other documentation
+changes, with no missing record, stale stable authority, or unresolved
+validation result that changes priority. Public lifecycle prose does not claim
+prompt during-probe cancellation. Source and direct-test mapping confirms the
+probe seam has no context parameter and uses fixed `net.DialTimeout`, while
+pre-canceled and post-readiness cancellation are covered on either side of the
+untested boundary. Only planned R90-90 is restored to pass `Start`'s context
+through the bounded probe and directly prove prompt cancellation plus pathname
+identity preservation; it remains unstarted pending R90-89 validation and
+delivery.
+All 104 task-state JSON files parse and all 94 roadmap rows match the complete
+Definition multiset with equal raw counts, no duplicate identifiers, and no
+asymmetry. R90-59, R90-75, R90-89, and R90-90 retain complete unfinished-item
+fields. Documentation, all 33 knowledge tests, formatting, exact four-path
+scope, and sensitive-information review pass. R90-89 satisfies its local
+acceptance evidence and awaits only documentation delivery, fetched remote
+verification, and exact-range Vault synchronization. R90-90 remains unstarted.
