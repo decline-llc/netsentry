@@ -149,8 +149,8 @@
 | R90-84 | Aug 10–Sep 5 | Complete early | Preserve non-socket UDS pathname occupants. | R90-83 | Receiver startup rejects a pre-existing non-socket or symlink pathname without modifying it, and shutdown removes only the socket identity created by that receiver while preserving a replacement path; stale/active socket policy remains unchanged. |
 | R90-85 | Aug 9 | Complete | Audit post-pathname delivery and repair roadmap chronology. | R90-84 | A dated audit reconciles the R90-84 feature/closure, recent phases, fetched remote, exact Vault evidence, corrects mutable delivery-history ordering, and restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-86 | Aug 10–Sep 5 | Complete early | Reject receiver startup with an already-canceled context. | R90-85 | `Start` returns an error matching `context.Canceled` before pathname mutation or listener creation; direct absent-path and pre-existing Unix-socket preservation regressions pass while live startup and post-readiness cancellation remain compatible. |
-| R90-87 | Aug 10 | Ready | Audit post-cancellation delivery and restore the active-socket lifecycle queue. | R90-86 | A dated audit reconciles the R90-86 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-existing-socket behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-88 | Aug 11–Sep 12 | Planned | Preserve an active UDS listener during receiver startup. | R90-87 | Startup rejects a currently connectable existing Unix listener without replacing its pathname identity or breaking its service, still reclaims a stale socket, and preserves a replacement identity if the pathname changes during classification. |
+| R90-87 | Aug 10 | Complete | Audit post-cancellation delivery and restore the active-socket lifecycle queue. | R90-86 | A dated audit reconciles the R90-86 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-existing-socket behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
+| R90-88 | Aug 11–Sep 12 | Ready | Preserve an active UDS listener during receiver startup. | R90-87 | Startup rejects a currently connectable existing Unix listener without replacing its pathname identity or breaking its service, still reclaims a stale socket, and preserves a replacement identity if the pathname changes during classification. |
 
 ## R90-01 Definition
 
@@ -3246,3 +3246,14 @@ scope, and sensitive-information review pass. R90-87 satisfies its local
 acceptance evidence and exact four-path scope; it awaits only documentation
 delivery, fetched remote verification, and exact-range Vault synchronization.
 R90-88 is not started.
+R90-87 completed at
+`d0cb83bec99d881c012738bb4a11a4ca2629e3cb`: its exact four-path documentation
+audit was pushed without force or tags, fetched equal to `origin/main`, and
+passed the post-fetch 33-test knowledge gate. Exact range
+`6ea917e976d71432a4beb72967f73f2abf5c908b..d0cb83bec99d881c012738bb4a11a4ca2629e3cb`
+was synchronized idempotently to the sole local Vault; its iteration note,
+full-index row, MOC link, and current stable MOC/UDS authority are verified.
+Identical-range replay preserved Vault content hash
+`48ff083888de53a14ff4305d1de359edc9b2fe09068139077c8592043bcd5286`.
+R90-88 is ready but was not started; R90-59 and R90-75 retain their external
+blockers.

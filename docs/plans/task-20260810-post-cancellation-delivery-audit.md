@@ -145,6 +145,27 @@ publication, workflow dispatch, or starting the follow-on.
   test, configuration, workflow, generated evidence, release artifact,
   private-data access, or external mutation was added.
 
+## Delivery Results
+
+- Documentation feature commit:
+  `d0cb83bec99d881c012738bb4a11a4ca2629e3cb` (`docs: audit post-cancellation
+  delivery`). It contains exactly the four validated audit, roadmap, plan, and
+  task-state paths.
+- `main` was pushed without force or tags. A fresh fetch verified
+  `FETCH_HEAD == HEAD == origin/main == d0cb83bec99d881c012738bb4a11a4ca2629e3cb`
+  with fast-forward ancestry from the recorded baseline, and the post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `6ea917e976d71432a4beb72967f73f2abf5c908b..d0cb83bec99d881c012738bb4a11a4ca2629e3cb`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC and UDS prose was reconciled to the completed R90-87 audit and
+  planned/unstarted R90-88 boundary without rewriting immutable iteration
+  notes. Replaying the identical range preserved exact Vault content hash
+  `48ff083888de53a14ff4305d1de359edc9b2fe09068139077c8592043bcd5286`.
+- R90-87 is complete. R90-88 is the next ready local increment and remains
+  unstarted; R90-59 and R90-75 retain their external blockers.
+
 ## Stop Conditions
 
 Stop if R90-86 evidence is missing or contradictory, active-listener
