@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-08-02 through 2026-10-31. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from the prior horizon is preserved below.
+> Window: 2026-08-10 through 2026-11-08. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from the prior horizon is preserved below.
 
 ## Status Rules
 
@@ -149,6 +149,8 @@
 | R90-84 | Aug 10–Sep 5 | Complete early | Preserve non-socket UDS pathname occupants. | R90-83 | Receiver startup rejects a pre-existing non-socket or symlink pathname without modifying it, and shutdown removes only the socket identity created by that receiver while preserving a replacement path; stale/active socket policy remains unchanged. |
 | R90-85 | Aug 9 | Complete | Audit post-pathname delivery and repair roadmap chronology. | R90-84 | A dated audit reconciles the R90-84 feature/closure, recent phases, fetched remote, exact Vault evidence, corrects mutable delivery-history ordering, and restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-86 | Aug 10–Sep 5 | Complete early | Reject receiver startup with an already-canceled context. | R90-85 | `Start` returns an error matching `context.Canceled` before pathname mutation or listener creation; direct absent-path and pre-existing Unix-socket preservation regressions pass while live startup and post-readiness cancellation remain compatible. |
+| R90-87 | Aug 10 | Ready | Audit post-cancellation delivery and restore the active-socket lifecycle queue. | R90-86 | A dated audit reconciles the R90-86 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-existing-socket behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
+| R90-88 | Aug 11–Sep 12 | Planned | Preserve an active UDS listener during receiver startup. | R90-87 | Startup rejects a currently connectable existing Unix listener without replacing its pathname identity or breaking its service, still reclaims a stale socket, and preserves a replacement identity if the pathname changes during classification. |
 
 ## R90-01 Definition
 
@@ -1784,6 +1786,45 @@
   from clean fetched baseline
   `ab63ee3ef53fdb7a764ca0863dac36580d0318fa`.
 
+## R90-87 Definition
+
+- **Goal:** reconcile R90-86 delivery and restore only directly evidenced
+  local work after the dependency-ready queue emptied.
+- **Risk:** speculative queue filling can turn unconditional pathname removal
+  into an unsupported liveness, trust, or production-defect claim.
+- **Required validation:** exact R90-86 feature/closure Git, task-state,
+  fetched-remote, and dual-Vault reconciliation; Jul 20 through Aug 10 phase
+  review; direct receiver existing-socket source, caller, test, and public-doc
+  mapping; complete unfinished-item fields; exact row/Definition multiset
+  comparison; task-state JSON, documentation, knowledge, formatting, scope,
+  and sensitive-information checks.
+- **Stop condition:** stop if exact R90-86 evidence is missing or contradictory,
+  a follow-on needs peer trust/authentication, protocol, private/external,
+  performance, or publication authority, validation is ambiguous, or
+  completion would start runtime/test work.
+- **Selected plan:**
+  [`task-20260810-post-cancellation-delivery-audit.md`](task-20260810-post-cancellation-delivery-audit.md),
+  from clean fetched baseline
+  `6ea917e976d71432a4beb72967f73f2abf5c908b`.
+
+## R90-88 Definition
+
+- **Goal:** retain established stale-socket reclamation without unlinking a
+  pathname currently owned by a connectable Unix listener.
+- **Risk:** a liveness probe can perturb the existing peer, a pathname can be
+  replaced between classification and removal, and treating reachability as
+  authentication can overstate the trust boundary.
+- **Required validation:** direct active-listener pathname-identity and
+  continued-service preservation; stale-socket reclamation; identity-bound
+  preservation when the pathname changes during classification; regular-file,
+  symlink, already-canceled, ordinary startup, reconnect, cancellation, and
+  owned-cleanup compatibility; repeated uncached receiver race, full native,
+  E2E, documentation, and knowledge checks.
+- **Stop condition:** stop if safe completion requires trusting or authenticating
+  the peer, changing the hello/frame protocol or capture sender, cross-process
+  locking beyond identity-bound pathname handling, private data, or
+  publication authority.
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -3178,3 +3219,30 @@ Identical-range replay preserved Vault content hash
 `41b42418edb5033763e8aa923f9f000765f6bac6cce27270f3c039c1884bc639`.
 No dependency-ready local increment remains. R90-59 and R90-75 retain their
 recorded external blockers, and neither was started.
+The Aug 10 trigger used the documented SSH-over-443 fallback after port 22
+closed and a first 443 fetch ended in a transient broken pipe; a keepalive
+retry fetched and verified the clean R90-86 docs-only closure baseline at
+`6ea917e976d71432a4beb72967f73f2abf5c908b`. Both exact R90-86 Vault notes,
+full-index rows, MOC links, and current stable MOC/UDS authority are verified.
+All 101 prior task states parse and all 90 prior roadmap row and Definition
+multisets match without duplicate or asymmetric identifiers. Recent phase
+review found no missing closure, stale stable authority, or unresolved
+validation result that changes priority. R90-59 and R90-75 retain their
+external blockers and no local row is ready, so R90-87 is selected as the
+documentation-only smallest safe queue unblocker with a persisted plan/state.
+Current `removeExistingSocket` removes every pre-existing non-symlink Unix
+socket after `Lstat`; the sole reclamation regression closes its listener
+first, and no direct test preserves a live listener or its pathname identity.
+R90-88 records only that bounded preservation outcome and remains unstarted.
+The R90-87 audit reconciles the exact R90-86 feature/closure chain, 145 commits
+across four recent phases, both immutable Vault notes, and current stable
+authority. It distinguishes reachability from trust, records the transient
+fetch and resolved R90-86 setup deviations, refreshes the horizon through
+Nov 8, and restores only R90-88 behind this audit. All 102 task states parse;
+all 92 roadmap rows and Definitions match as complete multisets without
+duplicates or asymmetry; R90-59, R90-75, R90-87, and R90-88 retain complete
+unfinished-item fields. Documentation, all 33 knowledge tests, formatting,
+scope, and sensitive-information review pass. R90-87 satisfies its local
+acceptance evidence and exact four-path scope; it awaits only documentation
+delivery, fetched remote verification, and exact-range Vault synchronization.
+R90-88 is not started.
