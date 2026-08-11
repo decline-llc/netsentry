@@ -260,6 +260,65 @@ func TestStartCanceledContextPreservesExistingUnixSocket(t *testing.T) {
 	}
 }
 
+func TestStartCancellationDuringExistingSocketProbePreservesPath(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	stale, err := net.Listen("unix", path)
+	if err != nil {
+		t.Fatalf("create Unix socket: %v", err)
+	}
+	stale.(*net.UnixListener).SetUnlinkOnClose(false)
+	if err := stale.Close(); err != nil {
+		t.Fatalf("close Unix socket listener: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Remove(path) })
+	before, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat Unix socket before probe cancellation: %v", err)
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	t.Cleanup(cancel)
+	probeEntered := make(chan struct{})
+	r := New(Config{Path: path}, zap.NewNop())
+	r.probeExistingSocket = func(ctx context.Context, _ string) (net.Conn, error) {
+		close(probeEntered)
+		<-ctx.Done()
+		return nil, ctx.Err()
+	}
+	startResult := make(chan error, 1)
+	go func() {
+		startResult <- r.Start(ctx)
+	}()
+
+	select {
+	case <-probeEntered:
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for existing-socket probe entry")
+	}
+	cancel()
+	select {
+	case err := <-startResult:
+		if !errors.Is(err, context.Canceled) {
+			t.Fatalf("start error = %v, want context.Canceled", err)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("receiver startup did not return promptly after probe cancellation")
+	}
+	if r.ln != nil {
+		t.Fatal("receiver installed a listener after probe cancellation")
+	}
+	after, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat Unix socket after probe cancellation: %v", err)
+	}
+	if after.Mode()&os.ModeSocket == 0 {
+		t.Fatalf("preserved path mode = %v, want Unix socket", after.Mode())
+	}
+	if !sameUnixSocketIdentity(before, after) {
+		t.Fatal("probe cancellation replaced the existing Unix socket identity")
+	}
+}
+
 func TestStartPreservesActiveUnixListener(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "netsentry.sock")
 	existing, err := net.Listen("unix", path)
@@ -328,7 +387,7 @@ func TestStartPreservesUnixSocketOnAmbiguousProbeFailure(t *testing.T) {
 	}
 
 	r := New(Config{Path: path}, zap.NewNop())
-	r.probeExistingSocket = func(string) (net.Conn, error) {
+	r.probeExistingSocket = func(context.Context, string) (net.Conn, error) {
 		return nil, os.ErrPermission
 	}
 	err = r.Start(context.Background())
@@ -367,7 +426,7 @@ func TestStartPreservesReplacementUnixListenerDuringProbe(t *testing.T) {
 		_ = os.Remove(path)
 	})
 	r := New(Config{Path: path}, zap.NewNop())
-	r.probeExistingSocket = func(string) (net.Conn, error) {
+	r.probeExistingSocket = func(context.Context, string) (net.Conn, error) {
 		if err := os.Remove(path); err != nil {
 			return nil, fmt.Errorf("remove stale socket in probe seam: %w", err)
 		}

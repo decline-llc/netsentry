@@ -14,7 +14,9 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
   interrupting later service, and treats only connection refusal as a stale
   removal candidate. Removal revalidates the non-following device, inode, and
   change-time identity so an immediate replacement listener is preserved;
-  ambiguous probe failures also leave the original path unchanged.
+  ambiguous probe failures also leave the original path unchanged. The bounded
+  probe observes startup context cancellation promptly while preserving that
+  pathname identity and the context sentinel before listener readiness.
 - The Go UDS receiver now rejects an already-canceled startup before
   inspecting or modifying its configured pathname or creating a listener. The
   returned error preserves the context cancellation sentinel, while absent

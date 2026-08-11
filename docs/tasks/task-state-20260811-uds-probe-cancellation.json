@@ -1,0 +1,59 @@
+{
+  "task": "r90-90-uds-probe-cancellation",
+  "timestamp": "2026-08-11T03:14:35-07:00",
+  "branch": "main",
+  "remote_baseline": "22ba8ce639d79547875885f4ce107321273dd3b7",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_delivery_pending",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
+    "Fetched origin main and verified FETCH_HEAD HEAD and origin main at 22ba8ce639d79547875885f4ce107321273dd3b7 with a clean worktree",
+    "Verified the R90-89 feature and docs-only closure chain exact paths completed state both Vault notes full-index rows MOC links current stable authority and reconciled closure hash",
+    "Parsed all 104 prior task-state JSON files and verified all 94 prior roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
+    "Reviewed 151 Jul 20 through Aug 11 commits and found no missing closure stale stable authority or unresolved validation result that changes priority",
+    "Confirmed R90-59 and R90-75 retain their external blockers and R90-90 is the sole dependency-ready increment",
+    "Mapped the non-contextual fixed-timeout production probe and direct cancellation tests to the during-probe evidence boundary",
+    "Persisted R90-90 scope non-goals risks evidence mapping validation authority boundaries and stop conditions before receiver or test changes",
+    "Passed the startup context through removeExistingSocket and the receiver-local bounded probe without changing classification",
+    "Replaced standalone net DialTimeout with a one-second net Dialer DialContext production probe",
+    "Added a direct probe-entry-synchronized cancellation regression proving the context sentinel absent receiver listener and complete pathname identity preservation",
+    "Passed the direct acceptance and compatibility set normally",
+    "Passed the direct acceptance and compatibility set twenty times uncached under the race detector",
+    "Passed the complete receiver package uncached under the race detector with no implementation or focused-validation deviation",
+    "Updated current changelog architecture and development lifecycle authority",
+    "Preflighted module-selected Go 1.25.12 GCC 13.3.0 GNU Make 4.3 Bash 5.2.21 Python 3.12.3 curl 8.5.0 timeout 9.4 jq 1.7 pkg-config 1.8.1 and libpcap 1.10.4",
+    "Passed make test across both C tests and every Go package uncached under race",
+    "Passed E2E smoke with six packets processed five alerts generated and eight rules loaded",
+    "Passed documentation and all 33 knowledge tests",
+    "Parsed all 105 task-state JSON files and verified all 94 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
+    "Compared every acceptance criterion to direct evidence and confirmed the synchronized regression reaches the promised during-probe boundary",
+    "Passed gofmt git diff check exact eight-path credential sensitive-path dependency configuration protocol public API release and publication review with no validation deviation"
+  ],
+  "in_progress": [
+    "Deliver R90-90 fetch-verify exact-range Vault synchronization stable-authority reconciliation and docs-only closure"
+  ],
+  "todo": [
+    "Commit and push the exact eight-path feature",
+    "Fetch and verify HEAD FETCH_HEAD and origin main then rerun the knowledge gate",
+    "Synchronize and verify the exact feature and closure Vault ranges without starting a later increment"
+  ],
+  "authority_boundaries": [
+    "Only R90-90 context propagation bounded probe receiver-local seam direct synchronized regression compatibility documentation and delivery",
+    "No active stale classification pathname-generation cleanup retry timeout protocol configuration public API capture or peer-policy change",
+    "No private external data performance policy tag release image registry workflow or other publication mutation",
+    "Do not start a later roadmap increment in this trigger"
+  ],
+  "remaining_risks": [
+    "R90-59 and R90-75 remain externally blocked",
+    "Complete focused repeated and repository validation remains required"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "resume_instructions": "Resume only R90-90 context-aware bounded probing and its direct synchronized cancellation evidence from clean fetched baseline 22ba8ce639d79547875885f4ce107321273dd3b7. Do not start a later increment or change classification protocol configuration public API peer policy or publication state."
+}

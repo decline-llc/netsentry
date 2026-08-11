@@ -756,8 +756,10 @@ connection-refused stale socket whose captured device/inode/change timestamp
 still matches immediately before removal. Ambiguous liveness results and a
 pathname replaced during classification are preserved. An already-canceled
 context still fails before pathname inspection, mutation, or listener
-creation. Shutdown removes only the socket identity created by that receiver
-while preserving a replacement regular file or symlink.
+creation. Cancellation after the existing-socket probe begins also returns the
+context sentinel promptly, preserves the captured socket identity, and installs
+no receiver listener. Shutdown removes only the socket identity created by that
+receiver while preserving a replacement regular file or symlink.
 
 ---
 

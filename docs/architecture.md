@@ -178,7 +178,10 @@ Target behavior:
   original non-following device/inode/change-time identity must still match
   immediately before removal. Ambiguous probe failures and a concurrently
   replaced pathname fail closed without removal. Reachability does not
-  authenticate or trust the existing peer.
+  authenticate or trust the existing peer. The same one-second bound uses the
+  startup context, so cancellation after probe entry returns the context
+  sentinel promptly without removing the captured pathname or installing a
+  receiver listener.
   An already-canceled startup returns before this inspection or any listener
   creation and preserves the context cancellation sentinel.
   Shutdown disables listener auto-unlink and removes the pathname only while it

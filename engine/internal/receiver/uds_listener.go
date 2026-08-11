@@ -58,7 +58,7 @@ type Receiver struct {
 	stats               *stats.Stats
 	wg                  sync.WaitGroup
 	slots               chan struct{}
-	probeExistingSocket func(string) (net.Conn, error)
+	probeExistingSocket func(context.Context, string) (net.Conn, error)
 }
 
 // New constructs a receiver. Start must be called before packets arrive.
@@ -87,8 +87,9 @@ func New(cfg Config, logger *zap.Logger) *Receiver {
 		packets: make(chan *model.PacketInfo, cfg.BufferSize),
 		state:   newHeartbeatState(),
 		stats:   cfg.Stats,
-		probeExistingSocket: func(path string) (net.Conn, error) {
-			return net.DialTimeout("unix", path, existingSocketProbeTimeout)
+		probeExistingSocket: func(ctx context.Context, path string) (net.Conn, error) {
+			dialer := net.Dialer{Timeout: existingSocketProbeTimeout}
+			return dialer.DialContext(ctx, "unix", path)
 		},
 	}
 }
@@ -123,7 +124,7 @@ func (r *Receiver) Start(ctx context.Context) error {
 	if err := ctx.Err(); err != nil {
 		return fmt.Errorf("start uds listener %q: %w", r.cfg.Path, err)
 	}
-	if err := removeExistingSocket(r.cfg.Path, r.probeExistingSocket); err != nil {
+	if err := removeExistingSocket(ctx, r.cfg.Path, r.probeExistingSocket); err != nil {
 		return fmt.Errorf("prepare uds listener %q: %w", r.cfg.Path, err)
 	}
 	ln, err := net.Listen("unix", r.cfg.Path)
@@ -168,7 +169,7 @@ func (r *Receiver) Start(ctx context.Context) error {
 	return nil
 }
 
-func removeExistingSocket(path string, probe func(string) (net.Conn, error)) error {
+func removeExistingSocket(ctx context.Context, path string, probe func(context.Context, string) (net.Conn, error)) error {
 	original, err := os.Lstat(path)
 	if errors.Is(err, os.ErrNotExist) {
 		return nil
@@ -179,7 +180,7 @@ func removeExistingSocket(path string, probe func(string) (net.Conn, error)) err
 	if original.Mode()&os.ModeSocket == 0 {
 		return fmt.Errorf("existing path is not a Unix socket")
 	}
-	conn, probeErr := probe(path)
+	conn, probeErr := probe(ctx, path)
 	if conn != nil {
 		_ = conn.Close()
 	}

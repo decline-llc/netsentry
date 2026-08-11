@@ -152,7 +152,7 @@
 | R90-87 | Aug 10 | Complete | Audit post-cancellation delivery and restore the active-socket lifecycle queue. | R90-86 | A dated audit reconciles the R90-86 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-existing-socket behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-88 | Aug 11–Sep 12 | Complete early | Preserve an active UDS listener during receiver startup. | R90-87 | Startup rejects a currently connectable existing Unix listener without replacing its pathname identity or breaking its service, still reclaims a stale socket, and preserves a replacement identity if the pathname changes during classification. |
 | R90-89 | Aug 11 | Complete | Audit post-listener delivery and restore the cancellation-aware startup queue. | R90-88 | A dated audit reconciles the R90-88 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-readiness probe cancellation behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-90 | Aug 12–Sep 12 | Ready | Make the existing-socket probe context-aware. | R90-89 | Cancellation during a blocked pre-readiness Unix-socket probe returns an error matching the context sentinel promptly, preserves the captured pathname identity, and installs no receiver listener while active/stale classification remains compatible. |
+| R90-90 | Aug 12–Sep 12 | In progress | Make the existing-socket probe context-aware. | R90-89 | Cancellation during a blocked pre-readiness Unix-socket probe returns an error matching the context sentinel promptly, preserves the captured pathname identity, and installs no receiver listener while active/stale classification remains compatible. |
 
 ## R90-01 Definition
 
@@ -1868,6 +1868,10 @@
   public test seam, if probe cancellation cannot preserve refusal-only stale
   classification and pathname identity, or if completion needs protocol,
   configuration, public API, private data, or publication authority.
+- **Selected plan:**
+  [`task-20260811-uds-probe-cancellation.md`](task-20260811-uds-probe-cancellation.md),
+  from clean fetched baseline
+  `22ba8ce639d79547875885f4ce107321273dd3b7`.
 
 ### R90-71 Validation Deviation
 
@@ -3394,3 +3398,33 @@ Identical-range replay preserved Vault content hash
 `340e0654c221cf3e5bba249cdfcb9abc87505eb954e237677de42c3730c015d3`.
 R90-90 is ready but was not started; R90-59 and R90-75 retain their external
 blockers.
+The next Aug 11 trigger fetched and verified the clean R90-89 docs-only closure
+at `22ba8ce639d79547875885f4ce107321273dd3b7`, both exact R90-89 Vault
+notes, full-index rows, MOC links, current stable MOC/UDS authority, and
+reconciled closure-range Vault hash
+`fbe378e8ad8a865ad65aca0c78a118d280481b876f4170a75aa9dba05160c022`.
+All 104 prior task states parse and all 94 prior roadmap row and Definition
+multisets match without duplicates or asymmetry. The 151-commit Jul 20 through
+Aug 11 phase review found no missing closure, stale stable authority, or
+unresolved validation result that changes priority. R90-59 and R90-75 retain
+their external blockers; R90-90 is selected as the sole dependency-ready
+increment with a persisted context, pathname-preservation, and evidence
+contract before receiver or test changes. No later increment or publication
+action is started.
+R90-90 now passes the startup context through pathname preparation and a
+receiver-local bounded `DialContext` probe without changing refusal-only stale
+classification. Its direct regression synchronizes on probe entry before
+canceling, then proves prompt `context.Canceled` matching, no installed
+receiver listener, and complete captured device/inode/change-time identity
+preservation. The acceptance and compatibility set passes normally, twenty
+times uncached under race, and as part of the complete receiver race package.
+No implementation or focused-validation deviation occurred; complete
+repository validation remains the delivery boundary.
+The complete fail-fast repository chain passes both C tests, every Go package
+uncached under race, E2E smoke, documentation, and all 33 knowledge tests. All
+105 task states parse and all 94 roadmap row and Definition multisets match
+without duplicate or asymmetric identifiers. R90-90 satisfies every local
+acceptance criterion through the direct synchronized regression and exact
+eight-path scope review; it awaits only feature delivery, fetched remote
+verification, and exact-range Vault synchronization. No later increment is
+started.
