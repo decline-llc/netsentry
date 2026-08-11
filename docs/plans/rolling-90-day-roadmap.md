@@ -152,7 +152,7 @@
 | R90-87 | Aug 10 | Complete | Audit post-cancellation delivery and restore the active-socket lifecycle queue. | R90-86 | A dated audit reconciles the R90-86 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-existing-socket behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-88 | Aug 11–Sep 12 | Complete early | Preserve an active UDS listener during receiver startup. | R90-87 | Startup rejects a currently connectable existing Unix listener without replacing its pathname identity or breaking its service, still reclaims a stale socket, and preserves a replacement identity if the pathname changes during classification. |
 | R90-89 | Aug 11 | Complete | Audit post-listener delivery and restore the cancellation-aware startup queue. | R90-88 | A dated audit reconciles the R90-88 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-readiness probe cancellation behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-90 | Aug 12–Sep 12 | In progress | Make the existing-socket probe context-aware. | R90-89 | Cancellation during a blocked pre-readiness Unix-socket probe returns an error matching the context sentinel promptly, preserves the captured pathname identity, and installs no receiver listener while active/stale classification remains compatible. |
+| R90-90 | Aug 12–Sep 12 | Complete early | Make the existing-socket probe context-aware. | R90-89 | Cancellation during a blocked pre-readiness Unix-socket probe returns an error matching the context sentinel promptly, preserves the captured pathname identity, and installs no receiver listener while active/stale classification remains compatible. |
 
 ## R90-01 Definition
 
@@ -3428,3 +3428,19 @@ acceptance criterion through the direct synchronized regression and exact
 eight-path scope review; it awaits only feature delivery, fetched remote
 verification, and exact-range Vault synchronization. No later increment is
 started.
+The first closure edit anchored the R90-90 completion paragraph on a repeated
+generic `started.` sentence and placed it inside older R90-59a history. The
+chronology check rejected that placement before validation; the unchanged
+completion facts now follow R90-90 selection, implementation, and successful
+validation, and the ordered-marker gate must pass before closure delivery.
+R90-90 completed early at
+`c17870eb7f829b7451ab866b00fead4ef6b72e92`: its exact eight-path feature
+was pushed without force or tags, fetched equal to `origin/main`, and passed
+the post-fetch 33-test knowledge gate. Exact range
+`22ba8ce639d79547875885f4ce107321273dd3b7..c17870eb7f829b7451ab866b00fead4ef6b72e92`
+was synchronized idempotently to the sole local Vault; its iteration note,
+full-index row, MOC link, and current stable MOC/UDS authority are verified.
+Identical-range replay preserved Vault content hash
+`07ee79b395aab016fc0e7617999a4f3bca5a8e5b59c772e5a4efec703b3ba997`.
+No dependency-ready local increment remains. R90-59 and R90-75 retain their
+recorded external blockers, and neither was started.

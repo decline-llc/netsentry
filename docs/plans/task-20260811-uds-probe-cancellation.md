@@ -168,6 +168,34 @@ publication, workflow dispatch, or a later roadmap increment.
   review, feature delivery, fetched remote verification, and exact-range Vault
   synchronization. No later increment is started.
 
+## Delivery Results
+
+- The first closure edit anchored the completion paragraph on a repeated
+  generic sentence and placed the correct facts inside older R90-59a history.
+  Delivery stayed blocked while the paragraph was moved after the exact R90-90
+  validation marker; the structural gate must prove selection, implementation,
+  validation, and completion ordering before commit.
+
+- Feature commit:
+  `c17870eb7f829b7451ab866b00fead4ef6b72e92` (`fix: honor cancellation
+  during UDS probe`). It contains exactly the eight validated source, test,
+  documentation, roadmap, plan, and task-state paths.
+- `main` was pushed without force or tags. A fresh fetch verified
+  `FETCH_HEAD == HEAD == origin/main == c17870eb7f829b7451ab866b00fead4ef6b72e92`
+  with fast-forward ancestry from the recorded baseline, and the post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `22ba8ce639d79547875885f4ce107321273dd3b7..c17870eb7f829b7451ab866b00fead4ef6b72e92`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC and UDS prose was reconciled to the delivered context-aware probe,
+  direct synchronized cancellation evidence, and unchanged classification/
+  public-contract boundary without rewriting immutable iteration notes.
+  Replaying the identical range preserved exact Vault content hash
+  `07ee79b395aab016fc0e7617999a4f3bca5a8e5b59c772e5a4efec703b3ba997`.
+- R90-90 is complete. R90-59 and R90-75 retain their external blockers; no
+  dependency-ready local increment remains and no later work was started.
+
 ## Stop Conditions
 
 Stop if deterministic proof requires fixed sleeps or a public seam, if the
