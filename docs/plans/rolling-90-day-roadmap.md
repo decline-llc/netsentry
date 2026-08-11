@@ -151,8 +151,8 @@
 | R90-86 | Aug 10–Sep 5 | Complete early | Reject receiver startup with an already-canceled context. | R90-85 | `Start` returns an error matching `context.Canceled` before pathname mutation or listener creation; direct absent-path and pre-existing Unix-socket preservation regressions pass while live startup and post-readiness cancellation remain compatible. |
 | R90-87 | Aug 10 | Complete | Audit post-cancellation delivery and restore the active-socket lifecycle queue. | R90-86 | A dated audit reconciles the R90-86 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-existing-socket behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-88 | Aug 11–Sep 12 | Complete early | Preserve an active UDS listener during receiver startup. | R90-87 | Startup rejects a currently connectable existing Unix listener without replacing its pathname identity or breaking its service, still reclaims a stale socket, and preserves a replacement identity if the pathname changes during classification. |
-| R90-89 | Aug 11 | In progress | Audit post-listener delivery and restore the cancellation-aware startup queue. | R90-88 | A dated audit reconciles the R90-88 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-readiness probe cancellation behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-90 | Aug 12–Sep 12 | Planned | Make the existing-socket probe context-aware. | R90-89 | Cancellation during a blocked pre-readiness Unix-socket probe returns an error matching the context sentinel promptly, preserves the captured pathname identity, and installs no receiver listener while active/stale classification remains compatible. |
+| R90-89 | Aug 11 | Complete | Audit post-listener delivery and restore the cancellation-aware startup queue. | R90-88 | A dated audit reconciles the R90-88 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-readiness probe cancellation behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
+| R90-90 | Aug 12–Sep 12 | Ready | Make the existing-socket probe context-aware. | R90-89 | Cancellation during a blocked pre-readiness Unix-socket probe returns an error matching the context sentinel promptly, preserves the captured pathname identity, and installs no receiver listener while active/stale classification remains compatible. |
 
 ## R90-01 Definition
 
@@ -3377,3 +3377,20 @@ fields. Documentation, all 33 knowledge tests, formatting, exact four-path
 scope, and sensitive-information review pass. R90-89 satisfies its local
 acceptance evidence and awaits only documentation delivery, fetched remote
 verification, and exact-range Vault synchronization. R90-90 remains unstarted.
+R90-89 completed at
+`d30729c9b6e2331fca834123a3f876f1c3b91df1`: its exact four-path
+documentation audit was pushed without force or tags. The first trigger's push
+produced no output or completion evidence and was interrupted; ordinary SSH,
+SSH-over-443, and HTTPS/API verification then timed out, so the remote result
+remained ambiguous and Vault work stayed blocked. On the resumed trigger, a
+fresh fetch proved `origin/main` was still the recorded baseline. The single
+authorized retry succeeded, and a second fresh fetch verified
+`FETCH_HEAD == HEAD == origin/main` at the feature commit. The post-fetch
+33-test knowledge gate passed. Exact range
+`56d7d0b8005601299292b47d49bee7fc1e651753..d30729c9b6e2331fca834123a3f876f1c3b91df1`
+was synchronized idempotently to the sole local Vault; its iteration note,
+full-index row, MOC link, and current stable MOC/UDS authority are verified.
+Identical-range replay preserved Vault content hash
+`340e0654c221cf3e5bba249cdfcb9abc87505eb954e237677de42c3730c015d3`.
+R90-90 is ready but was not started; R90-59 and R90-75 retain their external
+blockers.

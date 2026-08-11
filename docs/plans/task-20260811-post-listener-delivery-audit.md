@@ -154,6 +154,36 @@ workflow dispatch, or starting R90-90.
   delivery, fetched remote verification, and exact-range Vault synchronization.
   R90-90 remains planned and unstarted.
 
+## Delivery Results
+
+- Documentation feature commit:
+  `d30729c9b6e2331fca834123a3f876f1c3b91df1` (`docs: audit post-listener
+  delivery`). It contains exactly the four validated audit, roadmap, plan, and
+  task-state paths.
+- The first trigger's push produced no transport output or exit evidence and
+  was interrupted. Its ordinary verification fetch also stalled; SSH-over-443,
+  ordinary SSH with explicit connection bounds, and GitHub HTTPS/API all timed
+  out before usable remote-ref evidence. Delivery therefore remained ambiguous
+  and no Vault synchronization or push retry occurred.
+- On the resumed trigger, a fresh ordinary fetch succeeded and proved
+  `origin/main == 56d7d0b8005601299292b47d49bee7fc1e651753`, so the interrupted
+  push had not landed. The 33-test knowledge gate remained green, and the
+  single evidence-authorized push retry succeeded without force or tags.
+- A second fresh fetch verified
+  `FETCH_HEAD == HEAD == origin/main == d30729c9b6e2331fca834123a3f876f1c3b91df1`
+  with fast-forward ancestry from the recorded baseline. The post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `56d7d0b8005601299292b47d49bee7fc1e651753..d30729c9b6e2331fca834123a3f876f1c3b91df1`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC and UDS prose was reconciled to the completed R90-89 audit and
+  planned/unstarted R90-90 boundary without rewriting immutable iteration
+  notes. Replaying the identical range preserved exact Vault content hash
+  `340e0654c221cf3e5bba249cdfcb9abc87505eb954e237677de42c3730c015d3`.
+- R90-89 is complete. R90-90 is the next ready local increment and remains
+  unstarted; R90-59 and R90-75 retain their external blockers.
+
 ## Stop Conditions
 
 Stop if R90-88 evidence is missing or contradictory, prompt probe cancellation
