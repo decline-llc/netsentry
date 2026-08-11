@@ -3257,3 +3257,31 @@ Identical-range replay preserved Vault content hash
 `48ff083888de53a14ff4305d1de359edc9b2fe09068139077c8592043bcd5286`.
 R90-88 is ready but was not started; R90-59 and R90-75 retain their external
 blockers.
+The next Aug 10 trigger fetched and verified the R90-87 docs-only closure at
+`1dcda25ce728336a984892ae849dffeb1d01b4d6`, both exact R90-87 Vault notes,
+full-index rows, MOC links, current stable MOC/UDS authority, and reconciled
+Vault hash `1f14b6313b9692b419f9bc4a3c0ee4eb03b9cd0178e0f0032da11ee3e25335ef`.
+All 102 prior task states parse and all 92 roadmap row and Definition
+multisets match without duplicates or asymmetry. The 147-commit recent phase
+review found no missing closure, stale stable authority, or unresolved
+validation result that changes priority. R90-59 and R90-75 retain their
+external blockers; R90-88 is selected as the sole dependency-ready increment
+with a persisted ownership and evidence contract before receiver or
+documentation changes. No later increment or publication action is started.
+R90-88 now probes a pre-existing Unix socket with a bounded local connection,
+rejects a connectable listener, and treats only connection refusal as a stale
+candidate before re-inspecting its non-following identity. The first focused
+run exposed immediate inode reuse: device/inode equality alone removed a
+replacement listener and incorrectly allowed startup. Delivery remained
+blocked while the check added the captured change timestamp. The corrected
+active-listener, ambiguous-probe, immediate-replacement, and stale-reclamation
+regressions pass normally and twenty times uncached under race; the complete
+receiver race package also passes. Full repository validation remains pending.
+The complete fail-fast repository chain passes both C tests, every Go package
+uncached under race, E2E smoke, documentation, and all 33 knowledge tests. All
+103 task states parse and all 92 roadmap row and Definition multisets match
+without duplicates or asymmetry. R90-88 satisfies its local acceptance
+evidence, including direct continued-service and immediate-replacement
+boundaries, and exact eight-path scope review; it awaits only feature delivery,
+fetched remote verification, and exact-range Vault synchronization. No later
+increment is started.

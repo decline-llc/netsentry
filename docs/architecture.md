@@ -172,8 +172,13 @@ Target behavior:
   complete frame refreshes the deadline; idle expiry closes the handler and
   releases its slot without counting a protocol decode failure.
 - Receiver startup inspects the configured UDS pathname without following
-  symlinks: regular files and symlinks are rejected unchanged, while the
-  established pre-existing Unix-socket reclamation behavior is retained.
+  symlinks: regular files and symlinks are rejected unchanged. A bounded local
+  connect probe rejects a connectable Unix listener without replacing its
+  pathname; only connection refusal permits stale-socket removal, and the
+  original non-following device/inode/change-time identity must still match
+  immediately before removal. Ambiguous probe failures and a concurrently
+  replaced pathname fail closed without removal. Reachability does not
+  authenticate or trust the existing peer.
   An already-canceled startup returns before this inspection or any listener
   creation and preserves the context cancellation sentinel.
   Shutdown disables listener auto-unlink and removes the pathname only while it

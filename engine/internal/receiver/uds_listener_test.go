@@ -4,12 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
+	"syscall"
 	"testing"
 	"time"
 
@@ -258,6 +260,147 @@ func TestStartCanceledContextPreservesExistingUnixSocket(t *testing.T) {
 	}
 }
 
+func TestStartPreservesActiveUnixListener(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	existing, err := net.Listen("unix", path)
+	if err != nil {
+		t.Fatalf("create active Unix listener: %v", err)
+	}
+	existing.(*net.UnixListener).SetUnlinkOnClose(false)
+	t.Cleanup(func() {
+		_ = existing.Close()
+		_ = os.Remove(path)
+	})
+	before, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat active Unix listener: %v", err)
+	}
+
+	probeAccepted := make(chan error, 1)
+	go func() {
+		conn, err := existing.Accept()
+		if conn != nil {
+			_ = conn.Close()
+		}
+		probeAccepted <- err
+	}()
+
+	r := New(Config{Path: path}, zap.NewNop())
+	err = r.Start(context.Background())
+	if err == nil || !strings.Contains(err.Error(), "existing Unix socket is active") {
+		t.Fatalf("start error = %v, want active-listener rejection", err)
+	}
+	if r.ln != nil {
+		t.Fatal("receiver installed a listener after detecting an active peer")
+	}
+	select {
+	case err := <-probeAccepted:
+		if err != nil {
+			t.Fatalf("accept liveness probe: %v", err)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for active listener to accept liveness probe")
+	}
+	after, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat preserved active Unix listener: %v", err)
+	}
+	if !os.SameFile(before, after) {
+		t.Fatal("startup replaced the active Unix listener identity")
+	}
+	assertUnixListenerRoundTrip(t, existing, path)
+}
+
+func TestStartPreservesUnixSocketOnAmbiguousProbeFailure(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	stale, err := net.Listen("unix", path)
+	if err != nil {
+		t.Fatalf("create Unix socket: %v", err)
+	}
+	stale.(*net.UnixListener).SetUnlinkOnClose(false)
+	if err := stale.Close(); err != nil {
+		t.Fatalf("close Unix socket listener: %v", err)
+	}
+	t.Cleanup(func() { _ = os.Remove(path) })
+	before, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat Unix socket before ambiguous probe: %v", err)
+	}
+
+	r := New(Config{Path: path}, zap.NewNop())
+	r.probeExistingSocket = func(string) (net.Conn, error) {
+		return nil, os.ErrPermission
+	}
+	err = r.Start(context.Background())
+	if err == nil || !strings.Contains(err.Error(), "probe existing Unix socket") {
+		t.Fatalf("start error = %v, want ambiguous-probe rejection", err)
+	}
+	if r.ln != nil {
+		t.Fatal("receiver installed a listener after ambiguous liveness probe")
+	}
+	after, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat Unix socket after ambiguous probe: %v", err)
+	}
+	if !os.SameFile(before, after) {
+		t.Fatal("ambiguous liveness probe replaced the existing Unix socket identity")
+	}
+}
+
+func TestStartPreservesReplacementUnixListenerDuringProbe(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	stale, err := net.Listen("unix", path)
+	if err != nil {
+		t.Fatalf("create stale Unix socket: %v", err)
+	}
+	stale.(*net.UnixListener).SetUnlinkOnClose(false)
+	if err := stale.Close(); err != nil {
+		t.Fatalf("close stale Unix listener: %v", err)
+	}
+
+	var replacement net.Listener
+	var replacementInfo os.FileInfo
+	t.Cleanup(func() {
+		if replacement != nil {
+			_ = replacement.Close()
+		}
+		_ = os.Remove(path)
+	})
+	r := New(Config{Path: path}, zap.NewNop())
+	r.probeExistingSocket = func(string) (net.Conn, error) {
+		if err := os.Remove(path); err != nil {
+			return nil, fmt.Errorf("remove stale socket in probe seam: %w", err)
+		}
+		var err error
+		replacement, err = net.Listen("unix", path)
+		if err != nil {
+			return nil, fmt.Errorf("create replacement listener in probe seam: %w", err)
+		}
+		replacement.(*net.UnixListener).SetUnlinkOnClose(false)
+		replacementInfo, err = os.Lstat(path)
+		if err != nil {
+			return nil, fmt.Errorf("stat replacement listener in probe seam: %w", err)
+		}
+		return nil, syscall.ECONNREFUSED
+	}
+
+	err = r.Start(context.Background())
+	if err == nil || !strings.Contains(err.Error(), "changed during Unix socket liveness probe") {
+		t.Fatalf("start error = %v, want replacement-identity rejection", err)
+	}
+	if r.ln != nil {
+		t.Fatal("receiver installed a listener after the pathname identity changed")
+	}
+	after, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat preserved replacement listener: %v", err)
+	}
+	if replacementInfo == nil || !os.SameFile(replacementInfo, after) {
+		t.Fatal("startup removed or replaced the concurrent replacement listener")
+	}
+	assertUnixListenerRoundTrip(t, replacement, path)
+}
+
 func TestStartReclaimsPreExistingUnixSocket(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	path := filepath.Join(t.TempDir(), "netsentry.sock")
@@ -282,6 +425,60 @@ func TestStartReclaimsPreExistingUnixSocket(t *testing.T) {
 	waitForReceiverShutdown(t, r)
 	if _, err := os.Lstat(path); !errors.Is(err, os.ErrNotExist) {
 		t.Fatalf("owned socket path remains after shutdown: %v", err)
+	}
+}
+
+func assertUnixListenerRoundTrip(t *testing.T, listener net.Listener, path string) {
+	t.Helper()
+	accepted := make(chan error, 1)
+	go func() {
+		conn, err := listener.Accept()
+		if err != nil {
+			accepted <- err
+			return
+		}
+		defer conn.Close()
+		if err := conn.SetDeadline(time.Now().Add(time.Second)); err != nil {
+			accepted <- err
+			return
+		}
+		buf := make([]byte, 1)
+		if _, err := io.ReadFull(conn, buf); err != nil {
+			accepted <- err
+			return
+		}
+		if _, err := conn.Write(buf); err != nil {
+			accepted <- err
+			return
+		}
+		accepted <- nil
+	}()
+
+	client, err := net.DialTimeout("unix", path, time.Second)
+	if err != nil {
+		t.Fatalf("dial preserved Unix listener: %v", err)
+	}
+	defer client.Close()
+	if err := client.SetDeadline(time.Now().Add(time.Second)); err != nil {
+		t.Fatalf("set preserved-listener client deadline: %v", err)
+	}
+	if _, err := client.Write([]byte{'x'}); err != nil {
+		t.Fatalf("write preserved-listener probe: %v", err)
+	}
+	buf := make([]byte, 1)
+	if _, err := io.ReadFull(client, buf); err != nil {
+		t.Fatalf("read preserved-listener response: %v", err)
+	}
+	if buf[0] != 'x' {
+		t.Fatalf("preserved-listener response = %q, want x", buf)
+	}
+	select {
+	case err := <-accepted:
+		if err != nil {
+			t.Fatalf("serve preserved-listener round trip: %v", err)
+		}
+	case <-time.After(time.Second):
+		t.Fatal("timed out waiting for preserved-listener round trip")
 	}
 }
 

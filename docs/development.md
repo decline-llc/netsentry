@@ -750,10 +750,14 @@ before the store-close boundary.
 
 Receiver lifecycle tests also cover the configured UDS pathname as a
 filesystem ownership boundary. Startup preserves and rejects a pre-existing
-regular file or symlink, retains existing Unix-socket reclamation behavior,
-and rejects an already-canceled context before pathname inspection, mutation,
-or listener creation. Shutdown removes only the socket identity created by
-that receiver while preserving a replacement regular file or symlink.
+regular file or symlink, rejects a connectable active Unix listener while
+preserving its identity and later service, and reclaims only a
+connection-refused stale socket whose captured device/inode/change timestamp
+still matches immediately before removal. Ambiguous liveness results and a
+pathname replaced during classification are preserved. An already-canceled
+context still fails before pathname inspection, mutation, or listener
+creation. Shutdown removes only the socket identity created by that receiver
+while preserving a replacement regular file or symlink.
 
 ---
 

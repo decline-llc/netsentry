@@ -13,6 +13,7 @@ import (
 	"os"
 	"strconv"
 	"sync"
+	"syscall"
 	"time"
 
 	"go.uber.org/zap"
@@ -24,8 +25,9 @@ import (
 const defaultUDSPath = "/tmp/netsentry.sock"
 
 const (
-	maxUDSFrameBytes      = 64 << 10
-	maxPacketPayloadBytes = 4096
+	maxUDSFrameBytes           = 64 << 10
+	maxPacketPayloadBytes      = 4096
+	existingSocketProbeTimeout = time.Second
 )
 
 var errSessionProtocol = errors.New("uds session protocol violation")
@@ -47,15 +49,16 @@ type Config struct {
 
 // Receiver owns a UDS listener and a context-aware packet channel.
 type Receiver struct {
-	cfg     Config
-	logger  *zap.Logger
-	packets chan *model.PacketInfo
-	state   *heartbeatState
-	ln      net.Listener
-	socket  os.FileInfo
-	stats   *stats.Stats
-	wg      sync.WaitGroup
-	slots   chan struct{}
+	cfg                 Config
+	logger              *zap.Logger
+	packets             chan *model.PacketInfo
+	state               *heartbeatState
+	ln                  net.Listener
+	socket              os.FileInfo
+	stats               *stats.Stats
+	wg                  sync.WaitGroup
+	slots               chan struct{}
+	probeExistingSocket func(string) (net.Conn, error)
 }
 
 // New constructs a receiver. Start must be called before packets arrive.
@@ -84,6 +87,9 @@ func New(cfg Config, logger *zap.Logger) *Receiver {
 		packets: make(chan *model.PacketInfo, cfg.BufferSize),
 		state:   newHeartbeatState(),
 		stats:   cfg.Stats,
+		probeExistingSocket: func(path string) (net.Conn, error) {
+			return net.DialTimeout("unix", path, existingSocketProbeTimeout)
+		},
 	}
 }
 
@@ -117,7 +123,7 @@ func (r *Receiver) Start(ctx context.Context) error {
 	if err := ctx.Err(); err != nil {
 		return fmt.Errorf("start uds listener %q: %w", r.cfg.Path, err)
 	}
-	if err := removeExistingSocket(r.cfg.Path); err != nil {
+	if err := removeExistingSocket(r.cfg.Path, r.probeExistingSocket); err != nil {
 		return fmt.Errorf("prepare uds listener %q: %w", r.cfg.Path, err)
 	}
 	ln, err := net.Listen("unix", r.cfg.Path)
@@ -162,21 +168,57 @@ func (r *Receiver) Start(ctx context.Context) error {
 	return nil
 }
 
-func removeExistingSocket(path string) error {
-	info, err := os.Lstat(path)
+func removeExistingSocket(path string, probe func(string) (net.Conn, error)) error {
+	original, err := os.Lstat(path)
 	if errors.Is(err, os.ErrNotExist) {
 		return nil
 	}
 	if err != nil {
 		return fmt.Errorf("inspect existing path: %w", err)
 	}
-	if info.Mode()&os.ModeSocket == 0 {
+	if original.Mode()&os.ModeSocket == 0 {
 		return fmt.Errorf("existing path is not a Unix socket")
+	}
+	conn, probeErr := probe(path)
+	if conn != nil {
+		_ = conn.Close()
+	}
+	if probeErr == nil {
+		return fmt.Errorf("existing Unix socket is active")
+	}
+	if !errors.Is(probeErr, syscall.ECONNREFUSED) {
+		if errors.Is(probeErr, os.ErrNotExist) {
+			if _, err := os.Lstat(path); errors.Is(err, os.ErrNotExist) {
+				return nil
+			} else if err != nil {
+				return fmt.Errorf("inspect existing path after liveness probe: %w", err)
+			}
+		}
+		return fmt.Errorf("probe existing Unix socket: %w", probeErr)
+	}
+	current, err := os.Lstat(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("inspect existing path after liveness probe: %w", err)
+	}
+	if current.Mode()&os.ModeSocket == 0 || !sameUnixSocketIdentity(original, current) {
+		return fmt.Errorf("existing path changed during Unix socket liveness probe")
 	}
 	if err := os.Remove(path); err != nil {
 		return fmt.Errorf("remove existing Unix socket: %w", err)
 	}
 	return nil
+}
+
+func sameUnixSocketIdentity(original, current os.FileInfo) bool {
+	if !os.SameFile(original, current) {
+		return false
+	}
+	originalStat, originalOK := original.Sys().(*syscall.Stat_t)
+	currentStat, currentOK := current.Sys().(*syscall.Stat_t)
+	return originalOK && currentOK && originalStat.Ctim == currentStat.Ctim
 }
 
 func removeOwnedSocket(path string, owned os.FileInfo) error {

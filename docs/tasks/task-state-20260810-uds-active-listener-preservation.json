@@ -1,0 +1,53 @@
+{
+  "task": "r90-88-uds-active-listener-preservation",
+  "timestamp": "2026-08-10T19:26:16-07:00",
+  "branch": "main",
+  "remote_baseline": "1dcda25ce728336a984892ae849dffeb1d01b4d6",
+  "risk_level": "Medium",
+  "current_checkpoint": "planned",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
+    "Fetched origin main through SSH over 443 and verified FETCH_HEAD HEAD and origin main at 1dcda25ce728336a984892ae849dffeb1d01b4d6 with a clean worktree",
+    "Verified the R90-87 feature and docs-only closure chain exact paths both Vault notes full-index rows MOC links current stable authority and reconciled Vault hash",
+    "Parsed all 102 prior task-state JSON files and verified all 92 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
+    "Reviewed 147 Jul 20 through Aug 10 commits and found no missing closure stale stable authority or unresolved validation result that changes priority",
+    "Confirmed R90-59 and R90-75 retain their external blockers and R90-88 is the sole dependency-ready increment",
+    "Mapped unconditional existing Unix-socket removal and the closed-listener reclamation regression to the active-listener and classification-replacement preservation boundaries",
+    "Persisted R90-88 scope non-goals risks evidence mapping validation authority boundaries and stop conditions before behavior or documentation changes",
+    "Implemented a bounded receiver-local Unix-socket probe connection-refusal stale classification and pre-remove identity reinspection",
+    "Observed the first focused replacement regression fail because immediate inode reuse made os.SameFile accept and remove the replacement listener",
+    "Kept delivery blocked discarded the partial focused run as evidence and strengthened classification identity with the captured non-following change timestamp",
+    "Passed the corrected active-listener ambiguous-probe replacement-identity and stale-reclamation regressions normally",
+    "Passed the four direct R90-88 regressions twenty times uncached under the race detector",
+    "Passed the complete receiver package uncached under the race detector",
+    "Updated changelog architecture development roadmap plan and task-state authority without changing protocol configuration public API or capture behavior",
+    "Preflighted module-selected Go 1.25.12 GCC 13.3.0 GNU Make 4.3 Bash 5.2.21 Python 3.12.3 curl 8.5.0 timeout 9.4 jq 1.7 pkg-config 1.8.1 and libpcap 1.10.4",
+    "Passed make test across both C tests and every Go package uncached under race",
+    "Passed E2E smoke with six packets processed five alerts generated and eight rules loaded",
+    "Passed documentation and all 33 knowledge tests",
+    "Parsed all 103 task-state JSON files and verified all 92 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
+    "Compared completed evidence to every acceptance criterion and confirmed the strengthened identity check resolves the recorded inode-reuse deviation",
+    "Passed gofmt git diff check exact eight-path credential sensitive-path dependency configuration protocol public API release and publication review"
+  ],
+  "in_progress": [
+    "Commit and push the validated exact eight-path R90-88 feature"
+  ],
+  "todo": [
+    "Commit and push without force or tags then fetch and verify exact origin main",
+    "Synchronize and verify the exact feature Vault range",
+    "Persist verified delivery facts in the docs-only closure without starting later work"
+  ],
+  "authority_boundaries": [
+    "Only R90-88 bounded Unix-socket liveness probe identity-bound stale removal receiver-local test seam direct regressions and current documentation",
+    "No peer authentication trust protocol configuration public API capture sender or non-Unix policy change",
+    "No general cross-process lock PID ownership automatic retry timeout capacity cleanup or packet handling change",
+    "No private external data performance policy tag release image registry workflow or other publication mutation",
+    "Do not start a later roadmap increment in this trigger"
+  ],
+  "remaining_risks": [
+    "Only connection refusal may authorize stale removal and the original device inode plus change timestamp must still be current",
+    "The active-peer probe must close immediately and preserve continued peer service",
+    "R90-59 and R90-75 remain externally blocked"
+  ],
+  "resume_instructions": "Resume R90-88 only from fetched clean baseline 1dcda25ce728336a984892ae849dffeb1d01b4d6. Implement and validate the bounded active-listener and identity-bound stale-removal behavior without changing peer trust protocol configuration public API capture sender cleanup or publication state. Do not start later roadmap work."
+}
