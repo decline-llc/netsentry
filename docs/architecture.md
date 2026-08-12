@@ -184,9 +184,10 @@ Target behavior:
   receiver listener.
   An already-canceled startup returns before this inspection or any listener
   creation and preserves the context cancellation sentinel.
-  Shutdown disables listener auto-unlink and removes the pathname only while it
-  still identifies that receiver's created socket, preserving a replacement
-  file or symlink.
+  Shutdown disables listener auto-unlink and removes the pathname only while
+  its non-following device, inode, and change-time identity still matches the
+  receiver's captured socket. Missing or changed generation metadata fails
+  closed, preserving a replacement Unix listener, regular file, or symlink.
 - C reconnect uses exponential backoff, can bound initial offline connection attempts, and counts write errors/dropped frames while disconnected.
 - HTTP API bind failures are returned synchronously during startup. Engine
   shutdown waits for the UDS receiver accept loop/connection handlers, every

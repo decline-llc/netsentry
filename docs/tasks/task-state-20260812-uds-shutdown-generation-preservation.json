@@ -1,0 +1,59 @@
+{
+  "task": "r90-92-uds-shutdown-generation-preservation",
+  "timestamp": "2026-08-12T09:10:00-07:00",
+  "branch": "main",
+  "remote_baseline": "29c291a7dffcc37caf0375910e1ad1c6ef0a54a4",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_delivery_pending",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
+    "Fetched origin main through the documented IPv4 SSH over 443 keepalive fallback and verified FETCH_HEAD HEAD and origin main at 29c291a7dffcc37caf0375910e1ad1c6ef0a54a4 with a clean worktree",
+    "Verified the R90-91 feature and docs-only closure chain exact paths completed state both Vault notes full-index rows MOC links and current stable authority",
+    "Parsed all 106 prior task-state JSON files and verified all 96 prior roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
+    "Reviewed 155 Jul 20 through Aug 12 commits across four phases and found no missing closure stale stable authority or unresolved validation result that changes priority",
+    "Confirmed R90-59 and R90-75 retain their external blockers and R90-92 is the sole dependency-ready local increment",
+    "Mapped shutdown os SameFile cleanup and current regular-file and symlink regressions to the missing immediate inode-reuse generation boundary",
+    "Persisted R90-92 scope non-goals risks evidence mapping validation authority boundaries and stop conditions before receiver or test changes",
+    "Required captured non-following device inode and change-time identity during owned Unix socket cleanup",
+    "Moved the existing socket mode mutation before ownership capture after focused validation exposed its legitimate change-time update",
+    "Added a direct real-filesystem replacement-listener regression that proves device and inode reuse changed generation preservation and continued service",
+    "Added a direct unavailable-generation regression proving fail-closed pathname and service preservation",
+    "Passed the corrected focused acceptance and compatibility test set",
+    "Refined the separate netsentry-next skill to capture ownership only after intended metadata mutations",
+    "Passed the direct acceptance and compatibility set twenty times uncached under the race detector",
+    "Passed the complete receiver package uncached under the race detector",
+    "Preflighted module-selected Go 1.25.12 GCC 13.3.0 GNU Make 4.3 Bash 5.2.21 Python 3.12.3 curl 8.5.0 timeout 9.4 jq 1.7 pkg-config 1.8.1 and libpcap 1.10.4",
+    "Passed make test across both C tests and every Go package uncached under race",
+    "Passed E2E smoke with six packets processed five alerts generated and eight rules loaded",
+    "Passed documentation and all 33 knowledge tests",
+    "Parsed all 107 task-state JSON files and verified all 96 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
+    "Compared every acceptance criterion to direct evidence and confirmed the real-filesystem regression proves device inode reuse changed generation and continued replacement service",
+    "Passed gofmt git diff check exact eight-path credential sensitive-path dependency configuration protocol public API release and publication review"
+  ],
+  "in_progress": [
+    "Deliver R90-92 fetch-verify exact-range Vault synchronization stable-authority reconciliation and docs-only closure"
+  ],
+  "todo": [
+    "Commit and push the exact eight-path feature",
+    "Fetch and verify HEAD FETCH_HEAD and origin main then rerun the knowledge gate",
+    "Synchronize and verify the exact feature and closure Vault ranges without starting a later increment"
+  ],
+  "authority_boundaries": [
+    "Only R90-92 shutdown generation comparison direct regressions compatibility documentation and delivery",
+    "No startup classification protocol configuration public API peer policy or public test seam change",
+    "No private external data performance policy tag release image registry workflow or other publication mutation",
+    "Do not start a later roadmap increment in this trigger"
+  ],
+  "remaining_risks": [
+    "R90-59 and R90-75 remain externally blocked"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false
+  },
+  "resume_instructions": "Resume only R90-92 delivery from validated clean baseline 29c291a7dffcc37caf0375910e1ad1c6ef0a54a4. Do not repeat implementation or completed validation unless the diff changes. Commit only the exact eight planned paths, then fetch verify and synchronize the exact Vault range. Do not start R90-59 R90-75 or a later increment."
+}

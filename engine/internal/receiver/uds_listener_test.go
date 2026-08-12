@@ -614,6 +614,111 @@ func TestStopPreservesReplacementSymlink(t *testing.T) {
 	}
 }
 
+func TestRemoveOwnedSocketPreservesImmediateReplacementUnixListenerWithReusedInode(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	ownedListener, err := net.Listen("unix", path)
+	if err != nil {
+		t.Fatalf("create owned Unix listener: %v", err)
+	}
+	ownedListener.(*net.UnixListener).SetUnlinkOnClose(false)
+	owned, err := os.Lstat(path)
+	if err != nil {
+		_ = ownedListener.Close()
+		t.Fatalf("stat owned Unix listener: %v", err)
+	}
+	if err := ownedListener.Close(); err != nil {
+		t.Fatalf("close owned Unix listener: %v", err)
+	}
+	if err := os.Remove(path); err != nil {
+		t.Fatalf("remove owned Unix socket pathname: %v", err)
+	}
+
+	var replacement net.Listener
+	var replacementInfo os.FileInfo
+	for attempt := 0; attempt < 10_000; attempt++ {
+		replacement, err = net.Listen("unix", path)
+		if err != nil {
+			t.Fatalf("create replacement Unix listener: %v", err)
+		}
+		replacement.(*net.UnixListener).SetUnlinkOnClose(false)
+		replacementInfo, err = os.Lstat(path)
+		if err != nil {
+			_ = replacement.Close()
+			t.Fatalf("stat replacement Unix listener: %v", err)
+		}
+		if os.SameFile(owned, replacementInfo) && !sameUnixSocketIdentity(owned, replacementInfo) {
+			break
+		}
+		if err := replacement.Close(); err != nil {
+			t.Fatalf("close non-reusing replacement Unix listener: %v", err)
+		}
+		replacement = nil
+		if err := os.Remove(path); err != nil {
+			t.Fatalf("remove non-reusing replacement Unix socket: %v", err)
+		}
+	}
+	if replacement == nil || replacementInfo == nil {
+		t.Fatal("filesystem did not immediately reuse the owned Unix socket device/inode")
+	}
+	t.Cleanup(func() {
+		_ = replacement.Close()
+		_ = os.Remove(path)
+	})
+	if !os.SameFile(owned, replacementInfo) {
+		t.Fatal("replacement did not reuse the owned Unix socket device/inode")
+	}
+	if sameUnixSocketIdentity(owned, replacementInfo) {
+		t.Fatal("replacement unexpectedly retained the owned Unix socket change-time generation")
+	}
+
+	if err := removeOwnedSocket(path, owned); err != nil {
+		t.Fatalf("remove owned Unix socket: %v", err)
+	}
+	after, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat preserved replacement Unix listener: %v", err)
+	}
+	if !sameUnixSocketIdentity(replacementInfo, after) {
+		t.Fatal("shutdown cleanup removed or replaced the immediate replacement listener")
+	}
+	assertUnixListenerRoundTrip(t, replacement, path)
+}
+
+func TestRemoveOwnedSocketPreservesPathWithoutGenerationMetadata(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	listener, err := net.Listen("unix", path)
+	if err != nil {
+		t.Fatalf("create Unix listener: %v", err)
+	}
+	listener.(*net.UnixListener).SetUnlinkOnClose(false)
+	t.Cleanup(func() {
+		_ = listener.Close()
+		_ = os.Remove(path)
+	})
+	current, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat Unix listener: %v", err)
+	}
+
+	if err := removeOwnedSocket(path, fileInfoWithoutSys{FileInfo: current}); err != nil {
+		t.Fatalf("remove owned Unix socket without generation metadata: %v", err)
+	}
+	after, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat preserved Unix listener: %v", err)
+	}
+	if !sameUnixSocketIdentity(current, after) {
+		t.Fatal("shutdown cleanup changed a path whose owned generation metadata was unavailable")
+	}
+	assertUnixListenerRoundTrip(t, listener, path)
+}
+
+type fileInfoWithoutSys struct {
+	os.FileInfo
+}
+
+func (fileInfoWithoutSys) Sys() any { return nil }
+
 func TestWaitForPacketReturnsEOFForClosedChannel(t *testing.T) {
 	packets := make(chan *model.PacketInfo)
 	close(packets)

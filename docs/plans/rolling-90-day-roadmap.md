@@ -154,7 +154,7 @@
 | R90-89 | Aug 11 | Complete | Audit post-listener delivery and restore the cancellation-aware startup queue. | R90-88 | A dated audit reconciles the R90-88 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-readiness probe cancellation behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-90 | Aug 12–Sep 12 | Complete early | Make the existing-socket probe context-aware. | R90-89 | Cancellation during a blocked pre-readiness Unix-socket probe returns an error matching the context sentinel promptly, preserves the captured pathname identity, and installs no receiver listener while active/stale classification remains compatible. |
 | R90-91 | Aug 12 | Complete | Audit post-probe delivery and restore the shutdown pathname-generation queue. | R90-90 | A dated audit reconciles the R90-90 feature/closure, recent phases, fetched remote, exact Vault evidence, and current owned-socket shutdown cleanup, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-92 | Aug 13–Sep 12 | Ready | Preserve an immediate replacement Unix socket during receiver shutdown. | R90-91 | Shutdown removes its owned pathname only when non-following device, inode, and change-time identity still match; a direct immediate-inode-reuse regression preserves a replacement listener while ordinary owned cleanup and regular-file/symlink replacement behavior remain compatible. |
+| R90-92 | Aug 13–Sep 12 | In progress | Preserve an immediate replacement Unix socket during receiver shutdown. | R90-91 | Shutdown removes its owned pathname only when non-following device, inode, and change-time identity still match; a direct immediate-inode-reuse regression preserves a replacement listener while ordinary owned cleanup and regular-file/symlink replacement behavior remain compatible. |
 
 ## R90-01 Definition
 
@@ -1915,6 +1915,10 @@
   privileged filesystem control, a public test seam, following symlinks, or if
   completion needs protocol/configuration/public API, private data, or
   publication authority.
+- **Selected plan:**
+  [`task-20260812-uds-shutdown-generation-preservation.md`](task-20260812-uds-shutdown-generation-preservation.md),
+  from clean fetched baseline
+  `29c291a7dffcc37caf0375910e1ad1c6ef0a54a4`.
 
 ### R90-71 Validation Deviation
 
@@ -3530,3 +3534,36 @@ replay preserved reconciled Vault content hash
 `49af611ecaa37348a699ae392715c157025c9abc51355c8eecea114ae447d2a2`.
 R90-92 is the next ready local increment and remains unstarted; R90-59 and
 R90-75 retain their external blockers.
+The next Aug 12 trigger initially found GitHub SSH unavailable on ports 22 and
+443, then fetched successfully through the documented IPv4 SSH-over-443
+keepalive retry and verified the clean R90-91 docs-only closure at
+`29c291a7dffcc37caf0375910e1ad1c6ef0a54a4`. Both exact R90-91 Vault notes,
+full-index rows, MOC links, and current stable MOC/UDS authority are verified.
+All 106 prior task states parse and all 96 prior roadmap row and Definition
+multisets match without duplicates or asymmetry. The 155-commit Jul 20 through
+Aug 12 phase review found only the R90-91 feature and closure since the prior
+audit, with no missing record, stale stable authority, or unresolved validation
+result that changes priority. R90-59 and R90-75 retain their external blockers;
+R90-92 is selected as the sole dependency-ready local increment with a
+persisted generation-identity and direct-evidence contract before receiver or
+test changes. No later increment or publication action is started.
+R90-92 shutdown cleanup now requires the receiver's captured non-following
+device/inode/change-time identity. The first focused run exposed that startup
+captured ownership before its intended `chmod`, so ordinary cleanup correctly
+failed closed after the change timestamp advanced. The existing mode mutation
+now precedes the ownership snapshot. A direct real-filesystem regression proves
+device/inode reuse with a changed generation, preserves the replacement
+listener identity, and completes a service round trip; a separate missing-
+generation regression also fails closed. The corrected focused acceptance and
+compatibility set passes; repeated and full validation remain the delivery
+boundary.
+The direct acceptance and compatibility set then passed 20 uncached race
+executions, followed by a clean complete receiver-package race run. The
+module-selected Go 1.25.12 toolchain and repository tool surface were
+preflighted before the complete chain. Both C tests, every Go package uncached
+under race, E2E smoke, documentation, and all 33 knowledge tests pass. All 107
+task states parse and all 96 roadmap rows match exactly one Definition without
+duplicate or asymmetric identifiers. R90-92 satisfies its local acceptance
+evidence and exact eight-path scope review; it awaits only feature delivery,
+fetched remote verification, and exact-range Vault synchronization. No later
+increment is started.

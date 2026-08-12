@@ -23,9 +23,11 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
   paths and pre-existing Unix-socket identities remain unchanged.
 - The Go UDS receiver now rejects pre-existing regular files and symlinks at
   its configured socket pathname without modifying them. Listener auto-unlink
-  is disabled so shutdown removes only the socket identity created by that
-  receiver and preserves a replacement file or symlink; existing Unix-socket
-  reclamation behavior remains unchanged.
+  is disabled so shutdown removes only the non-following device/inode/change-
+  time identity created by that receiver and fails closed when generation
+  metadata is missing or changed, preserving a replacement Unix listener,
+  regular file, or symlink; existing Unix-socket reclamation behavior remains
+  unchanged.
 - Rule seed-file replacement now rejects short writes, preserves file mode,
   syncs and closes the temporary file before rename, and syncs and closes the
   containing directory before success. Direct lifecycle faults prove exact

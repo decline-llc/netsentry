@@ -137,6 +137,9 @@ func (r *Receiver) Start(ctx context.Context) error {
 		return fmt.Errorf("start uds listener %q: unexpected listener type %T", r.cfg.Path, ln)
 	}
 	unixListener.SetUnlinkOnClose(false)
+	if err := os.Chmod(r.cfg.Path, r.cfg.SocketMode); err != nil {
+		r.logger.Warn("chmod uds socket", zap.Error(err))
+	}
 	socket, err := os.Lstat(r.cfg.Path)
 	if err != nil {
 		_ = ln.Close()
@@ -151,9 +154,6 @@ func (r *Receiver) Start(ctx context.Context) error {
 	r.slots = make(chan struct{}, r.cfg.MaxConnections)
 	for i := 0; i < r.cfg.MaxConnections; i++ {
 		r.slots <- struct{}{}
-	}
-	if err := os.Chmod(r.cfg.Path, r.cfg.SocketMode); err != nil {
-		r.logger.Warn("chmod uds socket", zap.Error(err))
 	}
 
 	go func() {
@@ -233,7 +233,7 @@ func removeOwnedSocket(path string, owned os.FileInfo) error {
 	if err != nil {
 		return fmt.Errorf("inspect socket path: %w", err)
 	}
-	if current.Mode()&os.ModeSocket == 0 || !os.SameFile(current, owned) {
+	if current.Mode()&os.ModeSocket == 0 || !sameUnixSocketIdentity(owned, current) {
 		return nil
 	}
 	if err := os.Remove(path); err != nil {
