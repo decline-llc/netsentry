@@ -155,8 +155,8 @@
 | R90-90 | Aug 12–Sep 12 | Complete early | Make the existing-socket probe context-aware. | R90-89 | Cancellation during a blocked pre-readiness Unix-socket probe returns an error matching the context sentinel promptly, preserves the captured pathname identity, and installs no receiver listener while active/stale classification remains compatible. |
 | R90-91 | Aug 12 | Complete | Audit post-probe delivery and restore the shutdown pathname-generation queue. | R90-90 | A dated audit reconciles the R90-90 feature/closure, recent phases, fetched remote, exact Vault evidence, and current owned-socket shutdown cleanup, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-92 | Aug 13–Sep 12 | Complete early | Preserve an immediate replacement Unix socket during receiver shutdown. | R90-91 | Shutdown removes its owned pathname only when non-following device, inode, and change-time identity still match; a direct immediate-inode-reuse regression preserves a replacement listener while ordinary owned cleanup and regular-file/symlink replacement behavior remain compatible. |
-| R90-93 | Aug 12 | In progress | Audit post-generation delivery and restore the listener-creation ownership queue. | R90-92 | A dated audit reconciles the R90-92 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-listen mode/ownership boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-94 | Aug 13–Sep 13 | Planned | Bind UDS mode application and ownership capture to the created listener. | R90-93 | Startup applies the configured mode through the created listener identity and publishes ownership only if the non-following pathname still matches; direct regular-file, symlink-target, and replacement-listener races preserve replacement state and service while ordinary mode and shutdown cleanup remain compatible. |
+| R90-93 | Aug 12 | Complete | Audit post-generation delivery and restore the listener-creation ownership queue. | R90-92 | A dated audit reconciles the R90-92 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-listen mode/ownership boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
+| R90-94 | Aug 13–Sep 13 | Ready | Bind UDS mode application and ownership capture to the created listener. | R90-93 | Startup applies the configured mode through the created listener identity and publishes ownership only if the non-following pathname still matches; direct regular-file, symlink-target, and replacement-listener races preserve replacement state and service while ordinary mode and shutdown cleanup remain compatible. |
 
 ## R90-01 Definition
 
@@ -3652,3 +3652,16 @@ anchored after the exact R90-92 completion tail before validation. R90-93
 satisfies its local acceptance evidence and awaits only documentation delivery,
 fetched remote verification, and exact-range Vault synchronization. R90-94
 remains planned and unstarted.
+R90-93 completed at
+`0628005cd7c606dd14e6cf0fa2c4fb12042ecf65`: its exact three-path
+documentation audit was pushed without force or tags, freshly fetched with
+`FETCH_HEAD == HEAD == origin/main`, and passed the post-fetch 33-test
+knowledge gate. Exact range
+`c59c3aca6a67b1975f178734d6b0f81a6bcab6b8..0628005cd7c606dd14e6cf0fa2c4fb12042ecf65`
+was synchronized to the sole local Vault; its iteration note, full-index row,
+and MOC link are verified. Stable MOC/UDS prose now records the audited
+post-listen pathname boundary and ready/unstarted R90-94 follow-on; identical-
+range replay preserved Vault content hash
+`e085f102fbb71ac087ae5f3d629a91bad6fb5db4aa0d09f0134253690fb69624`.
+R90-94 is ready but was not started; R90-59 and R90-75 retain their external
+blockers.
