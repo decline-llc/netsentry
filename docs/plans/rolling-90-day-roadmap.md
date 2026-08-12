@@ -153,8 +153,8 @@
 | R90-88 | Aug 11–Sep 12 | Complete early | Preserve an active UDS listener during receiver startup. | R90-87 | Startup rejects a currently connectable existing Unix listener without replacing its pathname identity or breaking its service, still reclaims a stale socket, and preserves a replacement identity if the pathname changes during classification. |
 | R90-89 | Aug 11 | Complete | Audit post-listener delivery and restore the cancellation-aware startup queue. | R90-88 | A dated audit reconciles the R90-88 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-readiness probe cancellation behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-90 | Aug 12–Sep 12 | Complete early | Make the existing-socket probe context-aware. | R90-89 | Cancellation during a blocked pre-readiness Unix-socket probe returns an error matching the context sentinel promptly, preserves the captured pathname identity, and installs no receiver listener while active/stale classification remains compatible. |
-| R90-91 | Aug 12 | In progress | Audit post-probe delivery and restore the shutdown pathname-generation queue. | R90-90 | A dated audit reconciles the R90-90 feature/closure, recent phases, fetched remote, exact Vault evidence, and current owned-socket shutdown cleanup, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-92 | Aug 13–Sep 12 | Planned | Preserve an immediate replacement Unix socket during receiver shutdown. | R90-91 | Shutdown removes its owned pathname only when non-following device, inode, and change-time identity still match; a direct immediate-inode-reuse regression preserves a replacement listener while ordinary owned cleanup and regular-file/symlink replacement behavior remain compatible. |
+| R90-91 | Aug 12 | Complete | Audit post-probe delivery and restore the shutdown pathname-generation queue. | R90-90 | A dated audit reconciles the R90-90 feature/closure, recent phases, fetched remote, exact Vault evidence, and current owned-socket shutdown cleanup, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
+| R90-92 | Aug 13–Sep 12 | Ready | Preserve an immediate replacement Unix socket during receiver shutdown. | R90-91 | Shutdown removes its owned pathname only when non-following device, inode, and change-time identity still match; a direct immediate-inode-reuse regression preserves a replacement listener while ordinary owned cleanup and regular-file/symlink replacement behavior remain compatible. |
 
 ## R90-01 Definition
 
@@ -3515,3 +3515,18 @@ R90-90 completion tail before validation, with no evidence or scope change.
 R90-91 satisfies its local acceptance evidence and awaits only documentation
 delivery, fetched remote verification, and exact-range Vault synchronization.
 R90-92 remains planned and unstarted.
+R90-91 completed at
+`972a6714caf91e089a220eeec88c16944a47757d`: its exact three-path
+documentation audit was pushed without force or tags. The push produced no
+output or completion evidence and was interrupted after bounded polling; no
+retry occurred. A fresh fetch then proved the remote had advanced and verified
+`FETCH_HEAD == HEAD == origin/main` at the feature commit with fast-forward
+ancestry from the recorded baseline. The post-fetch 33-test knowledge gate
+passed. Exact range
+`c0b1eb2dae8dd90eda745eacc87b0a6ece01a450..972a6714caf91e089a220eeec88c16944a47757d`
+was synchronized to the sole local Vault; its iteration note, full-index row,
+MOC link, and current stable MOC/UDS authority are verified. Identical-range
+replay preserved reconciled Vault content hash
+`49af611ecaa37348a699ae392715c157025c9abc51355c8eecea114ae447d2a2`.
+R90-92 is the next ready local increment and remains unstarted; R90-59 and
+R90-75 retain their external blockers.

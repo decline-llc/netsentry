@@ -2,9 +2,9 @@
   "task": "r90-91-post-probe-delivery-audit",
   "timestamp": "2026-08-12T07:30:36-07:00",
   "branch": "main",
-  "remote_baseline": "c0b1eb2dae8dd90eda745eacc87b0a6ece01a450",
+  "remote_baseline": "972a6714caf91e089a220eeec88c16944a47757d",
   "risk_level": "Low",
-  "current_checkpoint": "validated_delivery_pending",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
     "Fetched origin main and verified FETCH_HEAD HEAD and origin main at c0b1eb2dae8dd90eda745eacc87b0a6ece01a450 with a clean worktree",
@@ -21,16 +21,19 @@
     "Parsed all 106 task-state JSON files and verified all 96 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
     "Passed documentation and all 33 knowledge tests plus formatting and ordered roadmap chronology",
     "Passed exact three-path credential sensitive-path source test configuration workflow generated-evidence release and publication review",
-    "Compared every R90-91 acceptance criterion to direct evidence with only the resolved history-placement deviation"
+    "Compared every R90-91 acceptance criterion to direct evidence with only the resolved history-placement deviation",
+    "Committed the exact three-path documentation audit at 972a6714caf91e089a220eeec88c16944a47757d",
+    "Interrupted the silent push after bounded polling and performed no retry while delivery remained ambiguous",
+    "Fetched origin main and proved the remote had advanced to the feature commit with HEAD FETCH_HEAD and origin main equal and fast-forward ancestry",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range c0b1eb2dae8dd90eda745eacc87b0a6ece01a450..972a6714caf91e089a220eeec88c16944a47757d to the sole local Vault",
+    "Verified the generated iteration note full-index row and MOC link",
+    "Reconciled stable MOC and UDS prose to the completed R90-91 audit and ready unstarted R90-92 boundary",
+    "Replayed the identical feature range and verified Vault content hash 49af611ecaa37348a699ae392715c157025c9abc51355c8eecea114ae447d2a2 remained unchanged",
+    "Completed R90-91 and left R90-92 ready but unstarted while R90-59 and R90-75 retain their external blockers"
   ],
-  "in_progress": [
-    "Deliver R90-91 fetch-verify exact-range Vault synchronization stable-authority reconciliation and docs-only closure"
-  ],
-  "todo": [
-    "Commit and push the exact three-path documentation audit",
-    "Fetch and verify HEAD FETCH_HEAD and origin main then rerun the knowledge gate",
-    "Synchronize and verify the exact feature and closure Vault ranges without starting R90-92"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Only R90-91 delivery evidence forward queue documentation task-state commit push and local Vault reconciliation",
     "No receiver source or test implementation and do not start R90-92",
@@ -39,15 +42,22 @@
   ],
   "remaining_risks": [
     "R90-59 and R90-75 remain externally blocked",
-    "R90-92 is planned behind R90-91 and remains unstarted until the next netsentry-next trigger"
+    "R90-92 is ready and remains unstarted until the next netsentry-next trigger"
   ],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false
+    "commit": "972a6714caf91e089a220eeec88c16944a47757d",
+    "origin_main_verified": true,
+    "branch_push_no_follow_tags": true,
+    "fast_forward_ancestry_verified": true,
+    "ambiguous_push_resolved_remote_advanced": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "c0b1eb2dae8dd90eda745eacc87b0a6ece01a450..972a6714caf91e089a220eeec88c16944a47757d",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true,
+    "vault_reconciled_content_hash": "49af611ecaa37348a699ae392715c157025c9abc51355c8eecea114ae447d2a2"
   },
-  "resume_instructions": "Resume only validated R90-91 documentation delivery from clean fetched baseline c0b1eb2dae8dd90eda745eacc87b0a6ece01a450. Commit only the exact three-path audit, fetch-verify, synchronize the exact Vault range, reconcile stable authority, and do not start R90-92."
+  "resume_instructions": "R90-91 is complete at 972a6714caf91e089a220eeec88c16944a47757d; do not repeat its audit validation feature delivery or feature-range Vault synchronization. On the next netsentry-next trigger fetch and verify this docs-only closure plus its exact Vault evidence before selecting R90-92. R90-92 is ready but unstarted. Do not start R90-59 or R90-75 without their recorded external inputs and authority."
 }

@@ -167,6 +167,30 @@ workflow dispatch.
   delivery, fetched remote verification, and exact-range Vault synchronization.
   R90-92 remains planned and unstarted.
 
+## Delivery Results
+
+- Documentation feature commit:
+  `972a6714caf91e089a220eeec88c16944a47757d` (`docs: audit post-probe
+  delivery`). It contains exactly the three validated roadmap, plan, and
+  task-state paths.
+- The push produced no output or exit evidence during bounded polling and was
+  interrupted. No retry occurred. A fresh non-mutating fetch proved the remote
+  had advanced, resolving the ambiguity as successful delivery.
+- The fetch verified
+  `FETCH_HEAD == HEAD == origin/main == 972a6714caf91e089a220eeec88c16944a47757d`
+  with fast-forward ancestry from the recorded baseline. The post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `c0b1eb2dae8dd90eda745eacc87b0a6ece01a450..972a6714caf91e089a220eeec88c16944a47757d`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC and UDS prose was reconciled to the completed R90-91 audit and
+  ready/unstarted R90-92 boundary without rewriting immutable iteration notes.
+  Replaying the identical range preserved reconciled Vault content hash
+  `49af611ecaa37348a699ae392715c157025c9abc51355c8eecea114ae447d2a2`.
+- R90-91 is complete. R90-92 is the next ready local increment and remains
+  unstarted; R90-59 and R90-75 retain their external blockers.
+
 ## Stop Conditions
 
 Stop if R90-90 evidence is missing or contradictory, the pathname-generation
