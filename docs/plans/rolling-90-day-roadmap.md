@@ -153,6 +153,8 @@
 | R90-88 | Aug 11–Sep 12 | Complete early | Preserve an active UDS listener during receiver startup. | R90-87 | Startup rejects a currently connectable existing Unix listener without replacing its pathname identity or breaking its service, still reclaims a stale socket, and preserves a replacement identity if the pathname changes during classification. |
 | R90-89 | Aug 11 | Complete | Audit post-listener delivery and restore the cancellation-aware startup queue. | R90-88 | A dated audit reconciles the R90-88 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-readiness probe cancellation behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-90 | Aug 12–Sep 12 | Complete early | Make the existing-socket probe context-aware. | R90-89 | Cancellation during a blocked pre-readiness Unix-socket probe returns an error matching the context sentinel promptly, preserves the captured pathname identity, and installs no receiver listener while active/stale classification remains compatible. |
+| R90-91 | Aug 12 | In progress | Audit post-probe delivery and restore the shutdown pathname-generation queue. | R90-90 | A dated audit reconciles the R90-90 feature/closure, recent phases, fetched remote, exact Vault evidence, and current owned-socket shutdown cleanup, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
+| R90-92 | Aug 13–Sep 12 | Planned | Preserve an immediate replacement Unix socket during receiver shutdown. | R90-91 | Shutdown removes its owned pathname only when non-following device, inode, and change-time identity still match; a direct immediate-inode-reuse regression preserves a replacement listener while ordinary owned cleanup and regular-file/symlink replacement behavior remain compatible. |
 
 ## R90-01 Definition
 
@@ -1873,6 +1875,47 @@
   from clean fetched baseline
   `22ba8ce639d79547875885f4ce107321273dd3b7`.
 
+## R90-91 Definition
+
+- **Goal:** reconcile R90-90 delivery and restore only the directly evidenced
+  pathname-generation cleanup work after the dependency-ready queue emptied.
+- **Risk:** device/inode reuse is a bounded filesystem race, not evidence of an
+  observed production incident; speculative queue filling or a weak
+  replacement test could overstate the gap.
+- **Required validation:** exact R90-90 feature/closure Git, task-state,
+  fetched-remote, and dual-Vault reconciliation; Jul 20 through Aug 12 phase
+  review; direct receiver ownership, cleanup, replacement-test, and public-doc
+  mapping; complete unfinished-item fields; exact row/Definition multiset
+  comparison; task-state JSON, documentation, knowledge, formatting, scope,
+  and sensitive-information checks.
+- **Stop condition:** stop if exact R90-90 evidence is missing or contradictory,
+  a follow-on needs protocol/configuration/public API, private/external,
+  performance, or publication authority, validation is ambiguous, or
+  completion would start runtime/test work.
+- **Selected plan:**
+  [`task-20260812-post-probe-delivery-audit.md`](task-20260812-post-probe-delivery-audit.md),
+  from clean fetched baseline
+  `c0b1eb2dae8dd90eda745eacc87b0a6ece01a450`.
+
+## R90-92 Definition
+
+- **Goal:** make receiver shutdown preserve a pathname occupant that replaces
+  its owned Unix socket even when the filesystem immediately reuses the
+  original device/inode identity.
+- **Risk:** device/inode equality alone can misclassify a new listener as the
+  receiver's owned socket; an over-broad cleanup change could instead leak the
+  ordinary owned pathname or follow a symlink.
+- **Required validation:** a direct synchronized immediate-replacement
+  regression proves inode reuse and replacement-listener service preservation;
+  missing or changed non-following generation metadata fails closed; direct
+  ordinary owned cleanup, regular-file and symlink replacement compatibility;
+  repeated uncached receiver race, full native, E2E, documentation, and
+  knowledge checks.
+- **Stop condition:** stop if deterministic proof requires fixed sleeps,
+  privileged filesystem control, a public test seam, following symlinks, or if
+  completion needs protocol/configuration/public API, private data, or
+  publication authority.
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -3444,3 +3487,31 @@ Identical-range replay preserved Vault content hash
 `07ee79b395aab016fc0e7617999a4f3bca5a8e5b59c772e5a4efec703b3ba997`.
 No dependency-ready local increment remains. R90-59 and R90-75 retain their
 recorded external blockers, and neither was started.
+The Aug 12 trigger fetched and verified the clean R90-90 docs-only closure at
+`c0b1eb2dae8dd90eda745eacc87b0a6ece01a450`, both exact R90-90 Vault
+notes, full-index rows, MOC links, and current stable MOC/UDS authority. All
+105 prior task states parse and all 94 prior roadmap row and Definition
+multisets match without duplicates or asymmetry. The 153-commit Jul 20 through
+Aug 12 phase review found the R90-90 closure-placement deviation resolved
+before delivery and no missing record, stale stable authority, or unresolved
+validation result that changes priority. R90-59 and R90-75 retain their
+external blockers and no local row is ready, so R90-91 is selected as the
+documentation-only smallest safe queue unblocker with a persisted plan/state.
+Current receiver shutdown captures its created socket with non-following
+metadata but `removeOwnedSocket` accepts Unix mode plus device/inode identity
+alone. The existing regular-file and symlink replacement tests do not exercise
+a replacement Unix listener or immediate inode reuse; the already-delivered
+startup classification regression proves the local filesystem can reuse that
+identity and that change time is required as a generation signal. R90-92
+records only fail-closed generation-aware cleanup plus direct immediate
+replacement-listener preservation and remains unstarted.
+All 106 task-state JSON files parse and all 96 roadmap rows match the complete
+Definition multiset with equal raw counts, no duplicate identifiers, and no
+asymmetry. Ordered history proves R90-90 completion precedes R90-91 selection
+and R90-92 planning. Documentation, all 33 knowledge tests, formatting, exact
+three-path scope, and sensitive-information review pass. The first history
+edit matched an older generic no-ready marker; it was moved after the exact
+R90-90 completion tail before validation, with no evidence or scope change.
+R90-91 satisfies its local acceptance evidence and awaits only documentation
+delivery, fetched remote verification, and exact-range Vault synchronization.
+R90-92 remains planned and unstarted.
