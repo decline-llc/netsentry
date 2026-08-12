@@ -155,6 +155,8 @@
 | R90-90 | Aug 12–Sep 12 | Complete early | Make the existing-socket probe context-aware. | R90-89 | Cancellation during a blocked pre-readiness Unix-socket probe returns an error matching the context sentinel promptly, preserves the captured pathname identity, and installs no receiver listener while active/stale classification remains compatible. |
 | R90-91 | Aug 12 | Complete | Audit post-probe delivery and restore the shutdown pathname-generation queue. | R90-90 | A dated audit reconciles the R90-90 feature/closure, recent phases, fetched remote, exact Vault evidence, and current owned-socket shutdown cleanup, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-92 | Aug 13–Sep 12 | Complete early | Preserve an immediate replacement Unix socket during receiver shutdown. | R90-91 | Shutdown removes its owned pathname only when non-following device, inode, and change-time identity still match; a direct immediate-inode-reuse regression preserves a replacement listener while ordinary owned cleanup and regular-file/symlink replacement behavior remain compatible. |
+| R90-93 | Aug 12 | In progress | Audit post-generation delivery and restore the listener-creation ownership queue. | R90-92 | A dated audit reconciles the R90-92 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-listen mode/ownership boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
+| R90-94 | Aug 13–Sep 13 | Planned | Bind UDS mode application and ownership capture to the created listener. | R90-93 | Startup applies the configured mode through the created listener identity and publishes ownership only if the non-following pathname still matches; direct regular-file, symlink-target, and replacement-listener races preserve replacement state and service while ordinary mode and shutdown cleanup remain compatible. |
 
 ## R90-01 Definition
 
@@ -1920,6 +1922,48 @@
   from clean fetched baseline
   `29c291a7dffcc37caf0375910e1ad1c6ef0a54a4`.
 
+## R90-93 Definition
+
+- **Goal:** reconcile R90-92 delivery and restore only the directly evidenced
+  post-listen mode/ownership work after the dependency-ready queue emptied.
+- **Risk:** a pathname-based metadata operation is a bounded local race, not
+  evidence of an observed production incident; speculative queue filling or
+  tests outside the listener-creation boundary could overstate the gap.
+- **Required validation:** exact R90-92 feature/closure Git, task-state,
+  fetched-remote, and dual-Vault reconciliation; Jul 20 through Aug 12 phase
+  review; direct listener creation, mode, ownership, replacement-test, Go
+  contract, and public-doc mapping; complete unfinished-item fields; exact
+  row/Definition multiset comparison; task-state JSON, documentation,
+  knowledge, formatting, scope, and sensitive-information checks.
+- **Stop condition:** stop if exact R90-92 evidence is missing or contradictory,
+  a follow-on needs protocol/configuration/public API, private/external,
+  performance, or publication authority, validation is ambiguous, or
+  completion would start runtime/test work.
+- **Selected plan:**
+  [`task-20260812-post-generation-delivery-audit.md`](task-20260812-post-generation-delivery-audit.md),
+  from clean fetched baseline
+  `c59c3aca6a67b1975f178734d6b0f81a6bcab6b8`.
+
+## R90-94 Definition
+
+- **Goal:** make the configured UDS mode and captured ownership refer to the
+  listener actually created by `Start`, even if its pathname is replaced
+  before readiness.
+- **Risk:** pathname-based `chmod` follows symlinks and can mutate a replacement
+  target, while capturing a replacement socket as owned can publish a detached
+  listener and later remove another service during shutdown.
+- **Required validation:** direct synchronized post-listen replacement
+  regressions preserve regular-file bytes/mode, symlink identity plus target
+  mode, and replacement-listener mode/identity/service; created-listener-bound
+  mode application and non-following pathname identity rejection; ordinary
+  configured-mode, startup cancellation, shutdown cleanup, repeated uncached
+  receiver race, full native, E2E, documentation, and knowledge checks.
+- **Stop condition:** stop if deterministic proof requires fixed sleeps,
+  privileged filesystem control, an exported/public test seam, following
+  symlinks, a new dependency or platform-specific unsafe implementation, or if
+  completion needs protocol/configuration/public API, private data, or
+  publication authority.
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -3582,3 +3626,29 @@ range replay preserved Vault content hash
 `e368106cf93971de1a76bb46ed0753fb04338a2453f62d3452d277088eea7217`.
 No dependency-ready local increment remains. R90-59 and R90-75 retain their
 recorded external blockers, and neither was started.
+The next Aug 12 trigger fetched and verified the clean R90-92 docs-only closure
+at `c59c3aca6a67b1975f178734d6b0f81a6bcab6b8`, both exact R90-92 Vault
+notes, full-index rows, MOC links, and current stable MOC/UDS authority. All
+107 prior task states parse and all 96 prior roadmap row and Definition
+multisets match without duplicates or asymmetry. The 157-commit Jul 20 through
+Aug 12 phase review found only the R90-92 feature and closure since the prior
+audit, with no missing record, stale stable authority, or unresolved validation
+result that changes priority. R90-59 and R90-75 retain their external blockers
+and no local row is ready, so R90-93 is selected as the documentation-only
+smallest safe queue unblocker with a persisted plan/state. Current startup uses
+pathname-based `os.Chmod` after `net.Listen` but before it verifies and captures
+the non-following pathname; Go documents that pathname-based `Chmod` follows a
+symlink. Current direct replacement evidence covers pre-start paths, the stale
+probe, and shutdown, not replacement after listener creation. R90-94 records
+only created-listener-bound mode application plus fail-closed pathname
+ownership and remains unstarted.
+All 108 task-state JSON files parse and all 98 roadmap rows match the complete
+Definition multiset with equal raw counts, no duplicate identifiers, and no
+asymmetry. Ordered history proves R90-92 completion precedes R90-93 selection
+and R90-94 planning. Documentation, all 33 knowledge tests, formatting, exact
+three-path scope, and sensitive-information review pass. The first two history
+edits matched older no-ready markers; the unchanged audit paragraph was finally
+anchored after the exact R90-92 completion tail before validation. R90-93
+satisfies its local acceptance evidence and awaits only documentation delivery,
+fetched remote verification, and exact-range Vault synchronization. R90-94
+remains planned and unstarted.
