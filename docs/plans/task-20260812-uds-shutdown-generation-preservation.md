@@ -171,6 +171,29 @@ dispatch, or a later roadmap increment.
   remains; R90-92 awaits only exact staged review, feature delivery, fetched
   remote verification, and exact-range Vault synchronization.
 
+## Delivery Results
+
+- Feature commit:
+  `b3ef17b8850c170b7f517fbb3e5eaa7c7fdf7c1e` (`fix: preserve replacement
+  UDS socket generations`). It contains exactly the eight validated source,
+  test, documentation, roadmap, plan, and task-state paths.
+- `main` was pushed without force or tags through the documented IPv4
+  SSH-over-443 transport. A fresh fetch verified
+  `FETCH_HEAD == HEAD == origin/main == b3ef17b8850c170b7f517fbb3e5eaa7c7fdf7c1e`
+  with fast-forward ancestry from the recorded baseline, and the post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `29c291a7dffcc37caf0375910e1ad1c6ef0a54a4..b3ef17b8850c170b7f517fbb3e5eaa7c7fdf7c1e`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC/UDS prose was reconciled to the delivered generation-bound
+  cleanup, ownership-snapshot ordering, and direct inode-reuse plus service
+  evidence without rewriting immutable iteration notes. Replaying the
+  identical range preserved Vault content hash
+  `e368106cf93971de1a76bb46ed0753fb04338a2453f62d3452d277088eea7217`.
+- R90-92 is complete. R90-59 and R90-75 retain their external blockers; no
+  dependency-ready local increment remains and no later work was started.
+
 ## Stop Conditions
 
 Stop if deterministic proof requires fixed sleeps, privileged filesystem

@@ -154,7 +154,7 @@
 | R90-89 | Aug 11 | Complete | Audit post-listener delivery and restore the cancellation-aware startup queue. | R90-88 | A dated audit reconciles the R90-88 feature/closure, recent phases, fetched remote, exact Vault evidence, and current pre-readiness probe cancellation behavior, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-90 | Aug 12–Sep 12 | Complete early | Make the existing-socket probe context-aware. | R90-89 | Cancellation during a blocked pre-readiness Unix-socket probe returns an error matching the context sentinel promptly, preserves the captured pathname identity, and installs no receiver listener while active/stale classification remains compatible. |
 | R90-91 | Aug 12 | Complete | Audit post-probe delivery and restore the shutdown pathname-generation queue. | R90-90 | A dated audit reconciles the R90-90 feature/closure, recent phases, fetched remote, exact Vault evidence, and current owned-socket shutdown cleanup, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-92 | Aug 13–Sep 12 | In progress | Preserve an immediate replacement Unix socket during receiver shutdown. | R90-91 | Shutdown removes its owned pathname only when non-following device, inode, and change-time identity still match; a direct immediate-inode-reuse regression preserves a replacement listener while ordinary owned cleanup and regular-file/symlink replacement behavior remain compatible. |
+| R90-92 | Aug 13–Sep 12 | Complete early | Preserve an immediate replacement Unix socket during receiver shutdown. | R90-91 | Shutdown removes its owned pathname only when non-following device, inode, and change-time identity still match; a direct immediate-inode-reuse regression preserves a replacement listener while ordinary owned cleanup and regular-file/symlink replacement behavior remain compatible. |
 
 ## R90-01 Definition
 
@@ -3567,3 +3567,18 @@ duplicate or asymmetric identifiers. R90-92 satisfies its local acceptance
 evidence and exact eight-path scope review; it awaits only feature delivery,
 fetched remote verification, and exact-range Vault synchronization. No later
 increment is started.
+R90-92 completed early at
+`b3ef17b8850c170b7f517fbb3e5eaa7c7fdf7c1e`: its exact eight-path feature
+was pushed without force or tags through the documented IPv4 SSH-over-443
+transport, then freshly fetched with
+`FETCH_HEAD == HEAD == origin/main` at the feature commit and fast-forward
+ancestry from the recorded baseline. The post-fetch 33-test knowledge gate
+passed. Exact range
+`29c291a7dffcc37caf0375910e1ad1c6ef0a54a4..b3ef17b8850c170b7f517fbb3e5eaa7c7fdf7c1e`
+was synchronized to the sole local Vault; its iteration note, full-index row,
+and MOC link are verified. Stable MOC/UDS prose now records the delivered
+generation-bound cleanup and direct replacement-listener evidence; identical-
+range replay preserved Vault content hash
+`e368106cf93971de1a76bb46ed0753fb04338a2453f62d3452d277088eea7217`.
+No dependency-ready local increment remains. R90-59 and R90-75 retain their
+recorded external blockers, and neither was started.

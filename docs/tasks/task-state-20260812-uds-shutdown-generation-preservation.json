@@ -2,9 +2,9 @@
   "task": "r90-92-uds-shutdown-generation-preservation",
   "timestamp": "2026-08-12T09:10:00-07:00",
   "branch": "main",
-  "remote_baseline": "29c291a7dffcc37caf0375910e1ad1c6ef0a54a4",
+  "remote_baseline": "b3ef17b8850c170b7f517fbb3e5eaa7c7fdf7c1e",
   "risk_level": "Medium",
-  "current_checkpoint": "validated_delivery_pending",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
     "Fetched origin main through the documented IPv4 SSH over 443 keepalive fallback and verified FETCH_HEAD HEAD and origin main at 29c291a7dffcc37caf0375910e1ad1c6ef0a54a4 with a clean worktree",
@@ -28,16 +28,18 @@
     "Passed documentation and all 33 knowledge tests",
     "Parsed all 107 task-state JSON files and verified all 96 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
     "Compared every acceptance criterion to direct evidence and confirmed the real-filesystem regression proves device inode reuse changed generation and continued replacement service",
-    "Passed gofmt git diff check exact eight-path credential sensitive-path dependency configuration protocol public API release and publication review"
+    "Passed gofmt git diff check exact eight-path credential sensitive-path dependency configuration protocol public API release and publication review",
+    "Committed the validated exact eight-path feature at b3ef17b8850c170b7f517fbb3e5eaa7c7fdf7c1e",
+    "Pushed main without force or tags through IPv4 SSH over 443 and freshly fetched FETCH_HEAD HEAD and origin main equal to the feature commit with fast-forward ancestry",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range 29c291a7dffcc37caf0375910e1ad1c6ef0a54a4..b3ef17b8850c170b7f517fbb3e5eaa7c7fdf7c1e to the sole local Vault",
+    "Verified the generated iteration note full-index row and MOC link",
+    "Reconciled stable MOC and UDS prose to the delivered generation-bound cleanup and direct replacement-listener evidence",
+    "Replayed the identical feature range and verified Vault content hash e368106cf93971de1a76bb46ed0753fb04338a2453f62d3452d277088eea7217 remained unchanged",
+    "Completed R90-92 and left R90-59 and R90-75 externally blocked with no dependency-ready local increment"
   ],
-  "in_progress": [
-    "Deliver R90-92 fetch-verify exact-range Vault synchronization stable-authority reconciliation and docs-only closure"
-  ],
-  "todo": [
-    "Commit and push the exact eight-path feature",
-    "Fetch and verify HEAD FETCH_HEAD and origin main then rerun the knowledge gate",
-    "Synchronize and verify the exact feature and closure Vault ranges without starting a later increment"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Only R90-92 shutdown generation comparison direct regressions compatibility documentation and delivery",
     "No startup classification protocol configuration public API peer policy or public test seam change",
@@ -48,12 +50,18 @@
     "R90-59 and R90-75 remain externally blocked"
   ],
   "delivery": {
-    "commit": null,
-    "origin_main_verified": false,
-    "vault_range": null,
-    "vault_note_verified": false,
-    "vault_full_index_verified": false,
-    "vault_moc_verified": false
+    "commit": "b3ef17b8850c170b7f517fbb3e5eaa7c7fdf7c1e",
+    "origin_main_verified": true,
+    "branch_push_no_follow_tags": true,
+    "fast_forward_ancestry_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "29c291a7dffcc37caf0375910e1ad1c6ef0a54a4..b3ef17b8850c170b7f517fbb3e5eaa7c7fdf7c1e",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true,
+    "vault_reconciled_content_hash": "e368106cf93971de1a76bb46ed0753fb04338a2453f62d3452d277088eea7217"
   },
-  "resume_instructions": "Resume only R90-92 delivery from validated clean baseline 29c291a7dffcc37caf0375910e1ad1c6ef0a54a4. Do not repeat implementation or completed validation unless the diff changes. Commit only the exact eight planned paths, then fetch verify and synchronize the exact Vault range. Do not start R90-59 R90-75 or a later increment."
+  "resume_instructions": "R90-92 is complete at b3ef17b8850c170b7f517fbb3e5eaa7c7fdf7c1e; do not repeat its implementation validation feature delivery or feature-range Vault synchronization. On the next netsentry-next trigger fetch and verify this docs-only closure plus its exact Vault evidence before refreshing the rolling queue. No dependency-ready local increment remains. Do not start R90-59 or R90-75 without their recorded external inputs and authority."
 }
