@@ -204,6 +204,212 @@ func TestStartPreservesPreExistingSymlink(t *testing.T) {
 	}
 }
 
+func TestStartAppliesConfiguredModeToCreatedListener(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	r := New(Config{Path: path, SocketMode: 0o640}, zap.NewNop())
+	if err := r.Start(ctx); err != nil {
+		t.Fatalf("start receiver: %v", err)
+	}
+	t.Cleanup(func() {
+		cancel()
+		r.Wait()
+	})
+	info, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat started listener: %v", err)
+	}
+	if got := info.Mode().Perm(); got != 0o640 {
+		t.Fatalf("started listener mode = %o, want 640", got)
+	}
+
+	cancel()
+	waitForReceiverShutdown(t, r)
+	if _, err := os.Lstat(path); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("owned socket path remains after shutdown: %v", err)
+	}
+	assertNoListenerStagingArtifacts(t, filepath.Dir(path))
+}
+
+func TestStartPreservesRegularFileReplacingCreatedListener(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	want := []byte("replacement operator data\n")
+	var replacement os.FileInfo
+	r := New(Config{Path: path, SocketMode: 0o600}, zap.NewNop())
+	r.afterListenerCreated = func() error {
+		if err := os.WriteFile(path, want, 0o640); err != nil {
+			return fmt.Errorf("write replacement regular file: %w", err)
+		}
+		if err := os.Chmod(path, 0o640); err != nil {
+			return fmt.Errorf("set replacement regular-file mode: %w", err)
+		}
+		var err error
+		replacement, err = os.Lstat(path)
+		if err != nil {
+			return fmt.Errorf("stat replacement regular file: %w", err)
+		}
+		return nil
+	}
+
+	err := r.Start(context.Background())
+	if err == nil || !strings.Contains(err.Error(), "publish created listener without replacing pathname") {
+		t.Fatalf("start error = %v, want listener replacement rejection", err)
+	}
+	if r.ln != nil || r.socket != nil {
+		t.Fatal("receiver published ownership after regular-file replacement")
+	}
+	after, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat preserved replacement regular file: %v", err)
+	}
+	if !sameUnixSocketIdentity(replacement, after) {
+		t.Fatal("startup removed or replaced the replacement regular file")
+	}
+	if got := after.Mode().Perm(); got != 0o640 {
+		t.Fatalf("replacement regular-file mode = %o, want 640", got)
+	}
+	got, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read replacement regular file: %v", err)
+	}
+	if string(got) != string(want) {
+		t.Fatalf("replacement regular-file bytes = %q, want %q", got, want)
+	}
+	assertNoListenerStagingArtifacts(t, filepath.Dir(path))
+}
+
+func TestStartPreservesSymlinkReplacingCreatedListener(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "netsentry.sock")
+	targetName := "replacement-target"
+	targetPath := filepath.Join(dir, targetName)
+	want := []byte("replacement target data\n")
+	if err := os.WriteFile(targetPath, want, 0o640); err != nil {
+		t.Fatalf("write symlink target: %v", err)
+	}
+	if err := os.Chmod(targetPath, 0o640); err != nil {
+		t.Fatalf("set symlink-target mode: %v", err)
+	}
+	var replacement os.FileInfo
+	var targetBefore os.FileInfo
+	r := New(Config{Path: path, SocketMode: 0o600}, zap.NewNop())
+	r.afterListenerCreated = func() error {
+		if err := os.Symlink(targetName, path); err != nil {
+			return fmt.Errorf("create replacement symlink: %w", err)
+		}
+		var err error
+		replacement, err = os.Lstat(path)
+		if err != nil {
+			return fmt.Errorf("stat replacement symlink: %w", err)
+		}
+		targetBefore, err = os.Stat(targetPath)
+		if err != nil {
+			return fmt.Errorf("stat replacement target: %w", err)
+		}
+		return nil
+	}
+
+	err := r.Start(context.Background())
+	if err == nil || !strings.Contains(err.Error(), "publish created listener without replacing pathname") {
+		t.Fatalf("start error = %v, want listener replacement rejection", err)
+	}
+	if r.ln != nil || r.socket != nil {
+		t.Fatal("receiver published ownership after symlink replacement")
+	}
+	after, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat preserved replacement symlink: %v", err)
+	}
+	if !sameUnixSocketIdentity(replacement, after) {
+		t.Fatal("startup removed or replaced the replacement symlink")
+	}
+	gotTarget, err := os.Readlink(path)
+	if err != nil {
+		t.Fatalf("read replacement symlink: %v", err)
+	}
+	if gotTarget != targetName {
+		t.Fatalf("replacement symlink target = %q, want %q", gotTarget, targetName)
+	}
+	targetAfter, err := os.Stat(targetPath)
+	if err != nil {
+		t.Fatalf("stat preserved symlink target: %v", err)
+	}
+	if !os.SameFile(targetBefore, targetAfter) {
+		t.Fatal("startup replaced the symlink target")
+	}
+	if got := targetAfter.Mode().Perm(); got != 0o640 {
+		t.Fatalf("replacement symlink-target mode = %o, want 640", got)
+	}
+	got, err := os.ReadFile(targetPath)
+	if err != nil {
+		t.Fatalf("read replacement symlink target: %v", err)
+	}
+	if string(got) != string(want) {
+		t.Fatalf("replacement symlink-target bytes = %q, want %q", got, want)
+	}
+	assertNoListenerStagingArtifacts(t, filepath.Dir(path))
+}
+
+func TestStartPreservesUnixListenerReplacingCreatedListener(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "netsentry.sock")
+	var replacement net.Listener
+	var replacementInfo os.FileInfo
+	r := New(Config{Path: path, SocketMode: 0o600}, zap.NewNop())
+	r.afterListenerCreated = func() error {
+		var err error
+		replacement, err = net.Listen("unix", path)
+		if err != nil {
+			return fmt.Errorf("create replacement listener: %w", err)
+		}
+		replacement.(*net.UnixListener).SetUnlinkOnClose(false)
+		if err := os.Chmod(path, 0o660); err != nil {
+			return fmt.Errorf("set replacement listener mode: %w", err)
+		}
+		replacementInfo, err = os.Lstat(path)
+		if err != nil {
+			return fmt.Errorf("stat replacement listener: %w", err)
+		}
+		return nil
+	}
+	t.Cleanup(func() {
+		if replacement != nil {
+			_ = replacement.Close()
+		}
+		_ = os.Remove(path)
+	})
+
+	err := r.Start(context.Background())
+	if err == nil || !strings.Contains(err.Error(), "publish created listener without replacing pathname") {
+		t.Fatalf("start error = %v, want listener replacement rejection", err)
+	}
+	if r.ln != nil || r.socket != nil {
+		t.Fatal("receiver published ownership after Unix-listener replacement")
+	}
+	after, err := os.Lstat(path)
+	if err != nil {
+		t.Fatalf("stat preserved replacement listener: %v", err)
+	}
+	if !sameUnixSocketIdentity(replacementInfo, after) {
+		t.Fatal("startup removed or replaced the replacement listener")
+	}
+	if got := after.Mode().Perm(); got != 0o660 {
+		t.Fatalf("replacement listener mode = %o, want 660", got)
+	}
+	assertUnixListenerRoundTrip(t, replacement, path)
+	assertNoListenerStagingArtifacts(t, filepath.Dir(path))
+}
+
+func assertNoListenerStagingArtifacts(t *testing.T, dir string) {
+	t.Helper()
+	matches, err := filepath.Glob(filepath.Join(dir, ".netsentry-uds-*"))
+	if err != nil {
+		t.Fatalf("glob listener staging artifacts: %v", err)
+	}
+	if len(matches) != 0 {
+		t.Fatalf("listener staging artifacts remain: %v", matches)
+	}
+}
+
 func TestStartCanceledContextPreservesAbsentPath(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "netsentry.sock")
 	ctx, cancel := context.WithCancel(context.Background())

@@ -1,0 +1,46 @@
+{
+  "task": "r90-94-uds-listener-mode-ownership",
+  "timestamp": "2026-08-13T10:39:45-07:00",
+  "branch": "main",
+  "remote_baseline": "50a98397c1145b0915458ab662247b4a68542b27",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills rolling roadmap knowledge contract latest R90-93 plan and state and current receiver source",
+    "Fetched origin main and verified a clean HEAD and origin main baseline at 50a98397c1145b0915458ab662247b4a68542b27",
+    "Verified exact R90-93 feature and closure Git and sole local Vault note index MOC and stable authority evidence",
+    "Reviewed four recent delivery phases and found no missing closure stale stable claim or unresolved local validation result that changes priority",
+    "Confirmed R90-59 and R90-75 retain external blockers and R90-94 is the sole dependency-ready local increment",
+    "Mapped pathname-following mode application later non-following ownership capture and the missing synchronized post-listen replacement evidence",
+    "Persisted R90-94 scope non-goals risks evidence map validation authority boundaries and stop conditions before behavior or compatibility documentation changes",
+    "Replaced pathname-following mode application with private same-filesystem listener creation mode verification and non-replacing publication",
+    "Retained a private hard-link identity anchor through shutdown and cleaned it before listener close",
+    "Added synchronized regular-file symlink-target and replacement-listener preservation regressions plus ordinary mode and cleanup coverage",
+    "Recorded and rejected the first descriptor-stat design because it did not expose the filesystem pathname identity",
+    "Passed the corrected direct and complete receiver tests normally twenty uncached acceptance race runs and the complete receiver package uncached under race",
+    "Preflighted the pinned Go module toolchain and required local native E2E documentation and knowledge tools",
+    "Passed both C tests every Go package uncached under race E2E smoke documentation and all 33 knowledge tests",
+    "Parsed all 109 task-state JSON files and verified all 98 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
+    "Mapped every R90-94 acceptance criterion to direct evidence and passed formatting exact seven-path scope and sensitive-information review"
+  ],
+  "in_progress": [
+    "Perform exact staged review then commit push fetch verify and synchronize the feature range"
+  ],
+  "todo": [
+    "Commit push fetch verify and synchronize the exact range to the sole local Vault",
+    "Persist verified feature delivery facts in one docs-only closure and leave the refreshed queue unstarted"
+  ],
+  "authority_boundaries": [
+    "Only R90-94 listener-bound mode ownership regressions compatibility documentation and delivery",
+    "No protocol configuration schema public API stale peer policy or general cross-process ownership change",
+    "No exported test seam dependency privileged filesystem control fixed sleeps or platform-specific unsafe implementation",
+    "No private external data performance policy tag release image registry workflow or later increment"
+  ],
+  "remaining_risks": [
+    "Private same-filesystem listener publication must preserve connectivity and leave no staging artifacts",
+    "Every replacement regression must synchronize after listener creation and before mode and ownership handling",
+    "R90-59 and R90-75 remain externally blocked"
+  ],
+  "delivery": null,
+  "resume_instructions": "R90-94 implementation and local validation are complete from baseline 50a98397c1145b0915458ab662247b4a68542b27. Do not repeat implementation or start another increment; resume with exact staged review feature commit push fetched-remote verification exact-range Vault synchronization and docs-only delivery closure."
+}

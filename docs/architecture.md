@@ -184,6 +184,12 @@ Target behavior:
   receiver listener.
   An already-canceled startup returns before this inspection or any listener
   creation and preserves the context cancellation sentinel.
+  A new listener is created and assigned its configured mode at a private path
+  on the target filesystem, then published without replacing an occupied
+  pathname. Startup captures ownership only after the published non-following
+  identity matches the private created identity. The private link remains as
+  an identity anchor until shutdown; a concurrent regular file, symlink, or
+  listener is neither modified nor claimed as owned.
   Shutdown disables listener auto-unlink and removes the pathname only while
   its non-following device, inode, and change-time identity still matches the
   receiver's captured socket. Missing or changed generation metadata fails

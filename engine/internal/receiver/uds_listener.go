@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/netip"
 	"os"
+	"path/filepath"
 	"strconv"
 	"sync"
 	"syscall"
@@ -49,16 +50,19 @@ type Config struct {
 
 // Receiver owns a UDS listener and a context-aware packet channel.
 type Receiver struct {
-	cfg                 Config
-	logger              *zap.Logger
-	packets             chan *model.PacketInfo
-	state               *heartbeatState
-	ln                  net.Listener
-	socket              os.FileInfo
-	stats               *stats.Stats
-	wg                  sync.WaitGroup
-	slots               chan struct{}
-	probeExistingSocket func(context.Context, string) (net.Conn, error)
+	cfg                  Config
+	logger               *zap.Logger
+	packets              chan *model.PacketInfo
+	state                *heartbeatState
+	ln                   net.Listener
+	socket               os.FileInfo
+	privateSocketDir     string
+	privateSocketPath    string
+	stats                *stats.Stats
+	wg                   sync.WaitGroup
+	slots                chan struct{}
+	probeExistingSocket  func(context.Context, string) (net.Conn, error)
+	afterListenerCreated func() error
 }
 
 // New constructs a receiver. Start must be called before packets arrive.
@@ -109,6 +113,9 @@ func (r *Receiver) Stop() {
 	if err := removeOwnedSocket(r.cfg.Path, r.socket); err != nil {
 		r.logger.Warn("remove owned uds socket", zap.Error(err))
 	}
+	if err := removePrivateSocket(r.privateSocketDir, r.privateSocketPath); err != nil {
+		r.logger.Warn("remove private uds socket", zap.Error(err))
+	}
 	if r.ln != nil {
 		_ = r.ln.Close()
 	}
@@ -127,30 +134,15 @@ func (r *Receiver) Start(ctx context.Context) error {
 	if err := removeExistingSocket(ctx, r.cfg.Path, r.probeExistingSocket); err != nil {
 		return fmt.Errorf("prepare uds listener %q: %w", r.cfg.Path, err)
 	}
-	ln, err := net.Listen("unix", r.cfg.Path)
+	unixListener, socket, privateDir, privatePath, err := r.createUnixListener()
 	if err != nil {
 		return fmt.Errorf("start uds listener %q: %w", r.cfg.Path, err)
 	}
-	unixListener, ok := ln.(*net.UnixListener)
-	if !ok {
-		_ = ln.Close()
-		return fmt.Errorf("start uds listener %q: unexpected listener type %T", r.cfg.Path, ln)
-	}
-	unixListener.SetUnlinkOnClose(false)
-	if err := os.Chmod(r.cfg.Path, r.cfg.SocketMode); err != nil {
-		r.logger.Warn("chmod uds socket", zap.Error(err))
-	}
-	socket, err := os.Lstat(r.cfg.Path)
-	if err != nil {
-		_ = ln.Close()
-		return fmt.Errorf("inspect started uds listener %q: %w", r.cfg.Path, err)
-	}
-	if socket.Mode()&os.ModeSocket == 0 {
-		_ = ln.Close()
-		return fmt.Errorf("inspect started uds listener %q: path is not a Unix socket", r.cfg.Path)
-	}
+	ln := net.Listener(unixListener)
 	r.ln = ln
 	r.socket = socket
+	r.privateSocketDir = privateDir
+	r.privateSocketPath = privatePath
 	r.slots = make(chan struct{}, r.cfg.MaxConnections)
 	for i := 0; i < r.cfg.MaxConnections; i++ {
 		r.slots <- struct{}{}
@@ -167,6 +159,81 @@ func (r *Receiver) Start(ctx context.Context) error {
 		r.acceptLoop(ctx, ln, r.slots)
 	}()
 	return nil
+}
+
+func (r *Receiver) createUnixListener() (*net.UnixListener, os.FileInfo, string, string, error) {
+	stagingDir, err := os.MkdirTemp(filepath.Dir(r.cfg.Path), ".netsentry-uds-")
+	if err != nil {
+		return nil, nil, "", "", fmt.Errorf("create private listener directory: %w", err)
+	}
+	stagingPath := filepath.Join(stagingDir, "socket")
+	listener, err := net.ListenUnix("unix", &net.UnixAddr{Name: stagingPath, Net: "unix"})
+	if err != nil {
+		_ = os.Remove(stagingDir)
+		return nil, nil, "", "", fmt.Errorf("create private listener: %w", err)
+	}
+	listener.SetUnlinkOnClose(false)
+
+	fail := func(cause error, created os.FileInfo) (*net.UnixListener, os.FileInfo, string, string, error) {
+		var cleanupErrs []error
+		if created != nil {
+			if err := removeOwnedSocket(r.cfg.Path, created); err != nil {
+				cleanupErrs = append(cleanupErrs, err)
+			}
+		}
+		if err := listener.Close(); err != nil {
+			cleanupErrs = append(cleanupErrs, fmt.Errorf("close created listener: %w", err))
+		}
+		if err := removePrivateSocket(stagingDir, stagingPath); err != nil {
+			cleanupErrs = append(cleanupErrs, err)
+		}
+		return nil, nil, "", "", errors.Join(append([]error{cause}, cleanupErrs...)...)
+	}
+
+	if r.afterListenerCreated != nil {
+		if err := r.afterListenerCreated(); err != nil {
+			return fail(fmt.Errorf("after listener creation: %w", err), nil)
+		}
+	}
+	if err := os.Chmod(stagingPath, r.cfg.SocketMode); err != nil {
+		return fail(fmt.Errorf("chmod created listener: %w", err), nil)
+	}
+	created, err := os.Lstat(stagingPath)
+	if err != nil {
+		return fail(fmt.Errorf("inspect private listener path: %w", err), nil)
+	}
+	if created.Mode()&os.ModeSocket == 0 || created.Mode().Perm() != r.cfg.SocketMode.Perm() {
+		return fail(fmt.Errorf("private listener metadata does not match created listener"), created)
+	}
+	if err := os.Link(stagingPath, r.cfg.Path); err != nil {
+		return fail(fmt.Errorf("publish created listener without replacing pathname: %w", err), created)
+	}
+	created, err = os.Lstat(stagingPath)
+	if err != nil {
+		return fail(fmt.Errorf("inspect published listener source: %w", err), created)
+	}
+	current, err := os.Lstat(r.cfg.Path)
+	if err != nil {
+		return fail(fmt.Errorf("inspect published listener path: %w", err), created)
+	}
+	if current.Mode()&os.ModeSocket == 0 || !sameUnixSocketIdentity(created, current) {
+		return fail(fmt.Errorf("listener path changed before ownership capture"), created)
+	}
+	return listener, current, stagingDir, stagingPath, nil
+}
+
+func removePrivateSocket(dir, path string) error {
+	if path == "" {
+		return nil
+	}
+	var errs []error
+	if err := os.Remove(path); err != nil && !errors.Is(err, os.ErrNotExist) {
+		errs = append(errs, fmt.Errorf("remove private listener path: %w", err))
+	}
+	if err := os.Remove(dir); err != nil && !errors.Is(err, os.ErrNotExist) {
+		errs = append(errs, fmt.Errorf("remove private listener directory: %w", err))
+	}
+	return errors.Join(errs...)
 }
 
 func removeExistingSocket(ctx context.Context, path string, probe func(context.Context, string) (net.Conn, error)) error {

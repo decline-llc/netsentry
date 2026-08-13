@@ -156,7 +156,7 @@
 | R90-91 | Aug 12 | Complete | Audit post-probe delivery and restore the shutdown pathname-generation queue. | R90-90 | A dated audit reconciles the R90-90 feature/closure, recent phases, fetched remote, exact Vault evidence, and current owned-socket shutdown cleanup, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-92 | Aug 13–Sep 12 | Complete early | Preserve an immediate replacement Unix socket during receiver shutdown. | R90-91 | Shutdown removes its owned pathname only when non-following device, inode, and change-time identity still match; a direct immediate-inode-reuse regression preserves a replacement listener while ordinary owned cleanup and regular-file/symlink replacement behavior remain compatible. |
 | R90-93 | Aug 12 | Complete | Audit post-generation delivery and restore the listener-creation ownership queue. | R90-92 | A dated audit reconciles the R90-92 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-listen mode/ownership boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-94 | Aug 13–Sep 13 | Ready | Bind UDS mode application and ownership capture to the created listener. | R90-93 | Startup applies the configured mode through the created listener identity and publishes ownership only if the non-following pathname still matches; direct regular-file, symlink-target, and replacement-listener races preserve replacement state and service while ordinary mode and shutdown cleanup remain compatible. |
+| R90-94 | Aug 13–Sep 13 | Complete early | Bind UDS mode application and ownership capture to the created listener. | R90-93 | Startup applies the configured mode through the created listener identity and publishes ownership only if the non-following pathname still matches; direct regular-file, symlink-target, and replacement-listener races preserve replacement state and service while ordinary mode and shutdown cleanup remain compatible. |
 
 ## R90-01 Definition
 
@@ -3049,6 +3049,32 @@ sole dependency-ready local increment with a persisted suppression lifecycle
 outcome contract and direct fault-evidence map. R90-80 remains
 dependency-planned; R90-59 and R90-75 retain their external blockers. No later
 increment or publication action is started.
+R90-94 now creates and modes its listener at a private same-filesystem path,
+publishes that verified socket identity with a non-replacing hard link, and
+requires a non-following private/public identity match before receiver
+ownership is assigned. The private link anchors identity through shutdown and
+is removed with the public owned path before listener close. Direct
+post-creation regular-file, symlink, and live-listener replacement regressions
+preserve replacement bytes, modes, identities, target, and service without
+publishing receiver ownership or leaving a private artifact; ordinary mode and
+owned cleanup remain compatible. The first descriptor-stat design applied mode
+but exposed kernel socket metadata rather than the filesystem pathname
+identity, so it was rejected before acceptance evidence. The corrected focused
+set and complete receiver package pass normally; twenty uncached acceptance
+race runs and the complete receiver race package pass. Complete repository
+validation remains pending, and no later increment is started.
+The complete fail-fast repository chain passes both native C tests, every Go
+package uncached under race, E2E smoke, documentation, and all 33 knowledge
+tests. All 109 task-state JSON files parse and all 98 roadmap rows match exactly
+one Definition with equal raw counts, no duplicate identifiers, and no
+asymmetry. Each R90-94 acceptance criterion reaches its direct promised
+boundary; formatting, exact seven-path scope, dependency/configuration/
+protocol/public-API/release boundaries, and sensitive-information review pass.
+The rejected descriptor-stat design is the only validation deviation and is
+fully superseded by the corrected clean sequences. R90-94 satisfies its local
+acceptance evidence and awaits only feature delivery, fetched remote
+verification, and exact-range Vault synchronization. No later increment is
+started.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
@@ -3665,3 +3691,16 @@ range replay preserved Vault content hash
 `e085f102fbb71ac087ae5f3d629a91bad6fb5db4aa0d09f0134253690fb69624`.
 R90-94 is ready but was not started; R90-59 and R90-75 retain their external
 blockers.
+The Aug 13 trigger fetched and verified the clean R90-93 docs-only closure at
+`50a98397c1145b0915458ab662247b4a68542b27`, both exact R90-93 Vault notes,
+full-index rows, MOC links, and current stable MOC/UDS authority. The 159-commit
+Jul 20 through Aug 13 phase review found no missing closure, stale stable claim,
+or unresolved local validation result that changes priority. R90-59 and R90-75
+retain their explicit external blockers; R90-94 is selected as the sole
+dependency-ready local increment with a persisted listener-identity,
+replacement-preservation, evidence, non-goal, and authority contract before
+receiver or compatibility-documentation changes. Current `Start` applies the
+configured mode through the pathname after `net.Listen`, then captures a later
+non-following pathname without proving it identifies the created listener;
+existing direct tests do not replace the pathname in that interval. No later
+increment or publication action is started.
