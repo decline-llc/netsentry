@@ -3075,6 +3075,22 @@ fully superseded by the corrected clean sequences. R90-94 satisfies its local
 acceptance evidence and awaits only feature delivery, fetched remote
 verification, and exact-range Vault synchronization. No later increment is
 started.
+R90-94 completed early at
+`2e03300e46f3df1f98e47f72bada5207cc2e8fc3`: its exact seven-path feature was
+pushed without force or tags. The first verification fetch returned no usable
+ref or exit evidence, so Vault work remained blocked; an identical non-mutating
+retry then verified `FETCH_HEAD == HEAD == origin/main` at the feature commit
+with fast-forward ancestry from the recorded baseline. The post-fetch 33-test
+knowledge gate passed. Exact range
+`50a98397c1145b0915458ab662247b4a68542b27..2e03300e46f3df1f98e47f72bada5207cc2e8fc3`
+was synchronized to the sole local Vault; its iteration note, full-index row,
+and MOC link are verified. Stable MOC/UDS prose now records private created-
+identity publication, the retained runtime identity anchor, direct replacement
+preservation, and the completed R90-94 boundary. Identical-range replay
+preserved Vault content hash
+`9f66c134e78a28538734d1c0891009c4142e667c7172969f394facef09cee94b`.
+No dependency-ready local increment remains. R90-59 and R90-75 retain their
+recorded external blockers, and neither was started.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent

@@ -2,9 +2,9 @@
   "task": "r90-94-uds-listener-mode-ownership",
   "timestamp": "2026-08-13T10:39:45-07:00",
   "branch": "main",
-  "remote_baseline": "50a98397c1145b0915458ab662247b4a68542b27",
+  "remote_baseline": "2e03300e46f3df1f98e47f72bada5207cc2e8fc3",
   "risk_level": "Medium",
-  "current_checkpoint": "validated",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills rolling roadmap knowledge contract latest R90-93 plan and state and current receiver source",
     "Fetched origin main and verified a clean HEAD and origin main baseline at 50a98397c1145b0915458ab662247b4a68542b27",
@@ -21,15 +21,19 @@
     "Preflighted the pinned Go module toolchain and required local native E2E documentation and knowledge tools",
     "Passed both C tests every Go package uncached under race E2E smoke documentation and all 33 knowledge tests",
     "Parsed all 109 task-state JSON files and verified all 98 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
-    "Mapped every R90-94 acceptance criterion to direct evidence and passed formatting exact seven-path scope and sensitive-information review"
+    "Mapped every R90-94 acceptance criterion to direct evidence and passed formatting exact seven-path scope and sensitive-information review",
+    "Committed the exact seven-path feature at 2e03300e46f3df1f98e47f72bada5207cc2e8fc3",
+    "Pushed main without force or tags and kept Vault work blocked when the first verification fetch returned no usable ref evidence",
+    "Repeated the non-mutating fetch and verified FETCH_HEAD HEAD and origin main at the feature commit with fast-forward ancestry",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range 50a98397c1145b0915458ab662247b4a68542b27..2e03300e46f3df1f98e47f72bada5207cc2e8fc3 to the sole local Vault",
+    "Verified the generated iteration note full-index row and MOC link",
+    "Reconciled stable MOC and UDS prose to the completed R90-94 behavior without rewriting immutable iteration notes",
+    "Replayed the identical feature range and verified Vault content hash 9f66c134e78a28538734d1c0891009c4142e667c7172969f394facef09cee94b remained unchanged",
+    "Completed R90-94 with no dependency-ready local increment while R90-59 and R90-75 retain their external blockers"
   ],
-  "in_progress": [
-    "Perform exact staged review then commit push fetch verify and synchronize the feature range"
-  ],
-  "todo": [
-    "Commit push fetch verify and synchronize the exact range to the sole local Vault",
-    "Persist verified feature delivery facts in one docs-only closure and leave the refreshed queue unstarted"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Only R90-94 listener-bound mode ownership regressions compatibility documentation and delivery",
     "No protocol configuration schema public API stale peer policy or general cross-process ownership change",
@@ -41,6 +45,19 @@
     "Every replacement regression must synchronize after listener creation and before mode and ownership handling",
     "R90-59 and R90-75 remain externally blocked"
   ],
-  "delivery": null,
-  "resume_instructions": "R90-94 implementation and local validation are complete from baseline 50a98397c1145b0915458ab662247b4a68542b27. Do not repeat implementation or start another increment; resume with exact staged review feature commit push fetched-remote verification exact-range Vault synchronization and docs-only delivery closure."
+  "delivery": {
+    "commit": "2e03300e46f3df1f98e47f72bada5207cc2e8fc3",
+    "origin_main_verified": true,
+    "branch_push_no_follow_tags": true,
+    "fast_forward_ancestry_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "50a98397c1145b0915458ab662247b4a68542b27..2e03300e46f3df1f98e47f72bada5207cc2e8fc3",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true,
+    "vault_reconciled_content_hash": "9f66c134e78a28538734d1c0891009c4142e667c7172969f394facef09cee94b"
+  },
+  "resume_instructions": "R90-94 is complete at 2e03300e46f3df1f98e47f72bada5207cc2e8fc3; do not repeat its implementation validation feature delivery or feature-range Vault synchronization. On the next netsentry-next trigger fetch and verify this docs-only closure plus its exact Vault evidence before refreshing the rolling queue. No dependency-ready local increment remains. Do not start R90-59 or R90-75 without their recorded external inputs and authority."
 }

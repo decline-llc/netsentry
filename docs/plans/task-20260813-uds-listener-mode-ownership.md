@@ -163,6 +163,30 @@ workflow dispatch, or any later increment.
   review, feature delivery, fetched remote verification, and exact-range Vault
   synchronization.
 
+## Delivery Results
+
+- Feature commit:
+  `2e03300e46f3df1f98e47f72bada5207cc2e8fc3` (`fix: bind UDS listener mode
+  and ownership`). It contains exactly the seven validated source, test,
+  documentation, roadmap, plan, and task-state paths.
+- `main` was pushed without force or tags. The first verification fetch
+  returned no usable ref or exit evidence and left synchronization blocked; an
+  identical non-mutating retry freshly verified
+  `FETCH_HEAD == HEAD == origin/main == 2e03300e46f3df1f98e47f72bada5207cc2e8fc3`
+  with fast-forward ancestry from the recorded baseline. The post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `50a98397c1145b0915458ab662247b4a68542b27..2e03300e46f3df1f98e47f72bada5207cc2e8fc3`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC and UDS prose was reconciled to private created-identity
+  publication, retained runtime identity anchor, direct replacement
+  preservation, and the completed R90-94 boundary without rewriting immutable
+  iteration notes. Replaying the identical range preserved Vault content hash
+  `9f66c134e78a28538734d1c0891009c4142e667c7172969f394facef09cee94b`.
+- R90-94 is complete. No dependency-ready local increment remains; R90-59 and
+  R90-75 retain their external blockers and were not started.
+
 ## Stop Conditions
 
 Stop if deterministic proof requires fixed sleeps, privileged filesystem
