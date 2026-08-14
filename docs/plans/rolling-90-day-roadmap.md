@@ -157,6 +157,8 @@
 | R90-92 | Aug 13–Sep 12 | Complete early | Preserve an immediate replacement Unix socket during receiver shutdown. | R90-91 | Shutdown removes its owned pathname only when non-following device, inode, and change-time identity still match; a direct immediate-inode-reuse regression preserves a replacement listener while ordinary owned cleanup and regular-file/symlink replacement behavior remain compatible. |
 | R90-93 | Aug 12 | Complete | Audit post-generation delivery and restore the listener-creation ownership queue. | R90-92 | A dated audit reconciles the R90-92 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-listen mode/ownership boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-94 | Aug 13–Sep 13 | Complete early | Bind UDS mode application and ownership capture to the created listener. | R90-93 | Startup applies the configured mode through the created listener identity and publishes ownership only if the non-following pathname still matches; direct regular-file, symlink-target, and replacement-listener races preserve replacement state and service while ordinary mode and shutdown cleanup remain compatible. |
+| R90-95 | Aug 14 | In progress | Audit post-listener-ownership delivery and restore the pre-readiness cancellation queue. | R90-94 | A dated audit reconciles the R90-94 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-private-listener cancellation boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
+| R90-96 | Aug 15–Sep 14 | Planned | Reject cancellation after private UDS listener creation. | R90-95 | Cancellation synchronized after private listener creation but before pathname publication returns the context sentinel, publishes no listener ownership, and leaves neither public nor private listener artifacts while existing startup/probe/shutdown behavior remains compatible. |
 
 ## R90-01 Definition
 
@@ -1964,6 +1966,50 @@
   completion needs protocol/configuration/public API, private data, or
   publication authority.
 
+## R90-95 Definition
+
+- **Goal:** reconcile R90-94 delivery and restore only the directly evidenced
+  post-private-listener cancellation work after the dependency-ready queue
+  emptied.
+- **Risk:** cancellation can race many filesystem operations, but this audit
+  must not promise interruptibility beyond the deterministic private-created,
+  not-yet-published boundary or treat a transient transport deviation as an
+  unresolved delivery failure.
+- **Required validation:** exact R90-94 feature/closure Git, task-state,
+  fetched-remote, and dual-Vault reconciliation; Jul 20 through Aug 14 phase
+  review; direct startup cancellation, private-listener creation, publication,
+  ownership, test, and public-doc mapping; complete unfinished-item fields;
+  exact row/Definition multiset comparison; task-state JSON, documentation,
+  knowledge, formatting, scope, and sensitive-information checks.
+- **Stop condition:** stop if exact R90-94 evidence is missing or contradictory,
+  a follow-on needs protocol/configuration/public API, private/external,
+  performance, or publication authority, validation is ambiguous, or
+  completion would start runtime/test work.
+- **Selected plan:**
+  [`task-20260814-post-listener-ownership-delivery-audit.md`](task-20260814-post-listener-ownership-delivery-audit.md),
+  from clean fetched baseline
+  `0dbf05acf1dcd233a9be6f76d54b947d77ff0290`.
+
+## R90-96 Definition
+
+- **Goal:** fail pre-readiness startup when the context is canceled after the
+  private listener exists but before its pathname and ownership are published.
+- **Risk:** returning success after cancellation can briefly publish a listener
+  that shutdown immediately removes, while a weak regression could cancel at
+  an already-covered boundary and leave the actual private-creation interval
+  untested.
+- **Required validation:** a direct synchronized regression cancels through the
+  existing private-listener-created seam and requires an error matching the
+  context sentinel, nil published receiver listener/ownership, absent public
+  pathname, and no private staging artifacts; already-canceled startup,
+  cancellation during the existing-socket probe, ordinary live startup,
+  post-readiness shutdown, configured mode/ownership, repeated uncached
+  receiver race, full native, E2E, documentation, and knowledge checks.
+- **Stop condition:** stop if deterministic proof needs fixed sleeps, an
+  exported/public seam, interruptible-filesystem guarantees, a dependency, or
+  protocol/configuration/public API, private-data, performance-policy, or
+  publication authority.
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -3091,6 +3137,23 @@ preserved Vault content hash
 `9f66c134e78a28538734d1c0891009c4142e667c7172969f394facef09cee94b`.
 No dependency-ready local increment remains. R90-59 and R90-75 retain their
 recorded external blockers, and neither was started.
+The Aug 14 trigger found the configured GitHub SSH port 22 route closed, then
+fetched successfully through the documented SSH-over-443 transport and
+verified the clean R90-94 docs-only closure at
+`0dbf05acf1dcd233a9be6f76d54b947d77ff0290`. Both exact R90-94 Vault notes,
+full-index rows, MOC links, and current stable MOC/UDS authority are verified.
+All 109 prior task states parse and all 98 prior roadmap row and Definition
+multisets match without duplicates or asymmetry. The 161-commit Jul 20 through
+Aug 14 phase review found no missing closure, stale stable authority, or
+unresolved local validation result that changes priority. R90-59 and R90-75
+retain their external blockers and no local row is ready, so R90-95 is selected
+as the documentation-only smallest safe queue unblocker with a persisted
+plan/state. Current `Start` checks cancellation before pathname preparation and
+during the existing-socket probe, but `createUnixListener` receives no context;
+the synchronized private-listener-created seam can observe cancellation while
+startup still proceeds toward mode application, pathname publication,
+ownership assignment, and a nil return. R90-96 records only cancellation after
+private listener creation and before publication, and remains unstarted.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
