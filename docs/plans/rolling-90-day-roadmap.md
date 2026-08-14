@@ -157,7 +157,7 @@
 | R90-92 | Aug 13–Sep 12 | Complete early | Preserve an immediate replacement Unix socket during receiver shutdown. | R90-91 | Shutdown removes its owned pathname only when non-following device, inode, and change-time identity still match; a direct immediate-inode-reuse regression preserves a replacement listener while ordinary owned cleanup and regular-file/symlink replacement behavior remain compatible. |
 | R90-93 | Aug 12 | Complete | Audit post-generation delivery and restore the listener-creation ownership queue. | R90-92 | A dated audit reconciles the R90-92 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-listen mode/ownership boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-94 | Aug 13–Sep 13 | Complete early | Bind UDS mode application and ownership capture to the created listener. | R90-93 | Startup applies the configured mode through the created listener identity and publishes ownership only if the non-following pathname still matches; direct regular-file, symlink-target, and replacement-listener races preserve replacement state and service while ordinary mode and shutdown cleanup remain compatible. |
-| R90-95 | Aug 14 | In progress | Audit post-listener-ownership delivery and restore the pre-readiness cancellation queue. | R90-94 | A dated audit reconciles the R90-94 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-private-listener cancellation boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
+| R90-95 | Aug 14 | Complete | Audit post-listener-ownership delivery and restore the pre-readiness cancellation queue. | R90-94 | A dated audit reconciles the R90-94 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-private-listener cancellation boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-96 | Aug 15–Sep 14 | Planned | Reject cancellation after private UDS listener creation. | R90-95 | Cancellation synchronized after private listener creation but before pathname publication returns the context sentinel, publishes no listener ownership, and leaves neither public nor private listener artifacts while existing startup/probe/shutdown behavior remains compatible. |
 
 ## R90-01 Definition
@@ -3154,6 +3154,20 @@ the synchronized private-listener-created seam can observe cancellation while
 startup still proceeds toward mode application, pathname publication,
 ownership assignment, and a nil return. R90-96 records only cancellation after
 private listener creation and before publication, and remains unstarted.
+R90-95 completed at
+`e109f91e012906546495eaa1fc18ee9aad71e064`: its exact three-path
+documentation audit was pushed without force or tags through the documented
+SSH-over-443 transport, freshly fetched with
+`FETCH_HEAD == HEAD == origin/main`, and passed the post-fetch 33-test
+knowledge gate. Exact range
+`0dbf05acf1dcd233a9be6f76d54b947d77ff0290..e109f91e012906546495eaa1fc18ee9aad71e064`
+was synchronized to the sole local Vault; its iteration note, full-index row,
+and MOC link are verified. Stable MOC prose now records the audited
+post-private-listener cancellation boundary and ready/unstarted R90-96
+follow-on. Identical-range replay preserved Vault content hash
+`595dcb5e24835a4ffef0c5e91188fd0313c1efe5e5d661d2b1f50ca46e4c1b00`.
+R90-96 is the next ready local increment and remains unstarted; R90-59 and
+R90-75 retain their external blockers.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent

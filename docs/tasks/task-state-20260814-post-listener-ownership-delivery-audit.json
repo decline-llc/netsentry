@@ -2,9 +2,9 @@
   "task": "r90-95-post-listener-ownership-delivery-audit",
   "timestamp": "2026-08-14T02:19:04-07:00",
   "branch": "main",
-  "remote_baseline": "0dbf05acf1dcd233a9be6f76d54b947d77ff0290",
+  "remote_baseline": "e109f91e012906546495eaa1fc18ee9aad71e064",
   "risk_level": "Low",
-  "current_checkpoint": "validated",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills plus the rolling roadmap before selection",
     "Fetched origin main through SSH over 443 and verified FETCH_HEAD HEAD and origin main at 0dbf05acf1dcd233a9be6f76d54b947d77ff0290 with a clean worktree",
@@ -23,14 +23,18 @@
     "Parsed all 110 task-state JSON files and verified all 100 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
     "Verified ordered R90-94 completion R90-95 selection and R90-96 planning chronology",
     "Passed documentation all 33 knowledge tests task-state JSON structural formatting exact three-path scope and sensitive-information review",
-    "Compared every R90-95 acceptance criterion to direct evidence with no unresolved deviation"
+    "Compared every R90-95 acceptance criterion to direct evidence with no unresolved deviation",
+    "Committed the exact three-path documentation audit at e109f91e012906546495eaa1fc18ee9aad71e064",
+    "Pushed main without force or tags through SSH over 443 and freshly fetched FETCH_HEAD HEAD and origin main equal to the feature commit",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range 0dbf05acf1dcd233a9be6f76d54b947d77ff0290..e109f91e012906546495eaa1fc18ee9aad71e064 to the sole local Vault",
+    "Verified the generated iteration note full-index row and MOC link",
+    "Reconciled stable MOC prose to the completed R90-95 audit and ready unstarted R90-96 boundary",
+    "Replayed the identical feature range and verified Vault content hash 595dcb5e24835a4ffef0c5e91188fd0313c1efe5e5d661d2b1f50ca46e4c1b00 remained unchanged",
+    "Completed R90-95 and left R90-96 ready but unstarted while R90-59 and R90-75 retain their external blockers"
   ],
-  "in_progress": [
-    "Perform exact staged review then commit push fetch verify and synchronize the documentation range"
-  ],
-  "todo": [
-    "Commit push fetch verify synchronize and close the exact R90-95 documentation range"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Only R90-95 delivery evidence forward queue documentation task-state commit push and local Vault reconciliation",
     "No receiver source or test implementation and do not start a later increment",
@@ -41,6 +45,19 @@
     "R90-59 and R90-75 remain externally blocked",
     "Any restored cancellation follow-on must remain unstarted until the next netsentry-next trigger"
   ],
-  "delivery": null,
-  "resume_instructions": "R90-95 audit and local validation are complete from baseline 0dbf05acf1dcd233a9be6f76d54b947d77ff0290. Do not repeat the audit or start R90-96; resume with exact staged review documentation commit push fetched-remote verification exact-range Vault synchronization and docs-only delivery closure."
+  "delivery": {
+    "commit": "e109f91e012906546495eaa1fc18ee9aad71e064",
+    "origin_main_verified": true,
+    "branch_push_no_follow_tags": true,
+    "fast_forward_ancestry_verified": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "0dbf05acf1dcd233a9be6f76d54b947d77ff0290..e109f91e012906546495eaa1fc18ee9aad71e064",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true,
+    "vault_reconciled_content_hash": "595dcb5e24835a4ffef0c5e91188fd0313c1efe5e5d661d2b1f50ca46e4c1b00"
+  },
+  "resume_instructions": "R90-95 is complete at e109f91e012906546495eaa1fc18ee9aad71e064; do not repeat its audit validation feature delivery or feature-range Vault synchronization. On the next netsentry-next trigger fetch and verify this docs-only closure plus its exact Vault evidence before selecting R90-96. R90-96 is ready but unstarted. Do not start R90-59 or R90-75 without their recorded external inputs and authority."
 }
