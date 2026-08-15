@@ -1,0 +1,58 @@
+{
+  "task": "r90-96-uds-private-listener-cancellation",
+  "timestamp": "2026-08-15T03:55:05-07:00",
+  "branch": "main",
+  "remote_baseline": "da317004c5ea655cda0ef19388d36c90029428ca",
+  "risk_level": "Medium",
+  "current_checkpoint": "awaiting_delivery",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills rolling roadmap knowledge contract latest R90-95 plan and state current receiver source tests and stable Vault authority",
+    "Fetched origin main and verified a clean HEAD and origin main baseline at da317004c5ea655cda0ef19388d36c90029428ca",
+    "Verified exact R90-95 feature and closure Git paths completed state dual Vault notes full-index rows MOC links and stable authority",
+    "Passed the 33-test knowledge gate before selection",
+    "Reviewed 163 Jul 20 through Aug 15 commits across four phases and found no missing closure stale stable claim or unresolved local validation result that changes priority",
+    "Confirmed R90-59 and R90-75 retain external blockers and reconciled R90-96 from stale Planned to Ready",
+    "Mapped startup context checks private listener creation seam publication ownership assignment existing direct regressions and artifact boundaries",
+    "Persisted R90-96 scope non-goals risks evidence map validation authority boundaries and stop conditions before behavior or compatibility documentation changes",
+    "Passed startup context into private listener creation and rejected cancellation at the existing post-creation pre-publication seam",
+    "Added a direct synchronized regression proving the private socket exists before cancellation and no public private or receiver-owned artifact remains after rejection",
+    "Diagnosed the first direct fixture failure as a Unix-address limit caused by the long test-derived staging path and corrected it with a short temporary base plus early-return observation",
+    "Passed the corrected focused acceptance and compatibility set normally twenty times uncached under race and in the complete receiver package uncached under race",
+    "Preflighted the pinned Go module toolchain and required local native E2E documentation and knowledge tools",
+    "Passed both C tests every Go package uncached under race E2E smoke documentation and all 33 knowledge tests",
+    "Parsed all 111 task-state JSON files and verified all 100 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
+    "Mapped every R90-96 acceptance criterion to direct evidence and passed formatting exact eight-path scope and sensitive-information review",
+    "Reviewed the exact staged eight-path feature with no unrelated path"
+  ],
+  "in_progress": [
+    "Deliver the validated feature"
+  ],
+  "todo": [
+    "Commit push fetch-verify run post-fetch knowledge check synchronize the exact Vault range and verify stable authority",
+    "Leave R90-59 and R90-75 blocked and do not start a later increment"
+  ],
+  "authority_boundaries": [
+    "Only R90-96 post-private-listener cancellation direct regression compatibility documentation and delivery",
+    "No interruptible-filesystem guarantee protocol configuration schema public API peer policy socket mode connection handling or shutdown ownership change",
+    "No exported seam dependency privileged filesystem control fixed sleep or platform-specific unsafe implementation",
+    "No private external data performance policy tag release image registry workflow or later increment"
+  ],
+  "remaining_risks": [
+    "Cancellation must be observed after private listener creation but before public pathname publication",
+    "Rejected startup must leave no public or private artifact and publish no receiver ownership state",
+    "R90-59 and R90-75 remain externally blocked"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "branch_push_no_follow_tags": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false,
+    "vault_stable_authority_reconciled": false,
+    "vault_idempotent_replay_verified": false
+  },
+  "resume_instructions": "R90-96 implementation and validation are complete; resume only its feature delivery from the exact staged eight-path change. Do not repeat the completed R90-95 audit or closure synchronization. Do not start R90-59 or R90-75 without their recorded external inputs and authority."
+}

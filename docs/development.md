@@ -758,10 +758,13 @@ pathname replaced during classification are preserved. An already-canceled
 context still fails before pathname inspection, mutation, or listener
 creation. Cancellation after the existing-socket probe begins also returns the
 context sentinel promptly, preserves the captured socket identity, and installs
-no receiver listener. Shutdown removes only a socket whose non-following
-device, inode, and change timestamp still match the identity captured by that
-receiver; missing or changed generation metadata preserves a replacement Unix
-listener, regular file, or symlink.
+no receiver listener. Cancellation synchronized after private listener
+creation but before pathname publication likewise returns the context
+sentinel, publishes no receiver ownership, and removes both the detached
+listener and its private staging artifacts. Shutdown removes only a socket
+whose non-following device, inode, and change timestamp still match the
+identity captured by that receiver; missing or changed generation metadata
+preserves a replacement Unix listener, regular file, or symlink.
 
 ---
 

@@ -134,7 +134,7 @@ func (r *Receiver) Start(ctx context.Context) error {
 	if err := removeExistingSocket(ctx, r.cfg.Path, r.probeExistingSocket); err != nil {
 		return fmt.Errorf("prepare uds listener %q: %w", r.cfg.Path, err)
 	}
-	unixListener, socket, privateDir, privatePath, err := r.createUnixListener()
+	unixListener, socket, privateDir, privatePath, err := r.createUnixListener(ctx)
 	if err != nil {
 		return fmt.Errorf("start uds listener %q: %w", r.cfg.Path, err)
 	}
@@ -161,7 +161,7 @@ func (r *Receiver) Start(ctx context.Context) error {
 	return nil
 }
 
-func (r *Receiver) createUnixListener() (*net.UnixListener, os.FileInfo, string, string, error) {
+func (r *Receiver) createUnixListener(ctx context.Context) (*net.UnixListener, os.FileInfo, string, string, error) {
 	stagingDir, err := os.MkdirTemp(filepath.Dir(r.cfg.Path), ".netsentry-uds-")
 	if err != nil {
 		return nil, nil, "", "", fmt.Errorf("create private listener directory: %w", err)
@@ -194,6 +194,9 @@ func (r *Receiver) createUnixListener() (*net.UnixListener, os.FileInfo, string,
 		if err := r.afterListenerCreated(); err != nil {
 			return fail(fmt.Errorf("after listener creation: %w", err), nil)
 		}
+	}
+	if err := ctx.Err(); err != nil {
+		return fail(fmt.Errorf("private listener creation canceled: %w", err), nil)
 	}
 	if err := os.Chmod(stagingPath, r.cfg.SocketMode); err != nil {
 		return fail(fmt.Errorf("chmod created listener: %w", err), nil)

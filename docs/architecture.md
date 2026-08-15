@@ -189,7 +189,10 @@ Target behavior:
   pathname. Startup captures ownership only after the published non-following
   identity matches the private created identity. The private link remains as
   an identity anchor until shutdown; a concurrent regular file, symlink, or
-  listener is neither modified nor claimed as owned.
+  listener is neither modified nor claimed as owned. Cancellation observed
+  after private listener creation but before publication rejects startup with
+  the context sentinel and removes the detached listener plus every private
+  staging artifact without publishing pathname ownership.
   Shutdown disables listener auto-unlink and removes the pathname only while
   its non-following device, inode, and change-time identity still matches the
   receiver's captured socket. Missing or changed generation metadata fails

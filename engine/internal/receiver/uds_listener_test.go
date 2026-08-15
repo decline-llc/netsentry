@@ -466,6 +466,86 @@ func TestStartCanceledContextPreservesExistingUnixSocket(t *testing.T) {
 	}
 }
 
+func TestStartCancellationAfterPrivateListenerCreationLeavesNoArtifacts(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	dir, err := os.MkdirTemp("", "netsentry-r96-")
+	if err != nil {
+		t.Fatalf("create short temporary directory: %v", err)
+	}
+	t.Cleanup(func() { _ = os.RemoveAll(dir) })
+	path := filepath.Join(dir, "netsentry.sock")
+	privateReady := make(chan error, 1)
+	releaseStart := make(chan struct{})
+	var releaseOnce sync.Once
+	release := func() {
+		releaseOnce.Do(func() { close(releaseStart) })
+	}
+	defer release()
+
+	r := New(Config{Path: path}, zap.NewNop())
+	r.afterListenerCreated = func() error {
+		matches, err := filepath.Glob(filepath.Join(dir, ".netsentry-uds-*"))
+		if err != nil {
+			privateReady <- fmt.Errorf("glob private listener directory: %w", err)
+			return err
+		}
+		if len(matches) != 1 {
+			err := fmt.Errorf("private listener directories = %v, want one", matches)
+			privateReady <- err
+			return err
+		}
+		info, err := os.Lstat(filepath.Join(matches[0], "socket"))
+		if err != nil {
+			privateReady <- fmt.Errorf("stat private listener: %w", err)
+			return err
+		}
+		if info.Mode()&os.ModeSocket == 0 {
+			err := fmt.Errorf("private listener mode = %v, want Unix socket", info.Mode())
+			privateReady <- err
+			return err
+		}
+		privateReady <- nil
+		<-releaseStart
+		return nil
+	}
+
+	startResult := make(chan error, 1)
+	go func() {
+		startResult <- r.Start(ctx)
+	}()
+
+	select {
+	case err := <-privateReady:
+		if err != nil {
+			t.Fatalf("observe private listener creation: %v", err)
+		}
+	case err := <-startResult:
+		t.Fatalf("startup returned before private listener seam: %v", err)
+	case <-time.After(5 * time.Second):
+		t.Fatal("timed out waiting for private listener creation")
+	}
+	cancel()
+	release()
+
+	select {
+	case err := <-startResult:
+		if !errors.Is(err, context.Canceled) {
+			t.Fatalf("start error = %v, want context.Canceled", err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("timed out waiting for canceled startup")
+	}
+	if r.ln != nil || r.socket != nil || r.privateSocketDir != "" || r.privateSocketPath != "" {
+		t.Fatal("receiver published listener ownership after private-listener cancellation")
+	}
+	if _, err := os.Lstat(path); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("public listener path exists after canceled startup: %v", err)
+	}
+	assertNoListenerStagingArtifacts(t, dir)
+}
+
 func TestStartCancellationDuringExistingSocketProbePreservesPath(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "netsentry.sock")
 	stale, err := net.Listen("unix", path)

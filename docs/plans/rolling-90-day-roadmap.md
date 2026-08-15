@@ -158,7 +158,7 @@
 | R90-93 | Aug 12 | Complete | Audit post-generation delivery and restore the listener-creation ownership queue. | R90-92 | A dated audit reconciles the R90-92 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-listen mode/ownership boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-94 | Aug 13–Sep 13 | Complete early | Bind UDS mode application and ownership capture to the created listener. | R90-93 | Startup applies the configured mode through the created listener identity and publishes ownership only if the non-following pathname still matches; direct regular-file, symlink-target, and replacement-listener races preserve replacement state and service while ordinary mode and shutdown cleanup remain compatible. |
 | R90-95 | Aug 14 | Complete | Audit post-listener-ownership delivery and restore the pre-readiness cancellation queue. | R90-94 | A dated audit reconciles the R90-94 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-private-listener cancellation boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-96 | Aug 15–Sep 14 | Planned | Reject cancellation after private UDS listener creation. | R90-95 | Cancellation synchronized after private listener creation but before pathname publication returns the context sentinel, publishes no listener ownership, and leaves neither public nor private listener artifacts while existing startup/probe/shutdown behavior remains compatible. |
+| R90-96 | Aug 15–Sep 14 | Complete early | Reject cancellation after private UDS listener creation. | R90-95 | Cancellation synchronized after private listener creation but before pathname publication returns the context sentinel, publishes no listener ownership, and leaves neither public nor private listener artifacts while existing startup/probe/shutdown behavior remains compatible. |
 
 ## R90-01 Definition
 
@@ -2009,6 +2009,10 @@
   exported/public seam, interruptible-filesystem guarantees, a dependency, or
   protocol/configuration/public API, private-data, performance-policy, or
   publication authority.
+- **Selected plan:**
+  [`task-20260815-uds-private-listener-cancellation.md`](task-20260815-uds-private-listener-cancellation.md),
+  from clean fetched baseline
+  `da317004c5ea655cda0ef19388d36c90029428ca`.
 
 ### R90-71 Validation Deviation
 
@@ -3168,6 +3172,43 @@ follow-on. Identical-range replay preserved Vault content hash
 `595dcb5e24835a4ffef0c5e91188fd0313c1efe5e5d661d2b1f50ca46e4c1b00`.
 R90-96 is the next ready local increment and remains unstarted; R90-59 and
 R90-75 retain their external blockers.
+The Aug 15 trigger fetched and verified the clean R90-95 docs-only closure at
+`da317004c5ea655cda0ef19388d36c90029428ca`, both exact R90-95 Vault notes,
+full-index rows, MOC links, and current stable MOC authority. All 110 prior
+task states parse and all 100 prior roadmap row and Definition multisets match
+without duplicate or asymmetric identifiers. The 163-commit Jul 20 through
+Aug 15 phase review adds only the R90-95 feature and closure to the prior
+audit; no missing record, stale stable authority, or unresolved local
+validation result changes priority. The forward queue status is reconciled
+from stale `Planned` to `Ready`: R90-96 is selected as the sole dependency-
+ready local increment with a persisted post-private-creation cancellation,
+artifact-preservation, evidence, non-goal, authority, and stop contract before
+receiver, test, or compatibility-documentation changes. R90-59 and R90-75
+retain their external blockers, and no later increment or publication action
+is started.
+R90-96 now passes the startup context into private listener creation and checks
+it immediately after the existing synchronized listener-created seam, before
+mode application or pathname publication. The direct regression observes a
+real private Unix socket, cancels and releases that seam, then proves
+`context.Canceled` matching, nil published listener/ownership fields, an absent
+public pathname, and no staging artifact. Its first run used the test name's
+long `t.TempDir` path and exceeded the Unix-address limit before reaching the
+seam; the fixture now uses a short temporary base and also observes early
+startup return. The corrected focused acceptance and compatibility set passes
+normally, twenty times uncached under race, and as part of the complete
+receiver race package. Complete repository validation remains the delivery
+boundary, and no later increment is started.
+The complete fail-fast repository chain passes both native C tests, every Go
+package uncached under race, E2E smoke, documentation, and all 33 knowledge
+tests. All 111 task states parse and all 100 roadmap rows match the complete
+Definition multiset with equal raw counts, no duplicate identifiers, and no
+asymmetry. Every R90-96 criterion reaches its direct promised boundary;
+formatting, exact eight-path scope, dependency/configuration/protocol/public-
+API/release boundaries, and sensitive-information review pass. The corrected
+short-path fixture fully resolves the sole focused-validation deviation.
+R90-96 satisfies its local acceptance evidence and awaits only feature
+delivery, fetched remote verification, and exact-range Vault synchronization.
+No later increment is started.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
