@@ -154,6 +154,27 @@ releases, images, registry publication, workflow dispatch, or later work.
   R90-96 awaits only exact staged review, feature delivery, fetched remote
   verification, and exact-range Vault synchronization.
 
+## Delivery Results
+
+- Feature commit:
+  `21303ded81714c096851116027b842f4055bff1a` (`fix: reject cancellation
+  before UDS publication`). It contains exactly the eight validated source,
+  test, compatibility-documentation, roadmap, plan, and task-state paths.
+- `main` was pushed without force or tags. A fresh fetch verified
+  `FETCH_HEAD == HEAD == origin/main == 21303ded81714c096851116027b842f4055bff1a`
+  with fast-forward ancestry from the recorded baseline, and the post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `da317004c5ea655cda0ef19388d36c90029428ca..21303ded81714c096851116027b842f4055bff1a`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC and UDS prose was reconciled to the completed R90-96 cancellation
+  and artifact-cleanup boundary without rewriting immutable iteration notes.
+  Replaying the identical range preserved Vault content hash
+  `ba7f350f817a14febdea488c958bb6d061f6e8fe0aaf2d63b651f937f387991e`.
+- R90-96 is complete. No dependency-ready local increment remains; R90-59 and
+  R90-75 retain their external blockers and were not started.
+
 ## Stop Conditions
 
 Stop if deterministic proof requires fixed sleeps, an exported/public seam,

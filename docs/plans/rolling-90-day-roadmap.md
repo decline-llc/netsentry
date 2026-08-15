@@ -3209,6 +3209,19 @@ short-path fixture fully resolves the sole focused-validation deviation.
 R90-96 satisfies its local acceptance evidence and awaits only feature
 delivery, fetched remote verification, and exact-range Vault synchronization.
 No later increment is started.
+R90-96 completed early at
+`21303ded81714c096851116027b842f4055bff1a`: its exact eight-path feature was
+pushed without force or tags, freshly fetched with
+`FETCH_HEAD == HEAD == origin/main`, and passed the post-fetch 33-test
+knowledge gate. Exact range
+`da317004c5ea655cda0ef19388d36c90029428ca..21303ded81714c096851116027b842f4055bff1a`
+was synchronized to the sole local Vault; its iteration note, full-index row,
+and MOC link are verified. Stable MOC/UDS prose now records the delivered
+post-private-creation cancellation and artifact-cleanup boundary; identical-
+range replay preserved Vault content hash
+`ba7f350f817a14febdea488c958bb6d061f6e8fe0aaf2d63b651f937f387991e`.
+No dependency-ready local increment remains. R90-59 and R90-75 retain their
+recorded external blockers, and neither was started.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
