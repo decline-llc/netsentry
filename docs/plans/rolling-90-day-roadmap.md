@@ -159,8 +159,8 @@
 | R90-94 | Aug 13–Sep 13 | Complete early | Bind UDS mode application and ownership capture to the created listener. | R90-93 | Startup applies the configured mode through the created listener identity and publishes ownership only if the non-following pathname still matches; direct regular-file, symlink-target, and replacement-listener races preserve replacement state and service while ordinary mode and shutdown cleanup remain compatible. |
 | R90-95 | Aug 14 | Complete | Audit post-listener-ownership delivery and restore the pre-readiness cancellation queue. | R90-94 | A dated audit reconciles the R90-94 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-private-listener cancellation boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-96 | Aug 15–Sep 14 | Complete early | Reject cancellation after private UDS listener creation. | R90-95 | Cancellation synchronized after private listener creation but before pathname publication returns the context sentinel, publishes no listener ownership, and leaves neither public nor private listener artifacts while existing startup/probe/shutdown behavior remains compatible. |
-| R90-97 | Aug 16 | In progress | Audit post-private-listener cancellation delivery and restore the final pre-readiness queue. | R90-96 | A dated audit reconciles the R90-96 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-publication readiness boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-98 | Aug 17–Sep 15 | Planned | Reject cancellation after UDS pathname publication. | R90-97 | Cancellation synchronized after the public listener pathname exists but before `Start` returns readiness returns the context sentinel, publishes no receiver ownership, and removes only its public/private listener artifacts while existing startup/probe/shutdown behavior remains compatible. |
+| R90-97 | Aug 16 | Complete | Audit post-private-listener cancellation delivery and restore the final pre-readiness queue. | R90-96 | A dated audit reconciles the R90-96 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-publication readiness boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
+| R90-98 | Aug 17–Sep 15 | Ready | Reject cancellation after UDS pathname publication. | R90-97 | Cancellation synchronized after the public listener pathname exists but before `Start` returns readiness returns the context sentinel, publishes no receiver ownership, and removes only its public/private listener artifacts while existing startup/probe/shutdown behavior remains compatible. |
 
 ## R90-01 Definition
 
@@ -3286,6 +3286,19 @@ cover cancellation immediately before publication and after readiness, not the
 pathname-published interval. R90-98 records only post-publication,
 pre-readiness cancellation plus identity-bound artifact cleanup and remains
 unstarted.
+R90-97 completed at
+`e15418e7186ed8b02e92a525b5c6257b9a14febc`: its exact three-path
+documentation audit was pushed without force or tags, freshly fetched with
+`FETCH_HEAD == HEAD == origin/main`, and passed the post-fetch 33-test
+knowledge gate. Exact range
+`0ba883c7b3ab065c00504651061079192142d6bd..e15418e7186ed8b02e92a525b5c6257b9a14febc`
+was synchronized to the sole local Vault; its iteration note, full-index row,
+and MOC link are verified. Stable MOC/UDS prose now records the audited
+post-publication readiness boundary and ready/unstarted R90-98 follow-on;
+identical-range replay preserved Vault content hash
+`0951c482520de5a8808a780e0538dde8009d27d27c6e58dd9e928ee8ae0621a9`.
+R90-98 is ready but was not started; R90-59 and R90-75 retain their external
+blockers.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
