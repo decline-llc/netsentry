@@ -2061,6 +2061,10 @@
   exported/public seam, interruptible-filesystem guarantees, a dependency, or
   protocol/configuration/public API, private-data, performance-policy, or
   publication authority.
+- **Selected plan:**
+  [`task-20260817-uds-published-listener-cancellation.md`](task-20260817-uds-published-listener-cancellation.md),
+  from clean fetched baseline
+  `1a42f0401c49b8ecc25fea361aa846cb6c36c13b`.
 
 ### R90-71 Validation Deviation
 
@@ -3299,6 +3303,37 @@ identical-range replay preserved Vault content hash
 `0951c482520de5a8808a780e0538dde8009d27d27c6e58dd9e928ee8ae0621a9`.
 R90-98 is ready but was not started; R90-59 and R90-75 retain their external
 blockers.
+The Aug 17 trigger fetched and verified the clean R90-97 docs-only closure at
+`1a42f0401c49b8ecc25fea361aa846cb6c36c13b`, both exact R90-97 Vault
+notes, full-index rows, MOC links, and current stable MOC/UDS authority. All
+112 prior task states parse and all 102 prior roadmap row and Definition
+multisets match without duplicates or asymmetry. The 167-commit Jul 20 through
+Aug 17 phase review adds only the R90-97 feature and closure to the prior
+audit; no missing record, stale stable authority, or unresolved local
+validation result changes priority. R90-59 and R90-75 retain their external
+blockers; R90-98 is selected as the sole dependency-ready local increment with
+a persisted post-publication cancellation, artifact-preservation, evidence,
+non-goal, authority, and stop contract before receiver or test changes.
+R90-98 now checks startup cancellation after the configured public pathname
+and private staging path pass the existing Unix-socket identity validation but
+before listener ownership returns to `Start`. The direct synchronized
+regression observes both live paths as the same socket before canceling, then
+proves `context.Canceled` matching, nil receiver ownership, an absent public
+path, and complete private cleanup. The focused set passes normally, twenty
+times uncached under race, and as part of the complete receiver race package.
+The first formatting command used repository-relative paths from the `engine`
+module, stopped before tests, and changed nothing; the corrected complete
+focused sequence passed.
+The first complete repository chain stopped when the unchanged R90-92
+immediate-inode-reuse fixture did not induce inode reuse. Its exact test passed
+twenty uncached race executions without unrelated changes, and a complete
+chain restart then passed both C tests, every Go package uncached under race,
+E2E smoke, documentation, and all 33 knowledge tests. All 113 task states parse
+and all 102 roadmap rows match the Definition multiset with equal raw counts,
+no duplicates, and no asymmetry. Every R90-98 criterion reaches its promised
+boundary; formatting, exact eight-path scope, and sensitive-information review
+pass. R90-98 awaits only feature delivery, fetched remote verification, and
+exact-range Vault synchronization. No later increment is started.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent

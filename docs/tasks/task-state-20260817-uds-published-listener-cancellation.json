@@ -1,0 +1,47 @@
+{
+  "task": "r90-98-uds-published-listener-cancellation",
+  "timestamp": "2026-08-17T01:02:46-07:00",
+  "branch": "main",
+  "remote_baseline": "1a42f0401c49b8ecc25fea361aa846cb6c36c13b",
+  "risk_level": "Medium",
+  "current_checkpoint": "validated_awaiting_delivery",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills rolling roadmap knowledge contract latest R90-97 plan and state current receiver source tests and stable Vault authority",
+    "Fetched origin main through SSH over 443 and verified a clean FETCH_HEAD HEAD and origin main baseline at 1a42f0401c49b8ecc25fea361aa846cb6c36c13b",
+    "Verified exact R90-97 feature and closure Git paths completed state dual Vault notes full-index rows MOC links and stable authority",
+    "Passed the 33-test knowledge gate before selection",
+    "Reviewed 167 Jul 20 through Aug 17 commits across four phases and found no missing closure stale stable claim or unresolved local validation result that changes priority",
+    "Parsed all 112 prior task states and verified all 102 prior roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
+    "Confirmed R90-59 and R90-75 retain external blockers and selected R90-98 as the sole dependency-ready local increment",
+    "Mapped startup context checks private listener creation public identity validation ownership assignment existing direct regressions and artifact boundaries",
+    "Persisted R90-98 scope non-goals risks evidence map validation authority boundaries and stop conditions before behavior or compatibility documentation changes",
+    "Added one unexported post-publication receiver seam and rejected active context cancellation after public private identity validation through established identity-bound cleanup",
+    "Added a direct synchronized regression that observes both published listener paths as the same Unix socket before cancellation and proves context matching nil ownership and complete public private cleanup",
+    "Recorded and corrected a focused setup-only module path deviation then reran the complete formatting and focused sequence successfully",
+    "Passed the corrected acceptance and compatibility set normally twenty times uncached under race and in the complete receiver package uncached under race",
+    "Preflighted the pinned Go module toolchain and required native E2E documentation and knowledge tools",
+    "Recorded the first complete chain failure in the unchanged R90-92 immediate inode reuse fixture and verified the exact test passed twenty uncached race executions without unrelated changes",
+    "Restarted and passed the complete chain with both C tests every Go package uncached under race E2E smoke documentation and all 33 knowledge tests",
+    "Parsed all 113 task-state JSON files and verified all 102 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
+    "Mapped every R90-98 acceptance criterion to direct evidence and passed formatting exact eight-path scope and sensitive-information review"
+  ],
+  "in_progress": [
+    "Review the exact staged feature and deliver it"
+  ],
+  "todo": [
+    "Commit and push the exact validated feature without force or tags",
+    "Fetch and verify the remote then synchronize and reconcile the exact Vault range",
+    "Create and deliver one docs-only closure record if verified push facts must be persisted"
+  ],
+  "authority_boundaries": [
+    "Only R90-98 post-publication pre-readiness context rejection direct regression compatibility documentation and delivery",
+    "No interruptible-filesystem guarantee protocol configuration schema public API peer policy socket mode connection handling or shutdown ownership change",
+    "No exported seam dependency privileged filesystem control fixed sleep or platform-specific unsafe implementation",
+    "No private external data performance policy tag release image registry workflow or later increment"
+  ],
+  "remaining_risks": [
+    "Cleanup must remain bound to the captured created socket identity if the public pathname changes",
+    "R90-59 and R90-75 remain externally blocked"
+  ],
+  "resume_instructions": "Resume only R90-98 from the persisted implementation checkpoint. Review the plan before editing. Do not start later work or R90-59 or R90-75."
+}

@@ -9,6 +9,11 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- The Go UDS receiver now rejects startup cancellation observed after its
+  created listener is published and identity-validated but before receiver
+  readiness. The error preserves the context sentinel, no receiver ownership
+  is published, and only the created public/private listener artifacts are
+  removed.
 - The Go UDS receiver now rejects startup cancellation observed after private
   listener creation but before pathname publication. The returned error
   preserves the context sentinel, no listener ownership is published, and the

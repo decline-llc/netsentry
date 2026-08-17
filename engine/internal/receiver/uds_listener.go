@@ -50,19 +50,20 @@ type Config struct {
 
 // Receiver owns a UDS listener and a context-aware packet channel.
 type Receiver struct {
-	cfg                  Config
-	logger               *zap.Logger
-	packets              chan *model.PacketInfo
-	state                *heartbeatState
-	ln                   net.Listener
-	socket               os.FileInfo
-	privateSocketDir     string
-	privateSocketPath    string
-	stats                *stats.Stats
-	wg                   sync.WaitGroup
-	slots                chan struct{}
-	probeExistingSocket  func(context.Context, string) (net.Conn, error)
-	afterListenerCreated func() error
+	cfg                    Config
+	logger                 *zap.Logger
+	packets                chan *model.PacketInfo
+	state                  *heartbeatState
+	ln                     net.Listener
+	socket                 os.FileInfo
+	privateSocketDir       string
+	privateSocketPath      string
+	stats                  *stats.Stats
+	wg                     sync.WaitGroup
+	slots                  chan struct{}
+	probeExistingSocket    func(context.Context, string) (net.Conn, error)
+	afterListenerCreated   func() error
+	afterListenerPublished func() error
 }
 
 // New constructs a receiver. Start must be called before packets arrive.
@@ -221,6 +222,14 @@ func (r *Receiver) createUnixListener(ctx context.Context) (*net.UnixListener, o
 	}
 	if current.Mode()&os.ModeSocket == 0 || !sameUnixSocketIdentity(created, current) {
 		return fail(fmt.Errorf("listener path changed before ownership capture"), created)
+	}
+	if r.afterListenerPublished != nil {
+		if err := r.afterListenerPublished(); err != nil {
+			return fail(fmt.Errorf("after listener publication: %w", err), created)
+		}
+	}
+	if err := ctx.Err(); err != nil {
+		return fail(fmt.Errorf("published listener creation canceled: %w", err), created)
 	}
 	return listener, current, stagingDir, stagingPath, nil
 }

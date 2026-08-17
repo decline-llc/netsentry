@@ -192,7 +192,11 @@ Target behavior:
   listener is neither modified nor claimed as owned. Cancellation observed
   after private listener creation but before publication rejects startup with
   the context sentinel and removes the detached listener plus every private
-  staging artifact without publishing pathname ownership.
+  staging artifact without publishing pathname ownership. Cancellation
+  observed after public/private identity validation but before receiver
+  readiness follows the same fail-closed contract: startup preserves the
+  context sentinel, publishes no receiver ownership, and removes only the
+  created public/private listener artifacts.
   Shutdown disables listener auto-unlink and removes the pathname only while
   its non-following device, inode, and change-time identity still matches the
   receiver's captured socket. Missing or changed generation metadata fails
