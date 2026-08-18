@@ -168,6 +168,27 @@ tag/release/image/registry publication, or workflow dispatch.
   delivery, fetched remote verification, and exact-range Vault synchronization.
   R90-100 remains planned and unstarted.
 
+## Delivery Results
+
+- Documentation feature commit:
+  `863ebd6c97a20e9265615c3aa29367a0bcae29a6` (`docs: audit
+  post-publication delivery`). It contains exactly the three validated roadmap,
+  plan, and task-state paths.
+- `main` was pushed without force or tags. A fresh fetch verified
+  `FETCH_HEAD == HEAD == origin/main == 863ebd6c97a20e9265615c3aa29367a0bcae29a6`
+  with fast-forward ancestry from the recorded baseline, and the post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `a2b3f65611ce1e69e44746275909ef293fe349b8..863ebd6c97a20e9265615c3aa29367a0bcae29a6`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC and UDS prose was reconciled to the completed R90-99 audit and
+  ready/unstarted R90-100 boundary without rewriting immutable iteration notes.
+  Replaying the identical range preserved Vault content hash
+  `f2c34e4bf52d719d63d37f13a6b0c95233ef0b83bd8bd5080d3e77cf2d1c36cc`.
+- R90-99 is complete. R90-100 is the next ready local increment and remains
+  unstarted; R90-59 and R90-75 retain their external blockers.
+
 ## Stop Conditions
 
 Stop if R90-98 evidence is missing or contradictory, the cancellation gap
