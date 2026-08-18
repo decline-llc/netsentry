@@ -161,6 +161,8 @@
 | R90-96 | Aug 15–Sep 14 | Complete early | Reject cancellation after private UDS listener creation. | R90-95 | Cancellation synchronized after private listener creation but before pathname publication returns the context sentinel, publishes no listener ownership, and leaves neither public nor private listener artifacts while existing startup/probe/shutdown behavior remains compatible. |
 | R90-97 | Aug 16 | Complete | Audit post-private-listener cancellation delivery and restore the final pre-readiness queue. | R90-96 | A dated audit reconciles the R90-96 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-publication readiness boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-98 | Aug 17–Sep 15 | Complete early | Reject cancellation after UDS pathname publication. | R90-97 | Cancellation synchronized after the public listener pathname exists but before `Start` returns readiness returns the context sentinel, publishes no receiver ownership, and removes only its public/private listener artifacts while existing startup/probe/shutdown behavior remains compatible. |
+| R90-99 | Aug 18 | In progress | Audit post-publication delivery and restore the return-to-readiness queue. | R90-98 | A dated audit reconciles the R90-98 feature/closure, recent phases, fetched remote, exact Vault evidence, and the remaining listener-return/ownership boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
+| R90-100 | Aug 19–Sep 16 | Planned | Reject cancellation after UDS listener creation returns. | R90-99 | Cancellation synchronized after `createUnixListener` returns its live public/private listener artifacts but before `Start` publishes receiver ownership returns the context sentinel, publishes no ownership, and removes only those returned artifacts while adjacent startup and shutdown behavior remains compatible. |
 
 ## R90-01 Definition
 
@@ -2066,6 +2068,48 @@
   from clean fetched baseline
   `1a42f0401c49b8ecc25fea361aa846cb6c36c13b`.
 
+## R90-99 Definition
+
+- **Goal:** reconcile R90-98 delivery and restore only directly evidenced work
+  after the dependency-ready queue emptied.
+- **Risk:** broad post-publication language can obscure the distinct interval
+  after `createUnixListener` returns but before `Start` publishes ownership and
+  readiness, while this audit must not reopen completed R90-98 work.
+- **Required validation:** exact R90-98 feature/closure Git, task-state,
+  fetched-remote, and dual-Vault reconciliation; Jul 20 through Aug 18 phase
+  review; direct post-publication check, listener return, ownership/readiness,
+  test, and stable-doc mapping; complete unfinished-item fields; exact
+  row/Definition multiset comparison; task-state JSON, documentation,
+  knowledge, formatting, scope, and sensitive-information checks.
+- **Stop condition:** stop if exact R90-98 evidence is missing or contradictory,
+  a follow-on needs protocol/configuration/public API, private/external,
+  performance, or publication authority, validation is ambiguous, or
+  completion would start runtime/test work.
+- **Selected plan:**
+  [`task-20260818-post-publication-delivery-audit.md`](task-20260818-post-publication-delivery-audit.md),
+  from clean fetched baseline
+  `a2b3f65611ce1e69e44746275909ef293fe349b8`.
+
+## R90-100 Definition
+
+- **Goal:** fail pre-readiness startup when the context is canceled after
+  `createUnixListener` returns successfully but before `Start` publishes the
+  returned listener and pathname ownership.
+- **Risk:** the public listener is live before receiver ownership and its
+  cancellation goroutine exist, while cleanup must remain bound to the
+  returned socket identity and must not remove a replacement pathname.
+- **Required validation:** a direct synchronized post-return/pre-ownership
+  regression requires an error matching the context sentinel, nil receiver
+  listener/path ownership, absent owned public/private artifacts, and no
+  removal of a replacement pathname; the existing entry/probe/private/
+  publication cancellation, live-startup, configured mode/ownership,
+  replacement-preservation, post-readiness shutdown, repeated uncached
+  receiver race, full native, E2E, documentation, and knowledge checks pass.
+- **Stop condition:** stop if deterministic proof needs fixed sleeps, an
+  exported/public seam, interruptible-filesystem guarantees, a dependency, or
+  protocol/configuration/public API, private-data, performance-policy, or
+  publication authority.
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -3347,6 +3391,41 @@ range replay preserved Vault content hash
 `fd4706fbee1ab1e8b19bd895caee131e63c8797fa5fa0f1d22a3381c7582b5dd`.
 No dependency-ready local increment remains. R90-59 and R90-75 retain their
 recorded external blockers, and neither was started.
+The Aug 18 trigger fetched and verified the clean R90-98 docs-only closure at
+`a2b3f65611ce1e69e44746275909ef293fe349b8`, both exact R90-98 Vault
+notes, full-index rows, MOC links, and current stable MOC/UDS authority. All
+113 prior task states parse and all 102 prior roadmap row and Definition
+multisets match without duplicates or asymmetry. The 169-commit Jul 20 through
+Aug 18 phase review adds only the R90-98 feature and closure to the prior
+audit; no missing record, stale stable authority, or unresolved local
+validation result changes priority. R90-59 and R90-75 retain their external
+blockers and no local row is ready, so R90-99 is selected as the documentation-
+only smallest safe queue unblocker with a persisted plan/state. R90-98 checks
+cancellation after public/private identity validation inside
+`createUnixListener`; after that function returns, `Start` assigns receiver
+ownership, initializes capacity, launches lifecycle goroutines, and returns
+success without another context check or a direct synchronized regression for
+that distinct interval. No runtime, test, later increment, or publication work
+is started.
+The R90-99 audit reconciles R90-98 feature
+`c088eade025aea1b30bb7f84d9ddc2ee52893f3a` and closure
+`a2b3f65611ce1e69e44746275909ef293fe349b8` with their exact parent chain,
+intended eight/three paths, completed task state, fetched remote, both exact
+Vault notes, full-index rows, MOC links, and current stable authority. The
+four delivery phases contain 59 commits Jul 20-25, 40 Jul 26-Aug 2, 46 Aug
+3-9, and 24 Aug 10-18. Resolved setup, fixture, chronology, and transport
+deviations remain recorded at their exact strengths; none creates a missing
+delivery record, stale stable claim, or unresolved validation blocker.
+R90-98's direct seam and prose accurately prove cancellation observed inside
+`createUnixListener` after identity validation. They do not prove the later
+interval after its successful return, when `Start` has live local listener and
+pathname values but has not assigned receiver ownership, initialized slots,
+or launched cancellation and accept goroutines. Only planned R90-100 is
+restored for a synchronized post-return/pre-ownership context check with
+identity-bound public/private cleanup and replacement preservation. It remains
+unstarted; arbitrary filesystem interruption, protocol/configuration/public
+API changes, performance policy, private data, and publication remain outside
+R90-99.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
