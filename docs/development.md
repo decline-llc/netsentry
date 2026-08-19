@@ -764,7 +764,10 @@ sentinel, publishes no receiver ownership, and removes both the detached
 listener and its private staging artifacts. Cancellation synchronized after
 public/private listener identity validation but before readiness also returns
 the context sentinel, publishes no receiver ownership, and removes only the
-created public/private artifacts. Shutdown removes only a socket whose
+created public/private artifacts. Cancellation after listener creation returns
+to `Start` but before receiver ownership assignment is checked separately;
+identity-bound cleanup removes only the returned artifacts and preserves a
+replacement pathname occupant. Shutdown removes only a socket whose
 non-following device, inode, and change timestamp still match the identity
 captured by that receiver; missing or changed generation metadata preserves a
 replacement Unix listener, regular file, or symlink.

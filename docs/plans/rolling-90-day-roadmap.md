@@ -2109,6 +2109,10 @@
   exported/public seam, interruptible-filesystem guarantees, a dependency, or
   protocol/configuration/public API, private-data, performance-policy, or
   publication authority.
+- **Selected plan:**
+  [`task-20260819-uds-returned-listener-cancellation.md`](task-20260819-uds-returned-listener-cancellation.md),
+  from clean fetched baseline
+  `039cd60a04b0e682a282f9d0f22c130f7cfedcfc`.
 
 ### R90-71 Validation Deviation
 
@@ -3439,6 +3443,39 @@ range replay preserved Vault content hash
 `f2c34e4bf52d719d63d37f13a6b0c95233ef0b83bd8bd5080d3e77cf2d1c36cc`.
 R90-100 is ready but was not started; R90-59 and R90-75 retain their external
 blockers.
+The Aug 19 trigger fetched and verified the clean R90-99 docs-only closure at
+`039cd60a04b0e682a282f9d0f22c130f7cfedcfc`, both exact R90-99 Vault notes,
+full-index rows, MOC links, and current stable MOC/UDS authority. All 114 prior
+task states parse and all 104 prior roadmap row and Definition multisets match
+without duplicates or asymmetry. The 171-commit Jul 20 through Aug 19 phase
+review adds only the R90-99 feature and closure to the prior audit; no missing
+record, stale stable authority, or unresolved local validation result changes
+priority. R90-59 and R90-75 retain their external blockers; R90-100 is selected
+as the sole dependency-ready local increment with a persisted post-return
+cancellation, identity-bound cleanup, replacement-preservation, evidence,
+non-goal, authority, and stop contract before receiver or compatibility-
+documentation changes. No later increment or publication action is started.
+R90-100 now checks startup cancellation after `createUnixListener` returns its
+live listener, captured public identity, and private identity anchor but before
+any of them are assigned to `Receiver`. The direct synchronized regression
+observes the returned public/private identity, then proves context-sentinel
+matching, nil receiver ownership, and complete owned-artifact cleanup. Its
+replacement case displaces the public path before cancellation and proves the
+replacement listener identity, mode, and service survive. The first formatting
+command stopped on a missing test brace before any test ran; after correction,
+the focused set passes normally, twenty times uncached under race, and as part
+of the complete receiver race package. Complete repository validation remains
+the delivery boundary, and no later increment is started.
+The complete fail-fast repository chain passes both native C test binaries,
+every Go package uncached under race, E2E smoke, documentation, and all 33
+knowledge tests. All 115 task states parse and all 104 roadmap rows match the
+Definition multiset with equal raw counts, no duplicates, and no asymmetry.
+Every R90-100 criterion reaches its promised post-return, pre-ownership and
+replacement-preservation boundary; formatting, exact eight-path scope, and
+sensitive-information review pass. The missing-brace setup deviation is fully
+resolved by every corrected clean sequence. R90-100 awaits only feature
+delivery, fetched remote verification, and exact-range Vault synchronization.
+No later increment is started.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent

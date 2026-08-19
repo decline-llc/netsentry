@@ -64,6 +64,7 @@ type Receiver struct {
 	probeExistingSocket    func(context.Context, string) (net.Conn, error)
 	afterListenerCreated   func() error
 	afterListenerPublished func() error
+	afterListenerReturned  func() error
 }
 
 // New constructs a receiver. Start must be called before packets arrive.
@@ -138,6 +139,29 @@ func (r *Receiver) Start(ctx context.Context) error {
 	unixListener, socket, privateDir, privatePath, err := r.createUnixListener(ctx)
 	if err != nil {
 		return fmt.Errorf("start uds listener %q: %w", r.cfg.Path, err)
+	}
+	fail := func(cause error) error {
+		var cleanupErrs []error
+		if err := removeOwnedSocket(r.cfg.Path, socket); err != nil {
+			cleanupErrs = append(cleanupErrs, err)
+		}
+		if err := unixListener.Close(); err != nil {
+			cleanupErrs = append(cleanupErrs, fmt.Errorf("close returned listener: %w", err))
+		}
+		if err := removePrivateSocket(privateDir, privatePath); err != nil {
+			cleanupErrs = append(cleanupErrs, err)
+		}
+		return errors.Join(append([]error{cause}, cleanupErrs...)...)
+	}
+	if r.afterListenerReturned != nil {
+		if err := r.afterListenerReturned(); err != nil {
+			return fmt.Errorf("start uds listener %q: %w", r.cfg.Path,
+				fail(fmt.Errorf("after listener return: %w", err)))
+		}
+	}
+	if err := ctx.Err(); err != nil {
+		return fmt.Errorf("start uds listener %q: %w", r.cfg.Path,
+			fail(fmt.Errorf("returned listener startup canceled: %w", err)))
 	}
 	ln := net.Listener(unixListener)
 	r.ln = ln

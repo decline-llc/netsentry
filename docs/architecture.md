@@ -196,7 +196,10 @@ Target behavior:
   observed after public/private identity validation but before receiver
   readiness follows the same fail-closed contract: startup preserves the
   context sentinel, publishes no receiver ownership, and removes only the
-  created public/private listener artifacts.
+  created public/private listener artifacts. A final context check after the
+  listener and identity anchor return to `Start`, but before receiver ownership
+  assignment, applies the same identity-bound cleanup and preserves any
+  replacement pathname occupant.
   Shutdown disables listener auto-unlink and removes the pathname only while
   its non-following device, inode, and change-time identity still matches the
   receiver's captured socket. Missing or changed generation metadata fails
