@@ -162,7 +162,7 @@
 | R90-97 | Aug 16 | Complete | Audit post-private-listener cancellation delivery and restore the final pre-readiness queue. | R90-96 | A dated audit reconciles the R90-96 feature/closure, recent phases, fetched remote, exact Vault evidence, and current post-publication readiness boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-98 | Aug 17–Sep 15 | Complete early | Reject cancellation after UDS pathname publication. | R90-97 | Cancellation synchronized after the public listener pathname exists but before `Start` returns readiness returns the context sentinel, publishes no receiver ownership, and removes only its public/private listener artifacts while existing startup/probe/shutdown behavior remains compatible. |
 | R90-99 | Aug 18 | Complete | Audit post-publication delivery and restore the return-to-readiness queue. | R90-98 | A dated audit reconciles the R90-98 feature/closure, recent phases, fetched remote, exact Vault evidence, and the remaining listener-return/ownership boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-100 | Aug 19–Sep 16 | Ready | Reject cancellation after UDS listener creation returns. | R90-99 | Cancellation synchronized after `createUnixListener` returns its live public/private listener artifacts but before `Start` publishes receiver ownership returns the context sentinel, publishes no ownership, and removes only those returned artifacts while adjacent startup and shutdown behavior remains compatible. |
+| R90-100 | Aug 19–Sep 16 | Complete early | Reject cancellation after UDS listener creation returns. | R90-99 | Cancellation synchronized after `createUnixListener` returns its live public/private listener artifacts but before `Start` publishes receiver ownership returns the context sentinel, publishes no ownership, and removes only those returned artifacts while adjacent startup and shutdown behavior remains compatible. |
 
 ## R90-01 Definition
 
@@ -3476,6 +3476,19 @@ sensitive-information review pass. The missing-brace setup deviation is fully
 resolved by every corrected clean sequence. R90-100 awaits only feature
 delivery, fetched remote verification, and exact-range Vault synchronization.
 No later increment is started.
+R90-100 completed early at
+`286531d3748c27edff8172d9b78f0f54a070937a`: its exact eight-path feature
+was pushed without force or tags, freshly fetched with
+`FETCH_HEAD == HEAD == origin/main`, and passed the post-fetch 33-test
+knowledge gate. Exact range
+`039cd60a04b0e682a282f9d0f22c130f7cfedcfc..286531d3748c27edff8172d9b78f0f54a070937a`
+was synchronized to the sole local Vault; its iteration note, full-index row,
+and MOC link are verified. Stable MOC/UDS prose now records the delivered
+post-return cancellation and identity-bound replacement-preservation boundary;
+identical-range replay preserved Vault content hash
+`be26d72f5208ced6198e0c92ce39d450eb8a5a4b491509b9523f4ca99c3db599`.
+No dependency-ready local increment remains. R90-59 and R90-75 retain their
+recorded external blockers, and neither was started.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent

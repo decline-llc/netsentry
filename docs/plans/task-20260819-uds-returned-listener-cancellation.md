@@ -152,6 +152,27 @@ later work.
   review, feature delivery, fetched remote verification, and exact-range Vault
   synchronization. No later increment is started.
 
+## Delivery Results
+
+- Feature commit:
+  `286531d3748c27edff8172d9b78f0f54a070937a` (`fix: reject cancellation
+  after UDS listener return`). It contains exactly the eight validated source,
+  test, compatibility-documentation, roadmap, plan, and task-state paths.
+- `main` was pushed without force or tags. A fresh fetch verified
+  `FETCH_HEAD == HEAD == origin/main == 286531d3748c27edff8172d9b78f0f54a070937a`
+  with fast-forward ancestry from the recorded baseline, and the post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `039cd60a04b0e682a282f9d0f22c130f7cfedcfc..286531d3748c27edff8172d9b78f0f54a070937a`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC and UDS prose was reconciled to the completed R90-100 behavior
+  without rewriting immutable iteration notes. Replaying the identical range
+  preserved Vault content hash
+  `be26d72f5208ced6198e0c92ce39d450eb8a5a4b491509b9523f4ca99c3db599`.
+- R90-100 is complete. No dependency-ready local increment remains; R90-59
+  and R90-75 retain their external blockers and were not started.
+
 ## Stop Conditions
 
 Stop if deterministic proof requires fixed sleeps, an exported/public seam,
