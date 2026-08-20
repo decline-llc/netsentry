@@ -3561,6 +3561,19 @@ cleared internal ownership, identity-bound public/private cleanup, and
 replacement preservation. It remains unstarted; runtime/tests, arbitrary
 filesystem interruption, protocol/configuration/public API changes,
 performance policy, private data, and publication remain outside R90-101.
+R90-101 completed at
+`d51de9f82c3af58d88f6254a12d5a5ac658debf7`: its exact three-path
+documentation audit was pushed without force or tags, freshly fetched with
+`FETCH_HEAD == HEAD == origin/main`, and passed the post-fetch 33-test
+knowledge gate. Exact range
+`8fff1070299f2698c4cd9daa5da36b97f57f80de..d51de9f82c3af58d88f6254a12d5a5ac658debf7`
+was synchronized to the sole local Vault; its iteration note, full-index row,
+and MOC link are verified. Stable MOC/UDS prose now records the audited
+ownership-to-goroutine boundary and ready/unstarted R90-102 follow-on;
+identical-range replay preserved Vault content hash
+`72628823636cf0f683abc8957618fd7b89d6d9733504a25fd54e04b75a1a9317`.
+R90-102 is ready but was not started; R90-59 and R90-75 retain their external
+blockers.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
