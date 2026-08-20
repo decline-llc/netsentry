@@ -163,6 +163,8 @@
 | R90-98 | Aug 17–Sep 15 | Complete early | Reject cancellation after UDS pathname publication. | R90-97 | Cancellation synchronized after the public listener pathname exists but before `Start` returns readiness returns the context sentinel, publishes no receiver ownership, and removes only its public/private listener artifacts while existing startup/probe/shutdown behavior remains compatible. |
 | R90-99 | Aug 18 | Complete | Audit post-publication delivery and restore the return-to-readiness queue. | R90-98 | A dated audit reconciles the R90-98 feature/closure, recent phases, fetched remote, exact Vault evidence, and the remaining listener-return/ownership boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-100 | Aug 19–Sep 16 | Complete early | Reject cancellation after UDS listener creation returns. | R90-99 | Cancellation synchronized after `createUnixListener` returns its live public/private listener artifacts but before `Start` publishes receiver ownership returns the context sentinel, publishes no ownership, and removes only those returned artifacts while adjacent startup and shutdown behavior remains compatible. |
+| R90-101 | Aug 20 | Complete | Audit post-return delivery and restore the ownership-to-readiness queue. | R90-100 | A dated audit reconciles the R90-100 feature/closure, recent phases, fetched remote, exact Vault evidence, and the remaining ownership-assignment/readiness boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
+| R90-102 | Aug 21–Sep 17 | Ready | Reject cancellation after UDS receiver ownership assignment. | R90-101 | Cancellation synchronized after receiver listener/path ownership and capacity are initialized but before lifecycle goroutines or readiness return yields the context sentinel, clears receiver ownership, and removes only its owned public/private artifacts while preserving a replacement pathname and adjacent lifecycle behavior. |
 
 ## R90-01 Definition
 
@@ -2114,6 +2116,48 @@
   from clean fetched baseline
   `039cd60a04b0e682a282f9d0f22c130f7cfedcfc`.
 
+## R90-101 Definition
+
+- **Goal:** reconcile the completed R90-100 feature and closure, then restore
+  at most one directly evidenced local follow-on across the remaining receiver
+  ownership-assignment to readiness-return boundary.
+- **Risk:** stale feature-only evidence could hide the fetched closure, while a
+  broad follow-on could reopen completed cancellation seams or promise
+  interruption outside a deterministic startup boundary.
+- **Required validation:** exact R90-100 feature/closure Git, task-state,
+  fetched-remote, dual-note Vault, full-index, MOC, and stable-authority
+  evidence; dated phase-level history; current source/test boundary mapping;
+  complete roadmap row/Definition multiset comparison; task-state JSON,
+  documentation, knowledge, diff, scope, and sensitive-information checks.
+- **Stop condition:** stop if R90-100 evidence is missing or contradictory, a
+  follow-on needs protocol/configuration/public API, private/external,
+  performance, or publication authority, validation is ambiguous, or
+  completion would start runtime/test work.
+- **Selected plan:**
+  [`task-20260820-post-return-delivery-audit.md`](task-20260820-post-return-delivery-audit.md),
+  from clean fetched baseline
+  `8fff1070299f2698c4cd9daa5da36b97f57f80de`.
+
+## R90-102 Definition
+
+- **Goal:** fail pre-readiness startup when the context is canceled after
+  receiver listener/path ownership and connection capacity are initialized but
+  before lifecycle goroutines launch or `Start` returns success.
+- **Risk:** receiver fields can expose ownership before any cancellation
+  goroutine exists, while rollback must clear internal ownership and remain
+  bound to the created socket identity without removing a replacement path.
+- **Required validation:** a direct synchronized post-ownership/pre-goroutine
+  regression requires an error matching the context sentinel, cleared receiver
+  listener/path/capacity ownership, absent owned public/private artifacts, no
+  launched lifecycle goroutine, and preservation of a replacement pathname;
+  the complete earlier cancellation seams, live startup, configured ownership,
+  replacement cleanup, post-readiness shutdown, repeated uncached receiver
+  race, full native, E2E, documentation, and knowledge checks pass.
+- **Stop condition:** stop if deterministic proof needs fixed sleeps, an
+  exported/public seam, interruptible-filesystem guarantees, a dependency, or
+  protocol/configuration/public API, private-data, performance-policy, or
+  publication authority.
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -3489,6 +3533,34 @@ identical-range replay preserved Vault content hash
 `be26d72f5208ced6198e0c92ce39d450eb8a5a4b491509b9523f4ca99c3db599`.
 No dependency-ready local increment remains. R90-59 and R90-75 retain their
 recorded external blockers, and neither was started.
+The Aug 20 trigger fetched and verified the clean R90-100 docs-only closure at
+`8fff1070299f2698c4cd9daa5da36b97f57f80de`, both exact R90-100 Vault notes,
+full-index rows, MOC links, and current stable MOC/UDS authority. All 115 prior
+task states parse and all 104 prior roadmap row and Definition multisets match
+without duplicates or asymmetry. The 173-commit Jul 20 through Aug 20 phase
+review adds only the R90-100 feature and closure to the prior audit; its
+missing-brace setup deviation was resolved before validation, and no missing
+record, stale stable authority, or unresolved local validation result changes
+priority. R90-59 and R90-75 retain their external blockers and no local row is
+ready, so R90-101 is selected as the documentation-only smallest safe queue
+unblocker with a persisted plan/state.
+The R90-101 audit reconciles R90-100 feature
+`286531d3748c27edff8172d9b78f0f54a070937a` and closure
+`8fff1070299f2698c4cd9daa5da36b97f57f80de` with their exact parent chain,
+intended eight/three paths, completed task state, fetched remote, both exact
+Vault notes, full-index rows, MOC links, and current stable authority. The four
+delivery phases contain 59 commits Jul 20-25, 40 Jul 26-Aug 2, 46 Aug 3-9,
+and 28 Aug 10-20. Current source and prose accurately place R90-100 after
+listener return and before receiver ownership assignment. After that check,
+`Start` assigns listener/path ownership and connection capacity, then launches
+the cancellation and accept goroutines and returns success without another
+context check; current direct tests cover the prior seam and post-readiness
+shutdown, not this ownership-to-goroutine interval. Only ready R90-102 is
+restored for a synchronized post-ownership/pre-goroutine context check with
+cleared internal ownership, identity-bound public/private cleanup, and
+replacement preservation. It remains unstarted; runtime/tests, arbitrary
+filesystem interruption, protocol/configuration/public API changes,
+performance policy, private data, and publication remain outside R90-101.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
