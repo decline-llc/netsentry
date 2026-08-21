@@ -164,7 +164,7 @@
 | R90-99 | Aug 18 | Complete | Audit post-publication delivery and restore the return-to-readiness queue. | R90-98 | A dated audit reconciles the R90-98 feature/closure, recent phases, fetched remote, exact Vault evidence, and the remaining listener-return/ownership boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-100 | Aug 19–Sep 16 | Complete early | Reject cancellation after UDS listener creation returns. | R90-99 | Cancellation synchronized after `createUnixListener` returns its live public/private listener artifacts but before `Start` publishes receiver ownership returns the context sentinel, publishes no ownership, and removes only those returned artifacts while adjacent startup and shutdown behavior remains compatible. |
 | R90-101 | Aug 20 | Complete | Audit post-return delivery and restore the ownership-to-readiness queue. | R90-100 | A dated audit reconciles the R90-100 feature/closure, recent phases, fetched remote, exact Vault evidence, and the remaining ownership-assignment/readiness boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-102 | Aug 21–Sep 17 | Ready | Reject cancellation after UDS receiver ownership assignment. | R90-101 | Cancellation synchronized after receiver listener/path ownership and capacity are initialized but before lifecycle goroutines or readiness return yields the context sentinel, clears receiver ownership, and removes only its owned public/private artifacts while preserving a replacement pathname and adjacent lifecycle behavior. |
+| R90-102 | Aug 21–Sep 17 | Complete early | Reject cancellation after UDS receiver ownership assignment. | R90-101 | Cancellation synchronized after receiver listener/path ownership and capacity are initialized but before lifecycle goroutines or readiness return yields the context sentinel, clears receiver ownership, and removes only its owned public/private artifacts while preserving a replacement pathname and adjacent lifecycle behavior. |
 
 ## R90-01 Definition
 
@@ -3617,6 +3617,20 @@ eight-path scope, and anchored sensitive-information review pass. The module-
 relative setup deviation is fully resolved by every corrected clean sequence.
 R90-102 awaits only feature delivery, fetched remote verification, and exact-
 range Vault synchronization. No later increment is started.
+R90-102 completed early at
+`2e88d00144e3642c99c7603dc53984cac66b620c`: its exact eight-path feature was
+pushed without force or tags, freshly fetched with
+`FETCH_HEAD == HEAD == origin/main`, and passed the post-fetch 33-test
+knowledge gate. Exact range
+`81482afa283a8b5f21e6afa74a43527cb438e9f6..2e88d00144e3642c99c7603dc53984cac66b620c`
+was synchronized to the sole local Vault; its iteration note, full-index row,
+and MOC link are verified. Stable MOC/UDS prose now records the delivered post-
+ownership cancellation, complete internal rollback, and identity-bound
+replacement-preservation boundary; identical-range replay preserved Vault
+content hash
+`79a8fc2654e00fc5bd650312c60b195b4c63e7cfd5d30176db70971534e4d6d5`.
+No dependency-ready local increment remains. R90-59 and R90-75 retain their
+recorded external blockers, and neither was started.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
