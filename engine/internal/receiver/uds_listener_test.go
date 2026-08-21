@@ -26,6 +26,17 @@ func TestMain(m *testing.M) {
 	goleak.VerifyTestMain(m)
 }
 
+type doneObservedContext struct {
+	context.Context
+	doneCalled chan struct{}
+	doneOnce   sync.Once
+}
+
+func (c *doneObservedContext) Done() <-chan struct{} {
+	c.doneOnce.Do(func() { close(c.doneCalled) })
+	return c.Context.Done()
+}
+
 func TestHandleLineControlFrames(t *testing.T) {
 	r := New(Config{BufferSize: 1}, zap.NewNop())
 	ctx := context.Background()
@@ -757,6 +768,164 @@ func TestStartCancellationAfterListenerReturn(t *testing.T) {
 			}
 			if r.ln != nil || r.socket != nil || r.privateSocketDir != "" || r.privateSocketPath != "" {
 				t.Fatal("receiver published listener ownership after post-return cancellation")
+			}
+			if tt.replacement {
+				after, err := os.Lstat(path)
+				if err != nil {
+					t.Fatalf("stat preserved replacement listener: %v", err)
+				}
+				if !sameUnixSocketIdentity(replacementInfo, after) {
+					t.Fatal("canceled startup removed or replaced the replacement listener")
+				}
+				if got := after.Mode().Perm(); got != 0o660 {
+					t.Fatalf("replacement listener mode = %o, want 660", got)
+				}
+				assertUnixListenerRoundTrip(t, replacement, path)
+			} else if _, err := os.Lstat(path); !errors.Is(err, os.ErrNotExist) {
+				t.Fatalf("public listener path exists after canceled startup: %v", err)
+			}
+			assertNoListenerStagingArtifacts(t, dir)
+		})
+	}
+}
+
+func TestStartCancellationAfterReceiverOwnership(t *testing.T) {
+	tests := []struct {
+		name        string
+		replacement bool
+	}{
+		{name: "owned artifacts removed"},
+		{name: "replacement listener preserved", replacement: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			baseCtx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			ctx := &doneObservedContext{
+				Context:    baseCtx,
+				doneCalled: make(chan struct{}),
+			}
+
+			dir, err := os.MkdirTemp("", "netsentry-r102-")
+			if err != nil {
+				t.Fatalf("create short temporary directory: %v", err)
+			}
+			t.Cleanup(func() { _ = os.RemoveAll(dir) })
+			path := filepath.Join(dir, "netsentry.sock")
+			ownershipReady := make(chan error, 1)
+			releaseStart := make(chan struct{})
+			var releaseOnce sync.Once
+			release := func() {
+				releaseOnce.Do(func() { close(releaseStart) })
+			}
+			defer release()
+
+			var replacement net.Listener
+			var replacementInfo os.FileInfo
+			r := New(Config{Path: path, SocketMode: 0o600, MaxConnections: 3}, zap.NewNop())
+			r.afterOwnershipAssigned = func() error {
+				if r.ln == nil || r.socket == nil || r.privateSocketDir == "" || r.privateSocketPath == "" {
+					err := errors.New("receiver ownership is incomplete at post-ownership seam")
+					ownershipReady <- err
+					return err
+				}
+				if r.slots == nil || cap(r.slots) != 3 || len(r.slots) != 3 {
+					err := fmt.Errorf("receiver capacity = len %d cap %d, want 3/3", len(r.slots), cap(r.slots))
+					ownershipReady <- err
+					return err
+				}
+				privateInfo, err := os.Lstat(r.privateSocketPath)
+				if err != nil {
+					ownershipReady <- fmt.Errorf("stat owned private listener: %w", err)
+					return err
+				}
+				publicInfo, err := os.Lstat(path)
+				if err != nil {
+					ownershipReady <- fmt.Errorf("stat owned public listener: %w", err)
+					return err
+				}
+				if !sameUnixSocketIdentity(privateInfo, publicInfo) || !sameUnixSocketIdentity(r.socket, publicInfo) {
+					err := errors.New("receiver public private and captured listener identities differ")
+					ownershipReady <- err
+					return err
+				}
+				waitReturned := make(chan struct{})
+				go func() {
+					r.Wait()
+					close(waitReturned)
+				}()
+				select {
+				case <-waitReturned:
+				case <-time.After(5 * time.Second):
+					err := errors.New("receiver accept lifecycle started before post-ownership seam")
+					ownershipReady <- err
+					return err
+				}
+				if tt.replacement {
+					if err := os.Remove(path); err != nil {
+						ownershipReady <- fmt.Errorf("remove owned public listener: %w", err)
+						return err
+					}
+					replacement, err = net.Listen("unix", path)
+					if err != nil {
+						ownershipReady <- fmt.Errorf("create replacement listener: %w", err)
+						return err
+					}
+					replacement.(*net.UnixListener).SetUnlinkOnClose(false)
+					if err := os.Chmod(path, 0o660); err != nil {
+						ownershipReady <- fmt.Errorf("set replacement listener mode: %w", err)
+						return err
+					}
+					replacementInfo, err = os.Lstat(path)
+					if err != nil {
+						ownershipReady <- fmt.Errorf("stat replacement listener: %w", err)
+						return err
+					}
+				}
+				ownershipReady <- nil
+				<-releaseStart
+				return nil
+			}
+			t.Cleanup(func() {
+				if replacement != nil {
+					_ = replacement.Close()
+				}
+				_ = os.Remove(path)
+			})
+
+			startResult := make(chan error, 1)
+			go func() {
+				startResult <- r.Start(ctx)
+			}()
+
+			select {
+			case err := <-ownershipReady:
+				if err != nil {
+					t.Fatalf("observe receiver ownership: %v", err)
+				}
+			case err := <-startResult:
+				t.Fatalf("startup returned before post-ownership seam: %v", err)
+			case <-time.After(5 * time.Second):
+				t.Fatal("timed out waiting for receiver ownership")
+			}
+			cancel()
+			release()
+
+			select {
+			case err := <-startResult:
+				if !errors.Is(err, context.Canceled) {
+					t.Fatalf("start error = %v, want context.Canceled", err)
+				}
+			case <-time.After(5 * time.Second):
+				t.Fatal("timed out waiting for canceled startup")
+			}
+			if r.ln != nil || r.socket != nil || r.privateSocketDir != "" || r.privateSocketPath != "" || r.slots != nil {
+				t.Fatal("receiver retained listener pathname or capacity ownership after cancellation")
+			}
+			select {
+			case <-ctx.doneCalled:
+				t.Fatal("receiver launched context lifecycle goroutine before rejecting startup")
+			default:
 			}
 			if tt.replacement {
 				after, err := os.Lstat(path)

@@ -65,6 +65,7 @@ type Receiver struct {
 	afterListenerCreated   func() error
 	afterListenerPublished func() error
 	afterListenerReturned  func() error
+	afterOwnershipAssigned func() error
 }
 
 // New constructs a receiver. Start must be called before packets arrive.
@@ -171,6 +172,24 @@ func (r *Receiver) Start(ctx context.Context) error {
 	r.slots = make(chan struct{}, r.cfg.MaxConnections)
 	for i := 0; i < r.cfg.MaxConnections; i++ {
 		r.slots <- struct{}{}
+	}
+	failOwned := func(cause error) error {
+		r.ln = nil
+		r.socket = nil
+		r.privateSocketDir = ""
+		r.privateSocketPath = ""
+		r.slots = nil
+		return fail(cause)
+	}
+	if r.afterOwnershipAssigned != nil {
+		if err := r.afterOwnershipAssigned(); err != nil {
+			return fmt.Errorf("start uds listener %q: %w", r.cfg.Path,
+				failOwned(fmt.Errorf("after receiver ownership assignment: %w", err)))
+		}
+	}
+	if err := ctx.Err(); err != nil {
+		return fmt.Errorf("start uds listener %q: %w", r.cfg.Path,
+			failOwned(fmt.Errorf("owned listener startup canceled: %w", err)))
 	}
 
 	go func() {

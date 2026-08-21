@@ -767,7 +767,11 @@ the context sentinel, publishes no receiver ownership, and removes only the
 created public/private artifacts. Cancellation after listener creation returns
 to `Start` but before receiver ownership assignment is checked separately;
 identity-bound cleanup removes only the returned artifacts and preserves a
-replacement pathname occupant. Shutdown removes only a socket whose
+replacement pathname occupant. Cancellation after receiver ownership and
+connection capacity initialization but before lifecycle goroutine launch also
+returns the context sentinel, clears listener/path/capacity ownership, and
+removes only the receiver's captured artifacts while preserving a replacement.
+Shutdown removes only a socket whose
 non-following device, inode, and change timestamp still match the identity
 captured by that receiver; missing or changed generation metadata preserves a
 replacement Unix listener, regular file, or symlink.

@@ -199,6 +199,10 @@ Target behavior:
   created public/private listener artifacts. A final context check after the
   listener and identity anchor return to `Start`, but before receiver ownership
   assignment, applies the same identity-bound cleanup and preserves any
+  replacement pathname occupant. Startup checks once more after listener/path
+  ownership and bounded connection capacity are initialized but before either
+  lifecycle goroutine launches; cancellation clears every receiver ownership
+  field and applies the same identity-bound cleanup without disturbing a
   replacement pathname occupant.
   Shutdown disables listener auto-unlink and removes the pathname only while
   its non-following device, inode, and change-time identity still matches the

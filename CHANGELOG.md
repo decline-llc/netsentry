@@ -9,6 +9,11 @@ NetSentry uses [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- The Go UDS receiver now rejects startup cancellation observed after receiver
+  listener/path ownership and bounded connection capacity are initialized but
+  before lifecycle goroutines launch. The error keeps the context sentinel,
+  clears internal ownership, removes only its public/private artifacts, and
+  preserves a replacement listener installed at the configured pathname.
 - The Go UDS receiver now rejects startup cancellation observed after listener
   creation returns but before receiver ownership is published. The error keeps
   the context sentinel, removes only the returned public/private artifacts,

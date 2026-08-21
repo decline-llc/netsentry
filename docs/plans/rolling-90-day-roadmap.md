@@ -2016,6 +2016,10 @@
   protocol/configuration/public API, private-data, performance-policy, or
   publication authority.
 - **Selected plan:**
+  [`task-20260821-uds-owned-listener-cancellation.md`](task-20260821-uds-owned-listener-cancellation.md),
+  from clean fetched baseline
+  `81482afa283a8b5f21e6afa74a43527cb438e9f6`.
+- **Selected plan:**
   [`task-20260815-uds-private-listener-cancellation.md`](task-20260815-uds-private-listener-cancellation.md),
   from clean fetched baseline
   `da317004c5ea655cda0ef19388d36c90029428ca`.
@@ -3574,6 +3578,45 @@ identical-range replay preserved Vault content hash
 `72628823636cf0f683abc8957618fd7b89d6d9733504a25fd54e04b75a1a9317`.
 R90-102 is ready but was not started; R90-59 and R90-75 retain their external
 blockers.
+The Aug 21 trigger fetched and verified the clean R90-101 docs-only closure at
+`81482afa283a8b5f21e6afa74a43527cb438e9f6`, both exact R90-101 Vault notes,
+full-index rows, MOC links, and current stable MOC/UDS authority. All 116 prior
+task states parse and all 106 prior roadmap row and Definition multisets match
+without duplicates or asymmetry. The 175-commit Jul 20 through Aug 21 phase
+review adds only the R90-101 feature and closure to the prior audit; no missing
+record, stale stable authority, or unresolved local validation result changes
+priority. R90-59 and R90-75 retain their external blockers; R90-102 is selected
+as the sole dependency-ready local increment with a persisted post-ownership
+cancellation, internal rollback, identity-bound cleanup, replacement-
+preservation, evidence, non-goal, authority, and stop contract before receiver
+or compatibility-documentation changes. No later increment or publication
+action is started.
+R90-102 now checks startup cancellation after listener/path ownership and
+bounded connection capacity are assigned to the receiver but before either
+lifecycle goroutine launches. Rejection clears every receiver listener,
+pathname, and capacity field before identity-bound public/private cleanup. The
+direct synchronized regression observes complete receiver ownership, proves
+the accept wait group and context watcher have not started, then proves context-
+sentinel matching and complete internal/artifact rollback. Its replacement case
+displaces the public path after receiver ownership and proves the replacement
+listener identity, mode, and service survive. The first formatting/focused
+command used repository-root paths from the Go module and stopped before any
+test ran; the corrected complete formatting, direct, and adjacent lifecycle
+sequence passes. Repeated race and complete repository validation remain the
+delivery boundary, and no later increment is started.
+The acceptance regression passes twenty times uncached under the race detector
+and the complete receiver package passes uncached under race. The complete
+fail-fast repository chain passes both native C test binaries, every Go package
+uncached under race, E2E smoke with six packets processed, five alerts
+generated, and eight rules loaded, documentation, and all 33 knowledge tests.
+All 117 task states parse and all 106 roadmap rows match the Definition
+multiset with equal raw counts, no duplicates, and no asymmetry. Every R90-102
+criterion reaches its promised post-ownership, pre-goroutine, internal rollback,
+and replacement-preservation boundary; formatting, ordered history, exact
+eight-path scope, and anchored sensitive-information review pass. The module-
+relative setup deviation is fully resolved by every corrected clean sequence.
+R90-102 awaits only feature delivery, fetched remote verification, and exact-
+range Vault synchronization. No later increment is started.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
