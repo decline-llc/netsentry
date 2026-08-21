@@ -3704,6 +3704,19 @@ bound public/private cleanup, and replacement preservation. It remains
 unstarted; runtime/tests, arbitrary goroutine scheduling or filesystem
 interruption, protocol/configuration/public API changes, performance policy,
 private data, and publication remain outside R90-103.
+R90-103 completed at
+`9736ccf8b07d5d513669595f29af4968ca684b87`: its exact three-path
+documentation audit was pushed without force or tags, freshly fetched with
+`FETCH_HEAD == HEAD == origin/main`, and passed the post-fetch 33-test
+knowledge gate. Exact range
+`df1294779f914da589956b7a4c1c9a74388c9fd8..9736ccf8b07d5d513669595f29af4968ca684b87`
+was synchronized to the sole local Vault; its iteration note, full-index row,
+and MOC link are verified. Stable MOC/UDS prose now records the audited
+post-lifecycle-launch/pre-return boundary and ready/unstarted R90-104 follow-on;
+identical-range replay preserved Vault content hash
+`57fb5d63b43de3a726f7ced1e024bac5d785eefab2d0fa4402a245f7a9c53f98`.
+R90-104 is ready but was not started; R90-59 and R90-75 retain their external
+blockers.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
