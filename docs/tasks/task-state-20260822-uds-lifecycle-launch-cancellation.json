@@ -1,0 +1,63 @@
+{
+  "task": "r90-104-uds-lifecycle-launch-cancellation",
+  "timestamp": "2026-08-22T05:46:28-07:00",
+  "branch": "main",
+  "remote_baseline": "7b7821678c1b09336ea8b8bcce990dfd9de84f01",
+  "risk_level": "Medium",
+  "current_checkpoint": "selected",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills active rolling roadmap knowledge contract latest R90-103 and R90-102 plans and states current receiver source tests and stable Vault authority",
+    "Fetched origin main and verified a clean FETCH_HEAD HEAD and origin main baseline at 7b7821678c1b09336ea8b8bcce990dfd9de84f01",
+    "Verified exact R90-103 feature and closure Git paths completed state dual Vault notes full-index rows MOC links and stable R90-104-ready authority",
+    "Passed the 33-test knowledge gate before selection",
+    "Reviewed 179 Jul 20 through Aug 22 commits across four phases and found no missing closure stale stable authority or unresolved validation result that changes priority",
+    "Parsed all 118 prior task states and verified all 108 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
+    "Confirmed R90-59 and R90-75 retain external blockers and selected R90-104 as the sole dependency-ready local increment",
+    "Mapped lifecycle launch readiness return current context checks direct regressions wait accounting receiver ownership and identity-bound artifact cleanup",
+    "Persisted R90-104 scope non-goals risks evidence map validation authority boundaries and stop conditions before behavior or compatibility documentation changes",
+    "Added an observable two-goroutine lifecycle launch barrier and final startup context check",
+    "Made rejected startup cancel and join the separately tracked watcher plus the existing accept and handler wait group before clearing receiver ownership and repeating identity-bound cleanup",
+    "Preserved existing public Stop and Wait semantics by keeping the context watcher outside the receiver wait group",
+    "Added direct synchronized ordinary and replacement-listener regressions proving context matching bounded lifecycle termination complete ownership rollback owned-artifact cleanup and replacement identity mode and service preservation",
+    "Passed focused normal adjacent lifecycle race twenty uncached direct race repetitions and the complete receiver package under race",
+    "Reconciled compatibility documentation roadmap implementation checkpoints and task-state evidence",
+    "Preflighted the pinned Go module toolchain and required native E2E documentation and knowledge tools",
+    "Passed both C tests every Go package uncached under race E2E smoke documentation and all 33 knowledge tests in one complete fail-fast chain",
+    "Parsed all 119 task-state JSON files and verified all 108 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
+    "Mapped every R90-104 acceptance criterion to direct evidence and passed formatting ordered history exact eight-path scope and sensitive-information review",
+    "Recorded a pre-commit chronology setup failure caused by a repeated generic validation marker and replaced it with the unique R90-104 acceptance marker before counting any later pre-commit result"
+  ],
+  "in_progress": [
+    "Deliver the validated feature"
+  ],
+  "todo": [
+    "Deliver the validated feature and synchronize its exact Vault range",
+    "Record verified delivery facts without starting another increment"
+  ],
+  "authority_boundaries": [
+    "Only R90-104 post-lifecycle-launch pre-readiness context rejection direct regressions compatibility documentation and delivery",
+    "No arbitrary scheduling or interruptible-filesystem guarantee protocol configuration schema public API peer policy socket mode connection handling or shutdown pathname-ownership change",
+    "No exported seam dependency privileged filesystem control fixed sleep or platform-specific unsafe implementation",
+    "No private external data performance policy tag release image registry workflow or later increment"
+  ],
+  "remaining_risks": [
+    "Both launched lifecycle goroutines must terminate before receiver ownership is cleared and rejected startup returns",
+    "Identity-bound cleanup must preserve a replacement public pathname",
+    "R90-59 and R90-75 remain externally blocked"
+  ],
+  "delivery": {
+    "commit": null,
+    "origin_main_verified": false,
+    "branch_push_no_follow_tags": false,
+    "fast_forward_ancestry_verified": false,
+    "post_fetch_knowledge_check": "pending",
+    "vault_range": null,
+    "vault_note_verified": false,
+    "vault_full_index_verified": false,
+    "vault_moc_verified": false,
+    "vault_stable_authority_reconciled": false,
+    "vault_idempotent_replay_verified": false,
+    "vault_reconciled_content_hash": null
+  },
+  "resume_instructions": "R90-104 is selected from clean fetched baseline 7b7821678c1b09336ea8b8bcce990dfd9de84f01 with its plan and state persisted. Resume only its post-lifecycle-launch pre-readiness context rejection direct regressions compatibility documentation validation delivery and exact-range Vault synchronization. Do not start R90-59 or R90-75 without their recorded external inputs and authority."
+}

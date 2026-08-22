@@ -771,6 +771,13 @@ replacement pathname occupant. Cancellation after receiver ownership and
 connection capacity initialization but before lifecycle goroutine launch also
 returns the context sentinel, clears listener/path/capacity ownership, and
 removes only the receiver's captured artifacts while preserving a replacement.
+Cancellation synchronized after both lifecycle goroutines cross their start
+barrier but before `Start` returns readiness is covered separately. Rejection
+joins the cancellation watcher plus the accept/handler lifecycle before
+clearing ownership and proves ordinary owned-artifact removal and replacement-
+listener identity, mode, and service preservation. The watcher uses separate
+startup rollback accounting, so existing `Stop(); Wait()` behavior is not
+broadened to require context cancellation.
 Shutdown removes only a socket whose
 non-following device, inode, and change timestamp still match the identity
 captured by that receiver; missing or changed generation metadata preserves a

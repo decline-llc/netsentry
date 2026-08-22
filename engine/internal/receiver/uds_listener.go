@@ -66,6 +66,7 @@ type Receiver struct {
 	afterListenerPublished func() error
 	afterListenerReturned  func() error
 	afterOwnershipAssigned func() error
+	afterLifecycleStarted  func() error
 }
 
 // New constructs a receiver. Start must be called before packets arrive.
@@ -146,7 +147,7 @@ func (r *Receiver) Start(ctx context.Context) error {
 		if err := removeOwnedSocket(r.cfg.Path, socket); err != nil {
 			cleanupErrs = append(cleanupErrs, err)
 		}
-		if err := unixListener.Close(); err != nil {
+		if err := unixListener.Close(); err != nil && !errors.Is(err, net.ErrClosed) {
 			cleanupErrs = append(cleanupErrs, fmt.Errorf("close returned listener: %w", err))
 		}
 		if err := removePrivateSocket(privateDir, privatePath); err != nil {
@@ -192,16 +193,41 @@ func (r *Receiver) Start(ctx context.Context) error {
 			failOwned(fmt.Errorf("owned listener startup canceled: %w", err)))
 	}
 
+	lifecycleCtx, stopLifecycle := context.WithCancel(ctx)
+	var lifecycleStarted sync.WaitGroup
+	lifecycleStarted.Add(2)
+	var watcherWG sync.WaitGroup
+	watcherWG.Add(1)
 	go func() {
-		<-ctx.Done()
+		defer watcherWG.Done()
+		lifecycleStarted.Done()
+		<-lifecycleCtx.Done()
 		r.Stop()
 	}()
 
 	r.wg.Add(1)
 	go func() {
 		defer r.wg.Done()
-		r.acceptLoop(ctx, ln, r.slots)
+		lifecycleStarted.Done()
+		r.acceptLoop(lifecycleCtx, ln, r.slots)
 	}()
+	lifecycleStarted.Wait()
+	failLifecycle := func(cause error) error {
+		stopLifecycle()
+		watcherWG.Wait()
+		r.Wait()
+		return failOwned(cause)
+	}
+	if r.afterLifecycleStarted != nil {
+		if err := r.afterLifecycleStarted(); err != nil {
+			return fmt.Errorf("start uds listener %q: %w", r.cfg.Path,
+				failLifecycle(fmt.Errorf("after receiver lifecycle launch: %w", err)))
+		}
+	}
+	if err := ctx.Err(); err != nil {
+		return fmt.Errorf("start uds listener %q: %w", r.cfg.Path,
+			failLifecycle(fmt.Errorf("launched listener startup canceled: %w", err)))
+	}
 	return nil
 }
 

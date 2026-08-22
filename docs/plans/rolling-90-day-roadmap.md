@@ -2206,6 +2206,10 @@
   exported/public seam, interruptible-filesystem guarantees, a dependency, or
   protocol/configuration/public API, private-data, performance-policy, or
   publication authority.
+- **Selected plan:**
+  [`task-20260822-uds-lifecycle-launch-cancellation.md`](task-20260822-uds-lifecycle-launch-cancellation.md),
+  from clean fetched baseline
+  `7b7821678c1b09336ea8b8bcce990dfd9de84f01`.
 
 ### R90-71 Validation Deviation
 
@@ -3717,6 +3721,47 @@ identical-range replay preserved Vault content hash
 `57fb5d63b43de3a726f7ced1e024bac5d785eefab2d0fa4402a245f7a9c53f98`.
 R90-104 is ready but was not started; R90-59 and R90-75 retain their external
 blockers.
+The Aug 22 trigger fetched and verified the clean R90-103 docs-only closure at
+`7b7821678c1b09336ea8b8bcce990dfd9de84f01`, both exact R90-103 Vault
+notes, full-index rows, MOC links, and current stable MOC/UDS authority. All
+118 prior task states parse and all 108 roadmap row and Definition multisets
+match without duplicates or asymmetry. The 179-commit Jul 20 through Aug 22
+phase review adds only the R90-103 feature/closure to the prior audit; no
+missing record, stale stable authority, or unresolved local validation result
+changes priority. R90-59 and R90-75 retain their external blockers; R90-104 is
+selected as the sole dependency-ready local increment with a persisted post-
+lifecycle-launch cancellation, bounded termination, ownership rollback,
+identity-bound cleanup, replacement-preservation, evidence, non-goal,
+authority, and stop contract before receiver or compatibility-documentation
+changes. No later increment or publication action is started.
+R90-104 now starts the cancellation watcher and accept loop behind a two-party
+observable launch barrier, then checks the startup context once more before
+readiness return. Rejected startup cancels the derived lifecycle, joins the
+watcher separately plus the existing accept/handler wait group, and only then
+clears receiver ownership and repeats captured-identity cleanup. The direct
+synchronized table regression reaches that exact post-launch seam and proves
+context-sentinel matching, bounded lifecycle termination, complete internal
+and owned-artifact rollback, and replacement listener identity, mode, and
+service preservation. Focused normal, adjacent lifecycle race, twenty
+uncached direct race repetitions, and the complete receiver race package pass;
+full repository validation remains the delivery boundary. No later increment
+is started.
+The complete fail-fast repository chain passes both native C test binaries,
+every Go package uncached under race, E2E smoke with six packets processed,
+five alerts generated, and eight rules loaded, documentation, and all 33
+knowledge tests. The module selected pinned Go 1.25.12 after the complete local
+tool surface was preflighted. All 119 task states parse and all 108 roadmap
+rows match the Definition multiset with equal raw counts, no duplicates, and
+no asymmetry. Every R90-104 criterion reaches its promised post-lifecycle-
+launch/pre-return, joined-goroutine, internal rollback, and replacement-
+preservation boundary; formatting, ordered history, exact eight-path scope,
+and anchored sensitive-information review pass. The first pre-commit chronology
+command used a repeated generic complete-validation sentence and correctly
+stopped after matching an older checkpoint; no later result from that sequence
+was counted. The corrected complete pre-commit sequence uses the unique R90-104
+acceptance marker and remains the delivery boundary. R90-104 awaits only
+feature delivery, fetched remote verification, and exact-range Vault
+synchronization. No later increment is started.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent

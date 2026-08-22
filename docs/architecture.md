@@ -204,6 +204,13 @@ Target behavior:
   lifecycle goroutine launches; cancellation clears every receiver ownership
   field and applies the same identity-bound cleanup without disturbing a
   replacement pathname occupant.
+  Both lifecycle goroutines cross an observable start barrier before readiness
+  can return, followed by one final context check. Cancellation synchronized at
+  that post-launch boundary stops and joins the watcher, accept loop, and any
+  accepted handlers before clearing receiver ownership; cleanup remains bound
+  to the captured public/private identity and preserves a replacement pathname
+  occupant. The watcher retains separate startup accounting so ordinary
+  `Stop(); Wait()` behavior still waits only for the accept/handler lifecycle.
   Shutdown disables listener auto-unlink and removes the pathname only while
   its non-following device, inode, and change-time identity still matches the
   receiver's captured socket. Missing or changed generation metadata fails
