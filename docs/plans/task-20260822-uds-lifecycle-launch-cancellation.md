@@ -168,6 +168,27 @@ dispatch, or later work.
   otherwise satisfies its local acceptance evidence and awaits only delivery;
   no later increment is started.
 
+## Delivery Results
+
+- Feature commit:
+  `513da95a0819b0c3886654dc78122c5be50a8dea` (`fix: reject cancellation
+  after UDS lifecycle launch`). It contains exactly the eight validated source,
+  test, compatibility-documentation, roadmap, plan, and task-state paths.
+- `main` was pushed without force or tags. A fresh fetch verified
+  `FETCH_HEAD == HEAD == origin/main == 513da95a0819b0c3886654dc78122c5be50a8dea`
+  with fast-forward ancestry from the recorded baseline, and the post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `7b7821678c1b09336ea8b8bcce990dfd9de84f01..513da95a0819b0c3886654dc78122c5be50a8dea`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC and UDS prose was reconciled to the completed R90-104 behavior
+  without rewriting immutable iteration notes. Replaying the identical range
+  preserved Vault content hash
+  `594fc6c4a408c9c76bef547c3ea3028e5d6747c49badcce7cf6da078cf64aa52`.
+- R90-104 is complete. No dependency-ready local increment remains; R90-59 and
+  R90-75 retain their external blockers and were not started.
+
 ## Stop Conditions
 
 Stop if deterministic proof requires fixed sleeps, an exported/public seam,

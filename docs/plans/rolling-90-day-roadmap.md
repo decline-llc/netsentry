@@ -166,7 +166,7 @@
 | R90-101 | Aug 20 | Complete | Audit post-return delivery and restore the ownership-to-readiness queue. | R90-100 | A dated audit reconciles the R90-100 feature/closure, recent phases, fetched remote, exact Vault evidence, and the remaining ownership-assignment/readiness boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-102 | Aug 21–Sep 17 | Complete early | Reject cancellation after UDS receiver ownership assignment. | R90-101 | Cancellation synchronized after receiver listener/path ownership and capacity are initialized but before lifecycle goroutines or readiness return yields the context sentinel, clears receiver ownership, and removes only its owned public/private artifacts while preserving a replacement pathname and adjacent lifecycle behavior. |
 | R90-103 | Aug 21 | Complete | Audit post-ownership delivery and restore the lifecycle-to-readiness queue. | R90-102 | A dated audit reconciles the R90-102 feature/closure, recent phases, fetched remote, exact Vault evidence, and the remaining lifecycle-goroutine-launch/readiness-return boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
-| R90-104 | Aug 22–Sep 18 | Ready | Reject cancellation after UDS lifecycle goroutine launch. | R90-103 | Cancellation synchronized after the cancellation watcher and accept loop launch but before `Start` returns readiness yields the context sentinel, terminates both lifecycle goroutines, clears receiver ownership, and removes only its owned public/private artifacts while preserving a replacement pathname and adjacent lifecycle behavior. |
+| R90-104 | Aug 22–Sep 18 | Complete early | Reject cancellation after UDS lifecycle goroutine launch. | R90-103 | Cancellation synchronized after the cancellation watcher and accept loop launch but before `Start` returns readiness yields the context sentinel, terminates both lifecycle goroutines, clears receiver ownership, and removes only its owned public/private artifacts while preserving a replacement pathname and adjacent lifecycle behavior. |
 
 ## R90-01 Definition
 
@@ -3762,6 +3762,20 @@ was counted. The corrected complete pre-commit sequence uses the unique R90-104
 acceptance marker and remains the delivery boundary. R90-104 awaits only
 feature delivery, fetched remote verification, and exact-range Vault
 synchronization. No later increment is started.
+R90-104 completed early at
+`513da95a0819b0c3886654dc78122c5be50a8dea`: its exact eight-path feature was
+pushed without force or tags, freshly fetched with
+`FETCH_HEAD == HEAD == origin/main`, and passed the post-fetch 33-test
+knowledge gate. Exact range
+`7b7821678c1b09336ea8b8bcce990dfd9de84f01..513da95a0819b0c3886654dc78122c5be50a8dea`
+was synchronized to the sole local Vault; its iteration note, full-index row,
+and MOC link are verified. Stable MOC/UDS prose now records the delivered post-
+lifecycle-launch cancellation, bounded lifecycle termination, internal
+rollback, and identity-bound replacement-preservation boundary; identical-
+range replay preserved Vault content hash
+`594fc6c4a408c9c76bef547c3ea3028e5d6747c49badcce7cf6da078cf64aa52`.
+No dependency-ready local increment remains. R90-59 and R90-75 retain their
+recorded external blockers, and neither was started.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
