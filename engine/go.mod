@@ -2,7 +2,7 @@ module github.com/decline-llc/netsentry
 
 go 1.22.2
 
-toolchain go1.25.12
+toolchain go1.25.14
 
 require (
 	go.uber.org/goleak v1.3.0

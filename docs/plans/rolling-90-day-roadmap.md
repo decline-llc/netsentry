@@ -121,7 +121,7 @@
 | R90-57 | Forecast Sep 19–Oct 2; waived | Complete early | Define restart-free emergency recovery semantics. | R90-56 | An operator-triggered, fail-closed state machine defines probe, recovery, retry, concurrency, and evidence-preservation boundaries without duplicate writes or automatic cleanup; implementation remains a separate increment. |
 | R90-58 | Oct 3–21 | Complete early | Refresh the v0.1.1 candidate decision package. | R90-56 | Version, current candidate commit, gates, artifacts, checksums, platform, and hold decision are reconciled from fresh evidence without tagging or publishing. |
 | R90-59a | Aug 7 | Complete | Create the authorized local v0.1.1 tag without remote publication. | R90-58; exact tag-only authorization | A signed annotated local `v0.1.1` tag resolves exactly to the authorized candidate after candidate changelog/evidence review and smoke validation; the remote tag remains absent and no workflow, GitHub Release, or GHCR action occurs. |
-| R90-59 | Oct 22–28 | Blocked on remote-publication authority | Execute the remote v0.1.1 publication gate. | R90-59a; explicit tag-push, GitHub Release, and GHCR authorization | Only an explicitly authorized tag may be pushed; GitHub Release and GHCR results must be verified directly, while absence of the remaining authority preserves the local-only tag without external mutation. |
+| R90-59 | Oct 22–28 | Blocked on failed candidate supply-chain gate and new-candidate authority | Execute the remote v0.1.1 publication gate. | R90-59a; explicit publication authority granted; passing exact-candidate supply-chain gate unfinished | Only an explicitly authorized signed `v0.1.1` tag may be pushed after zero-finding candidate validation; its exact remote tag, successful GitHub Release assets/checksum, and GHCR digest/platform must be verified directly. |
 | R90-60 | Forecast Aug 1–Oct 30; waived | Complete early | Implement operator-triggered restart-free storage recovery. | R90-57 | One authenticated request serializes recovery against store lifecycle operations, preflights durable input before the writable boundary, replays or probes idempotently, exposes bounded health/audit outcomes, and leaves failures in sticky emergency without automatic cleanup or retry. |
 | R90-61 | Aug 2 | Complete | Audit post-recovery delivery and restore the forward queue. | R90-60 | A dated audit reconciles recent commits, plans/states, fetched remote and Vault evidence, records the committed-prefix test gap, and restores a complete evidence-grounded queue without runtime or publication changes. |
 | R90-62 | Aug 3–Sep 4 | Complete early | Prove committed-prefix multi-shard recovery retry. | R90-61 | Deterministic direct regressions cancel or fail recovery after an earlier shard commit, retain the complete log and emergency state, and prove explicit retry completes every event once without aggregate inflation. |
@@ -167,6 +167,7 @@
 | R90-102 | Aug 21–Sep 17 | Complete early | Reject cancellation after UDS receiver ownership assignment. | R90-101 | Cancellation synchronized after receiver listener/path ownership and capacity are initialized but before lifecycle goroutines or readiness return yields the context sentinel, clears receiver ownership, and removes only its owned public/private artifacts while preserving a replacement pathname and adjacent lifecycle behavior. |
 | R90-103 | Aug 21 | Complete | Audit post-ownership delivery and restore the lifecycle-to-readiness queue. | R90-102 | A dated audit reconciles the R90-102 feature/closure, recent phases, fetched remote, exact Vault evidence, and the remaining lifecycle-goroutine-launch/readiness-return boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-104 | Aug 22–Sep 18 | Complete early | Reject cancellation after UDS lifecycle goroutine launch. | R90-103 | Cancellation synchronized after the cancellation watcher and accept loop launch but before `Start` returns readiness yields the context sentinel, terminates both lifecycle goroutines, clears receiver ownership, and removes only its owned public/private artifacts while preserving a replacement pathname and adjacent lifecycle behavior. |
+| R90-105 | Aug 23 | In progress | Refresh the selected Go 1.25 toolchain security patch. | R90-59 pre-publication validation blocker | The module language baseline remains `go 1.22.2`; the execution toolchain and supply-chain lock select reviewed Go 1.25.14; the exact archive checksum and authoritative release source are recorded; complete native, release-candidate, fetched supply-chain, documentation, knowledge, remote, and Vault validation pass with zero reachable vulnerabilities and without altering or publishing `v0.1.1`. |
 
 ## R90-01 Definition
 
@@ -1198,8 +1199,24 @@
 - **Unblock condition:** after changelog and smoke review, the user explicitly
   authorizes pushing the exact tag and the tag-triggered GitHub Release and
   GHCR actions.
+- **Authorization:** On Aug 23 the user explicitly authorized pushing the
+  existing signed `v0.1.1` tag at the exact candidate, both tag-triggered
+  publication workflows, the historical `[Unreleased]` changelog shape, and
+  reconciliation of the workflow-produced artifact as distinct from both
+  prior local builds. The tag may not be moved or recreated.
+- **Pre-publication blocker:** Exact-candidate pinned `govulncheck v1.6.0`
+  fails on reachable Go 1.25.12 standard-library findings `GO-2026-6090`,
+  `GO-2026-6089`, and `GO-2026-5972`; the vulnerability database identifies
+  Go 1.25.13 as fixing all three. Both tag workflows run this gate before
+  publication. Safe recovery requires a patched candidate, complete fresh
+  validation/artifact evidence, and explicit authority to replace and resign
+  the still-local tag at that new candidate.
 - **Stop condition:** remain blocked without explicit publication authority;
   stop on any SHA, tag, digest, platform, workflow, or artifact ambiguity.
+- **Selected plan:**
+  [`task-20260823-v0.1.1-remote-publication.md`](task-20260823-v0.1.1-remote-publication.md),
+  from clean fetched baseline
+  `8724b816a77c4bdeac899e4848dcb5bcd5232a93`.
 
 ## R90-59a Definition
 
@@ -2210,6 +2227,32 @@
   [`task-20260822-uds-lifecycle-launch-cancellation.md`](task-20260822-uds-lifecycle-launch-cancellation.md),
   from clean fetched baseline
   `7b7821678c1b09336ea8b8bcce990dfd9de84f01`.
+
+## R90-105 Definition
+
+- **Goal:** clear the R90-59 pre-publication security-gate blocker on current
+  `main` by refreshing the selected Go 1.25 execution toolchain to its latest
+  reviewed patch release without changing the module language baseline.
+- **Risk:** treating the scanner's minimum fixed release as the target could
+  leave a newer patch-level security fix unapplied, while broadening the
+  change into a language, dependency, candidate-tag, or publication update
+  would exceed this trigger.
+- **Required validation:** authoritative Go 1.25.14 release and Linux amd64
+  archive-checksum evidence; exact `go env GOVERSION`/lock alignment; pinned
+  workflow and supply-chain policy; zero reachable `govulncheck` findings;
+  all 9 locked external assets; complete native and v0.1.1 release-candidate
+  checks; release gate; task-state, roadmap-multiset, documentation, knowledge,
+  diff, scope, sensitive-information, fetched-remote, and exact-range Vault
+  checks.
+- **Stop condition:** stop if safe completion needs a Go language-baseline or
+  dependency change, an older or different release line without compatibility
+  evidence, tag movement/recreation/signing/push, workflow dispatch, GitHub
+  Release, image/registry publication, private input, performance policy, or
+  ambiguous validation.
+- **Selected plan:**
+  [`task-20260823-go-toolchain-1.25.14.md`](task-20260823-go-toolchain-1.25.14.md),
+  from last verified fetched baseline
+  `8724b816a77c4bdeac899e4848dcb5bcd5232a93`.
 
 ### R90-71 Validation Deviation
 
@@ -3776,6 +3819,83 @@ range replay preserved Vault content hash
 `594fc6c4a408c9c76bef547c3ea3028e5d6747c49badcce7cf6da078cf64aa52`.
 No dependency-ready local increment remains. R90-59 and R90-75 retain their
 recorded external blockers, and neither was started.
+The Aug 23 trigger fetched and verified the clean R90-104 docs-only closure at
+`8724b816a77c4bdeac899e4848dcb5bcd5232a93`, both exact R90-104 Vault notes,
+full-index rows, MOC links, and current stable MOC/UDS authority. All 119 prior
+task states parse and all 108 prior roadmap row and Definition multisets match
+without duplicates or asymmetry. The 181-commit Jul 20 through Aug 22 phase
+review adds only the R90-104 feature/closure to the prior audit; no missing
+record, stale stable authority, or unresolved local validation result changes
+priority. The user explicitly authorized the existing signed `v0.1.1` tag
+object at candidate `78cd78574e03c8f73ff68248eed2c409d6bca406`, both
+tag-triggered publication workflows, the immutable candidate changelog shape,
+and exact fresh-artifact reconciliation. R90-59 is selected with a persisted
+publication, verification, non-goal, authority, and stop contract before tag
+push; R90-75 retains its separate external blocker and is not started. One
+authenticated workflow-list request hit a transient TLS timeout, so API
+verification reliability and complete candidate validation remain pre-push
+boundaries.
+The exact-candidate pre-publication supply-chain check passes actionlint and
+structural policy, then fails pinned `govulncheck v1.6.0` on three reachable Go
+1.25.12 standard-library findings: `GO-2026-6090`, `GO-2026-6089`, and
+`GO-2026-5972`, all recorded as fixed in Go 1.25.13. The last three `main` CI
+jobs independently fail at their supply-chain step, but only the local direct
+scan supplies exact finding evidence. Both tag workflows execute the failing
+gate before external publication, so R90-59 is blocked before tag push. The
+remote tag, GitHub Release, and GHCR publication remain absent; no repository
+or external push occurred. Moving or recreating the exact authorized local tag
+for a patched candidate requires new authority. R90-75 remains unstarted.
+The next Aug 23 `$netsentry-next` trigger selects R90-105 as the sole bounded
+local unblocker after the R90-59 exact-candidate failure. The scanner's Go
+1.25.13 minimum fixed version is treated as a lower bound: authoritative Go
+release evidence shows Go 1.25.14 is the latest patch in the selected 1.25
+line and includes an additional `net/http` security fix. R90-105 therefore
+pins Go 1.25.14 while retaining the `go 1.22.2` language baseline and the
+existing dependency graph. Its plan records the official Linux amd64 archive
+SHA-256 `a21ae5633a269bcd7e90cf767e48225633795e99d831742cbf3397064fee7712`.
+The existing R90-59 blocker plan/state are included only as prerequisite
+evidence for this one increment. R90-59 remains blocked pending explicit
+new-candidate/tag authority; the local `v0.1.1` tag must not be moved,
+recreated, signed, pushed, or published. R90-75 remains unstarted.
+R90-105 now pins current `main` to Go 1.25.14 while preserving the `go 1.22.2`
+language baseline, dependencies, application behavior, workflows, scanner
+pins, fixture identities, and historical evidence. After transient single-
+connection TLS/DNS failures, the official 59,909,419-byte Linux amd64 archive
+was fetched in bounded ranges and matched the recorded SHA-256 exactly; Go's
+authenticated toolchain path independently reports `go1.25.14`. Version-
+stamped `actionlint v1.7.12` and `govulncheck v1.6.0` were rebuilt under that
+runtime. Focused workflow and fetched supply-chain checks pass with all 7
+locked Actions/11 uses, all 9 assets, and zero reachable vulnerabilities.
+Complete repository/release validation remains the delivery boundary; the
+local `v0.1.1` tag remains unchanged and unpushed.
+The first complete v0.1.1 RC run passes every non-Docker stage: both C tests,
+all Go packages uncached under race, 81.3% Go statement coverage, both 5,000-
+iteration sanitizer fuzz targets, E2E, archive checksum/content, and release-
+note smoke. Docker fetched its uncached pinned syntax frontend for 906 seconds,
+then stopped before any image build step when the configured Ubuntu mirror
+returned EOF resolving `ubuntu:24.04`. No Docker or later release-gate result
+from the stopped sequence is counted. R90-105 remains in progress pending an
+exact base-image metadata preflight and clean Docker build/content/runtime
+smoke plus downstream release-gate validation.
+The configured mirrors continued returning EOF/reset errors for Ubuntu and
+Dockerfile-frontend lookups. An explicit Docker Hub pull verified the exact
+Ubuntu digest
+`sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517`;
+the equivalent build then used BuildKit's supported syntax override pinned to
+the already fetched frontend digest
+`sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32`.
+That repository/daemon-neutral build selected Go 1.25.14, produced local image
+`sha256:1fdc62d56aa7fe9c4e4347523676f07094fcc60660cfbf867868900c718a46bb`,
+and passed image-content and runtime-health smoke; the v0.1.1 release gate also
+passed. The ordinary mirror-backed `make rc-check` deviation remains explicit,
+and no image/tag/Release publication occurred. Final documentation/evidence,
+scope, tag-boundary, and delivery validation remain.
+Final workflow/offline supply-chain, documentation, 42 evidence-test, 33
+knowledge-test, 121 task-state JSON, 109-row/109-Definition roadmap multiset,
+formatting, and exact local tag-boundary checks pass. Every local R90-105
+criterion is satisfied through the recorded digest-pinned Docker deviation;
+the exact twelve-path increment awaits only main commit/push/fetch verification
+and exact-range Vault synchronization. No publication action is started.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent

@@ -1,0 +1,77 @@
+{
+  "task": "r90-105-go-toolchain-1.25.14",
+  "timestamp": "2026-08-23T09:39:55-07:00",
+  "branch": "main",
+  "remote_baseline": "8724b816a77c4bdeac899e4848dcb5bcd5232a93",
+  "risk_level": "Medium",
+  "current_checkpoint": "ready-for-delivery",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills active roadmap R90-59 blocker plan and state current toolchain lock policy workflows and latest delivery evidence",
+    "Verified the last known clean remote baseline at 8724b816a77c4bdeac899e4848dcb5bcd5232a93 and recorded the later fetch connection reset without treating refs as refreshed",
+    "Verified the exact local v0.1.1 tag object and peeled candidate remain unchanged and no tag publication occurred",
+    "Observed the exact tagged candidate fail pinned govulncheck on three reachable Go 1.25.12 standard-library vulnerabilities before either tag workflow publication boundary",
+    "Reviewed official Go release history and download metadata and selected latest Go 1.25 patch 1.25.14 with Linux amd64 SHA-256 a21ae5633a269bcd7e90cf767e48225633795e99d831742cbf3397064fee7712",
+    "Selected R90-105 as the sole bounded local unblocker while preserving R90-59 and R90-75 blockers",
+    "Persisted scope non-goals risks evidence map validation authority and stop conditions before changing the toolchain pin or current public policy",
+    "Updated only the Go execution toolchain and supply-chain lock to Go 1.25.14 plus current public policy while preserving go 1.22.2 historical evidence dependencies behavior workflows and publication boundaries",
+    "Downloaded the official 59909419-byte Go 1.25.14 Linux amd64 archive in bounded ranges and matched SHA-256 a21ae5633a269bcd7e90cf767e48225633795e99d831742cbf3397064fee7712 after transient TLS and DNS instability",
+    "Authenticated the Go 1.25.14 toolchain module separately and verified go version and engine go env GOVERSION report go1.25.14 linux amd64",
+    "Built version-stamped actionlint v1.7.12 and govulncheck v1.6.0 under Go 1.25.14 and preflighted the complete native Docker documentation and delivery tool surface",
+    "Passed focused workflow validation and fetched supply-chain validation with all 7 Actions 11 uses 9 assets and zero reachable vulnerabilities",
+    "Passed every non-Docker v0.1.1 RC stage including C tests all Go packages uncached under race 81.3 percent coverage both sanitizer fuzz targets E2E archive checksum content and release-note smoke",
+    "Recorded the first Docker stage stop before image build when the configured Ubuntu mirror returned EOF resolving ubuntu 24.04 after the uncached syntax frontend completed",
+    "Verified exact Ubuntu 24.04 digest sha256 33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517 through an explicit Docker Hub pull after three mirror tag attempts and one mirror digest attempt failed on external transport",
+    "Built the Docker image with BuildKit syntax pinned to exact digest sha256 ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 after ordinary mirror-backed frontend lookup failed",
+    "Verified the Docker build selected Go 1.25.14 and passed image content and runtime health smoke for local image sha256 1fdc62d56aa7fe9c4e4347523676f07094fcc60660cfbf867868900c718a46bb",
+    "Passed the v0.1.1 non-PCAP release gate without publishing any tag Release or image",
+    "Passed final workflow offline supply-chain documentation 42 evidence tests 33 knowledge tests all 121 task-state JSON files 109-row 109-Definition roadmap symmetry and diff formatting",
+    "Verified the local v0.1.1 tag object and peeled candidate remain exactly unchanged and no publication occurred",
+    "Satisfied every local R90-105 acceptance criterion and exact twelve-path scope before delivery"
+  ],
+  "in_progress": [
+    "Commit and deliver the exact R90-105 scope on main without tags and synchronize the Vault"
+  ],
+  "todo": [
+    "Commit and push main without force or tags and verify freshly fetched ref equality",
+    "Synchronize and verify the exact repository range in the sole local Vault",
+    "Close R90-105 while leaving R90-59 blocked pending explicit new-candidate and tag authority"
+  ],
+  "authority_boundaries": [
+    "Only current-main Go 1.25.14 toolchain lock and current policy documentation plus R90-59 dependency evidence validation delivery and Vault sync",
+    "Keep go 1.22.2 language semantics dependencies behavior protocol configuration public API workflows Actions scanners and fixtures unchanged",
+    "Do not move recreate resign retarget delete or push v0.1.1 and do not dispatch workflows publish a Release or GHCR image or complete R90-59",
+    "Do not start R90-75 choose performance policy or access private input"
+  ],
+  "remaining_risks": [
+    "The configured Docker mirrors remained unavailable for ordinary mutable-tag frontend resolution so equivalent digest-pinned Docker validation is recorded rather than an unqualified make rc-check pass",
+    "Remote push fetch verification and exact-range Vault synchronization still must pass",
+    "R90-59 will remain blocked after this current-main hardening until explicit new-candidate and tag-replacement authority is granted",
+    "R90-75 remains externally blocked"
+  ],
+  "toolchain": {
+    "language_version": "1.22.2",
+    "prior": "go1.25.12",
+    "selected": "go1.25.14",
+    "linux_amd64_sha256": "a21ae5633a269bcd7e90cf767e48225633795e99d831742cbf3397064fee7712",
+    "release_source": "https://go.dev/doc/devel/release",
+    "download_source": "https://go.dev/dl/"
+  },
+  "tag_boundary": {
+    "name": "v0.1.1",
+    "object": "f1a38ecb82b9c63e8411f3df040bdea84e985dd8",
+    "candidate": "78cd78574e03c8f73ff68248eed2c409d6bca406",
+    "must_remain_unchanged": true,
+    "push_authorized_by_this_increment": false
+  },
+  "docker_validation": {
+    "ordinary_make_rc_check": "stopped-at-external-mirror-metadata",
+    "frontend_digest": "sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32",
+    "base_digest": "sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517",
+    "equivalent_digest_pinned_build": "pass",
+    "image_id": "sha256:1fdc62d56aa7fe9c4e4347523676f07094fcc60660cfbf867868900c718a46bb",
+    "image_content_smoke": "pass",
+    "runtime_health_smoke": "pass",
+    "published": false
+  },
+  "resume_instructions": "Continue only R90-105 from the persisted plan. Update current main from Go 1.25.12 to reviewed Go 1.25.14 without changing go 1.22.2 dependencies behavior workflows scanner pins fixtures or the local v0.1.1 tag. Verify the official archive checksum and exact runtime before costly validation; stop on any mismatch or regression. Deliver main without tags and synchronize the exact range to the sole local Vault. R90-59 remains blocked pending separate new-candidate and tag-replacement authority; do not start R90-75."
+}

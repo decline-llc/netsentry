@@ -121,7 +121,7 @@ PCAP_CORPUS=/path/to/reviewed-corpus make e2e-corpus-pressure
 make rc-check
 ```
 
-CI/Release/Docker workflow 的第三方 Action 均固定到 `.github/supply-chain-lock.json` 中审核过的完整 commit SHA；`engine/go.mod` 保留 `go 1.22.2` 语言基线并固定 CI toolchain `go1.25.12`。更新流程见 [docs/supply-chain.md](docs/supply-chain.md)。
+CI/Release/Docker workflow 的第三方 Action 均固定到 `.github/supply-chain-lock.json` 中审核过的完整 commit SHA；`engine/go.mod` 保留 `go 1.22.2` 语言基线并固定 CI toolchain `go1.25.14`。更新流程见 [docs/supply-chain.md](docs/supply-chain.md)。
 
 外部/生产 pcap 可能包含敏感内容。不得提交原始 corpus、私有路径或 `docs/evidence/local/`；分享前先运行 `make sanitize-pcap INPUT=in.pcap OUTPUT=out.pcap`，再人工复核。
 

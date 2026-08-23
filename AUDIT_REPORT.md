@@ -300,6 +300,22 @@ v0.3.0 发布门禁：schema migration/recovery 演练、24 小时 sustained fuz
 
 验证结果：`SUPPLY_CHAIN_FETCH_ASSETS=1 make supply-chain-check`、`SKIP_DOCKER=1 make rc-check`、外部 corpus integration、`git diff --check` 全部通过；将 checkout 临时改回 mutable `@v7` 的负向测试以 exit 1 正确拒绝；Go 总语句覆盖率为 **75.3%**。
 
+### R90-105：Go 1.25 工具链安全补丁刷新（2026-08-23）
+
+- `engine/go.mod` 继续保留 `go 1.22.2` 语言基线，仅将当前执行
+  toolchain 从 `go1.25.12` 更新到所选 1.25 分支最新安全补丁
+  `go1.25.14`。
+- 审核依据为 Go 官方 release history 与 download metadata；Linux amd64
+  archive SHA-256 为
+  `a21ae5633a269bcd7e90cf767e48225633795e99d831742cbf3397064fee7712`。
+- 本次变更不移动、重签、推送或发布本地 `v0.1.1` tag；R90-59 仍需新的
+  candidate/tag 明确授权与完整发布验证。
+- 本机验证通过 Go 1.25.14 runtime、9/9 外部资产、0 个可达漏洞、全部 C/Go
+  测试、81.3% Go statements、两项 sanitizer fuzz、E2E、release archive 与
+  release gate。配置的 Docker mirrors 无法完成普通 tag metadata lookup，
+  因此 Docker 以已验证 frontend/base digest 运行等价构建，并通过 image
+  content 与 runtime health smoke；该偏差保留在 R90-105 task plan 中。
+
 Docker 最终复跑已由本机 sudo Docker 在隔离的干净 worktree 完成：镜像成功构建，两个二进制与配置内容检查通过，容器内 `/api/health` 通过，并以 commit-addressable 审查标签推送 GHCR。正式版本标签、`latest`、Git tag 和 Release 不属于本轮授权范围。
 
 ### 外部 TestAssets

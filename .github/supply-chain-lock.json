@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "reviewed_at": "2026-07-12",
+  "reviewed_at": "2026-08-23",
   "go": {
     "language_version": "1.22.2",
-    "ci_toolchain": "1.25.12",
+    "ci_toolchain": "1.25.14",
     "supported_release_lines_at_review": [
-      "1.25.12",
+      "1.25.14",
       "1.26.5"
     ],
     "source": "https://go.dev/dl/?mode=json"

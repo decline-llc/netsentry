@@ -1,0 +1,82 @@
+{
+  "task": "r90-59-v0.1.1-remote-publication",
+  "timestamp": "2026-08-23T08:59:49-07:00",
+  "branch": "main",
+  "remote_baseline": "8724b816a77c4bdeac899e4848dcb5bcd5232a93",
+  "risk_level": "High",
+  "current_checkpoint": "blocked-before-publication",
+  "completed": [
+    "Read the netsentry-next and netsentry-roadmap skills active rolling roadmap knowledge contract R90-58 and R90-59a plans and states exact tag workflows candidate changelog evidence and stable Vault authority",
+    "Fetched origin main and tags and verified clean FETCH_HEAD HEAD and origin main equality at 8724b816a77c4bdeac899e4848dcb5bcd5232a93",
+    "Verified exact R90-104 feature closure task Vault note index MOC and stable authority plus the 33-test knowledge gate",
+    "Reviewed 181 Jul 20 through Aug 22 commits across four delivery phases without a missing record stale authority or unresolved local validation result",
+    "Parsed all 119 prior task states and verified all 108 roadmap row and Definition multisets without duplicate or asymmetric identifiers",
+    "Verified local annotated tag object f1a38ecb82b9c63e8411f3df040bdea84e985dd8 peels to candidate 78cd78574e03c8f73ff68248eed2c409d6bca406 and the remote tag and GitHub Release remain absent",
+    "Received explicit user authority for the exact v0.1.1 tag push tag-triggered GitHub Release and GHCR publication plus historical changelog and fresh-artifact reconciliation",
+    "Selected R90-59 while preserving the independent R90-75 evidence and product SLO blocker",
+    "Persisted scope non-goals risks acceptance evidence validation authority boundaries and stop conditions before repository or external publication changes",
+    "Reverified the SSH signature tag object annotation exact peeled candidate commit type and ancestry",
+    "Built the repository-pinned actionlint v1.7.12 and govulncheck v1.6.0 from verified cached module sources under Go 1.25.12 after transient DNS prevented a network install",
+    "Passed exact-candidate actionlint and structural supply-chain policy checks",
+    "Observed exact-candidate govulncheck fail on reachable GO-2026-6090 GO-2026-6089 and GO-2026-5972 standard-library findings fixed in Go 1.25.13",
+    "Verified the last three main GitHub Actions jobs fail at the supply-chain step without overstating their job-level evidence as exact finding evidence",
+    "Confirmed both tag workflows run the failing supply-chain gate before external publication",
+    "Kept the remote tag GitHub Release and GHCR publication absent and performed no external or repository push"
+  ],
+  "in_progress": [],
+  "todo": [
+    "Complete the selected R90-105 current-main Go 1.25.14 toolchain hardening increment",
+    "Obtain authority to prepare and validate a new candidate and replace and resign the still-local v0.1.1 tag at that candidate",
+    "Rerun the complete candidate RC fetched supply-chain and release-gate sequence with zero reachable vulnerabilities",
+    "Push only the newly and explicitly authorized signed v0.1.1 tag object",
+    "Fetch and verify the remote tag object and peeled candidate",
+    "Verify both tag-triggered workflows succeed for the exact candidate",
+    "Verify GitHub Release assets checksum bytes and platform",
+    "Verify GHCR v0.1.1 and 0.1.1 tags share the exact digest and expected platform",
+    "Reconcile roadmap task public release evidence and stable Vault knowledge",
+    "Validate commit push fetch and exact-range Vault synchronization for the R90-59 delivery record"
+  ],
+  "authority_boundaries": [
+    "Only publish existing signed tag object f1a38ecb82b9c63e8411f3df040bdea84e985dd8 at candidate 78cd78574e03c8f73ff68248eed2c409d6bca406 through its checked-in tag workflows",
+    "Approve the immutable candidate changelog under Unreleased and treat the exact workflow artifact as distinct from prior local builds",
+    "Do not move recreate or resign the tag change the candidate workflows runtime protocol configuration dependency or release gate",
+    "Do not dispatch replacement publication publish another version platform or artifact delete external state or start R90-75"
+  ],
+  "remaining_risks": [
+    "The exact authorized candidate fails the required supply-chain gate on three reachable Go 1.25.12 standard-library vulnerabilities fixed by Go 1.25.13 or later",
+    "Both tag workflows would fail before publication if the current tag were pushed",
+    "A tag move or recreation needs explicit new candidate and signing authority because the current grant is bound to the existing object and candidate",
+    "The workflow artifact identity is not known until the successful Release run and must not be inferred from either prior local build",
+    "One GitHub workflow-list request hit a transient TLS timeout and reliable API verification must be restored before push",
+    "R90-75 remains blocked pending comparable evidence and an explicit product SLO scope"
+  ],
+  "tag": {
+    "name": "v0.1.1",
+    "candidate": "78cd78574e03c8f73ff68248eed2c409d6bca406",
+    "object": "f1a38ecb82b9c63e8411f3df040bdea84e985dd8",
+    "local_present": true,
+    "remote_present": false,
+    "pushed": false
+  },
+  "publication": {
+    "authorized": true,
+    "github_release_created": false,
+    "ghcr_published": false,
+    "workflow_results_verified": false
+  },
+  "validation": {
+    "tag_signature": "pass",
+    "tag_object_and_candidate": "pass",
+    "structural_supply_chain_policy": "pass",
+    "govulncheck": "fail",
+    "reachable_findings": [
+      "GO-2026-6090",
+      "GO-2026-6089",
+      "GO-2026-5972"
+    ],
+    "minimum_fixed_toolchain": "go1.25.13",
+    "selected_current_main_toolchain": "go1.25.14",
+    "tag_push": "not-performed"
+  },
+  "resume_instructions": "R90-59 remains blocked before publication. R90-105 is selected to deliver the current-main Go 1.25.14 hardening and may commit and Vault-sync this file only as dependency evidence; that does not complete R90-59. Do not push existing signed v0.1.1 tag object f1a38ecb82b9c63e8411f3df040bdea84e985dd8: its exact candidate 78cd78574e03c8f73ff68248eed2c409d6bca406 fails pinned govulncheck on reachable GO-2026-6090 GO-2026-6089 and GO-2026-5972 findings, and both tag workflows run that gate before publication. Remote tag Release and GHCR remain absent. After R90-105, safe recovery still requires explicit authority to prepare and fully validate a new candidate and replace and resign the still-local tag. Do not start R90-75."
+}

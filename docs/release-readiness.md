@@ -23,6 +23,19 @@ Ready:
 - The tag publication workflows now run `make release-gate` after `make rc-check` and before building release assets or logging in to GHCR.
 - The approved v0.1.0 exception in `docs/audit/release_exception_v0.1.0.yaml` scopes out only real production-derived pcap evidence and expires before v0.1.1.
 - The 2026-07-12 supply-chain gate pins the Go CI toolchain to `go1.25.12`, pins every third-party Action to a reviewed full commit SHA, validates all workflows with `actionlint v1.7.12`, scans reachable Go code with `govulncheck v1.6.0`, and fetches/verifies all 9 locked external fixture/license files only in an ephemeral directory.
+- R90-105 refreshes the current `main` execution toolchain to reviewed
+  `go1.25.14` while preserving the `go 1.22.2` language baseline. The official
+  Linux amd64 archive SHA-256 is
+  `a21ae5633a269bcd7e90cf767e48225633795e99d831742cbf3397064fee7712`.
+  This current-branch hardening does not alter the immutable `v0.1.1` tag or
+  complete R90-59 publication.
+  Focused fetched supply-chain validation passes with all 9 assets and zero
+  reachable vulnerabilities. Native RC validation, 81.3% Go statement
+  coverage, both sanitizer fuzz targets, E2E, archive smoke, a digest-pinned
+  Docker build plus image/runtime smoke, and the v0.1.1 release gate pass. The
+  configured Docker mirrors prevented an unqualified ordinary `make rc-check`
+  result; the exact frontend/base digests and equivalent build deviation are
+  recorded in the R90-105 task plan.
 - The v0.1.1 pre-evidence quality baseline passed on 2026-07-15: the pinned supply-chain check verified 9/9 locked external fixture/license hashes and found zero reachable Go vulnerabilities; `SKIP_DOCKER=1 make rc-check` passed with 75.4% Go coverage, parser fuzz, e2e smoke, and distribution checks. This is local, non-Docker validation only and does not provide production-derived traffic evidence or v0.1.1 release approval.
 - R90-04 public-real-traffic validation passed on 2026-07-16 using one locally re-sanitized MAWI samplepoint-B trace: 544,525 packets processed with zero capture parse errors, drops, UDS write errors, or engine error-log lines. The reviewed, path-redacted record is [`r90-04-public-traffic-20260716.md`](evidence/r90-04-public-traffic-20260716.md). It is approved for R90-04 only; it neither approves a release nor satisfies later production-derived requirements.
 - The user approved `docs/audit/release_exception_r9005.yaml` on 2026-07-16 for one exact 7,500-packet synthetic corpus. The exception pins SHA-256 `509e940bc275d1972c09a4d9fd061e942516e22a0931d44eb9eb24deb7c66e68`, requires explicit non-production labeling and exact integrity verification, applies only to R90-05, and expires before R90-06.
