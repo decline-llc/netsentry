@@ -2,9 +2,9 @@
   "task": "r90-105-go-toolchain-1.25.14",
   "timestamp": "2026-08-23T09:39:55-07:00",
   "branch": "main",
-  "remote_baseline": "8724b816a77c4bdeac899e4848dcb5bcd5232a93",
+  "remote_baseline": "c50c184e7797440139b644ac7407ff238075d733",
   "risk_level": "Medium",
-  "current_checkpoint": "ready-for-delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills active roadmap R90-59 blocker plan and state current toolchain lock policy workflows and latest delivery evidence",
     "Verified the last known clean remote baseline at 8724b816a77c4bdeac899e4848dcb5bcd5232a93 and recorded the later fetch connection reset without treating refs as refreshed",
@@ -26,16 +26,18 @@
     "Passed the v0.1.1 non-PCAP release gate without publishing any tag Release or image",
     "Passed final workflow offline supply-chain documentation 42 evidence tests 33 knowledge tests all 121 task-state JSON files 109-row 109-Definition roadmap symmetry and diff formatting",
     "Verified the local v0.1.1 tag object and peeled candidate remain exactly unchanged and no publication occurred",
-    "Satisfied every local R90-105 acceptance criterion and exact twelve-path scope before delivery"
+    "Satisfied every local R90-105 acceptance criterion and exact twelve-path scope before delivery",
+    "Committed the exact twelve-path feature at c50c184e7797440139b644ac7407ff238075d733",
+    "Pushed main without force or tags and freshly verified FETCH_HEAD HEAD and origin main equal the feature commit with fast-forward ancestry",
+    "Verified remote v0.1.1 remains absent and the local tag object and peeled candidate remain unchanged",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range 8724b816a77c4bdeac899e4848dcb5bcd5232a93..c50c184e7797440139b644ac7407ff238075d733 to the sole local Vault",
+    "Verified the generated iteration note full-index row MOC link and current stable MOC CI-CD Actions-Docker and test-gate authority",
+    "Replayed the identical feature range and verified Vault content hash 178d7bf06942acb86c23d34a13a7fefd2cea17759ec4e17a9384b83b1656d391 remained unchanged",
+    "Completed R90-105 while R90-59 and R90-75 retain their separate external blockers and no publication occurred"
   ],
-  "in_progress": [
-    "Commit and deliver the exact R90-105 scope on main without tags and synchronize the Vault"
-  ],
-  "todo": [
-    "Commit and push main without force or tags and verify freshly fetched ref equality",
-    "Synchronize and verify the exact repository range in the sole local Vault",
-    "Close R90-105 while leaving R90-59 blocked pending explicit new-candidate and tag authority"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Only current-main Go 1.25.14 toolchain lock and current policy documentation plus R90-59 dependency evidence validation delivery and Vault sync",
     "Keep go 1.22.2 language semantics dependencies behavior protocol configuration public API workflows Actions scanners and fixtures unchanged",
@@ -44,7 +46,6 @@
   ],
   "remaining_risks": [
     "The configured Docker mirrors remained unavailable for ordinary mutable-tag frontend resolution so equivalent digest-pinned Docker validation is recorded rather than an unqualified make rc-check pass",
-    "Remote push fetch verification and exact-range Vault synchronization still must pass",
     "R90-59 will remain blocked after this current-main hardening until explicit new-candidate and tag-replacement authority is granted",
     "R90-75 remains externally blocked"
   ],
@@ -73,5 +74,21 @@
     "runtime_health_smoke": "pass",
     "published": false
   },
-  "resume_instructions": "Continue only R90-105 from the persisted plan. Update current main from Go 1.25.12 to reviewed Go 1.25.14 without changing go 1.22.2 dependencies behavior workflows scanner pins fixtures or the local v0.1.1 tag. Verify the official archive checksum and exact runtime before costly validation; stop on any mismatch or regression. Deliver main without tags and synchronize the exact range to the sole local Vault. R90-59 remains blocked pending separate new-candidate and tag-replacement authority; do not start R90-75."
+  "delivery": {
+    "commit": "c50c184e7797440139b644ac7407ff238075d733",
+    "origin_main_verified": true,
+    "branch_push_no_follow_tags": true,
+    "fast_forward_ancestry_verified": true,
+    "remote_v0.1.1_absent": true,
+    "local_tag_unchanged": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "8724b816a77c4bdeac899e4848dcb5bcd5232a93..c50c184e7797440139b644ac7407ff238075d733",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true,
+    "vault_reconciled_content_hash": "178d7bf06942acb86c23d34a13a7fefd2cea17759ec4e17a9384b83b1656d391"
+  },
+  "resume_instructions": "R90-105 is complete at c50c184e7797440139b644ac7407ff238075d733; do not repeat its toolchain change validation feature push or feature-range Vault synchronization. On the next netsentry-next trigger fetch and verify this docs-only closure plus its exact Vault evidence before auditing the queue. R90-59 remains blocked pending explicit new-candidate and tag-replacement authority plus complete candidate and fresh-artifact review; the existing local v0.1.1 tag must remain unchanged and unpushed. R90-75 retains its separate external blocker."
 }

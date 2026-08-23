@@ -167,6 +167,33 @@ publication, R90-59 completion, R90-75, or private input.
   `78cd78574e03c8f73ff68248eed2c409d6bca406`. R90-105 satisfies local
   acceptance and awaits only scoped commit/push/fetch/Vault delivery.
 
+## Delivery Results
+
+- Feature commit:
+  `c50c184e7797440139b644ac7407ff238075d733` (`build: pin Go toolchain
+  1.25.14`). It contains exactly the twelve validated toolchain, current-policy,
+  roadmap, plan, task-state, and R90-59 prerequisite-evidence paths.
+- `main` was pushed without force or tags. A fresh fetch verified
+  `FETCH_HEAD == HEAD == origin/main == c50c184e7797440139b644ac7407ff238075d733`
+  with fast-forward ancestry from the recorded baseline, and the post-fetch
+  33-test knowledge gate passed.
+- Remote `refs/tags/v0.1.1` remains absent. The local tag object remains
+  `f1a38ecb82b9c63e8411f3df040bdea84e985dd8` and still peels to
+  `78cd78574e03c8f73ff68248eed2c409d6bca406`; no tag, workflow, Release, GHCR,
+  or image publication occurred.
+- Exact range
+  `8724b816a77c4bdeac899e4848dcb5bcd5232a93..c50c184e7797440139b644ac7407ff238075d733`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC, CI/CD, Actions/Docker, and test-gate prose now records Go 1.25.14,
+  the R90-59 candidate vulnerability blocker, R90-105 validation/deviation,
+  and unchanged publication boundary without rewriting immutable iteration
+  history. Identical-range replay preserved Vault content hash
+  `178d7bf06942acb86c23d34a13a7fefd2cea17759ec4e17a9384b83b1656d391`.
+- R90-105 is complete. R90-59 remains blocked pending explicit new-candidate/
+  tag replacement authority and complete candidate/artifact review; R90-75
+  retains its separate blocker. Neither was started.
+
 ## Stop Conditions
 
 Stop on any release/checksum/runtime/lock mismatch, reachable vulnerability,

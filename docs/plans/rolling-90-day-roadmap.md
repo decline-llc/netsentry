@@ -167,7 +167,7 @@
 | R90-102 | Aug 21–Sep 17 | Complete early | Reject cancellation after UDS receiver ownership assignment. | R90-101 | Cancellation synchronized after receiver listener/path ownership and capacity are initialized but before lifecycle goroutines or readiness return yields the context sentinel, clears receiver ownership, and removes only its owned public/private artifacts while preserving a replacement pathname and adjacent lifecycle behavior. |
 | R90-103 | Aug 21 | Complete | Audit post-ownership delivery and restore the lifecycle-to-readiness queue. | R90-102 | A dated audit reconciles the R90-102 feature/closure, recent phases, fetched remote, exact Vault evidence, and the remaining lifecycle-goroutine-launch/readiness-return boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-104 | Aug 22–Sep 18 | Complete early | Reject cancellation after UDS lifecycle goroutine launch. | R90-103 | Cancellation synchronized after the cancellation watcher and accept loop launch but before `Start` returns readiness yields the context sentinel, terminates both lifecycle goroutines, clears receiver ownership, and removes only its owned public/private artifacts while preserving a replacement pathname and adjacent lifecycle behavior. |
-| R90-105 | Aug 23 | In progress | Refresh the selected Go 1.25 toolchain security patch. | R90-59 pre-publication validation blocker | The module language baseline remains `go 1.22.2`; the execution toolchain and supply-chain lock select reviewed Go 1.25.14; the exact archive checksum and authoritative release source are recorded; complete native, release-candidate, fetched supply-chain, documentation, knowledge, remote, and Vault validation pass with zero reachable vulnerabilities and without altering or publishing `v0.1.1`. |
+| R90-105 | Aug 23 | Complete early | Refresh the selected Go 1.25 toolchain security patch. | R90-59 pre-publication validation blocker | The module language baseline remains `go 1.22.2`; the execution toolchain and supply-chain lock select reviewed Go 1.25.14; the exact archive checksum and authoritative release source are recorded; complete native, release-candidate, fetched supply-chain, documentation, knowledge, remote, and Vault validation pass with zero reachable vulnerabilities and without altering or publishing `v0.1.1`. |
 
 ## R90-01 Definition
 
@@ -3896,6 +3896,20 @@ formatting, and exact local tag-boundary checks pass. Every local R90-105
 criterion is satisfied through the recorded digest-pinned Docker deviation;
 the exact twelve-path increment awaits only main commit/push/fetch verification
 and exact-range Vault synchronization. No publication action is started.
+R90-105 completed early at
+`c50c184e7797440139b644ac7407ff238075d733`: its exact twelve-path feature
+was pushed to `main` without force or tags, freshly fetched with
+`FETCH_HEAD == HEAD == origin/main`, and passed the post-fetch 33-test
+knowledge gate. Remote `v0.1.1` remains absent, while the local tag object and
+peeled candidate remain unchanged. Exact range
+`8724b816a77c4bdeac899e4848dcb5bcd5232a93..c50c184e7797440139b644ac7407ff238075d733`
+was synchronized to the sole local Vault; the iteration note, full-index row,
+MOC link, and current stable MOC/CI-CD/Actions-Docker/test-gate authority are
+verified. Identical-range replay preserved Vault content hash
+`178d7bf06942acb86c23d34a13a7fefd2cea17759ec4e17a9384b83b1656d391`.
+R90-59 remains blocked pending explicit new-candidate/tag replacement
+authority and complete candidate/artifact review; R90-75 retains its separate
+external blocker. Neither is started, and no publication occurred.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
