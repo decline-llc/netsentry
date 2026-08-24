@@ -2,9 +2,9 @@
   "task": "r90-106-post-toolchain-delivery-audit",
   "timestamp": "2026-08-24T01:07:24-07:00",
   "branch": "main",
-  "remote_baseline": "c55b2a52ba0c1b8d89daaae407a5e2ef87707c65",
+  "remote_baseline": "7a1598128c758a54f334966f25a6190d4728f713",
   "risk_level": "Low",
-  "current_checkpoint": "ready-for-delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Read the netsentry-next and netsentry-roadmap skills active roadmap knowledge contract latest R90-105 and R90-59 plans and states and current stable Vault authority",
     "Fetched origin main and verified a clean FETCH_HEAD HEAD and origin main baseline at c55b2a52ba0c1b8d89daaae407a5e2ef87707c65",
@@ -25,16 +25,19 @@
     "Parsed all 122 task-state JSON files and verified all 110 roadmap rows and Definitions match as complete multisets without duplicates or asymmetry",
     "Verified ordered R90-105 validation completion and R90-106 selection chronology",
     "Passed documentation all 33 knowledge tests formatting exact three-path scope and anchored sensitive-information review",
-    "Compared every R90-106 acceptance criterion to direct evidence without an unresolved deviation"
+    "Compared every R90-106 acceptance criterion to direct evidence without an unresolved deviation",
+    "Committed the exact three-path documentation audit at 7a1598128c758a54f334966f25a6190d4728f713",
+    "Pushed main without force or tags",
+    "Recorded the unusable first verification attempt and port-22 refusal without treating either as fetched evidence",
+    "Authenticated over SSH port 443 and freshly verified FETCH_HEAD HEAD and origin main equal the feature commit with fast-forward ancestry",
+    "Passed the post-fetch 33-test knowledge gate",
+    "Synchronized exact range c55b2a52ba0c1b8d89daaae407a5e2ef87707c65..7a1598128c758a54f334966f25a6190d4728f713 to the sole local Vault",
+    "Verified the generated iteration note full-index row MOC link and reconciled stable MOC release and queue authority",
+    "Replayed the identical feature range and verified Vault content hash 6cc70f9d62e5d185ede81f18270d4235d04bff402f72c2a72df5d285af1bff87 remained unchanged",
+    "Completed R90-106 while R90-59 and R90-75 retain their external blockers and no later increment is ready or started"
   ],
-  "in_progress": [
-    "Commit and deliver the exact R90-106 documentation audit without tags and synchronize the Vault"
-  ],
-  "todo": [
-    "Commit and push the exact documentation audit without force or tags and verify fetched ref equality",
-    "Synchronize and verify the exact repository range in the sole local Vault",
-    "Close R90-106 while leaving R90-59 and R90-75 blocked and no later increment started"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Only R90-106 delivery evidence forward queue documentation task-state commit push and local Vault reconciliation",
     "No source test dependency toolchain configuration workflow release gate generated evidence or artifact changes",
@@ -46,5 +49,20 @@
     "R90-75 remains blocked pending comparable-environment evidence and explicit product SLO scope",
     "No dependency-ready local runtime increment is supported by current evidence"
   ],
-  "resume_instructions": "Continue only R90-106 from its persisted documentation plan. Reconcile the exact R90-105 feature closure fetched remote and Vault evidence; preserve the current Go and local tag boundaries; keep R90-59 and R90-75 blocked; do not start runtime test toolchain release performance or publication work. Deliver only the roadmap plan and task-state paths after complete validation and synchronize the exact pushed range to the sole local Vault."
+  "delivery": {
+    "commit": "7a1598128c758a54f334966f25a6190d4728f713",
+    "origin_main_verified": true,
+    "branch_push_no_follow_tags": true,
+    "fast_forward_ancestry_verified": true,
+    "fetch_transport_retry": "port-22-refused-then-ssh-over-443-pass",
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "c55b2a52ba0c1b8d89daaae407a5e2ef87707c65..7a1598128c758a54f334966f25a6190d4728f713",
+    "vault_note_verified": true,
+    "vault_full_index_verified": true,
+    "vault_moc_verified": true,
+    "vault_stable_authority_reconciled": true,
+    "vault_idempotent_replay_verified": true,
+    "vault_reconciled_content_hash": "6cc70f9d62e5d185ede81f18270d4235d04bff402f72c2a72df5d285af1bff87"
+  },
+  "resume_instructions": "R90-106 is complete at 7a1598128c758a54f334966f25a6190d4728f713; do not repeat its audit validation feature delivery or feature-range Vault synchronization. On the next netsentry-next trigger fetch and verify this docs-only closure plus its exact Vault evidence before auditing the blocked queue. R90-59 remains blocked pending a patched candidate explicit tag replacement and resigning authority and complete fresh validation. R90-75 remains blocked pending comparable-environment evidence and explicit product SLO scope. No dependency-ready local increment remains."
 }

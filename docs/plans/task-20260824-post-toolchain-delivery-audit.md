@@ -167,6 +167,30 @@ or any later increment.
   review, documentation delivery, fetched remote verification, and exact-range
   Vault synchronization. No later increment is ready or started.
 
+## Delivery Results
+
+- Documentation feature commit:
+  `7a1598128c758a54f334966f25a6190d4728f713` (`docs: audit
+  post-toolchain delivery`). It contains exactly the three validated roadmap,
+  plan, and task-state paths.
+- `main` was pushed without force or tags. The first verification attempt
+  produced no usable `FETCH_HEAD`, and a direct port-22 fetch retry was refused.
+  Authenticated SSH-over-443 then fetched successfully and verified
+  `FETCH_HEAD == HEAD == origin/main == 7a1598128c758a54f334966f25a6190d4728f713`
+  with fast-forward ancestry from the recorded baseline. The post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `c55b2a52ba0c1b8d89daaae407a5e2ef87707c65..7a1598128c758a54f334966f25a6190d4728f713`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- Stable MOC prose now records the completed R90-105 evidence distinction,
+  current R90-59/R90-75 blockers, and empty dependency-ready local queue without
+  rewriting immutable iteration notes. Replaying the identical feature range
+  preserved Vault content hash
+  `6cc70f9d62e5d185ede81f18270d4235d04bff402f72c2a72df5d285af1bff87`.
+- R90-106 is complete. R90-59 and R90-75 remain externally blocked; no later
+  increment is dependency-ready or started.
+
 ## Stop Conditions
 
 Stop if R90-105 evidence is missing or contradictory, release/tag state cannot
