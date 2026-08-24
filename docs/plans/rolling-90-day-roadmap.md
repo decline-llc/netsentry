@@ -168,6 +168,7 @@
 | R90-103 | Aug 21 | Complete | Audit post-ownership delivery and restore the lifecycle-to-readiness queue. | R90-102 | A dated audit reconciles the R90-102 feature/closure, recent phases, fetched remote, exact Vault evidence, and the remaining lifecycle-goroutine-launch/readiness-return boundary, then restores at most one directly evidenced local follow-on without runtime or publication changes. |
 | R90-104 | Aug 22–Sep 18 | Complete early | Reject cancellation after UDS lifecycle goroutine launch. | R90-103 | Cancellation synchronized after the cancellation watcher and accept loop launch but before `Start` returns readiness yields the context sentinel, terminates both lifecycle goroutines, clears receiver ownership, and removes only its owned public/private artifacts while preserving a replacement pathname and adjacent lifecycle behavior. |
 | R90-105 | Aug 23 | Complete early | Refresh the selected Go 1.25 toolchain security patch. | R90-59 pre-publication validation blocker | The module language baseline remains `go 1.22.2`; the execution toolchain and supply-chain lock select reviewed Go 1.25.14; the exact archive checksum and authoritative release source are recorded; complete native, release-candidate, fetched supply-chain, documentation, knowledge, remote, and Vault validation pass with zero reachable vulnerabilities and without altering or publishing `v0.1.1`. |
+| R90-106 | Aug 24 | In progress | Audit post-toolchain delivery and reconcile the blocked forward queue. | R90-105 | A dated documentation-only audit reconciles the exact R90-105 feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current toolchain/tag/release boundaries, and complete R90-59/R90-75 blocker contracts without starting runtime, performance, candidate, or publication work. |
 
 ## R90-01 Definition
 
@@ -2254,6 +2255,30 @@
   from last verified fetched baseline
   `8724b816a77c4bdeac899e4848dcb5bcd5232a93`.
 
+## R90-106 Definition
+
+- **Goal:** reconcile the completed R90-105 feature/closure and current
+  release/toolchain authority, then restore an accurate blocked forward queue
+  without runtime, test, artifact, or external mutation.
+- **Risk:** current-main Go 1.25.14 evidence could be misapplied to the
+  historical local tag candidate, while speculative queue filling could cross
+  recorded release, performance-policy, private-input, or product boundaries.
+- **Required validation:** exact R90-105 feature/closure Git, task-state,
+  fetched-remote, dual-note Vault, full-index, MOC, and stable-authority
+  evidence; dated four-phase delivery review; current language/toolchain and
+  local/remote tag/Release boundary verification; complete R90-59/R90-75
+  unfinished contracts; task-state JSON, roadmap multiset, documentation,
+  knowledge, diff, exact scope, and sensitive-information checks.
+- **Stop condition:** stop if R90-105 evidence is missing or contradictory, a
+  blocker contract is incomplete, release/tag state or validation is
+  ambiguous, or completion requires runtime/test/toolchain work, candidate or
+  tag mutation, private/external input, performance policy, workflow dispatch,
+  publication, or another increment.
+- **Selected plan:**
+  [`task-20260824-post-toolchain-delivery-audit.md`](task-20260824-post-toolchain-delivery-audit.md),
+  from clean fetched baseline
+  `c55b2a52ba0c1b8d89daaae407a5e2ef87707c65`.
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -3910,6 +3935,39 @@ verified. Identical-range replay preserved Vault content hash
 R90-59 remains blocked pending explicit new-candidate/tag replacement
 authority and complete candidate/artifact review; R90-75 retains its separate
 external blocker. Neither is started, and no publication occurred.
+The Aug 24 trigger fetched and verified the clean R90-105 docs-only closure at
+`c55b2a52ba0c1b8d89daaae407a5e2ef87707c65`, the exact twelve-path feature and
+three-path closure parent chain, both immutable Vault notes, full-index rows,
+MOC links, and current stable MOC/CI-CD/Actions-Docker/test-gate authority.
+Identical replay of closure range
+`c50c184e7797440139b644ac7407ff238075d733..c55b2a52ba0c1b8d89daaae407a5e2ef87707c65`
+preserved complete Vault content hash
+`dae5ced0fa9a4d9ced732c07c6829d0caffe4eda068b24cf43f0818a020fb3db`.
+All 121 prior task states parse and all 109 prior roadmap rows and Definitions
+match as complete multisets without duplicates or asymmetry. The 122-commit Jul
+27 through Aug 24 review spans 38, 46, 22, and 16 commits across four dated
+phases, moving from recovery/model work through fuzz/performance and management-
+plane durability into receiver lifecycle hardening and the bounded toolchain
+security refresh; no missing closure, stale stable authority, or unresolved
+local validation result changes priority. Current main retains `go 1.22.2`
+language semantics and selects reviewed Go 1.25.14. The unchanged local
+`v0.1.1` tag object still peels to the historical candidate, while the remote
+tag and GitHub Release remain absent. R90-59 still requires a patched candidate,
+explicit tag replacement/resigning authority, and complete fresh validation;
+R90-75 still requires comparable-environment evidence and product/SLO scope.
+With no dependency-ready local row, R90-106 is selected as the documentation-
+only smallest safe queue audit with a persisted plan/state; neither blocker nor
+any later increment is started.
+All 122 task-state JSON files parse and all 110 roadmap rows match the 110
+Definitions as complete multisets with equal raw counts, no duplicate
+identifiers, and no asymmetric identifiers. Ordered history places R90-105
+validation before its completion and R90-106 selection afterward.
+Documentation, all 33 knowledge tests, formatting, exact three-path scope, and
+anchored credential, sensitive-path, source/test/dependency/toolchain/config,
+workflow, generated-evidence, release, and publication review pass. R90-106
+satisfies its local audit criteria and awaits only documentation delivery,
+fetched remote verification, and exact-range Vault synchronization. R90-59 and
+R90-75 remain blocked; no later work is started.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
