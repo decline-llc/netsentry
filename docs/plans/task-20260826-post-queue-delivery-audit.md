@@ -165,8 +165,25 @@ increment.
 
 ## Delivery Results
 
-- Pending exact staged review, documentation delivery, fetched remote
-  verification, and exact-range Vault synchronization.
+- Documentation feature commit:
+  `f51346a4e62b3384e81da174a2644740a6d0a43b` (`docs: audit R90-107
+  delivery`). It contains exactly the three validated roadmap, plan, and
+  task-state paths.
+- The initial push and standard verification fetch failed on transient DNS. An
+  SSH-over-443 fetch verified `origin/main` still equaled recorded baseline
+  `1eb7fda0355abd5a93b01b53205844819244d499`; the first retry push also hit
+  DNS. A second fresh old-ref verification preceded the bounded retry that
+  advanced `main` without force or tags.
+- A fresh SSH-over-443 fetch verified
+  `FETCH_HEAD == HEAD == origin/main == f51346a4e62b3384e81da174a2644740a6d0a43b`
+  with fast-forward ancestry from the recorded baseline; the post-fetch
+  33-test knowledge gate passed.
+- Exact range
+  `1eb7fda0355abd5a93b01b53205844819244d499..f51346a4e62b3384e81da174a2644740a6d0a43b`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, and MOC link are verified.
+- R90-108 is complete. R90-59 and R90-75 remain externally blocked; no later
+  increment is dependency-ready or started.
 
 ## Stop Conditions
 
