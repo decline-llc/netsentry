@@ -162,6 +162,26 @@ increment.
   review, documentation delivery, fetched remote verification, and exact-range
   Vault synchronization. No later increment is ready or started.
 
+## Delivery Results
+
+- Documentation feature commit:
+  `c6be93008a756bae95f15e9847c4f2e048367063` (`docs: audit R90-109
+  delivery`). It contains exactly the three validated roadmap, plan, and
+  task-state paths.
+- The feature was pushed to `main` without force or tags. A fresh fetch verified
+  `FETCH_HEAD == HEAD == origin/main == c6be93008a756bae95f15e9847c4f2e048367063`
+  with fast-forward ancestry from recorded baseline
+  `c0c54ff4b4b06ac8775f8516f83cd30e4f028c95`; the post-fetch 33-test
+  knowledge gate passed.
+- Exact range
+  `c0c54ff4b4b06ac8775f8516f83cd30e4f028c95..c6be93008a756bae95f15e9847c4f2e048367063`
+  was synchronized to the sole local Vault. The generated iteration note,
+  full-index row, MOC link, reconciled stable queue prose, and identical-range
+  replay are verified at content hash
+  `badbd147a979d142d06df0d62049c49ad8005e4dccffd7df21b20ff7864edb73`.
+- R90-110 is complete. R90-59 and R90-75 remain externally blocked; no later
+  increment is dependency-ready or started.
+
 ## Stop Conditions
 
 Stop if R90-109 evidence is missing or contradictory, release/tag state cannot
