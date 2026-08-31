@@ -172,6 +172,7 @@
 | R90-107 | Aug 25 | Complete | Audit post-queue delivery and preserve the blocked forward queue. | R90-106 | A dated documentation-only audit reconciles the exact R90-106 feature/closure, recent delivery phases, freshly fetched remote, exact Vault evidence, current toolchain/tag/release boundaries, and complete R90-59/R90-75 blocker contracts without starting runtime, performance, candidate, publication, or another increment. |
 | R90-108 | Aug 26 | Complete | Audit R90-107 delivery and preserve the externally blocked queue. | R90-107 | A dated documentation-only audit reconciles the exact R90-107 feature/closure, recent delivery phases, freshly fetched remote, exact and idempotent Vault evidence, current toolchain/tag/release boundaries, and complete R90-59/R90-75 blocker contracts without starting runtime, performance, candidate, publication, or another increment. |
 | R90-109 | Aug 28 | Complete | Audit R90-108 delivery and preserve the externally blocked queue. | R90-108 | A dated documentation-only audit reconciles the exact R90-108 feature/closure, recent delivery phases, freshly fetched remote, exact and idempotent Vault evidence, current toolchain/tag/release boundaries, and complete R90-59/R90-75 blocker contracts without starting runtime, performance, candidate, publication, or another increment. |
+| R90-110 | Aug 31 | Selected | Audit R90-109 delivery and preserve the externally blocked queue. | R90-109 | A dated documentation-only audit reconciles the exact R90-109 feature/closure, recent delivery phases, freshly fetched remote, exact and idempotent Vault evidence, current toolchain/tag/release boundaries, and complete R90-59/R90-75 blocker contracts without starting runtime, performance, candidate, publication, or another increment. |
 
 ## R90-01 Definition
 
@@ -2360,6 +2361,32 @@
   from clean fetched baseline
   `42a752f2ab628908d681bc30f9870da93efd1413`.
 
+## R90-110 Definition
+
+- **Goal:** reconcile the completed R90-109 documentation feature/closure and
+  current release/performance authority, then preserve an accurate blocked
+  forward queue without runtime, test, artifact, or external mutation.
+- **Risk:** generated Vault metadata or current-main validation could be
+  mistaken for stable queue authority or historical candidate evidence, while
+  an unevidenced queue addition could cross release, performance-policy,
+  private-input, product, or later-increment boundaries.
+- **Required validation:** exact R90-109 feature/closure Git, task-state,
+  freshly fetched remote, dual-note Vault, full-index, MOC, stable-authority,
+  and idempotent closure-range evidence; dated four-phase delivery review;
+  current language/toolchain and local/remote tag/Release boundary checks;
+  complete R90-59/R90-75 unfinished contracts; task-state JSON, roadmap
+  multiset, ordered-history, documentation, knowledge, diff, exact scope, and
+  sensitive-information checks.
+- **Stop condition:** stop if R90-109 evidence is missing or contradictory, a
+  blocker contract is incomplete, release/tag state or validation is
+  ambiguous, or completion requires runtime/test/toolchain work, candidate or
+  tag mutation, private/external input, performance policy, workflow dispatch,
+  publication, or another increment.
+- **Selected plan:**
+  [`task-20260831-post-queue-delivery-audit.md`](task-20260831-post-queue-delivery-audit.md),
+  from clean fetched baseline
+  `c0c54ff4b4b06ac8775f8516f83cd30e4f028c95`.
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -4188,6 +4215,26 @@ was synchronized to the sole local Vault; its iteration note, full-index row,
 and MOC link are verified. R90-59 and R90-75 retain their external blockers,
 no dependency-ready local increment remains, and no later work or publication
 action was started.
+The Aug 31 trigger fetched and verified the clean R90-109 docs-only closure at
+`c0c54ff4b4b06ac8775f8516f83cd30e4f028c95`. The exact R90-109
+feature/closure parent chain, three-path scopes, completed task state, both
+Vault notes, full-index rows, MOC links, and current stable release/queue
+authority are verified. Idempotent closure-range replay preserved complete
+Vault content hash
+`8d2a463bfc3c80924d912e524a25776342a5899c52a471135696c0efd5baa9d5`.
+All 125 prior task states parse and all 113 prior roadmap rows and Definitions
+match as complete multisets without duplicates or asymmetry. The 104-commit Jul
+31 through Aug 31 review spans 34, 40, 14, and 16 commits across four dated
+phases; only the exact R90-109 feature/closure followed the prior trigger
+audit, and no new code, missing record, stale stable authority, or unresolved
+local validation result changes priority. Current main retains `go 1.22.2`
+language semantics and selects Go 1.25.14. The unchanged local `v0.1.1` tag
+object still peels to the historical candidate and retains its embedded SSH
+signature; direct remote checks confirm the remote tag and GitHub Release
+remain absent. R90-59 and R90-75 retain their separate external blockers. With
+no dependency-ready local row, R90-110 is selected as the documentation-only
+smallest safe queue audit with a persisted plan/state; no later work or
+external action is started.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
