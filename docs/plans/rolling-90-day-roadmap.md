@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-09-01 through 2026-11-30. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-09-23 through 2026-12-21. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -174,6 +174,7 @@
 | R90-109 | Aug 28 | Complete | Audit R90-108 delivery and preserve the externally blocked queue. | R90-108 | A dated documentation-only audit reconciles the exact R90-108 feature/closure, recent delivery phases, freshly fetched remote, exact and idempotent Vault evidence, current toolchain/tag/release boundaries, and complete R90-59/R90-75 blocker contracts without starting runtime, performance, candidate, publication, or another increment. |
 | R90-110 | Aug 31 | Complete | Audit R90-109 delivery and preserve the externally blocked queue. | R90-109 | A dated documentation-only audit reconciles the exact R90-109 feature/closure, recent delivery phases, freshly fetched remote, exact and idempotent Vault evidence, current toolchain/tag/release boundaries, and complete R90-59/R90-75 blocker contracts without starting runtime, performance, candidate, publication, or another increment. |
 | R90-111 | Sep 1 | Complete | Audit R90-110 delivery, refresh the rolling horizon, and preserve the externally blocked queue. | R90-110 | A dated documentation-only audit reconciles the exact R90-110 feature/closure, recent delivery phases, freshly fetched remote, exact and idempotent Vault evidence, current toolchain/tag/release boundaries, complete R90-59/R90-75 blocker contracts, and the Sep 1-Nov 30 horizon without starting runtime, performance, candidate, publication, or another increment. |
+| R90-112 | Sep 23 | In progress | Refresh the rolling horizon and reconcile blocked-queue recovery instructions. | R90-111; R90-105 | Sep 23-Dec 21 horizon and active R90-59 recovery agree with delivered R90-105 evidence; historical candidate failure and remaining release/performance authority boundaries are preserved; remote and Vault delivery are verified. |
 
 ## R90-01 Definition
 
@@ -1198,13 +1199,13 @@
   local tag and signature revalidation before push, GitHub Release
   assets/checksums, GHCR digest/platform, workflow result, documentation,
   remote, and Vault evidence.
-- **Blocker evidence:** On Aug 7 the user authorized only creation of local tag
-  `v0.1.1` at candidate
-  `78cd78574e03c8f73ff68248eed2c409d6bca406`; GitHub Release and GHCR remain
-  unauthorized. The current tag-push workflows would trigger both outputs.
-- **Unblock condition:** after changelog and smoke review, the user explicitly
-  authorizes pushing the exact tag and the tag-triggered GitHub Release and
-  GHCR actions.
+- **Historical authority:** The Aug 7 local-tag-only grant at candidate
+  `78cd78574e03c8f73ff68248eed2c409d6bca406` was superseded by the Aug 23
+  exact-object publication grant below. Its earlier absence of publication
+  authority is not the current blocker.
+- **Unblock condition:** obtain explicit authority for the patched candidate
+  and replacement/resigning of the still-local tag, then complete fresh exact-
+  candidate validation and artifact reconciliation before publication.
 - **Authorization:** On Aug 23 the user explicitly authorized pushing the
   existing signed `v0.1.1` tag at the exact candidate, both tag-triggered
   publication workflows, the historical `[Unreleased]` changelog shape, and
@@ -1217,8 +1218,12 @@
   publication. Safe recovery requires a patched candidate, complete fresh
   validation/artifact evidence, and explicit authority to replace and resign
   the still-local tag at that new candidate.
-- **Stop condition:** remain blocked without explicit publication authority;
-  stop on any SHA, tag, digest, platform, workflow, or artifact ambiguity.
+- **Completed dependency:** R90-105 delivered current-main Go 1.25.14 in
+  `c50c184e7797440139b644ac7407ff238075d733`; do not repeat that increment.
+  It did not change or validate the historical signed candidate.
+- **Stop condition:** remain blocked without explicit new-candidate and tag
+  replacement/resigning authority; stop on any SHA, tag, digest, platform,
+  workflow, artifact, or required-validation ambiguity.
 - **Selected plan:**
   [`task-20260823-v0.1.1-remote-publication.md`](task-20260823-v0.1.1-remote-publication.md),
   from clean fetched baseline
@@ -2414,6 +2419,24 @@
   [`task-20260901-post-queue-delivery-audit.md`](task-20260901-post-queue-delivery-audit.md),
   from clean fetched baseline
   `7a41b77e02b2987f50437e9e09b88e36202afdaa`.
+
+## R90-112 Definition
+
+- **Goal:** refresh the active Sep 23-Dec 21 horizon and correct stale R90-59
+  recovery instructions using completed R90-105 evidence.
+- **Risk:** replaying completed dependency work or confusing current-main
+  evidence with exact-candidate validation can misdirect release recovery.
+- **Required validation:** R90-111 Git/remote and exact Vault records; R90-105
+  completed state and commit; historical tag identity and remote absence;
+  all task-state JSON; complete row/Definition multisets; horizon arithmetic;
+  ordered history; four-path scope; docs, knowledge, diff and sensitive-data
+  checks; push/fetch verification and exact-range Vault replay.
+- **Stop condition:** stop for ambiguous validation, new candidate/tag or
+  publication authority, private evidence, product/SLO decisions, or another
+  increment. R90-59 and R90-75 remain externally blocked.
+- **Selected plan:**
+  [`task-20260923-blocked-queue-recovery.md`](task-20260923-blocked-queue-recovery.md),
+  from fetched baseline `5a761756de3a981a3047373d8bc8da9a3a441f06`.
 
 ### R90-71 Validation Deviation
 
@@ -4325,6 +4348,19 @@ Identical-range replay preserved Vault content hash
 `b7ac115246de9fcf9036dc622d286a7e8169ca68179c4d7173a92406193be4e0`.
 R90-59 and R90-75 retain their external blockers, no dependency-ready local
 increment remains, and no later work or publication action was started.
+The Sep 23 trigger verified the clean fetched R90-111 closure at
+`5a761756de3a981a3047373d8bc8da9a3a441f06`, both exact parent/Vault
+ranges, full-index rows, MOC links and current stable authority. The Aug 26-Sep
+23 review contains eight documentation commits, with no changes after Sep 1.
+All 127 prior states parse and all 115 prior row/Definition multisets agree.
+R90-59 and R90-75 remain the only unfinished rows. The horizon is stale and
+R90-59 still instructs a future session to complete the delivered R90-105;
+R90-112 is selected as one bounded recovery-documentation repair with its
+plan/state persisted first. The horizon advances to Sep 23-Dec 21 inclusive;
+R90-59 now distinguishes the superseded Aug 7 grant, Aug 23 exact-object grant,
+completed current-main hardening, and remaining new-candidate/tag authority.
+Local tag identity is unchanged; remote tag is absent and Release lookup
+returns HTTP 404. No candidate, runtime, policy or publication action started.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent

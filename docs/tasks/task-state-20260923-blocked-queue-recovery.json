@@ -1,0 +1,33 @@
+{
+  "task": "r90-112-blocked-queue-recovery",
+  "timestamp": "2026-09-23T07:32:30.580381+00:00",
+  "branch": "main",
+  "remote_baseline": "5a761756de3a981a3047373d8bc8da9a3a441f06",
+  "risk_level": "Low",
+  "current_checkpoint": "validated-awaiting-delivery",
+  "completed": [
+    "Verified clean fetched baseline, prior state and roadmap structure, initial knowledge gate and remote tag/Release absence",
+    "Persisted bounded plan and evidence mapping before documentation edits",
+    "Verified both exact R90-111 parent and Vault ranges, index/MOC and prior closure replay",
+    "Verified R90-105 complete state and commit plus unchanged historical tag identity",
+    "Refreshed exact 90-day horizon and reconciled active R90-59 completed dependency and remaining authority",
+    "All 128 states parse and 116 unique row/Definition multisets match; docs, 33 knowledge tests and diff checks pass",
+    "Reviewed every acceptance criterion against direct documentation and Git evidence"
+  ],
+  "in_progress": [
+    "Feature delivery and exact-range Vault reconciliation"
+  ],
+  "todo": [
+    "Commit, push, fetch-verify and synchronize exact Vault range",
+    "Persist and deliver one closure record"
+  ],
+  "authority_boundaries": [
+    "Documentation and local Vault reconciliation only",
+    "No candidate, tag, publication, private evidence or performance-policy action"
+  ],
+  "remaining_risks": [
+    "R90-59 requires patched candidate authority, tag replacement/resigning authority and fresh validation",
+    "R90-75 requires comparable-environment evidence and product/SLO scope"
+  ],
+  "resume_instructions": "Complete only R90-112 using its persisted acceptance map; retain R90-59 and R90-75 blockers."
+}
