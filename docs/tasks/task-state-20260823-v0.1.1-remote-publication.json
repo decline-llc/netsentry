@@ -2,7 +2,7 @@
   "task": "r90-59-v0.1.1-remote-publication",
   "timestamp": "2026-08-23T08:59:49-07:00",
   "branch": "main",
-  "remote_baseline": "5a761756de3a981a3047373d8bc8da9a3a441f06",
+  "remote_baseline": "139504de6bc74148244b681956dbc5b50b125cd5",
   "risk_level": "High",
   "current_checkpoint": "blocked-before-publication",
   "completed": [

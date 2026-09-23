@@ -73,3 +73,21 @@ R90-59 keeps its failed historical validation and R90-75 retains both blockers.
 No direct runtime regression is promised by this documentation-only plan.
 No skill change is needed: existing stale-authority reconciliation rules cover
 this repair. Feature delivery and exact-range Vault verification remain.
+
+## Delivery results
+
+Feature `139504de6bc74148244b681956dbc5b50b125cd5` contains exactly the
+four planned documentation paths. Main was pushed without force or tags;
+fresh fetch proved clean `HEAD == origin/main == FETCH_HEAD` and the post-fetch
+33-test knowledge gate passed. Exact range
+`5a761756de3a981a3047373d8bc8da9a3a441f06..139504de6bc74148244b681956dbc5b50b125cd5`
+was synchronized to the sole local Vault. Iteration note, full index and MOC
+links are verified. Stable MOC and release guidance now explain the refreshed
+horizon, completed dependency, superseded grant and current recovery boundary.
+Identical-range replay preserves Markdown content hash
+`2a3afb05293071e13bed34fede7125bcffb1190573b2bd8e228eae6b78efb0c2`.
+
+R90-112 is complete. This docs-only closure records verified feature delivery;
+it must receive its own push/fetch, knowledge gate and exact-range Vault sync.
+R90-59 and R90-75 remain blocked with complete contracts. There is no next ready
+increment; future selection requires material evidence or authority change.

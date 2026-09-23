@@ -174,7 +174,7 @@
 | R90-109 | Aug 28 | Complete | Audit R90-108 delivery and preserve the externally blocked queue. | R90-108 | A dated documentation-only audit reconciles the exact R90-108 feature/closure, recent delivery phases, freshly fetched remote, exact and idempotent Vault evidence, current toolchain/tag/release boundaries, and complete R90-59/R90-75 blocker contracts without starting runtime, performance, candidate, publication, or another increment. |
 | R90-110 | Aug 31 | Complete | Audit R90-109 delivery and preserve the externally blocked queue. | R90-109 | A dated documentation-only audit reconciles the exact R90-109 feature/closure, recent delivery phases, freshly fetched remote, exact and idempotent Vault evidence, current toolchain/tag/release boundaries, and complete R90-59/R90-75 blocker contracts without starting runtime, performance, candidate, publication, or another increment. |
 | R90-111 | Sep 1 | Complete | Audit R90-110 delivery, refresh the rolling horizon, and preserve the externally blocked queue. | R90-110 | A dated documentation-only audit reconciles the exact R90-110 feature/closure, recent delivery phases, freshly fetched remote, exact and idempotent Vault evidence, current toolchain/tag/release boundaries, complete R90-59/R90-75 blocker contracts, and the Sep 1-Nov 30 horizon without starting runtime, performance, candidate, publication, or another increment. |
-| R90-112 | Sep 23 | In progress | Refresh the rolling horizon and reconcile blocked-queue recovery instructions. | R90-111; R90-105 | Sep 23-Dec 21 horizon and active R90-59 recovery agree with delivered R90-105 evidence; historical candidate failure and remaining release/performance authority boundaries are preserved; remote and Vault delivery are verified. |
+| R90-112 | Sep 23 | Complete | Refresh the rolling horizon and reconcile blocked-queue recovery instructions. | R90-111; R90-105 | Sep 23-Dec 21 horizon and active R90-59 recovery agree with delivered R90-105 evidence; historical candidate failure and remaining release/performance authority boundaries are preserved; remote and Vault delivery are verified. |
 
 ## R90-01 Definition
 
@@ -4361,6 +4361,22 @@ R90-59 now distinguishes the superseded Aug 7 grant, Aug 23 exact-object grant,
 completed current-main hardening, and remaining new-candidate/tag authority.
 Local tag identity is unchanged; remote tag is absent and Release lookup
 returns HTTP 404. No candidate, runtime, policy or publication action started.
+R90-112 completed at `139504de6bc74148244b681956dbc5b50b125cd5`.
+The four-path documentation repair passed docs, all 33 knowledge tests,
+128-state JSON parsing, 116-row/Definition multiset checks, exact 90-day
+arithmetic, chronology, formatting, scope and sensitive-information review.
+Main was pushed without force or tags and freshly fetched equal to HEAD and
+FETCH_HEAD; the post-fetch knowledge gate passed. Exact range
+`5a761756de3a981a3047373d8bc8da9a3a441f06..139504de6bc74148244b681956dbc5b50b125cd5`
+was synchronized to the sole local Vault. Note, full-index row, MOC link and
+current stable MOC/release recovery authority are verified. Identical-range
+replay preserved Markdown content hash
+`2a3afb05293071e13bed34fede7125bcffb1190573b2bd8e228eae6b78efb0c2`.
+No further local increment is ready. R90-59 requires patched-candidate and tag
+replacement/resigning authority plus fresh validation; R90-75 requires
+comparable-environment evidence and product/SLO scope. Next trigger verifies
+this closure and acts only on a material evidence or authority change; routine
+repetition of the completed audit is unnecessary.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
