@@ -1,0 +1,75 @@
+{
+  "task": "r90-75-production-slo-acceptance",
+  "timestamp": "2026-09-23T07:50:52.625191+00:00",
+  "branch": "main",
+  "remote_baseline": "55019110e3227028236cd2478623525b3f77d939",
+  "risk_level": "High",
+  "current_checkpoint": "blocked-before-acceptance-execution",
+  "contract": "docs/performance-slo.md",
+  "scope_decision": "Production SLO evaluation selected; staging and production values are proposed acceptance targets, not demonstrated capacity",
+  "completed": [
+    "User selected production SLO scope and supplied hardware/workload profiles",
+    "User formally required live-arrival-to-durable-persistence latency including buffering and queueing",
+    "User formally required offered-eligible-versus-fully-processed loss and failure accounting for missing expected alerts without latency filtering",
+    "User formally required raw counts, deadline violations, p99 and extended-duration tail validation",
+    "User initially designated bench01, then explicitly clarified that no external host exists and all testing is isolated local execution in this Ubuntu VM",
+    "Existing R90-74 baseline revalidated without a production capacity claim",
+    "User replaced independently provisioned environment eligibility with separate local working directory, isolated process groups and no production runtime reuse",
+    "Read-only local discovery found 16 visible logical CPUs, 8078816 KiB RAM and lo/ens33/ens37/docker0; no test traffic ran"
+  ],
+  "in_progress": [],
+  "todo": [
+    "Define isolated local SUT/generator working directories, process groups, resource allocations, service endpoints and chosen ingress",
+    "Freeze exact workload, configuration, rule set, commits, durability settings and timestamp boundary",
+    "Specify extended duration, minimum sample criterion, estimator and missing-latency representation",
+    "Implement and directly validate correlated arrival/completion and offered/processed/expected-alert measurements",
+    "Perform the comparison in the approved isolated same-host context with matched commit/toolchain/resources or explicitly plan a matched rebaseline",
+    "Execute both profiles locally only after resource/profile agreement and retain full recomputable artifacts",
+    "Verify all acceptance results before any profile-specific SLO compliance claim"
+  ],
+  "runner": {
+    "mode": "isolated-local-vm",
+    "external_host_exists": false,
+    "ssh_required": false,
+    "independent_hardware": false,
+    "isolation": [
+      "separate working directory",
+      "isolated test process groups",
+      "no production service runtime/state reuse"
+    ],
+    "sut": "local test instance on same Ubuntu VM",
+    "ingress_candidates": [
+      "lo",
+      "ens33",
+      "ens37"
+    ],
+    "ingress_selected": false,
+    "observed_resources": {
+      "logical_cpus_visible": 16,
+      "memory_total_kib": 8078816,
+      "dedicated_allocation_verified": false
+    },
+    "superseded_preflight": "SSH name-resolution failure preceded user clarification that bench01 is not an external host"
+  },
+  "artifact_template": "~/benchmarks/r90‑75/acceptance_{staging|prod}_{YYYYMMDD_HHMMSS}.json",
+  "qualifying_evidence": {
+    "staging": false,
+    "prod": false,
+    "acceptance_runs_executed": false,
+    "slo_compliance_asserted": false
+  },
+  "remaining_risks": [
+    "No qualifying measurement evidence for either proposed profile",
+    "Current guest RAM is approximately 7.70 GiB; production target requires 16 GiB",
+    "Higher risk for production baseline with 20000 active rules",
+    "Current histograms and pre-processing counter do not satisfy formal measurement boundaries",
+    "SUT and generator share hardware; isolated processes do not prove hardware independence",
+    "Local allocation, fixture/ingress selection, clocks and extended-run policy remain unresolved"
+  ],
+  "authority_boundaries": [
+    "Accepted production SLO direction, formal measurement contract and isolated local execution scope; remote-host prerequisite superseded",
+    "Targets do not establish capacity or authorize a passing gate without evidence",
+    "No release, tag or registry action"
+  ],
+  "resume_instructions": "Use docs/performance-slo.md as the contract. All tests use isolated directories/process groups and a fresh test service on this single Ubuntu VM; no external bench01 or SSH lookup is needed. Product direction and local execution scope are supplied. Resolve profile/resources (current RAM is below production target), measurement and frozen-run prerequisites, then execute qualifying local acceptance with full artifacts. R90-113 records the contract only; R90-75 and both profile compliance claims remain outstanding."
+}

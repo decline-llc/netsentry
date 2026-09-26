@@ -232,9 +232,19 @@ observations from one clean commit and unchanged environment under
 [`r90-74-single-host-benchmark-baseline/`](evidence/r90-74-single-host-benchmark-baseline/).
 The highest recorded coefficient of variation is 11.252396% for
 `BenchmarkMatcherMatch/no_hit` `ns/op`; this is an observation, not a failure
-or proposed budget. A portable/same-host/observation-only budget decision
-remains blocked in R90-75 until comparable-environment evidence and explicit
-product/SLO scope exist.
+or proposed budget. On 2026-09-23 the user selected production SLO evaluation
+and clarified that all testing uses an isolated execution context on this same
+Ubuntu VM, superseding the earlier external bench01 description. The
+[production SLO acceptance contract](performance-slo.md) records the proposed
+staging/production targets, formal end-to-end latency and loss accounting,
+raw counts/deadline violations beside p99, extended-run requirement, and exact
+artifact destination. Neither profile has qualifying acceptance evidence.
+R90-75 remains blocked on local measurement coverage, frozen run parameters,
+profile/resource agreement and qualifying artifacts. Current guest RAM is about
+7.70 GiB, below the proposed production profile's 16 GiB. Product direction and
+local execution scope are supplied; no remote SSH host is required. The
+comparison study uses the approved isolated same-host context and remains
+outstanding. Local isolation does not establish hardware independence.
 
 See
 [`performance-evidence-audit-20260805.md`](audit/performance-evidence-audit-20260805.md)

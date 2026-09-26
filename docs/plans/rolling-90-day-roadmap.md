@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-09-23 through 2026-12-21. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-09-25 through 2026-12-23. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -137,7 +137,7 @@
 | R90-72 | Oct 3–31 | Complete early | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
 | R90-73 | Aug 5–Sep 4 | Complete early | Add versioned local benchmark evidence capture. | R90-72 | One directly tested command captures every established C/Go benchmark with exact Git/tree state, environment/toolchain fingerprint, parameters, raw output, parsed metrics, path redaction, and local-synthetic classification without applying a threshold. |
 | R90-74 | Sep 5–Oct 2 | Complete early | Record a repeated single-host benchmark baseline. | R90-73 | At least five uncached complete-surface samples from one clean pinned commit and unchanged environment retain every raw result plus median/IQR/variation summaries as observation-only local evidence. |
-| R90-75 | Oct 3–31 | Blocked / pending evidence; non-blocking | Decide portable performance-budget scope. | R90-74; comparable-environment evidence; explicit budget scope | Matched evidence and product/SLO authority decide whether a budget can be portable, same-host-only, or observation-only; current single-host data cannot activate a numeric gate or prevent unrelated dependency-ready roadmap work. |
+| R90-75 | Oct 3–31 | Blocked on measurement coverage, profile resources and qualifying evidence; non-blocking | Validate proposed staging/production SLO acceptance profiles. | R90-74; R90-113 contract; isolated local execution and matched comparison | Production scope and same-VM isolation are supplied; live arrival-to-durable-write latency, offered-versus-completed loss, missing-alert failures, counts/violations beside p99 and extended local runs must pass with matching profile resources and full artifacts before compliance is claimed. |
 | R90-76 | Aug 9 | Complete | Audit post-tag delivery and restore the forward queue. | R90-59a; R90-74 | A dated audit reconciles the local-tag feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current code/tests, and blocked authorities, then restores only evidence-grounded local work without runtime or publication changes. |
 | R90-77 | Aug 10–Sep 4 | Complete early | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
 | R90-78 | Sep 5–25 | Complete early | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
@@ -175,6 +175,7 @@
 | R90-110 | Aug 31 | Complete | Audit R90-109 delivery and preserve the externally blocked queue. | R90-109 | A dated documentation-only audit reconciles the exact R90-109 feature/closure, recent delivery phases, freshly fetched remote, exact and idempotent Vault evidence, current toolchain/tag/release boundaries, and complete R90-59/R90-75 blocker contracts without starting runtime, performance, candidate, publication, or another increment. |
 | R90-111 | Sep 1 | Complete | Audit R90-110 delivery, refresh the rolling horizon, and preserve the externally blocked queue. | R90-110 | A dated documentation-only audit reconciles the exact R90-110 feature/closure, recent delivery phases, freshly fetched remote, exact and idempotent Vault evidence, current toolchain/tag/release boundaries, complete R90-59/R90-75 blocker contracts, and the Sep 1-Nov 30 horizon without starting runtime, performance, candidate, publication, or another increment. |
 | R90-112 | Sep 23 | Complete | Refresh the rolling horizon and reconcile blocked-queue recovery instructions. | R90-111; R90-105 | Sep 23-Dec 21 horizon and active R90-59 recovery agree with delivered R90-105 evidence; historical candidate failure and remaining release/performance authority boundaries are preserved; remote and Vault delivery are verified. |
+| R90-113 | Sep 23–25 | In progress | Record the formal production SLO acceptance contract and reconcile R90-75 blockers. | R90-112; supplied production-scope decision | Both proposed profiles and all formal measurement clauses, clarified local execution context, exact artifact template and absent qualifying evidence are recorded; source-grounded measurement/resource gaps and active state replace superseded product-choice blockers without claiming capacity or running traffic. |
 
 ## R90-01 Definition
 
@@ -1579,23 +1580,43 @@
 
 ## R90-75 Definition
 
-- **Goal:** decide from matched evidence and explicit product/SLO scope whether
-  NetSentry can support a portable, same-host-only, or observation-only
-  regression policy.
-- **Risk:** turning a single-host variance band into a universal gate can
-  create false failures and false production-capacity claims.
-- **Required validation:** completed R90-74 evidence; at least one independently
-  provisioned comparable-environment evidence set using the same schema and
-  exact benchmark commit; documented product/SLO scope; statistical and
-  fixture comparability review; direct threshold-policy tests if any gate is
-  proposed; documentation and knowledge checks.
-- **Blocker evidence:** this trigger contains neither a comparable-environment
-  evidence set nor authority to choose a product/SLO regression scope.
-- **Unblock condition:** supply the matched evidence and explicitly choose the
-  budget scope after R90-74 completes.
-- **Stop condition:** remain blocked without both inputs; stop on corpus,
-  commit, environment, metric, statistical, production-claim, or publication
-  ambiguity.
+- **Goal:** validate proposed staging and production SLO profiles against the
+  [formal acceptance contract](../performance-slo.md) in the agreed isolated
+  local execution context.
+- **Risk:** treating proposed capacity as measured capacity, excluding missing
+  alerts from latency, counting packets before completion, or relying on sparse
+  p99 samples can falsely certify a profile. Generator/SUT share hardware;
+  production has 20,000 rules and requires more RAM than this VM currently has.
+- **Authority update (Sep 23):** the user selected production SLO evaluation,
+  supplied target profiles and formally adopted the three measurement clauses.
+  A subsequent clarification replaces the independently provisioned environment
+  prerequisite with isolated local directories, process groups and fresh test
+  runtime on this single Ubuntu VM. No external bench01 host exists and SSH is
+  not required. Process isolation does not establish hardware independence.
+- **Required validation:** R90-74 and matched comparison in the approved local
+  context, preserving exact benchmark commit/schema/toolchain/resource
+  comparability or explicitly planning a matched rebaseline; verified local
+  process/state isolation and actual profile resources; correlated live-arrival
+  to durable-persistence latency including capture buffering and queueing;
+  offered-eligible versus fully-processed loss; missing expected alerts counted
+  as failures without latency filtering; raw counts and deadline violations
+  alongside p99; extended-duration runs; complete local artifacts; direct
+  collector/threshold-policy regressions before any gate; docs/knowledge checks.
+- **Blocker evidence:** neither profile has qualifying measurements. Local
+  discovery found approximately 7.70 GiB guest RAM, below the production
+  profile's 16 GiB. Frozen local allocation/ingress/workload and extended-run
+  policy remain unspecified. Current component histograms and the
+  pre-processing counter cannot satisfy the measurement contract.
+- **Unblock condition:** establish the isolated local test setup, align actual
+  resources with each tested profile or explicitly revise the profile, complete
+  measurement coverage, freeze run parameters, execute acceptance, retain full
+  artifacts at the designated local location and review all results.
+- **Stop condition:** no profile compliance claim without successful local
+  execution and retained full artifacts; stop on missing/ambiguous identity,
+  resource, clock, workload, durability, loss, sample or validation evidence.
+  No tag or publication authority is implied.
+- **Active state:**
+  [`task-state-20260923-production-slo-acceptance.json`](../tasks/task-state-20260923-production-slo-acceptance.json).
 
 ## R90-76 Definition
 
@@ -2438,6 +2459,26 @@
   [`task-20260923-blocked-queue-recovery.md`](task-20260923-blocked-queue-recovery.md),
   from fetched baseline `5a761756de3a981a3047373d8bc8da9a3a441f06`.
 
+## R90-113 Definition
+
+- **Goal:** deliver the user-supplied production SLO contract and accurate
+  outstanding R90-75 execution requirements as one documentation increment.
+- **Risk:** contract approval or successful documentation validation could be
+  mistaken for demonstrated staging/production capacity or completed R90-75.
+- **Required validation:** exact six-path scope, supplied profile/measurement
+  clause review, rate arithmetic, runner preflight classification, source
+  boundary review, retained artifact-template identity, local resource discovery,
+  R90-74 baseline check,
+  JSON and roadmap multiset/chronology checks, docs/knowledge/diff and sensitive-
+  data checks, verified push/fetch and exact-range Vault synchronization.
+- **Stop condition:** stop before acceptance execution without isolated local
+  setup, matching profile resources and validated measurement coverage; stop
+  delivery on ambiguous local
+  validation or remote/Vault evidence. No runtime or publication changes.
+- **Selected plan:**
+  [`task-20260923-production-slo-contract.md`](task-20260923-production-slo-contract.md),
+  from fetched baseline `55019110e3227028236cd2478623525b3f77d939`.
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -2950,11 +2991,12 @@
 `R90-01 → R90-02 → R90-03`; `R90-03a → R90-04a`;
 `R90-04 → R90-04b → R90-05 → R90-06 → R90-07 → R90-08 → R90-09 → R90-10 → R90-11 → R90-12 → R90-13 → R90-14 → R90-15 → R90-16 → R90-17 → R90-18 → R90-19 → R90-20 → R90-21 → R90-22 → R90-23 → R90-24 → R90-25 → R90-26 → R90-27 → R90-28 → R90-29 → R90-30 → R90-31 → R90-32 → R90-33 → R90-34 → R90-35 → R90-36 → R90-37 → R90-38 → R90-39 → R90-40 → R90-41 → R90-42 → R90-43 → R90-44 → R90-45 → R90-46 → R90-47 → R90-48 → R90-49 → R90-50 → R90-51 → R90-52 → R90-53 → R90-54 → R90-55 → R90-56 → R90-57 → R90-60 → R90-61 → R90-62 → R90-63 → R90-64 → R90-65 → R90-66 → R90-67 → R90-68 → R90-69 → R90-70 → R90-71 → R90-72 → R90-73 → R90-74 → R90-75`;
 `(R90-59a + R90-74) → R90-76 → R90-77 → R90-78 → R90-79 → R90-80 → R90-81 → R90-82`;
-`R90-56 → R90-58 → R90-59a → R90-59`. R90-75 is blocked on
-comparable-environment evidence plus explicit product/SLO budget scope but is
-not a dependency for unrelated future work. R90-59 is blocked on explicit
-remote tag-push, GitHub Release, and GHCR authorization after R90-59a. R90-04a
-is an evidence-independent quality
+`R90-56 → R90-58 → R90-59a → R90-59`. R90-113 records the supplied
+production SLO direction and user-approved isolated same-VM execution scope.
+R90-75 remains blocked on measurement coverage, matching profile resources
+and qualifying retained artifacts, and is not a dependency for unrelated
+future work. R90-59 retains the separate candidate/tag-replacement and
+validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
 PCAP exceptions remain immutable historical delivery evidence. The later global
 PCAP waiver supersedes their restrictions for current and future release-gate
@@ -4377,6 +4419,37 @@ replacement/resigning authority plus fresh validation; R90-75 requires
 comparable-environment evidence and product/SLO scope. Next trigger verifies
 this closure and acts only on a material evidence or authority change; routine
 repetition of the completed audit is unnecessary.
+The subsequent Sep 23 user decision supplies production SLO scope, proposed
+staging/production target profiles, formal end-to-end latency and loss
+accounting, counts/deadline violations beside p99, extended-duration runs,
+and independent runner bench01 with its exact artifact destination. The user
+explicitly confirms neither profile has qualifying measurements. R90-113 is
+selected only to record that material contract and reconcile R90-75 authority.
+The clean R90-112 closure, dual Git/Vault ranges, 128 prior states and 116
+unique roadmap Definitions are verified; the ten-commit Aug 26-Sep 23 phase
+contains documentation only. Read-only SSH could not resolve bench01, so no
+remote command or traffic ran. Current worker metrics count processing before
+completion and time only components; the new contract records those concrete
+measurement gaps. The six-path plan/state was persisted before documentation
+edits. R90-59 retains its independent blocker; R90-75 remains pending actual
+acceptance, with scope and runner designation now supplied.
+Before delivery, the user clarified that bench01 is not an external host:
+all tests use separate working directories, isolated process groups and fresh
+service state on this same Ubuntu VM. This explicitly supersedes the
+independently provisioned environment requirement; SSH resolution is no longer
+a blocker. The contract, performance guide and active R90-75 state now record
+single-VM evidence and shared generator/SUT resources. Read-only discovery
+found 16 visible logical CPUs and 8,078,816 KiB RAM (about 7.70 GiB), below the
+production profile's 16 GiB; lo, ens33, ens37 and docker0 exist but no ingress
+was selected and no traffic ran. Qualification requires matching the profile's
+actual resources or an explicit profile revision, not relabeling a shared-host
+run as independent hardware evidence. Acceptance remains outstanding.
+The Sep 25 continuation re-fetched the unchanged R90-112 closure and confirmed
+only the six intended in-progress documentation paths. Local CPU, RAM and
+interface observations are unchanged. The rolling horizon advances to Sep
+25-Dec 23 (90 inclusive days); the same R90-113 increment resumes without
+starting a benchmark or another increment. The contract preserves all formal
+measurement clauses and the exact Unicode-hyphen artifact destination.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent
