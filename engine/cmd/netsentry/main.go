@@ -17,6 +17,7 @@ import (
 	"github.com/decline-llc/netsentry/internal/alert"
 	"github.com/decline-llc/netsentry/internal/api"
 	"github.com/decline-llc/netsentry/internal/config"
+	"github.com/decline-llc/netsentry/internal/measurement"
 	"github.com/decline-llc/netsentry/internal/pipeline"
 	"github.com/decline-llc/netsentry/internal/receiver"
 	"github.com/decline-llc/netsentry/internal/rule"
@@ -26,8 +27,25 @@ import (
 )
 
 func main() {
+	os.Exit(run())
+}
+
+func run() int {
 	cfgPath := flag.String("config", "config.yaml", "path to config.yaml")
+	sloDir := flag.String("slo-output-dir", "", "new private directory for opt-in lifecycle export")
+	sloRun := flag.String("slo-run-id", "", "measurement run ID shared with ingress and oracle")
+	sloOrigin := flag.String("slo-origin", "", "measurement run origin, UTC YYYY-MM-DDTHH:MM:SSZ")
 	flag.Parse()
+	sloEnabled := *sloDir != "" || *sloRun != "" || *sloOrigin != ""
+	var origin time.Time
+	if sloEnabled {
+		var err error
+		origin, err = time.Parse("2006-01-02T15:04:05Z", *sloOrigin)
+		if err != nil || origin.Format("2006-01-02T15:04:05Z") != *sloOrigin || *sloDir == "" || !model.ValidSLOIdentifier(*sloRun) {
+			fmt.Fprintln(os.Stderr, "fatal: all three valid --slo-output-dir, --slo-run-id and --slo-origin flags are required")
+			return 1
+		}
+	}
 
 	cfg, err := config.Load(*cfgPath)
 	if err != nil {
@@ -70,16 +88,26 @@ func main() {
 	metrics := stats.New()
 	ctx, cancel := nssignal.WaitForShutdown()
 	defer cancel()
+	var exporter *measurement.Exporter
+	if sloEnabled {
+		exporter, err = measurement.Open(*sloDir, *sloRun, origin, cancel)
+		if err != nil {
+			logger.Error("open measurement export", zap.Error(err))
+			return 1
+		}
+		logger.Info("measurement export enabled; physical boundaries require departmental review", zap.String("run_id", *sloRun))
+	}
 
 	store, err := alert.Open(ctx, alert.Options{
-		Path:              cfg.Engine.DBPath,
-		Dir:               cfg.Engine.DBDir,
-		DailyShard:        cfg.Engine.DBShardDaily,
-		JournalMode:       cfg.Engine.DBJournalMode,
-		BusyTimeoutMS:     cfg.Engine.DBBusyTimeout,
-		AggregationWindow: time.Duration(cfg.Engine.AlertAggregationWindow) * time.Second,
-		RetentionDays:     cfg.Engine.AlertRetentionDays,
-		RecoveryLogPath:   cfg.Engine.AlertRecoveryLogPath,
+		Path:                 cfg.Engine.DBPath,
+		Dir:                  cfg.Engine.DBDir,
+		DailyShard:           cfg.Engine.DBShardDaily,
+		JournalMode:          cfg.Engine.DBJournalMode,
+		BusyTimeoutMS:        cfg.Engine.DBBusyTimeout,
+		AggregationWindow:    time.Duration(cfg.Engine.AlertAggregationWindow) * time.Second,
+		RetentionDays:        cfg.Engine.AlertRetentionDays,
+		RecoveryLogPath:      cfg.Engine.AlertRecoveryLogPath,
+		RequireDurableWrites: sloEnabled,
 	})
 	if err != nil {
 		logger.Fatal("open alert store", zap.Error(err))
@@ -112,6 +140,9 @@ func main() {
 		logger.Fatal("create suppression manager", zap.Error(err))
 	}
 	worker := pipeline.NewWorker(ruleEngine, store, logger, metrics)
+	if exporter != nil {
+		worker.SetObserver(exporter)
+	}
 	worker.SetSuppressor(suppressions)
 	if cfg.Engine.RedactSensitiveFields {
 		worker.SetRedactor(alert.RedactSensitivePayloads)
@@ -129,7 +160,14 @@ func main() {
 	<-ctx.Done()
 	logger.Info("shutdown signal received, stopping receiver")
 	waitForEngineShutdown(recv, workerDone, httpDone)
+	if exporter != nil {
+		if err := exporter.Close(); err != nil {
+			logger.Error("measurement export incomplete; retain partial files", zap.Error(err))
+			return 1
+		}
+	}
 	logger.Info("shutdown complete")
+	return 0
 }
 
 func waitForEngineShutdown(recv *receiver.Receiver, workerDone, httpDone <-chan struct{}) {

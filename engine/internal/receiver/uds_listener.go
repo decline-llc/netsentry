@@ -551,6 +551,11 @@ func validatePacketFrame(pkt *model.PacketInfo) error {
 	if pkt == nil {
 		return fmt.Errorf("invalid packet frame: null packet")
 	}
+	if pkt.SLO != nil {
+		if err := pkt.SLO.Validate(); err != nil {
+			return fmt.Errorf("invalid packet frame: %w", err)
+		}
+	}
 	if pkt.TimestampUsec < 0 || pkt.TimestampUsec >= 1_000_000 {
 		return fmt.Errorf("invalid packet frame: timestamp_usec out of range")
 	}

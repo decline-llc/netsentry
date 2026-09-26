@@ -19,6 +19,7 @@ type Worker struct {
 	stats      *stats.Stats
 	suppressor SuppressionFilter
 	redactor   AlertRedactor
+	observer   Observer
 }
 
 // NewWorker constructs a single packet processing worker.
@@ -47,6 +48,23 @@ func (w *Worker) SetSuppressor(filter SuppressionFilter) {
 // SetRedactor configures an optional alert payload redactor.
 func (w *Worker) SetRedactor(redactor AlertRedactor) {
 	w.redactor = redactor
+}
+
+// SetObserver enables lifecycle export; call only before starting workers.
+func (w *Worker) SetObserver(observer Observer) { w.observer = observer }
+
+func (w *Worker) observed(err error) bool {
+	if err != nil {
+		w.logger.Error("measurement export failed", zap.Error(err))
+		return false
+	}
+	return true
+}
+
+func (w *Worker) processed(pkt *model.PacketInfo) {
+	if w.observer != nil {
+		w.observed(w.observer.Processed(pkt, w.now()))
+	}
 }
 
 // Run processes packets until the input channel is closed or ctx is cancelled.
@@ -83,15 +101,20 @@ func (w *Worker) processPacket(ctx context.Context, pkt *model.PacketInfo) {
 	}()
 
 	w.stats.IncPacketProcessed()
+	if w.observer != nil && !w.observed(w.observer.Arrival(pkt)) {
+		return
+	}
 	start := time.Now()
 	alerts := w.matcher.Match(pkt)
 	w.stats.ObserveMatchDuration(time.Since(start))
 	if len(alerts) == 0 {
+		w.processed(pkt)
 		return
 	}
 	if w.suppressor != nil {
 		alerts = w.suppressor.Filter(alerts)
 		if len(alerts) == 0 {
+			w.processed(pkt)
 			return
 		}
 	}
@@ -112,10 +135,17 @@ func (w *Worker) processPacket(ctx context.Context, pkt *model.PacketInfo) {
 
 	writeStart := time.Now()
 	err := w.writer.WriteBatch(ctx, alerts)
+	var persistedAt time.Time
+	if err == nil && w.observer != nil {
+		persistedAt = w.now()
+	}
 	w.stats.ObserveAlertWriteDuration(time.Since(writeStart))
 	if err != nil {
 		w.stats.IncAlertWriteError()
 		w.logger.Warn("write pipeline alerts", zap.Error(err))
+		return
+	}
+	if w.observer != nil && !w.observed(w.observer.Durable(pkt, alerts, persistedAt)) {
 		return
 	}
 	w.stats.ObserveAlerts(alerts)
@@ -123,4 +153,5 @@ func (w *Worker) processPacket(ctx context.Context, pkt *model.PacketInfo) {
 		zap.String("src_ip", pkt.SrcIP),
 		zap.String("dst_ip", pkt.DstIP),
 		zap.Int("alerts", len(alerts)))
+	w.processed(pkt)
 }

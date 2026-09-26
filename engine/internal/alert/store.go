@@ -56,15 +56,16 @@ var ErrDatabaseIntegrity = errors.New("existing SQLite database failed integrity
 
 // Options controls the SQLite alert store.
 type Options struct {
-	Path              string
-	Dir               string
-	DailyShard        bool
-	JournalMode       string
-	BusyTimeoutMS     int
-	AggregationWindow time.Duration
-	RetentionDays     int
-	RecoveryLogPath   string
-	Now               func() time.Time
+	Path                 string
+	Dir                  string
+	DailyShard           bool
+	JournalMode          string
+	BusyTimeoutMS        int
+	AggregationWindow    time.Duration
+	RetentionDays        int
+	RecoveryLogPath      string
+	RequireDurableWrites bool
+	Now                  func() time.Time
 }
 
 type recoveryLogDurabilityFile interface {
@@ -79,24 +80,25 @@ type recoveryLogAppendFile interface {
 
 // Store persists alerts and aggregates repeated hits in a fixed time window.
 type Store struct {
-	db                 *sql.DB
-	path               string
-	dir                string
-	dailyShard         bool
-	journalMode        string
-	busyTimeoutMS      int
-	aggregationWindow  time.Duration
-	retentionDays      int
-	recoveryLogPath    string
-	openRecoveryAppend func(string, int, os.FileMode) (recoveryLogAppendFile, error)
-	openRecoveryClear  func(string, int, os.FileMode) (recoveryLogDurabilityFile, error)
-	now                func() time.Time
-	lifecycle          *storeLifecycle
-	writeMu            sync.Mutex
-	healthMu           sync.RWMutex
-	health             StorageHealth
-	closing            bool
-	recoveryCancel     context.CancelFunc
+	db                   *sql.DB
+	path                 string
+	dir                  string
+	dailyShard           bool
+	journalMode          string
+	requireDurableWrites bool
+	busyTimeoutMS        int
+	aggregationWindow    time.Duration
+	retentionDays        int
+	recoveryLogPath      string
+	openRecoveryAppend   func(string, int, os.FileMode) (recoveryLogAppendFile, error)
+	openRecoveryClear    func(string, int, os.FileMode) (recoveryLogDurabilityFile, error)
+	now                  func() time.Time
+	lifecycle            *storeLifecycle
+	writeMu              sync.Mutex
+	healthMu             sync.RWMutex
+	health               StorageHealth
+	closing              bool
+	recoveryCancel       context.CancelFunc
 }
 
 // StorageHealth describes the current alert storage state.
@@ -233,6 +235,9 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 	if opts.JournalMode == "" {
 		opts.JournalMode = "WAL"
 	}
+	if opts.RequireDurableWrites && !strings.EqualFold(strings.TrimSpace(opts.JournalMode), "WAL") {
+		return nil, fmt.Errorf("measurement durable writes require WAL journal mode")
+	}
 	if opts.BusyTimeoutMS <= 0 {
 		opts.BusyTimeoutMS = 5000
 	}
@@ -262,25 +267,30 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 		}
 	}
 
-	db, err := sql.Open("sqlite", dbPath)
+	dsn, err := writableDatabaseDSN(dbPath, opts.RequireDurableWrites)
+	if err != nil {
+		return nil, err
+	}
+	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("open sqlite alerts store: %w", err)
 	}
 	db.SetMaxOpenConns(1)
 
 	store := &Store{
-		db:                db,
-		path:              dbPath,
-		dir:               defaultDBDir(opts.Dir),
-		dailyShard:        opts.DailyShard,
-		journalMode:       opts.JournalMode,
-		busyTimeoutMS:     opts.BusyTimeoutMS,
-		aggregationWindow: opts.AggregationWindow,
-		retentionDays:     opts.RetentionDays,
-		recoveryLogPath:   recoveryLogPath,
-		now:               clock(opts.Now),
-		lifecycle:         newStoreLifecycle(),
-		health:            StorageHealth{Status: "ok"},
+		db:                   db,
+		path:                 dbPath,
+		dir:                  defaultDBDir(opts.Dir),
+		dailyShard:           opts.DailyShard,
+		journalMode:          opts.JournalMode,
+		requireDurableWrites: opts.RequireDurableWrites,
+		busyTimeoutMS:        opts.BusyTimeoutMS,
+		aggregationWindow:    opts.AggregationWindow,
+		retentionDays:        opts.RetentionDays,
+		recoveryLogPath:      recoveryLogPath,
+		now:                  clock(opts.Now),
+		lifecycle:            newStoreLifecycle(),
+		health:               StorageHealth{Status: "ok"},
 	}
 	if err := store.init(ctx, opts); err != nil {
 		_ = db.Close()
@@ -933,6 +943,20 @@ func readOnlyDatabaseDSN(path string) (string, error) {
 	return (&url.URL{Scheme: "file", Path: path, RawQuery: query.Encode()}).String(), nil
 }
 
+// The driver applies _pragma to every new connection, including replacements.
+// Preserve the ordinary DSN path when measurement is disabled.
+func writableDatabaseDSN(path string, durable bool) (string, error) {
+	if !durable {
+		return path, nil
+	}
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		return "", fmt.Errorf("resolve durable sqlite path: %w", err)
+	}
+	query := url.Values{"_pragma": {"synchronous(FULL)"}}
+	return (&url.URL{Scheme: "file", Path: abs, RawQuery: query.Encode()}).String(), nil
+}
+
 func resolveDBPath(opts Options) string {
 	if !opts.DailyShard {
 		if opts.Path != "" {
@@ -1176,6 +1200,19 @@ func (s *Store) init(ctx context.Context, opts Options) error {
 	if _, err := s.db.ExecContext(ctx, "PRAGMA journal_mode="+journalMode); err != nil {
 		return fmt.Errorf("set sqlite journal mode: %w", err)
 	}
+	if opts.RequireDurableWrites {
+		var mode string
+		var synchronous int
+		if err := s.db.QueryRowContext(ctx, "PRAGMA journal_mode").Scan(&mode); err != nil {
+			return fmt.Errorf("verify measurement journal mode: %w", err)
+		}
+		if err := s.db.QueryRowContext(ctx, "PRAGMA synchronous").Scan(&synchronous); err != nil {
+			return fmt.Errorf("verify measurement synchronous mode: %w", err)
+		}
+		if !strings.EqualFold(mode, "WAL") || synchronous != 2 {
+			return fmt.Errorf("measurement requires effective WAL and synchronous=FULL")
+		}
+	}
 	if _, err := s.db.ExecContext(ctx, fmt.Sprintf("PRAGMA busy_timeout=%d", opts.BusyTimeoutMS)); err != nil {
 		return fmt.Errorf("set sqlite busy timeout: %w", err)
 	}
@@ -1198,14 +1235,19 @@ func (s *Store) openShard(ctx context.Context, path string) (*sql.DB, error) {
 			return nil, err
 		}
 	}
-	db, err := sql.Open("sqlite", path)
+	dsn, err := writableDatabaseDSN(path, s.requireDurableWrites)
+	if err != nil {
+		return nil, err
+	}
+	db, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("open sqlite alert shard: %w", err)
 	}
 	db.SetMaxOpenConns(1)
 	opts := Options{
-		JournalMode:   s.journalMode,
-		BusyTimeoutMS: s.busyTimeoutMS,
+		JournalMode:          s.journalMode,
+		BusyTimeoutMS:        s.busyTimeoutMS,
+		RequireDurableWrites: s.requireDurableWrites,
 	}
 	shard := &Store{db: db}
 	if err := shard.init(ctx, opts); err != nil {

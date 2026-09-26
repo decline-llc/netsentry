@@ -1,0 +1,34 @@
+{
+  "task": "r90-116-slo-runtime",
+  "timestamp": "2026-09-26T11:46:10.582002+00:00",
+  "branch": "main",
+  "remote_baseline": "1dd5dac2923fee51d7af4b43ae1fd0695c33a88d",
+  "risk_level": "High",
+  "current_checkpoint": "implementation-reviewed-delivery-pending",
+  "completed": [
+    "Fresh clean fetched baseline and R90-115 Vault index/MOC verified",
+    "User reiterated testing delegation; persisted bounded engine export plan before edits",
+    "Implemented optional UDS metadata, engine observer/export lifecycle and full-synchronous WAL connection configuration",
+    "Documented engine boundary, remaining native ingress work and departmental validation matrix",
+    "Compile-only engine build succeeded; binary not executed; manual source, gofmt, JSON/roadmap/links/diff reviews passed"
+  ],
+  "in_progress": [
+    "Feature commit/push/fetch and exact Vault verification"
+  ],
+  "todo": [
+    "Verified feature Git/Vault delivery",
+    "Docs-only closure"
+  ],
+  "validation": {
+    "tests": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "acceptance_runs": "not_run",
+    "static_review": "pass: compile-only Go build, gofmt, manual source and static JSON/roadmap/link/diff review",
+    "build": "pass: go build -o /tmp/netsentry-r90-116 ./cmd/netsentry; binary not executed"
+  },
+  "remaining_risks": [
+    "Behavior untested by user direction",
+    "Native ingress correlation, clock and physical durability evidence remain pending"
+  ],
+  "resume_instructions": "Deliver the reviewed 15-path R90-116 feature and exact Vault range, then docs-only closure. All tests remain delegated; do not execute binary or traffic. R90-117 native ingress correlation is queued separately."
+}

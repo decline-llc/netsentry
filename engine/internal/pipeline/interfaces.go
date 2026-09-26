@@ -2,6 +2,7 @@ package pipeline
 
 import (
 	"context"
+	"time"
 
 	"github.com/decline-llc/netsentry/pkg/model"
 )
@@ -23,3 +24,11 @@ type SuppressionFilter interface {
 
 // AlertRedactor mutates alerts before they are persisted or returned by storage-backed APIs.
 type AlertRedactor func(alerts []*model.Alert)
+
+// Observer is configured before workers start. Implementations must be safe for
+// concurrent workers. Durable is called only after successful writer return.
+type Observer interface {
+	Arrival(pkt *model.PacketInfo) error
+	Durable(pkt *model.PacketInfo, alerts []*model.Alert, at time.Time) error
+	Processed(pkt *model.PacketInfo, at time.Time) error
+}

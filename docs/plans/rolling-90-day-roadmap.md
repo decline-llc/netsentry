@@ -193,7 +193,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-113 | Sep 23–25 | Complete | Record the formal production SLO acceptance contract and reconcile R90-75 blockers. | R90-112; supplied production-scope decision | Both proposed profiles and all formal measurement clauses, clarified local execution context, exact artifact template and absent qualifying evidence are recorded; source-grounded measurement/resource gaps and active state replace superseded product-choice blockers without claiming capacity or running traffic. |
 | R90-114 | Sep 25 | Complete implementation; tests delegated | Implement departmental SLO observation summaries and retained reports. | R90-113; user-directed test delegation | A standard-library API/CLI validates supplied cohorts/events, retains missing alerts in p99 and failure counts, summarizes phase/minute/five-minute loss and latency, and publishes a non-overwriting source-bound report without asserting compliance; behavioral tests are explicitly delegated. |
 | R90-115 | Sep 26 | Complete implementation; tests delegated | Adapt raw packet/oracle and lifecycle ledgers into retained SLO report input. | R90-114 | Unique identity correlation, oracle-driven missing/failure accounting, exact raw copies and checksums, reporter-compatible observations, no compliance assertion; static review with tests delegated. |
-| R90-116 | Sep 26–Oct 9 | Ready | Add opt-in runtime correlation and lifecycle export for the SLO adapter. | R90-115 | Freeze packet/event identity propagation and arrival/durable/terminal boundaries; implement opt-in exports with explicit overhead/error semantics and departmental handoff, without claiming acceptance. |
+| R90-116 | Sep 26–Oct 9 | In progress; tests delegated | Add opt-in runtime correlation and lifecycle export for the SLO adapter. | R90-115 | Freeze packet/event identity propagation and arrival/durable/terminal boundaries; implement opt-in exports with explicit overhead/error semantics and departmental handoff, without claiming acceptance. |
+| R90-117 | Sep 26–Oct 16 | Planned | Connect native live ingress and offered-oracle correlation. | R90-116 | Freeze and implement native ingress packet identity propagation and live-arrival metadata with an independently retained offered oracle; document clocks, losses and measurement overhead without claiming acceptance. |
 
 ## R90-01 Definition
 
@@ -2556,6 +2557,25 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 - **Stop condition:** new external authority or ambiguous runtime boundary;
   record the precise issue and continue independent work. No traffic, release,
   CI weakening or test/hardware gate contrary to the user instruction.
+- **Selected plan:** [task-20260926-slo-runtime.md](task-20260926-slo-runtime.md).
+  Bounded to engine-side exports from supplied live-arrival/oracle metadata;
+  native C ingress integration is explicitly queued as R90-117.
+
+## R90-117 Definition
+
+- **Goal:** connect native live ingress to the engine measurement metadata and
+  offered-packet oracle; persist the exact correlation design before edits.
+- **Dependencies/window:** R90-116 implementation delivery; Sep 26–Oct 16.
+- **Risk:** fixture identity embedded in traffic can change workload, capture
+  drops can hide denominators, and timestamp precision/domain need verification.
+- **Acceptance:** implement the native ingress/identity boundary and retain the
+  offered cohort independently of successful capture; freeze live timestamp and
+  eligible-byte definitions, document loss/error behavior and department handoff.
+- **Required review:** static source/format/compile/docs/diff and verified Git/
+  Vault delivery; user delegates behavioral/benchmark/acceptance/knowledge tests.
+- **Stop condition:** external/private-input authority or ambiguous protocol
+  boundary; record the issue without making hardware/tests development gates.
+  No acceptance traffic, publication, or SLO claim without qualifying evidence.
 
 ### R90-71 Validation Deviation
 
@@ -3074,7 +3094,7 @@ production SLO direction and user-approved isolated same-VM execution scope.
 R90-75 acceptance is delegated to the test department; agent implementation
 is unblocked by missing tests, profile resources or qualifying artifacts under
 the explicit Sep 25 instruction. R90-114 and R90-115 implementations are
-delivered; R90-116 opt-in runtime exports are next ready.
+delivered; R90-116 engine exports are selected and R90-117 queues native ingress.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -4614,6 +4634,24 @@ claim follows. R90-116 is ready for its own runtime export plan; no source work
 on that increment began. This docs-only closure completes delivery bookkeeping
 and receives its own verified push/fetch/Vault range. R90-75 remains acceptance
 owned by the department and does not gate development.
+
+### Sep 26: R90-116 opt-in engine lifecycle export
+
+The user reiterated testing delegation and requested implementation progress.
+Fresh fetched `1dd5dac2923fee51d7af4b43ae1fd0695c33a88d` is clean and matches
+HEAD/origin/main/FETCH_HEAD; R90-115 feature/closure Vault index/MOC are verified.
+The next ready scope is the engine boundary: optional UDS measurement metadata,
+concurrent lifecycle export, full-synchronous WAL and terminal-success hooks.
+Plan/state were persisted before code edits. Native capture cannot yet supply
+oracle packet identity; R90-117 queues that independent integration. No tests,
+acceptance traffic or CLI smoke invocation are part of this delivery.
+The 15-path implementation now wires optional metadata/observer/export and
+full-synchronous WAL through primary and daily-shard connections. Compile-only
+engine build passes; no binary was run. Manual source/gofmt review, 133 state
+JSONs, 121 unique roadmap row/Definition pairs, local links, chronology and diff
+review pass. No tests (including knowledge tests), benchmarks or acceptance runs
+were executed. Engine export accepts supplied live-arrival metadata; native
+capture wiring and actual clock/durability proof remain explicitly outstanding.
 
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,

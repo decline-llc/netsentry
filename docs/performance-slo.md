@@ -182,6 +182,11 @@ unique packet counters, retains missing expected alerts and binds raw copies
 to report input by checksum. It does not instrument live capture or the engine.
 Its behavioral validation is also delegated and unexecuted.
 
+R90-116 adds [opt-in engine lifecycle export](slo-runtime.md), consuming supplied
+arrival/correlation metadata and observing terminal processing and successful
+full-synchronous WAL write return. Native capture identity wiring and physical
+clock/durability qualification remain pending. Tests remain delegated.
+
 ## Current evidence gaps and execution prerequisites
 
 - `capture/src/main.c` forwards libpcap timestamps and records send/drop

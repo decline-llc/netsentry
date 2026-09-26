@@ -80,6 +80,16 @@ Packet frame:
 
 ---
 
+### Optional measurement extension
+
+R90-116 adds optional `slo` packet metadata and opt-in engine lifecycle JSONL
+export. See [the runtime measurement contract](slo-runtime.md) for CLI flags,
+run/packet identity, supplied live-arrival timestamps, terminal success,
+full-synchronous WAL persistence and failure semantics. Native capture does not
+yet emit this metadata. Ordinary frames and disabled runtime behavior retain
+the existing path. This implementation is untested under user-directed test
+delegation; it does not establish SLO compliance.
+
 ## 4. Rule Engine
 
 The rule engine owns an immutable `ruleState` snapshot:

@@ -89,8 +89,9 @@ Exactly these three row types are supported:
   is unsuitable. Failure/no terminal observation is represented by absence.
 
 Physical instrumentation must produce and validate these boundaries. The
-current capture/engine do not emit this ledger. File order may be arbitrary;
-all offers are loaded before events. Arrival must follow offer; durable must
+[opt-in engine exporter](slo-runtime.md) now emits these lifecycle rows from
+supplied live-arrival metadata. Native capture identity integration is pending.
+File order may be arbitrary; all offers are loaded before events. Arrival must follow offer; durable must
 follow arrival; terminal processing must follow arrival and any known durable
 writes. All lifecycle times are at or before `observed_through_ns`, including
 valid zero. Duplicate observations, even identical ones, and events for unknown
@@ -160,5 +161,5 @@ been demonstrated. The adapter does not modify SUT/runtime/CI configuration.
 | Retention | Recompute all hashes and output from retained sources; cross-check report source digest; existing directory preservation; permissions; interrupted/read/disk-full/fsync errors; receipt-last behavior |
 | Scale/integration | SQLite scratch cleanup, bounded memory and actual disk/throughput cost, reporter compatibility, long acceptance runs, real arrival/durable/terminal instrumentation |
 
-No row in this handoff represents a passed test. Real instrumentation and both
-profiles' acceptance remain outstanding with the specialist department.
+No row in this handoff represents a passed test. Full ingress instrumentation
+and both profiles' acceptance remain outstanding with the specialist department.
