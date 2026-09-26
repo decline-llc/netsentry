@@ -26,6 +26,21 @@
   publication, workflow dispatch, or any other external mutation that needs
   explicit action authority.
 
+## User-Directed Development and Test Department Split (Sep 25)
+
+The user explicitly instructed the agent to skip tests and continue development;
+a specialist department will complete testing. This supersedes the agent-run
+unit, integration, benchmark, acceptance and `make knowledge-check` gates in
+the skills and this roadmap for subsequent implementation deliveries, until the
+user changes that instruction. Do not run those suites, disable CI, fabricate
+passes or infer compliance. Use static source/syntax/JSON/diff and sensitive-
+information review plus direct Git/remote/Vault verification for development
+closeout; record behavioral validation as **not run; delegated by user**.
+A bounded implementation increment may be delivered with that explicit
+validation limitation. R90-75 acceptance remains the department's outstanding
+outcome. Local hardware shortfalls and unavailable acceptance artifacts do not
+block implementation work; the formal SLO and evidence contract is unchanged.
+
 ## Per-Trigger Plan Audit
 
 1. **Baseline audit:** work from the repository root; fetch the active remote;
@@ -137,7 +152,7 @@
 | R90-72 | Oct 3–31 | Complete early | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
 | R90-73 | Aug 5–Sep 4 | Complete early | Add versioned local benchmark evidence capture. | R90-72 | One directly tested command captures every established C/Go benchmark with exact Git/tree state, environment/toolchain fingerprint, parameters, raw output, parsed metrics, path redaction, and local-synthetic classification without applying a threshold. |
 | R90-74 | Sep 5–Oct 2 | Complete early | Record a repeated single-host benchmark baseline. | R90-73 | At least five uncached complete-surface samples from one clean pinned commit and unchanged environment retain every raw result plus median/IQR/variation summaries as observation-only local evidence. |
-| R90-75 | Oct 3–31 | Blocked on measurement coverage, profile resources and qualifying evidence; non-blocking | Validate proposed staging/production SLO acceptance profiles. | R90-74; R90-113 contract; isolated local execution and matched comparison | Production scope and same-VM isolation are supplied; live arrival-to-durable-write latency, offered-versus-completed loss, missing-alert failures, counts/violations beside p99 and extended local runs must pass with matching profile resources and full artifacts before compliance is claimed. |
+| R90-75 | Oct 3–31 | Acceptance delegated; development unblocked | Validate proposed staging/production SLO acceptance profiles. | R90-74; R90-113 contract; departmental execution and evidence | Departmental tests must establish end-to-end latency, offered-versus-completed loss, missing-alert failures and extended-tail evidence with full artifacts; agent development proceeds without test execution or a local hardware prerequisite. |
 | R90-76 | Aug 9 | Complete | Audit post-tag delivery and restore the forward queue. | R90-59a; R90-74 | A dated audit reconciles the local-tag feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current code/tests, and blocked authorities, then restores only evidence-grounded local work without runtime or publication changes. |
 | R90-77 | Aug 10–Sep 4 | Complete early | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
 | R90-78 | Sep 5–25 | Complete early | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
@@ -176,6 +191,7 @@
 | R90-111 | Sep 1 | Complete | Audit R90-110 delivery, refresh the rolling horizon, and preserve the externally blocked queue. | R90-110 | A dated documentation-only audit reconciles the exact R90-110 feature/closure, recent delivery phases, freshly fetched remote, exact and idempotent Vault evidence, current toolchain/tag/release boundaries, complete R90-59/R90-75 blocker contracts, and the Sep 1-Nov 30 horizon without starting runtime, performance, candidate, publication, or another increment. |
 | R90-112 | Sep 23 | Complete | Refresh the rolling horizon and reconcile blocked-queue recovery instructions. | R90-111; R90-105 | Sep 23-Dec 21 horizon and active R90-59 recovery agree with delivered R90-105 evidence; historical candidate failure and remaining release/performance authority boundaries are preserved; remote and Vault delivery are verified. |
 | R90-113 | Sep 23–25 | Complete | Record the formal production SLO acceptance contract and reconcile R90-75 blockers. | R90-112; supplied production-scope decision | Both proposed profiles and all formal measurement clauses, clarified local execution context, exact artifact template and absent qualifying evidence are recorded; source-grounded measurement/resource gaps and active state replace superseded product-choice blockers without claiming capacity or running traffic. |
+| R90-114 | Sep 25 | In progress | Implement departmental SLO observation summaries and retained reports. | R90-113; user-directed test delegation | A standard-library API/CLI validates supplied cohorts/events, retains missing alerts in p99 and failure counts, summarizes phase/minute/five-minute loss and latency, and publishes a non-overwriting source-bound report without asserting compliance; behavioral tests are explicitly delegated. |
 
 ## R90-01 Definition
 
@@ -1602,15 +1618,20 @@
   as failures without latency filtering; raw counts and deadline violations
   alongside p99; extended-duration runs; complete local artifacts; direct
   collector/threshold-policy regressions before any gate; docs/knowledge checks.
-- **Blocker evidence:** neither profile has qualifying measurements. Local
+- **Outstanding departmental evidence:** neither profile has qualifying
+  measurements. Local
   discovery found approximately 7.70 GiB guest RAM, below the production
   profile's 16 GiB. Frozen local allocation/ingress/workload and extended-run
   policy remain unspecified. Current component histograms and the
   pre-processing counter cannot satisfy the measurement contract.
-- **Unblock condition:** establish the isolated local test setup, align actual
-  resources with each tested profile or explicitly revise the profile, complete
-  measurement coverage, freeze run parameters, execute acceptance, retain full
-  artifacts at the designated local location and review all results.
+- **Acceptance completion condition:** the department establishes the isolated
+  local test setup, aligns actual
+  resources with each tested profile or explicitly revises the profile, completes
+  measurement coverage, freezes run parameters, executes acceptance, retains
+  full artifacts and reviews results. These do not block agent implementation.
+- **Testing ownership (Sep 25):** the user delegates all test execution to the
+  specialist department and directs development to continue. Agent development
+  uses static review and explicitly records behavioral tests as not run.
 - **Stop condition:** no profile compliance claim without successful local
   execution and retained full artifacts; stop on missing/ambiguous identity,
   resource, clock, workload, durability, loss, sample or validation evidence.
@@ -2479,6 +2500,27 @@
   [`task-20260923-production-slo-contract.md`](task-20260923-production-slo-contract.md),
   from fetched baseline `55019110e3227028236cd2478623525b3f77d939`.
 
+## R90-114 Definition
+
+- **Goal:** implement a bounded departmental observation summarizer and JSON
+  report interface while the user delegates all test execution.
+- **Risk:** successful structural analysis could be mistaken for physical
+  measurement validation or certified capacity; implementation is untested.
+- **Required development review:** static Python syntax and manual source
+  review, JSON/roadmap/links/diff/scope/sensitive-data checks, exact Git/remote
+  and Vault evidence. Behavioral, benchmark and knowledge tests are deferred
+  by explicit user instruction; the handoff lists their required coverage.
+- **Acceptance:** unique event/oracle structure, missing-as-infinite p99,
+  deadline counts, offered/completed phase loss, minute and rolling-window
+  cohorts, retained source bytes/hash, non-overwriting output and explicit
+  review-required/no-compliance semantics.
+- **Stop condition:** stop on ambiguous source or delivery evidence, live
+  traffic/runtime mutation beyond this tool or a request to invent compliance;
+  missing test execution or production hardware does not block this delivery.
+- **Selected plan:**
+  [`task-20260925-slo-report.md`](task-20260925-slo-report.md),
+  from fetched baseline `99f84420e52d66718e5c6eadce3fd21278016d78`.
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -2993,9 +3035,10 @@
 `(R90-59a + R90-74) → R90-76 → R90-77 → R90-78 → R90-79 → R90-80 → R90-81 → R90-82`;
 `R90-56 → R90-58 → R90-59a → R90-59`. R90-113 records the supplied
 production SLO direction and user-approved isolated same-VM execution scope.
-R90-75 remains blocked on measurement coverage, matching profile resources
-and qualifying retained artifacts, and is not a dependency for unrelated
-future work. R90-59 retains the separate candidate/tag-replacement and
+R90-75 acceptance is delegated to the test department; agent implementation
+is unblocked by missing tests, profile resources or qualifying artifacts under
+the explicit Sep 25 instruction. R90-114 is the selected development increment.
+R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
 PCAP exceptions remain immutable historical delivery evidence. The later global
@@ -4469,6 +4512,24 @@ made. Product direction and local scope are supplied, so do not repeat the
 external-runner/product-choice questions. R90-59 retains its separate blocker.
 No further increment was started; next work must address the recorded local
 measurement prerequisites before acceptance execution.
+The next Sep 25 user instruction delegates testing to a specialist department
+and explicitly directs the agent to continue development without test execution.
+R90-114 is selected to implement the supplied-observation report API/CLI; its
+plan/state precede source edits. Clean fetched R90-113 closure and both exact
+Git/Vault ranges are verified. No test or acceptance command runs. The user
+instruction supersedes local test/knowledge-test gates for this development
+increment; static review and honest untested status remain mandatory. R90-75
+acceptance stays outstanding with the department, while local RAM and missing
+qualifying artifacts no longer block implementation work.
+R90-114 now implements a standard-library observation summarizer with strict
+schema/identity/time validation, complete expected-event latency denominators,
+missing-as-infinite nearest-rank p99, deadline counts, phase/minute/rolling-window
+loss, source-byte/hash retention and non-overwriting JSON publication. Every
+report requires departmental review and asserts no SLO compliance. The exact
+input schema and unexecuted behavioral coverage are handed off in docs. Static
+source review, AST-only Python syntax and diff checks pass; no test, benchmark,
+CLI/acceptance run or knowledge test was executed. This is an implementation
+delivery under the user's testing delegation, not demonstrated capacity.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent

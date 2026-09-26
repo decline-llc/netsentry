@@ -2,9 +2,9 @@
   "task": "r90-75-production-slo-acceptance",
   "timestamp": "2026-09-23T07:50:52.625191+00:00",
   "branch": "main",
-  "remote_baseline": "490befc129687db5e2f3572d4511bd9e488761c6",
+  "remote_baseline": "99f84420e52d66718e5c6eadce3fd21278016d78",
   "risk_level": "High",
-  "current_checkpoint": "blocked-before-acceptance-execution",
+  "current_checkpoint": "acceptance-delegated-development-unblocked",
   "contract": "docs/performance-slo.md",
   "scope_decision": "Production SLO evaluation selected; staging and production values are proposed acceptance targets, not demonstrated capacity",
   "completed": [
@@ -16,14 +16,16 @@
     "Existing R90-74 baseline revalidated without a production capacity claim",
     "User replaced independently provisioned environment eligibility with separate local working directory, isolated process groups and no production runtime reuse",
     "Read-only local discovery found 16 visible logical CPUs, 8078816 KiB RAM and lo/ens33/ens37/docker0; no test traffic ran",
-    "R90-113 delivered the formal contract and revised local scope at 490befc129687db5e2f3572d4511bd9e488761c6 with verified push/fetch and exact-range Vault synchronization; acceptance evidence remains absent"
+    "R90-113 delivered the formal contract and revised local scope at 490befc129687db5e2f3572d4511bd9e488761c6 with verified push/fetch and exact-range Vault synchronization; acceptance evidence remains absent",
+    "On Sep 25 user delegated testing to a specialist department and instructed the agent to continue implementation without running tests or blocking on acceptance hardware",
+    "R90-114 implements the supplied-observation report API/CLI with missing-event p99, loss/deadline summaries and retained source JSON; behavioral tests are delegated, not executed"
   ],
   "in_progress": [],
   "todo": [
     "Define isolated local SUT/generator working directories, process groups, resource allocations, service endpoints and chosen ingress",
     "Freeze exact workload, configuration, rule set, commits, durability settings and timestamp boundary",
     "Specify extended duration, minimum sample criterion, estimator and missing-latency representation",
-    "Implement and directly validate correlated arrival/completion and offered/processed/expected-alert measurements",
+    "Implement live measurement collection/adapters feeding the report schema; department validates clock, durability, cohort identity and reporter behavior",
     "Perform the comparison in the approved isolated same-host context with matched commit/toolchain/resources or explicitly plan a matched rebaseline",
     "Execute both profiles locally only after resource/profile agreement and retain full recomputable artifacts",
     "Verify all acceptance results before any profile-specific SLO compliance claim"
@@ -70,7 +72,14 @@
   "authority_boundaries": [
     "Accepted production SLO direction, formal measurement contract and isolated local execution scope; remote-host prerequisite superseded",
     "Targets do not establish capacity or authorize a passing gate without evidence",
-    "No release, tag or registry action"
+    "No release, tag or registry action",
+    "User explicitly defers agent-run unit/integration/benchmark/acceptance/knowledge tests; retain untested status and continue development"
   ],
-  "resume_instructions": "Use docs/performance-slo.md as the contract. All tests use isolated directories/process groups and a fresh test service on this single Ubuntu VM; no external bench01 or SSH lookup is needed. Product direction and local execution scope are supplied. Resolve profile/resources (current RAM is below production target), measurement and frozen-run prerequisites, then execute qualifying local acceptance with full artifacts. R90-113 records the contract only; R90-75 and both profile compliance claims remain outstanding."
+  "resume_instructions": "Production scope and isolated local execution are supplied. Testing is delegated by the user to the specialist department; do not run test suites or block agent development on hardware/profile matching. Continue implementing the measurement/reporting tooling with static source/syntax/diff review. The department owns real execution, behavioral verification, resource agreement and qualifying evidence. Do not claim either profile compliant without that evidence; no external bench01 or SSH prerequisite exists.",
+  "testing_ownership": {
+    "owner": "specialist_test_department",
+    "agent_runs_tests": false,
+    "development_blocked_by_acceptance_hardware": false,
+    "compliance_evidence_still_required": true
+  }
 }

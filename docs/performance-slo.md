@@ -5,6 +5,18 @@ The user selected production SLO evaluation on 2026-09-23 and formally adopted
 the three measurement requirements below. Neither profile represents
 demonstrated capacity. No qualifying measurement evidence currently exists.
 
+## Development and testing ownership
+
+On 2026-09-25 the user instructed the agent to skip tests, delegate testing to
+specialist staff and continue development. Agent-run unit, integration,
+benchmark, acceptance and knowledge test suites are deferred. Static source,
+syntax and diff review remain part of development delivery; they are not test
+results. Missing acceptance hardware or completed measurements does not block
+implementation. The department owns actual run setup, behavioral validation,
+profile/resource verification and the evidence required for compliance claims.
+No performance target, failure-accounting requirement or evidence truthfulness
+is waived by this division of work.
+
 ## Target profiles
 
 These are the reviewed starting profiles, not an enabled numeric gate. Record
@@ -158,8 +170,11 @@ Full retained artifacts must allow independent review and recomputation:
 - Full raw logs/samples embedded or retained as checksum-bound companion
   artifacts. A summary JSON alone is insufficient if its source data are lost.
 
-This document specifies the evidence contract; it does not claim an acceptance
-collector, schema validator or SLO gate has been implemented.
+R90-114 implements [the supplied-observation report tool](slo-report.md) in
+`scripts/slo_report.py`: strict input validation, loss/latency/deadline summaries,
+source-byte retention and review-required JSON output. Its behavioral tests
+are delegated and have not been executed by the agent. This is a report
+implementation, not a live collector or an automatic SLO compliance gate.
 
 ## Current evidence gaps and execution prerequisites
 
@@ -175,9 +190,10 @@ collector, schema validator or SLO gate has been implemented.
 - The earlier SSH preflight failed name resolution before any remote command.
   The user then clarified there is no remote host; SSH/DNS is no longer an
   execution prerequisite. No acceptance traffic ran.
-- Local test resource allocation and isolated service endpoints/ingress,
-  frozen fixtures/configuration, extended-run policy, measurement
-  implementation and verified artifact completeness remain to be established.
+- The department still needs local test resource allocation and isolated
+  service endpoints/ingress, frozen fixtures/configuration, extended-run policy,
+  live measurement collection and verified artifacts. These acceptance
+  prerequisites no longer block agent implementation work.
 - The observed guest RAM is below the proposed production profile. Match that
   profile before qualifying execution, or explicitly revise its hardware scope.
 
