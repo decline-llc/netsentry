@@ -1,8 +1,8 @@
 {
   "task": "r90-75-production-slo-acceptance",
-  "timestamp": "2026-09-23T07:50:52.625191+00:00",
+  "timestamp": "2026-09-26T11:16:00.077676+00:00",
   "branch": "main",
-  "remote_baseline": "1a1893bc7c18077aa4bedb57f15e6956eccc0daa",
+  "remote_baseline": "f2be37c0b4d9b867a15dc1f3a4d2f460d78e7be7",
   "risk_level": "High",
   "current_checkpoint": "acceptance-delegated-development-unblocked",
   "contract": "docs/performance-slo.md",
@@ -19,16 +19,15 @@
     "R90-113 delivered the formal contract and revised local scope at 490befc129687db5e2f3572d4511bd9e488761c6 with verified push/fetch and exact-range Vault synchronization; acceptance evidence remains absent",
     "On Sep 25 user delegated testing to a specialist department and instructed the agent to continue implementation without running tests or blocking on acceptance hardware",
     "R90-114 implements the supplied-observation report API/CLI with missing-event p99, loss/deadline summaries and retained source JSON; behavioral tests are delegated, not executed",
-    "Report implementation delivered at 418e5dc5a1443068b25bad2e2ee6307f1338a3e1 with verified push/fetch/Vault; behavioral tests intentionally delegated and not run"
+    "Report implementation delivered at 418e5dc5a1443068b25bad2e2ee6307f1338a3e1 with verified push/fetch/Vault; behavioral tests intentionally delegated and not run",
+    "R90-115 raw packet/oracle/lifecycle adapter delivered at f2be37c0b4d9b867a15dc1f3a4d2f460d78e7be7 with verified push/fetch/Vault; static review only, behavioral tests delegated"
   ],
-  "in_progress": [
-    "R90-115 packet ledger adapter implementation; behavioral validation delegated"
-  ],
+  "in_progress": [],
   "todo": [
     "Define isolated local SUT/generator working directories, process groups, resource allocations, service endpoints and chosen ingress",
     "Freeze exact workload, configuration, rule set, commits, durability settings and timestamp boundary",
     "Specify extended duration, minimum sample criterion, estimator and missing-latency representation",
-    "Complete R90-115 adapter delivery; implement opt-in live runtime exports as R90-116; department validates clock, durability, cohort identity and reporter behavior",
+    "Implement opt-in live runtime exports as R90-116 to feed the delivered R90-115 adapter; department validates clock, durability, cohort identity and reporter behavior",
     "Perform the comparison in the approved isolated same-host context with matched commit/toolchain/resources or explicitly plan a matched rebaseline",
     "Execute both profiles locally only after resource/profile agreement and retain full recomputable artifacts",
     "Verify all acceptance results before any profile-specific SLO compliance claim"

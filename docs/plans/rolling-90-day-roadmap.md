@@ -192,8 +192,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-112 | Sep 23 | Complete | Refresh the rolling horizon and reconcile blocked-queue recovery instructions. | R90-111; R90-105 | Sep 23-Dec 21 horizon and active R90-59 recovery agree with delivered R90-105 evidence; historical candidate failure and remaining release/performance authority boundaries are preserved; remote and Vault delivery are verified. |
 | R90-113 | Sep 23–25 | Complete | Record the formal production SLO acceptance contract and reconcile R90-75 blockers. | R90-112; supplied production-scope decision | Both proposed profiles and all formal measurement clauses, clarified local execution context, exact artifact template and absent qualifying evidence are recorded; source-grounded measurement/resource gaps and active state replace superseded product-choice blockers without claiming capacity or running traffic. |
 | R90-114 | Sep 25 | Complete implementation; tests delegated | Implement departmental SLO observation summaries and retained reports. | R90-113; user-directed test delegation | A standard-library API/CLI validates supplied cohorts/events, retains missing alerts in p99 and failure counts, summarizes phase/minute/five-minute loss and latency, and publishes a non-overwriting source-bound report without asserting compliance; behavioral tests are explicitly delegated. |
-| R90-115 | Sep 26 | In progress; tests delegated | Adapt raw packet/oracle and lifecycle ledgers into retained SLO report input. | R90-114 | Unique identity correlation, oracle-driven missing/failure accounting, exact raw copies and checksums, reporter-compatible observations, no compliance assertion; static review with tests delegated. |
-| R90-116 | Sep 26–Oct 9 | Planned | Add opt-in runtime correlation and lifecycle export for the SLO adapter. | R90-115 | Freeze packet/event identity propagation and arrival/durable/terminal boundaries; implement opt-in exports with explicit overhead/error semantics and departmental handoff, without claiming acceptance. |
+| R90-115 | Sep 26 | Complete implementation; tests delegated | Adapt raw packet/oracle and lifecycle ledgers into retained SLO report input. | R90-114 | Unique identity correlation, oracle-driven missing/failure accounting, exact raw copies and checksums, reporter-compatible observations, no compliance assertion; static review with tests delegated. |
+| R90-116 | Sep 26–Oct 9 | Ready | Add opt-in runtime correlation and lifecycle export for the SLO adapter. | R90-115 | Freeze packet/event identity propagation and arrival/durable/terminal boundaries; implement opt-in exports with explicit overhead/error semantics and departmental handoff, without claiming acceptance. |
 
 ## R90-01 Definition
 
@@ -3073,8 +3073,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 production SLO direction and user-approved isolated same-VM execution scope.
 R90-75 acceptance is delegated to the test department; agent implementation
 is unblocked by missing tests, profile resources or qualifying artifacts under
-the explicit Sep 25 instruction. R90-114 is delivered; R90-115 is the selected
-adapter increment and R90-116 queues opt-in runtime exports.
+the explicit Sep 25 instruction. R90-114 and R90-115 implementations are
+delivered; R90-116 opt-in runtime exports are next ready.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -4603,6 +4603,17 @@ its disk/throughput cost is unmeasured. AST-only syntax, manual source review,
 132 task-state JSON structures, 120 unique roadmap row/Definition pairs, local
 links and diff formatting have been reviewed without executing business logic.
 The nine-path scope retains the explicit untested status and department handoff.
+R90-115 implementation is delivered at `f2be37c0b4d9b867a15dc1f3a4d2f460d78e7be7`.
+Push without force/tags and fresh fetch verified clean HEAD/origin/main/FETCH_HEAD
+equality. Exact range `1a1893bc7c18077aa4bedb57f15e6956eccc0daa..f2be37c0b4d9b867a15dc1f3a4d2f460d78e7be7`
+is synchronized to the local Vault; note/index/MOC and four stable authority
+notes are verified, with historical iteration records preserved. Replay retained
+Markdown SHA-256 `02a01880173ce1a2f9c2125166ae1b4db312129a547293c70da48f885d1d62d9`.
+Tests are not run, explicitly delegated; no acceptance or measured-capacity
+claim follows. R90-116 is ready for its own runtime export plan; no source work
+on that increment began. This docs-only closure completes delivery bookkeeping
+and receives its own verified push/fetch/Vault range. R90-75 remains acceptance
+owned by the department and does not gate development.
 
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,

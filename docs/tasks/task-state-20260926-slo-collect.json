@@ -1,24 +1,23 @@
 {
   "task": "r90-115-slo-collect",
-  "timestamp": "2026-09-26T11:13:45.883660+00:00",
+  "timestamp": "2026-09-26T11:16:00.076620+00:00",
   "branch": "main",
-  "remote_baseline": "1a1893bc7c18077aa4bedb57f15e6956eccc0daa",
+  "remote_baseline": "f2be37c0b4d9b867a15dc1f3a4d2f460d78e7be7",
   "risk_level": "Medium",
-  "current_checkpoint": "implementation-reviewed-delivery-pending",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean fetched baseline and R90-114 Vault index/MOC",
     "Persisted bounded adapter plan before source changes",
     "Implemented strict raw ledger adapter with temporary SQLite correlation, oracle-preserving loss/latency input and retained checksum-bound bundle",
     "Documented exact external export schemas and unexecuted departmental validation matrix",
-    "Manual source review and AST-only syntax passed; static JSON/roadmap/link/diff checks passed"
+    "Manual source review and AST-only syntax passed; static JSON/roadmap/link/diff checks passed",
+    "Committed exactly the nine planned paths at f2be37c0b4d9b867a15dc1f3a4d2f460d78e7be7",
+    "Pushed without force/tags; freshly fetched clean HEAD/origin/main/FETCH_HEAD equality",
+    "Verified exact feature Vault range, iteration/index/MOC and four reconciled stable notes; historical iteration records unchanged",
+    "Idempotent replay retained Markdown SHA-256 02a01880173ce1a2f9c2125166ae1b4db312129a547293c70da48f885d1d62d9"
   ],
-  "in_progress": [
-    "Feature commit/push/fetch and exact Vault verification"
-  ],
-  "todo": [
-    "Deliver feature and reconcile local stable Vault",
-    "Docs-only delivery closure"
-  ],
+  "in_progress": [],
+  "todo": [],
   "validation": {
     "tests": "not_run_user_delegated",
     "knowledge_check": "not_run_user_delegated",
@@ -29,5 +28,15 @@
     "Behavior untested by explicit user instruction",
     "Live instrumentation and physical evidence remain external"
   ],
-  "resume_instructions": "Deliver the reviewed nine-path R90-115 scope with explicit user-delegated tests, then exact Vault reconciliation and docs closure. Do not execute tests or claim SLO compliance. R90-116 runtime exports are queued separately."
+  "resume_instructions": "R90-115 implementation is delivered at f2be37c0b4d9b867a15dc1f3a4d2f460d78e7be7 with tests explicitly delegated and not run. Verify its docs-only closure and exact Vault evidence on resume; do not repeat feature delivery. R90-116 is the next ready increment: opt-in runtime correlation/lifecycle exports, with a persisted bounded plan before source edits. Do not run tests, block development on acceptance hardware, require external bench01, or claim SLO compliance.",
+  "delivery": {
+    "commit": "f2be37c0b4d9b867a15dc1f3a4d2f460d78e7be7",
+    "origin_main_verified": true,
+    "push_without_force_or_tags": true,
+    "post_fetch_knowledge_check": "not_run_user_delegated",
+    "vault_range": "1a1893bc7c18077aa4bedb57f15e6956eccc0daa..f2be37c0b4d9b867a15dc1f3a4d2f460d78e7be7",
+    "vault_note_index_moc_verified": true,
+    "vault_stable_prose_reconciled": true,
+    "vault_idempotent_replay_verified": true
+  }
 }
