@@ -191,7 +191,7 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-111 | Sep 1 | Complete | Audit R90-110 delivery, refresh the rolling horizon, and preserve the externally blocked queue. | R90-110 | A dated documentation-only audit reconciles the exact R90-110 feature/closure, recent delivery phases, freshly fetched remote, exact and idempotent Vault evidence, current toolchain/tag/release boundaries, complete R90-59/R90-75 blocker contracts, and the Sep 1-Nov 30 horizon without starting runtime, performance, candidate, publication, or another increment. |
 | R90-112 | Sep 23 | Complete | Refresh the rolling horizon and reconcile blocked-queue recovery instructions. | R90-111; R90-105 | Sep 23-Dec 21 horizon and active R90-59 recovery agree with delivered R90-105 evidence; historical candidate failure and remaining release/performance authority boundaries are preserved; remote and Vault delivery are verified. |
 | R90-113 | Sep 23–25 | Complete | Record the formal production SLO acceptance contract and reconcile R90-75 blockers. | R90-112; supplied production-scope decision | Both proposed profiles and all formal measurement clauses, clarified local execution context, exact artifact template and absent qualifying evidence are recorded; source-grounded measurement/resource gaps and active state replace superseded product-choice blockers without claiming capacity or running traffic. |
-| R90-114 | Sep 25 | In progress | Implement departmental SLO observation summaries and retained reports. | R90-113; user-directed test delegation | A standard-library API/CLI validates supplied cohorts/events, retains missing alerts in p99 and failure counts, summarizes phase/minute/five-minute loss and latency, and publishes a non-overwriting source-bound report without asserting compliance; behavioral tests are explicitly delegated. |
+| R90-114 | Sep 25 | Complete implementation; tests delegated | Implement departmental SLO observation summaries and retained reports. | R90-113; user-directed test delegation | A standard-library API/CLI validates supplied cohorts/events, retains missing alerts in p99 and failure counts, summarizes phase/minute/five-minute loss and latency, and publishes a non-overwriting source-bound report without asserting compliance; behavioral tests are explicitly delegated. |
 
 ## R90-01 Definition
 
@@ -4530,6 +4530,23 @@ input schema and unexecuted behavioral coverage are handed off in docs. Static
 source review, AST-only Python syntax and diff checks pass; no test, benchmark,
 CLI/acceptance run or knowledge test was executed. This is an implementation
 delivery under the user's testing delegation, not demonstrated capacity.
+R90-114 implementation completed at
+`418e5dc5a1443068b25bad2e2ee6307f1338a3e1`. The eight intended paths passed
+manual source review, AST-only Python syntax, static JSON/roadmap/link/chronology
+and sensitive-data review plus diff formatting. All behavioral tests, benchmarks,
+acceptance runs and knowledge test suites were **not run**, as explicitly
+instructed by the user; this limitation remains part of delivery evidence.
+Main was pushed without force or tags, then fetched equal to HEAD/FETCH_HEAD.
+Exact range
+`99f84420e52d66718e5c6eadce3fd21278016d78..418e5dc5a1443068b25bad2e2ee6307f1338a3e1`
+was synchronized to the local Vault; note/index/MOC and stable implementation/
+testing-ownership authority are verified. Historical iteration records were
+preserved; replay retained Markdown content hash
+`388277884c0b4c109f2fd31f1dada7c09ad1ed04d210851c870664fd67f811c9`.
+The next engineering scope is live measurement collection/adapters feeding the
+report schema; it was not started in this increment. R90-75 acceptance remains
+with the test department. Do not reintroduce test execution, local production
+hardware or external-host access as prerequisites for agent development.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent

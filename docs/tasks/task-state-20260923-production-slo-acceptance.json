@@ -2,7 +2,7 @@
   "task": "r90-75-production-slo-acceptance",
   "timestamp": "2026-09-23T07:50:52.625191+00:00",
   "branch": "main",
-  "remote_baseline": "99f84420e52d66718e5c6eadce3fd21278016d78",
+  "remote_baseline": "418e5dc5a1443068b25bad2e2ee6307f1338a3e1",
   "risk_level": "High",
   "current_checkpoint": "acceptance-delegated-development-unblocked",
   "contract": "docs/performance-slo.md",
@@ -18,7 +18,8 @@
     "Read-only local discovery found 16 visible logical CPUs, 8078816 KiB RAM and lo/ens33/ens37/docker0; no test traffic ran",
     "R90-113 delivered the formal contract and revised local scope at 490befc129687db5e2f3572d4511bd9e488761c6 with verified push/fetch and exact-range Vault synchronization; acceptance evidence remains absent",
     "On Sep 25 user delegated testing to a specialist department and instructed the agent to continue implementation without running tests or blocking on acceptance hardware",
-    "R90-114 implements the supplied-observation report API/CLI with missing-event p99, loss/deadline summaries and retained source JSON; behavioral tests are delegated, not executed"
+    "R90-114 implements the supplied-observation report API/CLI with missing-event p99, loss/deadline summaries and retained source JSON; behavioral tests are delegated, not executed",
+    "Report implementation delivered at 418e5dc5a1443068b25bad2e2ee6307f1338a3e1 with verified push/fetch/Vault; behavioral tests intentionally delegated and not run"
   ],
   "in_progress": [],
   "todo": [
