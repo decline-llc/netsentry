@@ -175,7 +175,7 @@
 | R90-110 | Aug 31 | Complete | Audit R90-109 delivery and preserve the externally blocked queue. | R90-109 | A dated documentation-only audit reconciles the exact R90-109 feature/closure, recent delivery phases, freshly fetched remote, exact and idempotent Vault evidence, current toolchain/tag/release boundaries, and complete R90-59/R90-75 blocker contracts without starting runtime, performance, candidate, publication, or another increment. |
 | R90-111 | Sep 1 | Complete | Audit R90-110 delivery, refresh the rolling horizon, and preserve the externally blocked queue. | R90-110 | A dated documentation-only audit reconciles the exact R90-110 feature/closure, recent delivery phases, freshly fetched remote, exact and idempotent Vault evidence, current toolchain/tag/release boundaries, complete R90-59/R90-75 blocker contracts, and the Sep 1-Nov 30 horizon without starting runtime, performance, candidate, publication, or another increment. |
 | R90-112 | Sep 23 | Complete | Refresh the rolling horizon and reconcile blocked-queue recovery instructions. | R90-111; R90-105 | Sep 23-Dec 21 horizon and active R90-59 recovery agree with delivered R90-105 evidence; historical candidate failure and remaining release/performance authority boundaries are preserved; remote and Vault delivery are verified. |
-| R90-113 | Sep 23–25 | In progress | Record the formal production SLO acceptance contract and reconcile R90-75 blockers. | R90-112; supplied production-scope decision | Both proposed profiles and all formal measurement clauses, clarified local execution context, exact artifact template and absent qualifying evidence are recorded; source-grounded measurement/resource gaps and active state replace superseded product-choice blockers without claiming capacity or running traffic. |
+| R90-113 | Sep 23–25 | Complete | Record the formal production SLO acceptance contract and reconcile R90-75 blockers. | R90-112; supplied production-scope decision | Both proposed profiles and all formal measurement clauses, clarified local execution context, exact artifact template and absent qualifying evidence are recorded; source-grounded measurement/resource gaps and active state replace superseded product-choice blockers without claiming capacity or running traffic. |
 
 ## R90-01 Definition
 
@@ -4450,6 +4450,25 @@ interface observations are unchanged. The rolling horizon advances to Sep
 25-Dec 23 (90 inclusive days); the same R90-113 increment resumes without
 starting a benchmark or another increment. The contract preserves all formal
 measurement clauses and the exact Unicode-hyphen artifact destination.
+R90-113 completed at `490befc129687db5e2f3572d4511bd9e488761c6`.
+The six-path contract documentation passed the R90-74 baseline check, docs,
+all 33 knowledge tests, 130-state JSON parsing, 117-row/Definition multiset
+checks, chronology, 90-day horizon and rate arithmetic, link/formatting/scope
+and sensitive-data review. Main was pushed without force or tags and freshly
+fetched equal to HEAD and FETCH_HEAD; the post-fetch knowledge gate passed.
+Exact range
+`55019110e3227028236cd2478623525b3f77d939..490befc129687db5e2f3572d4511bd9e488761c6`
+was synchronized to the sole local Vault. Note, full-index row and MOC link
+are verified. Current MOC/release/build/API/UDS authority now points to the
+local SLO contract, and immutable iteration hashes remain unchanged. Replay
+preserved Markdown content hash
+`f7daed59884a81f3b9e2e90338ed3a47b71afc781f80efb1cf5d1c992a0a6e53`.
+R90-75 remains blocked on measurement coverage, frozen local execution/profile
+resources and qualifying artifacts; no acceptance run or compliance claim was
+made. Product direction and local scope are supplied, so do not repeat the
+external-runner/product-choice questions. R90-59 retains its separate blocker.
+No further increment was started; next work must address the recorded local
+measurement prerequisites before acceptance execution.
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent

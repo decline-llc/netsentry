@@ -2,9 +2,9 @@
   "task": "r90-113-production-slo-contract",
   "timestamp": "2026-09-23T07:49:06.283366+00:00",
   "branch": "main",
-  "remote_baseline": "55019110e3227028236cd2478623525b3f77d939",
+  "remote_baseline": "490befc129687db5e2f3572d4511bd9e488761c6",
   "risk_level": "Low",
-  "current_checkpoint": "validated-awaiting-delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean fetched R90-112 closure and both exact Git/Vault ranges",
     "Audited 128 prior states, 116 unique roadmap definitions and ten recent documentation commits",
@@ -15,15 +15,14 @@
     "On Sep 25 re-fetched unchanged baseline and verified only the six planned in-progress paths; local resources unchanged",
     "Recorded final contract, local scope, exact artifact template, profile-resource mismatch and R90-75 outstanding evidence",
     "Validated 130 task states, 117 unique row/Definition multisets, local links, chronology, rate arithmetic, scope and sensitive-data review",
-    "R90-74 baseline, documentation and all 33 knowledge tests pass; refreshed Sep 25-Dec 23 horizon included in final checks"
+    "R90-74 baseline, documentation and all 33 knowledge tests pass; refreshed Sep 25-Dec 23 horizon included in final checks",
+    "Committed exactly the six intended documentation paths at 490befc129687db5e2f3572d4511bd9e488761c6",
+    "Pushed main without force or tags, freshly fetched clean ref equality and passed the 33-test knowledge gate",
+    "Synchronized exact feature range and verified Vault note, full index, MOC and current stable contract authority",
+    "Verified unchanged historical iteration hashes and content-stable replay at f7daed59884a81f3b9e2e90338ed3a47b71afc781f80efb1cf5d1c992a0a6e53"
   ],
-  "in_progress": [
-    "Feature delivery and exact-range Vault reconciliation"
-  ],
-  "todo": [
-    "Commit, push, fetch-verify and synchronize local Vault",
-    "Deliver one documentation closure"
-  ],
+  "in_progress": [],
+  "todo": [],
   "authority_boundaries": [
     "Documentation and read-only runner preflight only",
     "No acceptance execution, threshold activation, runtime or publication mutation"
@@ -34,5 +33,16 @@
     "Single-VM process isolation does not provide hardware independence",
     "Measurement implementation, local allocation and frozen run policy remain outstanding"
   ],
-  "resume_instructions": "Complete only the R90-113 contract-documentation increment; keep R90-75 acceptance outstanding."
+  "resume_instructions": "R90-113 contract documentation is complete at 490befc129687db5e2f3572d4511bd9e488761c6. On the next trigger fetch and verify this docs-only closure plus exact Vault evidence; do not repeat contract selection or feature delivery. R90-75 has product direction and approved isolated local execution scope. Continue from its active acceptance state to resolve measurement, frozen run policy and profile/resources before executing acceptance; no external bench01 or SSH prerequisite exists. Neither profile has qualifying evidence. Do not infer SLO compliance or start release work.",
+  "delivery": {
+    "commit": "490befc129687db5e2f3572d4511bd9e488761c6",
+    "origin_main_verified": true,
+    "push_without_force_or_tags": true,
+    "post_fetch_knowledge_check": "pass",
+    "vault_range": "55019110e3227028236cd2478623525b3f77d939..490befc129687db5e2f3572d4511bd9e488761c6",
+    "vault_note_index_moc_verified": true,
+    "vault_stable_prose_reconciled": true,
+    "vault_historical_iterations_preserved": true,
+    "vault_idempotent_replay_verified": true
+  }
 }

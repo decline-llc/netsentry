@@ -103,3 +103,24 @@ No direct runtime regression is promised or executed by this increment.
 The existing skill's authority and evidence rules cover the user correction;
 no reusable skill change is needed. Delivery and exact-range Vault verification
 remain before R90-113 completion.
+
+## Delivery results
+
+Feature `490befc129687db5e2f3572d4511bd9e488761c6` contains exactly the
+six planned documentation paths. Main was pushed without force or tags; fresh
+fetch proved clean HEAD, origin/main and FETCH_HEAD equality, and the post-fetch
+33-test knowledge gate passed. Exact range
+`55019110e3227028236cd2478623525b3f77d939..490befc129687db5e2f3572d4511bd9e488761c6`
+was synchronized to the sole local Vault. Note, index and MOC links are verified.
+Current stable MOC/release/build/API/UDS prose now records the supplied product
+scope, corrected local context, formal measurement requirements and profile
+RAM mismatch, linking a dedicated SLO note. Historical iteration hashes remain
+unchanged. Identical-range replay preserved Markdown content hash
+`f7daed59884a81f3b9e2e90338ed3a47b71afc781f80efb1cf5d1c992a0a6e53`.
+
+R90-113 is complete; this docs-only closure records those facts and receives its
+own push/fetch, knowledge gate and exact-range synchronization. R90-75 remains
+unvalidated, with no acceptance traffic or completed-run artifact created.
+The next task is local measurement preparation and profile/resource agreement,
+not another product-direction or external-host request. R90-59's independent
+release boundary is unchanged. No further increment was started.

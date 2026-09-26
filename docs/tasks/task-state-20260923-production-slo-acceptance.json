@@ -2,7 +2,7 @@
   "task": "r90-75-production-slo-acceptance",
   "timestamp": "2026-09-23T07:50:52.625191+00:00",
   "branch": "main",
-  "remote_baseline": "55019110e3227028236cd2478623525b3f77d939",
+  "remote_baseline": "490befc129687db5e2f3572d4511bd9e488761c6",
   "risk_level": "High",
   "current_checkpoint": "blocked-before-acceptance-execution",
   "contract": "docs/performance-slo.md",
@@ -15,7 +15,8 @@
     "User initially designated bench01, then explicitly clarified that no external host exists and all testing is isolated local execution in this Ubuntu VM",
     "Existing R90-74 baseline revalidated without a production capacity claim",
     "User replaced independently provisioned environment eligibility with separate local working directory, isolated process groups and no production runtime reuse",
-    "Read-only local discovery found 16 visible logical CPUs, 8078816 KiB RAM and lo/ens33/ens37/docker0; no test traffic ran"
+    "Read-only local discovery found 16 visible logical CPUs, 8078816 KiB RAM and lo/ens33/ens37/docker0; no test traffic ran",
+    "R90-113 delivered the formal contract and revised local scope at 490befc129687db5e2f3572d4511bd9e488761c6 with verified push/fetch and exact-range Vault synchronization; acceptance evidence remains absent"
   ],
   "in_progress": [],
   "todo": [
