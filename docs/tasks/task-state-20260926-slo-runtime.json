@@ -1,24 +1,23 @@
 {
   "task": "r90-116-slo-runtime",
-  "timestamp": "2026-09-26T11:46:10.582002+00:00",
+  "timestamp": "2026-09-26T11:49:01.078360+00:00",
   "branch": "main",
-  "remote_baseline": "1dd5dac2923fee51d7af4b43ae1fd0695c33a88d",
+  "remote_baseline": "9b7262f88c1bfde8d5f984b0e159f6821eb5d130",
   "risk_level": "High",
-  "current_checkpoint": "implementation-reviewed-delivery-pending",
+  "current_checkpoint": "complete",
   "completed": [
     "Fresh clean fetched baseline and R90-115 Vault index/MOC verified",
     "User reiterated testing delegation; persisted bounded engine export plan before edits",
     "Implemented optional UDS metadata, engine observer/export lifecycle and full-synchronous WAL connection configuration",
     "Documented engine boundary, remaining native ingress work and departmental validation matrix",
-    "Compile-only engine build succeeded; binary not executed; manual source, gofmt, JSON/roadmap/links/diff reviews passed"
+    "Compile-only engine build succeeded; binary not executed; manual source, gofmt, JSON/roadmap/links/diff reviews passed",
+    "Committed the 15 intended paths at 9b7262f88c1bfde8d5f984b0e159f6821eb5d130",
+    "Pushed without force/tags; freshly fetched clean HEAD/origin/main/FETCH_HEAD equality",
+    "Verified exact feature Vault range, note/index/MOC and seven reconciled stable notes; iteration history preserved",
+    "Replay retained Markdown SHA-256 1a8c7be0e874faf59eba7a8fa8e828be65a1e1276be55a85166987769cd6a7db"
   ],
-  "in_progress": [
-    "Feature commit/push/fetch and exact Vault verification"
-  ],
-  "todo": [
-    "Verified feature Git/Vault delivery",
-    "Docs-only closure"
-  ],
+  "in_progress": [],
+  "todo": [],
   "validation": {
     "tests": "not_run_user_delegated",
     "knowledge_check": "not_run_user_delegated",
@@ -30,5 +29,15 @@
     "Behavior untested by user direction",
     "Native ingress correlation, clock and physical durability evidence remain pending"
   ],
-  "resume_instructions": "Deliver the reviewed 15-path R90-116 feature and exact Vault range, then docs-only closure. All tests remain delegated; do not execute binary or traffic. R90-117 native ingress correlation is queued separately."
+  "resume_instructions": "R90-116 implementation delivered at 9b7262f88c1bfde8d5f984b0e159f6821eb5d130 with all tests explicitly delegated and not run. Verify docs-only closure and exact Vault evidence on resume; do not repeat delivery. R90-117 is ready: persist a bounded native live ingress/oracle correlation plan before changes. Do not run tests, treat hardware as a development gate, require external bench01 or assert SLO compliance.",
+  "delivery": {
+    "commit": "9b7262f88c1bfde8d5f984b0e159f6821eb5d130",
+    "origin_main_verified": true,
+    "push_without_force_or_tags": true,
+    "post_fetch_knowledge_check": "not_run_user_delegated",
+    "vault_range": "1dd5dac2923fee51d7af4b43ae1fd0695c33a88d..9b7262f88c1bfde8d5f984b0e159f6821eb5d130",
+    "vault_note_index_moc_verified": true,
+    "vault_stable_prose_reconciled": true,
+    "vault_idempotent_replay_verified": true
+  }
 }

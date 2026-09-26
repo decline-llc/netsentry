@@ -1,8 +1,8 @@
 {
   "task": "r90-75-production-slo-acceptance",
-  "timestamp": "2026-09-26T11:16:00.077676+00:00",
+  "timestamp": "2026-09-26T11:49:01.079245+00:00",
   "branch": "main",
-  "remote_baseline": "1dd5dac2923fee51d7af4b43ae1fd0695c33a88d",
+  "remote_baseline": "9b7262f88c1bfde8d5f984b0e159f6821eb5d130",
   "risk_level": "High",
   "current_checkpoint": "acceptance-delegated-development-unblocked",
   "contract": "docs/performance-slo.md",
@@ -20,16 +20,15 @@
     "On Sep 25 user delegated testing to a specialist department and instructed the agent to continue implementation without running tests or blocking on acceptance hardware",
     "R90-114 implements the supplied-observation report API/CLI with missing-event p99, loss/deadline summaries and retained source JSON; behavioral tests are delegated, not executed",
     "Report implementation delivered at 418e5dc5a1443068b25bad2e2ee6307f1338a3e1 with verified push/fetch/Vault; behavioral tests intentionally delegated and not run",
-    "R90-115 raw packet/oracle/lifecycle adapter delivered at f2be37c0b4d9b867a15dc1f3a4d2f460d78e7be7 with verified push/fetch/Vault; static review only, behavioral tests delegated"
+    "R90-115 raw packet/oracle/lifecycle adapter delivered at f2be37c0b4d9b867a15dc1f3a4d2f460d78e7be7 with verified push/fetch/Vault; static review only, behavioral tests delegated",
+    "R90-116 opt-in engine lifecycle export and full-synchronous WAL measurement storage delivered at 9b7262f88c1bfde8d5f984b0e159f6821eb5d130 with verified Git/Vault; compile/static review only, tests delegated"
   ],
-  "in_progress": [
-    "R90-116 opt-in engine lifecycle export; tests delegated"
-  ],
+  "in_progress": [],
   "todo": [
     "Define isolated local SUT/generator working directories, process groups, resource allocations, service endpoints and chosen ingress",
     "Freeze exact workload, configuration, rule set, commits, durability settings and timestamp boundary",
     "Specify extended duration, minimum sample criterion, estimator and missing-latency representation",
-    "Complete R90-116 engine export delivery and implement native ingress correlation as R90-117; department validates clock, durability, cohort identity and reporter behavior",
+    "Implement native ingress/oracle correlation as R90-117 to feed delivered R90-116 engine exports; department validates clock, durability, cohort identity and reporter behavior",
     "Perform the comparison in the approved isolated same-host context with matched commit/toolchain/resources or explicitly plan a matched rebaseline",
     "Execute both profiles locally only after resource/profile agreement and retain full recomputable artifacts",
     "Verify all acceptance results before any profile-specific SLO compliance claim"
