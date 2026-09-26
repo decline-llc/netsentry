@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-09-25 through 2026-12-23. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-09-26 through 2026-12-24. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -192,6 +192,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-112 | Sep 23 | Complete | Refresh the rolling horizon and reconcile blocked-queue recovery instructions. | R90-111; R90-105 | Sep 23-Dec 21 horizon and active R90-59 recovery agree with delivered R90-105 evidence; historical candidate failure and remaining release/performance authority boundaries are preserved; remote and Vault delivery are verified. |
 | R90-113 | Sep 23–25 | Complete | Record the formal production SLO acceptance contract and reconcile R90-75 blockers. | R90-112; supplied production-scope decision | Both proposed profiles and all formal measurement clauses, clarified local execution context, exact artifact template and absent qualifying evidence are recorded; source-grounded measurement/resource gaps and active state replace superseded product-choice blockers without claiming capacity or running traffic. |
 | R90-114 | Sep 25 | Complete implementation; tests delegated | Implement departmental SLO observation summaries and retained reports. | R90-113; user-directed test delegation | A standard-library API/CLI validates supplied cohorts/events, retains missing alerts in p99 and failure counts, summarizes phase/minute/five-minute loss and latency, and publishes a non-overwriting source-bound report without asserting compliance; behavioral tests are explicitly delegated. |
+| R90-115 | Sep 26 | In progress; tests delegated | Adapt raw packet/oracle and lifecycle ledgers into retained SLO report input. | R90-114 | Unique identity correlation, oracle-driven missing/failure accounting, exact raw copies and checksums, reporter-compatible observations, no compliance assertion; static review with tests delegated. |
+| R90-116 | Sep 26–Oct 9 | Planned | Add opt-in runtime correlation and lifecycle export for the SLO adapter. | R90-115 | Freeze packet/event identity propagation and arrival/durable/terminal boundaries; implement opt-in exports with explicit overhead/error semantics and departmental handoff, without claiming acceptance. |
 
 ## R90-01 Definition
 
@@ -2521,6 +2523,40 @@ block implementation work; the formal SLO and evidence contract is unchanged.
   [`task-20260925-slo-report.md`](task-20260925-slo-report.md),
   from fetched baseline `99f84420e52d66718e5c6eadce3fd21278016d78`.
 
+## R90-115 Definition
+
+- **Goal:** correlate finalized packet/oracle and lifecycle ledgers into the
+  existing reporter schema with raw retention and unique packet accounting.
+- **Risk:** external acquisition truth, oracle completeness, disk scale and
+  untested behavior cannot be established by static schema checks.
+- **Required review:** AST syntax, manual source/JSON/roadmap/link/diff and
+  sensitive-data review; verified Git/remote and exact Vault evidence. All
+  behavioral, benchmark, acceptance and knowledge tests are user-delegated.
+- **Acceptance:** disk-backed identity correlation, missing events preserved,
+  terminal-plus-durable packet success, bounded rows/output, exact raw copies,
+  checksummed completion receipt and documented live-instrumentation boundary.
+- **Stop condition:** ambiguous delivery or scope beyond the adapter; no
+  development block from delegated tests or missing acceptance hardware.
+- **Selected plan:** [task-20260926-slo-collect.md](task-20260926-slo-collect.md),
+  fetched baseline `1a1893bc7c18077aa4bedb57f15e6956eccc0daa`.
+
+## R90-116 Definition
+
+- **Goal:** add opt-in runtime correlation and lifecycle records consumable by
+  R90-115; persist the exact protocol/runtime plan before implementation.
+- **Dependencies/window:** R90-115 implementation delivery; Sep 26–Oct 9.
+- **Risk:** packet identity propagation, clock boundaries, durable semantics
+  and collector overhead must remain explicit and require departmental testing.
+- **Acceptance:** implement opt-in correlated runtime exports, preserve ordinary
+  runtime behavior when disabled, document terminal success and exporter failure
+  behavior, and hand off clock/durability/overhead verification without claiming
+  SLO compliance. Do not use component histograms or early counters as E2E proof.
+- **Required review:** static language/source/configuration/diff and delivery
+  review; behavioral, benchmark and acceptance tests remain user-delegated.
+- **Stop condition:** new external authority or ambiguous runtime boundary;
+  record the precise issue and continue independent work. No traffic, release,
+  CI weakening or test/hardware gate contrary to the user instruction.
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -3037,7 +3073,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 production SLO direction and user-approved isolated same-VM execution scope.
 R90-75 acceptance is delegated to the test department; agent implementation
 is unblocked by missing tests, profile resources or qualifying artifacts under
-the explicit Sep 25 instruction. R90-114 is the selected development increment.
+the explicit Sep 25 instruction. R90-114 is delivered; R90-115 is the selected
+adapter increment and R90-116 queues opt-in runtime exports.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -4547,6 +4584,27 @@ The next engineering scope is live measurement collection/adapters feeding the
 report schema; it was not started in this increment. R90-75 acceptance remains
 with the test department. Do not reintroduce test execution, local production
 hardware or external-host access as prerequisites for agent development.
+
+### Sep 26: R90-115 packet ledger adapter
+
+Fetched baseline `1a1893bc7c18077aa4bedb57f15e6956eccc0daa` is clean and
+matches HEAD/origin/main/FETCH_HEAD. R90-114 feature/closure Vault index/MOC
+records are present. September history progresses from queue reconciliation to
+formal contract and report implementation; tests remain delegated and acceptance
+is unmeasured. The horizon advances to Sep 26–Dec 24. R90-115 plan/state were
+persisted before source edits; R90-116 runtime exports are queued separately.
+The adapter consumes external finalized ledgers, not live runtime instrumentation.
+No test suite, CLI smoke run, acceptance traffic or remote runner is used.
+The implementation now derives minute counters from unique offered packets and
+terminal-plus-durable success, preserves every expected alert, accepts unordered
+lifecycle rows with consistent timestamps, and retains exact raw copies plus
+checksums in a new output bundle. Temporary SQLite indexing bounds packet RAM;
+its disk/throughput cost is unmeasured. AST-only syntax, manual source review,
+132 task-state JSON structures, 120 unique roadmap row/Definition pairs, local
+links and diff formatting have been reviewed without executing business logic.
+The nine-path scope retains the explicit untested status and department handoff.
+
+
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
 successful suppression mutation response. Direct faults cover stat, parent

@@ -2,7 +2,7 @@
   "task": "r90-75-production-slo-acceptance",
   "timestamp": "2026-09-23T07:50:52.625191+00:00",
   "branch": "main",
-  "remote_baseline": "418e5dc5a1443068b25bad2e2ee6307f1338a3e1",
+  "remote_baseline": "1a1893bc7c18077aa4bedb57f15e6956eccc0daa",
   "risk_level": "High",
   "current_checkpoint": "acceptance-delegated-development-unblocked",
   "contract": "docs/performance-slo.md",
@@ -21,12 +21,14 @@
     "R90-114 implements the supplied-observation report API/CLI with missing-event p99, loss/deadline summaries and retained source JSON; behavioral tests are delegated, not executed",
     "Report implementation delivered at 418e5dc5a1443068b25bad2e2ee6307f1338a3e1 with verified push/fetch/Vault; behavioral tests intentionally delegated and not run"
   ],
-  "in_progress": [],
+  "in_progress": [
+    "R90-115 packet ledger adapter implementation; behavioral validation delegated"
+  ],
   "todo": [
     "Define isolated local SUT/generator working directories, process groups, resource allocations, service endpoints and chosen ingress",
     "Freeze exact workload, configuration, rule set, commits, durability settings and timestamp boundary",
     "Specify extended duration, minimum sample criterion, estimator and missing-latency representation",
-    "Implement live measurement collection/adapters feeding the report schema; department validates clock, durability, cohort identity and reporter behavior",
+    "Complete R90-115 adapter delivery; implement opt-in live runtime exports as R90-116; department validates clock, durability, cohort identity and reporter behavior",
     "Perform the comparison in the approved isolated same-host context with matched commit/toolchain/resources or explicitly plan a matched rebaseline",
     "Execute both profiles locally only after resource/profile agreement and retain full recomputable artifacts",
     "Verify all acceptance results before any profile-specific SLO compliance claim"

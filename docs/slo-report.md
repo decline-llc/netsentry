@@ -5,6 +5,10 @@ run supplied by the test department. It executes no traffic and collects no
 runtime data. Implementation is delivered with **tests deferred by the user's
 2026-09-25 instruction**. No behavioral test or acceptance execution is claimed.
 
+For raw packet/oracle and lifecycle exports, use the
+[packet ledger adapter](slo-collect.md) to derive these observations and retain
+checksum-bound raw inputs. Live instrumentation remains external.
+
 ## Invocation and output
 
 ```bash

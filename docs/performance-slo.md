@@ -176,6 +176,12 @@ source-byte retention and review-required JSON output. Its behavioral tests
 are delegated and have not been executed by the agent. This is a report
 implementation, not a live collector or an automatic SLO compliance gate.
 
+R90-115 adds [the packet ledger adapter](slo-collect.md): it correlates
+department-exported offered/oracle and arrival/durable/terminal records, derives
+unique packet counters, retains missing expected alerts and binds raw copies
+to report input by checksum. It does not instrument live capture or the engine.
+Its behavioral validation is also delegated and unexecuted.
+
 ## Current evidence gaps and execution prerequisites
 
 - `capture/src/main.c` forwards libpcap timestamps and records send/drop
