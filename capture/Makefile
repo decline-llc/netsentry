@@ -14,6 +14,7 @@ SRCS := src/main.c \
         src/passthrough_parser.c \
         src/uds_sender.c
 HEADERS := include/eth_parser.h \
+           include/slo.h \
            include/packet_types.h \
            include/parser.h \
            include/uds_sender.h

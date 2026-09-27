@@ -16,6 +16,7 @@
 #include <unistd.h>
 
 #include "packet_types.h"
+#include "slo.h"
 #include "uds_sender.h"
 
 /* ---- internal state -------------------------------------------------- */
@@ -234,6 +235,16 @@ int uds_format_packet_json(const PacketInfo *pkt, char *buf, size_t buf_len) {
     char dst_ip[NS_MAX_IP_STR * 6];
     char tcp_flags[sizeof(pkt->tcp_flags) * 6];
     char b64_buf[((NS_MAX_PAYLOAD_LEN + 2) / 3) * 4 + 1];
+    char slo_buf[NS_SLO_ID_LEN * 2 + 128] = "";
+
+    if (pkt->slo_enabled) {
+        if (!ns_slo_identifier(pkt->slo_run_id) || !ns_slo_identifier(pkt->slo_packet_id) ||
+            pkt->slo_arrival_unix_ns <= 0) return -1;
+        int used = snprintf(slo_buf, sizeof(slo_buf),
+            ",\"slo\":{\"run_id\":\"%s\",\"packet_id\":\"%s\",\"arrival_unix_ns\":%lld}",
+            pkt->slo_run_id, pkt->slo_packet_id, (long long)pkt->slo_arrival_unix_ns);
+        if (used < 0 || (size_t)used >= sizeof(slo_buf)) return -1;
+    }
 
     if (json_escape(pkt->src_ip, src_ip, sizeof(src_ip)) < 0) return -1;
     if (json_escape(pkt->dst_ip, dst_ip, sizeof(dst_ip)) < 0) return -1;
@@ -246,14 +257,14 @@ int uds_format_packet_json(const PacketInfo *pkt, char *buf, size_t buf_len) {
         "\"src_port\":%u,\"dst_port\":%u,\"protocol\":%u,"
         "\"tcp_flags\":\"%s\","
         "\"payload_len\":%u,\"payload_preview\":\"%s\","
-        "\"is_fragment\":%s,\"truncated\":%s}",
+        "\"is_fragment\":%s,\"truncated\":%s%s}",
         (long long)pkt->timestamp_sec, pkt->timestamp_usec,
         src_ip, dst_ip,
         pkt->src_port, pkt->dst_port, pkt->protocol,
         tcp_flags,
         pkt->payload_len, b64_buf,
         pkt->is_fragment ? "true" : "false",
-        pkt->truncated   ? "true" : "false");
+        pkt->truncated   ? "true" : "false", slo_buf);
 
     if (n < 0 || (size_t)n >= buf_len) return -1;
     record_serialize(start_ns);

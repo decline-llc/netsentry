@@ -56,10 +56,11 @@ The worker emits the supplied arrival value, so subsequent capture buffering,
 UDS and queue delays remain inside measured latency. Packets that never reach
 the worker have no emitted arrival and remain missing in the offered oracle.
 
-**Native C capture does not yet emit `slo` metadata.** An instrumented ingress
-must supply it for this engine feature. R90-117 is queued to connect native live
-capture and generator identities. Do not label direct UDS injection as proof of
-live packet arrival. The current pre-match processed metric is still unchanged
+[Native UDP measurement ingress](slo-ingress.md) now supplies `slo` metadata
+from an explicit live capture mode and marker-bearing fixture. Its host timestamp
+boundary and independent offered oracle require departmental validation; TCP/mixed
+workloads are not covered. Do not label direct UDS injection as proof of live
+packet arrival. The current pre-match processed metric is still unchanged
 and is not the new terminal-success observation.
 
 For each expected packet/rule pair, the oracle must use:
@@ -155,5 +156,6 @@ calibration and uncertainty accounting.
 - Recompute raw hashes and adapter/report input; repeated/long acceptance runs,
   raw alert and deadline counts, telemetry coverage, export cost and disk usage.
 
-None of these checks has been executed by the agent. Native ingress wiring and
-both profile acceptance runs remain outstanding; development can continue.
+None of these checks has been executed by the agent. Native UDP ingress is
+implemented separately in R90-117; full profile qualification and both acceptance
+runs remain outstanding with the department.

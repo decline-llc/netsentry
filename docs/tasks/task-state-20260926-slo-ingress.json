@@ -1,0 +1,37 @@
+{
+  "task": "r90-117-slo-ingress",
+  "timestamp": "2026-09-27T03:21:14.337517+00:00",
+  "branch": "main",
+  "remote_baseline": "98541884f60a12adc1a605ce10e918ed5f0b1663",
+  "risk_level": "High",
+  "current_checkpoint": "implementation-reviewed-delivery-pending",
+  "completed": [
+    "Clean fetched baseline and R90-116 Vault index/MOC verified",
+    "Persisted UDP-only native ingress and independent offered-ledger design before edits",
+    "Preflight GCC 13.3.0 and libpcap 1.10.4 available",
+    "Implemented native live UDP marker metadata, timestamp/direction checks and retained capture counters",
+    "Implemented reference raw UDP sender with independent offered oracle, submission outcomes and retained checksummed inputs",
+    "Documented exact UDP/byte/clock limits and unexecuted departmental validation matrix",
+    "Compile-only C build passed with warnings as errors; Python AST/source/JSON/roadmap/link/diff reviews passed"
+  ],
+  "in_progress": [
+    "Feature commit/push/fetch and exact Vault verification"
+  ],
+  "todo": [
+    "Deliver feature and reconcile stable Vault",
+    "Docs-only closure"
+  ],
+  "validation": {
+    "tests": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "acceptance_runs": "not_run",
+    "static_review": "pass: C compile only, Python AST, manual source and JSON/roadmap/link/diff review; no business logic executed",
+    "build": "pass: GCC 13.3.0 C11 Wall/Wextra/Werror O2 with libpcap 1.10.4; binary not executed"
+  },
+  "remaining_risks": [
+    "Untested implementation",
+    "UDP fixture and reference sender do not demonstrate full proposed workload capacity",
+    "Physical arrival timestamp and VM/storage truth require department verification"
+  ],
+  "resume_instructions": "Deliver reviewed 16-path R90-117 feature with explicit tests-delegated status, exact Git/Vault evidence and docs-only closure. Do not run sender/capture/tests or claim SLO capacity. R90-118 cross-artifact evidence bundle is queued separately."
+}

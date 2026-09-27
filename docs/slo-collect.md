@@ -90,9 +90,11 @@ Exactly these three row types are supported:
 
 Physical instrumentation must produce and validate these boundaries. The
 [opt-in engine exporter](slo-runtime.md) now emits these lifecycle rows from
-supplied live-arrival metadata. Native capture identity integration is pending.
-File order may be arbitrary; all offers are loaded before events. Arrival must follow offer; durable must
-follow arrival; terminal processing must follow arrival and any known durable
+supplied live-arrival metadata. [Native UDP ingress](slo-ingress.md) implements
+one explicit marker/capture mode and independent sender ledger; its clock and
+workload qualification remain departmental.
+File order may be arbitrary; all offers are loaded before events. Arrival must
+follow offer; durable must follow arrival; terminal processing must follow arrival and any known durable
 writes. All lifecycle times are at or before `observed_through_ns`, including
 valid zero. Duplicate observations, even identical ones, and events for unknown
 packet/event IDs reject the bundle. Timestamp inconsistencies reject it too.

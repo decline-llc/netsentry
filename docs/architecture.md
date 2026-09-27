@@ -85,9 +85,10 @@ Packet frame:
 R90-116 adds optional `slo` packet metadata and opt-in engine lifecycle JSONL
 export. See [the runtime measurement contract](slo-runtime.md) for CLI flags,
 run/packet identity, supplied live-arrival timestamps, terminal success,
-full-synchronous WAL persistence and failure semantics. Native capture does not
-yet emit this metadata. Ordinary frames and disabled runtime behavior retain
-the existing path. This implementation is untested under user-directed test
+full-synchronous WAL persistence and failure semantics.
+[Native UDP measurement capture](slo-ingress.md) can now emit this metadata
+with explicit live-only flags and a marked fixture. Ordinary frames and disabled
+runtime behavior retain the existing path. This implementation is untested under user-directed test
 delegation; it does not establish SLO compliance.
 
 ## 4. Rule Engine

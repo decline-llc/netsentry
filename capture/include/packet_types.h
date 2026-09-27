@@ -8,6 +8,7 @@
 #define NS_MAX_IP_STR        40
 #define NS_SESSION_ID_LEN    9   /* 8 hex chars + NUL */
 #define NS_TCP_FLAGS_LEN     32
+#define NS_SLO_ID_LEN        129
 
 typedef struct {
     int64_t  timestamp_sec;
@@ -22,6 +23,10 @@ typedef struct {
     uint8_t  payload[NS_MAX_PAYLOAD_LEN];
     bool     is_fragment;
     bool     truncated;
+    bool     slo_enabled;
+    char     slo_run_id[NS_SLO_ID_LEN];
+    char     slo_packet_id[NS_SLO_ID_LEN];
+    int64_t  slo_arrival_unix_ns;
 } PacketInfo;
 
 typedef struct {

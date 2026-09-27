@@ -184,8 +184,9 @@ Its behavioral validation is also delegated and unexecuted.
 
 R90-116 adds [opt-in engine lifecycle export](slo-runtime.md), consuming supplied
 arrival/correlation metadata and observing terminal processing and successful
-full-synchronous WAL write return. Native capture identity wiring and physical
-clock/durability qualification remain pending. Tests remain delegated.
+full-synchronous WAL write return. R90-117 adds
+[native UDP measurement ingress](slo-ingress.md) and an independent sender ledger. Physical clock/durability and complete workload
+qualification remain pending; tests remain delegated.
 
 ## Current evidence gaps and execution prerequisites
 
