@@ -1,10 +1,10 @@
 {
   "task": "r90-117-slo-ingress",
-  "timestamp": "2026-09-27T03:21:14.337517+00:00",
+  "timestamp": "2026-09-27T03:24:12.059908+00:00",
   "branch": "main",
-  "remote_baseline": "98541884f60a12adc1a605ce10e918ed5f0b1663",
+  "remote_baseline": "fc5f64b157dd210d2108de4b0ee96e574a8af7bf",
   "risk_level": "High",
-  "current_checkpoint": "implementation-reviewed-delivery-pending",
+  "current_checkpoint": "complete",
   "completed": [
     "Clean fetched baseline and R90-116 Vault index/MOC verified",
     "Persisted UDP-only native ingress and independent offered-ledger design before edits",
@@ -12,15 +12,14 @@
     "Implemented native live UDP marker metadata, timestamp/direction checks and retained capture counters",
     "Implemented reference raw UDP sender with independent offered oracle, submission outcomes and retained checksummed inputs",
     "Documented exact UDP/byte/clock limits and unexecuted departmental validation matrix",
-    "Compile-only C build passed with warnings as errors; Python AST/source/JSON/roadmap/link/diff reviews passed"
+    "Compile-only C build passed with warnings as errors; Python AST/source/JSON/roadmap/link/diff reviews passed",
+    "Committed the 16 intended paths at fc5f64b157dd210d2108de4b0ee96e574a8af7bf",
+    "Pushed without force/tags; fresh fetch verified clean HEAD/origin/main/FETCH_HEAD equality",
+    "Verified exact Vault feature range, note/index/MOC and nine stable notes; historical iteration records preserved",
+    "Replay retained Markdown SHA-256 6b8b09425f24556c96c5d1dc40d74c922c225f60f77443994ecc7a2e2aba8f65"
   ],
-  "in_progress": [
-    "Feature commit/push/fetch and exact Vault verification"
-  ],
-  "todo": [
-    "Deliver feature and reconcile stable Vault",
-    "Docs-only closure"
-  ],
+  "in_progress": [],
+  "todo": [],
   "validation": {
     "tests": "not_run_user_delegated",
     "knowledge_check": "not_run_user_delegated",
@@ -33,5 +32,15 @@
     "UDP fixture and reference sender do not demonstrate full proposed workload capacity",
     "Physical arrival timestamp and VM/storage truth require department verification"
   ],
-  "resume_instructions": "Deliver reviewed 16-path R90-117 feature with explicit tests-delegated status, exact Git/Vault evidence and docs-only closure. Do not run sender/capture/tests or claim SLO capacity. R90-118 cross-artifact evidence bundle is queued separately."
+  "resume_instructions": "R90-117 implementation delivered at fc5f64b157dd210d2108de4b0ee96e574a8af7bf with tests delegated and not run. Verify docs-only closure/exact Vault range on resume; do not repeat feature delivery. R90-118 is next ready: persist a bounded supplied-artifact receipt/digest reconciliation plan. Do not run tests or traffic, treat hardware as a development gate, require external bench01 or assert SLO compliance.",
+  "delivery": {
+    "commit": "fc5f64b157dd210d2108de4b0ee96e574a8af7bf",
+    "origin_main_verified": true,
+    "push_without_force_or_tags": true,
+    "post_fetch_knowledge_check": "not_run_user_delegated",
+    "vault_range": "98541884f60a12adc1a605ce10e918ed5f0b1663..fc5f64b157dd210d2108de4b0ee96e574a8af7bf",
+    "vault_note_index_moc_verified": true,
+    "vault_stable_prose_reconciled": true,
+    "vault_idempotent_replay_verified": true
+  }
 }

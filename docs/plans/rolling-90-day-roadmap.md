@@ -194,8 +194,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-114 | Sep 25 | Complete implementation; tests delegated | Implement departmental SLO observation summaries and retained reports. | R90-113; user-directed test delegation | A standard-library API/CLI validates supplied cohorts/events, retains missing alerts in p99 and failure counts, summarizes phase/minute/five-minute loss and latency, and publishes a non-overwriting source-bound report without asserting compliance; behavioral tests are explicitly delegated. |
 | R90-115 | Sep 26 | Complete implementation; tests delegated | Adapt raw packet/oracle and lifecycle ledgers into retained SLO report input. | R90-114 | Unique identity correlation, oracle-driven missing/failure accounting, exact raw copies and checksums, reporter-compatible observations, no compliance assertion; static review with tests delegated. |
 | R90-116 | Sep 26–Oct 9 | Complete implementation; tests delegated | Add opt-in runtime correlation and lifecycle export for the SLO adapter. | R90-115 | Freeze packet/event identity propagation and arrival/durable/terminal boundaries; implement opt-in exports with explicit overhead/error semantics and departmental handoff, without claiming acceptance. |
-| R90-117 | Sep 26–Oct 16 | In progress; tests delegated | Connect native live ingress and offered-oracle correlation. | R90-116 | Freeze and implement native ingress packet identity propagation and live-arrival metadata with an independently retained offered oracle; document clocks, losses and measurement overhead without claiming acceptance. |
-| R90-118 | Sep 26–Oct 23 | Planned | Bind sender, capture, engine and adapter artifacts into a reviewable evidence bundle. | R90-117 | Validate supplied run IDs/origins/digests/completion boundaries across all artifact receipts; retain partial and missing evidence as explicit gaps without asserting compliance or executing acceptance. |
+| R90-117 | Sep 26–Oct 16 | Complete implementation; tests delegated | Connect native live ingress and offered-oracle correlation. | R90-116 | Freeze and implement native ingress packet identity propagation and live-arrival metadata with an independently retained offered oracle; document clocks, losses and measurement overhead without claiming acceptance. |
+| R90-118 | Sep 26–Oct 23 | Ready | Bind sender, capture, engine and adapter artifacts into a reviewable evidence bundle. | R90-117 | Validate supplied run IDs/origins/digests/completion boundaries across all artifact receipts; retain partial and missing evidence as explicit gaps without asserting compliance or executing acceptance. |
 
 ## R90-01 Definition
 
@@ -3114,8 +3114,8 @@ production SLO direction and user-approved isolated same-VM execution scope.
 R90-75 acceptance is delegated to the test department; agent implementation
 is unblocked by missing tests, profile resources or qualifying artifacts under
 the explicit Sep 25 instruction. R90-114 and R90-115 implementations are
-delivered; R90-116 engine exports are complete, R90-117 native UDP ingress is
-selected, and R90-118 queues artifact bundle reconciliation.
+delivered; R90-116 engine exports and R90-117 native UDP ingress are complete.
+R90-118 artifact bundle reconciliation is next ready.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -4703,6 +4703,17 @@ host-arrival timestamps, and records capture counters without asserting a run
 pass. Manual source/AST/compile review plus 134 state JSONs, 122 unique roadmap
 row/Definition pairs, local links, chronology and diff checks pass. All tests,
 CLI runs, benchmarks, acceptance traffic and knowledge tests remain unexecuted.
+R90-117 implementation is delivered at `fc5f64b157dd210d2108de4b0ee96e574a8af7bf`.
+Push without force/tags and fresh fetch verified clean HEAD/origin/main/FETCH_HEAD
+equality. Exact range `98541884f60a12adc1a605ce10e918ed5f0b1663..fc5f64b157dd210d2108de4b0ee96e574a8af7bf`
+is synchronized to the local Vault; note/index/MOC and nine stable notes are
+verified, with historical iteration records preserved. Replay retained Markdown
+SHA-256 `6b8b09425f24556c96c5d1dc40d74c922c225f60f77443994ecc7a2e2aba8f65`.
+Tests remain delegated/unexecuted; UDP-only implementation and compile/static
+checks are not measured capacity or full workload qualification. R90-118 is next
+ready for a separate artifact-reconciliation plan, not started. This docs-only
+closure records feature facts and receives its own verified Git/Vault range.
+R90-75 acceptance remains departmental and does not block implementation.
 
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
