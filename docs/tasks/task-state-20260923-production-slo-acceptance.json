@@ -2,7 +2,7 @@
   "task": "r90-75-production-slo-acceptance",
   "timestamp": "2026-09-29",
   "branch": "main",
-  "remote_baseline": "c6ae4bce4a8a8c834bc0c15f8aaf1c8b10c34906",
+  "remote_baseline": "9c5d12ccc1c63fca42a1731451207b44acaec69c",
   "risk_level": "High",
   "current_checkpoint": "acceptance-delegated-development-unblocked",
   "contract": "docs/performance-slo.md",
@@ -22,14 +22,15 @@
     "Report implementation delivered at 418e5dc5a1443068b25bad2e2ee6307f1338a3e1 with verified push/fetch/Vault; behavioral tests intentionally delegated and not run",
     "R90-115 raw packet/oracle/lifecycle adapter delivered at f2be37c0b4d9b867a15dc1f3a4d2f460d78e7be7 with verified push/fetch/Vault; static review only, behavioral tests delegated",
     "R90-116 opt-in engine lifecycle export and full-synchronous WAL measurement storage delivered at 9b7262f88c1bfde8d5f984b0e159f6821eb5d130 with verified Git/Vault; compile/static review only, tests delegated",
-    "R90-117 bounded native live UDP marker/capture and independent reference sender delivered at fc5f64b157dd210d2108de4b0ee96e574a8af7bf with verified Git/Vault; compile/static review only, all tests delegated"
+    "R90-117 bounded native live UDP marker/capture and independent reference sender delivered at fc5f64b157dd210d2108de4b0ee96e574a8af7bf with verified Git/Vault; compile/static review only, all tests delegated",
+    "R90-118 supplied-artifact snapshot/receipt/identity/digest/report reconciliation delivered at 9c5d12ccc1c63fca42a1731451207b44acaec69c with verified Git/Vault; static review only, tests delegated"
   ],
   "in_progress": [],
   "todo": [
     "Define isolated local SUT/generator working directories, process groups, resource allocations, service endpoints and chosen ingress",
     "Freeze exact workload, configuration, rule set, commits, durability settings and timestamp boundary",
     "Specify extended duration, minimum sample criterion, estimator and missing-latency representation",
-    "Finish R90-118 supplied-artifact consistency tooling; then R90-119 compares declared bundle conditions. Department validates clock, durability, cohort identity and reporter behavior",
+    "Implement R90-119 declared bundle comparability; department validates R90-118 behavior and clock, durability, cohort identity, raw-ledger reconstruction and reporter truth",
     "Perform the comparison in the approved isolated same-host context with matched commit/toolchain/resources or explicitly plan a matched rebaseline",
     "Execute both profiles locally only after resource/profile agreement and retain full recomputable artifacts",
     "Verify all acceptance results before any profile-specific SLO compliance claim"
