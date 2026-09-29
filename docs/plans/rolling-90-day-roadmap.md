@@ -196,8 +196,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-116 | Sep 26–Oct 9 | Complete implementation; tests delegated | Add opt-in runtime correlation and lifecycle export for the SLO adapter. | R90-115 | Freeze packet/event identity propagation and arrival/durable/terminal boundaries; implement opt-in exports with explicit overhead/error semantics and departmental handoff, without claiming acceptance. |
 | R90-117 | Sep 26–Oct 16 | Complete implementation; tests delegated | Connect native live ingress and offered-oracle correlation. | R90-116 | Freeze and implement native ingress packet identity propagation and live-arrival metadata with an independently retained offered oracle; document clocks, losses and measurement overhead without claiming acceptance. |
 | R90-118 | Sep 29–Oct 23 | Complete implementation; tests delegated | Bind sender, capture, engine and adapter artifacts into a reviewable evidence bundle. | R90-117 | Validate supplied run IDs/origins/digests/completion boundaries across all artifact receipts; retain partial and missing evidence as explicit gaps without asserting compliance or executing acceptance. |
-| R90-119 | Sep 29–Oct 30 | In progress | Diagnose comparability of two supplied SLO evidence bundles. | R90-118 | Retain pair provenance and compare profile, workload/policy, hardware declarations and tool/source identity; identify mismatches and missing qualification without benchmark execution or capacity/compliance claims. |
-| R90-120 | Sep 29–Nov 6 | Planned | Retain explicit run-context declarations for SLO comparison review. | R90-119 | Define and validate bounded hardware/toolchain/isolation metadata and checksum-bound evidence references without automatic discovery, live execution or acceptance claims. |
+| R90-119 | Sep 29–Oct 30 | Complete implementation; tests delegated | Diagnose comparability of two supplied SLO evidence bundles. | R90-118 | Retain pair provenance and compare profile, workload/policy, hardware declarations and tool/source identity; identify mismatches and missing qualification without benchmark execution or capacity/compliance claims. |
+| R90-120 | Sep 29–Nov 6 | Ready | Retain explicit run-context declarations for SLO comparison review. | R90-119 | Define and validate bounded hardware/toolchain/isolation metadata and checksum-bound evidence references without automatic discovery, live execution or acceptance claims. |
 
 ## R90-01 Definition
 
@@ -3156,7 +3156,7 @@ is unblocked by missing tests, profile resources or qualifying artifacts under
 the explicit Sep 25 instruction. R90-114 and R90-115 implementations are
 delivered; R90-116 engine exports and R90-117 native UDP ingress are complete.
 R90-118 artifact bundle reconciliation is delivered; R90-119 supplied-bundle
-comparability is selected. R90-120 run-context declarations follow its delivery.
+comparability is delivered. R90-120 run-context declarations are next ready.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -4806,6 +4806,17 @@ AST parsing, literal schema parity, source review, 136 task JSONs, 124 unique
 roadmap row/Definition pairs, local links/history/diff/token-pattern checks pass.
 No module/CLI, tests, traffic, benchmark, acceptance or knowledge suite ran;
 no comparison evidence was manufactured. R90-120 remains queued, not started.
+R90-119 implementation is delivered at `48ccdf6fa324e81c0139d815eb12aa750c335f61`.
+The nine-path feature passed static AST/schema/source/JSON/roadmap/link/diff review;
+all tests and CLI/benchmark/acceptance/knowledge execution remain delegated.
+Push without force/tags and fresh fetch verified clean HEAD/origin/main/FETCH_HEAD
+equality. Exact range `2c5acb245d129c41c701f68cd39b12b4807b5cb8..48ccdf6fa324e81c0139d815eb12aa750c335f61`
+is synchronized to the local Vault; note/index/MOC and nine stable notes are
+verified with immutable iteration bytes preserved. Replay retained Markdown
+SHA-256 `5d77bd112cd413b76b6e81d7f50a78dafe2dde504b8219a21c9605287561b7f7`.
+R90-120 is now next ready for a separate supplied run-context plan; not started.
+Both profiles lack qualifying evidence; declaration matching does not establish
+actual comparability. This single docs-only closure gets its own Git/Vault range.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
