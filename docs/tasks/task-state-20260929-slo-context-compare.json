@@ -2,21 +2,23 @@
   "task": "r90-121-slo-context-compare",
   "timestamp": "2026-09-29",
   "branch": "main",
-  "remote_baseline": "11c82f8273635e60222948dcd2b7f9f2a019aed5",
+  "remote_baseline": "09a555ea22eb98c03b1b757c2747925009ab8c57",
   "risk_level": "High",
-  "current_checkpoint": "implementation-statically-reviewed-awaiting-delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Fetched clean baseline and R90-120 feature/closure Vault records verified",
     "Persisted optional context consumption and per-field evidence plan before edits",
     "Implemented optional v2 context comparison with original/fresh source proof and exact qualified-bundle binding",
     "Implemented 25-field known/unknown/unsupported/unavailable comparison, preserved gaps and conservative status/authority boundaries",
     "Documented APIs, limits, outputs, v1 compatibility and unexecuted departmental fault matrix",
-    "AST-only make python-check and static receipt schema parity, 25 documented fields, 138 task JSONs, 126 unique roadmap row/Definition pairs, ordered history, links, diff and token-pattern review passed"
+    "AST-only make python-check and static receipt schema parity, 25 documented fields, 138 task JSONs, 126 unique roadmap row/Definition pairs, ordered history, links, diff and token-pattern review passed",
+    "Committed exactly eleven intended paths at 09a555ea22eb98c03b1b757c2747925009ab8c57",
+    "Pushed without force/tags; fresh fetch verified clean HEAD/origin/main/FETCH_HEAD equality",
+    "Verified exact Vault feature range, note/index/MOC and nine stable notes; immutable iteration bytes preserved",
+    "Idempotent replay retained Markdown SHA-256 710a934a152d9e83359785aec87c60e0a7b9ae13cb4e2af7911008ce9a494f58"
   ],
   "in_progress": [],
-  "todo": [
-    "Verified feature Git/Vault delivery and one docs-only closure"
-  ],
+  "todo": [],
   "validation": {
     "tests": "not_run_user_delegated",
     "knowledge_check": "not_run_user_delegated",
@@ -29,5 +31,15 @@
     "Declaration equality does not authenticate facts or evidence relevance",
     "No qualifying acceptance measurements for either profile"
   ],
-  "resume_instructions": "Deliver R90-121 implementation only with exact Git/Vault feature and closure ranges; R90-122 is queued, not started. Tests and acceptance remain delegated; no compliance claim."
+  "resume_instructions": "R90-121 implementation delivered at 09a555ea22eb98c03b1b757c2747925009ab8c57; tests delegated and not run. Verify this single docs-only closure and exact Vault range on resume; do not repeat feature delivery. R90-122 is next ready: persist an offline raw-ledger reconstruction plan before edits. No tests, CLI smoke, resource discovery, traffic, external bench01 prerequisite, hardware development gate or compliance claim.",
+  "delivery": {
+    "commit": "09a555ea22eb98c03b1b757c2747925009ab8c57",
+    "origin_main_verified": true,
+    "push_without_force_or_tags": true,
+    "post_fetch_knowledge_check": "not_run_user_delegated",
+    "vault_range": "11c82f8273635e60222948dcd2b7f9f2a019aed5..09a555ea22eb98c03b1b757c2747925009ab8c57",
+    "vault_note_index_moc_verified": true,
+    "vault_stable_prose_reconciled": true,
+    "vault_idempotent_replay_verified": true
+  }
 }

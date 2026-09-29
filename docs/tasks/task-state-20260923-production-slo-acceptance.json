@@ -2,7 +2,7 @@
   "task": "r90-75-production-slo-acceptance",
   "timestamp": "2026-09-29",
   "branch": "main",
-  "remote_baseline": "11c82f8273635e60222948dcd2b7f9f2a019aed5",
+  "remote_baseline": "09a555ea22eb98c03b1b757c2747925009ab8c57",
   "risk_level": "High",
   "current_checkpoint": "acceptance-delegated-development-unblocked",
   "contract": "docs/performance-slo.md",
@@ -25,14 +25,15 @@
     "R90-117 bounded native live UDP marker/capture and independent reference sender delivered at fc5f64b157dd210d2108de4b0ee96e574a8af7bf with verified Git/Vault; compile/static review only, all tests delegated",
     "R90-118 supplied-artifact snapshot/receipt/identity/digest/report reconciliation delivered at 9c5d12ccc1c63fca42a1731451207b44acaec69c with verified Git/Vault; static review only, tests delegated",
     "R90-119 retained bundle comparison and exact declared repeatability diagnostics delivered at 48ccdf6fa324e81c0139d815eb12aa750c335f61 with verified Git/Vault; static review only, tests delegated",
-    "R90-120 nullable run-context schema and retained reference/observation binding delivered at 09e8a0ea37739617f3e43357f800d41a68641c84 with verified Git/Vault; static review only, tests delegated"
+    "R90-120 nullable run-context schema and retained reference/observation binding delivered at 09e8a0ea37739617f3e43357f800d41a68641c84 with verified Git/Vault; static review only, tests delegated",
+    "R90-121 optional context-aware pair comparison delivered at 09a555ea22eb98c03b1b757c2747925009ab8c57 with verified Git/Vault; fresh source/bundle binding and explicit unknown fields, static review only, tests delegated"
   ],
   "in_progress": [],
   "todo": [
     "Define isolated local SUT/generator working directories, process groups, resource allocations, service endpoints and chosen ingress",
     "Freeze exact workload, configuration, rule set, commits, durability settings and timestamp boundary",
     "Specify extended duration, minimum sample criterion, estimator and missing-latency representation",
-    "Finish selected R90-121 context comparison, then R90-122 retained raw-ledger reconstruction; department validates R90-118/R90-119/R90-120 behavior, actual environment/comparability, clocks, durability, cohort identity, raw-ledger reconstruction and reporter truth",
+    "Next implement R90-122 retained raw-ledger reconstruction; department validates R90-118/R90-119/R90-120/R90-121 behavior, actual environment/comparability, clocks, durability, cohort identity, raw-ledger reconstruction and reporter truth",
     "Perform the comparison in the approved isolated same-host context with matched commit/toolchain/resources or explicitly plan a matched rebaseline",
     "Execute both profiles locally only after resource/profile agreement and retain full recomputable artifacts",
     "Verify all acceptance results before any profile-specific SLO compliance claim"
@@ -61,7 +62,7 @@
     },
     "superseded_preflight": "SSH name-resolution failure preceded user clarification that bench01 is not an external host"
   },
-  "artifact_template": "~/benchmarks/r90‑75/acceptance_{staging|prod}_{YYYYMMDD_HHMMSS}.json",
+  "artifact_template": "~/benchmarks/r90\u201175/acceptance_{staging|prod}_{YYYYMMDD_HHMMSS}.json",
   "qualifying_evidence": {
     "staging": false,
     "prod": false,
