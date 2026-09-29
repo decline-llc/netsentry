@@ -12,10 +12,11 @@ import sys
 from typing import Any, Sequence
 
 if __package__:
-    from . import slo_bundle as bundle, slo_report as report
+    from . import slo_bundle as bundle, slo_report as report, slo_context_compare as context_compare
 else:
     import slo_bundle as bundle
     import slo_report as report
+    import slo_context_compare as context_compare
 
 SIDES = ("baseline", "candidate")
 FILES = {role + "/" + name for role, names in bundle.SOURCES.items() for name in names}
@@ -171,14 +172,22 @@ def _conditions(root: Path, original: dict[str, Any]) -> tuple[dict[str, Any], d
 
 
 def compare(output: Path, *, baseline: Path | None = None, candidate: Path | None = None,
-            max_bytes_per_side: int = bundle.DEFAULT_MAX_BYTES) -> dict[str, Any]:
+            max_bytes_per_side: int = bundle.DEFAULT_MAX_BYTES,
+            baseline_context: Path | None = None, candidate_context: Path | None = None,
+            require_context: bool = False,
+            max_context_evidence_bytes: int = context_compare.DEFAULT_MAX_EVIDENCE_BYTES) -> dict[str, Any]:
     """Retain/reconcile two supplied bundles, then compare exact declared conditions."""
     report._integer(max_bytes_per_side, "max_bytes_per_side", 1)
+    report._integer(max_context_evidence_bytes, "max_context_evidence_bytes", 1)
+    report._boolean(require_context, "require_context")
+    context_enabled = require_context or baseline_context is not None or candidate_context is not None
     output = output.expanduser()
     output.mkdir(mode=0o700, parents=False, exist_ok=False)
-    metadata = bundle._Bundle(output, 2 * bundle.META_LIMIT)
+    metadata = bundle._Bundle(output, (4 if context_enabled else 2) * bundle.META_LIMIT)
     sides: dict[str, Any] = {}
     projections: dict[str, dict[str, Any]] = {}
+    bundle_identities: dict[str, dict[str, Any]] = {}
+    observation_sizes: dict[str, int] = {}
     evidence_gaps: list[str] = []
     invalid: list[str] = []
     for side, source in (("baseline", baseline), ("candidate", candidate)):
@@ -217,6 +226,24 @@ def compare(output: Path, *, baseline: Path | None = None, candidate: Path | Non
         conditions, metrics = _conditions(root, original)
         projections[side] = conditions
         sides[side]["metrics"] = metrics
+        observed = next(item for item in current["inventory"] if item["file"] == "adapter/observations.json")
+        bundle_identities[side] = {"run_id": metrics["run_id"], "profile": conditions["profile"],
+                                   "started_at": metrics["started_at"], "observations_sha256": observed["sha256"]}
+        observation_sizes[side] = observed["bytes"]
+    context_rows = []
+    if context_enabled:
+        context_cells = {}
+        for side, source in (("baseline", baseline_context), ("candidate", candidate_context)):
+            info, cells, gaps, errors = context_compare.consume(
+                metadata, side, source, bundle_identities.get(side), observation_sizes.get(side),
+                max_context_evidence_bytes)
+            sides[side]["context"] = info
+            context_cells[side] = cells
+            evidence_gaps.extend(gaps)
+            invalid.extend(errors)
+        context_rows = context_compare.compare_fields(context_cells)
+        if any(row["equal"] is None for row in context_rows):
+            evidence_gaps.append("Context comparison has unknown, unsupported or unavailable fields.")
     rows = []
     pair_gaps = []
     if set(projections) == set(SIDES):
@@ -236,7 +263,7 @@ def compare(output: Path, *, baseline: Path | None = None, candidate: Path | Non
     invalid.extend(metadata.mismatches)
     evidence_gaps.extend(metadata.gaps)
     evidence_gaps.extend(metadata.skipped)
-    differences = [row["field"] for row in rows if not row["equal"]]
+    differences = [row["field"] for row in rows + context_rows if row["equal"] is False]
     status = "invalid_evidence" if invalid else (
         "incomplete" if evidence_gaps or pair_gaps else "conditions_differ" if differences else "review_required")
     result = {
@@ -266,6 +293,30 @@ def compare(output: Path, *, baseline: Path | None = None, candidate: Path | Non
             "Current reconciliation is retained alongside original receipts; changing input tool versions requires departmental review.",
         ],
     }
+    if context_enabled:
+        context_differences = [row["field"] for row in context_rows if row["equal"] is False]
+        context_unknown = any(row["equal"] is None for row in context_rows)
+        result.update(
+            schema_version=2, comparison_policy="exact_declared_repeatability_with_context_v1",
+            declared_conditions_match=False if differences else None if not rows or context_unknown else True,
+            context_conditions_match=False if context_differences else None if context_unknown else True,
+            context_comparisons=context_rows, facts_verified=False,
+            max_context_evidence_bytes_per_side=max_context_evidence_bytes,
+            context_consumer_source_sha256=hashlib.sha256(Path(context_compare.__file__).read_bytes()).hexdigest())
+        result["qualification_gaps"][0] = (
+            "Context declarations are retained when supplied; CPU/pinning, VM/storage/NIC and actual isolation facts remain unverified.")
+        result["limitations"].extend([
+            "Context values compare only with original/current source proof and exact bundle binding; null never counts as a match.",
+            "Context evidence IDs/digests are provenance, not property equality conditions; reference relevance remains unverified.",
+            "Context mode adds per-side evidence budgets, a 1 MiB declaration, 64 MiB observations and 1 MiB original receipt.",
+        ])
+        # Context retention syncs its own parent; persist the context entry in each side as well.
+        for side in SIDES:
+            descriptor = os.open(output / side, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(descriptor)
+            finally:
+                os.close(descriptor)
     # reconcile() synced side directory entries; publish the pair manifest last.
     report.write_report(output / "comparison.json", result)
     descriptor = os.open(output.parent, os.O_RDONLY | os.O_DIRECTORY)
@@ -282,10 +333,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--candidate", type=Path, help="supplied R90-118 bundle directory")
     parser.add_argument("--output-dir", type=Path, required=True, help="new directory in an existing parent")
     parser.add_argument("--max-bytes-per-side", type=int, default=bundle.DEFAULT_MAX_BYTES)
+    parser.add_argument("--baseline-context", type=Path, help="retained context package for the baseline run")
+    parser.add_argument("--candidate-context", type=Path, help="retained context package for the candidate run")
+    parser.add_argument("--require-context", action="store_true", help="require both context packages even when absent")
+    parser.add_argument("--max-context-evidence-bytes", type=int, default=context_compare.DEFAULT_MAX_EVIDENCE_BYTES)
     args = parser.parse_args(argv)
     try:
         result = compare(args.output_dir, baseline=args.baseline, candidate=args.candidate,
-                         max_bytes_per_side=args.max_bytes_per_side)
+                         max_bytes_per_side=args.max_bytes_per_side,
+                         baseline_context=args.baseline_context, candidate_context=args.candidate_context,
+                         require_context=args.require_context,
+                         max_context_evidence_bytes=args.max_context_evidence_bytes)
     except (OSError, ValueError, RecursionError) as error:
         print(f"[slo-compare] {error}; retain partial output and retry to a new directory", file=sys.stderr)
         return 2

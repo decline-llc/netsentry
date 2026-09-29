@@ -161,9 +161,10 @@ status and retry to a fresh destination. No scale or performance is demonstrated
 
 ## Comparison consumer contract
 
-R90-119 currently compares the fields already in its bundle schema. It does not
-automatically read this context package or remove its qualification gaps.
-For context integration, a consumer must retain/revalidate the declaration and
+R90-121 adds optional context consumption to [the pair comparator](slo-compare.md).
+Providing a context package or requiring context enables its version-2 policy;
+the default without context options keeps the version-1 path. A consumer must
+retain/revalidate the declaration and
 references, verify the receipt against its snapshots, bind exact run/profile/start
 and observation SHA-256 to the corresponding bundle, and compare declared values
 while preserving null/unsupported/mismatched evidence. Evidence IDs and raw file
@@ -173,7 +174,10 @@ Differing evidence files can legitimately support equal declarations.
 Unknown fields cannot count as a match that establishes comparability. Even known
 matching declarations with matching retained references remain subject to factual
 review. Binding must never replace live clock/durability, packet-oracle, hardware
-or isolation qualification. Consumer wiring is queued separately as R90-121.
+or isolation qualification. The consumer rechecks original/fresh inventories and binds each context to its
+exact bundle observations. Unknown, unsupported and unavailable fields remain
+explicit, and null values cannot count as a match. Known values may be compared
+individually within an incomplete context, while all original gaps remain.
 
 ## Required departmental validation — not executed
 

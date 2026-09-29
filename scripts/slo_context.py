@@ -262,7 +262,7 @@ def retain(output: Path, *, declaration: Path | None = None, observations: Path 
             "Explicit false values remain declarations; profile targets and isolation adequacy are not evaluated here.",
             "Observations are schema/digest-bound, not reconstructed from live traffic or packet ledgers.",
             "No hardware discovery, shell command, service, benchmark or acceptance run is performed.",
-            "R90-119 does not automatically consume context; a consumer must freshly verify identity and retained digests.",
+            "Context-aware comparison must freshly verify identity and retained digests; receipt presence alone is insufficient.",
             "Clock/durability, workload, physical isolation and process outcomes remain departmental qualification work.",
         ],
     }

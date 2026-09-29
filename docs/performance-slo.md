@@ -201,7 +201,9 @@ run benchmarks or infer regression, capacity or SLO compliance. Tests remain del
 R90-120 adds [retained run-context declarations](slo-context.md): typed unknowns,
 hardware/toolchain/isolation fields and opaque evidence references bound to exact
 observation bytes. It performs no discovery and verifies no machine facts.
-R90-119 consumer integration is queued separately; tests remain delegated.
+R90-121 adds optional [context-aware pair comparison](slo-compare.md), freshly
+checking original/current references and exact bundle observation binding. Unknown
+values cannot qualify as matching facts; tests remain delegated.
 
 ## Current evidence gaps and execution prerequisites
 

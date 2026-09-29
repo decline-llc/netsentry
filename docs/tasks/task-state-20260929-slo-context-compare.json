@@ -1,0 +1,33 @@
+{
+  "task": "r90-121-slo-context-compare",
+  "timestamp": "2026-09-29",
+  "branch": "main",
+  "remote_baseline": "11c82f8273635e60222948dcd2b7f9f2a019aed5",
+  "risk_level": "High",
+  "current_checkpoint": "implementation-statically-reviewed-awaiting-delivery",
+  "completed": [
+    "Fetched clean baseline and R90-120 feature/closure Vault records verified",
+    "Persisted optional context consumption and per-field evidence plan before edits",
+    "Implemented optional v2 context comparison with original/fresh source proof and exact qualified-bundle binding",
+    "Implemented 25-field known/unknown/unsupported/unavailable comparison, preserved gaps and conservative status/authority boundaries",
+    "Documented APIs, limits, outputs, v1 compatibility and unexecuted departmental fault matrix",
+    "AST-only make python-check and static receipt schema parity, 25 documented fields, 138 task JSONs, 126 unique roadmap row/Definition pairs, ordered history, links, diff and token-pattern review passed"
+  ],
+  "in_progress": [],
+  "todo": [
+    "Verified feature Git/Vault delivery and one docs-only closure"
+  ],
+  "validation": {
+    "tests": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "acceptance_runs": "not_run",
+    "static_review": "passed_source_ast_schema_json_roadmap_links_diff_token_patterns_only",
+    "runtime_correctness": "unverified_no_implementation_import_or_execution"
+  },
+  "remaining_risks": [
+    "Untested implementation",
+    "Declaration equality does not authenticate facts or evidence relevance",
+    "No qualifying acceptance measurements for either profile"
+  ],
+  "resume_instructions": "Deliver R90-121 implementation only with exact Git/Vault feature and closure ranges; R90-122 is queued, not started. Tests and acceptance remain delegated; no compliance claim."
+}
