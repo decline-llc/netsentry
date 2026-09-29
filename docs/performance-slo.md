@@ -193,6 +193,11 @@ fixed source files and checking receipts, run/origin/port identity, raw digests 
 recomputed report consistency. Consistency does not establish authenticity,
 complete packet replay or SLO compliance; behavioral validation remains delegated.
 
+R90-119 adds [declared bundle comparability](slo-compare.md): it retains and
+reconciles a pair, compares exact available conditions and exposes side-by-side
+metrics and qualification gaps. It does not certify hardware/workload equivalence,
+run benchmarks or infer regression, capacity or SLO compliance. Tests remain delegated.
+
 ## Current evidence gaps and execution prerequisites
 
 - `capture/src/main.c` forwards libpcap timestamps and records send/drop
