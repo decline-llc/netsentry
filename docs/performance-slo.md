@@ -198,6 +198,11 @@ reconciles a pair, compares exact available conditions and exposes side-by-side
 metrics and qualification gaps. It does not certify hardware/workload equivalence,
 run benchmarks or infer regression, capacity or SLO compliance. Tests remain delegated.
 
+R90-120 adds [retained run-context declarations](slo-context.md): typed unknowns,
+hardware/toolchain/isolation fields and opaque evidence references bound to exact
+observation bytes. It performs no discovery and verifies no machine facts.
+R90-119 consumer integration is queued separately; tests remain delegated.
+
 ## Current evidence gaps and execution prerequisites
 
 - `capture/src/main.c` forwards libpcap timestamps and records send/drop

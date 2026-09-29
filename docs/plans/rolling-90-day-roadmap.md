@@ -197,7 +197,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-117 | Sep 26–Oct 16 | Complete implementation; tests delegated | Connect native live ingress and offered-oracle correlation. | R90-116 | Freeze and implement native ingress packet identity propagation and live-arrival metadata with an independently retained offered oracle; document clocks, losses and measurement overhead without claiming acceptance. |
 | R90-118 | Sep 29–Oct 23 | Complete implementation; tests delegated | Bind sender, capture, engine and adapter artifacts into a reviewable evidence bundle. | R90-117 | Validate supplied run IDs/origins/digests/completion boundaries across all artifact receipts; retain partial and missing evidence as explicit gaps without asserting compliance or executing acceptance. |
 | R90-119 | Sep 29–Oct 30 | Complete implementation; tests delegated | Diagnose comparability of two supplied SLO evidence bundles. | R90-118 | Retain pair provenance and compare profile, workload/policy, hardware declarations and tool/source identity; identify mismatches and missing qualification without benchmark execution or capacity/compliance claims. |
-| R90-120 | Sep 29–Nov 6 | Ready | Retain explicit run-context declarations for SLO comparison review. | R90-119 | Define and validate bounded hardware/toolchain/isolation metadata and checksum-bound evidence references without automatic discovery, live execution or acceptance claims. |
+| R90-120 | Sep 29–Nov 6 | In progress | Retain explicit run-context declarations for SLO comparison review. | R90-119 | Define and validate bounded hardware/toolchain/isolation metadata and checksum-bound evidence references without automatic discovery, live execution or acceptance claims. |
+| R90-121 | Sep 29–Nov 13 | Planned | Bind supplied run-context packages into SLO pair comparison. | R90-120 | Retain and revalidate each context, bind exact observation/run identity, compare known declarations and expose unknown/missing/different evidence without asserting verified facts or acceptance. |
 
 ## R90-01 Definition
 
@@ -2636,6 +2637,25 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 - **Stop condition:** new private/external evidence authority or ambiguous facts;
   implement the schema with unknown fields, not invented environment measurements.
 
+- **Selected plan:** [task-20260929-slo-context.md](task-20260929-slo-context.md).
+  Nullable typed declarations and bounded opaque references bind to exact
+  observation identity; comparison consumption is documented and separately queued.
+
+## R90-121 Definition
+
+- **Goal:** consume supplied context packages alongside compared bundles while
+  preserving source identity, missing qualification and declaration-only semantics.
+- **Dependencies/window:** R90-120 implementation delivery; Sep 29–Nov 13.
+- **Risk:** stale receipts, unknown fields and jointly rewritten evidence must
+  not be promoted to actual machine equivalence or SLO compliance.
+- **Acceptance:** revalidate and retain context sources, bind run/profile/start
+  and observation bytes to each side, compare known declarations and report
+  unknown/missing/differing context with explicit departmental review.
+- **Required review:** source/AST/JSON/docs/diff and verified Git/Vault delivery;
+  tests, benchmarks, acceptance and knowledge suites remain delegated.
+- **Stop condition:** new external/private evidence authority or undocumented
+  input interpretation; implement only against the versioned context contract.
+
 
 ### R90-71 Validation Deviation
 
@@ -3156,7 +3176,8 @@ is unblocked by missing tests, profile resources or qualifying artifacts under
 the explicit Sep 25 instruction. R90-114 and R90-115 implementations are
 delivered; R90-116 engine exports and R90-117 native UDP ingress are complete.
 R90-118 artifact bundle reconciliation is delivered; R90-119 supplied-bundle
-comparability is delivered. R90-120 run-context declarations are next ready.
+comparability is delivered. R90-120 run-context declarations are selected;
+R90-121 context consumption follows their delivery.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -4817,6 +4838,25 @@ SHA-256 `5d77bd112cd413b76b6e81d7f50a78dafe2dde504b8219a21c9605287561b7f7`.
 R90-120 is now next ready for a separate supplied run-context plan; not started.
 Both profiles lack qualifying evidence; declaration matching does not establish
 actual comparability. This single docs-only closure gets its own Git/Vault range.
+
+### Sep 29: R90-120 supplied run-context selection
+
+Fetched `79011111b3e7997f8176cf3325952fcd885f178e` equals clean HEAD/origin/main/
+FETCH_HEAD; R90-119 feature/closure Vault index/MOC are verified. Recent measurement
+tooling is delivered with behavioral execution delegated. R90-120 plan/state were
+persisted before edits. The Sep 29–Dec 27 horizon remains current. The bounded
+schema records explicit unknowns and evidence references, binding declarations
+to exact observations without discovering hardware or inferring truth. R90-119
+consumer behavior is unchanged; R90-121 queues fresh context binding/comparison
+and is not started. R90-75 acceptance stays departmental; R90-59 retains its
+separate blocked publication boundary.
+R90-120 implementation/static review is complete pending Git/Vault delivery:
+25 nullable fields, safe bounded opaque references and exact observation/allocation
+binding across the nine intended paths. AST/source review, 25-field documentation
+parity, 137 task JSONs, 125 unique roadmap row/Definition pairs, history/links/diff
+and token-pattern checks pass. No module/CLI, tests, traffic, benchmark, acceptance
+or knowledge suite ran; no context or measurement artifact was manufactured.
+R90-121 remains queued and not started.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
