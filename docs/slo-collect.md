@@ -165,3 +165,11 @@ been demonstrated. The adapter does not modify SUT/runtime/CI configuration.
 
 No row in this handoff represents a passed test. Full ingress instrumentation
 and both profiles' acceptance remain outstanding with the specialist department.
+
+## Cross-artifact handoff
+
+Use the [supplied evidence bundle checker](slo-bundle.md) to retain and compare
+sender/capture/engine/adapter/report sources, receipts and completion declarations.
+It reports missing inputs and mismatches without running traffic or asserting
+compliance. For this UDP lane, the manifest fixture digest identifies the exact
+retained sender `fixture.jsonl` bytes. Behavioral validation remains delegated.

@@ -188,6 +188,11 @@ full-synchronous WAL write return. R90-117 adds
 [native UDP measurement ingress](slo-ingress.md) and an independent sender ledger. Physical clock/durability and complete workload
 qualification remain pending; tests remain delegated.
 
+R90-118 adds [supplied-artifact bundle reconciliation](slo-bundle.md), retaining
+fixed source files and checking receipts, run/origin/port identity, raw digests and
+recomputed report consistency. Consistency does not establish authenticity,
+complete packet replay or SLO compliance; behavioral validation remains delegated.
+
 ## Current evidence gaps and execution prerequisites
 
 - `capture/src/main.c` forwards libpcap timestamps and records send/drop

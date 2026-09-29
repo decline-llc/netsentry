@@ -1,8 +1,8 @@
 {
   "task": "r90-75-production-slo-acceptance",
-  "timestamp": "2026-09-27T03:24:12.061801+00:00",
+  "timestamp": "2026-09-29",
   "branch": "main",
-  "remote_baseline": "fc5f64b157dd210d2108de4b0ee96e574a8af7bf",
+  "remote_baseline": "c6ae4bce4a8a8c834bc0c15f8aaf1c8b10c34906",
   "risk_level": "High",
   "current_checkpoint": "acceptance-delegated-development-unblocked",
   "contract": "docs/performance-slo.md",
@@ -29,7 +29,7 @@
     "Define isolated local SUT/generator working directories, process groups, resource allocations, service endpoints and chosen ingress",
     "Freeze exact workload, configuration, rule set, commits, durability settings and timestamp boundary",
     "Specify extended duration, minimum sample criterion, estimator and missing-latency representation",
-    "Implement cross-artifact evidence reconciliation as R90-118 for the delivered capture/sender/engine/adapter paths; department validates clock, durability, cohort identity and reporter behavior",
+    "Finish R90-118 supplied-artifact consistency tooling; then R90-119 compares declared bundle conditions. Department validates clock, durability, cohort identity and reporter behavior",
     "Perform the comparison in the approved isolated same-host context with matched commit/toolchain/resources or explicitly plan a matched rebaseline",
     "Execute both profiles locally only after resource/profile agreement and retain full recomputable artifacts",
     "Verify all acceptance results before any profile-specific SLO compliance claim"

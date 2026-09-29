@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-09-26 through 2026-12-24. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-09-29 through 2026-12-27. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -195,7 +195,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-115 | Sep 26 | Complete implementation; tests delegated | Adapt raw packet/oracle and lifecycle ledgers into retained SLO report input. | R90-114 | Unique identity correlation, oracle-driven missing/failure accounting, exact raw copies and checksums, reporter-compatible observations, no compliance assertion; static review with tests delegated. |
 | R90-116 | Sep 26–Oct 9 | Complete implementation; tests delegated | Add opt-in runtime correlation and lifecycle export for the SLO adapter. | R90-115 | Freeze packet/event identity propagation and arrival/durable/terminal boundaries; implement opt-in exports with explicit overhead/error semantics and departmental handoff, without claiming acceptance. |
 | R90-117 | Sep 26–Oct 16 | Complete implementation; tests delegated | Connect native live ingress and offered-oracle correlation. | R90-116 | Freeze and implement native ingress packet identity propagation and live-arrival metadata with an independently retained offered oracle; document clocks, losses and measurement overhead without claiming acceptance. |
-| R90-118 | Sep 26–Oct 23 | Ready | Bind sender, capture, engine and adapter artifacts into a reviewable evidence bundle. | R90-117 | Validate supplied run IDs/origins/digests/completion boundaries across all artifact receipts; retain partial and missing evidence as explicit gaps without asserting compliance or executing acceptance. |
+| R90-118 | Sep 29–Oct 23 | In progress | Bind sender, capture, engine and adapter artifacts into a reviewable evidence bundle. | R90-117 | Validate supplied run IDs/origins/digests/completion boundaries across all artifact receipts; retain partial and missing evidence as explicit gaps without asserting compliance or executing acceptance. |
+| R90-119 | Sep 29–Oct 30 | Planned | Diagnose comparability of two supplied SLO evidence bundles. | R90-118 | Retain pair provenance and compare profile, workload/policy, hardware declarations and tool/source identity; identify mismatches and missing qualification without benchmark execution or capacity/compliance claims. |
 
 ## R90-01 Definition
 
@@ -2586,7 +2587,7 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 
 - **Goal:** assemble and cross-check supplied live-run companion artifacts so
   sender/capture/engine/adapter provenance can be reviewed together.
-- **Dependencies/window:** R90-117 implementation delivery; Sep 26–Oct 23.
+- **Dependencies/window:** R90-117 implementation delivery; Sep 29–Oct 23.
 - **Risk:** missing receipts, inconsistent IDs/clocks, partial submissions and
   rewritten raw files must not be promoted to qualifying evidence.
 - **Acceptance:** implement bounded receipt/source cross-checks and retained
@@ -2596,6 +2597,25 @@ block implementation work; the formal SLO and evidence contract is unchanged.
   behavioral, benchmark, acceptance and knowledge tests remain delegated.
 - **Stop condition:** private/external artifact authority or ambiguous format;
   implement against documented schemas without inventing real run evidence.
+- **Selected plan:** [task-20260929-slo-bundle.md](task-20260929-slo-bundle.md).
+  Snapshot supplied files, verify receipts and recompute the observation report;
+  full packet replay and physical boundary qualification remain departmental.
+
+## R90-119 Definition
+
+- **Goal:** diagnose whether two supplied SLO bundles support a meaningful matched
+  comparison, exposing declared conditions and differences for department review.
+- **Dependencies/window:** R90-118 implementation delivery; Sep 29–Oct 30.
+- **Risk:** matching declarations are not hardware independence or proof of a
+  workload; incompatible runs must not imply a regression or capacity result.
+- **Acceptance:** bounded API/CLI retaining pair source identity and comparing
+  profile, duration/policy, resource/workload/provenance and tooling declarations;
+  distinguish missing, divergent and consistent review-required comparisons.
+- **Required review:** source/AST/JSON/docs/diff and verified Git/Vault delivery;
+  tests and benchmark/acceptance execution remain delegated by the user.
+- **Stop condition:** newly required external/private evidence or authority;
+  implement only against versioned schemas and never generate measurement data.
+
 
 ### R90-71 Validation Deviation
 
@@ -3115,7 +3135,8 @@ R90-75 acceptance is delegated to the test department; agent implementation
 is unblocked by missing tests, profile resources or qualifying artifacts under
 the explicit Sep 25 instruction. R90-114 and R90-115 implementations are
 delivered; R90-116 engine exports and R90-117 native UDP ingress are complete.
-R90-118 artifact bundle reconciliation is next ready.
+R90-118 artifact bundle reconciliation is selected; R90-119 supplied-bundle
+comparability follows its implementation delivery.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -4715,6 +4736,25 @@ ready for a separate artifact-reconciliation plan, not started. This docs-only
 closure records feature facts and receives its own verified Git/Vault range.
 R90-75 acceptance remains departmental and does not block implementation.
 
+### Sep 29: R90-118 supplied-artifact reconciliation selection
+
+Fetched `c6ae4bce4a8a8c834bc0c15f8aaf1c8b10c34906` matches clean HEAD/origin/main/
+FETCH_HEAD after a transient port-22 fetch failure and successful read-only retry.
+Prior feature/closure Vault index/MOC are verified. Recent contract, report,
+adapter, engine export and UDP ingress deliveries remain explicitly untested
+under user delegation. R90-118 plan/state were persisted before edits. The
+horizon moves to Sep 29–Dec 27; R90-118 forecasts Sep 29–Oct 23 and R90-119
+Sep 29–Oct 30. R90-75 stays acceptance-delegated and R90-59 separately blocked.
+The bounded bundle checker retains fixed sources, cross-checks receipt hashes,
+IDs/origins/port/fixture and recomputes the supplied-observation report. Missing
+and mismatched inputs remain explicit; no real artifacts or tests are generated.
+R90-119 will diagnose declared comparability of supplied bundles; it is not started.
+R90-118 implementation/static review is complete pending Git/Vault delivery:
+thirteen fixed input snapshots, receipt/identity/fixture/source checks and exact
+report recomputation, with bounded retention and explicit gaps/mismatches. AST-only
+syntax, source review, 135 JSON states, 123 unique roadmap row/Definition pairs,
+local links, diff and token-pattern checks pass. No code invocation, tests or
+measurement artifacts were generated; all execution remains department-owned.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a

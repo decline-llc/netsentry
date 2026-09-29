@@ -192,3 +192,11 @@ sample counts and complete hardware/workload profiles separately.
 No test, sender, capture command or acceptance run was executed by the agent.
 The Python sender, per-packet ledger and serialized runtime exporter have
 unmeasured overhead and do not demonstrate 3/7 Gbps or either proposed profile.
+
+## Cross-artifact handoff
+
+Use the [supplied evidence bundle checker](slo-bundle.md) to retain and compare
+sender/capture/engine/adapter/report sources, receipts and completion declarations.
+It reports missing inputs and mismatches without running traffic or asserting
+compliance. For this UDP lane, the manifest fixture digest identifies the exact
+retained sender `fixture.jsonl` bytes. Behavioral validation remains delegated.
