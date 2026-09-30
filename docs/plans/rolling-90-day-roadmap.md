@@ -202,6 +202,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-122 | Sep 29–Nov 20 | Complete implementation; tests delegated | Reconstruct retained observations from supplied raw packet ledgers. | R90-121 | Reuse the bounded adapter against retained manifest/offered/events sources, compare derived observations and retain diagnostic provenance without live execution or acceptance claims. |
 | R90-123 | Sep 29–Nov 27 | Complete implementation; tests delegated | Integrate fresh ledger reconstruction with bundle and pair review. | R90-122 | Add explicit reconstruction mode/policy, rebind retained raw inputs and observations, preserve differences and incomplete/error outcomes without receipt-only trust or acceptance claims. |
 | R90-124 | Sep 29–Dec 4 | Complete documentation; execution delegated | Consolidate the departmental SLO execution and artifact-review runbook. | R90-123 | Document the implemented command/artifact chain, versioned review modes, missing evidence and profile-specific acceptance handoff without executing tests or asserting capacity. |
+| R90-125 | Sep 30 | In progress | Reconcile post-runbook delivery and restore a source-grounded local queue. | R90-124 | Verify delivery/history, correct superseded active SLO blockers, and define bounded offline sender-source reconstruction with complete review/authority contracts; no runtime work or tests. |
+| R90-126 | Sep 30–Dec 11 | Planned | Reconstruct offered-oracle and submission evidence from retained sender fixtures. | R90-125; R90-117 sender contract | A standalone offline operation retains and validates four sender files, streams fixture/offer/submission correlation, derives event IDs and frame length/hash using pure construction, and preserves failures without sending traffic or asserting physical facts/SLO compliance. |
 
 ## R90-01 Definition
 
@@ -2717,6 +2719,57 @@ block implementation work; the formal SLO and evidence contract is unchanged.
   represent unresolved values explicitly rather than inventing qualifying evidence.
 
 
+## R90-125 Definition
+
+- **Goal:** close the empty local queue after R90-124 using verified delivery and
+  source-grounded evidence, and remove superseded active blocker prose.
+- **Dependencies/window:** R90-124 verified documentation delivery; Sep 30.
+- **Risk:** audit-only churn or an invented readiness claim could obscure the
+  actual departmental acceptance and release-authority boundaries.
+- **Acceptance:** reconcile fetched R90-124 feature/closure, recent phase history,
+  Vault and current state; correct R90-59's stale SLO product-scope blocker; define
+  R90-126 from the sender/consumer derivation gap with full scope, non-goals and
+  validation contracts without starting its implementation.
+- **Required review:** source references, static docs/JSON/roadmap multiset,
+  history/link/diff/sensitive-information review and verified Git/Vault delivery.
+  Tests and knowledge suites remain not run, delegated by user.
+- **Stop condition:** new private/external authority or product decision; do not
+  turn absent acceptance evidence into a runtime gate or publication permission.
+
+## R90-126 Definition
+
+- **Goal:** diagnose whether retained offered-oracle and successful-submission
+  records derive consistently from the reference sender's retained fixture.
+- **Dependencies/window:** R90-125 queue reconciliation and completed R90-117
+  sender contract; Sep 30–Dec 11. Dates are forecasts, not execution gates.
+- **Risk:** row-count/hash consistency can conceal source derivation drift;
+  replay agreement could be misread as actual traffic, oracle or clock proof.
+- **Acceptance:** freeze a standalone API/CLI/schema in its implementation plan;
+  retain fixed submission.json/fixture.jsonl/offered.jsonl/submissions.jsonl
+  sources and verify original receipt, run/link/origin and exact inventories;
+  stream aligned rows with bounded memory; validate fixture schema/offsets and
+  exact pkt-N sequence; derive expected packet/rule event IDs and compare all
+  offered oracle identities, regenerated frame length/hash, scheduled offsets,
+  offered time versus scheduled+lateness, and offer/start/return ordering. Detect
+  missing/extra/reordered/duplicate rows, malformed payloads and identity drift;
+  preserve source/tool identity, diagnostics, partial output and permanent
+  review-required/no-physical-facts/no-SLO flags. Reuse pure frame construction
+  only; never invoke sending, clock waits, discovery or service startup.
+- **Non-goals:** bundle/pair integration, live acquisition, new protocol lanes,
+  deriving the rule oracle from observed detections, physical authentication,
+  acceptance execution, capacity claims, dependencies or release changes.
+- **Required review:** static source/data-flow/schema/AST/docs/JSON/diff and
+  sensitive-information checks plus verified Git/Vault. Departmental validation
+  remains explicitly unexecuted: row alignment/each identity and timing mismatch,
+  payload/Base64/MTU/padding/checksum boundaries, zero/exact offset boundaries,
+  original/fresh digest and count drift, missing/partial inputs, no-overwrite,
+  byte limits, nonregular/mutating files, I/O/fsync/close/interruption and scale.
+  A source hash proves supplied code identity only; no live fact is verified.
+- **Stop condition:** undocumented sender formats or new private/external/product
+  authority; represent absent or ambiguous evidence as gaps/errors, never infer
+  a qualifying run. Persist its separate implementation plan before editing.
+
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -3239,8 +3292,8 @@ R90-118 artifact bundle reconciliation is delivered; R90-119 supplied-bundle
 comparability and R90-120 run-context declarations are delivered;
 R90-121 context consumption and R90-122 raw-ledger reconstruction are delivered.
 R90-123 integration into bundle/pair review and R90-124 departmental runbook are delivered.
-No local increment is currently ready; the next trigger audits new evidence before
-planning a bounded source-grounded increment.
+R90-125 is the selected documentation-only queue repair. It queues R90-126
+standalone sender-source reconstruction; that implementation remains unstarted.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -5078,6 +5131,37 @@ user-delegated and unrun. This single docs-only closure receives its own verifie
 Git/Vault range. No next local increment is ready or started. The next trigger
 verifies closure and audits new evidence before persisting a bounded next plan;
 do not repeat R90-124 or infer test/publication authority from an empty queue.
+
+### Sep 30: R90-125 post-runbook queue reconciliation selection
+
+Clean fetched `ca48b350419653eb28c19ad428d7348fcab86238` equals
+HEAD/origin/main/FETCH_HEAD through the previously established transient
+IPv4 SSH-over-443 transport. Both R90-124 exact feature/closure Vault notes,
+index/MOC links and current stable runbook authority are verified. The Sep 2–30
+phase review covers contract through runbook delivery with tests delegated and
+no missing delivery record. All 141 prior task states parse and 128 unique
+roadmap row/Definition multisets agree. The horizon remains Sep 30–Dec 28.
+
+No local item is ready, so R90-125 is selected as the smallest documentation-only
+queue repair with a persisted five-path plan/state. R90-59 active risk/resume
+text still names product/SLO-scope blockers superseded by R90-113 and the Sep 25
+test-department split; current prose is reconciled while immutable validation
+and tag facts remain historical. Source review finds bundle sender validation
+checks inventories, row counts, submission shape/time order and hash syntax but
+does not reconstruct fixture rows into offered identities/frame lengths/hashes.
+Adapter reconstruction does not consume the fixture. This is a declared coverage
+gap, not an executed failure or a claim that existing tools promise authenticity.
+R90-126 queues only bounded standalone offline sender-source reconstruction.
+It is planned and unstarted; no runtime/test/acceptance/release action begins.
+
+R90-125 static review is complete pending delivery. The exact five-path change
+corrects current R90-59 SLO-scope risk/resume prose while preserving its complete
+tag/publication/validation/authority/recovery data, and gives R90-126 a bounded
+standalone reconstruction contract. Static docs-check, 142 JSON states, 130 unique
+roadmap pairs, complete unfinished contracts, ordered history, links/fences and
+diff review pass. No implementation, tests, CLI smoke, measurements, discovery or
+publication checks ran. No scope deviation or skill update was needed. Sensitive-
+information review and verified Git/Vault delivery remain; R90-126 is unstarted.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a

@@ -1,8 +1,8 @@
 {
   "task": "r90-59-v0.1.1-remote-publication",
-  "timestamp": "2026-08-23T08:59:49-07:00",
+  "timestamp": "2026-09-30",
   "branch": "main",
-  "remote_baseline": "139504de6bc74148244b681956dbc5b50b125cd5",
+  "remote_baseline": "ca48b350419653eb28c19ad428d7348fcab86238",
   "risk_level": "High",
   "current_checkpoint": "blocked-before-publication",
   "completed": [
@@ -22,7 +22,8 @@
     "Verified the last three main GitHub Actions jobs fail at the supply-chain step without overstating their job-level evidence as exact finding evidence",
     "Confirmed both tag workflows run the failing supply-chain gate before external publication",
     "Kept the remote tag GitHub Release and GHCR publication absent and performed no external or repository push",
-    "R90-112 verified completed R90-105 current-main Go 1.25.14 delivery at c50c184e7797440139b644ac7407ff238075d733; historical tag candidate and failed validation remain unchanged"
+    "R90-112 verified completed R90-105 current-main Go 1.25.14 delivery at c50c184e7797440139b644ac7407ff238075d733; historical tag candidate and failed validation remain unchanged",
+    "R90-125 source/state audit reconciles the superseded R90-75 product-scope blocker; historical candidate/tag/validation/publication facts are preserved and no new external publication check or mutation is claimed"
   ],
   "in_progress": [],
   "todo": [
@@ -48,7 +49,7 @@
     "A tag move or recreation needs explicit new candidate and signing authority because the current grant is bound to the existing object and candidate",
     "The workflow artifact identity is not known until the successful Release run and must not be inferred from either prior local build",
     "One GitHub workflow-list request hit a transient TLS timeout and reliable API verification must be restored before push",
-    "R90-75 remains blocked pending comparable evidence and an explicit product SLO scope"
+    "R90-75 production SLO scope and isolated same-VM execution are supplied; behavioral testing and qualifying acceptance evidence remain departmental, with implementation unblocked"
   ],
   "tag": {
     "name": "v0.1.1",
@@ -78,5 +79,5 @@
     "selected_current_main_toolchain": "go1.25.14",
     "tag_push": "not-performed"
   },
-  "resume_instructions": "R90-59 remains blocked before publication. R90-105 is complete at c50c184e7797440139b644ac7407ff238075d733; do not repeat its toolchain upgrade. The Aug 23 publication grant covers only existing signed v0.1.1 object f1a38ecb82b9c63e8411f3df040bdea84e985dd8 at candidate 78cd78574e03c8f73ff68248eed2c409d6bca406, which failed required govulncheck. Do not push that tag. Obtain explicit patched-candidate and tag replacement/resigning authority, then run complete fresh candidate and artifact validation before publication. R90-112 reverified remote tag and Release absence on Sep 23; refresh external state before any future action. R90-75 retains its independent evidence and product/SLO blockers."
+  "resume_instructions": "R90-59 remains blocked before publication. R90-105 is complete at c50c184e7797440139b644ac7407ff238075d733; do not repeat its toolchain upgrade. The Aug 23 publication grant covers only existing signed v0.1.1 object f1a38ecb82b9c63e8411f3df040bdea84e985dd8 at candidate 78cd78574e03c8f73ff68248eed2c409d6bca406, which failed required govulncheck. Do not push that tag. Obtain explicit patched-candidate and tag replacement/resigning authority, then run complete fresh candidate and artifact validation before publication. R90-112 reverified remote tag and Release absence on Sep 23; refresh external state before any future action. R90-75 has supplied production SLO and isolated same-VM scope; acceptance evidence and behavioral validation remain departmental under the Sep 25 testing split. It does not block local implementation. R90-125 reconciles the local queue separately; no new candidate/tag authority is inferred."
 }
