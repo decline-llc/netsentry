@@ -2,21 +2,23 @@
   "task": "r90-122-slo-reconstruct",
   "timestamp": "2026-09-29",
   "branch": "main",
-  "remote_baseline": "67ebd1b48a127c3e517f555af0495d209f6b8b9c",
+  "remote_baseline": "95bd075d479b1162377cfd662ba489ba7346f58a",
   "risk_level": "High",
-  "current_checkpoint": "implementation-statically-reviewed-awaiting-delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Clean fetched baseline and R90-121 feature/closure Vault records verified",
     "Persisted bounded offline reconstruction plan before edits",
     "Implemented bounded fixed-file retention, strict original receipt/schema/run binding and adapter replay on retained copies",
     "Implemented rebuilt source/output provenance checks, all-root-field semantic comparison and separate raw-byte equality",
     "Documented partial/error outcomes, source versus workspace budgets, compatibility and unexecuted departmental fault matrix",
-    "AST-only make python-check and manual source review passed; 139 task JSONs, 127 unique roadmap pairs, ordered history, links, exact ten-path scope, diff and token-pattern review passed"
+    "AST-only make python-check and manual source review passed; 139 task JSONs, 127 unique roadmap pairs, ordered history, links, exact ten-path scope, diff and token-pattern review passed",
+    "Committed exactly ten intended paths at 95bd075d479b1162377cfd662ba489ba7346f58a",
+    "Pushed without force/tags; fresh fetch verified clean HEAD/origin/main/FETCH_HEAD equality",
+    "Verified exact Vault feature range, note/index/MOC and nine stable notes; immutable iteration bytes preserved",
+    "Idempotent replay retained Markdown SHA-256 593059cb9e34e21af124394f8065f7d45c44c161defbeae560eb9bb2fb55cc27"
   ],
   "in_progress": [],
-  "todo": [
-    "Verified feature and docs-only closure Git/Vault delivery"
-  ],
+  "todo": [],
   "validation": {
     "tests": "not_run_user_delegated",
     "knowledge_check": "not_run_user_delegated",
@@ -29,5 +31,15 @@
     "Reconstruction does not prove input authenticity or physical measurements",
     "No qualifying acceptance evidence for either profile"
   ],
-  "resume_instructions": "Deliver R90-122 only with exact feature and docs-only closure Git/Vault ranges; R90-123 queued and not started. Tests remain delegated; no compliance claim."
+  "resume_instructions": "R90-122 implementation delivered at 95bd075d479b1162377cfd662ba489ba7346f58a; tests delegated and not run. Verify this single docs-only closure and exact Vault range on resume; do not repeat feature delivery. R90-123 is next ready: persist a bounded reconstruction integration plan before edits. No tests, CLI smoke, resource discovery, traffic, external bench01 prerequisite, hardware development gate or compliance claim.",
+  "delivery": {
+    "commit": "95bd075d479b1162377cfd662ba489ba7346f58a",
+    "origin_main_verified": true,
+    "push_without_force_or_tags": true,
+    "post_fetch_knowledge_check": "not_run_user_delegated",
+    "vault_range": "67ebd1b48a127c3e517f555af0495d209f6b8b9c..95bd075d479b1162377cfd662ba489ba7346f58a",
+    "vault_note_index_moc_verified": true,
+    "vault_stable_prose_reconciled": true,
+    "vault_idempotent_replay_verified": true
+  }
 }

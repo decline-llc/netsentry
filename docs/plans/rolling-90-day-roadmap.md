@@ -199,8 +199,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-119 | Sep 29–Oct 30 | Complete implementation; tests delegated | Diagnose comparability of two supplied SLO evidence bundles. | R90-118 | Retain pair provenance and compare profile, workload/policy, hardware declarations and tool/source identity; identify mismatches and missing qualification without benchmark execution or capacity/compliance claims. |
 | R90-120 | Sep 29–Nov 6 | Complete implementation; tests delegated | Retain explicit run-context declarations for SLO comparison review. | R90-119 | Define and validate bounded hardware/toolchain/isolation metadata and checksum-bound evidence references without automatic discovery, live execution or acceptance claims. |
 | R90-121 | Sep 29–Nov 13 | Complete implementation; tests delegated | Bind supplied run-context packages into SLO pair comparison. | R90-120 | Retain and revalidate each context, bind exact observation/run identity, compare known declarations and expose unknown/missing/different evidence without asserting verified facts or acceptance. |
-| R90-122 | Sep 29–Nov 20 | In progress | Reconstruct retained observations from supplied raw packet ledgers. | R90-121 | Reuse the bounded adapter against retained manifest/offered/events sources, compare derived observations and retain diagnostic provenance without live execution or acceptance claims. |
-| R90-123 | Sep 29–Nov 27 | Planned | Integrate fresh ledger reconstruction with bundle and pair review. | R90-122 | Add explicit reconstruction mode/policy, rebind retained raw inputs and observations, preserve differences and incomplete/error outcomes without receipt-only trust or acceptance claims. |
+| R90-122 | Sep 29–Nov 20 | Complete implementation; tests delegated | Reconstruct retained observations from supplied raw packet ledgers. | R90-121 | Reuse the bounded adapter against retained manifest/offered/events sources, compare derived observations and retain diagnostic provenance without live execution or acceptance claims. |
+| R90-123 | Sep 29–Nov 27 | Ready | Integrate fresh ledger reconstruction with bundle and pair review. | R90-122 | Add explicit reconstruction mode/policy, rebind retained raw inputs and observations, preserve differences and incomplete/error outcomes without receipt-only trust or acceptance claims. |
 
 ## R90-01 Definition
 
@@ -3217,8 +3217,8 @@ the explicit Sep 25 instruction. R90-114 and R90-115 implementations are
 delivered; R90-116 engine exports and R90-117 native UDP ingress are complete.
 R90-118 artifact bundle reconciliation is delivered; R90-119 supplied-bundle
 comparability and R90-120 run-context declarations are delivered;
-R90-121 context consumption is delivered; R90-122 raw-ledger reconstruction is selected.
-R90-123 queues explicit integration into bundle/pair review.
+R90-121 context consumption and R90-122 raw-ledger reconstruction are delivered.
+R90-123 integration into bundle/pair review is next ready.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -4966,6 +4966,20 @@ source review pass; 139 task JSONs and 127 unique roadmap row/Definition pairs,
 history, links, scope, diff and token-pattern checks pass. No tests, CLI smoke,
 acceptance/benchmark/knowledge suites or evidence-producing execution ran.
 R90-123 remains queued, not started; no capacity/compliance conclusion is claimed.
+
+R90-122 implementation is delivered at `95bd075d479b1162377cfd662ba489ba7346f58a`.
+The ten-path feature was pushed without force/tags and freshly fetched with
+clean HEAD/origin/main/FETCH_HEAD equality. Exact range
+`67ebd1b48a127c3e517f555af0495d209f6b8b9c..95bd075d479b1162377cfd662ba489ba7346f58a`
+was synchronized to the sole local Vault; note/index/MOC are verified. Nine stable
+notes were reconciled, historical iteration bytes preserved, and identical-range
+replay retained Markdown SHA-256
+`593059cb9e34e21af124394f8065f7d45c44c161defbeae560eb9bb2fb55cc27`.
+R90-123 is next ready for a separately persisted fresh reconstruction integration
+plan; it is not started. This single docs-only closure records feature delivery
+and receives its own verified Git/Vault range. Tests and qualifying acceptance
+remain departmental; reproducible derivation does not establish acquisition truth
+or SLO compliance.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a

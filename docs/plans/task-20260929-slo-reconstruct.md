@@ -68,3 +68,17 @@ was imported or executed and no evidence fixtures/artifacts were generated.
 User-delegated tests are the planned validation deviation; resource/performance
 and runtime correctness remain unverified. No other scope or skill change was
 needed. Feature delivery and one docs-only closure remain; R90-123 is unstarted.
+
+## Verified implementation delivery
+
+Feature `95bd075d479b1162377cfd662ba489ba7346f58a` contains exactly the ten planned paths.
+Push without force/tags and a fresh fetch established clean
+HEAD/origin/main/FETCH_HEAD equality. Exact range
+`67ebd1b48a127c3e517f555af0495d209f6b8b9c..95bd075d479b1162377cfd662ba489ba7346f58a`
+was synchronized to the sole local Vault; iteration note, full index and MOC
+were verified. Nine current stable notes were reconciled while preserving all
+immutable iteration bytes. Identical-range replay preserved Markdown SHA-256
+`593059cb9e34e21af124394f8065f7d45c44c161defbeae560eb9bb2fb55cc27`.
+This single docs-only closure records those facts and receives its own verified
+push/fetch/Vault range. R90-123 is ready and unstarted. Execution tests and
+acceptance remain delegated; no qualifying measurements or SLO claim exist.

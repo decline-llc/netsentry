@@ -2,7 +2,7 @@
   "task": "r90-75-production-slo-acceptance",
   "timestamp": "2026-09-29",
   "branch": "main",
-  "remote_baseline": "67ebd1b48a127c3e517f555af0495d209f6b8b9c",
+  "remote_baseline": "95bd075d479b1162377cfd662ba489ba7346f58a",
   "risk_level": "High",
   "current_checkpoint": "acceptance-delegated-development-unblocked",
   "contract": "docs/performance-slo.md",
@@ -26,14 +26,15 @@
     "R90-118 supplied-artifact snapshot/receipt/identity/digest/report reconciliation delivered at 9c5d12ccc1c63fca42a1731451207b44acaec69c with verified Git/Vault; static review only, tests delegated",
     "R90-119 retained bundle comparison and exact declared repeatability diagnostics delivered at 48ccdf6fa324e81c0139d815eb12aa750c335f61 with verified Git/Vault; static review only, tests delegated",
     "R90-120 nullable run-context schema and retained reference/observation binding delivered at 09e8a0ea37739617f3e43357f800d41a68641c84 with verified Git/Vault; static review only, tests delegated",
-    "R90-121 optional context-aware pair comparison delivered at 09a555ea22eb98c03b1b757c2747925009ab8c57 with verified Git/Vault; fresh source/bundle binding and explicit unknown fields, static review only, tests delegated"
+    "R90-121 optional context-aware pair comparison delivered at 09a555ea22eb98c03b1b757c2747925009ab8c57 with verified Git/Vault; fresh source/bundle binding and explicit unknown fields, static review only, tests delegated",
+    "R90-122 retained-source raw-ledger reconstruction and observation comparison delivered at 95bd075d479b1162377cfd662ba489ba7346f58a with verified Git/Vault; static review only, tests delegated"
   ],
   "in_progress": [],
   "todo": [
     "Define isolated local SUT/generator working directories, process groups, resource allocations, service endpoints and chosen ingress",
     "Freeze exact workload, configuration, rule set, commits, durability settings and timestamp boundary",
     "Specify extended duration, minimum sample criterion, estimator and missing-latency representation",
-    "Finish selected R90-122 retained raw-ledger reconstruction, then R90-123 integration; department validates R90-118/R90-119/R90-120/R90-121 behavior, actual environment/comparability, clocks, durability, cohort identity, raw-ledger reconstruction and reporter truth",
+    "Next implement R90-123 reconstruction integration; department validates R90-118/R90-119/R90-120/R90-121/R90-122 behavior, actual environment/comparability, clocks, durability, cohort identity, raw-ledger reconstruction and reporter truth",
     "Perform the comparison in the approved isolated same-host context with matched commit/toolchain/resources or explicitly plan a matched rebaseline",
     "Execute both profiles locally only after resource/profile agreement and retain full recomputable artifacts",
     "Verify all acceptance results before any profile-specific SLO compliance claim"
