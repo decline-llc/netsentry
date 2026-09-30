@@ -2,9 +2,9 @@
   "task": "r90-123-slo-reconstruction-integration",
   "timestamp": "2026-09-29",
   "branch": "main",
-  "remote_baseline": "e8b0734cf45b7c75ec8f1e19658346cb2d962fdd",
+  "remote_baseline": "820de2527b97e9467975b36bf693e05b6cd99a62",
   "risk_level": "High",
-  "current_checkpoint": "implementation-statically-reviewed-awaiting-delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Clean fetched baseline and R90-122 feature/closure Vault records verified",
     "Persisted opt-in fresh reconstruction integration plan before edits",
@@ -12,12 +12,14 @@
     "Implemented strict original v2 schemas, default version compatibility and preserved original/current/context error boundaries",
     "Documented APIs, policies, outputs, budgets, partial failures and unexecuted departmental matrix",
     "Static review corrected a context diagnostic variable reuse that could overwrite replay operation errors",
-    "AST-only make python-check, producer/consumer receipt field parity, 140 task JSONs, 128 unique roadmap pairs, history/link/scope/diff/token-pattern review passed"
+    "AST-only make python-check, producer/consumer receipt field parity, 140 task JSONs, 128 unique roadmap pairs, history/link/scope/diff/token-pattern review passed",
+    "Committed exactly twelve intended paths at 820de2527b97e9467975b36bf693e05b6cd99a62",
+    "Pushed without force/tags; fresh fetch verified clean HEAD/origin/main/FETCH_HEAD equality",
+    "Verified exact Vault feature range, note/index/MOC and nine stable notes; immutable iteration bytes preserved",
+    "Idempotent replay retained Markdown SHA-256 30d600ea80fbd9254dcb2a5a0c51fe9c34c22fc9b28f28401a50b83bcedd542d"
   ],
   "in_progress": [],
-  "todo": [
-    "Verified feature and one docs-only closure Git/Vault delivery"
-  ],
+  "todo": [],
   "validation": {
     "tests": "not_run_user_delegated",
     "knowledge_check": "not_run_user_delegated",
@@ -30,5 +32,15 @@
     "Reconstruction and declaration equality do not prove physical measurements",
     "No qualifying acceptance evidence for either profile"
   ],
-  "resume_instructions": "Deliver R90-123 only with exact feature and docs-only closure Git/Vault ranges; R90-124 queued and unstarted. Tests remain delegated; no compliance claim."
+  "resume_instructions": "R90-123 implementation delivered at 820de2527b97e9467975b36bf693e05b6cd99a62; tests delegated and not run. Verify this single docs-only closure and exact Vault range on resume; do not repeat feature delivery. R90-124 is next ready: persist a bounded departmental runbook plan before edits. No tests, CLI smoke, resource discovery, traffic, external bench01 prerequisite, hardware development gate or compliance claim.",
+  "delivery": {
+    "commit": "820de2527b97e9467975b36bf693e05b6cd99a62",
+    "origin_main_verified": true,
+    "push_without_force_or_tags": true,
+    "post_fetch_knowledge_check": "not_run_user_delegated",
+    "vault_range": "e8b0734cf45b7c75ec8f1e19658346cb2d962fdd..820de2527b97e9467975b36bf693e05b6cd99a62",
+    "vault_note_index_moc_verified": true,
+    "vault_stable_prose_reconciled": true,
+    "vault_idempotent_replay_verified": true
+  }
 }

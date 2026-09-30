@@ -200,8 +200,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-120 | Sep 29–Nov 6 | Complete implementation; tests delegated | Retain explicit run-context declarations for SLO comparison review. | R90-119 | Define and validate bounded hardware/toolchain/isolation metadata and checksum-bound evidence references without automatic discovery, live execution or acceptance claims. |
 | R90-121 | Sep 29–Nov 13 | Complete implementation; tests delegated | Bind supplied run-context packages into SLO pair comparison. | R90-120 | Retain and revalidate each context, bind exact observation/run identity, compare known declarations and expose unknown/missing/different evidence without asserting verified facts or acceptance. |
 | R90-122 | Sep 29–Nov 20 | Complete implementation; tests delegated | Reconstruct retained observations from supplied raw packet ledgers. | R90-121 | Reuse the bounded adapter against retained manifest/offered/events sources, compare derived observations and retain diagnostic provenance without live execution or acceptance claims. |
-| R90-123 | Sep 29–Nov 27 | In progress | Integrate fresh ledger reconstruction with bundle and pair review. | R90-122 | Add explicit reconstruction mode/policy, rebind retained raw inputs and observations, preserve differences and incomplete/error outcomes without receipt-only trust or acceptance claims. |
-| R90-124 | Sep 29–Dec 4 | Planned | Consolidate the departmental SLO execution and artifact-review runbook. | R90-123 | Document the implemented command/artifact chain, versioned review modes, missing evidence and profile-specific acceptance handoff without executing tests or asserting capacity. |
+| R90-123 | Sep 29–Nov 27 | Complete implementation; tests delegated | Integrate fresh ledger reconstruction with bundle and pair review. | R90-122 | Add explicit reconstruction mode/policy, rebind retained raw inputs and observations, preserve differences and incomplete/error outcomes without receipt-only trust or acceptance claims. |
+| R90-124 | Sep 29–Dec 4 | Ready | Consolidate the departmental SLO execution and artifact-review runbook. | R90-123 | Document the implemented command/artifact chain, versioned review modes, missing evidence and profile-specific acceptance handoff without executing tests or asserting capacity. |
 
 ## R90-01 Definition
 
@@ -3238,7 +3238,7 @@ delivered; R90-116 engine exports and R90-117 native UDP ingress are complete.
 R90-118 artifact bundle reconciliation is delivered; R90-119 supplied-bundle
 comparability and R90-120 run-context declarations are delivered;
 R90-121 context consumption and R90-122 raw-ledger reconstruction are delivered.
-R90-123 integration into bundle/pair review is selected; R90-124 runbook consolidation follows.
+R90-123 integration into bundle/pair review is delivered; R90-124 runbook consolidation is next ready.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -5021,6 +5021,19 @@ AST-only syntax, producer/consumer receipt field parity, 140 task JSONs, 128 uni
 roadmap pairs, history, links, exact twelve-path scope, diff and token-pattern
 checks pass. No tests, CLI smoke, benchmark/acceptance/knowledge suites or artifact-
 producing execution ran. R90-124 is queued and unstarted; no SLO claim is made.
+
+R90-123 implementation is delivered at `820de2527b97e9467975b36bf693e05b6cd99a62`.
+The twelve-path feature was pushed without force/tags and freshly fetched with
+clean HEAD/origin/main/FETCH_HEAD equality. Exact range
+`e8b0734cf45b7c75ec8f1e19658346cb2d962fdd..820de2527b97e9467975b36bf693e05b6cd99a62`
+was synchronized to the sole local Vault; note/index/MOC are verified. Nine stable
+notes were reconciled, historical iteration bytes preserved, and identical-range
+replay retained Markdown SHA-256
+`30d600ea80fbd9254dcb2a5a0c51fe9c34c22fc9b28f28401a50b83bcedd542d`.
+R90-124 is next ready for a separately persisted departmental runbook plan; it
+is not started. This single docs-only closure records feature delivery and
+receives its own verified Git/Vault range. Tests and qualifying acceptance remain
+departmental; reconstruction consistency does not assert capacity or compliance.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
