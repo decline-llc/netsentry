@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-09-29 through 2026-12-27. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-09-30 through 2026-12-28. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -201,7 +201,7 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-121 | Sep 29–Nov 13 | Complete implementation; tests delegated | Bind supplied run-context packages into SLO pair comparison. | R90-120 | Retain and revalidate each context, bind exact observation/run identity, compare known declarations and expose unknown/missing/different evidence without asserting verified facts or acceptance. |
 | R90-122 | Sep 29–Nov 20 | Complete implementation; tests delegated | Reconstruct retained observations from supplied raw packet ledgers. | R90-121 | Reuse the bounded adapter against retained manifest/offered/events sources, compare derived observations and retain diagnostic provenance without live execution or acceptance claims. |
 | R90-123 | Sep 29–Nov 27 | Complete implementation; tests delegated | Integrate fresh ledger reconstruction with bundle and pair review. | R90-122 | Add explicit reconstruction mode/policy, rebind retained raw inputs and observations, preserve differences and incomplete/error outcomes without receipt-only trust or acceptance claims. |
-| R90-124 | Sep 29–Dec 4 | Ready | Consolidate the departmental SLO execution and artifact-review runbook. | R90-123 | Document the implemented command/artifact chain, versioned review modes, missing evidence and profile-specific acceptance handoff without executing tests or asserting capacity. |
+| R90-124 | Sep 29–Dec 4 | In progress | Consolidate the departmental SLO execution and artifact-review runbook. | R90-123 | Document the implemented command/artifact chain, versioned review modes, missing evidence and profile-specific acceptance handoff without executing tests or asserting capacity. |
 
 ## R90-01 Definition
 
@@ -3238,7 +3238,7 @@ delivered; R90-116 engine exports and R90-117 native UDP ingress are complete.
 R90-118 artifact bundle reconciliation is delivered; R90-119 supplied-bundle
 comparability and R90-120 run-context declarations are delivered;
 R90-121 context consumption and R90-122 raw-ledger reconstruction are delivered.
-R90-123 integration into bundle/pair review is delivered; R90-124 runbook consolidation is next ready.
+R90-123 integration into bundle/pair review is delivered; R90-124 runbook consolidation is selected.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -5034,6 +5034,33 @@ R90-124 is next ready for a separately persisted departmental runbook plan; it
 is not started. This single docs-only closure records feature delivery and
 receives its own verified Git/Vault range. Tests and qualifying acceptance remain
 departmental; reconstruction consistency does not assert capacity or compliance.
+
+### Sep 30: R90-124 departmental runbook selection
+
+Fetched clean `15d7db7cd3b6b997f8f68f618fce215004b2cf42` equals
+HEAD/origin/main/FETCH_HEAD. Port 22 failed; documented transient IPv4
+SSH-over-443 succeeded. R90-123 feature/closure notes, index/MOC and stable Vault
+authority are verified. Sep 2–30 history covers delivered contract, reporting,
+acquisition, context and reconstruction phases with tests delegated throughout;
+no missing closure or new evidence changes priority. All 140 prior task states
+parse and 128 roadmap rows match unique Definitions. The horizon now spans
+Sep 30–Dec 28; unfinished windows remain forecasts. R90-124 is selected with a
+persisted seven-path documentation-only plan before edits. The runbook maps
+existing commands, artifacts, review versions, failure recovery and unresolved
+profile handoff. No traffic, tests, discovery or measurement artifacts are run
+or generated. R90-59 and R90-75 retain complete outstanding contracts; after this
+increment no local implementation is queued. A future trigger audits new evidence
+before planning a bounded next increment, without repeating this delivery.
+
+R90-124 static review is complete pending delivery. Eight unexecuted command
+blocks map to source flags/build outputs; artifact, shutdown, version/policy,
+status/budget and unresolved profile boundaries were reviewed. Static docs-check,
+shell syntax, links/fences, 141 task JSONs, 128 unique roadmap pairs, ordered
+history and diff checks pass. Sensitive-information and exact seven-path review
+are required immediately before commit. No behavioral or knowledge tests,
+traffic, discovery or qualifying artifacts ran. No scope or skill change was
+needed; the successful transport fallback is recorded. R90-59 publication and
+R90-75 departmental acceptance remain outstanding; no later increment is started.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a

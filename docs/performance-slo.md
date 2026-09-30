@@ -17,6 +17,10 @@ profile/resource verification and the evidence required for compliance claims.
 No performance target, failure-accounting requirement or evidence truthfulness
 is waived by this division of work.
 
+For the ordered command/artifact chain, versioned review modes, recovery and
+profile-specific departmental handoff, use the [SLO runbook](slo-runbook.md).
+Its invocation templates are unexecuted; it adds no qualifying evidence.
+
 ## Target profiles
 
 These are the reviewed starting profiles, not an enabled numeric gate. Record

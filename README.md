@@ -125,6 +125,9 @@ CI/Release/Docker workflow 的第三方 Action 均固定到 `.github/supply-chai
 
 外部/生产 pcap 可能包含敏感内容。不得提交原始 corpus、私有路径或 `docs/evidence/local/`；分享前先运行 `make sanitize-pcap INPUT=in.pcap OUTPUT=out.pcap`，再人工复核。
 
+生产 SLO 的部门执行与产物审查流程见 [SLO runbook](docs/slo-runbook.md)。
+命令模板未经执行；staging/prod 均无合格验收证据，测试由专门部门负责。
+
 ## 构建与发布
 
 ```bash
