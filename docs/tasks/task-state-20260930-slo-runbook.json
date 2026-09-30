@@ -2,32 +2,41 @@
   "task": "r90-124-slo-runbook",
   "timestamp": "2026-09-30",
   "branch": "main",
-  "remote_baseline": "15d7db7cd3b6b997f8f68f618fce215004b2cf42",
+  "remote_baseline": "f5d78c26c0119a215aa56f11d9780da990cd5d7a",
   "risk_level": "Medium",
-  "current_checkpoint": "static-review-complete-awaiting-delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean fetched baseline and R90-123 feature/closure Vault evidence",
     "Audited September delivery phases, 140 task states and 128 roadmap row/Definition pairs",
     "Persisted seven-path documentation-only plan before edits",
     "Created ordered command/artifact, versioned mode, outcome/recovery and profile handoff runbook with README/contract links",
-    "Static source/flag/build/receipt review, eight shell blocks, docs-check, links/fences, 141 task JSONs, 128 roadmap pairs and ordered history passed"
+    "Static source/flag/build/receipt review, eight shell blocks, docs-check, links/fences, 141 task JSONs, 128 roadmap pairs and ordered history passed",
+    "Passed static docs/shell/JSON/roadmap/link/diff checks and exact seven-path sensitive-information review",
+    "Committed and pushed seven intended paths at f5d78c26c0119a215aa56f11d9780da990cd5d7a; freshly fetched clean HEAD/origin/main/FETCH_HEAD equality",
+    "Verified exact-range Vault note/index/MOC and reconciled nine current stable notes while preserving immutable iterations",
+    "Identical-range replay preserved Vault Markdown hash 571e8afa1aac4807b71573b33427e394a2c734c96c79ca6cfc5961b86bb9329a"
   ],
-  "in_progress": [
-    "Sensitive-information review and Git/Vault delivery"
-  ],
-  "todo": [
-    "Feature push/fetch/Vault verification",
-    "One documentation closure"
-  ],
+  "in_progress": [],
+  "todo": [],
   "validation": {
     "tests": "not_run_user_delegated",
     "knowledge_check": "not_run_user_delegated",
     "acceptance_runs": "not_run",
-    "static_review": "passed_source_flags_artifacts_modes_shell_syntax_docs_JSON_roadmap_history_links_diff"
+    "static_review": "passed_source_flags_artifacts_modes_shell_syntax_docs_JSON_roadmap_history_links_scope_diff_sensitive_information"
   },
   "remaining_risks": [
     "Behavioral validation delegated and unexecuted",
     "No qualifying acceptance measurements for either profile"
   ],
-  "resume_instructions": "R90-124 documentation is statically reviewed; finish only focused delivery and exact-range Vault reconciliation, then one docs-only closure. Tests/knowledge suites remain delegated. No next local implementation is selected; preserve R90-59/R90-75 outstanding contracts."
+  "resume_instructions": "R90-124 documentation delivered at f5d78c26c0119a215aa56f11d9780da990cd5d7a; tests and knowledge suites remain delegated and not run. Verify this single docs-only closure against fetched remote and its exact Vault range; do not repeat feature delivery or completed synchronization. No local increment is currently ready. Audit new evidence and persist the smallest source-grounded next plan if needed, preserving R90-59 authority and R90-75 departmental acceptance boundaries. Do not run tests, discovery, traffic or claim profile compliance.",
+  "delivery": {
+    "commit": "f5d78c26c0119a215aa56f11d9780da990cd5d7a",
+    "origin_main_verified": true,
+    "push_without_force_or_tags": true,
+    "post_fetch_knowledge_check": "not_run_user_delegated",
+    "vault_range": "15d7db7cd3b6b997f8f68f618fce215004b2cf42..f5d78c26c0119a215aa56f11d9780da990cd5d7a",
+    "vault_note_index_moc_verified": true,
+    "vault_stable_prose_reconciled": true,
+    "vault_idempotent_replay_verified": true
+  }
 }

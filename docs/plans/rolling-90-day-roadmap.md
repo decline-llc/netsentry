@@ -201,7 +201,7 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-121 | Sep 29–Nov 13 | Complete implementation; tests delegated | Bind supplied run-context packages into SLO pair comparison. | R90-120 | Retain and revalidate each context, bind exact observation/run identity, compare known declarations and expose unknown/missing/different evidence without asserting verified facts or acceptance. |
 | R90-122 | Sep 29–Nov 20 | Complete implementation; tests delegated | Reconstruct retained observations from supplied raw packet ledgers. | R90-121 | Reuse the bounded adapter against retained manifest/offered/events sources, compare derived observations and retain diagnostic provenance without live execution or acceptance claims. |
 | R90-123 | Sep 29–Nov 27 | Complete implementation; tests delegated | Integrate fresh ledger reconstruction with bundle and pair review. | R90-122 | Add explicit reconstruction mode/policy, rebind retained raw inputs and observations, preserve differences and incomplete/error outcomes without receipt-only trust or acceptance claims. |
-| R90-124 | Sep 29–Dec 4 | In progress | Consolidate the departmental SLO execution and artifact-review runbook. | R90-123 | Document the implemented command/artifact chain, versioned review modes, missing evidence and profile-specific acceptance handoff without executing tests or asserting capacity. |
+| R90-124 | Sep 29–Dec 4 | Complete documentation; execution delegated | Consolidate the departmental SLO execution and artifact-review runbook. | R90-123 | Document the implemented command/artifact chain, versioned review modes, missing evidence and profile-specific acceptance handoff without executing tests or asserting capacity. |
 
 ## R90-01 Definition
 
@@ -3238,7 +3238,9 @@ delivered; R90-116 engine exports and R90-117 native UDP ingress are complete.
 R90-118 artifact bundle reconciliation is delivered; R90-119 supplied-bundle
 comparability and R90-120 run-context declarations are delivered;
 R90-121 context consumption and R90-122 raw-ledger reconstruction are delivered.
-R90-123 integration into bundle/pair review is delivered; R90-124 runbook consolidation is selected.
+R90-123 integration into bundle/pair review and R90-124 departmental runbook are delivered.
+No local increment is currently ready; the next trigger audits new evidence before
+planning a bounded source-grounded increment.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -5061,6 +5063,21 @@ are required immediately before commit. No behavioral or knowledge tests,
 traffic, discovery or qualifying artifacts ran. No scope or skill change was
 needed; the successful transport fallback is recorded. R90-59 publication and
 R90-75 departmental acceptance remain outstanding; no later increment is started.
+
+R90-124 documentation is delivered at `f5d78c26c0119a215aa56f11d9780da990cd5d7a`.
+The exact seven-path commit was pushed without force/tags and freshly fetched
+with clean HEAD/origin/main/FETCH_HEAD equality. Range
+`15d7db7cd3b6b997f8f68f618fce215004b2cf42..f5d78c26c0119a215aa56f11d9780da990cd5d7a`
+was synchronized to the sole local Vault; note/index/MOC are verified. Nine
+stable notes now record the delivered runbook, current horizon and outstanding
+R90-59/R90-75 boundaries. Pre-existing immutable iteration bytes are preserved;
+identical-range replay retained Vault Markdown hash
+`571e8afa1aac4807b71573b33427e394a2c734c96c79ca6cfc5961b86bb9329a`.
+Static acceptance and sensitive-information review pass; all execution remains
+user-delegated and unrun. This single docs-only closure receives its own verified
+Git/Vault range. No next local increment is ready or started. The next trigger
+verifies closure and audits new evidence before persisting a bounded next plan;
+do not repeat R90-124 or infer test/publication authority from an empty queue.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a

@@ -64,3 +64,27 @@ suite remain not run, delegated by user; documentation adds no behavioral claim.
 The only operational deviation was the successful documented transport fallback.
 No reusable skill change was needed. Delivery awaits focused commit/push/fetch
 and exact-range Vault reconciliation, followed by one documentation closure.
+
+## Verified documentation delivery
+
+R90-124 delivered at `f5d78c26c0119a215aa56f11d9780da990cd5d7a` with exactly the seven planned paths.
+Push without force/tags and fresh fetch verified clean
+HEAD/origin/main/FETCH_HEAD equality. Exact range
+`15d7db7cd3b6b997f8f68f618fce215004b2cf42..f5d78c26c0119a215aa56f11d9780da990cd5d7a`
+was synchronized to the sole existing local Vault; note, full index and MOC are
+verified. Nine stable notes now reflect the completed runbook and refreshed
+Sep 30–Dec 28 horizon. Pre-existing immutable iteration bytes were preserved;
+identical-range replay preserved Vault Markdown hash
+`571e8afa1aac4807b71573b33427e394a2c734c96c79ca6cfc5961b86bb9329a`.
+Static acceptance criteria are satisfied with no scope change. Behavioral tests,
+knowledge suite and actual acceptance remain not run, delegated by user; no
+runtime or SLO qualification claim is made. The only operational deviation was
+the documented port-22 failure followed by successful transient SSH-over-443.
+
+This single docs-only closure receives its own push/fetch and exact-range Vault
+verification. R90-124 is complete; no local increment is currently ready or
+selected. R90-59 retains candidate/tag authority and validation requirements;
+R90-75 requires departmental evidence under its unchanged acceptance contract.
+The next trigger verifies this closure against fetched remote/Vault and audits
+new evidence before planning the smallest bounded increment if needed. Do not
+repeat the runbook, feature push or synchronization already verified here.
