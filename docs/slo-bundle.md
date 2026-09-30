@@ -132,3 +132,14 @@ The [declared-comparability tool](slo-compare.md) retains and reconciles two
 bundles before comparing their available profile/workload/resource/tooling
 declarations. Same declarations do not establish real hardware independence,
 qualified workload or acceptance. Testing remains departmental.
+
+## Offline observation reconstruction (R90-122)
+
+The [raw-ledger reconstruction checker](slo-reconstruct.md) snapshots a supplied
+adapter package, validates its original receipt and sources, reruns the adapter
+on retained copies, and compares every observation field. Expected alerts compare
+by event identity; missing values remain present. This separately diagnoses the
+raw-ledger derivation gap without live traffic or a compliance claim. Bundle and
+pair comparison do not invoke it automatically; integration is queued as R90-123.
+Implementation review is static only; departmental behavior/acceptance tests remain
+outstanding.

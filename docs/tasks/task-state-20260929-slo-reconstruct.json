@@ -1,0 +1,33 @@
+{
+  "task": "r90-122-slo-reconstruct",
+  "timestamp": "2026-09-29",
+  "branch": "main",
+  "remote_baseline": "67ebd1b48a127c3e517f555af0495d209f6b8b9c",
+  "risk_level": "High",
+  "current_checkpoint": "implementation-statically-reviewed-awaiting-delivery",
+  "completed": [
+    "Clean fetched baseline and R90-121 feature/closure Vault records verified",
+    "Persisted bounded offline reconstruction plan before edits",
+    "Implemented bounded fixed-file retention, strict original receipt/schema/run binding and adapter replay on retained copies",
+    "Implemented rebuilt source/output provenance checks, all-root-field semantic comparison and separate raw-byte equality",
+    "Documented partial/error outcomes, source versus workspace budgets, compatibility and unexecuted departmental fault matrix",
+    "AST-only make python-check and manual source review passed; 139 task JSONs, 127 unique roadmap pairs, ordered history, links, exact ten-path scope, diff and token-pattern review passed"
+  ],
+  "in_progress": [],
+  "todo": [
+    "Verified feature and docs-only closure Git/Vault delivery"
+  ],
+  "validation": {
+    "tests": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "acceptance_runs": "not_run",
+    "static_review": "passed_AST_manual_source_JSON_roadmap_history_links_scope_diff_token_patterns",
+    "runtime_correctness": "unverified_no_implementation_import_or_execution"
+  },
+  "remaining_risks": [
+    "Untested implementation",
+    "Reconstruction does not prove input authenticity or physical measurements",
+    "No qualifying acceptance evidence for either profile"
+  ],
+  "resume_instructions": "Deliver R90-122 only with exact feature and docs-only closure Git/Vault ranges; R90-123 queued and not started. Tests remain delegated; no compliance claim."
+}

@@ -199,7 +199,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-119 | Sep 29–Oct 30 | Complete implementation; tests delegated | Diagnose comparability of two supplied SLO evidence bundles. | R90-118 | Retain pair provenance and compare profile, workload/policy, hardware declarations and tool/source identity; identify mismatches and missing qualification without benchmark execution or capacity/compliance claims. |
 | R90-120 | Sep 29–Nov 6 | Complete implementation; tests delegated | Retain explicit run-context declarations for SLO comparison review. | R90-119 | Define and validate bounded hardware/toolchain/isolation metadata and checksum-bound evidence references without automatic discovery, live execution or acceptance claims. |
 | R90-121 | Sep 29–Nov 13 | Complete implementation; tests delegated | Bind supplied run-context packages into SLO pair comparison. | R90-120 | Retain and revalidate each context, bind exact observation/run identity, compare known declarations and expose unknown/missing/different evidence without asserting verified facts or acceptance. |
-| R90-122 | Sep 29–Nov 20 | Ready | Reconstruct retained observations from supplied raw packet ledgers. | R90-121 | Reuse the bounded adapter against retained manifest/offered/events sources, compare derived observations and retain diagnostic provenance without live execution or acceptance claims. |
+| R90-122 | Sep 29–Nov 20 | In progress | Reconstruct retained observations from supplied raw packet ledgers. | R90-121 | Reuse the bounded adapter against retained manifest/offered/events sources, compare derived observations and retain diagnostic provenance without live execution or acceptance claims. |
+| R90-123 | Sep 29–Nov 27 | Planned | Integrate fresh ledger reconstruction with bundle and pair review. | R90-122 | Add explicit reconstruction mode/policy, rebind retained raw inputs and observations, preserve differences and incomplete/error outcomes without receipt-only trust or acceptance claims. |
 
 ## R90-01 Definition
 
@@ -2676,6 +2677,25 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 - **Stop condition:** new private/external evidence authority or ambiguous raw
   formats; implement against existing ledger schemas with no invented measurements.
 
+- **Selected plan:** [task-20260929-slo-reconstruct.md](task-20260929-slo-reconstruct.md).
+  Standalone adapter-package replay uses private retained inputs, compares all
+  observation fields and preserves original/fresh provenance and partial errors.
+
+## R90-123 Definition
+
+- **Goal:** integrate fresh raw-ledger reconstruction into evidence bundle/pair
+  review with explicit compatibility and conservative qualification semantics.
+- **Dependencies/window:** R90-122 implementation delivery; Sep 29–Nov 27.
+- **Risk:** trusting a stale reconstruction receipt or hiding replay failures
+  could promote inconsistent evidence; runtime and large-ledger cost remain untested.
+- **Acceptance:** define an opt-in versioned policy that freshly reconstructs
+  retained inputs, binds sources and observations, propagates mismatch/incomplete/
+  error status, and preserves default compatibility and no-compliance flags.
+- **Required review:** static source/AST/schema/docs/diff and verified Git/Vault;
+  behavior, benchmark, acceptance and knowledge suites remain user-delegated.
+- **Stop condition:** new private/external authority or ambiguous versioned input;
+  use existing artifacts without live traffic or fabricated measurement evidence.
+
 
 ### R90-71 Validation Deviation
 
@@ -3197,7 +3217,8 @@ the explicit Sep 25 instruction. R90-114 and R90-115 implementations are
 delivered; R90-116 engine exports and R90-117 native UDP ingress are complete.
 R90-118 artifact bundle reconciliation is delivered; R90-119 supplied-bundle
 comparability and R90-120 run-context declarations are delivered;
-R90-121 context consumption is delivered; R90-122 raw-ledger reconstruction is next ready.
+R90-121 context consumption is delivered; R90-122 raw-ledger reconstruction is selected.
+R90-123 queues explicit integration into bundle/pair review.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -4924,6 +4945,27 @@ plan; it is not started. This single docs-only closure records feature delivery
 and receives its own verified Git/Vault range. Tests and qualifying acceptance
 remain departmental; declaration equality does not assert factual comparability
 or SLO compliance.
+
+### Sep 29: R90-122 retained-ledger reconstruction selection
+
+Fetched clean `67ebd1b48a127c3e517f555af0495d209f6b8b9c` equals
+HEAD/origin/main/FETCH_HEAD; R90-121 feature/closure Vault records and current
+stable prose are verified. September contract-to-comparison work remains delivered
+with execution tests delegated; no missing delivery changes selection. R90-122
+plan/state were persisted before edits. Select only standalone bounded replay of
+supplied adapter sources, complete observation comparison and diagnostic retention.
+No live work, test execution or measured evidence is authorized by this increment.
+R90-123 is queued for fresh bundle/pair integration, not started. R90-75 acceptance
+stays departmental and R90-59 publication retains its separate block.
+
+R90-122 implementation/static review is complete pending Git/Vault delivery.
+The standalone tool reuses retained-source adapter replay, binds new provenance,
+compares every observation root field with expected-alert identity normalization
+and retains missing/invalid/resource-error diagnostics. AST-only syntax and manual
+source review pass; 139 task JSONs and 127 unique roadmap row/Definition pairs,
+history, links, scope, diff and token-pattern checks pass. No tests, CLI smoke,
+acceptance/benchmark/knowledge suites or evidence-producing execution ran.
+R90-123 remains queued, not started; no capacity/compliance conclusion is claimed.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a

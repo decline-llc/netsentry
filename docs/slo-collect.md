@@ -173,3 +173,14 @@ sender/capture/engine/adapter/report sources, receipts and completion declaratio
 It reports missing inputs and mismatches without running traffic or asserting
 compliance. For this UDP lane, the manifest fixture digest identifies the exact
 retained sender `fixture.jsonl` bytes. Behavioral validation remains delegated.
+
+## Offline observation reconstruction (R90-122)
+
+The [raw-ledger reconstruction checker](slo-reconstruct.md) snapshots a supplied
+adapter package, validates its original receipt and sources, reruns the adapter
+on retained copies, and compares every observation field. Expected alerts compare
+by event identity; missing values remain present. This separately diagnoses the
+raw-ledger derivation gap without live traffic or a compliance claim. Bundle and
+pair comparison do not invoke it automatically; integration is queued as R90-123.
+Implementation review is static only; departmental behavior/acceptance tests remain
+outstanding.
