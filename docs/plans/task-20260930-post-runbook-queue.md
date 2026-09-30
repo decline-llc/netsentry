@@ -86,3 +86,25 @@ unfinished contracts, history ordering, local links/fences and diff review pass.
 No tests, imports/CLI smoke, traffic, resource probes, measurement artifacts or
 publication checks ran. No scope deviation or skill change was needed; the
 standing user test delegation remains the explicit validation limitation.
+
+## Verified delivery and next boundary
+
+R90-125 delivered at `b3bd6b12784151b91228269c58ed56c8c4a0836e` with exactly five intended documentation paths.
+Push without force/tags and fresh fetch verified clean
+HEAD/origin/main/FETCH_HEAD equality. Exact range
+`ca48b350419653eb28c19ad428d7348fcab86238..b3bd6b12784151b91228269c58ed56c8c4a0836e`
+was synchronized to the sole existing local Vault; note/index/MOC verified.
+Nine stable notes now record the reconciled authority and R90-126 ready/unstarted
+queue; explicitly historical SLO-scope passages retain their historical meaning.
+All pre-existing immutable iteration bytes are preserved. Identical-range replay
+preserved Vault Markdown hash
+`1848698564be57a5bd98cacf21ff5b09c52096a3a850065e1d68558c9ea5885d`.
+The static evidence satisfies this audit plan; no scope deviation, behavioral
+validation or new release outcome is claimed. No skill change was necessary.
+
+This single documentation closure receives its own verified push/fetch/Vault
+range. R90-125 is complete. R90-126 is next ready but unstarted: on the next trigger,
+verify this closure and persist its own standalone sender-source reconstruction
+API/schema/validation plan before edits. Do not repeat this queue-repair delivery.
+R90-59 and R90-75 retain the independent authority and departmental evidence
+boundaries; user-delegated tests and knowledge suites remain not run.

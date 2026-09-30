@@ -2,7 +2,7 @@
   "task": "r90-59-v0.1.1-remote-publication",
   "timestamp": "2026-09-30",
   "branch": "main",
-  "remote_baseline": "ca48b350419653eb28c19ad428d7348fcab86238",
+  "remote_baseline": "b3bd6b12784151b91228269c58ed56c8c4a0836e",
   "risk_level": "High",
   "current_checkpoint": "blocked-before-publication",
   "completed": [
@@ -79,5 +79,5 @@
     "selected_current_main_toolchain": "go1.25.14",
     "tag_push": "not-performed"
   },
-  "resume_instructions": "R90-59 remains blocked before publication. R90-105 is complete at c50c184e7797440139b644ac7407ff238075d733; do not repeat its toolchain upgrade. The Aug 23 publication grant covers only existing signed v0.1.1 object f1a38ecb82b9c63e8411f3df040bdea84e985dd8 at candidate 78cd78574e03c8f73ff68248eed2c409d6bca406, which failed required govulncheck. Do not push that tag. Obtain explicit patched-candidate and tag replacement/resigning authority, then run complete fresh candidate and artifact validation before publication. R90-112 reverified remote tag and Release absence on Sep 23; refresh external state before any future action. R90-75 has supplied production SLO and isolated same-VM scope; acceptance evidence and behavioral validation remain departmental under the Sep 25 testing split. It does not block local implementation. R90-125 reconciles the local queue separately; no new candidate/tag authority is inferred."
+  "resume_instructions": "R90-59 remains blocked before publication. R90-105 is complete at c50c184e7797440139b644ac7407ff238075d733; do not repeat its toolchain upgrade. The Aug 23 publication grant covers only existing signed v0.1.1 object f1a38ecb82b9c63e8411f3df040bdea84e985dd8 at candidate 78cd78574e03c8f73ff68248eed2c409d6bca406, which failed required govulncheck. Do not push that tag. Obtain explicit patched-candidate and tag replacement/resigning authority, then run complete fresh candidate and artifact validation before publication. R90-112 reverified remote tag and Release absence on Sep 23; refresh external state before any future action. R90-75 has supplied production SLO and isolated same-VM scope; acceptance evidence and behavioral validation remain departmental under the Sep 25 testing split. It does not block local implementation. R90-125 queue reconciliation is delivered; R90-126 is ready and unstarted; no new candidate/tag authority is inferred."
 }

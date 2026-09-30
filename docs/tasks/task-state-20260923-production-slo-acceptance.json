@@ -2,7 +2,7 @@
   "task": "r90-75-production-slo-acceptance",
   "timestamp": "2026-09-30",
   "branch": "main",
-  "remote_baseline": "ca48b350419653eb28c19ad428d7348fcab86238",
+  "remote_baseline": "b3bd6b12784151b91228269c58ed56c8c4a0836e",
   "risk_level": "High",
   "current_checkpoint": "acceptance-delegated-development-unblocked",
   "contract": "docs/performance-slo.md",
@@ -29,7 +29,8 @@
     "R90-121 optional context-aware pair comparison delivered at 09a555ea22eb98c03b1b757c2747925009ab8c57 with verified Git/Vault; fresh source/bundle binding and explicit unknown fields, static review only, tests delegated",
     "R90-122 retained-source raw-ledger reconstruction and observation comparison delivered at 95bd075d479b1162377cfd662ba489ba7346f58a with verified Git/Vault; static review only, tests delegated",
     "R90-123 explicit fresh reconstruction in bundle v2 and pair v3 delivered at 820de2527b97e9467975b36bf693e05b6cd99a62 with verified Git/Vault; original/current failures retained, static review only, tests delegated",
-    "R90-124 departmental command/artifact/mode/recovery/profile runbook delivered at f5d78c26c0119a215aa56f11d9780da990cd5d7a with verified Git/Vault; documentation static review only, execution and qualifying evidence remain departmental"
+    "R90-124 departmental command/artifact/mode/recovery/profile runbook delivered at f5d78c26c0119a215aa56f11d9780da990cd5d7a with verified Git/Vault; documentation static review only, execution and qualifying evidence remain departmental",
+    "R90-125 source-grounded queue reconciliation delivered at b3bd6b12784151b91228269c58ed56c8c4a0836e with verified Git/Vault; R90-126 ready/unstarted, no new measurement or validation evidence"
   ],
   "in_progress": [],
   "todo": [
@@ -87,7 +88,7 @@
     "No release, tag or registry action",
     "User explicitly defers agent-run unit/integration/benchmark/acceptance/knowledge tests; retain untested status and continue development"
   ],
-  "resume_instructions": "Production scope and isolated local execution are supplied. Testing is delegated by the user to the specialist department; do not run test suites or block agent development on hardware/profile matching. Continue implementing the measurement/reporting tooling with static source/syntax/diff review. The department owns real execution, behavioral verification, resource agreement and qualifying evidence. Do not claim either profile compliant without that evidence; no external bench01 or SSH prerequisite exists. The consolidated handoff is docs/slo-runbook.md; R90-124 is delivered. R90-125 is the documentation-only queue repair; it defines R90-126 standalone offline sender-source reconstruction, which remains unstarted until its own trigger and persisted implementation plan.",
+  "resume_instructions": "Production scope and isolated local execution are supplied. Testing is delegated by the user to the specialist department; do not run test suites or block agent development on hardware/profile matching. Continue implementing the measurement/reporting tooling with static source/syntax/diff review. The department owns real execution, behavioral verification, resource agreement and qualifying evidence. Do not claim either profile compliant without that evidence; no external bench01 or SSH prerequisite exists. The consolidated handoff is docs/slo-runbook.md; R90-124 is delivered. R90-125 documentation-only queue repair is delivered. R90-126 standalone offline sender-source reconstruction is ready and remains unstarted until its own trigger and persisted implementation plan.",
   "testing_ownership": {
     "owner": "specialist_test_department",
     "agent_runs_tests": false,

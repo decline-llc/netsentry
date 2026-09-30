@@ -2,9 +2,9 @@
   "task": "r90-125-post-runbook-queue",
   "timestamp": "2026-09-30",
   "branch": "main",
-  "remote_baseline": "ca48b350419653eb28c19ad428d7348fcab86238",
+  "remote_baseline": "b3bd6b12784151b91228269c58ed56c8c4a0836e",
   "risk_level": "Medium",
-  "current_checkpoint": "static-review-complete-awaiting-delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean fetched baseline, R90-124 exact feature/closure Vault records and current stable runbook prose",
     "Reviewed September delivery phases; 141 task states and 128 unique roadmap pairs",
@@ -12,23 +12,34 @@
     "Persisted five-path documentation-only queue-repair plan before edits",
     "Corrected superseded active R90-59 SLO blocker while preserving tag/publication/validation/authority/recovery objects",
     "Defined R90-126 dependency/window/risk/acceptance/review/stop/non-goals from sender and consumer source; implementation unstarted",
-    "Static docs-check, 142 task JSONs, 130 unique roadmap pairs, unfinished contracts, history ordering, links/fences and diff checks passed"
+    "Static docs-check, 142 task JSONs, 130 unique roadmap pairs, unfinished contracts, history ordering, links/fences and diff checks passed",
+    "Passed exact five-path and sensitive-information review",
+    "Committed and pushed b3bd6b12784151b91228269c58ed56c8c4a0836e; fresh fetch verified clean HEAD/origin/main/FETCH_HEAD equality",
+    "Verified exact-range Vault note/index/MOC and nine stable notes; immutable iterations preserved",
+    "Idempotent replay preserved Vault Markdown hash 1848698564be57a5bd98cacf21ff5b09c52096a3a850065e1d68558c9ea5885d",
+    "R90-126 marked ready and remains unstarted"
   ],
-  "in_progress": [
-    "Sensitive-information review and Git/Vault delivery"
-  ],
-  "todo": [
-    "Verified Git/Vault delivery and one closure"
-  ],
+  "in_progress": [],
+  "todo": [],
   "validation": {
     "tests": "not_run_user_delegated",
     "knowledge_check": "not_run_user_delegated",
     "acceptance_runs": "not_run",
-    "static_review": "passed_source_gap_docs_JSON_roadmap_contracts_history_links_scope_diff"
+    "static_review": "passed_source_gap_docs_JSON_roadmap_contracts_history_links_scope_diff_sensitive_information"
   },
   "remaining_risks": [
     "No executed sender derivation or SLO behavior evidence",
     "R90-59 candidate/tag authority and R90-75 qualifying acceptance evidence remain outstanding"
   ],
-  "resume_instructions": "Finish only R90-125 delivery and exact-range Vault reconciliation, followed by one docs-only closure. R90-126 is defined but unstarted; do not implement it in this trigger. Tests/knowledge suites stay delegated; no release or acceptance action."
+  "resume_instructions": "R90-125 delivered at b3bd6b12784151b91228269c58ed56c8c4a0836e; verify this single docs-only closure and exact Vault range against fetched remote, without repeating the completed feature push/sync. R90-126 is next ready and unstarted: persist its standalone sender-source reconstruction API/schema/acceptance plan before implementation. Tests and knowledge suites remain delegated and unrun; R90-59 release authority and R90-75 acceptance evidence remain separate.",
+  "delivery": {
+    "commit": "b3bd6b12784151b91228269c58ed56c8c4a0836e",
+    "origin_main_verified": true,
+    "push_without_force_or_tags": true,
+    "post_fetch_knowledge_check": "not_run_user_delegated",
+    "vault_range": "ca48b350419653eb28c19ad428d7348fcab86238..b3bd6b12784151b91228269c58ed56c8c4a0836e",
+    "vault_note_index_moc_verified": true,
+    "vault_stable_prose_reconciled": true,
+    "vault_idempotent_replay_verified": true
+  }
 }
