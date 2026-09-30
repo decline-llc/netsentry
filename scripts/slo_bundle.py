@@ -319,9 +319,13 @@ def _summary(bundle: _Bundle, summary: dict[str, Any], observations: dict[str, A
 
 def reconcile(output: Path, *, sender: Path | None = None, capture: Path | None = None,
               engine: Path | None = None, adapter: Path | None = None,
-              summary: Path | None = None, max_bytes: int = DEFAULT_MAX_BYTES) -> dict[str, Any]:
+              summary: Path | None = None, max_bytes: int = DEFAULT_MAX_BYTES,
+              reconstruct_ledgers: bool = False, max_reconstruction_bytes: int = DEFAULT_MAX_BYTES,
+              scratch_dir: Path | None = None) -> dict[str, Any]:
     """Snapshot fixed filenames and publish bundle.json last; no live work occurs."""
     report._integer(max_bytes, "max_bytes", 1)
+    report._boolean(reconstruct_ledgers, "reconstruct_ledgers")
+    report._integer(max_reconstruction_bytes, "max_reconstruction_bytes", 1)
     output = output.expanduser()
     output.mkdir(mode=0o700, parents=False, exist_ok=False)
     bundle = _Bundle(output, max_bytes)
@@ -376,7 +380,20 @@ def reconcile(output: Path, *, sender: Path | None = None, capture: Path | None 
     bundle.check("report source and recomputed summary", lambda: _summary(
         bundle, documents["report/report.json"], documents["adapter/observations.json"]),
         ("report/report.json", "adapter/observations.json"))
-    status = "mismatch" if bundle.mismatches else "incomplete" if bundle.gaps or bundle.skipped else "review_required"
+    reconstruction = None
+    errors: list[str] = []
+    if reconstruct_ledgers:
+        # Lazy import: reconstruction reuses this module's snapshot/schema helpers.
+        if __package__:
+            from . import slo_reconstruct as replay
+        else:
+            import slo_reconstruct as replay
+        reconstruction, gaps, mismatches, errors = replay.integrate(
+            bundle, max_bytes=max_reconstruction_bytes, scratch_dir=scratch_dir)
+        bundle.gaps.extend(gaps)
+        bundle.mismatches.extend(mismatches)
+    status = "error" if errors else "mismatch" if bundle.mismatches else (
+        "incomplete" if bundle.gaps or bundle.skipped else "review_required")
     result = {
         "schema_version": 1, "artifact_kind": "netsentry_slo_evidence_bundle",
         "status": status, "bundle_complete": status == "review_required",
@@ -404,6 +421,14 @@ def reconcile(output: Path, *, sender: Path | None = None, capture: Path | None 
             "Default 64 GiB retained-input budget may need increasing for extended acceptance runs.",
         ],
     }
+    if reconstruct_ledgers:
+        result.update(schema_version=2, reconstruction_policy="retained_adapter_replay_v1",
+                      reconstruction=reconstruction, errors=errors,
+                      max_reconstruction_bytes=max_reconstruction_bytes,
+                      reconstruction_source_sha256=hashlib.sha256(Path(replay.__file__).read_bytes()).hexdigest())
+        result["limitations"][2] = "Packet identity/oracle replay is required in this mode; inspect reconstruction and source binding."
+        result["limitations"][6] = "Fresh raw-ledger derivation is checked when inputs qualify; acquisition truth remains unverified."
+        result["limitations"].append("Reconstruction adds its own input copies, rebuilt outputs and temporary SQLite disk use.")
     # Persist child directory entries before the completion manifest is published.
     for directory in [path for path in output.iterdir() if path.is_dir()]:
         descriptor = os.open(directory, os.O_RDONLY | os.O_DIRECTORY)
@@ -426,15 +451,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         parser.add_argument("--" + name, type=Path, help="supplied input; omission is retained as an evidence gap")
     parser.add_argument("--output-dir", type=Path, required=True, help="new directory in an existing parent")
     parser.add_argument("--max-bytes", type=int, default=DEFAULT_MAX_BYTES, help="total retained input byte budget")
+    parser.add_argument("--reconstruct-ledgers", action="store_true", help="require fresh retained adapter replay")
+    parser.add_argument("--max-reconstruction-bytes", type=int, default=DEFAULT_MAX_BYTES)
+    parser.add_argument("--scratch-dir", type=Path, help="temporary reconstruction SQLite index directory")
     args = parser.parse_args(argv)
     try:
         result = reconcile(args.output_dir, sender=args.sender, capture=args.capture, engine=args.engine,
-                           adapter=args.adapter, summary=args.summary, max_bytes=args.max_bytes)
+                           adapter=args.adapter, summary=args.summary, max_bytes=args.max_bytes,
+                           reconstruct_ledgers=args.reconstruct_ledgers,
+                           max_reconstruction_bytes=args.max_reconstruction_bytes, scratch_dir=args.scratch_dir)
     except (OSError, ValueError, RecursionError) as error:
         print(f"[slo-bundle] {error}; retain partial output and use a new directory", file=sys.stderr)
         return 2
     print(f"[slo-bundle] {result['status']}; departmental review required: {args.output_dir}")
-    return {"review_required": 0, "mismatch": 1, "incomplete": 3}[result["status"]]
+    return {"review_required": 0, "mismatch": 1, "error": 2, "incomplete": 3}[result["status"]]
 
 
 if __name__ == "__main__":

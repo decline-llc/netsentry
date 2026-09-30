@@ -125,7 +125,10 @@ retained ledgers, disk/SQLite/read/write/fsync/close faults, scratch cleanup and
 extended-run scale. Verify error/mismatch/incomplete precedence and retained partial
 outputs. No case above is a passed test or qualifying acceptance run.
 
-Bundle and pair comparison do not automatically invoke or consume reconstruction
-receipts yet. R90-123 queues fresh integration and source binding separately.
+R90-123 adds explicit `--reconstruct-ledgers` modes to bundle and pair review.
+They invoke fresh reconstruction on their own retained adapter sources and bind
+all five nested source entries to the enclosing bundle. Existing receipts alone
+cannot satisfy that requirement. See [bundle mode](slo-bundle.md) and
+[pair mode](slo-compare.md) for version, status, budget and compatibility rules.
 The [production SLO contract](performance-slo.md) remains authoritative; staging
 and production acceptance are both outstanding.

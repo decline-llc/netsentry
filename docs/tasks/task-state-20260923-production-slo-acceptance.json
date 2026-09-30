@@ -2,7 +2,7 @@
   "task": "r90-75-production-slo-acceptance",
   "timestamp": "2026-09-29",
   "branch": "main",
-  "remote_baseline": "95bd075d479b1162377cfd662ba489ba7346f58a",
+  "remote_baseline": "e8b0734cf45b7c75ec8f1e19658346cb2d962fdd",
   "risk_level": "High",
   "current_checkpoint": "acceptance-delegated-development-unblocked",
   "contract": "docs/performance-slo.md",
@@ -34,7 +34,7 @@
     "Define isolated local SUT/generator working directories, process groups, resource allocations, service endpoints and chosen ingress",
     "Freeze exact workload, configuration, rule set, commits, durability settings and timestamp boundary",
     "Specify extended duration, minimum sample criterion, estimator and missing-latency representation",
-    "Next implement R90-123 reconstruction integration; department validates R90-118/R90-119/R90-120/R90-121/R90-122 behavior, actual environment/comparability, clocks, durability, cohort identity, raw-ledger reconstruction and reporter truth",
+    "Finish selected R90-123 reconstruction integration, then R90-124 departmental runbook; department validates R90-118/R90-119/R90-120/R90-121/R90-122 behavior, actual environment/comparability, clocks, durability, cohort identity, raw-ledger reconstruction and reporter truth",
     "Perform the comparison in the approved isolated same-host context with matched commit/toolchain/resources or explicitly plan a matched rebaseline",
     "Execute both profiles locally only after resource/profile agreement and retain full recomputable artifacts",
     "Verify all acceptance results before any profile-specific SLO compliance claim"

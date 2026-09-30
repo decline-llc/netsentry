@@ -1,0 +1,34 @@
+{
+  "task": "r90-123-slo-reconstruction-integration",
+  "timestamp": "2026-09-29",
+  "branch": "main",
+  "remote_baseline": "e8b0734cf45b7c75ec8f1e19658346cb2d962fdd",
+  "risk_level": "High",
+  "current_checkpoint": "implementation-statically-reviewed-awaiting-delivery",
+  "completed": [
+    "Clean fetched baseline and R90-122 feature/closure Vault records verified",
+    "Persisted opt-in fresh reconstruction integration plan before edits",
+    "Implemented explicit bundle v2 and pair v3 replay modes with five-file source binding and no old receipt trust",
+    "Implemented strict original v2 schemas, default version compatibility and preserved original/current/context error boundaries",
+    "Documented APIs, policies, outputs, budgets, partial failures and unexecuted departmental matrix",
+    "Static review corrected a context diagnostic variable reuse that could overwrite replay operation errors",
+    "AST-only make python-check, producer/consumer receipt field parity, 140 task JSONs, 128 unique roadmap pairs, history/link/scope/diff/token-pattern review passed"
+  ],
+  "in_progress": [],
+  "todo": [
+    "Verified feature and one docs-only closure Git/Vault delivery"
+  ],
+  "validation": {
+    "tests": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "acceptance_runs": "not_run",
+    "static_review": "passed_AST_receipt_field_parity_manual_source_JSON_roadmap_history_links_scope_diff_token_patterns",
+    "runtime_correctness": "unverified_no_implementation_import_or_execution"
+  },
+  "remaining_risks": [
+    "Untested implementation",
+    "Reconstruction and declaration equality do not prove physical measurements",
+    "No qualifying acceptance evidence for either profile"
+  ],
+  "resume_instructions": "Deliver R90-123 only with exact feature and docs-only closure Git/Vault ranges; R90-124 queued and unstarted. Tests remain delegated; no compliance claim."
+}

@@ -200,7 +200,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-120 | Sep 29–Nov 6 | Complete implementation; tests delegated | Retain explicit run-context declarations for SLO comparison review. | R90-119 | Define and validate bounded hardware/toolchain/isolation metadata and checksum-bound evidence references without automatic discovery, live execution or acceptance claims. |
 | R90-121 | Sep 29–Nov 13 | Complete implementation; tests delegated | Bind supplied run-context packages into SLO pair comparison. | R90-120 | Retain and revalidate each context, bind exact observation/run identity, compare known declarations and expose unknown/missing/different evidence without asserting verified facts or acceptance. |
 | R90-122 | Sep 29–Nov 20 | Complete implementation; tests delegated | Reconstruct retained observations from supplied raw packet ledgers. | R90-121 | Reuse the bounded adapter against retained manifest/offered/events sources, compare derived observations and retain diagnostic provenance without live execution or acceptance claims. |
-| R90-123 | Sep 29–Nov 27 | Ready | Integrate fresh ledger reconstruction with bundle and pair review. | R90-122 | Add explicit reconstruction mode/policy, rebind retained raw inputs and observations, preserve differences and incomplete/error outcomes without receipt-only trust or acceptance claims. |
+| R90-123 | Sep 29–Nov 27 | In progress | Integrate fresh ledger reconstruction with bundle and pair review. | R90-122 | Add explicit reconstruction mode/policy, rebind retained raw inputs and observations, preserve differences and incomplete/error outcomes without receipt-only trust or acceptance claims. |
+| R90-124 | Sep 29–Dec 4 | Planned | Consolidate the departmental SLO execution and artifact-review runbook. | R90-123 | Document the implemented command/artifact chain, versioned review modes, missing evidence and profile-specific acceptance handoff without executing tests or asserting capacity. |
 
 ## R90-01 Definition
 
@@ -2696,6 +2697,25 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 - **Stop condition:** new private/external authority or ambiguous versioned input;
   use existing artifacts without live traffic or fabricated measurement evidence.
 
+- **Selected plan:** [task-20260929-slo-reconstruction-integration.md](task-20260929-slo-reconstruction-integration.md).
+  Explicit bundle v2/pair v3 modes require fresh retained-source replay, preserve
+  old/current failures and keep default invocation contracts.
+
+## R90-124 Definition
+
+- **Goal:** give the specialist department one coherent execution and evidence
+  review runbook for the implemented SLO measurement/report/comparison chain.
+- **Dependencies/window:** R90-123 implementation delivery; Sep 29–Dec 4.
+- **Risk:** unexecuted commands or proposed hardware/targets could be mistaken for
+  validated workflows or demonstrated capacity; missing evidence must stay explicit.
+- **Acceptance:** document input/output ordering, artifact retention, versioned
+  replay/context options, failure recovery and staging/production handoff with
+  unresolved acquisition/hardware/clock/durability/sample requirements.
+- **Required review:** source-to-command/artifact mapping, docs/JSON/roadmap/diff
+  static checks and verified Git/Vault; tests/execution stay user-delegated.
+- **Stop condition:** new private/external authority or unknown deployment values;
+  represent unresolved values explicitly rather than inventing qualifying evidence.
+
 
 ### R90-71 Validation Deviation
 
@@ -3218,7 +3238,7 @@ delivered; R90-116 engine exports and R90-117 native UDP ingress are complete.
 R90-118 artifact bundle reconciliation is delivered; R90-119 supplied-bundle
 comparability and R90-120 run-context declarations are delivered;
 R90-121 context consumption and R90-122 raw-ledger reconstruction are delivered.
-R90-123 integration into bundle/pair review is next ready.
+R90-123 integration into bundle/pair review is selected; R90-124 runbook consolidation follows.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -4980,6 +5000,27 @@ plan; it is not started. This single docs-only closure records feature delivery
 and receives its own verified Git/Vault range. Tests and qualifying acceptance
 remain departmental; reproducible derivation does not establish acquisition truth
 or SLO compliance.
+
+### Sep 29: R90-123 fresh reconstruction integration selection
+
+Fetched clean `e8b0734cf45b7c75ec8f1e19658346cb2d962fdd` equals
+HEAD/origin/main/FETCH_HEAD; R90-122 feature/closure Vault records and current
+stable notes are verified. September contract-to-reconstruction delivery remains
+complete with behavioral tests delegated. R90-123 plan/state were persisted before
+edits; explicit opt-in bundle v2/pair v3 policies perform fresh retained-source
+replay, bind five adapter files and preserve incomplete/mismatch/error outcomes.
+R90-124 queues a departmental runbook, not started. No live execution, tests or
+measurement evidence is created. R90-75 acceptance and R90-59 publication retain
+their separate boundaries.
+
+R90-123 implementation/static review is complete pending Git/Vault delivery.
+Fresh bundle v2/pair v3 modes bind replay inputs and preserve original/current
+failures, including context qualification. Manual review corrected diagnostic
+variable reuse between context invalid evidence and replay operation errors.
+AST-only syntax, producer/consumer receipt field parity, 140 task JSONs, 128 unique
+roadmap pairs, history, links, exact twelve-path scope, diff and token-pattern
+checks pass. No tests, CLI smoke, benchmark/acceptance/knowledge suites or artifact-
+producing execution ran. R90-124 is queued and unstarted; no SLO claim is made.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a

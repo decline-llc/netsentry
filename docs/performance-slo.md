@@ -209,7 +209,9 @@ R90-122 adds [offline ledger reconstruction](slo-reconstruct.md): fresh retained
 source checks, adapter replay and complete observation-value comparison with
 explicit missing data. Agreement establishes derivation from supplied bytes only;
 it does not establish actual acquisition, clock/durability or SLO compliance.
-Bundle/comparison integration is separately queued; execution tests remain delegated.
+R90-123 integrates fresh replay through explicit bundle/comparison modes, with
+new versioned outputs and retained failures. Previous receipts cannot substitute
+for fresh source-bound reconstruction; execution tests remain delegated.
 
 ## Current evidence gaps and execution prerequisites
 

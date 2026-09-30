@@ -23,7 +23,8 @@ python3 scripts/slo_bundle.py \
 ```
 
 The public API is `reconcile(output, *, sender=None, capture=None, engine=None,
-adapter=None, summary=None, max_bytes=64*1024**3)`. Directory/path arguments are
+adapter=None, summary=None, max_bytes=64*1024**3, reconstruct_ledgers=False,
+max_reconstruction_bytes=64*1024**3, scratch_dir=None)`. Directory/path arguments are
 `pathlib.Path` values. Each input is optional so a partial handoff can publish
 explicit gaps; omitted inputs never produce a completed bundle. Output must be
 a new directory in an existing parent. No existing file/directory is replaced
@@ -84,11 +85,11 @@ review exit statuses separately. Capture drops and unavailable pcap stats remain
 visible diagnostics, not a replacement denominator or an automatic packet-loss
 verdict. Missing expected alerts remain in the report's failure and latency counts.
 
-The checker does not replay the adapter's packet identity join, regenerate frames,
-verify the oracle against rules, authenticate jointly rewritten artifacts, establish
-physical arrival/clock accuracy, or prove storage persistence/hardware allocation.
+The default mode does not replay the adapter's packet identity join. No mode regenerates frames or
+verifies the oracle against rules, authenticates jointly rewritten artifacts, establishes
+physical arrival/clock accuracy, or proves storage persistence/hardware allocation.
 Receipts and hashes show consistency of supplied bytes, not independent truth.
-Full raw-ledger reconstruction and those physical boundaries remain departmental.
+Opt-in reconstruction is described below; execution and physical qualification remain departmental.
 
 ## Bounds and persistence
 
@@ -140,6 +141,60 @@ adapter package, validates its original receipt and sources, reruns the adapter
 on retained copies, and compares every observation field. Expected alerts compare
 by event identity; missing values remain present. This separately diagnoses the
 raw-ledger derivation gap without live traffic or a compliance claim. Bundle and
-pair comparison do not invoke it automatically; integration is queued as R90-123.
+pair comparison now offer explicit fresh reconstruction mode under R90-123.
 Implementation review is static only; departmental behavior/acceptance tests remain
 outstanding.
+
+## Fresh reconstruction mode (R90-123)
+
+Add `--reconstruct-ledgers` to the bundle invocation above. This unexecuted option
+requires a fresh replay of this bundle's retained adapter files. It does not accept
+an old reconstruction receipt as proof. Default calls still emit schema v1; enabled
+calls emit schema v2 with `reconstruction_policy: retained_adapter_replay_v1`.
+
+All existing source/report checks must complete without gaps, mismatches or skipped
+checks before reconstruction begins. Otherwise the reconstruction summary records
+incomplete evidence and a gap, while original mismatches remain. Eligible bundles
+create `reconstruction/`, containing R90-122's retained `adapter/`, `rebuilt/` and
+`reconstruction.json`. All five nested adapter inventory entries must match this
+bundle's original snapshots, including exact bytes, hashes and ledger row counts.
+The nested tool also binds run/metadata and rebuilt observations. An unchanged old
+receipt cannot hide altered sources or replace current replay.
+
+The v2 bundle adds `reconstruction`, `errors`, `max_reconstruction_bytes` and
+`reconstruction_source_sha256`. The summary has these exact fields:
+
+- `status`: review_required, mismatch, incomplete or error.
+- `reconstruction_attempted`, `reconstruction_complete`: the nested adapter's
+  attempt/completion flags; replay completion alone does not mean agreement.
+- `source_binding_complete`: all five nested source entries match this bundle.
+- `observations_match`: normalized observation equality, or null before completion.
+- `manifest`: relative file/bytes/SHA-256 for the new nested receipt, or null when
+  skipped or an operation failed before a reference could be retained.
+
+A complete v2 bundle requires a complete, source-bound replay with observation
+agreement. Nested mismatch becomes bundle mismatch; incomplete replay becomes
+a bundle gap. Local replay I/O/SQLite errors produce `status: error`, exit 2 and
+nonempty `errors`; snapshot/publication errors can still prevent a final receipt.
+Precedence is error > mismatch > incomplete > review_required. Diagnostics and
+partial files remain retained. With reconstruction gaps, `snapshots_complete` is
+false even if all original files were copied; inspect individual inventory flags.
+No measurement outcome, compliance flag or physical qualification is upgraded.
+
+`--max-reconstruction-bytes` defaults to a separate 64 GiB input budget for the
+nested replay. This is additional to `--max-bytes` and excludes rebuilt copies,
+generated metadata and temporary SQLite storage. `--scratch-dir` chooses an
+existing directory for that temporary index. Both options are used only when
+reconstruction is enabled; positive byte-limit arguments are validated regardless.
+Allocate space for all original and nested copies; no total workspace quota or
+performance claim is implied. Nested child entries are synced before the bundle
+receipt is published. Existing partial-output/no-overwrite rules remain.
+
+### Additional departmental validation — not executed
+
+Cover v1 default compatibility; opt-in v2 success, base-check skip, nested gaps,
+changed snapshot/receipt/rows/run identity, observation mismatch, byte-only
+formatting changes, raw identity/time rejection, replay budgets, scratch/SQLite/
+I/O failure and late publication errors. Verify source binding independently of
+nested completion, mixed diagnostic precedence, old receipt substitution, retained
+partial outputs and unchanged failed/inconclusive measurement outcomes.

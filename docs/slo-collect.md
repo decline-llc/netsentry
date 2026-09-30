@@ -181,6 +181,7 @@ adapter package, validates its original receipt and sources, reruns the adapter
 on retained copies, and compares every observation field. Expected alerts compare
 by event identity; missing values remain present. This separately diagnoses the
 raw-ledger derivation gap without live traffic or a compliance claim. Bundle and
-pair comparison do not invoke it automatically; integration is queued as R90-123.
+pair comparison offer explicit fresh replay under R90-123; see their
+`--reconstruct-ledgers` modes and additional retained-source binding.
 Implementation review is static only; departmental behavior/acceptance tests remain
 outstanding.

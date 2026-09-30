@@ -144,7 +144,7 @@ def reconstruct(output: Path, *, adapter: Path | None = None,
             "The input budget excludes rebuilt copies, generated metadata and the temporary SQLite identity index.",
             "Disk/time/memory cost and runtime correctness remain unmeasured; no tests or acceptance run is performed.",
             "Partial rebuilt files may lack a complete receipt/inventory; preserve the directory and use a fresh retry path.",
-            "Bundle and pair comparison do not automatically consume this reconstruction receipt.",
+            "Bundle and pair reconstruction mode performs fresh replay; this receipt alone cannot qualify evidence.",
         ],
     }
     for directory in (output / "adapter", output / "rebuilt"):
@@ -161,6 +161,48 @@ def reconstruct(output: Path, *, adapter: Path | None = None,
     finally:
         os.close(descriptor)
     return result
+
+
+def integrate(retained: bundle._Bundle, *, max_bytes: int,
+              scratch_dir: Path | None = None) -> tuple[dict[str, Any], list[str], list[str], list[str]]:
+    """Freshly replay a reconciled bundle's own snapshots, never an old receipt."""
+    info = {"status": "incomplete", "reconstruction_attempted": False,
+            "reconstruction_complete": False, "source_binding_complete": False,
+            "observations_match": None, "manifest": None}
+    if retained.gaps or retained.mismatches or retained.skipped:
+        return info, ["Reconstruction requires all existing bundle checks to complete."], [], []
+    gaps: list[str] = []
+    mismatches: list[str] = []
+    errors: list[str] = []
+    try:
+        current = reconstruct(retained.output / "reconstruction", adapter=retained.output / "adapter",
+                              max_bytes=max_bytes, scratch_dir=scratch_dir)
+        raw = (retained.output / "reconstruction/reconstruction.json").read_bytes()
+        info.update(status=current["status"], reconstruction_attempted=current["reconstruction_attempted"],
+                    reconstruction_complete=current["reconstruction_complete"],
+                    observations_match=current["observations_match"],
+                    manifest={"file": "reconstruction/reconstruction.json", "bytes": len(raw),
+                              "sha256": hashlib.sha256(raw).hexdigest()})
+        gaps.extend("Reconstruction: " + item for item in current["gaps"] + current["checks_not_performed"])
+        mismatches.extend("Reconstruction: " + item for item in current["mismatches"])
+        errors.extend("Reconstruction: " + item for item in current["errors"])
+        fresh = {entry["file"]: entry for entry in current["inventory"]}
+        names = {"adapter/" + name for name in bundle.SOURCES["adapter"]}
+        if set(fresh) != names or any(not fresh[key]["complete"] for key in names):
+            gaps.append("Reconstruction source inventory is incomplete; enclosing bundle binding unavailable.")
+        else:
+            try:
+                bundle._same({key: retained.inventory[key] for key in names}, fresh,
+                             "reconstruction sources differ from enclosing bundle")
+            except (ValueError, KeyError):
+                mismatches.append("Reconstruction source inventory differs from enclosing bundle.")
+            else:
+                info["source_binding_complete"] = True
+    except (OSError, sqlite3.Error):
+        errors.append("Reconstruction I/O or SQLite failure; retain partial reconstruction directory.")
+    info["status"] = "error" if errors else "mismatch" if mismatches else (
+        "incomplete" if gaps or not info["reconstruction_complete"] else "review_required")
+    return info, gaps, mismatches, errors
 
 
 def main(argv: Sequence[str] | None = None) -> int:

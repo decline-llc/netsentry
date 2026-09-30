@@ -19,7 +19,8 @@ python3 scripts/slo_compare.py \
 
 API: `compare(output, *, baseline=None, candidate=None,
 max_bytes_per_side=64*1024**3, baseline_context=None, candidate_context=None,
-require_context=False, max_context_evidence_bytes=256*1024**2)`, using
+require_context=False, max_context_evidence_bytes=256*1024**2,
+reconstruct_ledgers=False, max_reconstruction_bytes=64*1024**3, scratch_dir=None)`, using
 `pathlib.Path` directory arguments.
 Either input can be omitted to record missing evidence. Output must be new,
 with an existing parent. Existing outputs are never overwritten or deleted.
@@ -35,7 +36,8 @@ manifest bytes/digest, the new manifest digest, input checks, per-side metrics,
 field comparisons, differences and qualification gaps. All references to retained
 files are relative to the new output directory; source paths are not published.
 
-Original manifests require the exact current v1 schema, coherent status/completion
+Default mode requires the exact v1 bundle schema; explicit reconstruction mode
+also accepts the v2 bundle schema described below. Both require coherent status/completion
 flags, bounded known inventory paths, unique entries, hashes/byte/row counts and
 valid run/origin declarations. R90-118 reconciliation reads only fixed companion
 basenames, checks receipts and raw source identity, and recomputes the report from
@@ -47,7 +49,7 @@ partial or malformed inputs remain visible, with retained raw copies where reada
 Original mismatch/incomplete statuses cannot be upgraded by the comparison.
 
 Source hashes identify supplied bytes; they do not authenticate them. The checker
-does not replay the packet join or verify that the fixtures/rules, clocks, physical
+does not replay the packet join in default mode. No mode verifies that fixtures/rules, clocks, physical
 packet arrival, storage durability or process exits reflect reality. Original tool
 source digests are compared between sides, not asserted to be authenticated builds.
 Current reconciliation uses the installed implementation; changed interpretation
@@ -55,7 +57,7 @@ can reject an old report. Freeze tools and retain the source versions for review
 
 ## Conservative comparison policy
 
-Without context options, output schema v1 uses `comparison_policy`
+Without context or reconstruction options, output schema v1 uses `comparison_policy`
 `exact_declared_repeatability_v1`: same-commit repeatability
 under exactly matching available declarations. There are no implicit tolerances,
 waivers, regression thresholds or statistical conclusions. Commit/config/tool
@@ -172,7 +174,7 @@ python3 scripts/slo_compare.py \
 
 Either context argument or `--require-context` enables context mode. When neither
 argument is supplied and context is not required, the existing v1 policy/output
-path remains. Context mode uses output `schema_version: 2` and policy
+path remains when reconstruction is disabled. Context-only mode uses output `schema_version: 2` and policy
 `exact_declared_repeatability_with_context_v1`; a missing side is an explicit gap.
 `--require-context` alone therefore cannot produce a completed declared comparison.
 
@@ -254,3 +256,75 @@ mismatch and unknown field; preserved failed/inconclusive metrics; no context
 success fallback; modes, no-overwrite, source changes, read/write/fsync/close/
 interrupt failures and retained partial manifests. No such case was executed by
 the agent; static implementation delivery does not establish runtime correctness.
+
+## Fresh reconstruction in pair review (R90-123)
+
+Unexecuted invocation template:
+
+```bash
+python3 scripts/slo_compare.py --baseline baseline-bundle --candidate candidate-bundle \
+  --reconstruct-ledgers --scratch-dir scratch --output-dir reconstructed-pair
+```
+
+`--reconstruct-ledgers` requires fresh reconstruction for both sides through
+[the v2 bundle mode](slo-bundle.md). Original v1 or v2 bundles can be supplied,
+including one of each. Original v2 bundles require this explicit flag; supplying
+them in default or context-only mode is invalid evidence, with no silent fallback.
+No supplied reconstruction path or old nested receipt selects the new replay.
+
+The original bundle manifest is retained and strictly checked. V2 adds exact
+policy, summary field/type/path/hash checks, error-list/status coherence, and
+complete/source-bound/matching replay requirements for a successful original
+receipt. Independently, the current reconciler copies the fixed companion files,
+finishes ordinary checks and replays its own retained adapter inputs. All five
+nested source inventories bind to the enclosing bundle; the original bundle's
+shared inventory/run/report fields must also match the fresh reconciliation.
+The old nested reconstruction files are not copied or authenticated; retain them
+with the original source bundle for historical review. An old summary is never
+proof of fresh reconstruction. Different old/new replay tool digests remain
+reviewable provenance, not authenticated builds or automatic acceptance.
+
+Original mismatch/incomplete/error statuses remain failures even if fresh replay
+succeeds. A current replay failure prevents that side from supplying condition
+fields, metrics or a qualified identity for context binding. A valid side retains
+its failed/inconclusive measurement status; replay agreement never upgrades it.
+Known comparisons already eligible under the existing rules remain diagnostic.
+
+Enabled output uses `schema_version: 3` and one of two policies:
+
+| Context enabled | Policy |
+| --- | --- |
+| No | `exact_declared_repeatability_with_reconstruction_v1` |
+| Yes | `exact_declared_repeatability_with_context_and_reconstruction_v1` |
+
+V3 adds `reconstruction_required: true`, `errors`,
+`max_reconstruction_bytes_per_side` and `sides.<side>.reconstruction`. Each summary
+points to a fresh receipt relative to the pair output, at
+`<side>/reconciled/reconstruction/reconstruction.json` when available. Original
+receipt and new bundle references remain retained. V1/v2 calls without replay
+keep their previous output structure; source-code digests naturally change.
+
+`error` / exit 2 now also represents recorded original/current replay operation
+errors. Precedence is `error > invalid_evidence > incomplete > conditions_differ > review_required`,
+with other diagnostic lists retained. Invalid original v2
+schemas remain invalid evidence, not trusted operation-error declarations.
+Physical qualification, comparability/regression/SLO flags and context unknown
+semantics retain their prior boundaries.
+
+`--max-reconstruction-bytes` defaults to 64 GiB per side, additional to bundle
+and context budgets. Each nested reconstruction also needs rebuilt copies and
+SQLite scratch space. Sides replay sequentially using `--scratch-dir` (or system
+temporary storage); original and nested outputs remain retained. Source/operation/
+late fsync failures require preserving partial outputs and checking process exit.
+
+### Additional departmental validation — not executed
+
+Cover original v1/v2 and mixed pairs; v2 without the explicit flag; all context/
+replay combinations; every v2 root/summary type/policy/path/flag/error constraint;
+old receipt claims versus changed raw sources; fresh observation mismatch; each
+original/current incomplete/mismatch/error outcome; source binding and output-path
+references; budget/scratch/disk failures; context eligibility after failed replay;
+unchanged failed/inconclusive metrics and permanent qualification flags. Verify
+v1/v2 default output compatibility and retained diagnostics in v3. In combined
+mode, context errors must remain invalid evidence and must neither overwrite nor
+be promoted into reconstruction operation errors; verify both error classes together.
