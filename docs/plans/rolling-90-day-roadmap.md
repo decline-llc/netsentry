@@ -206,7 +206,7 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-126 | Sep 30–Dec 11 | Complete implementation; tests delegated | Reconstruct offered-oracle and submission evidence from retained sender fixtures. | R90-125; R90-117 sender contract | A standalone offline operation retains and validates four sender files, streams fixture/offer/submission correlation, derives event IDs and frame length/hash using pure construction, and preserves failures without sending traffic or asserting physical facts/SLO compliance. |
 | R90-127 | Sep 30–Dec 18 | Complete implementation; tests delegated | Integrate fresh sender-source reconstruction into bundle and pair review. | R90-126 | An explicit offline sender-replay option replays retained bundle sources, binds fresh inventories and propagates incomplete/mismatch/error results through single and pair review without trusting an old receipt or claiming physical/SLO facts. |
 | R90-128 | Oct 1 | Complete documentation; execution delegated | Audit sender-integration delivery and restore the bounded adapter-input queue. | R90-127 | Reconcile delivery/history/Vault, refresh the horizon, and define standalone adapter input admission and retention limits from source evidence without runtime work. |
-| R90-129 | Oct 1–Dec 18 | In progress | Bound finalized-file admission and retained input bytes in the standalone SLO adapter. | R90-128; R90-115 adapter and R90-122 reconstruction contracts | Admit only supplied regular files through non-following/nonblocking handles, account for all three inputs under a configurable byte budget, reject changed/oversized sources without completion, preserve partial evidence and existing sender/adapter formats. |
+| R90-129 | Oct 1–Dec 18 | Complete implementation; tests delegated | Bound finalized-file admission and retained input bytes in the standalone SLO adapter. | R90-128; R90-115 adapter and R90-122 reconstruction contracts | Admit only supplied regular files through non-following/nonblocking handles, account for all three inputs under a configurable byte budget, reject changed/oversized sources without completion, preserve partial evidence and existing sender/adapter formats. |
 
 ## R90-01 Definition
 
@@ -3374,7 +3374,9 @@ R90-125 documentation-only queue repair is delivered. R90-126 standalone
 sender-source reconstruction is delivered with tests delegated. R90-127 fresh
 sender-replay consumer integration is delivered with tests delegated. R90-128
 documentation audit is delivered; R90-129 standalone adapter input bounds are
-selected under the persisted plan. The active horizon is Oct 1–Dec 29.
+implemented and pushed with tests delegated. No local ready increment is
+currently defined; the next trigger audits the queue and delivery evidence. The
+active horizon is Oct 1–Dec 29.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -5395,6 +5397,22 @@ complete unique multisets; docs-check validates local links/fences. The exact
 eight-path scope is confirmed, and the sensitive scan found no credential
 prefixes. No behavioral or CLI validation ran; testing and knowledge checks
 remain delegated by the user.
+
+### Oct 1: R90-129 feature delivery checkpoint
+
+Feature commit `c2e87f5ad9521ee7a61c5f6da4ef58ff0ac26639` contains exactly the
+planned eight paths. Push succeeded without force; fetch verifies clean
+HEAD/origin/main/FETCH_HEAD equality at that SHA. Exact range
+`a88476ced2b9ab2409a5a89aa17aa47d56dafd09..c2e87f5ad9521ee7a61c5f6da4ef58ff0ac26639`
+is synchronized to the sole existing local Vault at
+`/home/ubuntu/Desktop/NetSentry-Knowledge`; the documented path is absent in this
+environment, so the unique sibling Vault was explicitly selected. Its iteration
+note, full-index row, MOC link and nine stable notes are verified. Replaying the
+identical range preserved the 335-file Markdown hash
+`60db28b9fe1b6a2bfc509edd665467748839b4c6dc89bb0c19f9f42b20e0b10f` after stable
+prose reconciliation. No behavioral tests, CLI smoke or knowledge suite ran;
+they remain delegated. This docs-only closure receives its own verified push,
+fetch and exact-range Vault sync. No next increment is started.
 
 The exact three-path audit was pushed without force/tags; fresh fetch verified
 clean HEAD/origin/main/FETCH_HEAD equality. Exact range

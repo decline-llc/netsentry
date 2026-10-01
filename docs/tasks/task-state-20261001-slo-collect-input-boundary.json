@@ -2,21 +2,22 @@
   "task": "r90-129-slo-collect-input-boundary",
   "timestamp": "2026-10-01",
   "branch": "main",
-  "remote_baseline": "a88476ced2b9ab2409a5a89aa17aa47d56dafd09",
+  "remote_baseline": "c2e87f5ad9521ee7a61c5f6da4ef58ff0ac26639",
   "risk_level": "Medium",
-  "current_checkpoint": "implemented_static_review_pending",
+  "current_checkpoint": "feature_pushed_vault_synced_closure_pending",
   "completed": [
     "Verified R90-128 feature/closure exact Git/Vault evidence and stable authority",
     "Reviewed rolling queue and source/call-site boundary; R90-129 is highest-priority ready local increment",
     "Persisted eight-path API/admission/budget/receipt/caller acceptance plan before source changes",
-    "Implemented same-handle admission, shared aggregate source-byte accounting, retained-source metadata check and reconstruction budget propagation"
+    "Implemented same-handle admission, shared aggregate source-byte accounting, retained-source metadata check and reconstruction budget propagation",
+    "Passed static checks and exact-scope review; pushed feature and verified fetched remote",
+    "Synchronized exact feature range, verified iteration/index/MOC and reconciled nine stable notes; identical-range replay preserved Markdown hash"
   ],
   "in_progress": [
-    "Stage and deliver the feature after final static acceptance/scope/sensitive review"
+    "Commit docs-only feature delivery closure; fetch-verify and sync its exact range"
   ],
   "todo": [
     "Static AST/docs/JSON/roadmap/scope/sensitive review",
-    "Feature commit/push/fetch and exact Vault synchronization",
     "Single docs-only delivery closure"
   ],
   "validation": {
@@ -28,5 +29,5 @@
     "No executed regressions or scale/behavior evidence under user test delegation",
     "Physical acquisition, clock, durability and SLO facts remain unverified"
   ],
-  "resume_instructions": "Implement only R90-129 according to its persisted plan; preserve sender behavior, receipt compatibility, outer caller budgets and the existing test delegation."
+  "resume_instructions": "R90-129 feature is pushed and its exact Vault range is reconciled. Complete only the docs-only closure, fetch-verify and sync that exact closure range; do not repeat feature commit/push/sync, execute behavioral tests, run CLI smoke or start another increment. Testing and knowledge checks remain user-delegated."
 }

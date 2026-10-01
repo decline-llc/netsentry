@@ -78,3 +78,18 @@ caller compatibility requires a new product choice, or explicit larger replay
 budgets cannot propagate without changing an external format. Preserve partial
 outputs, state diagnostics and do not claim scale/runtime evidence. No following
 increment is started in this trigger.
+
+## Feature delivery record
+
+Feature commit `c2e87f5ad9521ee7a61c5f6da4ef58ff0ac26639` contains exactly the
+eight planned paths and is verified at `HEAD`, `origin/main` and `FETCH_HEAD`.
+The exact feature range
+`a88476ced2b9ab2409a5a89aa17aa47d56dafd09..c2e87f5ad9521ee7a61c5f6da4ef58ff0ac26639`
+is synchronized to the sole existing local Vault. Its iteration note, index row,
+MOC link and nine stable notes are verified; replay preserved the reconciled
+Markdown hash `60db28b9fe1b6a2bfc509edd665467748839b4c6dc89bb0c19f9f42b20e0b10f`.
+`make python-check`, `make docs-check`, roadmap/task-state JSON/multiset audit,
+`git diff --check` and credential-prefix scan pass. Behavioral testing, CLI smoke
+and knowledge checks remain user-delegated and were not run. A separate docs-only
+closure remains to verify this delivery record against the fetched remote and
+Vault.
