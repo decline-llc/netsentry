@@ -204,7 +204,7 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-124 | Sep 29–Dec 4 | Complete documentation; execution delegated | Consolidate the departmental SLO execution and artifact-review runbook. | R90-123 | Document the implemented command/artifact chain, versioned review modes, missing evidence and profile-specific acceptance handoff without executing tests or asserting capacity. |
 | R90-125 | Sep 30 | Complete documentation; execution delegated | Reconcile post-runbook delivery and restore a source-grounded local queue. | R90-124 | Verify delivery/history, correct superseded active SLO blockers, and define bounded offline sender-source reconstruction with complete review/authority contracts; no runtime work or tests. |
 | R90-126 | Sep 30–Dec 11 | Complete implementation; tests delegated | Reconstruct offered-oracle and submission evidence from retained sender fixtures. | R90-125; R90-117 sender contract | A standalone offline operation retains and validates four sender files, streams fixture/offer/submission correlation, derives event IDs and frame length/hash using pure construction, and preserves failures without sending traffic or asserting physical facts/SLO compliance. |
-| R90-127 | Sep 30–Dec 18 | In progress | Integrate fresh sender-source reconstruction into bundle and pair review. | R90-126 | An explicit offline sender-replay option replays retained bundle sources, binds fresh inventories and propagates incomplete/mismatch/error results through single and pair review without trusting an old receipt or claiming physical/SLO facts. |
+| R90-127 | Sep 30–Dec 18 | Complete implementation; tests delegated | Integrate fresh sender-source reconstruction into bundle and pair review. | R90-126 | An explicit offline sender-replay option replays retained bundle sources, binds fresh inventories and propagates incomplete/mismatch/error results through single and pair review without trusting an old receipt or claiming physical/SLO facts. |
 
 ## R90-01 Definition
 
@@ -3320,7 +3320,8 @@ R90-121 context consumption and R90-122 raw-ledger reconstruction are delivered.
 R90-123 integration into bundle/pair review and R90-124 departmental runbook are delivered.
 R90-125 documentation-only queue repair is delivered. R90-126 standalone
 sender-source reconstruction is delivered with tests delegated. R90-127 fresh
-sender-replay consumer integration is selected under its persisted API/schema plan.
+sender-replay consumer integration is delivered with tests delegated. No local
+ready increment remains; the next trigger must audit the forward queue.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -5265,6 +5266,21 @@ docs-check, 144 task JSONs, 131 unique roadmap pairs, ordered history, links/fen
 exact ten-path scope/diff and sensitive-information checks pass. Tests and
 knowledge suites remain unrun under user delegation. No scope or skill deviation
 occurred. Delivery remains; no additional local ready increment is queued.
+
+R90-127 implementation is delivered at `0b6283e7e6474ef6a1e8f68ef751de35832733c5`.
+The exact ten-path feature was pushed without force/tags; fresh fetch verified
+clean HEAD/origin/main/FETCH_HEAD equality. Exact range
+`7dc6a1f38e80ea128b3e542af08e5af000f9eef6..0b6283e7e6474ef6a1e8f68ef751de35832733c5`
+was synchronized to the sole local Vault. Note/index/MOC and nine stable notes
+are verified; immutable iteration bytes are preserved. Identical-range replay
+retained Vault Markdown hash
+`66feca85909ab71e63eec079562c5fa50b982fa2db8c1100628b5dd2a419f023`.
+Static acceptance evidence satisfies the implementation plan; tests/knowledge
+suites and behavioral/scale/acceptance evidence remain delegated and unrun. No
+scope deviation or skill update occurred. This single docs-only closure receives
+its own verified Git/Vault range. No local ready increment remains: the next
+trigger verifies closure and audits the forward queue. R90-59 candidate/tag
+authority and R90-75 departmental acceptance remain independently outstanding.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a

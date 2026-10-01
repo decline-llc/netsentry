@@ -2,24 +2,23 @@
   "task": "r90-127-slo-sender-integration",
   "timestamp": "2026-09-30",
   "branch": "main",
-  "remote_baseline": "7dc6a1f38e80ea128b3e542af08e5af000f9eef6",
+  "remote_baseline": "0b6283e7e6474ef6a1e8f68ef751de35832733c5",
   "risk_level": "Medium",
-  "current_checkpoint": "static_review_complete_pending_delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified R90-126 feature/closure Git/remote/Vault evidence and September delivery phases",
     "Audited complete forward queue; persisted ten-path API/schema/acceptance plan before implementation",
     "Implemented independent sender replay and exact four-source binding in bundle/pair consumers",
     "Added versioned schema/mode requirements, per-side summaries and mixed diagnostic preservation",
     "Updated four public guides with options, budgets, references and unexecuted departmental cases",
-    "Static source/schema/data-flow review, AST/python-check/docs-check, 144 task JSONs, 131 unique roadmap pairs, history/links/fences/scope/diff/sensitive checks passed"
+    "Static source/schema/data-flow review, AST/python-check/docs-check, 144 task JSONs, 131 unique roadmap pairs, history/links/fences/scope/diff/sensitive checks passed",
+    "Committed/pushed 0b6283e7e6474ef6a1e8f68ef751de35832733c5; fresh fetch verified clean HEAD/origin/main/FETCH_HEAD equality",
+    "Verified exact-range Vault note/index/MOC and nine stable notes; immutable iteration bytes preserved",
+    "Identical-range replay preserved Vault Markdown hash 66feca85909ab71e63eec079562c5fa50b982fa2db8c1100628b5dd2a419f023",
+    "Forward queue refreshed: no local ready increment remains; R90-59/R90-75 retain independent boundaries"
   ],
-  "in_progress": [
-    "Feature commit/push/fetch and exact-range Vault synchronization"
-  ],
-  "todo": [
-    "Static review and departmental handoff",
-    "Feature push/fetch/Vault and single docs-only closure"
-  ],
+  "in_progress": [],
+  "todo": [],
   "validation": {
     "tests": "not_run_user_delegated",
     "knowledge_check": "not_run_user_delegated",
@@ -30,5 +29,15 @@
     "Behavior and scale remain untested; replay cannot prove physical facts",
     "R90-59 authority and R90-75 departmental acceptance remain separate"
   ],
-  "resume_instructions": "Continue only R90-127 under its persisted plan; tests remain delegated."
+  "resume_instructions": "R90-127 implementation delivered at 0b6283e7e6474ef6a1e8f68ef751de35832733c5. Verify this single docs-only closure and exact Vault range against fetched origin/main, without repeating completed feature delivery. No local ready increment remains: audit the forward queue before selecting the next bounded work. R90-59 candidate/tag authority and R90-75 departmental acceptance remain outstanding; tests/knowledge suites remain delegated and unrun.",
+  "delivery": {
+    "commit": "0b6283e7e6474ef6a1e8f68ef751de35832733c5",
+    "origin_main_verified": true,
+    "push_without_force_or_tags": true,
+    "post_fetch_knowledge_check": "not_run_user_delegated",
+    "vault_range": "7dc6a1f38e80ea128b3e542af08e5af000f9eef6..0b6283e7e6474ef6a1e8f68ef751de35832733c5",
+    "vault_note_index_moc_verified": true,
+    "vault_stable_prose_reconciled": true,
+    "vault_idempotent_replay_verified": true
+  }
 }

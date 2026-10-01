@@ -106,3 +106,24 @@ No scope deviation or reusable skill update was needed. Once delivered, no local
 ready increment remains; the next trigger must audit the forward queue without
 repeating this delivery. R90-59/R90-75 retain their independent outstanding
 contracts. Feature delivery and the single docs-only closure remain.
+
+## Verified delivery and resume boundary
+
+Feature `0b6283e7e6474ef6a1e8f68ef751de35832733c5` contains exactly ten intended paths. Push without
+force/tags and fresh fetch verified clean HEAD/origin/main/FETCH_HEAD equality.
+Exact range `7dc6a1f38e80ea128b3e542af08e5af000f9eef6..0b6283e7e6474ef6a1e8f68ef751de35832733c5`
+was synchronized to the sole local Vault. Note/index/MOC and nine stable notes
+are verified; pre-existing immutable iteration bytes are preserved. Identical-
+range replay retained Vault Markdown hash
+`66feca85909ab71e63eec079562c5fa50b982fa2db8c1100628b5dd2a419f023`.
+
+Every acceptance row is covered by source review and documented unexecuted
+departmental cases. No scope deviation, behavioral proof, acceptance outcome or
+skill change is claimed. R90-127 is complete as implementation delivery under
+the standing testing split. No local ready increment remains; R90-59 authority
+and R90-75 departmental acceptance retain their full independent contracts.
+
+This single docs-only closure receives its own verified push/fetch/exact Vault
+range. The next trigger must verify that closure against fetched origin/main and
+audit the forward queue before selecting work. Do not repeat this feature's
+commit/push/sync, start unplanned consumer work or execute delegated tests.
