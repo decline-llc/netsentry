@@ -2,26 +2,22 @@
   "task": "r90-130-post-collector-delivery-queue-audit",
   "timestamp": "2026-10-01",
   "branch": "main",
-  "remote_baseline": "bb413363a47ea3beb5f6364b97532998637cf57f",
+  "remote_baseline": "475e136d34da967cb17c0a489848591d5ced9245",
   "risk_level": "Low",
-  "current_checkpoint": "static_review_complete_feature_delivery_pending",
+  "current_checkpoint": "complete_after_docs_only_delivery_closure",
   "completed": [
     "Fetched and verified clean HEAD/origin/main/FETCH_HEAD at the R90-129 final checkpoint",
     "Verified recent R90-129 feature and two docs-only commits plus final Vault iteration/index/MOC/hash",
     "Audited 37 commits since Sep 3 and confirmed 146 parseable task states plus 133 unique roadmap row/Definition pairs",
     "Confirmed no local ready item; R90-59 publication authority and R90-75 departmental acceptance remain independent",
-    "Found nine stable Vault notes with stale current handoff text directing completion of R90-129"
+    "Found nine stable Vault notes with stale current handoff text directing completion of R90-129",
+    "Persisted three-path queue repair plan and roadmap Definition before edits",
+    "Committed/pushed 475e136d34da967cb17c0a489848591d5ced9245; fetched remote matches",
+    "Reconciled nine stable notes; exact Vault range replay preserved Markdown hash",
+    "Persisted the R90-130 delivery closure with complete task-state resume instructions"
   ],
-  "in_progress": [
-    "Commit and deliver the post-delivery queue audit, reconcile nine stable notes, then create one docs-only closure"
-  ],
-  "todo": [
-    "Verify all R90-129 exact ranges and leave immutable iteration notes unchanged",
-    "Update nine stable notes and replay the exact latest range",
-    "Update roadmap row/Definition/history and final resume instruction",
-    "Run static documentation/JSON/scope/sensitive checks",
-    "Commit, push, fetch-verify and sync the exact delivery range"
-  ],
+  "in_progress": [],
+  "todo": [],
   "validation": {
     "tests": "not_run_user_delegated",
     "knowledge_check": "not_run_user_delegated",
@@ -33,5 +29,5 @@
     "R90-75 remains delegated; qualifying measurements have not been produced",
     "No local dependency-ready runtime increment has been identified"
   ],
-  "resume_instructions": "Complete only R90-130's documentation-only post-delivery queue audit. Do not repeat R90-129, alter immutable iteration notes, run behavioral tests or knowledge checks, execute R90-59 publication, or perform R90-75 acceptance. After exact Git/Vault delivery, record that no local item is ready unless new evidence or authority changes the queue."
+  "resume_instructions": "R90-130's audit and docs-only delivery closure are complete. On the next $netsentry-next trigger, verify current fetched remote and Vault state, then audit for new evidence that could change the queue. Do not repeat R90-129/R90-130, alter immutable iteration notes, run behavioral tests or knowledge checks, execute R90-59 publication, or perform R90-75 acceptance."
 }

@@ -53,3 +53,19 @@ Stop for new external authority, product scope, private evidence, or ambiguous
 Git/Vault identity. Do not execute or authorize R90-59 publication or R90-75
 departmental acceptance. No runtime/test changes, external coordination,
 publication, tag, benchmark, or next increment is in scope.
+
+## Feature delivery checkpoint
+
+Audit commit `475e136d34da967cb17c0a489848591d5ced9245` contains the exact three
+planned repository paths and is fetched at `HEAD`, `origin/main` and
+`FETCH_HEAD`. Exact range
+`bb413363a47ea3beb5f6364b97532998637cf57f..475e136d34da967cb17c0a489848591d5ced9245`
+has its iteration note, index row and MOC link. The nine stable notes now carry
+the corrected R90-130 current authority and no longer direct the next session
+to repeat R90-129. Identical-range replay preserved the 338-file Markdown hash
+`73b3ed1e2850b447070d91ff19811dbd52262fb09c366079c1b53ae13a7625f3`.
+`make docs-check`, JSON/roadmap multiset, diff, scope and sensitive-information
+checks pass. Tests/knowledge checks remain user-delegated and unrun. A docs-only
+delivery closure records this audit as complete. No local item is ready; the next
+trigger should verify current remote/Vault state and re-audit only if new evidence
+changes the queue. Do not repeat the stale R90-129 handoff or this audit.
