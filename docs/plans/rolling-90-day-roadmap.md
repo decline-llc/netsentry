@@ -5367,6 +5367,18 @@ planned and unstarted. No scope deviation or skill update was necessary.
 
 R90-128 documentation is delivered at `992ddd326a50b6d48603e6d8676eba91fa2a65da`.
 
+The exact three-path audit was pushed without force/tags; fresh fetch verified
+clean HEAD/origin/main/FETCH_HEAD equality. Exact range
+`f1effc42ddafca8d7d90a7caac54f1fa5f158f25..992ddd326a50b6d48603e6d8676eba91fa2a65da`
+was synchronized to the sole local Vault; note/index/MOC and nine stable notes
+are verified. Identical-range replay retained Vault Markdown hash
+`61622850670e143bbbc4f665701ac5af7cc7368ce337cba29f72c8cbd054a9dd`.
+Closure `a88476ced2b9ab2409a5a89aa17aa47d56dafd09` was separately fetched and
+synchronized over `992ddd326a50b6d48603e6d8676eba91fa2a65da..a88476ced2b9ab2409a5a89aa17aa47d56dafd09`; its replay preserved hash
+`6df06b8293443cb19e4f1fb497c59548f7cb4450c4cfce96104fbb7b8e5214f4`. Both
+feature/closure Vault notes, index/MOC, stable knowledge and queue state were
+verified. R90-129 was next ready; R90-59 and R90-75 remained independent.
+
 ### Oct 1: R90-129 standalone adapter input boundary selection
 
 Fresh fetch verifies clean HEAD/origin/main/FETCH_HEAD at
@@ -5414,20 +5426,16 @@ prose reconciliation. No behavioral tests, CLI smoke or knowledge suite ran;
 they remain delegated. This docs-only closure receives its own verified push,
 fetch and exact-range Vault sync. No next increment is started.
 
-The exact three-path audit was pushed without force/tags; fresh fetch verified
-clean HEAD/origin/main/FETCH_HEAD equality. Exact range
-`f1effc42ddafca8d7d90a7caac54f1fa5f158f25..992ddd326a50b6d48603e6d8676eba91fa2a65da`
-was synchronized to the sole local Vault; note/index/MOC and nine stable notes
-are verified. Current horizon/queue prose is reconciled, substantive integration
-knowledge and immutable iteration bytes are preserved. Identical-range replay
-retained Vault Markdown hash
-`61622850670e143bbbc4f665701ac5af7cc7368ce337cba29f72c8cbd054a9dd`.
-Static audit acceptance is complete; tests/knowledge suites remain delegated and
-unrun. No implementation, acceptance/publication outcome or skill change occurred.
-This single docs-only closure receives its own verified Git/Vault range. R90-129
-is next ready but unstarted: verify closure and persist its standalone adapter
-input-admission/budget/API/caller-compatibility plan before edits. R90-59 authority
-and R90-75 departmental acceptance retain their independent outstanding contracts.
+### Oct 1: R90-129 final closure verification
+
+Docs-only closure `14d119c9a91549ebb39fcea59b98f23b2f7ef11f` is fetched at
+HEAD/origin/main/FETCH_HEAD and its exact Vault range is verified. The generated
+closure note/index/MOC links exist. Nine stable notes now state that both feature
+and closure are delivered; identical-range replay retained 336-file Markdown
+hash `07a746c1de0d71dd68247354bfac653722e2f1761ece7386cf42143b7b719b1b`.
+This final docs-only reconciliation corrects a stale closure-pending statement
+discovered during stable-note review. R90-129 is complete with testing delegated;
+no subsequent local ready increment is defined or started.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a

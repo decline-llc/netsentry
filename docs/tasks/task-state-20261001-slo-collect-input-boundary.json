@@ -4,22 +4,19 @@
   "branch": "main",
   "remote_baseline": "c2e87f5ad9521ee7a61c5f6da4ef58ff0ac26639",
   "risk_level": "Medium",
-  "current_checkpoint": "feature_pushed_vault_synced_closure_pending",
+  "current_checkpoint": "complete_feature_and_closure_verified",
   "completed": [
     "Verified R90-128 feature/closure exact Git/Vault evidence and stable authority",
     "Reviewed rolling queue and source/call-site boundary; R90-129 is highest-priority ready local increment",
     "Persisted eight-path API/admission/budget/receipt/caller acceptance plan before source changes",
     "Implemented same-handle admission, shared aggregate source-byte accounting, retained-source metadata check and reconstruction budget propagation",
     "Passed static checks and exact-scope review; pushed feature and verified fetched remote",
-    "Synchronized exact feature range, verified iteration/index/MOC and reconciled nine stable notes; identical-range replay preserved Markdown hash"
+    "Synchronized exact feature range, verified iteration/index/MOC and reconciled nine stable notes; identical-range replay preserved Markdown hash",
+    "Pushed and fetched docs-only closure; synchronized its exact range and verified iteration/index/MOC",
+    "Reconciled closure status across nine stable notes and verified idempotent closure replay/hash"
   ],
-  "in_progress": [
-    "Commit docs-only feature delivery closure; fetch-verify and sync its exact range"
-  ],
-  "todo": [
-    "Static AST/docs/JSON/roadmap/scope/sensitive review",
-    "Single docs-only delivery closure"
-  ],
+  "in_progress": [],
+  "todo": [],
   "validation": {
     "tests": "not_run_user_delegated",
     "knowledge_check": "not_run_user_delegated",
@@ -29,5 +26,5 @@
     "No executed regressions or scale/behavior evidence under user test delegation",
     "Physical acquisition, clock, durability and SLO facts remain unverified"
   ],
-  "resume_instructions": "R90-129 feature is pushed and its exact Vault range is reconciled. Complete only the docs-only closure, fetch-verify and sync that exact closure range; do not repeat feature commit/push/sync, execute behavioral tests, run CLI smoke or start another increment. Testing and knowledge checks remain user-delegated."
+  "resume_instructions": "R90-129 feature and docs-only delivery closure are complete; exact Git and Vault ranges plus stable-note reconciliation are recorded. On the next $netsentry-next trigger, verify current fetched remote and Vault state, then audit the forward queue. Do not repeat R90-129 or run behavior tests, CLI smoke or knowledge checks; testing remains user-delegated."
 }
