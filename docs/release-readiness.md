@@ -1,6 +1,6 @@
 # NetSentry Release Readiness
 
-> Status: release-candidate preparation. This file tracks public release gates and evidence commands. It must not contain private pcap paths, private fuzz corpora, credentials, or local operator notes.
+> Status: v0.1.1 published and verified on 2026-10-01. This file tracks public release gates and evidence commands. It must not contain private pcap paths, private fuzz corpora, credentials, or local operator notes.
 
 ## Current Gate State
 
@@ -23,16 +23,17 @@ Ready:
 - The tag publication workflows now run `make release-gate` after `make rc-check` and before building release assets or logging in to GHCR.
 - The approved v0.1.0 exception in `docs/audit/release_exception_v0.1.0.yaml` scopes out only real production-derived pcap evidence and expires before v0.1.1.
 - The 2026-07-12 supply-chain gate pins the Go CI toolchain to `go1.25.12`, pins every third-party Action to a reviewed full commit SHA, validates all workflows with `actionlint v1.7.12`, scans reachable Go code with `govulncheck v1.6.0`, and fetches/verifies all 9 locked external fixture/license files only in an ephemeral directory.
-- R90-105 refreshes the current `main` execution toolchain to reviewed
+- R90-105 refreshed the current `main` execution toolchain to reviewed
   `go1.25.14` while preserving the `go 1.22.2` language baseline. The official
   Linux amd64 archive SHA-256 is
   `a21ae5633a269bcd7e90cf767e48225633795e99d831742cbf3397064fee7712`.
-  This current-branch hardening does not alter the immutable `v0.1.1` tag or
-  complete R90-59 publication.
-  Focused fetched supply-chain validation passes with all 9 assets and zero
+  At that historical delivery checkpoint, this current-branch hardening did
+  not alter the then-local `v0.1.1` tag or complete R90-59 publication; the
+  later patched candidate and verified publication are recorded below.
+  Focused fetched supply-chain validation passed with all 9 assets and zero
   reachable vulnerabilities. Native RC validation, 81.3% Go statement
   coverage, both sanitizer fuzz targets, E2E, archive smoke, a digest-pinned
-  Docker build plus image/runtime smoke, and the v0.1.1 release gate pass. The
+  Docker build plus image/runtime smoke, and the v0.1.1 release gate passed. The
   configured Docker mirrors prevented an unqualified ordinary `make rc-check`
   result; the exact frontend/base digests and equivalent build deviation are
   recorded in the R90-105 task plan.
@@ -48,7 +49,23 @@ Ready:
   passed. The fresh `linux/amd64` archive is 9,760,241 bytes with SHA-256
   `c68e09df46d24307c9a0d405a2724573f3382813a8b2611bdb5f3b7d8b068568`.
   Publication remains on hold; no tag, GitHub Release, or GHCR image was
-  created.
+  created at that historical checkpoint.
+- R90-59 completed on 2026-10-01 after explicit patched-candidate and tag-
+  replacement authority. Signed tag object `cbe602ff997c14a375f89acad00ab4d572fa49de`
+  points to candidate `e6f519ade6ad4fa758e8924e66e9a5a1347291a0`, patched to
+  Go 1.26.8 (official Linux amd64 archive SHA-256
+  `d0f743b33e8d8945e6b1f432edd15785c70507121d6e2a723b21285eddf8b57b`). Full
+  Docker RC, fetched supply-chain scan (9/9 assets, zero reachable
+  vulnerabilities), release gate, both workflows, GitHub Release checksum,
+  and GHCR digest/platform were verified. The GitHub archive is 9,905,076
+  bytes, SHA-256
+  `6bbeb5b680f2d94e05ef27b27dee875fd454eb96497ed82e254e67f33b92b8e8`; GHCR
+  tags `v0.1.1` and `0.1.1` share index digest
+  `sha256:f4aae2de10c7553c011b05cad8ba86f7e3e3ec9265507b3f36744ea2d26321be`
+  with `linux/amd64` manifest
+  `sha256:e55caf21991aac2c126e1660cfcb4ab01f061654b750a70b750ce5615c75306e`.
+  The workflow-produced archive is the publication identity; local build bytes
+  are recorded separately in `docs/evidence/release-v0.1.1.md`.
 
 v0.1.0 publication result:
 

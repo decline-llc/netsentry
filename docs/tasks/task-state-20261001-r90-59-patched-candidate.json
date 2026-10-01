@@ -1,0 +1,80 @@
+{
+  "task": "r90-59-v0.1.1-patched-candidate-publication",
+  "timestamp": "2026-10-01",
+  "branch": "main",
+  "remote_baseline": "5dced1bc9576f769d770a227d3989fbe0c0f4ea4",
+  "risk_level": "High",
+  "current_checkpoint": "final-checks-passed-awaiting-audit-delivery-and-vault-verification",
+  "completed": [
+    "Fetched origin main and tags and verified clean HEAD, origin/main and FETCH_HEAD equality at 5dced1bc9576f769d770a227d3989fbe0c0f4ea4",
+    "Confirmed local v0.1.1 still peels to historical candidate 78cd78574e03c8f73ff68248eed2c409d6bca406 and direct remote lookup returns no matching tag",
+    "Received explicit user authorization to prepare a patched candidate and replace/resign the v0.1.1 tag, with complete revalidation including behavioral tests and knowledge checks",
+    "Verified official Go release policy and release history identify Go 1.26.8 as the latest patch in the newest supported line; current main's Go 1.25.14 pin is behind",
+    "Created minimal patched candidate e6f519ade6ad4fa758e8924e66e9a5a1347291a0 at tree db9356712ed765f820b29038f4ff399c4549877f, based on the approved historical v0.1.1 payload",
+    "Full VERSION=0.1.1 make rc-check passed with Go 1.26.8, including C and Go race tests, 78.3 percent Go coverage, 5000 parser fuzz iterations, E2E, archive/checksum, Docker image content and runtime health",
+    "Fetched supply-chain gate passed actionlint, all 9 locked fixture/license hashes and 0 reachable vulnerabilities; one vulnerability in a required module was reported as not called",
+    "Exact candidate release gate passed and archive validated as linux/amd64, 9908296 bytes, SHA-256 67d02e15a3272e22ca4e86bba9fdd0c6fa02bfa6524bb3e355f8833801526d0b",
+    "Candidate RC knowledge-check passed 33 tests; current main knowledge-check passed 33 tests; docs-check, JSON parse and diff check passed",
+    "Replaced local tag with signed annotated object cbe602ff997c14a375f89acad00ab4d572fa49de at candidate e6f519ade6ad4fa758e8924e66e9a5a1347291a0 and verified signature with the historical release identity",
+    "Pushed only refs/tags/v0.1.1 through authenticated SSH-over-443 after SSH port 22 was unreachable; fetched remote tag object and peeled target match local exactly",
+    "GitHub Release run 36889806244 and Docker Publish run 36889806404 completed successfully for exact candidate SHA e6f519ade6ad4fa758e8924e66e9a5a1347291a0",
+    "Release run published a non-draft, non-prerelease release at https://github.com/decline-llc/netsentry/releases/tag/v0.1.1",
+    "Downloaded the workflow archive (9905076 bytes, SHA-256 6bbeb5b680f2d94e05ef27b27dee875fd454eb96497ed82e254e67f33b92b8e8), validated its paired 101-byte checksum, and confirmed linux-amd64 package contents; it is distinct from the local archive",
+    "Direct GHCR inspection confirms v0.1.1 and 0.1.1 share index digest sha256:f4aae2de10c7553c011b05cad8ba86f7e3e3ec9265507b3f36744ea2d26321be and linux/amd64 manifest sha256:e55caf21991aac2c126e1660cfcb4ab01f061654b750a70b750ce5615c75306e",
+    "Final docs-check, 33-test knowledge-check, git diff check and all task-state JSON parsing passed after release evidence and audit updates"
+  ],
+  "in_progress": [
+    "Commit, push and fetch-verify the audit closure; synchronize its exact full-SHA range to the local Vault; verify generated notes, index and MOC, then replay idempotently"
+  ],
+  "todo": [],
+  "authority_boundaries": [
+    "Patched candidate and local v0.1.1 tag replacement/resigning are explicitly authorized",
+    "Use only the v0.1.1 candidate and checked-in tag-triggered Release and GHCR workflows",
+    "Publish only after all candidate gates pass and signing/remote/artifact identities are directly verified",
+    "Do not begin R90-75 or publish additional versions, tags, images or platforms"
+  ],
+  "validation": {
+    "candidate": "pass:e6f519ade6ad4fa758e8924e66e9a5a1347291a0",
+    "behavioral_tests": "pass:full-rc-check",
+    "supply_chain": "pass:9-of-9-assets;zero-reachable-findings",
+    "release_gate": "pass",
+    "knowledge_check": "pass:33-candidate;33-main",
+    "replacement_tag": "pass:cbe602ff997c14a375f89acad00ab4d572fa49de",
+    "remote_publication": "pass:tag-release-ghcr-verified"
+  },
+  "tag": {
+    "name": "v0.1.1",
+    "candidate": "e6f519ade6ad4fa758e8924e66e9a5a1347291a0",
+    "local_object": "cbe602ff997c14a375f89acad00ab4d572fa49de",
+    "remote_object": "cbe602ff997c14a375f89acad00ab4d572fa49de",
+    "signature": "pass:SHA256:lanK75hksvHVuDmY55rdL1CJVqj4ZjqgBuE5/kMm4ZU"
+  },
+  "workflows": {
+    "release": {
+      "run_id": "36889806244",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "docker_publish": {
+      "run_id": "36889806404",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  },
+  "release": {
+    "url": "https://github.com/decline-llc/netsentry/releases/tag/v0.1.1",
+    "is_draft": false,
+    "is_prerelease": false,
+    "archive": "netsentry-0.1.1-linux-amd64.tar.gz",
+    "archive_bytes": 9905076,
+    "archive_sha256": "6bbeb5b680f2d94e05ef27b27dee875fd454eb96497ed82e254e67f33b92b8e8",
+    "checksum_verified": true
+  },
+  "ghcr": {
+    "v0.1.1": "sha256:f4aae2de10c7553c011b05cad8ba86f7e3e3ec9265507b3f36744ea2d26321be",
+    "0.1.1": "sha256:f4aae2de10c7553c011b05cad8ba86f7e3e3ec9265507b3f36744ea2d26321be",
+    "platform": "linux/amd64",
+    "platform_manifest": "sha256:e55caf21991aac2c126e1660cfcb4ab01f061654b750a70b750ce5615c75306e"
+  },
+  "resume_instructions": "R90-59 candidate validation, tag replacement, publication and final checks are complete. Finish only the audit commit/push/fetch and exact Vault synchronization/idempotency verification; do not repeat release actions or start R90-75."
+}

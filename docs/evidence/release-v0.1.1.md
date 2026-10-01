@@ -64,15 +64,29 @@
 
 ## Tag Publication Verification
 
-- Tag: not created
-- Tag commit: not applicable
-- GitHub Release workflow: not authorized
-- Release asset: not published
-- Release checksum: local distribution checksum passed
-- GHCR workflow: not authorized
-- Image: local `netsentry:0.1.1` validation image only
-- Reviewer decision: publication remains pending separate authorization
-- Notes: R90-05 does not authorize tagging or publication.
+- Tag: signed annotated `v0.1.1`, pushed and fetched
+- Tag object: `cbe602ff997c14a375f89acad00ab4d572fa49de`
+- Tag commit: `e6f519ade6ad4fa758e8924e66e9a5a1347291a0`
+- Signature: verified with release SSH key `SHA256:lanK75hksvHVuDmY55rdL1CJVqj4ZjqgBuE5/kMm4ZU`
+- GitHub Release workflow: passed, run `36889806244`
+- Release: published 2026-10-01, non-draft and non-prerelease
+- Release asset: `netsentry-0.1.1-linux-amd64.tar.gz`, 9,905,076 bytes, SHA-256 `6bbeb5b680f2d94e05ef27b27dee875fd454eb96497ed82e254e67f33b92b8e8`
+- Release checksum asset: `netsentry-0.1.1-linux-amd64.tar.gz.sha256`; downloaded checksum verified against the archive
+- GHCR workflow: passed, run `36889806404`
+- GHCR tags `v0.1.1` and `0.1.1`: both resolve to index `sha256:f4aae2de10c7553c011b05cad8ba86f7e3e3ec9265507b3f36744ea2d26321be`; `linux/amd64` manifest is `sha256:e55caf21991aac2c126e1660cfcb4ab01f061654b750a70b750ce5615c75306e`
+- Reviewer decision: publication verified against the exact authorized candidate
+- Notes: The independently generated local candidate archive (9,908,296 bytes, SHA-256 `67d02e15a3272e22ca4e86bba9fdd0c6fa02bfa6524bb3e355f8833801526d0b`) differs from the workflow-produced release asset and is not substituted for it.
+
+## R90-59 Candidate Revalidation
+
+- Date: 2026-10-01
+- Candidate: `e6f519ade6ad4fa758e8924e66e9a5a1347291a0`, tree `db9356712ed765f820b29038f4ff399c4549877f`; based on the approved historical v0.1.1 payload with only the Go toolchain/lock/documentation patch
+- Toolchain: Go `1.26.8`, the latest patch in the newest supported release line at review; official Linux amd64 archive SHA-256 `d0f743b33e8d8945e6b1f432edd15785c70507121d6e2a723b21285eddf8b57b`
+- Behavioral validation: full `VERSION=0.1.1 make rc-check` passed, including C and Go race suites, 78.3% Go statement coverage, 5,000 parser fuzz iterations, E2E (6 packets/5 alerts), distribution archive/checksum, Docker image contents and runtime health
+- Supply-chain validation: fetched all 9 locked fixture/license assets with exact hashes; actionlint and pinned `govulncheck v1.6.0` passed with zero reachable vulnerabilities. One vulnerability exists in a required module but is not called by the candidate.
+- Release gate: `RELEASE_EVIDENCE=docs/evidence/release-v0.1.1.md make release-gate` passed
+- Knowledge validation: candidate RC's knowledge gate passed 33 tests; current main `make knowledge-check` passed 33 tests
+- Local candidate archive: `netsentry-0.1.1-linux-amd64.tar.gz`, Linux amd64, 9,908,296 bytes, SHA-256 `67d02e15a3272e22ca4e86bba9fdd0c6fa02bfa6524bb3e355f8833801526d0b`; distinct from the 9,905,076-byte workflow release asset above
 
 ## Sensitive Information Review
 
@@ -88,5 +102,5 @@
 - Sustained external fuzz evidence reviewed: yes
 - Realistic sanitized pcap corpus evidence reviewed: yes
 - Local RC validation reviewed: yes
-- Tag publication verified: no
+- Tag publication verified: yes
 - Approved for release: yes

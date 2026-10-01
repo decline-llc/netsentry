@@ -29,17 +29,17 @@
 ## User-Directed Development and Test Department Split (Sep 25)
 
 The user explicitly instructed the agent to skip tests and continue development;
-a specialist department will complete testing. This supersedes the agent-run
-unit, integration, benchmark, acceptance and `make knowledge-check` gates in
-the skills and this roadmap for subsequent implementation deliveries, until the
-user changes that instruction. Do not run those suites, disable CI, fabricate
-passes or infer compliance. Use static source/syntax/JSON/diff and sensitive-
-information review plus direct Git/remote/Vault verification for development
-closeout; record behavioral validation as **not run; delegated by user**.
-A bounded implementation increment may be delivered with that explicit
-validation limitation. R90-75 acceptance remains the department's outstanding
-outcome. Local hardware shortfalls and unavailable acceptance artifacts do not
-block implementation work; the formal SLO and evidence contract is unchanged.
+a specialist department will complete testing. This supersedes agent-run
+behavioral and knowledge gates for subsequent implementation deliveries until
+the user changes that instruction. On Oct 1, the user explicitly requested
+behavioral tests and knowledge checks for R90-59; the full candidate RC and
+knowledge checks are completed and recorded in its state. This task-scoped
+authorization does not claim R90-75 acceptance, which remains the department's
+outstanding outcome. For other work, do not run suites, disable CI, fabricate
+passes or infer compliance unless the user authorizes testing; record delegated
+validation as **not run; delegated by user**. Local hardware shortfalls and
+unavailable R90-75 acceptance artifacts do not block implementation work; its
+formal SLO and evidence contract is unchanged.
 
 ## Per-Trigger Plan Audit
 
@@ -136,7 +136,7 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-57 | Forecast Sep 19–Oct 2; waived | Complete early | Define restart-free emergency recovery semantics. | R90-56 | An operator-triggered, fail-closed state machine defines probe, recovery, retry, concurrency, and evidence-preservation boundaries without duplicate writes or automatic cleanup; implementation remains a separate increment. |
 | R90-58 | Oct 3–21 | Complete early | Refresh the v0.1.1 candidate decision package. | R90-56 | Version, current candidate commit, gates, artifacts, checksums, platform, and hold decision are reconciled from fresh evidence without tagging or publishing. |
 | R90-59a | Aug 7 | Complete | Create the authorized local v0.1.1 tag without remote publication. | R90-58; exact tag-only authorization | A signed annotated local `v0.1.1` tag resolves exactly to the authorized candidate after candidate changelog/evidence review and smoke validation; the remote tag remains absent and no workflow, GitHub Release, or GHCR action occurs. |
-| R90-59 | Oct 22–28 | Blocked on failed candidate supply-chain gate and new-candidate authority | Execute the remote v0.1.1 publication gate. | R90-59a; explicit publication authority granted; passing exact-candidate supply-chain gate unfinished | Only an explicitly authorized signed `v0.1.1` tag may be pushed after zero-finding candidate validation; its exact remote tag, successful GitHub Release assets/checksum, and GHCR digest/platform must be verified directly. |
+| R90-59 | Oct 1 | Complete early | Publish the patched v0.1.1 candidate and verify release artifacts. | R90-59a; explicit patched-candidate/tag-replacement authority; prior publication grant | Signed remote tag object `cbe602ff997c14a375f89acad00ab4d572fa49de` resolves to validated candidate `e6f519ade6ad4fa758e8924e66e9a5a1347291a0`; full Docker RC, fetched supply-chain scan and release gate pass; both tag workflows succeed; GitHub archive checksum and GHCR index/platform digests are directly verified. |
 | R90-60 | Forecast Aug 1–Oct 30; waived | Complete early | Implement operator-triggered restart-free storage recovery. | R90-57 | One authenticated request serializes recovery against store lifecycle operations, preflights durable input before the writable boundary, replays or probes idempotently, exposes bounded health/audit outcomes, and leaves failures in sticky emergency without automatic cleanup or retry. |
 | R90-61 | Aug 2 | Complete | Audit post-recovery delivery and restore the forward queue. | R90-60 | A dated audit reconciles recent commits, plans/states, fetched remote and Vault evidence, records the committed-prefix test gap, and restores a complete evidence-grounded queue without runtime or publication changes. |
 | R90-62 | Aug 3–Sep 4 | Complete early | Prove committed-prefix multi-shard recovery retry. | R90-61 | Deterministic direct regressions cancel or fail recovery after an earlier shard commit, retain the complete log and emergency state, and prove explicit retry completes every event once without aggregate inflation. |
@@ -1236,31 +1236,38 @@ block implementation work; the formal SLO and evidence contract is unchanged.
   `78cd78574e03c8f73ff68248eed2c409d6bca406` was superseded by the Aug 23
   exact-object publication grant below. Its earlier absence of publication
   authority is not the current blocker.
-- **Unblock condition:** obtain explicit authority for the patched candidate
-  and replacement/resigning of the still-local tag, then complete fresh exact-
-  candidate validation and artifact reconciliation before publication.
-- **Authorization:** On Aug 23 the user explicitly authorized pushing the
+- **Unblock condition:** resolved on Oct 1, 2026 by explicit patched-candidate
+  and tag-replacement/resigning authority, followed by complete fresh
+  candidate validation and artifact reconciliation.
+- **Historical authorization:** On Aug 23 the user explicitly authorized pushing the
   existing signed `v0.1.1` tag at the exact candidate, both tag-triggered
   publication workflows, the historical `[Unreleased]` changelog shape, and
   reconciliation of the workflow-produced artifact as distinct from both
-  prior local builds. The tag may not be moved or recreated.
-- **Pre-publication blocker:** Exact-candidate pinned `govulncheck v1.6.0`
+  prior local builds. The Oct 1 user authorization supersedes the old
+  no-tag-movement boundary for this new candidate only.
+- **Resolved pre-publication blocker:** Exact-candidate pinned `govulncheck v1.6.0`
   fails on reachable Go 1.25.12 standard-library findings `GO-2026-6090`,
   `GO-2026-6089`, and `GO-2026-5972`; the vulnerability database identifies
-  Go 1.25.13 as fixing all three. Both tag workflows run this gate before
-  publication. Safe recovery requires a patched candidate, complete fresh
-  validation/artifact evidence, and explicit authority to replace and resign
-  the still-local tag at that new candidate.
+  Go 1.25.13 as fixing all three. The replacement candidate pins Go 1.26.8;
+  fresh `govulncheck` reports zero reachable vulnerabilities. The historical
+  findings remain attached to the old candidate, not the published one.
 - **Completed dependency:** R90-105 delivered current-main Go 1.25.14 in
   `c50c184e7797440139b644ac7407ff238075d733`; do not repeat that increment.
   It did not change or validate the historical signed candidate.
-- **Stop condition:** remain blocked without explicit new-candidate and tag
-  replacement/resigning authority; stop on any SHA, tag, digest, platform,
-  workflow, artifact, or required-validation ambiguity.
+- **Completion evidence:** Candidate `e6f519ade6ad4fa758e8924e66e9a5a1347291a0`
+  passed full Docker RC, fetched supply-chain, release-gate and knowledge
+  checks. Signed tag object `cbe602ff997c14a375f89acad00ab4d572fa49de` was
+  fetched and verified. GitHub Release run `36889806244` and Docker Publish run
+  `36889806404` succeeded. The workflow archive is 9,905,076 bytes with SHA-256
+  `6bbeb5b680f2d94e05ef27b27dee875fd454eb96497ed82e254e67f33b92b8e8`; GHCR
+  tags share index digest `sha256:f4aae2de10c7553c011b05cad8ba86f7e3e3ec9265507b3f36744ea2d26321be`
+  and linux/amd64 manifest `sha256:e55caf21991aac2c126e1660cfcb4ab01f061654b750a70b750ce5615c75306e`.
+- **Stop condition:** stop on any SHA, tag, digest, platform, workflow,
+  artifact, or required-validation ambiguity.
 - **Selected plan:**
-  [`task-20260823-v0.1.1-remote-publication.md`](task-20260823-v0.1.1-remote-publication.md),
+  [`task-20261001-r90-59-patched-candidate.md`](task-20261001-r90-59-patched-candidate.md),
   from clean fetched baseline
-  `8724b816a77c4bdeac899e4848dcb5bcd5232a93`.
+  `5dced1bc9576f769d770a227d3989fbe0c0f4ea4`.
 
 ## R90-59a Definition
 
@@ -6132,3 +6139,42 @@ configured mode through the pathname after `net.Listen`, then captures a later
 non-following pathname without proving it identifies the created listener;
 existing direct tests do not replace the pathname in that interval. No later
 increment or publication action is started.
+
+R90-59 completed on 2026-10-01. The trigger began from clean fetched
+`main`/`origin/main`/`FETCH_HEAD` `5dced1bc9576f769d770a227d3989fbe0c0f4ea4`
+with the historical local tag at `78cd78574e03c8f73ff68248eed2c409d6bca406`
+and no remote tag or Release. The 39 commits since Sep 17 were reviewed across
+four delivery phases (Sep 23; Sep 25-26; Sep 29-30; Oct 1), along with task
+states, roadmap row/Definition coverage, R90-130 Vault evidence, and current
+release authority. No missing delivery record or new R90-75 acceptance evidence
+was found. The new Oct 1 request explicitly authorized the patched candidate,
+tag replacement/resigning, full behavioral tests, and knowledge checks for
+R90-59; it did not accept R90-75 on the department's behalf.
+
+The exact candidate is
+`e6f519ade6ad4fa758e8924e66e9a5a1347291a0`, based on the approved historical
+v0.1.1 payload plus the minimal Go toolchain/supply-chain documentation change
+to Go 1.26.8. Go 1.26.8 was the latest patch in the newest supported line per
+the [official Go release history](https://go.dev/doc/devel/release) and its
+Linux amd64 archive SHA-256 is
+`d0f743b33e8d8945e6b1f432edd15785c70507121d6e2a723b21285eddf8b57b` from the
+[official download metadata](https://go.dev/dl/?mode=json). Full Docker RC
+passed with 78.3% Go coverage, C/Go race tests, 5,000 parser fuzz iterations,
+6-packet/5-alert E2E, archive/checksum and image/runtime smoke. Fetched
+supply-chain validation matched 9/9 locked assets and `govulncheck v1.6.0`
+reported zero reachable vulnerabilities. The release gate and both 33-test
+knowledge-check runs passed.
+
+Signed replacement tag object
+`cbe602ff997c14a375f89acad00ab4d572fa49de` was pushed and fetched with the exact
+peeled candidate. GitHub Release run `36889806244` and Docker Publish run
+`36889806404` succeeded. The published archive is 9,905,076 bytes and SHA-256
+`6bbeb5b680f2d94e05ef27b27dee875fd454eb96497ed82e254e67f33b92b8e8`; its
+paired checksum verified. It is distinct from the local 9,908,296-byte build
+(`67d02e15a3272e22ca4e86bba9fdd0c6fa02bfa6524bb3e355f8833801526d0b`). GHCR
+tags `v0.1.1` and `0.1.1` share index digest
+`sha256:f4aae2de10c7553c011b05cad8ba86f7e3e3ec9265507b3f36744ea2d26321be`
+and linux/amd64 manifest
+`sha256:e55caf21991aac2c126e1660cfcb4ab01f061654b750a70b750ce5615c75306e`.
+R90-59 is complete; R90-75 remains independently acceptance-delegated and no
+other increment was started.
