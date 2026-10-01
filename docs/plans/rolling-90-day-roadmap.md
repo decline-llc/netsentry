@@ -207,6 +207,7 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-127 | Sep 30–Dec 18 | Complete implementation; tests delegated | Integrate fresh sender-source reconstruction into bundle and pair review. | R90-126 | An explicit offline sender-replay option replays retained bundle sources, binds fresh inventories and propagates incomplete/mismatch/error results through single and pair review without trusting an old receipt or claiming physical/SLO facts. |
 | R90-128 | Oct 1 | Complete documentation; execution delegated | Audit sender-integration delivery and restore the bounded adapter-input queue. | R90-127 | Reconcile delivery/history/Vault, refresh the horizon, and define standalone adapter input admission and retention limits from source evidence without runtime work. |
 | R90-129 | Oct 1–Dec 18 | Complete implementation; tests delegated | Bound finalized-file admission and retained input bytes in the standalone SLO adapter. | R90-128; R90-115 adapter and R90-122 reconstruction contracts | Admit only supplied regular files through non-following/nonblocking handles, account for all three inputs under a configurable byte budget, reject changed/oversized sources without completion, preserve partial evidence and existing sender/adapter formats. |
+| R90-130 | Oct 1–Dec 29 | In progress | Audit post-collector delivery and restore the forward queue. | R90-129 | Reconcile the three R90-129 Git/Vault ranges, phase history, task states and nine current stable notes; correct the stale next-session handoff, preserve immutable iteration notes, and leave only evidence-grounded work with exact blockers, without tests or acceptance claims. |
 
 ## R90-01 Definition
 
@@ -2847,6 +2848,29 @@ block implementation work; the formal SLO and evidence contract is unchanged.
   authority; ambiguous input must fail without completion, never imply a valid
   acquisition. Persist a separate implementation plan before editing behavior.
 
+## R90-130 Definition
+
+- **Goal:** audit the R90-129 delivery chain and remove its stale current Vault
+  handoff while restoring an evidence-grounded forward queue.
+- **Dependencies/window:** R90-129 feature and delivery closure; Oct 1–Dec 29.
+  Forecast dates do not gate execution.
+- **Risk:** an outdated note can instruct the next session to repeat delivered
+  work or obscure that the only remaining items require external authority or
+  departmental acceptance.
+- **Acceptance:** review the recent 37-commit phase, clean fetched baseline,
+  task/roadmap multisets, R90-59/R90-75 contracts and exact R90-129 commit/Vault
+  evidence; reconcile all nine stable notes without rewriting iteration notes;
+  document no ready local item unless new evidence establishes one.
+- **Required review:** `make docs-check`, task-state JSON, complete unique
+  roadmap multisets and ordered history, local links/fences, exact scope,
+  `git diff --check`, sensitive-information review, and exact push/fetch/Vault
+  verification. Tests and knowledge checks remain delegated and unrun.
+- **Non-goals:** runtime/tests/CLI/acceptance, publication, tag changes, private
+  evidence, external coordination, or beginning a subsequent increment.
+- **Stop condition:** stop for new external authority, product scope, private
+  evidence, or ambiguous Git/Vault identity; do not invent readiness to fill an
+  empty local queue.
+
 
 ### R90-71 Validation Deviation
 
@@ -5436,6 +5460,29 @@ hash `07a746c1de0d71dd68247354bfac653722e2f1761ece7386cf42143b7b719b1b`.
 This final docs-only reconciliation corrects a stale closure-pending statement
 discovered during stable-note review. R90-129 is complete with testing delegated;
 no subsequent local ready increment is defined or started.
+
+### Oct 1: R90-130 post-collector queue audit selection
+
+Fresh fetch verifies clean `HEAD`/`origin/main`/`FETCH_HEAD` at
+`bb413363a47ea3beb5f6364b97532998637cf57f`. R90-129's feature and two docs-only
+records are present; all three exact Vault iteration notes, index entries and
+MOC links exist. The latest range replay preserved the 337-file Markdown hash
+`8c8717bb583cb221e6f91e9c0b17cb6829f3a1a71f72ba75af254b3edbd81a9a`. A 37-commit
+Sep 3–Oct 1 phase audit found no missing code/delivery pair or new acceptance
+artifact. All 146 task states parse and 133 roadmap rows/Definitions match as
+unique multisets. R90-59 remains blocked on patched-candidate/tag replacement
+authority and fresh validation; R90-75 remains departmental. The nine stable
+notes still instructed the next session to finish the already delivered
+R90-129 closure. R90-130 is selected as a documentation-only correction; no
+behavioral test, knowledge check or acceptance run occurs. No later increment
+is started.
+
+R90-130 static review passes `make docs-check`, all 147 task-state JSON files,
+134 complete unique roadmap row/Definition pairs, exact three-path repository
+scope, `git diff --check` and credential-prefix scan. Vault review confirms all
+nine current stable notes contain the stale handoff; the three R90-129 iteration
+notes and index/MOC links are present before repair. No behavioral tests, CLI
+smoke, acceptance or knowledge checks ran, per user delegation. Delivery remains.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
