@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-09-30 through 2026-12-28. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-10-01 through 2026-12-29. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -205,6 +205,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-125 | Sep 30 | Complete documentation; execution delegated | Reconcile post-runbook delivery and restore a source-grounded local queue. | R90-124 | Verify delivery/history, correct superseded active SLO blockers, and define bounded offline sender-source reconstruction with complete review/authority contracts; no runtime work or tests. |
 | R90-126 | Sep 30–Dec 11 | Complete implementation; tests delegated | Reconstruct offered-oracle and submission evidence from retained sender fixtures. | R90-125; R90-117 sender contract | A standalone offline operation retains and validates four sender files, streams fixture/offer/submission correlation, derives event IDs and frame length/hash using pure construction, and preserves failures without sending traffic or asserting physical facts/SLO compliance. |
 | R90-127 | Sep 30–Dec 18 | Complete implementation; tests delegated | Integrate fresh sender-source reconstruction into bundle and pair review. | R90-126 | An explicit offline sender-replay option replays retained bundle sources, binds fresh inventories and propagates incomplete/mismatch/error results through single and pair review without trusting an old receipt or claiming physical/SLO facts. |
+| R90-128 | Oct 1 | In progress | Audit sender-integration delivery and restore the bounded adapter-input queue. | R90-127 | Reconcile delivery/history/Vault, refresh the horizon, and define standalone adapter input admission and retention limits from source evidence without runtime work. |
+| R90-129 | Oct 1–Dec 18 | Planned | Bound finalized-file admission and retained input bytes in the standalone SLO adapter. | R90-128; R90-115 adapter and R90-122 reconstruction contracts | Admit only supplied regular files through non-following/nonblocking handles, account for all three inputs under a configurable byte budget, reject changed/oversized sources without completion, preserve partial evidence and existing sender/adapter formats. |
 
 ## R90-01 Definition
 
@@ -2796,6 +2798,56 @@ block implementation work; the formal SLO and evidence contract is unchanged.
   absent evidence stays incomplete and never establishes compliance.
 
 
+## R90-128 Definition
+
+- **Goal:** reconcile completed sender-integration delivery, advance the active
+  horizon and restore one bounded source-grounded local follow-up.
+- **Dependencies/window:** R90-127 verified implementation delivery; Oct 1.
+- **Risk:** documentation churn or unsupported failure claims could obscure
+  absent behavioral evidence and the independent release/acceptance boundaries.
+- **Acceptance:** verify R90-127 feature/closure and phase history against fetched
+  remote/Vault; refresh Oct 1–Dec 29 horizon; map standalone adapter admission/
+  budget behavior and shared callers; define R90-129 completely without coding it.
+- **Required review:** static source references, docs/JSON/complete unique roadmap
+  multisets/history/links/diff/sensitive scope and verified Git/Vault delivery.
+  Tests and knowledge suites remain not run, delegated by user.
+- **Non-goals:** runtime/tool schema/test/measurement/CI/release changes.
+- **Stop condition:** new product/private/external authority or contradictory
+  delivery evidence; do not infer executed failures or qualifying acceptance.
+
+## R90-129 Definition
+
+- **Goal:** enforce bounded finalized-file admission and input retention for
+  standalone adapter collection, matching the existing wrapper's safety boundary.
+- **Dependencies/window:** R90-128 audit and delivered R90-115/R90-122 contracts;
+  Oct 1–Dec 18. Forecast dates do not gate execution.
+- **Risk:** ordinary opens can block on nonregular inputs and per-row limits do
+  not bound total retained bytes; a shared-helper change could alter live sender
+  behavior or silently cap a caller's explicitly larger reconstruction budget.
+- **Acceptance:** persist exact API/CLI/receipt and caller-compatibility plan;
+  use a configurable cumulative retained-input budget (64 GiB default convention)
+  for manifest/offered/events while retaining 64 MiB metadata and 256 KiB row
+  limits; admit supplied regular files through non-following/nonblocking handles
+  before reads, check before/after metadata for source changes, and retain exact
+  consumed-byte inventories. Missing/nonregular/symlink/changed/over-budget inputs
+  must not produce a completed receipt. Preserve partial output and source bytes,
+  existing formats/oracle/lifecycle semantics, live-sender behavior, no-overwrite,
+  explicit larger caller budgets and no-physical-facts/no-SLO boundaries.
+- **Required review:** static source/data-flow/API/schema/AST/docs/JSON/diff and
+  sensitive-information checks plus verified Git/Vault. Departmental cases remain
+  unexecuted: ordinary paths and spaces; missing/directory/FIFO/symlink inputs;
+  zero/invalid/exact/over/shared cumulative budget, metadata/row limits, changed
+  files, fresh inventory/receipt binding, sender compatibility, reconstruction
+  budget propagation, source preservation and read/write/close/fsync/interruption.
+  Distinguish input-byte budgets from generated outputs and SQLite storage costs.
+- **Non-goals:** live traffic, global reporter-reader policy changes, new protocols,
+  source authenticity, rule oracle derivation, performance/acceptance execution,
+  workspace-wide quota, dependencies, CI or release actions.
+- **Stop condition:** undocumented formats or new product/private/external
+  authority; ambiguous input must fail without completion, never imply a valid
+  acquisition. Persist a separate implementation plan before editing behavior.
+
+
 ### R90-71 Validation Deviation
 
 - **Observed:** The first uncached complete alert-package run hit the existing
@@ -3320,8 +3372,9 @@ R90-121 context consumption and R90-122 raw-ledger reconstruction are delivered.
 R90-123 integration into bundle/pair review and R90-124 departmental runbook are delivered.
 R90-125 documentation-only queue repair is delivered. R90-126 standalone
 sender-source reconstruction is delivered with tests delegated. R90-127 fresh
-sender-replay consumer integration is delivered with tests delegated. No local
-ready increment remains; the next trigger must audit the forward queue.
+sender-replay consumer integration is delivered with tests delegated. R90-128
+documentation audit is selected; R90-129 bounded standalone adapter input handling
+is planned and unstarted. The active horizon is Oct 1–Dec 29.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -5281,6 +5334,34 @@ scope deviation or skill update occurred. This single docs-only closure receives
 its own verified Git/Vault range. No local ready increment remains: the next
 trigger verifies closure and audits the forward queue. R90-59 candidate/tag
 authority and R90-75 departmental acceptance remain independently outstanding.
+
+### Oct 1: R90-128 post-sender-integration queue audit selection
+
+Fresh fetch verifies clean HEAD/origin/main/FETCH_HEAD at
+`f1effc42ddafca8d7d90a7caac54f1fa5f158f25`. R90-127 feature/closure exact
+Vault notes, full index, MOC and nine stable notes are verified. The Sep 3–Oct 1
+phase review covers 32 commits; no missing delivery or changed release/testing
+authority alters priority. All 144 prior task states parse; 131 unique roadmap
+row/Definition pairs match. No local item is ready, so R90-128 is selected as
+one documentation-only queue unblocker with its three-path plan/state persisted
+before edits. Calendar rollover advances the active horizon to Oct 1–Dec 29;
+historical windows remain intact. R90-59 and R90-75 retain independent contracts.
+
+Source review finds collect/_rows impose a per-row 256 KiB bound but no total
+input-byte budget or non-following regular-file admission on standalone adapter
+inputs; read_observations caps metadata at 64 MiB but uses ordinary open. Bundle
+snapshots already enforce a configurable 64 GiB budget and descriptor/metadata
+checks. Shared _rows also serves the live sender, and reconstruction calls collect,
+so R90-129 scopes standalone admission/retention with caller compatibility and
+budget propagation. This is a source-observed boundary, not an executed failure.
+No R90-129 implementation, test, discovery, traffic or publication action begins.
+
+R90-128 static review is complete pending delivery. The exact three-path audit
+passes docs-check, 145 task-state JSONs, 133 unique complete roadmap multisets,
+unfinished contracts, ordered history, local links/fences and scope/diff/sensitive
+review. Runtime sources and R90-59/R90-75 authority contracts remain unchanged.
+Tests and knowledge suites are not run, delegated by user. R90-129 remains
+planned and unstarted. No scope deviation or skill update was necessary.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
