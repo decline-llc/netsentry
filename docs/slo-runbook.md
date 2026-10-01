@@ -8,8 +8,9 @@ is authoritative; tool success means only the documented local operation succeed
 
 For optional offline sender-source correlation, see the
 [sender reconstruction guide](slo-sender-reconstruct.md). It retains and joins
-fixture/offer/submission bytes without traffic; current bundle/pair reconstruction
-replays adapter observations only. Both remain behaviorally unvalidated.
+fixture/offer/submission bytes without traffic. Bundle/pair `--reconstruct-sender`
+selects fresh sender replay; `--reconstruct-ledgers` selects adapter replay.
+Both remain behaviorally unvalidated.
 
 ## 1. Freeze the run and resolve execution prerequisites
 
@@ -235,11 +236,24 @@ python3 "$REPO/scripts/slo_compare.py" \
 | Operation / options | Output schema and policy |
 | --- | --- |
 | Bundle default | v1; supplied-artifact consistency, no ledger replay |
-| Bundle `--reconstruct-ledgers` | v2; `retained_adapter_replay_v1` |
+| Bundle adapter-only `--reconstruct-ledgers` | v2; `retained_adapter_replay_v1` |
 | Pair default, no context or replay | v1; `exact_declared_repeatability_v1` |
 | Pair context option(s) or `--require-context`, no replay | v2; `exact_declared_repeatability_with_context_v1` |
-| Pair replay, no context | v3; `exact_declared_repeatability_with_reconstruction_v1` |
-| Pair replay plus context | v3; `exact_declared_repeatability_with_context_and_reconstruction_v1` |
+| Pair adapter replay, no context or sender | v3; `exact_declared_repeatability_with_reconstruction_v1` |
+| Pair adapter replay plus context, no sender | v3; `exact_declared_repeatability_with_context_and_reconstruction_v1` |
+
+Add `--reconstruct-sender` to either bundle or pair invocation to require fresh
+fixture/offer/submission correlation. Bundle output becomes v3; pair output
+becomes v4. Both replay flags can be selected together. The sender adds
+`sender-reconstruction/sender/` and `sender-reconstruction/sender-reconstruction.json`
+under the bundle (or each pair side's reconciled directory), with all four nested
+inventory entries bound to the current sender snapshots. Sender and adapter
+failures are recorded independently after the common base checks pass.
+
+Original bundle v3 requires pair `--reconstruct-sender`, plus
+`--reconstruct-ledgers` when its adapter requirement is true. Missing selections
+are invalid evidence. See the [bundle](slo-bundle.md) and [pair](slo-compare.md)
+guides for exact schemas, mode policies and unexecuted departmental cases.
 
 Original bundle v2 requires explicit pair `--reconstruct-ledgers`; default and
 context-only pair calls reject it. Replay mode accepts original v1/v2 or mixed
@@ -277,6 +291,8 @@ different boundaries. None is SLO compliance, factual verification or comparabil
 Default bundle retained-input budget is 64 GiB (`--max-bytes`). Pair has 64 GiB
 per side (`--max-bytes-per-side`). Replay adds a separate 64 GiB per operation/side
 (`--max-reconstruction-bytes`), plus rebuilt copies, metadata and SQLite scratch.
+Sender replay adds a separate 64 GiB per operation/side
+(`--max-sender-reconstruction-bytes`) for four input copies, excluding metadata.
 Standalone reconstruction uses `--max-bytes`. Context defaults to 256 MiB for
 references (`--max-evidence-bytes`, pair `--max-context-evidence-bytes` per side),
 with a 64 MiB per-reference ceiling. Receipt/declaration, observation/report and

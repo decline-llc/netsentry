@@ -204,7 +204,7 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-124 | Sep 29–Dec 4 | Complete documentation; execution delegated | Consolidate the departmental SLO execution and artifact-review runbook. | R90-123 | Document the implemented command/artifact chain, versioned review modes, missing evidence and profile-specific acceptance handoff without executing tests or asserting capacity. |
 | R90-125 | Sep 30 | Complete documentation; execution delegated | Reconcile post-runbook delivery and restore a source-grounded local queue. | R90-124 | Verify delivery/history, correct superseded active SLO blockers, and define bounded offline sender-source reconstruction with complete review/authority contracts; no runtime work or tests. |
 | R90-126 | Sep 30–Dec 11 | Complete implementation; tests delegated | Reconstruct offered-oracle and submission evidence from retained sender fixtures. | R90-125; R90-117 sender contract | A standalone offline operation retains and validates four sender files, streams fixture/offer/submission correlation, derives event IDs and frame length/hash using pure construction, and preserves failures without sending traffic or asserting physical facts/SLO compliance. |
-| R90-127 | Sep 30–Dec 18 | Ready | Integrate fresh sender-source reconstruction into bundle and pair review. | R90-126 | An explicit offline sender-replay option replays retained bundle sources, binds fresh inventories and propagates incomplete/mismatch/error results through single and pair review without trusting an old receipt or claiming physical/SLO facts. |
+| R90-127 | Sep 30–Dec 18 | In progress | Integrate fresh sender-source reconstruction into bundle and pair review. | R90-126 | An explicit offline sender-replay option replays retained bundle sources, binds fresh inventories and propagates incomplete/mismatch/error results through single and pair review without trusting an old receipt or claiming physical/SLO facts. |
 
 ## R90-01 Definition
 
@@ -3320,7 +3320,7 @@ R90-121 context consumption and R90-122 raw-ledger reconstruction are delivered.
 R90-123 integration into bundle/pair review and R90-124 departmental runbook are delivered.
 R90-125 documentation-only queue repair is delivered. R90-126 standalone
 sender-source reconstruction is delivered with tests delegated. R90-127 fresh
-sender-replay consumer integration is next ready and remains unstarted.
+sender-replay consumer integration is selected under its persisted API/schema plan.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -5242,6 +5242,29 @@ deviation occurred. This single docs-only closure receives its own verified
 Git/Vault range. R90-127 is next ready but unstarted; persist its integration
 option/API/schema/evidence plan on the next trigger. R90-59 release authority
 and R90-75 departmental acceptance remain independent outstanding boundaries.
+
+### Sep 30: R90-127 sender replay consumer integration selection
+
+Fresh fetch verifies clean HEAD/origin/main/FETCH_HEAD at
+`7dc6a1f38e80ea128b3e542af08e5af000f9eef6`. Both exact R90-126 feature/closure
+Vault records, index/MOC and nine stable notes are verified. The Sep 2–30
+phase review covers 30 commits; no missing closure, changed authority or new
+acceptance artifact changes priority. All 143 prior task states parse and all
+131 unique roadmap rows/Definitions match. R90-127 is selected with its ten-path
+option/API/schema/status/budget/acceptance plan persisted before implementation.
+R90-59 remains authority-blocked and R90-75 acceptance remains departmental;
+tests/knowledge suites are not run. No other increment is started.
+
+R90-127 implementation adds independent --reconstruct-sender selection, fresh
+four-file source binding, bundle v3 and pair v4 contracts, strict original mode
+requirements, per-side summaries and preserved mixed failure diagnostics.
+Both selected replays see the same base eligibility before their diagnostics
+are aggregated. Default and adapter-only schemas remain; no old receipt can
+replace fresh sender replay. Static source/schema/data-flow review, AST/python-check,
+docs-check, 144 task JSONs, 131 unique roadmap pairs, ordered history, links/fences,
+exact ten-path scope/diff and sensitive-information checks pass. Tests and
+knowledge suites remain unrun under user delegation. No scope or skill deviation
+occurred. Delivery remains; no additional local ready increment is queued.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a

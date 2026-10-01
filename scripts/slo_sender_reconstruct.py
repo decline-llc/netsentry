@@ -188,7 +188,7 @@ def reconstruct(output: Path, *, sender: Path | None = None,
             "A matching prefix is not a complete reconstruction; failure diagnostics stop at the first boundary.",
             "Runtime correctness, performance and departmental acceptance remain untested.",
             "Partial output may lack complete inventory or manifest; retain it and retry to a new directory.",
-            "This standalone receipt is not consumed by bundle or pair review.",
+            "Bundle/pair sender mode requires fresh replay and source binding; this old receipt cannot qualify it.",
         ],
     }
     directory = output / "sender"
@@ -205,6 +205,48 @@ def reconstruct(output: Path, *, sender: Path | None = None,
     finally:
         os.close(descriptor)
     return result
+
+
+def integrate(retained: bundle._Bundle, *, max_bytes: int
+              ) -> tuple[dict[str, Any], list[str], list[str], list[str]]:
+    """Replay this bundle's sender snapshots and bind all four fresh inventories."""
+    info = {"status": "incomplete", "reconstruction_attempted": False,
+            "reconstruction_complete": False, "source_binding_complete": False,
+            "sender_records_match": None, "manifest": None}
+    if retained.gaps or retained.mismatches or retained.skipped:
+        return info, ["Sender replay requires all existing bundle checks to complete."], [], []
+    gaps: list[str] = []
+    mismatches: list[str] = []
+    errors: list[str] = []
+    try:
+        current = reconstruct(retained.output / "sender-reconstruction",
+                              sender=retained.output / "sender", max_bytes=max_bytes)
+        raw = (retained.output / "sender-reconstruction/sender-reconstruction.json").read_bytes()
+        info.update(status=current["status"], reconstruction_attempted=current["reconstruction_attempted"],
+                    reconstruction_complete=current["reconstruction_complete"],
+                    sender_records_match=current["sender_records_match"],
+                    manifest={"file": "sender-reconstruction/sender-reconstruction.json", "bytes": len(raw),
+                              "sha256": hashlib.sha256(raw).hexdigest()})
+        gaps.extend("Sender replay: " + item for item in current["gaps"] + current["checks_not_performed"])
+        mismatches.extend("Sender replay: " + item for item in current["mismatches"])
+        errors.extend("Sender replay: " + item for item in current["errors"])
+        fresh = {entry["file"]: entry for entry in current["inventory"]}
+        names = {"sender/" + name for name in bundle.SOURCES["sender"]}
+        if set(fresh) != names or any(not fresh[key]["complete"] for key in names):
+            gaps.append("Sender replay source inventory is incomplete; enclosing bundle binding unavailable.")
+        else:
+            try:
+                bundle._same({key: retained.inventory[key] for key in names}, fresh,
+                             "sender replay sources differ from enclosing bundle")
+            except (ValueError, KeyError):
+                mismatches.append("Sender replay sources differ from enclosing bundle.")
+            else:
+                info["source_binding_complete"] = True
+    except OSError:
+        errors.append("Sender replay I/O failure; retain partial sender-reconstruction directory.")
+    info["status"] = "error" if errors else "mismatch" if mismatches else (
+        "incomplete" if gaps or not info["reconstruction_complete"] else "review_required")
+    return info, gaps, mismatches, errors
 
 
 def main(argv: Sequence[str] | None = None) -> int:

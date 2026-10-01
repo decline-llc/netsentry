@@ -20,7 +20,8 @@ python3 scripts/slo_compare.py \
 API: `compare(output, *, baseline=None, candidate=None,
 max_bytes_per_side=64*1024**3, baseline_context=None, candidate_context=None,
 require_context=False, max_context_evidence_bytes=256*1024**2,
-reconstruct_ledgers=False, max_reconstruction_bytes=64*1024**3, scratch_dir=None)`, using
+reconstruct_ledgers=False, max_reconstruction_bytes=64*1024**3, scratch_dir=None,
+reconstruct_sender=False, max_sender_reconstruction_bytes=64*1024**3)`, using
 `pathlib.Path` directory arguments.
 Either input can be omitted to record missing evidence. Output must be new,
 with an existing parent. Existing outputs are never overwritten or deleted.
@@ -37,7 +38,7 @@ field comparisons, differences and qualification gaps. All references to retaine
 files are relative to the new output directory; source paths are not published.
 
 Default mode requires the exact v1 bundle schema; explicit reconstruction mode
-also accepts the v2 bundle schema described below. Both require coherent status/completion
+also accepts v2; sender mode accepts v3 as described below. All require coherent status/completion
 flags, bounded known inventory paths, unique entries, hashes/byte/row counts and
 valid run/origin declarations. R90-118 reconciliation reads only fixed companion
 basenames, checks receipts and raw source identity, and recomputes the report from
@@ -290,7 +291,7 @@ fields, metrics or a qualified identity for context binding. A valid side retain
 its failed/inconclusive measurement status; replay agreement never upgrades it.
 Known comparisons already eligible under the existing rules remain diagnostic.
 
-Enabled output uses `schema_version: 3` and one of two policies:
+Adapter replay without sender selection uses `schema_version: 3` and one of two policies:
 
 | Context enabled | Policy |
 | --- | --- |
@@ -328,3 +329,69 @@ unchanged failed/inconclusive metrics and permanent qualification flags. Verify
 v1/v2 default output compatibility and retained diagnostics in v3. In combined
 mode, context errors must remain invalid evidence and must neither overwrite nor
 be promoted into reconstruction operation errors; verify both error classes together.
+
+## Fresh sender reconstruction in pair review (R90-127)
+
+Unexecuted handoff template:
+
+```bash
+python3 scripts/slo_compare.py --baseline baseline-bundle --candidate candidate-bundle \
+  --reconstruct-sender --reconstruct-ledgers --output-dir sender-replayed-pair
+```
+
+`--reconstruct-sender` requires both sides to run fresh sender reconstruction
+through [bundle schema v3](slo-bundle.md). Adapter replay remains an independent
+`--reconstruct-ledgers` selection; context selection also remains independent.
+Default and adapter-only modes retain their prior output structures.
+
+| Supplied original bundle | Required selections |
+| --- | --- |
+| v1 | None; either or both fresh replays may be requested |
+| v2 | `--reconstruct-ledgers`; sender replay is optional |
+| v3, adapter requirement false | `--reconstruct-sender`; adapter replay is optional |
+| v3, adapter requirement true | Both replay flags |
+
+Missing a required flag yields invalid evidence. Original v3 must have the exact
+sender policy/fields and boolean adapter requirement; the latter controls whether
+adapter fields must be present. Replay summaries validate types, completion,
+nullable matching values, fixed manifest paths, hashes and diagnostic coherence.
+A nonempty shared errors list must correspond to an error in at least one selected
+operation; it does not imply both operations failed. No source path in an old
+receipt chooses fresh inputs, and no old summary qualifies a side.
+
+The current bundle is rebuilt from its fixed companion files and runs the selected
+replays against its own snapshots. Sender replay binds all four nested inventory
+entries. Original and fresh complete bundle identities/inventories must then bind
+before the side contributes comparison conditions, metrics or context identity.
+Original incomplete/mismatch/error statuses remain failures after fresh success;
+invalid original schemas remain invalid evidence. The valid side's failed or
+inconclusive measurement metrics retain their meaning.
+
+Sender-enabled output is schema v4. Its policy is
+`exact_declared_repeatability_with_` followed by optional `context_and_`, optional
+`reconstruction_and_` (adapter replay), and `sender_reconstruction_v1`, in that
+order. V4 includes `sender_reconstruction_required: true`,
+`adapter_reconstruction_required`, `errors`,
+`max_sender_reconstruction_bytes_per_side`, and
+`sides.<side>.sender_reconstruction`. Existing adapter/context fields remain
+when selected. Sender manifest references point to
+`<side>/reconciled/sender-reconstruction/sender-reconstruction.json` when available.
+Original nested replay files must remain with their original bundle; they are
+not copied or trusted by the current replay.
+
+The default sender budget is another 64 GiB per side, independent of bundle,
+adapter and context budgets, and excludes generated metadata. Source, operation,
+publication and interruption failures require retaining all partial output and
+checking process exit. Status precedence remains error > invalid_evidence >
+incomplete > conditions_differ > review_required. Physical facts, comparability,
+regression and SLO assertions remain false; sender replay certifies none of them.
+
+### Additional departmental validation — not executed
+
+Cover mixed v1/v2/v3 inputs and every flag/context combination; exact v3 root,
+policy, summary, nullable/type/path and error coherence; original/current failures
+and asymmetry; independent fresh sender/adapter inventory drift; old receipt
+substitution; context eligibility after sender failure; unchanged measurement
+outcomes; separate budgets, I/O/close/fsync/interruption and partial manifests.
+The [implementation plan](plans/task-20260930-slo-sender-integration.md) records
+static acceptance mapping. No tests, CLI execution or knowledge suite ran.

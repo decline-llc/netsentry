@@ -321,11 +321,14 @@ def reconcile(output: Path, *, sender: Path | None = None, capture: Path | None 
               engine: Path | None = None, adapter: Path | None = None,
               summary: Path | None = None, max_bytes: int = DEFAULT_MAX_BYTES,
               reconstruct_ledgers: bool = False, max_reconstruction_bytes: int = DEFAULT_MAX_BYTES,
-              scratch_dir: Path | None = None) -> dict[str, Any]:
+              scratch_dir: Path | None = None, reconstruct_sender: bool = False,
+              max_sender_reconstruction_bytes: int = DEFAULT_MAX_BYTES) -> dict[str, Any]:
     """Snapshot fixed filenames and publish bundle.json last; no live work occurs."""
     report._integer(max_bytes, "max_bytes", 1)
     report._boolean(reconstruct_ledgers, "reconstruct_ledgers")
     report._integer(max_reconstruction_bytes, "max_reconstruction_bytes", 1)
+    report._boolean(reconstruct_sender, "reconstruct_sender")
+    report._integer(max_sender_reconstruction_bytes, "max_sender_reconstruction_bytes", 1)
     output = output.expanduser()
     output.mkdir(mode=0o700, parents=False, exist_ok=False)
     bundle = _Bundle(output, max_bytes)
@@ -380,7 +383,8 @@ def reconcile(output: Path, *, sender: Path | None = None, capture: Path | None 
     bundle.check("report source and recomputed summary", lambda: _summary(
         bundle, documents["report/report.json"], documents["adapter/observations.json"]),
         ("report/report.json", "adapter/observations.json"))
-    reconstruction = None
+    reconstruction = sender_reconstruction = None
+    replay_results = []
     errors: list[str] = []
     if reconstruct_ledgers:
         # Lazy import: reconstruction reuses this module's snapshot/schema helpers.
@@ -388,10 +392,22 @@ def reconcile(output: Path, *, sender: Path | None = None, capture: Path | None 
             from . import slo_reconstruct as replay
         else:
             import slo_reconstruct as replay
-        reconstruction, gaps, mismatches, errors = replay.integrate(
+        reconstruction, gaps, mismatches, replay_errors = replay.integrate(
             bundle, max_bytes=max_reconstruction_bytes, scratch_dir=scratch_dir)
+        replay_results.append((gaps, mismatches, replay_errors))
+    if reconstruct_sender:
+        if __package__:
+            from . import slo_sender_reconstruct as sender_replay
+        else:
+            import slo_sender_reconstruct as sender_replay
+        sender_reconstruction, gaps, mismatches, replay_errors = sender_replay.integrate(
+            bundle, max_bytes=max_sender_reconstruction_bytes)
+        replay_results.append((gaps, mismatches, replay_errors))
+    # Both selected operations see the same base eligibility; neither failure hides the other.
+    for gaps, mismatches, replay_errors in replay_results:
         bundle.gaps.extend(gaps)
         bundle.mismatches.extend(mismatches)
+        errors.extend(replay_errors)
     status = "error" if errors else "mismatch" if bundle.mismatches else (
         "incomplete" if bundle.gaps or bundle.skipped else "review_required")
     result = {
@@ -429,6 +445,17 @@ def reconcile(output: Path, *, sender: Path | None = None, capture: Path | None 
         result["limitations"][2] = "Packet identity/oracle replay is required in this mode; inspect reconstruction and source binding."
         result["limitations"][6] = "Fresh raw-ledger derivation is checked when inputs qualify; acquisition truth remains unverified."
         result["limitations"].append("Reconstruction adds its own input copies, rebuilt outputs and temporary SQLite disk use.")
+    if reconstruct_sender:
+        result.update(schema_version=3, sender_reconstruction_policy="retained_sender_replay_v1",
+                      sender_reconstruction=sender_reconstruction, errors=errors,
+                      adapter_reconstruction_required=reconstruct_ledgers,
+                      max_sender_reconstruction_bytes=max_sender_reconstruction_bytes,
+                      sender_reconstruction_source_sha256=hashlib.sha256(
+                          Path(sender_replay.__file__).read_bytes()).hexdigest())
+        result["limitations"][2] = (
+            "Fresh sender fixture/oracle/frame replay is required; inspect each selected replay and its source binding.")
+        result["limitations"].append(
+            "Sender replay adds four retained input copies under a separate budget; old receipts cannot replace fresh replay.")
     # Persist child directory entries before the completion manifest is published.
     for directory in [path for path in output.iterdir() if path.is_dir()]:
         descriptor = os.open(directory, os.O_RDONLY | os.O_DIRECTORY)
@@ -453,13 +480,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--max-bytes", type=int, default=DEFAULT_MAX_BYTES, help="total retained input byte budget")
     parser.add_argument("--reconstruct-ledgers", action="store_true", help="require fresh retained adapter replay")
     parser.add_argument("--max-reconstruction-bytes", type=int, default=DEFAULT_MAX_BYTES)
+    parser.add_argument("--reconstruct-sender", action="store_true", help="require fresh retained sender replay")
+    parser.add_argument("--max-sender-reconstruction-bytes", type=int, default=DEFAULT_MAX_BYTES)
     parser.add_argument("--scratch-dir", type=Path, help="temporary reconstruction SQLite index directory")
     args = parser.parse_args(argv)
     try:
         result = reconcile(args.output_dir, sender=args.sender, capture=args.capture, engine=args.engine,
                            adapter=args.adapter, summary=args.summary, max_bytes=args.max_bytes,
                            reconstruct_ledgers=args.reconstruct_ledgers,
-                           max_reconstruction_bytes=args.max_reconstruction_bytes, scratch_dir=args.scratch_dir)
+                           max_reconstruction_bytes=args.max_reconstruction_bytes, scratch_dir=args.scratch_dir,
+                           reconstruct_sender=args.reconstruct_sender,
+                           max_sender_reconstruction_bytes=args.max_sender_reconstruction_bytes)
     except (OSError, ValueError, RecursionError) as error:
         print(f"[slo-bundle] {error}; retain partial output and use a new directory", file=sys.stderr)
         return 2

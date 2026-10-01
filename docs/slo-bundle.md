@@ -24,7 +24,8 @@ python3 scripts/slo_bundle.py \
 
 The public API is `reconcile(output, *, sender=None, capture=None, engine=None,
 adapter=None, summary=None, max_bytes=64*1024**3, reconstruct_ledgers=False,
-max_reconstruction_bytes=64*1024**3, scratch_dir=None)`. Directory/path arguments are
+max_reconstruction_bytes=64*1024**3, scratch_dir=None, reconstruct_sender=False,
+max_sender_reconstruction_bytes=64*1024**3)`. Directory/path arguments are
 `pathlib.Path` values. Each input is optional so a partial handoff can publish
 explicit gaps; omitted inputs never produce a completed bundle. Output must be
 a new directory in an existing parent. No existing file/directory is replaced
@@ -150,7 +151,7 @@ outstanding.
 Add `--reconstruct-ledgers` to the bundle invocation above. This unexecuted option
 requires a fresh replay of this bundle's retained adapter files. It does not accept
 an old reconstruction receipt as proof. Default calls still emit schema v1; enabled
-calls emit schema v2 with `reconstruction_policy: retained_adapter_replay_v1`.
+adapter-only calls emit schema v2 with `reconstruction_policy: retained_adapter_replay_v1`.
 
 All existing source/report checks must complete without gaps, mismatches or skipped
 checks before reconstruction begins. Otherwise the reconstruction summary records
@@ -198,3 +199,57 @@ formatting changes, raw identity/time rejection, replay budgets, scratch/SQLite/
 I/O failure and late publication errors. Verify source binding independently of
 nested completion, mixed diagnostic precedence, old receipt substitution, retained
 partial outputs and unchanged failed/inconclusive measurement outcomes.
+
+## Fresh sender reconstruction (R90-127)
+
+Add `--reconstruct-sender` to require [sender-source replay](slo-sender-reconstruct.md).
+It can be selected alone or with `--reconstruct-ledgers`. These are unexecuted
+handoff options. Both selected replays require the original bundle checks to
+complete; after that gate, a recorded failure in one does not suppress the other.
+
+The sender operation consumes only this bundle's four retained `sender/` files.
+It creates `sender-reconstruction/sender/` copies and
+`sender-reconstruction/sender-reconstruction.json`. All four fresh inventory
+entries must equal the enclosing bundle's entries, including file name,
+bytes/SHA-256/completeness and JSONL row counts. No supplied standalone receipt
+or prior nested replay is accepted as proof of current execution.
+
+Sender selection emits bundle schema v3 with these additions to the base fields:
+
+| Field | Contract |
+| --- | --- |
+| `sender_reconstruction_policy` | `retained_sender_replay_v1` |
+| `sender_reconstruction` | Status, attempted/complete/binding flags, `sender_records_match` and manifest reference |
+| `adapter_reconstruction_required` | Boolean; true includes all existing adapter-replay fields and requires that replay too |
+| `max_sender_reconstruction_bytes` | Positive retained-input budget for nested sender replay |
+| `sender_reconstruction_source_sha256` | Current sender reconstruction source digest |
+| `errors` | Combined recorded operation errors from all selected replays |
+
+The sender summary uses `status`, `reconstruction_attempted`,
+`reconstruction_complete`, `source_binding_complete`, `sender_records_match`
+(true after completed correlation, otherwise null), and `manifest` (relative
+file/bytes/SHA-256, or null). A complete bundle requires every selected replay to
+complete, bind its inputs and agree. Partial binding is never sufficient.
+An operation error takes precedence over mismatch and incomplete evidence; all
+diagnostic lists remain available. One replay can succeed while the other fails.
+Original component failure or missing input is never upgraded by replay.
+
+`--max-sender-reconstruction-bytes` defaults to 64 GiB, separate from bundle and
+adapter budgets. Pair review applies it separately to each side. It covers four
+additional retained input copies, excluding generated metadata; no SQLite scratch
+is needed for sender replay. All budget arguments must be positive even when a
+mode is disabled. This is not a total workspace quota. Preserve partial output
+and inspect process exit after late write/fsync/close or interruption failures.
+
+Without sender selection, v1 default and v2 adapter-only structures remain.
+Agreement establishes supplied-byte derivation, never actual sending, rule-oracle
+truth, physical arrival/durability, clock accuracy, comparability or SLO compliance.
+
+### Additional departmental validation — not executed
+
+Cover each sender inventory field/missing/extra/partial file; old receipt
+substitution; each nested mismatch, gap and I/O error; sender-only, adapter-only,
+both and neither; simultaneous differing replay outcomes, budgets/no-overwrite,
+late publication and interrupted retention. The
+[R90-127 plan](plans/task-20260930-slo-sender-integration.md) maps static source
+review to the full unexecuted handoff. No behavioral or knowledge suite ran.

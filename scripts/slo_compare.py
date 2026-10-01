@@ -33,37 +33,38 @@ RECONSTRUCTION_FIELDS = {"reconstruction_policy", "reconstruction", "errors",
                          "max_reconstruction_bytes", "reconstruction_source_sha256"}
 
 
-def _reconstruction_manifest(document: dict[str, Any]) -> None:
-    bundle._require(document["reconstruction_policy"] == "retained_adapter_replay_v1", "unsupported replay policy")
-    report._integer(document["max_reconstruction_bytes"], "max_reconstruction_bytes", 1)
-    bundle._hash(document["reconstruction_source_sha256"])
-    errors = document["errors"]
-    bundle._require(isinstance(errors, list) and all(isinstance(item, str) for item in errors), "invalid errors")
-    info = document["reconstruction"]
+SENDER_RECONSTRUCTION_FIELDS = {"sender_reconstruction_policy", "sender_reconstruction", "errors",
+                                "max_sender_reconstruction_bytes", "sender_reconstruction_source_sha256",
+                                "adapter_reconstruction_required"}
+
+
+def _replay_summary(document: dict[str, Any], key: str, match_field: str, path: str) -> None:
+    info = document[key]
     report._object(info, {"status", "reconstruction_attempted", "reconstruction_complete",
-                          "source_binding_complete", "observations_match", "manifest"}, "reconstruction summary")
+                          "source_binding_complete", match_field, "manifest"}, "reconstruction summary")
     bundle._require(info["status"] in ("review_required", "mismatch", "incomplete", "error"), "invalid replay status")
-    for key in ("reconstruction_attempted", "reconstruction_complete", "source_binding_complete"):
-        report._boolean(info[key], key)
+    for field in ("reconstruction_attempted", "reconstruction_complete", "source_binding_complete"):
+        report._boolean(info[field], field)
     if info["reconstruction_complete"]:
         bundle._require(info["reconstruction_attempted"] is True, "completion without replay")
-        report._boolean(info["observations_match"], "observations_match")
+        report._boolean(info[match_field], match_field)
+        if match_field == "sender_records_match":
+            bundle._require(info[match_field] is True, "sender completion without matching records")
     else:
-        bundle._require(info["observations_match"] is None, "equality without replay completion")
+        bundle._require(info[match_field] is None, "equality without replay completion")
     manifest = info["manifest"]
     if manifest is not None:
         report._object(manifest, {"file", "bytes", "sha256"}, "reconstruction manifest")
-        bundle._require(manifest["file"] == "reconstruction/reconstruction.json", "unknown replay manifest path")
+        bundle._require(manifest["file"] == path, "unknown replay manifest path")
         bundle._require(report._integer(manifest["bytes"], "bytes", 1) <= bundle.META_LIMIT, "replay manifest too large")
         bundle._hash(manifest["sha256"])
     else:
         bundle._require(not info["reconstruction_complete"] and not info["source_binding_complete"],
                         "completion/binding without manifest")
-    bundle._require(bool(errors) == (info["status"] == "error"), "replay errors contradict status")
     if info["status"] == "review_required":
         bundle._require(info["source_binding_complete"] and info["reconstruction_complete"]
-                        and info["observations_match"] is True, "replay success lacks bound agreement")
-    if info["observations_match"] is False:
+                        and info[match_field] is True, "replay success lacks bound agreement")
+    if info[match_field] is False:
         bundle._require(info["status"] in ("mismatch", "error"), "observation difference lacks failure")
     if info["status"] == "mismatch":
         bundle._require(bool(document["mismatches"]), "missing replay mismatch diagnostic")
@@ -71,6 +72,28 @@ def _reconstruction_manifest(document: dict[str, Any]) -> None:
         bundle._require(bool(document["gaps"] or document["checks_not_performed"]), "missing replay gap")
     if document["status"] == "review_required":
         bundle._require(info["status"] == "review_required", "bundle success without replay success")
+
+
+def _reconstruction_manifest(document: dict[str, Any], *, sender: bool, adapter: bool) -> None:
+    errors = document["errors"]
+    bundle._require(isinstance(errors, list) and all(isinstance(item, str) for item in errors), "invalid errors")
+    selected = []
+    if adapter:
+        bundle._require(document["reconstruction_policy"] == "retained_adapter_replay_v1", "unsupported replay policy")
+        report._integer(document["max_reconstruction_bytes"], "max_reconstruction_bytes", 1)
+        bundle._hash(document["reconstruction_source_sha256"])
+        _replay_summary(document, "reconstruction", "observations_match", "reconstruction/reconstruction.json")
+        selected.append(document["reconstruction"])
+    if sender:
+        bundle._require(document["sender_reconstruction_policy"] == "retained_sender_replay_v1",
+                        "unsupported sender replay policy")
+        report._integer(document["max_sender_reconstruction_bytes"], "max_sender_reconstruction_bytes", 1)
+        bundle._hash(document["sender_reconstruction_source_sha256"])
+        _replay_summary(document, "sender_reconstruction", "sender_records_match",
+                       "sender-reconstruction/sender-reconstruction.json")
+        selected.append(document["sender_reconstruction"])
+    bundle._require(bool(errors) == any(info["status"] == "error" for info in selected),
+                    "replay errors contradict selected operation statuses")
 
 
 def _encoded(value: Any) -> bytes:
@@ -96,14 +119,21 @@ def _read(path: Path) -> dict[str, Any]:
     return value
 
 
-def _manifest(document: dict[str, Any], allow_reconstruction: bool = False) -> None:
+def _manifest(document: dict[str, Any], allow_reconstruction: bool = False,
+              allow_sender: bool = False) -> None:
     bundle._require(isinstance(document, dict), "bundle manifest must be an object")
     version = document.get("schema_version")
-    bundle._require(type(version) is int and (version == 1 or version == 2 and allow_reconstruction),
-                    "unsupported bundle schema; v2 requires explicit reconstruction mode")
-    report._object(document, MANIFEST_FIELDS | (RECONSTRUCTION_FIELDS if version == 2 else set()), "bundle manifest")
-    if version == 2:
-        _reconstruction_manifest(document)
+    bundle._require(type(version) is int and version in (1, 2, 3), "unsupported bundle schema")
+    sender = version == 3
+    adapter = version == 2
+    if sender:
+        adapter = report._boolean(document.get("adapter_reconstruction_required"), "adapter_reconstruction_required")
+        bundle._require(allow_sender, "v3 requires explicit sender reconstruction mode")
+    bundle._require(not adapter or allow_reconstruction, "bundle requires explicit adapter reconstruction mode")
+    fields = MANIFEST_FIELDS | (SENDER_RECONSTRUCTION_FIELDS if sender else set())
+    if adapter:
+        fields |= RECONSTRUCTION_FIELDS
+    report._object(document, fields, "bundle manifest")
     bundle._require(document["artifact_kind"] == "netsentry_slo_evidence_bundle", "wrong artifact kind")
     bundle._require(document["evidence_class"] == "single_vm_supplied_artifact_snapshots", "wrong evidence class")
     for key in ("bundle_complete", "snapshots_complete", "cross_checks_complete", "execution_complete",
@@ -114,7 +144,9 @@ def _manifest(document: dict[str, Any], allow_reconstruction: bool = False) -> N
     for key in ("gaps", "mismatches", "checks_completed", "checks_not_performed", "limitations"):
         bundle._require(isinstance(document[key], list) and all(isinstance(item, str) for item in document[key]),
                         "invalid diagnostic list")
-    status = "error" if version == 2 and document["errors"] else "mismatch" if document["mismatches"] else (
+    if sender or adapter:
+        _reconstruction_manifest(document, sender=sender, adapter=adapter)
+    status = "error" if (sender or adapter) and document["errors"] else "mismatch" if document["mismatches"] else (
         "incomplete" if document["gaps"] or document["checks_not_performed"] else "review_required")
     bundle._require(document["status"] == status, "status contradicts diagnostics")
     bundle._require(document["bundle_complete"] == document["cross_checks_complete"] == (status == "review_required"),
@@ -224,13 +256,16 @@ def compare(output: Path, *, baseline: Path | None = None, candidate: Path | Non
             require_context: bool = False,
             max_context_evidence_bytes: int = context_compare.DEFAULT_MAX_EVIDENCE_BYTES,
             reconstruct_ledgers: bool = False, max_reconstruction_bytes: int = bundle.DEFAULT_MAX_BYTES,
-            scratch_dir: Path | None = None) -> dict[str, Any]:
+            scratch_dir: Path | None = None, reconstruct_sender: bool = False,
+            max_sender_reconstruction_bytes: int = bundle.DEFAULT_MAX_BYTES) -> dict[str, Any]:
     """Retain/reconcile two supplied bundles, then compare exact declared conditions."""
     report._integer(max_bytes_per_side, "max_bytes_per_side", 1)
     report._integer(max_context_evidence_bytes, "max_context_evidence_bytes", 1)
     report._boolean(require_context, "require_context")
     report._boolean(reconstruct_ledgers, "reconstruct_ledgers")
     report._integer(max_reconstruction_bytes, "max_reconstruction_bytes", 1)
+    report._boolean(reconstruct_sender, "reconstruct_sender")
+    report._integer(max_sender_reconstruction_bytes, "max_sender_reconstruction_bytes", 1)
     context_enabled = require_context or baseline_context is not None or candidate_context is not None
     output = output.expanduser()
     output.mkdir(mode=0o700, parents=False, exist_ok=False)
@@ -248,7 +283,8 @@ def compare(output: Path, *, baseline: Path | None = None, candidate: Path | Non
         key = side + "/bundle.json"
         metadata.snapshot(None if source is None else source / "bundle.json", key)
         original = metadata.documents.get(key)
-        manifest_valid = metadata.check(side + " original bundle schema", lambda: _manifest(original, reconstruct_ledgers), (key,))
+        manifest_valid = metadata.check(side + " original bundle schema", lambda: _manifest(
+            original, reconstruct_ledgers, reconstruct_sender), (key,))
         root = output / side / "reconciled"
         current = bundle.reconcile(
             root, sender=None if source is None else source / "sender",
@@ -257,23 +293,26 @@ def compare(output: Path, *, baseline: Path | None = None, candidate: Path | Non
             adapter=None if source is None else source / "adapter",
             summary=None if source is None else source / "report/report.json",
             max_bytes=max_bytes_per_side, reconstruct_ledgers=reconstruct_ledgers,
-            max_reconstruction_bytes=max_reconstruction_bytes, scratch_dir=scratch_dir)
+            max_reconstruction_bytes=max_reconstruction_bytes, scratch_dir=scratch_dir,
+            reconstruct_sender=reconstruct_sender, max_sender_reconstruction_bytes=max_sender_reconstruction_bytes)
         sides[side] = {"original_manifest": metadata.inventory.get(key),
                        "reconciled_manifest": {"file": side + "/reconciled/bundle.json",
                                                "sha256": hashlib.sha256((root / "bundle.json").read_bytes()).hexdigest()},
                        "reconciled_status": current["status"], "metrics": None}
-        if reconstruct_ledgers:
-            info = dict(current["reconstruction"])
-            if info["manifest"] is not None:
-                info["manifest"] = dict(info["manifest"], file=side + "/reconciled/" + info["manifest"]["file"])
-            sides[side]["reconstruction"] = info
+        for enabled, key_name in ((reconstruct_ledgers, "reconstruction"),
+                                  (reconstruct_sender, "sender_reconstruction")):
+            if enabled:
+                info = dict(current[key_name])
+                if info["manifest"] is not None:
+                    info["manifest"] = dict(info["manifest"], file=side + "/reconciled/" + info["manifest"]["file"])
+                sides[side][key_name] = info
         if current["status"] == "error":
             errors.append(side + ": current reconstruction operation failed; see retained bundle.json")
         elif current["status"] == "mismatch":
             invalid.append(side + ": current reconciliation found mismatches; see retained bundle.json")
         elif current["status"] == "incomplete":
             evidence_gaps.append(side + ": current reconciliation is incomplete; see retained bundle.json")
-        if reconstruct_ledgers:
+        if reconstruct_ledgers or reconstruct_sender:
             if current["mismatches"] and current["status"] != "mismatch":
                 invalid.append(side + ": current reconciliation also records mismatches")
             if (current["gaps"] or current["checks_not_performed"]) and current["status"] != "incomplete":
@@ -286,7 +325,7 @@ def compare(output: Path, *, baseline: Path | None = None, candidate: Path | Non
             invalid.append(side + ": supplied bundle declares mismatches")
         elif original["status"] == "incomplete":
             evidence_gaps.append(side + ": supplied bundle declares incomplete evidence")
-        if reconstruct_ledgers:
+        if reconstruct_ledgers or reconstruct_sender:
             if original["mismatches"] and original["status"] != "mismatch":
                 invalid.append(side + ": supplied bundle also records mismatches")
             if (original["gaps"] or original["checks_not_performed"]) and original["status"] != "incomplete":
@@ -399,6 +438,16 @@ def compare(output: Path, *, baseline: Path | None = None, candidate: Path | Non
             "Fresh raw-ledger replay is required; clocks, physical arrival, persistence and process exits remain unverified.")
         result["limitations"].append(
             "Each side must freshly replay and bind retained adapter sources; old reconstruction summaries cannot qualify a side.")
+    if reconstruct_sender:
+        modes = ("context_and_" if context_enabled else "") + ("reconstruction_and_" if reconstruct_ledgers else "")
+        result.update(schema_version=4,
+                      comparison_policy="exact_declared_repeatability_with_" + modes + "sender_reconstruction_v1",
+                      sender_reconstruction_required=True, adapter_reconstruction_required=reconstruct_ledgers,
+                      errors=errors, max_sender_reconstruction_bytes_per_side=max_sender_reconstruction_bytes)
+        result["qualification_gaps"][2] = (
+            "Fresh sender-source derivation is required; actual offered load, generator headroom and oracle truth remain unverified.")
+        result["limitations"].append(
+            "Both sides require fresh sender replay bound to four retained files; old receipts cannot qualify a side.")
     # reconcile() synced side directory entries; publish the pair manifest last.
     report.write_report(output / "comparison.json", result)
     descriptor = os.open(output.parent, os.O_RDONLY | os.O_DIRECTORY)
@@ -421,6 +470,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--max-context-evidence-bytes", type=int, default=context_compare.DEFAULT_MAX_EVIDENCE_BYTES)
     parser.add_argument("--reconstruct-ledgers", action="store_true", help="require fresh raw-ledger replay for both sides")
     parser.add_argument("--max-reconstruction-bytes", type=int, default=bundle.DEFAULT_MAX_BYTES)
+    parser.add_argument("--reconstruct-sender", action="store_true", help="require fresh sender replay for both sides")
+    parser.add_argument("--max-sender-reconstruction-bytes", type=int, default=bundle.DEFAULT_MAX_BYTES)
     parser.add_argument("--scratch-dir", type=Path, help="temporary reconstruction SQLite index directory")
     args = parser.parse_args(argv)
     try:
@@ -430,7 +481,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                          require_context=args.require_context,
                          max_context_evidence_bytes=args.max_context_evidence_bytes,
                          reconstruct_ledgers=args.reconstruct_ledgers,
-                         max_reconstruction_bytes=args.max_reconstruction_bytes, scratch_dir=args.scratch_dir)
+                         max_reconstruction_bytes=args.max_reconstruction_bytes, scratch_dir=args.scratch_dir,
+                         reconstruct_sender=args.reconstruct_sender,
+                         max_sender_reconstruction_bytes=args.max_sender_reconstruction_bytes)
     except (OSError, ValueError, RecursionError) as error:
         print(f"[slo-compare] {error}; retain partial output and retry to a new directory", file=sys.stderr)
         return 2

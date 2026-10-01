@@ -103,9 +103,10 @@ sequence, oracle, timing and inventory mismatch; malformed payloads and size
 boundaries; missing/nonregular/mutating input, budgets, no-overwrite, I/O/fsync/
 close/interruption and scale. No behavioral, acceptance or knowledge suite ran.
 
-This is a standalone review tool. [Bundle](slo-bundle.md) and
-[pair](slo-compare.md) review do not consume this receipt or run sender replay;
-their existing reconstruction option rebuilds adapter observations only.
-Fresh consumer integration is a separate queued increment. Actual kernel/NIC
+The standalone API remains available. [Bundle](slo-bundle.md) and
+[pair](slo-compare.md) review now offer `--reconstruct-sender`, which runs fresh
+replay against retained sender files and binds all four inventories. An old
+standalone receipt cannot qualify that mode. `--reconstruct-ledgers` independently
+selects adapter-observation replay. Actual kernel/NIC
 submission, physical timing/durability, authentic builds and oracle correctness
 remain departmental evidence obligations in the [runbook](slo-runbook.md).
