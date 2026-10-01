@@ -2,23 +2,23 @@
   "task": "r90-128-post-sender-integration-queue",
   "timestamp": "2026-10-01",
   "branch": "main",
-  "remote_baseline": "f1effc42ddafca8d7d90a7caac54f1fa5f158f25",
+  "remote_baseline": "992ddd326a50b6d48603e6d8676eba91fa2a65da",
   "risk_level": "Medium",
-  "current_checkpoint": "static_review_complete_pending_delivery",
+  "current_checkpoint": "complete",
   "completed": [
     "Verified clean fetched R90-127 feature/closure Git and exact Vault records/current stable authority",
     "Audited Sep 3\u2013Oct 1 phases, 144 task states and 131 unique roadmap pairs",
     "Mapped standalone adapter admission/budget gap and shared sender/reconstruction callers",
     "Persisted documentation-only three-path queue-repair plan before edits",
     "Refreshed Oct 1\u2013Dec 29 horizon and defined complete R90-129 admission/budget/caller-compatibility contract without implementation",
-    "Static docs-check, 145 task JSONs, 133 unique roadmap pairs, unfinished contracts/history/links/fences/exact scope/diff/sensitive review passed"
+    "Static docs-check, 145 task JSONs, 133 unique roadmap pairs, unfinished contracts/history/links/fences/exact scope/diff/sensitive review passed",
+    "Committed/pushed 992ddd326a50b6d48603e6d8676eba91fa2a65da; fresh fetch verified clean HEAD/origin/main/FETCH_HEAD equality",
+    "Verified exact-range Vault note/index/MOC and nine stable notes; immutable iterations and substantive integration knowledge preserved",
+    "Identical-range replay preserved Vault Markdown hash 61622850670e143bbbc4f665701ac5af7cc7368ce337cba29f72c8cbd054a9dd",
+    "R90-129 marked ready and remains unstarted"
   ],
-  "in_progress": [
-    "Documentation commit/push/fetch and exact-range Vault synchronization"
-  ],
-  "todo": [
-    "Single docs-only delivery closure"
-  ],
+  "in_progress": [],
+  "todo": [],
   "validation": {
     "tests": "not_run_user_delegated",
     "knowledge_check": "not_run_user_delegated",
@@ -29,5 +29,15 @@
     "No executed reproduction or behavioral validation; R90-129 implementation remains unstarted",
     "R90-59 release authority and R90-75 departmental acceptance remain separate"
   ],
-  "resume_instructions": "Complete only R90-128 documentation audit under its plan; do not start R90-129 implementation or delegated tests."
+  "resume_instructions": "R90-128 documentation audit delivered at 992ddd326a50b6d48603e6d8676eba91fa2a65da. Verify this single docs-only closure and exact Vault range against fetched origin/main without repeating completed delivery. R90-129 is next ready and unstarted: persist exact standalone adapter input-budget/admission/API/receipt and sender/reconstruction caller-compatibility plan before edits. Tests/knowledge suites remain delegated and unrun; R90-59 release authority and R90-75 departmental acceptance remain separate.",
+  "delivery": {
+    "commit": "992ddd326a50b6d48603e6d8676eba91fa2a65da",
+    "origin_main_verified": true,
+    "push_without_force_or_tags": true,
+    "post_fetch_knowledge_check": "not_run_user_delegated",
+    "vault_range": "f1effc42ddafca8d7d90a7caac54f1fa5f158f25..992ddd326a50b6d48603e6d8676eba91fa2a65da",
+    "vault_note_index_moc_verified": true,
+    "vault_stable_prose_reconciled": true,
+    "vault_idempotent_replay_verified": true
+  }
 }

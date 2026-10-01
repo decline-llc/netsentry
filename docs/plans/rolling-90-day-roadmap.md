@@ -205,8 +205,8 @@ block implementation work; the formal SLO and evidence contract is unchanged.
 | R90-125 | Sep 30 | Complete documentation; execution delegated | Reconcile post-runbook delivery and restore a source-grounded local queue. | R90-124 | Verify delivery/history, correct superseded active SLO blockers, and define bounded offline sender-source reconstruction with complete review/authority contracts; no runtime work or tests. |
 | R90-126 | Sep 30–Dec 11 | Complete implementation; tests delegated | Reconstruct offered-oracle and submission evidence from retained sender fixtures. | R90-125; R90-117 sender contract | A standalone offline operation retains and validates four sender files, streams fixture/offer/submission correlation, derives event IDs and frame length/hash using pure construction, and preserves failures without sending traffic or asserting physical facts/SLO compliance. |
 | R90-127 | Sep 30–Dec 18 | Complete implementation; tests delegated | Integrate fresh sender-source reconstruction into bundle and pair review. | R90-126 | An explicit offline sender-replay option replays retained bundle sources, binds fresh inventories and propagates incomplete/mismatch/error results through single and pair review without trusting an old receipt or claiming physical/SLO facts. |
-| R90-128 | Oct 1 | In progress | Audit sender-integration delivery and restore the bounded adapter-input queue. | R90-127 | Reconcile delivery/history/Vault, refresh the horizon, and define standalone adapter input admission and retention limits from source evidence without runtime work. |
-| R90-129 | Oct 1–Dec 18 | Planned | Bound finalized-file admission and retained input bytes in the standalone SLO adapter. | R90-128; R90-115 adapter and R90-122 reconstruction contracts | Admit only supplied regular files through non-following/nonblocking handles, account for all three inputs under a configurable byte budget, reject changed/oversized sources without completion, preserve partial evidence and existing sender/adapter formats. |
+| R90-128 | Oct 1 | Complete documentation; execution delegated | Audit sender-integration delivery and restore the bounded adapter-input queue. | R90-127 | Reconcile delivery/history/Vault, refresh the horizon, and define standalone adapter input admission and retention limits from source evidence without runtime work. |
+| R90-129 | Oct 1–Dec 18 | Ready | Bound finalized-file admission and retained input bytes in the standalone SLO adapter. | R90-128; R90-115 adapter and R90-122 reconstruction contracts | Admit only supplied regular files through non-following/nonblocking handles, account for all three inputs under a configurable byte budget, reject changed/oversized sources without completion, preserve partial evidence and existing sender/adapter formats. |
 
 ## R90-01 Definition
 
@@ -3373,8 +3373,8 @@ R90-123 integration into bundle/pair review and R90-124 departmental runbook are
 R90-125 documentation-only queue repair is delivered. R90-126 standalone
 sender-source reconstruction is delivered with tests delegated. R90-127 fresh
 sender-replay consumer integration is delivered with tests delegated. R90-128
-documentation audit is selected; R90-129 bounded standalone adapter input handling
-is planned and unstarted. The active horizon is Oct 1–Dec 29.
+documentation audit is delivered; R90-129 bounded standalone adapter input handling
+is next ready and remains unstarted. The active horizon is Oct 1–Dec 29.
 R90-75 is not a dependency for unrelated future work. R90-59 retains the separate candidate/tag-replacement and
 validation boundary in its Definition. R90-04a is an evidence-independent quality
 increment and does not satisfy any R90-04 dependency. The R90-04 and R90-05
@@ -5362,6 +5362,22 @@ unfinished contracts, ordered history, local links/fences and scope/diff/sensiti
 review. Runtime sources and R90-59/R90-75 authority contracts remain unchanged.
 Tests and knowledge suites are not run, delegated by user. R90-129 remains
 planned and unstarted. No scope deviation or skill update was necessary.
+
+R90-128 documentation is delivered at `992ddd326a50b6d48603e6d8676eba91fa2a65da`.
+The exact three-path audit was pushed without force/tags; fresh fetch verified
+clean HEAD/origin/main/FETCH_HEAD equality. Exact range
+`f1effc42ddafca8d7d90a7caac54f1fa5f158f25..992ddd326a50b6d48603e6d8676eba91fa2a65da`
+was synchronized to the sole local Vault; note/index/MOC and nine stable notes
+are verified. Current horizon/queue prose is reconciled, substantive integration
+knowledge and immutable iteration bytes are preserved. Identical-range replay
+retained Vault Markdown hash
+`61622850670e143bbbc4f665701ac5af7cc7368ce337cba29f72c8cbd054a9dd`.
+Static audit acceptance is complete; tests/knowledge suites remain delegated and
+unrun. No implementation, acceptance/publication outcome or skill change occurred.
+This single docs-only closure receives its own verified Git/Vault range. R90-129
+is next ready but unstarted: verify closure and persist its standalone adapter
+input-admission/budget/API/caller-compatibility plan before edits. R90-59 authority
+and R90-75 departmental acceptance retain their independent outstanding contracts.
 
 R90-79 now requires exact-length temporary writes, preserved mode, file sync,
 file close, atomic rename, and containing-directory sync and close before a
