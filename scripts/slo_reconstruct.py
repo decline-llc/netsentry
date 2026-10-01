@@ -89,7 +89,8 @@ def reconstruct(output: Path, *, adapter: Path | None = None,
         root = output / "adapter"
         try:
             receipt = collect.collect(root / "manifest.json", root / "offered.jsonl", root / "events.jsonl",
-                                      output / "rebuilt", scratch_dir.expanduser() if scratch_dir else None)
+                                      output / "rebuilt", scratch_dir.expanduser() if scratch_dir else None,
+                                      max_input_bytes=max_bytes)
             document, raw = report.read_observations(output / "rebuilt/observations.json")
             complete = retained.check("rebuilt input/output receipt binding", lambda:
                                       _rebuilt_proof(retained, receipt, raw, document))

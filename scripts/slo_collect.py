@@ -10,6 +10,7 @@ import json
 import os
 from pathlib import Path
 import sqlite3
+import stat
 import sys
 import tempfile
 from typing import Any, Iterator, Sequence
@@ -20,6 +21,7 @@ else:
     import slo_report as report
 
 MAX_LINE_BYTES = 256 * 1024
+DEFAULT_MAX_INPUT_BYTES = 64 * 1024**3
 COMMIT_INTERVAL = 10_000
 
 
@@ -55,6 +57,92 @@ def _rows(source: Path, retained: Path, receipts: list[dict[str, Any]]) -> Itera
             digest.update(raw)
             size += len(raw)
             yield row
+        outgoing.flush()
+        os.fsync(outgoing.fileno())
+    receipts.append({"file": retained.name, "bytes": size, "rows": count, "sha256": digest.hexdigest()})
+
+
+_INPUT_STAT_FIELDS = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
+
+
+def _input_stat(stream: Any, before: os.stat_result, label: str) -> None:
+    after = os.fstat(stream.fileno())
+    for field in _INPUT_STAT_FIELDS:
+        if not hasattr(before, field) or not hasattr(after, field):
+            raise report.EvidenceError(f"{label}: stable input metadata unavailable")
+        if getattr(before, field) != getattr(after, field):
+            raise report.EvidenceError(f"{label}: source changed while reading")
+
+
+def _admitted_sources(paths: tuple[Path, Path, Path]):
+    """Open all inputs once without following links/blocking on special files."""
+    from contextlib import ExitStack, contextmanager
+
+    @contextmanager
+    def opened():
+        with ExitStack() as stack:
+            result = []
+            for path in paths:
+                descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+                stream = stack.enter_context(os.fdopen(descriptor, "rb"))
+                before = os.fstat(descriptor)
+                if not stat.S_ISREG(before.st_mode):
+                    raise report.EvidenceError("input must be a regular file")
+                if any(not hasattr(before, field) for field in _INPUT_STAT_FIELDS):
+                    raise report.EvidenceError("stable input metadata unavailable")
+                result.append((stream, before))
+            yield result
+
+    return opened()
+
+
+def _read_manifest(stream: Any, before: os.stat_result, remaining: int) -> tuple[dict[str, Any], bytes]:
+    limit = min(report.MAX_INPUT_BYTES, remaining)
+    raw = stream.read(limit + 1)
+    if len(raw) > remaining:
+        raise report.EvidenceError("aggregate input exceeds max_input_bytes")
+    if len(raw) > report.MAX_INPUT_BYTES:
+        raise report.EvidenceError("manifest exceeds 64 MiB")
+    _input_stat(stream, before, "manifest")
+    try:
+        document = json.loads(raw.decode("utf-8"), object_pairs_hook=report._pairs,
+                              parse_constant=report._constant)
+    except (UnicodeError, json.JSONDecodeError, RecursionError) as error:
+        raise report.EvidenceError("input must be a complete UTF-8 JSON document") from error
+    if not isinstance(document, dict):
+        raise report.EvidenceError("input must be a JSON object")
+    return document, raw
+
+
+def _adapter_rows(stream: Any, before: os.stat_result, retained: Path,
+                  receipts: list[dict[str, Any]], budget: list[int]) -> Iterator[dict[str, Any]]:
+    """Retain parsed adapter rows within the shared input budget."""
+    digest = hashlib.sha256()
+    count = size = 0
+    with retained.open("xb") as outgoing:
+        while True:
+            limit = min(MAX_LINE_BYTES, budget[0])
+            raw = stream.readline(limit + 1)
+            if not raw:
+                break
+            if len(raw) > budget[0]:
+                raise report.EvidenceError("aggregate input exceeds max_input_bytes")
+            count += 1
+            if len(raw) > MAX_LINE_BYTES:
+                raise report.EvidenceError(f"{retained.name} line {count}: exceeds 256 KiB")
+            try:
+                row = json.loads(raw.decode("utf-8"), object_pairs_hook=report._pairs,
+                                 parse_constant=report._constant)
+            except (UnicodeError, ValueError, RecursionError) as error:
+                raise report.EvidenceError(f"{retained.name} line {count}: invalid JSON row") from error
+            if not isinstance(row, dict):
+                raise report.EvidenceError(f"{retained.name} line {count}: expected object")
+            outgoing.write(raw)
+            digest.update(raw)
+            size += len(raw)
+            budget[0] -= len(raw)
+            yield row
+        _input_stat(stream, before, retained.name)
         outgoing.flush()
         os.fsync(outgoing.fileno())
     receipts.append({"file": retained.name, "bytes": size, "rows": count, "sha256": digest.hexdigest()})
@@ -175,34 +263,44 @@ def _observations(db: sqlite3.Connection, document: dict[str, Any]) -> None:
 
 
 def collect(manifest: Path, offered: Path, events: Path, output: Path,
-            scratch_dir: Path | None = None) -> dict[str, Any]:
+            scratch_dir: Path | None = None, *,
+            max_input_bytes: int = DEFAULT_MAX_INPUT_BYTES) -> dict[str, Any]:
     """Build a new retained bundle; keep partial output on error for inspection.
 
     Inputs must be finalized department exports. No live capture, test traffic,
     clock calibration, physical durability verification or SLO certification.
     """
-    source, raw_manifest = report.read_observations(manifest.expanduser())
-    document = _manifest(source)
+    report._integer(max_input_bytes, "max_input_bytes", 1)
     output = output.expanduser()
-    output.mkdir(mode=0o700, parents=False, exist_ok=False)
-    receipts = [_retain(output / "manifest.json", raw_manifest)]
-    with tempfile.TemporaryDirectory(prefix="netsentry-slo-", dir=scratch_dir) as temporary:
-        db = sqlite3.connect(str(Path(temporary) / "identities.sqlite"))
-        try:
-            _schema(db)
-            for number, row in enumerate(_rows(offered.expanduser(), output / "offered.jsonl", receipts), 1):
-                _offer(db, row, document)
-                if number % COMMIT_INTERVAL == 0:
-                    db.commit()
-            db.commit()
-            for number, row in enumerate(_rows(events.expanduser(), output / "events.jsonl", receipts), 1):
-                _event(db, row, document["observed_through_ns"])
-                if number % COMMIT_INTERVAL == 0:
-                    db.commit()
-            db.commit()
-            _observations(db, document)
-        finally:
-            db.close()
+    sources = tuple(path.expanduser() for path in (manifest, offered, events))
+    receipts = []
+    with _admitted_sources(sources) as admitted:
+        manifest_stream, manifest_before = admitted[0]
+        source, raw_manifest = _read_manifest(manifest_stream, manifest_before, max_input_bytes)
+        document = _manifest(source)
+        remaining = [max_input_bytes - len(raw_manifest)]
+        output.mkdir(mode=0o700, parents=False, exist_ok=False)
+        receipts.append(_retain(output / "manifest.json", raw_manifest))
+        _input_stat(manifest_stream, manifest_before, "manifest")
+        with tempfile.TemporaryDirectory(prefix="netsentry-slo-", dir=scratch_dir) as temporary:
+            db = sqlite3.connect(str(Path(temporary) / "identities.sqlite"))
+            try:
+                _schema(db)
+                for number, row in enumerate(_adapter_rows(admitted[1][0], admitted[1][1],
+                                                           output / "offered.jsonl", receipts, remaining), 1):
+                    _offer(db, row, document)
+                    if number % COMMIT_INTERVAL == 0:
+                        db.commit()
+                db.commit()
+                for number, row in enumerate(_adapter_rows(admitted[2][0], admitted[2][1],
+                                                           output / "events.jsonl", receipts, remaining), 1):
+                    _event(db, row, document["observed_through_ns"])
+                    if number % COMMIT_INTERVAL == 0:
+                        db.commit()
+                db.commit()
+                _observations(db, document)
+            finally:
+                db.close()
     raw_observations = _encoded(document)
     if len(raw_observations) > report.MAX_INPUT_BYTES:
         raise report.EvidenceError("observation output exceeds reporter 64 MiB limit")
@@ -239,10 +337,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--events", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True, help="new directory in an existing parent")
     parser.add_argument("--scratch-dir", type=Path, help="existing directory with space for the SQLite identity index")
+    parser.add_argument("--max-input-bytes", type=int, default=DEFAULT_MAX_INPUT_BYTES,
+                        help="total retained source-byte budget")
     args = parser.parse_args(argv)
     try:
         collect(args.manifest, args.offered, args.events, args.output_dir,
-                args.scratch_dir.expanduser() if args.scratch_dir else None)
+                args.scratch_dir.expanduser() if args.scratch_dir else None,
+                max_input_bytes=args.max_input_bytes)
     except (OSError, ValueError, sqlite3.Error, RecursionError) as error:
         print(f"[slo-collect] {error}; inspect retained partial output before retrying", file=sys.stderr)
         return 2

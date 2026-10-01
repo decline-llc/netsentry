@@ -1,0 +1,32 @@
+{
+  "task": "r90-129-slo-collect-input-boundary",
+  "timestamp": "2026-10-01",
+  "branch": "main",
+  "remote_baseline": "a88476ced2b9ab2409a5a89aa17aa47d56dafd09",
+  "risk_level": "Medium",
+  "current_checkpoint": "implemented_static_review_pending",
+  "completed": [
+    "Verified R90-128 feature/closure exact Git/Vault evidence and stable authority",
+    "Reviewed rolling queue and source/call-site boundary; R90-129 is highest-priority ready local increment",
+    "Persisted eight-path API/admission/budget/receipt/caller acceptance plan before source changes",
+    "Implemented same-handle admission, shared aggregate source-byte accounting, retained-source metadata check and reconstruction budget propagation"
+  ],
+  "in_progress": [
+    "Stage and deliver the feature after final static acceptance/scope/sensitive review"
+  ],
+  "todo": [
+    "Static AST/docs/JSON/roadmap/scope/sensitive review",
+    "Feature commit/push/fetch and exact Vault synchronization",
+    "Single docs-only delivery closure"
+  ],
+  "validation": {
+    "tests": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "acceptance_runs": "not_run"
+  },
+  "remaining_risks": [
+    "No executed regressions or scale/behavior evidence under user test delegation",
+    "Physical acquisition, clock, durability and SLO facts remain unverified"
+  ],
+  "resume_instructions": "Implement only R90-129 according to its persisted plan; preserve sender behavior, receipt compatibility, outer caller budgets and the existing test delegation."
+}

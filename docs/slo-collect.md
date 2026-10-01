@@ -28,9 +28,22 @@ fixture, configuration, durability and workload evidence. The report's
 `source.sha256` must equal the receipt's digest for `observations.json`.
 
 The Python API is `scripts.slo_collect.collect(manifest, offered, events,
-output, scratch_dir=None)`, with `pathlib.Path` arguments. It returns the
-receipt, not a compliance result. CLI exit 0 means adaptation completed; exit 2
-means input/filesystem/SQLite failure. Neither means an SLO pass.
+output, scratch_dir=None, *, max_input_bytes=64*1024**3)`, with `pathlib.Path`
+arguments. `--max-input-bytes` sets the CLI equivalent; it must be a positive
+integer. One cumulative budget covers the exact bytes of manifest, offered ledger
+and events ledger. The 64 MiB manifest and 256 KiB per-row ceilings remain.
+The limit excludes generated observations/receipt, filesystem overhead and
+SQLite temporary storage. Successful retention preserves the existing receipt
+schema; it does not add a compliance result. CLI exit 0 means adaptation
+completed; exit 2 means input/filesystem/SQLite failure. Neither means an SLO pass.
+
+Before reading or creating output, all three inputs are opened once with
+non-following, nonblocking descriptors and must be regular files. Parsing and
+retention use those same handles. Device/inode/size/mtime/ctime are compared
+before and after consumption. A symlink, special file, changed source or exceeded
+aggregate budget cannot produce a completion receipt; preserve any partial output
+and source files. This check does not authenticate parent directories or hostile
+mount changes. The limit bounds retained source bytes, not total workspace use.
 
 ## Exact input formats
 
@@ -185,3 +198,21 @@ pair comparison offer explicit fresh replay under R90-123; see their
 `--reconstruct-ledgers` modes and additional retained-source binding.
 Implementation review is static only; departmental behavior/acceptance tests remain
 outstanding.
+
+
+### R90-129 input bounds and departmental cases
+
+The 64 GiB cumulative default aligns standalone collection with the established
+bundle-input budget. A custom larger limit is also passed through by
+[sender-independent adapter reconstruction](slo-reconstruct.md), so a caller's
+explicit setting is not capped again at the collector default. The reference
+sender keeps its prior fixture-reading behavior; its caller shares a low-level
+reader but does not use the adapter's new admission path.
+
+Unexecuted departmental cases include ordinary paths and spaces; symlink,
+directory, FIFO/device and missing inputs; invalid/zero/exact/one-byte-over and
+cross-file budgets; malformed/oversized rows and manifest; source mutation;
+byte-for-byte source preservation; no-overwrite; parse/write/fsync/close and
+interruption partials; sender compatibility; and reconstruction propagation.
+Behavioral tests, CLI smoke and knowledge suites were not run under the user
+instruction delegating test execution.

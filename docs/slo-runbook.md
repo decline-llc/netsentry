@@ -80,7 +80,10 @@ pathname alone is insufficient readiness evidence.
 All three capture measurement flags are required with live `-i`; offline `-r`
 is rejected. Retain successful capture activation, inbound/filter setup and UDS
 connection before offers. Do not substitute a fixed sleep for readiness proof.
-The tools do not configure interfaces, routes, namespaces or ARP. See the
+The adapter collector defaults to a cumulative 64 GiB source-byte budget across
+manifest, offered and events files; `--max-input-bytes` can set another positive
+limit. Admission requires regular files and source metadata stability. This
+budget excludes generated outputs and SQLite scratch. See the
 [ingress contract](slo-ingress.md) for fixture schema, link fields and privileges.
 Only after both components are ready, invoke the sender in its owned process group:
 
@@ -293,7 +296,7 @@ per side (`--max-bytes-per-side`). Replay adds a separate 64 GiB per operation/s
 (`--max-reconstruction-bytes`), plus rebuilt copies, metadata and SQLite scratch.
 Sender replay adds a separate 64 GiB per operation/side
 (`--max-sender-reconstruction-bytes`) for four input copies, excluding metadata.
-Standalone reconstruction uses `--max-bytes`. Context defaults to 256 MiB for
+Standalone reconstruction uses `--max-bytes`; its selected budget is passed to the nested collector. Context defaults to 256 MiB for
 references (`--max-evidence-bytes`, pair `--max-context-evidence-bytes` per side),
 with a 64 MiB per-reference ceiling. Receipt/declaration, observation/report and
 JSONL limits remain in the detailed contracts. These are input limits, not total

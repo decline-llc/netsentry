@@ -34,7 +34,12 @@ traffic, service invocation, resource discovery or external command is involved.
    digests/bytes/rows, manifest and observation schemas, common metadata and run
    identity. Missing, partial, malformed or inconsistent inputs block replay.
    Supplied completion flags cannot bypass freshly checked files.
-3. Call the existing adapter on **the retained copies** into `rebuilt/`. Its
+3. Call the existing adapter on **the retained copies** into `rebuilt/`, passing
+the reconstruction input limit through to the collector's cumulative
+`max_input_bytes`. This avoids a hidden default-sized second cap when a caller
+explicitly chooses a larger reconstruction budget. The collector's input budget
+covers manifest/offered/events bytes; it excludes generated outputs and SQLite.
+Its
    SQLite correlation enforces packet/event/packet-rule uniqueness, lifecycle
    identity and time ordering, and reconstructs offered/processed/byte counts
    plus all expected alerts. Missing lifecycle values stay null.
