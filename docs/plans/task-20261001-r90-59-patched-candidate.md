@@ -83,7 +83,7 @@ scope. R90-75 remains separate.
 - The existing local signed tag still targets the historical candidate; direct
   remote tag lookup returned no `v0.1.1` ref.
 - Current main pins Go 1.25.14, but official policy and release history show
-  Go 1.26.8 is the latest patch in the newest supported line; the historical
+  Go 1.26.8 is the latest patch in the selected supported 1.26 line; the historical
   tagged candidate remains on Go 1.25.12.
 - The prior SSH tag signature and current release signing identity match at
   fingerprint `SHA256:lanK75hksvHVuDmY55rdL1CJVqj4ZjqgBuE5/kMm4ZU`; direct
@@ -100,7 +100,7 @@ scope. R90-75 remains separate.
 - The candidate is the approved historical v0.1.1 payload plus only the Go
   toolchain/supply-chain-lock/documentation patch to Go 1.26.8.
 - The official Go release policy supports the two newest major release lines;
-  Go 1.26.8 is the latest patch in the newest supported line at this review.
+  Go 1.26.8 is the latest patch in the selected supported 1.26 line at this review.
   The official Linux amd64 archive SHA-256 is
   `d0f743b33e8d8945e6b1f432edd15785c70507121d6e2a723b21285eddf8b57b`.
 - `VERSION=0.1.1 make rc-check` passed: C and Go race tests, 78.3% Go
@@ -139,9 +139,66 @@ scope. R90-75 remains separate.
   the `linux/amd64` manifest is
   `sha256:e55caf21991aac2c126e1660cfcb4ab01f061654b750a70b750ce5615c75306e`.
 
-## Remaining delivery
+## Verified audit delivery
 
-R90-59 candidate validation and publication are complete. Final documentation,
-JSON, diff, and knowledge checks passed (33 knowledge tests). The remaining
-closeout is to commit/push/fetch-verify this audit and synchronize its exact
-verified range to the sole local Vault. Do not start R90-75.
+Audit commit `1808fcdda909a1432721b54bea2762a8f75c409a` is pushed and freshly
+fetched; HEAD, origin/main and FETCH_HEAD match. The post-fetch knowledge gate
+passed 33 tests in the publication turn. Exact range
+`5dced1bc9576f769d770a227d3989fbe0c0f4ea4..1808fcdda909a1432721b54bea2762a8f75c409a`
+is synchronized and its iteration note, full-index row and MOC link verified.
+The next trigger reproduced the recorded 340-file Markdown hash
+`bce2ac3d5b24a92df4f06277261f00d9b3afc2a7f9342cfb40c4b32f969c953a`.
+These completed actions must not be repeated as pending work.
+
+The original scope mentioned a candidate-branch push; actual publication pushed
+only the exact tag, which retains the candidate and triggers both workflows.
+No candidate branch publication was needed. The older phrase "newest supported
+line" was imprecise: 1.26.8 belongs to the selected supported 1.26 line; the
+[official release history](https://go.dev/doc/devel/release) identifies 1.27 as
+the newer major line. This correction changes no release object or test result.
+
+
+## Selected delivery-record closure (next Oct 1 trigger)
+
+The fetched baseline is `1808fcdda909a1432721b54bea2762a8f75c409a`.
+The prior audit commit and its exact Vault range are already delivered; the
+remaining work is one docs-only delivery-record closure of R90-59.
+
+- **Scope:** reconcile this plan, active task state, latest roadmap audit and
+  current stable Vault prose with verified delivery; correct the release-line
+  description in release evidence, and define the next main-toolchain increment
+  from the verified support-policy gap. Preserve historical
+  iteration notes and all published release objects.
+- **Acceptance/evidence:** verify the prior full-SHA range, generated note,
+  index/MOC and 340-file Vault hash; remove obsolete commit/push/sync resume
+  instructions; confirm every unfinished row has a complete contract; validate
+  documentation, task JSON, roadmap multisets and knowledge checks; push/fetch
+  this one closure and synchronize its exact range with idempotent replay.
+- **Risk/stop:** stop on remote/ref divergence, missing historical evidence,
+  unexpected user changes, ambiguous validation, or a required new authority.
+- **Non-goals:** no runtime/toolchain change, release/tag mutation, acceptance
+  execution, or next increment. R90-75 stays departmental. The prior scoped
+  R90-59 knowledge-check authorization covers this remaining closure.
+- **Deviation:** the previous turn verified delivery and Vault but left its
+  plan/state at a pre-delivery checkpoint. Current stable notes only partially
+  superseded the old publication blocker. This closure records those facts and
+  repairs current handoff prose without repeating the release.
+
+
+## Delivery-record closure evidence
+
+- Prior audit push/fetch, exact Vault note/index/MOC and remote tag object/target
+  verified directly; SSH-over-443 resolved the port-22 tag-lookup failure.
+- Reconciled 11 current stable notes. All 293 pre-existing immutable iteration
+  notes retain their original SHA-256 values. Replaying the identical prior
+  range preserves the reconciled 340-file Markdown hash
+  `17f197976d7ea921c5c3491b6c1de2be1d1e14fbdd30ea379421f3c2a8b84953`.
+- `make docs-check`, 33-test `make knowledge-check`, release-evidence gate and
+  `git diff --check` pass. All 148 task-state JSON files parse; all 135 roadmap
+  rows and Definitions match as unique complete multisets. No behavioral suite
+  rerun is needed for this documentation closure; the candidate's historical
+  full-RC results are preserved without claiming main SLO validation.
+- R90-131 is ready and unstarted. R90-75 still requires departmental evidence.
+  The next trigger should verify the fetched closure commit and its exact Vault
+  range, then audit/select the next item; no completed publication or audit
+  operation is a pending task.

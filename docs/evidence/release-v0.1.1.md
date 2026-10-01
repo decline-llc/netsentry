@@ -81,7 +81,7 @@
 
 - Date: 2026-10-01
 - Candidate: `e6f519ade6ad4fa758e8924e66e9a5a1347291a0`, tree `db9356712ed765f820b29038f4ff399c4549877f`; based on the approved historical v0.1.1 payload with only the Go toolchain/lock/documentation patch
-- Toolchain: Go `1.26.8`, the latest patch in the newest supported release line at review; official Linux amd64 archive SHA-256 `d0f743b33e8d8945e6b1f432edd15785c70507121d6e2a723b21285eddf8b57b`
+- Toolchain: Go `1.26.8`, the latest patch in the selected supported 1.26 release line at review; official Linux amd64 archive SHA-256 `d0f743b33e8d8945e6b1f432edd15785c70507121d6e2a723b21285eddf8b57b`
 - Behavioral validation: full `VERSION=0.1.1 make rc-check` passed, including C and Go race suites, 78.3% Go statement coverage, 5,000 parser fuzz iterations, E2E (6 packets/5 alerts), distribution archive/checksum, Docker image contents and runtime health
 - Supply-chain validation: fetched all 9 locked fixture/license assets with exact hashes; actionlint and pinned `govulncheck v1.6.0` passed with zero reachable vulnerabilities. One vulnerability exists in a required module but is not called by the candidate.
 - Release gate: `RELEASE_EVIDENCE=docs/evidence/release-v0.1.1.md make release-gate` passed

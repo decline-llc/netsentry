@@ -2,14 +2,14 @@
   "task": "r90-59-v0.1.1-patched-candidate-publication",
   "timestamp": "2026-10-01",
   "branch": "main",
-  "remote_baseline": "5dced1bc9576f769d770a227d3989fbe0c0f4ea4",
+  "remote_baseline": "1808fcdda909a1432721b54bea2762a8f75c409a",
   "risk_level": "High",
-  "current_checkpoint": "final-checks-passed-awaiting-audit-delivery-and-vault-verification",
+  "current_checkpoint": "r90-59-complete-delivery-record-reconciled",
   "completed": [
     "Fetched origin main and tags and verified clean HEAD, origin/main and FETCH_HEAD equality at 5dced1bc9576f769d770a227d3989fbe0c0f4ea4",
     "Confirmed local v0.1.1 still peels to historical candidate 78cd78574e03c8f73ff68248eed2c409d6bca406 and direct remote lookup returns no matching tag",
     "Received explicit user authorization to prepare a patched candidate and replace/resign the v0.1.1 tag, with complete revalidation including behavioral tests and knowledge checks",
-    "Verified official Go release policy and release history identify Go 1.26.8 as the latest patch in the newest supported line; current main's Go 1.25.14 pin is behind",
+    "Verified official Go release policy and release history identify Go 1.26.8 as the latest patch in the selected supported 1.26 line; current main's Go 1.25.14 pin is behind",
     "Created minimal patched candidate e6f519ade6ad4fa758e8924e66e9a5a1347291a0 at tree db9356712ed765f820b29038f4ff399c4549877f, based on the approved historical v0.1.1 payload",
     "Full VERSION=0.1.1 make rc-check passed with Go 1.26.8, including C and Go race tests, 78.3 percent Go coverage, 5000 parser fuzz iterations, E2E, archive/checksum, Docker image content and runtime health",
     "Fetched supply-chain gate passed actionlint, all 9 locked fixture/license hashes and 0 reachable vulnerabilities; one vulnerability in a required module was reported as not called",
@@ -21,11 +21,15 @@
     "Release run published a non-draft, non-prerelease release at https://github.com/decline-llc/netsentry/releases/tag/v0.1.1",
     "Downloaded the workflow archive (9905076 bytes, SHA-256 6bbeb5b680f2d94e05ef27b27dee875fd454eb96497ed82e254e67f33b92b8e8), validated its paired 101-byte checksum, and confirmed linux-amd64 package contents; it is distinct from the local archive",
     "Direct GHCR inspection confirms v0.1.1 and 0.1.1 share index digest sha256:f4aae2de10c7553c011b05cad8ba86f7e3e3ec9265507b3f36744ea2d26321be and linux/amd64 manifest sha256:e55caf21991aac2c126e1660cfcb4ab01f061654b750a70b750ce5615c75306e",
-    "Final docs-check, 33-test knowledge-check, git diff check and all task-state JSON parsing passed after release evidence and audit updates"
+    "Final docs-check, 33-test knowledge-check, git diff check and all task-state JSON parsing passed after release evidence and audit updates",
+    "Verified audit commit 1808fcdda909a1432721b54bea2762a8f75c409a against freshly fetched HEAD/origin/main/FETCH_HEAD and its exact prior-baseline Vault range, iteration note, full-index row and MOC link",
+    "Reproduced the 340-file pre-closure Vault hash bce2ac3d5b24a92df4f06277261f00d9b3afc2a7f9342cfb40c4b32f969c953a",
+    "Reviewed 40 main commits since Sep 17 across four delivery phases; selected this docs-only delivery closure before new work",
+    "Corrected selected-supported-line wording; defined unstarted R90-131 for the current-main 1.25.14 pin with execution tests still delegated",
+    "Reconciled 11 current stable Vault notes; verified all 293 existing immutable iteration-note hashes and identical-range replay with 340-file hash 17f197976d7ea921c5c3491b6c1de2be1d1e14fbdd30ea379421f3c2a8b84953",
+    "Docs-only closure passed docs-check, 33 knowledge tests, release-evidence gate, all 148 task JSON parses, 135 unique matching roadmap rows/Definitions and diff review"
   ],
-  "in_progress": [
-    "Commit, push and fetch-verify the audit closure; synchronize its exact full-SHA range to the local Vault; verify generated notes, index and MOC, then replay idempotently"
-  ],
+  "in_progress": [],
   "todo": [],
   "authority_boundaries": [
     "Patched candidate and local v0.1.1 tag replacement/resigning are explicitly authorized",
@@ -40,7 +44,8 @@
     "release_gate": "pass",
     "knowledge_check": "pass:33-candidate;33-main",
     "replacement_tag": "pass:cbe602ff997c14a375f89acad00ab4d572fa49de",
-    "remote_publication": "pass:tag-release-ghcr-verified"
+    "remote_publication": "pass:tag-release-ghcr-verified",
+    "delivery_record": "pass:docs;33-knowledge-tests;release-gate;json;roadmap-multisets;diff;prior-range-vault-replay"
   },
   "tag": {
     "name": "v0.1.1",
@@ -76,5 +81,16 @@
     "platform": "linux/amd64",
     "platform_manifest": "sha256:e55caf21991aac2c126e1660cfcb4ab01f061654b750a70b750ce5615c75306e"
   },
-  "resume_instructions": "R90-59 candidate validation, tag replacement, publication and final checks are complete. Finish only the audit commit/push/fetch and exact Vault synchronization/idempotency verification; do not repeat release actions or start R90-75."
+  "resume_instructions": "R90-59 publication and audit delivery are complete. On the next trigger verify the fetched current tip and the exact Vault note/index/MOC for this delivery-record commit, repairing only an actually missing range. Do not repeat published tag/workflows or the verified 1808fcdda909a1432721b54bea2762a8f75c409a commit/push/sync. Audit the queue and select ready R90-131 from fresh evidence; its testing remains delegated. R90-75 acceptance remains departmental.",
+  "starting_remote_baseline": "5dced1bc9576f769d770a227d3989fbe0c0f4ea4",
+  "delivery": {
+    "audit_commit": "1808fcdda909a1432721b54bea2762a8f75c409a",
+    "verified_vault_range": "5dced1bc9576f769d770a227d3989fbe0c0f4ea4..1808fcdda909a1432721b54bea2762a8f75c409a",
+    "iteration_note": "04-开发迭代记录/2026-10-01-1808fcdda9-CI知识同步.md",
+    "index_and_moc": "verified",
+    "pre_closure_markdown_count": 340,
+    "pre_closure_markdown_sha256": "bce2ac3d5b24a92df4f06277261f00d9b3afc2a7f9342cfb40c4b32f969c953a",
+    "reconciled_prior_range_markdown_sha256": "17f197976d7ea921c5c3491b6c1de2be1d1e14fbdd30ea379421f3c2a8b84953"
+  },
+  "next_increment": "R90-131: ready supported main toolchain metadata refresh; not started; testing remains delegated"
 }
