@@ -6,6 +6,11 @@ to the specialist department under the Sep 25 user instruction. Neither staging
 nor production has qualifying measurements. The [SLO contract](performance-slo.md)
 is authoritative; tool success means only the documented local operation succeeded.
 
+For optional offline sender-source correlation, see the
+[sender reconstruction guide](slo-sender-reconstruct.md). It retains and joins
+fixture/offer/submission bytes without traffic; current bundle/pair reconstruction
+replays adapter observations only. Both remain behaviorally unvalidated.
+
 ## 1. Freeze the run and resolve execution prerequisites
 
 Testing takes place in this single Ubuntu VM, with separate working directories,
