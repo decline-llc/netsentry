@@ -19,7 +19,10 @@ For an Action update:
 `engine/go.mod` separates the module language baseline from the CI compiler:
 
 - `go 1.22.2` preserves the current language/module semantics.
-- `toolchain go1.25.12` pins a supported n-1 Go patch release reviewed from `https://go.dev/dl/?mode=json`.
+- `toolchain go1.26.8` pins the latest patch in the newest supported Go line.
+  The 2026-10-01 review used the official Go release history and download
+  metadata; the Linux amd64 archive SHA-256 is
+  `d0f743b33e8d8945e6b1f432edd15785c70507121d6e2a723b21285eddf8b57b`.
 
 `actions/setup-go` reads the toolchain directive. The supply-chain checker also runs `go env GOVERSION` inside `engine/` and rejects a runtime that differs from the lock. CI installs `govulncheck` and `actionlint` from exact Go module versions; their upstream release commits are recorded in the lock. `govulncheck ./...` must report zero reachable vulnerabilities.
 
