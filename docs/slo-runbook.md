@@ -85,11 +85,24 @@ manifest, offered and events files; `--max-input-bytes` can set another positive
 limit. Admission requires regular files and source metadata stability. This
 budget excludes generated outputs and SQLite scratch. See the
 [ingress contract](slo-ingress.md) for fixture schema, link fields and privileges.
+
+R90-133 also snapshots the entire finalized sender fixture before the first send.
+Its independent `--max-fixture-bytes` limit defaults to 64 GiB and bounds fixture
+source bytes only. Admission requires a non-following/nonblocking regular-file
+handle, stable source metadata and a flushed/fsynced/closed retained snapshot.
+Acquisition rejection prevents packet submission; semantic validation during
+retained replay may still leave an incomplete submitted prefix. Retain all
+partial artifacts. Budget snapshot preparation time before the frozen origin and
+review actual lateness; do not shift origin or claim generator headroom silently.
+The schema-v1 sender receipt/inventory is unchanged; record the configured budget
+with the execution command. These behavior checks remain departmental and unrun.
+
 Only after both components are ready, invoke the sender in its owned process group:
 
 ```bash
 python3 "$REPO/scripts/slo_ingress.py" \
   --interface "$SEND_INTERFACE" --fixture fixture.jsonl --output-dir sender-run \
+  --max-fixture-bytes 68719476736 \
   --run-id "$RUN_ID" --origin "$UTC_ORIGIN" \
   --src-mac "$SOURCE_MAC" --dst-mac "$DESTINATION_MAC" \
   --src-ip "$SOURCE_IPV4" --dst-ip "$DESTINATION_IPV4" \

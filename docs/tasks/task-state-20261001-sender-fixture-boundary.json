@@ -1,0 +1,49 @@
+{
+  "task": "r90-133-sender-fixture-input-boundary",
+  "timestamp": "2026-10-01",
+  "branch": "main",
+  "remote_baseline": "e8d057963d3c655b4494ed1f3d74dc10a8303e6d",
+  "starting_remote_baseline": "e8d057963d3c655b4494ed1f3d74dc10a8303e6d",
+  "risk_level": "Medium",
+  "current_checkpoint": "implementation_static_review_complete_awaiting_delivery",
+  "completed": [
+    "Received explicit user direction to start R90-133 development",
+    "Verified clean fetched R90-132 closure and both exact Git/Vault ranges",
+    "Reproduced 345-file Vault snapshot JSON hash d7f644b9d643d9dba56f0479033b616a48f935d330f88bdfdbacb4c6b1945c48",
+    "Reviewed 45-commit phase history, dependency contracts and sender/reader/strict receipt call sites",
+    "Persisted six-path implementation plan, evidence map, API/CLI/receipt boundary and unexecuted departmental cases before runtime edits",
+    "Implemented keyword-only max_fixture_bytes and CLI --max-fixture-bytes with the default 64 GiB and shared signed-64-bit positive integer convention",
+    "Added single-handle non-following/nonblocking source admission, regular-file/metadata/size checks, raw-row bounded retention, short-write checks and snapshot sync/close before any send",
+    "Added retained-only bounded reading with captured metadata and exact bytes/rows/SHA-256 inventory verification at EOF",
+    "Updated ingress/runbook with unchanged schema-v1 fields, preparation-lateness/partial-run behavior and unexecuted departmental cases",
+    "Static AST comparison proves frame/link/checksum/ledger functions, positional parameters, semantic/send loop and receipt fields unchanged; CLI and input-order/budget/schema source review passed"
+  ],
+  "in_progress": [
+    "Final scope/sensitive-information review and exact Git/Vault delivery"
+  ],
+  "todo": [
+    "Commit/push/fetch feature",
+    "Reconcile stable notes and verify exact range replay",
+    "One docs-only delivery closure"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_departmental",
+    "knowledge_check": "not_run_user_delegated",
+    "static_review": "pass:AST-source-flow;unchanged-semantic-loop;strict-receipt-fields;python-check;docs-check;151-task-json;137-roadmap-pairs"
+  },
+  "authority_boundaries": [
+    "Implement only R90-133; do not invoke sender or traffic",
+    "Preserve strict schema-v1 receipt/inventory and frame/schedule/oracle semantics",
+    "R90-75 acceptance and all behavioral/knowledge execution remain departmental",
+    "No shared reader, dependency, toolchain, workflow or publication changes"
+  ],
+  "resume_instructions": "Finish only R90-133 under its persisted plan, using static checks and exact Git/Vault delivery. Do not execute traffic, delegated tests/knowledge suites or another increment.",
+  "remaining_risks": [
+    "Behavioral/CLI/traffic/knowledge regressions remain unexecuted under user delegation",
+    "Snapshot preparation affects lateness; throughput and disk overhead are unmeasured",
+    "Metadata detects observed changes but does not authenticate source/output or freeze writers; a submitted prefix can precede later semantic or replay failure",
+    "Fixture budget excludes generated ledgers and total workspace storage"
+  ]
+}

@@ -14,16 +14,20 @@ import os
 from pathlib import Path
 import re
 import socket
+import stat
 import struct
 import sys
 import time
-from typing import Any, Callable, Sequence
+from typing import Any, BinaryIO, Callable, Iterator, Sequence
 
 if __package__:
     from . import slo_collect as collector, slo_report as report
 else:
     import slo_collect as collector
     import slo_report as report
+
+
+DEFAULT_MAX_FIXTURE_BYTES = collector.DEFAULT_MAX_INPUT_BYTES
 
 
 def _checksum(raw: bytes) -> int:
@@ -101,13 +105,101 @@ class _Ledger:
         return {"file": self.path.name, "rows": self.rows, "bytes": self.size, "sha256": self.digest.hexdigest()}
 
 
+def _fixture_open(path: Path) -> BinaryIO:
+    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    try:
+        return os.fdopen(descriptor, "rb")
+    except BaseException:
+        os.close(descriptor)
+        raise
+
+
+def _fixture_metadata(stream: BinaryIO) -> os.stat_result:
+    metadata = os.fstat(stream.fileno())
+    if not stat.S_ISREG(metadata.st_mode):
+        raise report.EvidenceError("fixture must be a regular file")
+    if any(not hasattr(metadata, field) for field in collector._INPUT_STAT_FIELDS):
+        raise report.EvidenceError("stable fixture metadata unavailable")
+    return metadata
+
+
+def _snapshot_fixture(source: Path, retained: Path, max_bytes: int
+                      ) -> tuple[dict[str, Any], os.stat_result]:
+    """Close a bounded, synced source snapshot before any submission starts."""
+    digest = hashlib.sha256()
+    size = count = 0
+    with _fixture_open(source) as incoming:
+        before = _fixture_metadata(incoming)
+        if before.st_size > max_bytes:
+            raise report.EvidenceError("fixture exceeds max_fixture_bytes")
+        with retained.open("xb", buffering=0) as outgoing:
+            os.fchmod(outgoing.fileno(), 0o600)
+            while True:
+                raw = incoming.readline(min(collector.MAX_LINE_BYTES, max_bytes - size) + 1)
+                if not raw:
+                    break
+                if len(raw) > max_bytes - size:
+                    raise report.EvidenceError("fixture exceeds max_fixture_bytes")
+                if len(raw) > collector.MAX_LINE_BYTES:
+                    raise report.EvidenceError(f"{retained.name} line {count + 1}: exceeds 256 KiB")
+                if outgoing.write(raw) != len(raw):
+                    raise OSError("short fixture snapshot write")
+                digest.update(raw)
+                size += len(raw)
+                count += 1
+            if size != before.st_size:
+                raise report.EvidenceError("fixture size differs from admitted source")
+            outgoing.flush()
+            os.fsync(outgoing.fileno())
+            snapshot = _fixture_metadata(outgoing)
+            if snapshot.st_size != size:
+                raise OSError("fixture snapshot size mismatch")
+        collector._input_stat(incoming, before, "fixture")
+    return {"file": retained.name, "bytes": size, "rows": count,
+            "sha256": digest.hexdigest()}, snapshot
+
+
+def _fixture_rows(retained: Path, receipt: dict[str, Any], snapshot: os.stat_result
+                  ) -> Iterator[dict[str, Any]]:
+    """Interpret only the retained snapshot and verify its inventory at EOF."""
+    digest = hashlib.sha256()
+    size = count = 0
+    with _fixture_open(retained) as incoming:
+        _fixture_metadata(incoming)
+        collector._input_stat(incoming, snapshot, "retained fixture")
+        while True:
+            raw = incoming.readline(min(collector.MAX_LINE_BYTES, receipt["bytes"] - size) + 1)
+            if not raw:
+                break
+            if len(raw) > receipt["bytes"] - size:
+                raise report.EvidenceError("retained fixture exceeds snapshot bytes")
+            count += 1
+            if len(raw) > collector.MAX_LINE_BYTES:
+                raise report.EvidenceError(f"{retained.name} line {count}: exceeds 256 KiB")
+            try:
+                row = json.loads(raw.decode("utf-8"), object_pairs_hook=report._pairs,
+                                 parse_constant=report._constant)
+            except (UnicodeError, ValueError, RecursionError) as error:
+                raise report.EvidenceError(f"{retained.name} line {count}: invalid JSON row") from error
+            if not isinstance(row, dict):
+                raise report.EvidenceError(f"{retained.name} line {count}: expected object")
+            digest.update(raw)
+            size += len(raw)
+            yield row
+        collector._input_stat(incoming, snapshot, "retained fixture")
+        if (size, count, digest.hexdigest()) != (receipt["bytes"], receipt["rows"], receipt["sha256"]):
+            raise report.EvidenceError("retained fixture differs from snapshot inventory")
+
+
 def send_fixture(fixture: Path, output: Path, run_id: str, origin: str,
-                 link: dict[str, Any], send: Callable[[bytes], int]) -> dict[str, Any]:
+                 link: dict[str, Any], send: Callable[[bytes], int], *,
+                 max_fixture_bytes: int = DEFAULT_MAX_FIXTURE_BYTES) -> dict[str, Any]:
     """Submit a finalized external fixture; send must return the full frame length.
 
     Retain every initiated offer before send; errors leave partial artifacts and
     no completed submission receipt. Successful send is not proof of NIC delivery.
     """
+    report._integer(max_fixture_bytes, "max_fixture_bytes", 1)
     report._identifier(run_id, "run_id")
     started = report._timestamp(origin)
     if not 2000 <= started.year < 2100:
@@ -117,7 +209,9 @@ def send_fixture(fixture: Path, output: Path, run_id: str, origin: str,
     link = dict(link)
     output = output.expanduser()
     output.mkdir(mode=0o700, parents=False, exist_ok=False)
-    source_receipts: list[dict[str, Any]] = []
+    fixture_receipt, snapshot = _snapshot_fixture(
+        fixture.expanduser(), output / "fixture.jsonl", max_fixture_bytes)
+    source_receipts = [fixture_receipt]
     ledgers: list[_Ledger] = []
     previous = -1
     try:
@@ -125,7 +219,7 @@ def send_fixture(fixture: Path, output: Path, run_id: str, origin: str,
         ledgers.append(offers)
         submissions = _Ledger(output / "submissions.jsonl")
         ledgers.append(submissions)
-        rows = collector._rows(fixture.expanduser(), output / "fixture.jsonl", source_receipts)
+        rows = _fixture_rows(output / "fixture.jsonl", fixture_receipt, snapshot)
         try:
             for sequence, row in enumerate(rows, 1):
                 report._object(row, {"offset_ns", "payload_base64", "expected_rule_ids"}, "fixture row")
@@ -194,6 +288,7 @@ def send_fixture(fixture: Path, output: Path, run_id: str, origin: str,
                "limitations": ["Successful send only establishes kernel submission, not NIC delivery.",
                                "Offer time precedes ledger write and send; inspect scheduling/serialization delay.",
                                "UDP marker remains in payload; fixture and oracle must include it.",
+                               "Fixture snapshot preparation can increase lateness; source limits exclude generated ledgers.",
                                "Reference sender throughput and overhead are unmeasured."]}
     report.write_report(output / "submission.json", receipt)
     parent_fd = os.open(output.parent, os.O_RDONLY | os.O_DIRECTORY)
@@ -211,14 +306,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     for flag in ("src-port", "dst-port"):
         parser.add_argument("--" + flag, type=int, required=True)
     parser.add_argument("--fixture", type=Path, required=True)
+    parser.add_argument("--max-fixture-bytes", type=int, default=DEFAULT_MAX_FIXTURE_BYTES)
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args(argv)
     link = {key: getattr(args, key) for key in ("src_mac", "dst_mac", "src_ip", "dst_ip", "src_port", "dst_port")}
     try:
+        report._integer(args.max_fixture_bytes, "max_fixture_bytes", 1)
         _link(link)
         with socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(0x0800)) as sock:
             sock.bind((args.interface, 0))
-            send_fixture(args.fixture, args.output_dir, args.run_id, args.origin, link, sock.send)
+            send_fixture(args.fixture, args.output_dir, args.run_id, args.origin, link, sock.send,
+                         max_fixture_bytes=args.max_fixture_bytes)
     except (OSError, ValueError, RecursionError, KeyboardInterrupt) as error:
         print(f"[slo-ingress] {error}; retain partial artifacts; no acceptance claim", file=sys.stderr)
         return 2

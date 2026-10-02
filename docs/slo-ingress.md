@@ -5,6 +5,8 @@ R90-117 connects a bounded IPv4/UDP fixture lane to the
 Implementation is **untested by explicit user direction**. Only compilation and
 static source/syntax/document review were performed. No traffic or acceptance
 run was executed. The [SLO acceptance contract](performance-slo.md) still applies.
+R90-133 adds the sender fixture boundary with static AST/source/docs review only;
+behavioral, CLI, traffic and knowledge suites remain delegated and unrun.
 
 ## Wire contract and eligibility
 
@@ -110,6 +112,7 @@ Department invocation example (not executed):
 ```bash
 python3 scripts/slo_ingress.py \
   --interface "$SEND_INTERFACE" --fixture fixture.jsonl --output-dir sender-run \
+  --max-fixture-bytes 68719476736 \
   --run-id run-001 --origin "$UTC_ORIGIN" \
   --src-mac "$SOURCE_MAC" --dst-mac "$DESTINATION_MAC" \
   --src-ip "$SOURCE_IPV4" --dst-ip "$DESTINATION_IPV4" \
@@ -123,14 +126,42 @@ capture and engine must use the same run identity; origin must be canonical
 whole-second UTC in `[2000,2100)`, equal to the final manifest `started_at`.
 Start capture/engine before the offer schedule and retain actual readiness.
 
-The public API `send_fixture(fixture, output, run_id, origin, link, send)` accepts
+The public API `send_fixture(fixture, output, run_id, origin, link, send, *,
+max_fixture_bytes=DEFAULT_MAX_FIXTURE_BYTES)` accepts
 Path inputs, six link fields (`src_mac`, `dst_mac`, `src_ip`, `dst_ip`, `src_port`,
 `dst_port`) and a caller-owned `send(bytes) -> full_frame_length` function.
 `frame(...)` exposes frame construction. A custom sender must also retain its
 own transport/interface configuration and prove submission semantics.
 
-The sender streams the fixture, waits for scheduled offsets, and records each
-actual offer attempt before calling send. The `offered_ns` timestamp precedes
+R90-133 snapshots the finalized source before the first send. The Python
+`max_fixture_bytes` keyword and CLI `--max-fixture-bytes` set a positive integer
+limit in `[1, 2^63-1]` (default 64 GiB); Python booleans are rejected. Invalid
+budgets fail before output creation, and the CLI validates the budget before
+socket setup. The limit bounds source fixture bytes only, excluding generated
+ledgers, metadata and total workspace storage. Record the chosen limit with the
+departmental invocation; schema-v1 receipt fields remain unchanged.
+
+The supplied final pathname is opened once with non-following/nonblocking flags
+and must identify a regular file. Missing, directory, FIFO and symlink inputs
+fail acquisition before any packet submission. A known size above the budget
+is rejected before copying. Retention admits at most the budget and enforces
+the existing 256 KiB raw-row limit before writing. The snapshot writer checks
+short writes, flushes/fsyncs and closes; device/inode/size/mtime/ctime metadata
+and consumed size must remain consistent before the source closes. Failure
+retains available partial evidence and creates no completed submission receipt.
+
+Submission reads only the new mode-0600 `fixture.jsonl`, through one non-following
+regular-file handle. Its metadata is compared before reading and at EOF; exact
+bytes, rows and SHA-256 must agree with the captured snapshot before completion.
+Only one bounded raw row is retained in memory at a time. Metadata observes
+changes but does not authenticate acquisition or guarantee continuous mutation
+exclusion. Parent traversal and local output manipulation are not authenticated
+filesystem boundaries. Source bytes are never repaired or deleted.
+
+The sender streams the retained fixture, waits for scheduled offsets, and records
+each actual offer attempt before calling send. Snapshot preparation can increase
+lateness; it preserves origin and requested offsets and does not prove adequate
+generator throughput. The `offered_ns` timestamp precedes
 ledger serialization/write and kernel submission; inspect `send_start_ns`,
 `send_return_ns`, schedule/lateness and frame hashes in the separate submission
 ledger to bound that delay. Offer cohorts use actual attempt initiation times,
@@ -144,7 +175,7 @@ files. **Do not feed an incomplete sender attempt ledger into a qualifying run**
 failed/ambiguous submissions must be investigated, never silently removed to
 improve loss. Even successful socket send proves kernel acceptance, not NIC
 transmission; retain independent generator/NIC offered-load evidence for final
-qualification. Streaming validation may discover a malformed later fixture row
+qualification. Retained-row validation may discover a malformed later fixture row
 after earlier traffic; that run is incomplete and must be retained as such.
 
 ## Retained artifacts and downstream handoff
@@ -153,7 +184,7 @@ A new mode-0700 sender directory contains:
 
 | File | Meaning |
 | --- | --- |
-| `fixture.jsonl` | Exact consumed input copy, independent of capture results |
+| `fixture.jsonl` | Complete bounded source snapshot before sending; a prefix may remain on failed acquisition |
 | `offered.jsonl` | Every initiated offer with bytes and all expected alerts; direct adapter input |
 | `submissions.jsonl` | Submission result, timestamps, schedule/lateness and frame hashes |
 | `submission.json` | Written last after successful submissions and ledger sync/close; hashes, counts, link configuration and sender source digest |
@@ -186,7 +217,13 @@ conversion; checksum/MTU/DF/padding byte boundaries; independent oracle/event ID
 background/foreign/duplicate packets and capture/UDS drops; read/send/short-write/
 fsync/close/interrupt faults; no-overwrite/partial preservation; clock/schedule
 changes and delayed submission; adapter/reporter consistency and complete source
-retention. Validate actual generator headroom, NIC counters, long-window alert
+retention. R90-133 adds unexecuted cases for ordinary/space paths; input admission
+and source mutation/replacement; invalid/bool/exact/over budgets, the signed
+64-bit integer ceiling and row limits;
+zero-send acquisition rejection; permission and snapshot/replay inventory checks;
+retained-output replacement/mutation; snapshot preparation latency; strict
+bundle/sender-replay compatibility; partial preservation and I/O/close faults.
+Validate actual generator headroom, NIC counters, long-window alert
 sample counts and complete hardware/workload profiles separately.
 
 No test, sender, capture command or acceptance run was executed by the agent.
