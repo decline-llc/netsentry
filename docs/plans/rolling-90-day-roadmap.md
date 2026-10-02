@@ -209,8 +209,8 @@ formal SLO and evidence contract is unchanged.
 | R90-129 | Oct 1–Dec 18 | Complete implementation; tests delegated | Bound finalized-file admission and retained input bytes in the standalone SLO adapter. | R90-128; R90-115 adapter and R90-122 reconstruction contracts | Admit only supplied regular files through non-following/nonblocking handles, account for all three inputs under a configurable byte budget, reject changed/oversized sources without completion, preserve partial evidence and existing sender/adapter formats. |
 | R90-130 | Oct 1–Dec 29 | Complete documentation; execution delegated | Audit post-collector delivery and restore the forward queue. | R90-129 | Reconcile the three R90-129 Git/Vault ranges, phase history, task states and nine current stable notes; correct the stale next-session handoff, preserve immutable iteration notes, and leave only evidence-grounded work with exact blockers, without tests or acceptance claims. |
 | R90-131 | Oct 1–Dec 29 | Complete metadata; execution delegated | Refresh the main execution toolchain to a supported reviewed Go line. | R90-59 delivery closure; R90-130 | Module toolchain, supply-chain lock and documentation agree on the latest reviewed patch in a supported selected line with official checksum/source; preserve the language baseline, dependencies and published release; execution evidence stays delegated and is not inferred from the old release candidate. |
-| R90-132 | Oct 1–Dec 29 | In progress; documentation only | Reconcile toolchain delivery and restore a bounded sender-input queue. | R90-131 feature/closure | Verify exact Git/Vault delivery and phase history; define source-grounded R90-133 with a complete input/compatibility/delegation contract; update current handoffs without runtime changes. |
-| R90-133 | Oct 1–Dec 29 | Planned; tests delegated | Bound finalized fixture admission and retention before reference-sender submission. | R90-132; R90-117 sender; R90-129 collector boundary; R90-126/R90-127 replay compatibility | Admit and snapshot supplied regular fixture bytes with non-following/nonblocking handles and a configurable 64 GiB default input budget; reject nonregular, changed and over-budget acquisition before any send; preserve sender schedules, oracle, formats, partial evidence and independent acceptance boundary. |
+| R90-132 | Oct 1–Dec 29 | Complete documentation; execution delegated | Reconcile toolchain delivery and restore a bounded sender-input queue. | R90-131 feature/closure | Verify exact Git/Vault delivery and phase history; define source-grounded R90-133 with a complete input/compatibility/delegation contract; update current handoffs without runtime changes. |
+| R90-133 | Oct 1–Dec 29 | Ready; tests delegated | Bound finalized fixture admission and retention before reference-sender submission. | R90-132; R90-117 sender; R90-129 collector boundary; R90-126/R90-127 replay compatibility | Admit and snapshot supplied regular fixture bytes with non-following/nonblocking handles and a configurable 64 GiB default input budget; reject nonregular, changed and over-budget acquisition before any send; preserve sender schedules, oracle, formats, partial evidence and independent acceptance boundary. |
 
 ## R90-01 Definition
 
@@ -2915,7 +2915,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-132 Definition
 
-- **Goal/status:** documentation-only delivery/queue audit; selected in progress
+- **Goal/status:** complete documentation-only delivery/queue audit, selected
   from verified R90-131 feature and closure evidence.
 - **Dependencies/window:** R90-131; Oct 1–Dec 29. Forecasts do not gate selection.
 - **Risk:** an empty queue can conceal an input acquisition gap, and a candidate
@@ -2933,8 +2933,8 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-133 Definition
 
-- **Goal/status:** planned bounded reference-sender fixture admission and
-  retention; not started. Ready only after R90-132 delivery.
+- **Goal/status:** ready bounded reference-sender fixture admission and
+  retention after R90-132 delivery; not started.
 - **Dependencies/window:** R90-132; R90-117 sender, R90-129 collector boundary,
   and R90-126/R90-127 replay contracts; Oct 1–Dec 29.
 - **Source evidence:** `slo_ingress.send_fixture` calls legacy `slo_collect._rows`.
@@ -6400,3 +6400,31 @@ independent. Current stable notes correctly close R90-131 but need a fresh next-
 item handoff; immutable iteration notes remain historical. No runtime change,
 traffic, test or other increment starts here. Existing skills already require
 source-grounded queue repair, so no skill change is needed.
+
+
+## R90-132 Completion and R90-133 Handoff (2026-10-01)
+
+Audit `c781c38ee029ebaf5216f2d4672173c9cd361800` contains exactly the three
+planned documentation paths, was pushed without force and freshly fetched at
+clean matching HEAD/origin/main/FETCH_HEAD. Exact range
+`9e485df8dbb6bf332ad1d45b66cd6eab75f4387f..c781c38ee029ebaf5216f2d4672173c9cd361800`
+has its iteration note, index row and MOC link. Twelve current stable notes now
+carry the source-grounded sender follow-up and completed R90-131 authority;
+all 296 pre-existing iteration-directory notes are unchanged. Identical-range
+replay preserved the 344-file snapshot JSON hash
+`cbf040fc6304e53a33b3b09b65034ad2c2b7f20b46abceb16929c77fdf57c6fb`.
+
+Acceptance matches the plan: prior R90-131 delivery and recent phases are
+verified; the sender legacy reader/strict receipt compatibility gap supplies
+concrete queue authority; R90-75 and R90-133 have complete contracts; current
+handoffs are reconciled. Docs, 150 task JSON parses, 137 unique matching roadmap
+row/Definition pairs, chronology, links/fences, exact scope, diff and sensitive
+additions review pass. No implementation or test ran, and no runtime regression
+was claimed; there was no scope or validation deviation. Main/departmental
+execution evidence remains delegated and candidate validation remains separate.
+
+This single docs-only delivery record closes R90-132. R90-133 is the next ready
+increment and has not started; its distinct implementation plan must be persisted
+on the next trigger. R90-75 retains its departmental acceptance contract. Verify
+the latest fetched tip and this closure's exact Vault range before selection;
+do not repeat the completed R90-131/R90-132 commits, synchronization or release.
