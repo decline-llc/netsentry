@@ -215,6 +215,8 @@ formal SLO and evidence contract is unchanged.
 | R90-135 | Oct 2–Dec 30 | Complete implementation; tests delegated | Admit bounded finalized observations through a stable reporter file handle. | R90-134; R90-114 reporter; R90-119/R90-122/R90-123 shared consumers | Reject symlink/nonregular/observed-changing and oversized acquisition through one non-following/nonblocking regular-file descriptor; retain 64 MiB cap, exact bytes/hash, JSON/report/status semantics and output preservation; tests delegated. |
 | R90-136 | Oct 2 | Complete documentation; execution delegated | Reconcile reporter delivery and scope inventory-bound bundle decoding. | R90-135 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record retained-decoder inventory gap and define complete R90-137 contract without runtime or test execution. |
 | R90-137 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind retained bundle decoding to captured byte/hash inventory. | R90-136; R90-118/R90-119/R90-122/R90-126 consumers; R90-135 boundary precedent | Admit one bounded non-following/nonblocking regular retained-file handle; verify exact inventory bytes/hash and descriptor metadata before publishing decoded state; preserve strict schemas, parsing/status and partial evidence; tests delegated. |
+| R90-138 | Oct 2 | In progress documentation; execution delegated | Reconcile decoder delivery and scope bounded sender replay. | R90-137 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record replay reopen/total-read gap and define complete R90-139 contract without runtime or test execution. |
+| R90-139 | Oct 2–Dec 30 | Planned; execution delegated | Bound and admit retained sender replay ledgers against captured inventory. | R90-138; R90-126/R90-127 sender consumers; R90-137 decoder precedent | Admit three non-following/nonblocking regular replay handles; bound bytes/rows, verify exact EOF inventory and descriptor metadata, close before success; preserve correlation/schema/status/partial evidence; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3121,6 +3123,77 @@ formal SLO and evidence contract is unchanged.
   ownership, unavailable primitives without safe rejection, ambiguous review or
   new external/private/product authority. Never infer whole-bundle perpetual
   integrity from a matching decode boundary.
+
+## R90-138 Definition
+
+- **Goal/status:** documentation-only post-decoder queue audit in progress;
+  define the retained sender replay follow-up without implementation.
+- **Dependencies/window:** R90-137 verified feature/closure; Oct 2.
+- **Risk:** low; inaccurate source authority or stale stable handoff.
+- **Acceptance:** verify prior exact Git/Vault/phase evidence; inspect `_Rows`,
+  `_replay` and standalone/integrated/bundle/pair callers; persist three-path
+  audit plan/state and complete R90-139 forward contract; reconcile current
+  stable notes while preserving immutable history.
+- **Required review:** docs/JSON/full unique roadmap row/Definition multisets,
+  chronology/links/fences/scope/diff/sensitive additions and exact Git/Vault
+  delivery. All execution suites remain delegated and unrun.
+- **Non-goals:** runtime, tests, traffic, acceptance, dependency, toolchain,
+  workflow or release changes; do not begin R90-139.
+- **Stop condition:** contradictory delivery, ambiguous Vault discovery,
+  schema migration, incompatible consumer error/progress ownership, ambiguous
+  review or new external/private/product authority.
+- **Plan/state:** `task-20261002-sender-replay-queue.md` and corresponding
+  `docs/tasks/task-state-20261002-sender-replay-queue.json`.
+
+## R90-139 Definition
+
+- **Goal/status:** planned until R90-138 delivery; bind retained sender replay
+  reads to captured inventories, with all behavioral tests delegated.
+- **Dependencies/window:** R90-138; completed R90-126 standalone and R90-127
+  bundle/pair sender integration; R90-137 decoder precedent; Oct 2–Dec 30.
+- **Source evidence:** `_replay` reopens three retained JSONL files using
+  following `Path.open`; `_Rows` limits rows individually and checks total
+  bytes/rows/hash only at aligned EOF. No nonblocking/regular/metadata admission
+  or total captured read bound protects these later replay handles. R90-137
+  closes its decoder handle before replay and cannot supply that evidence.
+  This is static source review, not an executed failure or absent-hash claim.
+- **Risk:** medium; altered rejection order or leaked handles can undermine
+  correlation diagnostics and shared consumers. A growing input can extend
+  reading before the existing EOF mismatch; following inputs can block.
+- **Acceptance:** persist a separate implementation plan. Preserve APIs/public
+  formats, receipt and fixture/oracle/frame/timing rules. Validate all three
+  complete matching-key inventories and bounded nonnegative integer bytes/rows
+  (reject bool), lowercase SHA-256 and required flags before replay reads.
+  Acquire three read-only non-following/nonblocking regular-file handles with
+  required integer dev/inode/size/mtime_ns/ctime_ns; reject known-size mismatch
+  before that ledger read and admit all handles before correlation. Fail closed
+  on unavailable flags/metadata. Bound each read to remaining captured bytes+1,
+  keep 256 KiB row limit and reject excess bytes/rows before extra correlation.
+  At EOF require exact consumed bytes/rows/hash and stable descriptor metadata;
+  close all acquired handles before replay success/progress clearing/completion
+  and completed-check publication. Preserve matched-prefix diagnostics,
+  mismatch/OSError classifications, sources and partial artifacts; no rollback
+  claim. Review standalone reconstruct, integrate, bundle and pair consumers.
+  Source-digest changes do not waive strict binding or comparability.
+- **Required review:** static admission/limit/EOF/close/success-order/caller/
+  unchanged-correlation/schema review; docs/JSON/full unique roadmap/history/
+  links/fences/scope/diff/sensitive additions and exact Git/Vault delivery.
+  Departmental direct cases remain unrun: each ledger valid/space/missing/
+  directory/FIFO/symlink/replacement, incomplete/missing/mis-keyed/invalid
+  inventory, absent flags/metadata, known-size/empty/exact/over bytes or rows,
+  short reads/same-size digest change/growth/truncation/observed mutation, row/
+  UTF-8/JSON/duplicate/nonfinite/finite-overflow boundaries, all correlation
+  rejections, first/second/third admission/wrapping/fstat/read/close faults and
+  earlier-handle cleanup, exact EOF/no success on failure, preservation and
+  standalone/integrated/bundle/pair status/schema/partial evidence/source hashes.
+  Every rejection must reach replay itself, not a nearby snapshot/decoder test.
+- **Non-goals:** other readers, new budgets, snapshot/receipt/publication changes,
+  schema/dependency/toolchain/workflow/release changes, authenticity, continuous
+  stability, parent-traversal security, acceptance or execution suites.
+- **Stop condition:** required format migration, incompatible shared error/
+  progress ownership, unavailable primitives without safe rejection, ambiguous
+  review or new external/private/product authority.
+
 
 ### R90-71 Validation Deviation
 
@@ -6874,3 +6947,27 @@ No additional local ready item is defined; the next trigger verifies this closur
 and audits fresh queue evidence without repeating completed work or publication.
 R90-75 retains its complete independent departmental acceptance contract.
 No subsequent increment starts here.
+
+
+## R90-138 Selection and Queue Audit (2026-10-02)
+
+Fresh clean HEAD/origin/main/FETCH_HEAD is
+`45ff1af40d7ff77b1a8b3a5a2d5680f9f83c9a75`; R90-137 feature/closure
+exact Git/Vault scope/index/MOC evidence is verified. The 355-file snapshot JSON
+SHA-256 is `572fec4b4cbe57bbf38dce55e2da60cd4611450ed6ce48c19e21ad502b61cbb7`.
+The 55-commit Sep 4–Oct 2 phase audit separates tooling/replay, input admission,
+queue repairs, historical candidate publication and main metadata. No missing
+delivery or new qualifying department measurement appears. R90-75 remains the
+sole unfinished contract; Oct 2–Dec 30 remains the current horizon.
+
+The three-path audit plan/state was persisted before roadmap edits. R90-138
+restores the empty local ready queue by defining R90-139: `_replay` independently
+reopens retained sender ledgers with following/blocking handles, limits each
+row and checks total inventory only at EOF. R90-137's closed decoder handle does
+not protect replay. Existing hashing and correlation remain real source authority;
+the gap concerns admission, total reads and descriptor metadata. Define three
+regular non-following/nonblocking replay handles, captured-byte/row bounds,
+exact EOF inventory/metadata and close-before-success while preserving all
+standalone/integrated/bundle/pair contracts. R90-139 remains planned/unstarted
+until this audit delivery; no runtime or test execution begins here. All execution
+suites remain user-delegated, and no behavioral rejection or SLO result is claimed.

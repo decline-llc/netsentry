@@ -1,0 +1,60 @@
+{
+  "task": "r90-138-sender-replay-queue-audit",
+  "timestamp": "2026-10-02",
+  "branch": "main",
+  "remote_baseline": "45ff1af40d7ff77b1a8b3a5a2d5680f9f83c9a75",
+  "starting_remote_baseline": "45ff1af40d7ff77b1a8b3a5a2d5680f9f83c9a75",
+  "risk_level": "Low",
+  "current_checkpoint": "static_review_passed_awaiting_audit_delivery",
+  "completed": [
+    "Verified clean fetched refs and both exact R90-137 Git/Vault ranges",
+    "Captured 355-file Vault baseline and 308 immutable iteration notes; reviewed 55-commit phase history",
+    "Reviewed replay rows/EOF/open/close and reconstruct/integrate/bundle/pair flow",
+    "Audited independent complete departmental R90-75 contract",
+    "Persisted three-path plan/state before roadmap edits",
+    "Defined complete R90-138/R90-139 contracts and preserved R90-75",
+    "Directly reviewed replay admission/total bounds/EOF/close and standalone/integrated/bundle/pair boundaries",
+    "Docs/156 JSON/143 full unique roadmap pairs/history/links/fences/scope/diff/sensitive additions pass; runtime unchanged"
+  ],
+  "in_progress": [
+    "Exact R90-138 audit delivery and current stable handoff reconciliation"
+  ],
+  "todo": [
+    "Commit/push/fetch verify exact audit and Vault range",
+    "Reconcile 12 stable notes and preserve immutable iteration history",
+    "Record one docs-only closure and verify its exact delivery"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_departmental",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "static_review": "pass:docs-check;direct-replay-and-consumer-source-review;156-task-json;143-full-unique-roadmap-pairs;ordered-history;links;fences;three-path-scope;unchanged-runtime;diff;sensitive-additions"
+  },
+  "authority_boundaries": [
+    "Exactly R90-138 documentation-only audit and three planned paths",
+    "R90-139 implementation remains unstarted",
+    "All execution suites and R90-75 acceptance remain departmental",
+    "No runtime/schema/toolchain/dependency/workflow/publication changes"
+  ],
+  "remaining_risks": [
+    "Replay admission/total-read gap is source evidence, not an executed failure",
+    "No departmental current-main acceptance evidence supplied"
+  ],
+  "resume_instructions": "Complete only the persisted R90-138 documentation audit and delivery; do not implement R90-139 in this trigger. Preserve departmental execution ownership.",
+  "next_increment": {
+    "id": "R90-139",
+    "status": "planned",
+    "started": false,
+    "dependencies": [
+      "R90-138",
+      "R90-126",
+      "R90-127",
+      "R90-137"
+    ]
+  },
+  "deviations": [
+    "Initial Vault verifier assumed full-SHA generated prose; corrected to versioned abbreviated range format plus full Git ancestry/endpoints and exact generated scope. No delivery or scope deviation."
+  ]
+}
