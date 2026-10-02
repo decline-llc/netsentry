@@ -1,0 +1,47 @@
+{
+  "task": "r90-135-reporter-input-boundary",
+  "timestamp": "2026-10-02",
+  "branch": "main",
+  "remote_baseline": "66cde661c06226e5953e0ba0ed936302c8f5ed05",
+  "starting_remote_baseline": "66cde661c06226e5953e0ba0ed936302c8f5ed05",
+  "risk_level": "Medium",
+  "current_checkpoint": "implementation_and_static_review_complete",
+  "completed": [
+    "Verified clean fresh refs and R90-134 audit/closure exact Vault evidence",
+    "Reproduced 349-file Vault baseline hash; reviewed 49-commit phase history",
+    "Audited complete R90-75/R90-135 forward contracts and shared reader/callers",
+    "Persisted six-path implementation plan, authority boundaries and direct departmental case matrix",
+    "Implemented reporter-local single read-only non-following/nonblocking regular-file admission and fail-closed flags/metadata",
+    "Added known-size/cap+1/EOF consumed-size and metadata checks with wrapping-error/context-managed close before decoding",
+    "Updated reporter/runbook admission, compatibility, provenance and departmental case handoff",
+    "AST equality verified unchanged other definitions/constants/signature/decode and three direct caller consumers",
+    "Python/docs/153 JSON/139 full unique roadmap pairs/history/links/fences/exact scope/diff/sensitive additions passed"
+  ],
+  "in_progress": [
+    "Feature commit and exact Git/Vault delivery"
+  ],
+  "todo": [
+    "Feature commit/push/fetch and exact Vault stable-note reconciliation/replay",
+    "One docs-only closure with exact range delivery"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_departmental",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "static_review": "pass:python-check;docs-check;AST-unchanged-definitions-constants-signature-decode;three-callers;153-task-json;139-full-roadmap-pairs;history;links;fences;scope;diff;sensitive-additions"
+  },
+  "authority_boundaries": [
+    "Exactly R90-135 and six planned paths",
+    "No other readers/consumers/schema/dependency/toolchain/workflow/publication changes",
+    "All execution remains user-delegated",
+    "Preserve raw bytes/hash, JSON diagnostics, summary/status and publication contracts"
+  ],
+  "remaining_risks": [
+    "All direct behavioral/CLI/shared consumer cases unexecuted",
+    "Metadata observation does not authenticate input or continuously freeze writers",
+    "Shared reader admission changes and source digest require department review"
+  ],
+  "resume_instructions": "Finish only R90-135 planned implementation and exact Git/Vault delivery; preserve the testing split and do not repeat prior publication/delivery or start next work."
+}

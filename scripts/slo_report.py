@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 import re
+import stat
 import sys
 import tempfile
 from pathlib import Path
@@ -78,11 +79,37 @@ def _constant(_: str) -> Any:
 
 
 def read_observations(path: Path) -> tuple[dict[str, Any], bytes]:
-    """Read at most 64 MiB, preserving exact source bytes for the report."""
-    with path.open("rb") as stream:
+    """Admit one stable regular-file read, preserving at most 64 MiB exactly."""
+    flags = tuple(getattr(os, name, None) for name in ("O_NOFOLLOW", "O_NONBLOCK"))
+    if any(type(flag) is not int or flag <= 0 for flag in flags):
+        raise EvidenceError("non-following/nonblocking input admission unavailable")
+    descriptor = os.open(path, os.O_RDONLY | flags[0] | flags[1])
+    try:
+        stream = os.fdopen(descriptor, "rb")
+    except BaseException:
+        os.close(descriptor)
+        raise
+    fields = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
+    limit_error = "input exceeds 64 MiB; use minute cohorts, not per-packet traces"
+    with stream:
+        before = os.fstat(stream.fileno())
+        if not stat.S_ISREG(before.st_mode):
+            raise EvidenceError("input must be a regular file")
+        if any(type(getattr(before, field, None)) is not int for field in fields):
+            raise EvidenceError("stable input metadata unavailable")
+        if before.st_size < 0:
+            raise EvidenceError("stable input size unavailable")
+        if before.st_size > MAX_INPUT_BYTES:
+            raise EvidenceError(limit_error)
         raw = stream.read(MAX_INPUT_BYTES + 1)
-    if len(raw) > MAX_INPUT_BYTES:
-        raise EvidenceError("input exceeds 64 MiB; use minute cohorts, not per-packet traces")
+        if len(raw) > MAX_INPUT_BYTES:
+            raise EvidenceError(limit_error)
+        after = os.fstat(stream.fileno())
+        if any(type(getattr(after, field, None)) is not int for field in fields):
+            raise EvidenceError("stable input metadata unavailable")
+        if (any(getattr(before, field) != getattr(after, field) for field in fields)
+                or len(raw) != before.st_size):
+            raise EvidenceError("source changed while reading")
     try:
         document = json.loads(raw.decode("utf-8"), object_pairs_hook=_pairs, parse_constant=_constant)
     except (UnicodeError, json.JSONDecodeError, RecursionError) as error:

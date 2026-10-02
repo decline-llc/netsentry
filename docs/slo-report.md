@@ -50,6 +50,40 @@ Every report sets `slo_compliance_asserted=false` and
 `departmental_review_required=true`. A zero exit is **not SLO acceptance**.
 The tool does not activate any CI or release gate.
 
+## Finalized input admission
+
+R90-135 adds reporter-local admission before JSON decoding. The Python reader
+and CLI require a finalized regular file opened once read-only with
+`O_NOFOLLOW | O_NONBLOCK`; the final component cannot be a symlink and a FIFO
+cannot block waiting for a writer. Missing, directory and other nonregular
+inputs are rejected. Required flags or integer device/inode/size/mtime/ctime
+metadata being unavailable is an error, rather than a weaker fallback.
+
+A known size above 64 MiB is rejected before reading. The same handle reads at
+most 64 MiB plus one byte to detect growth past the existing cap, then compares
+its required metadata and consumed byte count with admission. Observed changes
+or a size mismatch are rejected. The source closes before the existing UTF-8/
+JSON decode and semantic summary; acquisition or close failure cannot create a
+standalone report or modify an existing destination. The tool opens the source
+read-only and does not repair it. Existing publication-stage failure semantics
+described above still apply after successful admission and summary.
+
+Exact source bytes/hash, the reader signature/tuple, cap, JSON diagnostics,
+schema, thresholds and report status/exit interpretation remain unchanged.
+Admission failures intentionally precede decoding. Reconstruction and pair
+comparison use the same reader for their retained regular observations; an
+admission failure preserves their existing error/partial-artifact behavior,
+without a whole-operation rollback guarantee. Reporter source digests naturally
+change with this implementation; retain provenance and require the existing
+comparability review rather than treating old and new tool identities as equal.
+
+Metadata checks observe read-boundary changes; they do not authenticate content,
+freeze concurrent writers, secure parent-directory traversal or certify supplied
+measurement facts. A handle never reopens a replaced source pathname, but a
+successful read does not promise ongoing pathname/content stability. These
+contracts have static source/AST review only; departmental cases below remain
+unexecuted.
+
 ## Input schema v1
 
 Input is a single UTF-8 JSON object, at most 64 MiB. All listed fields are
@@ -201,6 +235,16 @@ The user delegated testing. This implementation has only static syntax, diff
 and manual source review; the following behavioral validation remains with the
 test department:
 
+- Direct reader admission: ordinary/space paths; missing/directory/FIFO/symlink;
+  unavailable flags/metadata or negative size; empty/exact 64 MiB/known-over-cap
+  and read-over-cap;
+  mutation/growth/truncation and immediate pathname replacement; open/fdopen/
+  read/fstat/close errors. Verify exact source bytes/hash and independent read-only
+  proof of source/existing-output preservation with no standalone publication on
+  admission rejection. Each rejection must reach this reader directly.
+- Stable valid JSON, invalid UTF-8, malformed/deep/duplicate/nonfinite input and
+  existing semantic diagnostics; shared reconstruction/comparison inputs,
+  partial-artifact/status handling and changed reporter source-digest binding.
 - Valid staging/prod reports, exact targets, threshold equality, high/low load,
   resource mismatch, sparse/empty samples, short runs and absent phases.
 - Missing arrivals/completions, finite p99 with rare missing samples, unbounded

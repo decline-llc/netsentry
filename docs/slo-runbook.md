@@ -185,6 +185,18 @@ such deviation from the designated handoff location. Reports embed exact source
 JSON and its SHA-256; verify that it matches adapter observations. Keep the entire
 adapter package and external evidence as well as the report.
 
+Finalize `observations.json` as a regular file before invoking the reporter.
+Its shared reader uses one non-following/nonblocking read-only handle, the
+existing 64 MiB cap and before/after descriptor metadata plus consumed-size
+checks, then closes before decoding. Rejected acquisition produces no standalone
+report; existing input/output bytes are preserved by the tool. Keep and inspect
+failed evidence rather than converting it into success. Reconstruction and pair
+review also use this reader; their existing partial artifacts may remain on
+failure. Source identity changes require ordinary comparability review. Metadata
+is an observed boundary, not authenticity or continuous writer exclusion.
+Direct admission, close/error and shared-consumer tests remain departmental and
+unrun; see the [reporter handoff](slo-report.md#finalized-input-admission).
+
 Review full-run, per-minute and trailing five-minute results as offer-time cohorts
 finalized at the declared drain deadline. Separate sustained/burst denominators;
 review each burst's loss, all raw expected/completed/missing/late counts and

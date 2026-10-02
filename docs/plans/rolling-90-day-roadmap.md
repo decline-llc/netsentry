@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-10-01 through 2026-12-29. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-10-02 through 2026-12-30. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -212,7 +212,7 @@ formal SLO and evidence contract is unchanged.
 | R90-132 | Oct 1–Dec 29 | Complete documentation; execution delegated | Reconcile toolchain delivery and restore a bounded sender-input queue. | R90-131 feature/closure | Verify exact Git/Vault delivery and phase history; define source-grounded R90-133 with a complete input/compatibility/delegation contract; update current handoffs without runtime changes. |
 | R90-133 | Oct 1–Dec 29 | Complete implementation; tests delegated | Bound finalized fixture admission and retention before reference-sender submission. | R90-132; R90-117 sender; R90-129 collector boundary; R90-126/R90-127 replay compatibility | Admit and snapshot supplied regular fixture bytes with non-following/nonblocking handles and a configurable 64 GiB default input budget; reject nonregular, changed and over-budget acquisition before any send; preserve sender schedules, oracle, formats, partial evidence and independent acceptance boundary. |
 | R90-134 | Oct 1 | Complete documentation; execution delegated | Reconcile post-sender delivery and scope reporter input admission. | R90-133 verified feature/closure | Audit exact Git/Vault evidence and shared reporter reader; define complete R90-135 contract without implementation or tests. |
-| R90-135 | Oct 1–Dec 29 | Ready; tests delegated | Admit bounded finalized observations through a stable reporter file handle. | R90-134; R90-114 reporter; R90-119/R90-122/R90-123 shared consumers | Reject symlink/nonregular/observed-changing and oversized acquisition through one non-following/nonblocking regular-file descriptor; retain 64 MiB cap, exact bytes/hash, JSON/report/status semantics and output preservation; tests delegated. |
+| R90-135 | Oct 2–Dec 30 | In progress; tests delegated | Admit bounded finalized observations through a stable reporter file handle. | R90-134; R90-114 reporter; R90-119/R90-122/R90-123 shared consumers | Reject symlink/nonregular/observed-changing and oversized acquisition through one non-following/nonblocking regular-file descriptor; retain 64 MiB cap, exact bytes/hash, JSON/report/status semantics and output preservation; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3004,10 +3004,10 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-135 Definition
 
-- **Goal/status:** ready after verified R90-134 audit delivery; tighten finalized observation
-  admission at `slo_report.read_observations`. Implementation remains unstarted.
+- **Goal/status:** implementation in progress after verified R90-134 delivery;
+  tighten finalized observation admission at `slo_report.read_observations`.
 - **Dependencies/window:** R90-134; completed R90-114 reporter and
-  R90-119/R90-122/R90-123 shared comparison/reconstruction consumers; Oct 1–Dec 29.
+  R90-119/R90-122/R90-123 shared comparison/reconstruction consumers; Oct 2–Dec 30.
 - **Source evidence:** the reader currently uses following `Path.open("rb")`,
   bounds read to 64 MiB plus one byte and returns exact raw JSON bytes. It has no
   nonregular admission or descriptor metadata comparison. Standalone reporting
@@ -6611,3 +6611,30 @@ delivery. R90-135 is the next ready increment, unstarted; on the next trigger
 verify the latest fetched tip/closure Vault evidence and persist its separate
 implementation plan. R90-75 retains its independent departmental contract.
 Do not repeat R90-133/R90-134 commits/synchronization or R90-59 publication.
+
+
+## R90-135 Selection and Implementation (2026-10-02)
+
+Fresh clean HEAD/origin/main/FETCH_HEAD is
+`66cde661c06226e5953e0ba0ed936302c8f5ed05`; R90-134 audit/closure exact
+ranges have verified note/index/MOC, with the 349-file Vault snapshot JSON hash
+`b96394b22638adc2a41f8112a62b9b86b8a1d2a3d44f16c7ab2ef6a90924dd75`.
+The 49-commit Sep 4–Oct 2 phase review separates contracts/tooling/replay,
+collector/sender admission, queue repair, historical publication and main
+metadata. R90-135 dependencies are complete; R90-75 retains its independent
+complete departmental contract without new qualifying measurements. The 90-day
+horizon is Oct 2–Dec 30, forecast movement only, with no eligibility gate.
+
+The six-path `task-20261002-reporter-input-boundary.md` and matching state were
+persisted before source/documentation edits. Reporter acquisition now requires
+available non-following/nonblocking flags, one read-only regular-file handle,
+integer descriptor metadata, known-size rejection, cap+1 bounded read and
+before/after metadata/consumed-size equality. Descriptor wrapping failure closes
+the raw handle; all other admission/read paths use context-managed close before
+the unchanged decode block. Existing signature/tuple/raw-byte/hash, 64 MiB cap,
+JSON/semantic/schema/status/threshold and publication contracts are retained.
+Standalone rejection precedes summary/output creation; shared reconstruction/pair
+readers retain their wrapper error and partial-artifact behavior. Reporter source
+identities naturally change and do not waive comparability. Metadata cannot
+prove authenticity or continuous writer exclusion. All behavioral/CLI/traffic/
+acceptance/scanner/knowledge suites remain unrun, delegated by user.
