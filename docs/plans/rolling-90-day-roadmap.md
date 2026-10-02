@@ -216,7 +216,7 @@ formal SLO and evidence contract is unchanged.
 | R90-136 | Oct 2 | Complete documentation; execution delegated | Reconcile reporter delivery and scope inventory-bound bundle decoding. | R90-135 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record retained-decoder inventory gap and define complete R90-137 contract without runtime or test execution. |
 | R90-137 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind retained bundle decoding to captured byte/hash inventory. | R90-136; R90-118/R90-119/R90-122/R90-126 consumers; R90-135 boundary precedent | Admit one bounded non-following/nonblocking regular retained-file handle; verify exact inventory bytes/hash and descriptor metadata before publishing decoded state; preserve strict schemas, parsing/status and partial evidence; tests delegated. |
 | R90-138 | Oct 2 | Complete documentation; execution delegated | Reconcile decoder delivery and scope bounded sender replay. | R90-137 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record replay reopen/total-read gap and define complete R90-139 contract without runtime or test execution. |
-| R90-139 | Oct 2–Dec 30 | In progress implementation; tests delegated | Bound and admit retained sender replay ledgers against captured inventory. | R90-138; R90-126/R90-127 sender consumers; R90-137 decoder precedent | Admit three non-following/nonblocking regular replay handles; bound bytes/rows, verify exact EOF inventory and descriptor metadata, close before success; preserve correlation/schema/status/partial evidence; tests delegated. |
+| R90-139 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bound and admit retained sender replay ledgers against captured inventory. | R90-138; R90-126/R90-127 sender consumers; R90-137 decoder precedent | Admit three non-following/nonblocking regular replay handles; bound bytes/rows, verify exact EOF inventory and descriptor metadata, close before success; preserve correlation/schema/status/partial evidence; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3147,14 +3147,14 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-139 Definition
 
-- **Goal/status:** implementation in progress after verified R90-138 delivery; bind retained sender replay
-  reads to captured inventories, with all behavioral tests delegated.
+- **Goal/status:** complete implementation after verified R90-138 delivery;
+  retained sender replay reads bind to captured inventories; behavioral tests delegated.
 - **Dependencies/window:** R90-138; completed R90-126 standalone and R90-127
   bundle/pair sender integration; R90-137 decoder precedent; Oct 2–Dec 30.
-- **Source evidence:** `_replay` reopens three retained JSONL files using
-  following `Path.open`; `_Rows` limits rows individually and checks total
-  bytes/rows/hash only at aligned EOF. No nonblocking/regular/metadata admission
-  or total captured read bound protects these later replay handles. R90-137
+- **Source evidence before this increment:** `_replay` reopened three retained
+  JSONL files using following `Path.open`; `_Rows` limited rows individually and
+  checked total bytes/rows/hash only at aligned EOF. No nonblocking/regular/
+  metadata admission or total captured read bound protected those later handles. R90-137
   closes its decoder handle before replay and cannot supply that evidence.
   This is static source review, not an executed failure or absent-hash claim.
 - **Risk:** medium; altered rejection order or leaked handles can undermine
@@ -7034,3 +7034,47 @@ receipt/schema/status/partial evidence and standalone/integrated/bundle/pair
 contracts remain. Reconstruction source digest changes naturally; no authenticity,
 continuous integrity or acceptance claim. Every execution suite remains user-
 delegated and unrun. No subsequent increment begins here.
+
+
+## R90-139 Completion and Queue Refresh (2026-10-02)
+
+Feature `f3420f12fea932621f3efae4de01f395bb375b62` contains exactly the
+six intended paths. Push/fresh fetch verified matching clean HEAD/origin/main/
+FETCH_HEAD. Exact range
+`d05bcefb85476bbaf9b451484a203874290d2cf2..f3420f12fea932621f3efae4de01f395bb375b62`
+has verified generated scope/note/index/MOC. All 12 current stable notes describe
+implemented replay admission, byte/row bounds, EOF metadata/inventory, cleanup
+and close-before-success with unchanged correlation and consumer contracts.
+All 310 prior immutable iteration-directory notes are preserved. Identical-range
+replay preserves the 358-file snapshot JSON SHA-256
+`c6eaaabe1ff43b5b28b53070765921770e79abcfd9123e58e7596e1123e413c5`.
+
+Acceptance matches the evidence map: complete captured primitives/flags and
+three regular handle admissions before correlation; registered cleanup before
+reader initialization/later opens; bounded probes/row-count rejection before extra
+decode/correlation; EOF stable metadata and exact inventory; stack close before
+success/caller complete/check. Local stdlib cleanup source is reviewed, without
+executing fault scenarios. AST verifies other definitions/constants/imports,
+replay signature, full original correlation loop and original JSON/counter sequence
+unchanged. Standalone/integrated/bundle/pair schemas/status/errors/partial evidence/
+source binding are directly reviewed with unchanged consumer source. Python/docs,
+157 task JSON, 143 full unique roadmap pairs, chronological history/links/fences/
+six-path scope/diff/sensitive additions pass. Planned effects are earlier admission
+rejection for altered inputs and a changed reconstruction source digest.
+
+Initial port-22 push connection closed; read-only fetch verified remote still at
+old baseline. Existing trusted host key authenticated GitHub SSH-over-443 and
+transient Git SSH command push/fetch succeeded; remote configuration stayed
+unchanged and synchronization waited for verified delivery. No scope or static-
+review deviation remains. Every direct behavioral/CLI/traffic/acceptance/scanner/
+knowledge case remains departmental and unrun. Static structure is not measured
+runtime rejection, handle cleanup/preservation under injected faults, authenticity,
+continuous integrity, performance or SLO acceptance. Existing skills need no edit.
+
+This single docs-only record closes R90-139. Resolve its final SHA from Git,
+verify its own push/fresh fetch/exact Vault range before final reporting, and do
+not create another closure merely to embed a self-reference. No additional local
+ready increment is defined; next trigger verifies latest fetched tip/closure
+knowledge and audits fresh evidence. R90-75 retains its complete independent
+departmental acceptance contract. Do not repeat completed R90-138/R90-139 delivery
+or R90-59 publication. No subsequent increment begins here.

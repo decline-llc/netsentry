@@ -121,3 +121,35 @@ acceptance. Existing skill instructions already cover the workflow; no edit need
 
 Feature Git/Vault delivery, current stable reconciliation and one docs-only
 closure remain. Do not begin a subsequent increment.
+
+## Delivery and acceptance closeout
+
+Feature `f3420f12fea932621f3efae4de01f395bb375b62` contains exactly the
+six planned paths. Push/fresh fetch verified matching clean refs. Exact range
+`d05bcefb85476bbaf9b451484a203874290d2cf2..f3420f12fea932621f3efae4de01f395bb375b62`
+has verified generated scope/note/index/MOC. All 12 current stable notes now
+record implemented replay boundary and unchanged consumer contracts. All 310
+prior immutable iteration-directory notes remain unchanged; identical-range
+replay preserves the 358-file snapshot JSON SHA-256
+`c6eaaabe1ff43b5b28b53070765921770e79abcfd9123e58e7596e1123e413c5`.
+
+Every acceptance maps to planned direct evidence: prior selection/delivery,
+validated inventories/flags and handle admission, bounded byte/row-before-extra-
+decode sequence, exact EOF inventory/metadata, registered/raw handle cleanup and
+close-before-success, unchanged full correlation/JSON sequences and consumers,
+static structural/scope/sensitive checks plus exact Git/Vault delivery. Direct
+regressions remain unrun; this establishes source implementation/static review,
+not observed failure cleanup, preservation, runtime correctness or SLO acceptance.
+
+First port-22 push connection closed; read-only fetch proved old remote baseline,
+existing trusted host key authenticated SSH-over-443, and transient Git SSH
+command push/fetch verified feature delivery before sync. Remote unchanged.
+No scope or static-review failure occurred; transport recovery is the only
+execution deviation. Existing skills already cover this recovery and need no edit.
+
+One docs-only record closes the same increment. Resolve its SHA from Git and
+verify its own push/fresh fetch/exact Vault range before reporting; avoid another
+commit merely to embed its self-reference. No further local ready increment is
+defined. Next trigger verifies latest tip/closure knowledge and audits fresh queue
+evidence. R90-75 and all execution suites remain departmental. Do not repeat old
+deliveries/publication or begin subsequent implementation in this trigger.
