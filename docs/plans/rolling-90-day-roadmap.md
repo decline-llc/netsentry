@@ -208,7 +208,7 @@ formal SLO and evidence contract is unchanged.
 | R90-128 | Oct 1 | Complete documentation; execution delegated | Audit sender-integration delivery and restore the bounded adapter-input queue. | R90-127 | Reconcile delivery/history/Vault, refresh the horizon, and define standalone adapter input admission and retention limits from source evidence without runtime work. |
 | R90-129 | Oct 1–Dec 18 | Complete implementation; tests delegated | Bound finalized-file admission and retained input bytes in the standalone SLO adapter. | R90-128; R90-115 adapter and R90-122 reconstruction contracts | Admit only supplied regular files through non-following/nonblocking handles, account for all three inputs under a configurable byte budget, reject changed/oversized sources without completion, preserve partial evidence and existing sender/adapter formats. |
 | R90-130 | Oct 1–Dec 29 | Complete documentation; execution delegated | Audit post-collector delivery and restore the forward queue. | R90-129 | Reconcile the three R90-129 Git/Vault ranges, phase history, task states and nine current stable notes; correct the stale next-session handoff, preserve immutable iteration notes, and leave only evidence-grounded work with exact blockers, without tests or acceptance claims. |
-| R90-131 | Oct 1–Dec 29 | In progress; tests delegated | Refresh the main execution toolchain to a supported reviewed Go line. | R90-59 delivery closure; R90-130 | Module toolchain, supply-chain lock and documentation agree on the latest reviewed patch in a supported selected line with official checksum/source; preserve the language baseline, dependencies and published release; execution evidence stays delegated and is not inferred from the old release candidate. |
+| R90-131 | Oct 1–Dec 29 | Complete metadata; execution delegated | Refresh the main execution toolchain to a supported reviewed Go line. | R90-59 delivery closure; R90-130 | Module toolchain, supply-chain lock and documentation agree on the latest reviewed patch in a supported selected line with official checksum/source; preserve the language baseline, dependencies and published release; execution evidence stays delegated and is not inferred from the old release candidate. |
 
 ## R90-01 Definition
 
@@ -2884,8 +2884,8 @@ formal SLO and evidence contract is unchanged.
 - **Goal:** update current-main execution toolchain metadata from Go 1.25.14
   to a supported selected line; keep `go 1.22.2`, dependencies, runtime sources,
   workflow behavior and the published v0.1.1 tag/artifacts unchanged.
-- **Status/dependencies/window:** ready after the R90-59 delivery-record
-  closure and R90-130; Oct 1–Dec 29; selected on this trigger.
+- **Status/dependencies/window:** complete metadata after the R90-59 delivery-record
+  closure and R90-130; Oct 1–Dec 29; execution remains delegated.
 - **Source evidence:** before this increment, main `engine/go.mod` and the
   supply-chain lock selected 1.25.14. The [official release policy/history](https://go.dev/doc/devel/release)
   lists 1.27 and 1.26 as the supported major lines at the Oct 1 review. The
@@ -6275,3 +6275,34 @@ ended with its delivery. Static consistency and delivery evidence can complete
 this metadata increment under that split; no main compatibility, zero reachable
 findings, release or R90-75 acceptance is inferred. Existing skills already
 cover pin evidence and task-scoped authority; no skill change is warranted.
+
+
+## R90-131 Completion and Queue Refresh (2026-10-01)
+
+Feature `7505be8457e99a89965a276694e9e22e9eae0913` contains exactly the nine
+planned paths, was pushed without force, and fetched at matching clean
+HEAD/origin/main/FETCH_HEAD. Local publication tag identity is unchanged.
+Exact range `1ec7c9555e7e4788618f88efb9050fb536c72ad1..7505be8457e99a89965a276694e9e22e9eae0913`
+has its iteration note, full-index row and MOC link. Eleven current handoffs
+and the separate Actions/Docker stable note were reconciled: the extra stable
+note was discovered in the toolchain consumer review and changed no repository
+scope. All 294 existing iteration-directory note bytes were preserved.
+Identical-range replay preserved the 342-file Markdown snapshot JSON hash
+`6a8b18f17ce5195153ed2412eeb00ef7c553114fa1381c7f15c67d9b50fdcfef`.
+
+Acceptance matches the plan: latest selected-supported-line patch and official
+archive identity are recorded; module/lock/current docs and all consumers agree;
+only the toolchain directive changes module behavior. Documentation, JSON,
+135 unique row/Definition multiset, links/fences, diff/scope and additions-only
+sensitive-information review pass. An initial review script scanned existing
+historical pathname examples and stopped before staging; the corrected complete
+review checks current additions and passes. No execution test result is inferred.
+Main behavioral/native/RC, scanner, workflow execution and knowledge suites
+remain not run; delegated by user. This is metadata implementation completion.
+
+R90-131 is complete and this single docs-only delivery record closes the same
+increment. The refreshed queue has no additional local ready item; R90-75
+retains its departmental acceptance, dependencies, forecast, risks, required
+artifacts and stop condition. On the next trigger verify the latest fetched
+remote and exact closure Vault range, then audit new evidence rather than
+repeating delivery or inventing work. No next increment is started.

@@ -2,10 +2,10 @@
   "task": "r90-131-main-supported-go-toolchain",
   "timestamp": "2026-10-01",
   "branch": "main",
-  "remote_baseline": "1ec7c9555e7e4788618f88efb9050fb536c72ad1",
+  "remote_baseline": "7505be8457e99a89965a276694e9e22e9eae0913",
   "starting_remote_baseline": "1ec7c9555e7e4788618f88efb9050fb536c72ad1",
   "risk_level": "Medium",
-  "current_checkpoint": "static_review_complete_awaiting_delivery",
+  "current_checkpoint": "complete_metadata_delivery_execution_delegated",
   "completed": [
     "Verified clean fetched baseline and prior closure exact Vault note/index/MOC",
     "Reviewed recent SLO, collector, queue and publication phases and independent acceptance boundaries",
@@ -13,15 +13,15 @@
     "Persisted scope, evidence map, non-goals and stop conditions before implementation",
     "Aligned module/lock/latest supported patches and recorded official Linux amd64 archive metadata",
     "Reviewed setup-go consumers in all three workflows and Docker module-driven toolchain selection",
-    "Docs check, 149 task JSON parses, 135 unique roadmap row/Definition pairs, scope/link/fence/diff review passed"
+    "Docs check, 149 task JSON parses, 135 unique roadmap row/Definition pairs, scope/link/fence/diff review passed",
+    "Committed exact nine-path feature 7505be8457e99a89965a276694e9e22e9eae0913; pushed main and fetched HEAD/origin/main/FETCH_HEAD equality",
+    "Synchronized exact full-SHA feature range and verified iteration note/index/MOC",
+    "Reconciled 11 stale current handoffs plus the Actions/Docker stable toolchain note; preserved all 294 pre-existing iteration-directory notes",
+    "Identical-range replay preserved the 342-file Vault Markdown hash 6a8b18f17ce5195153ed2412eeb00ef7c553114fa1381c7f15c67d9b50fdcfef",
+    "Refreshed remaining queue: no additional local ready increment; R90-75 acceptance remains departmental"
   ],
-  "in_progress": [
-    "Scoped commit/push/fetch and exact Vault delivery"
-  ],
-  "todo": [
-    "Reconcile 11 stable current handoffs and verify immutable notes and range replay",
-    "One docs-only delivery closure"
-  ],
+  "in_progress": [],
+  "todo": [],
   "toolchain": {
     "previous": "1.25.14",
     "selected": "1.26.8",
@@ -49,5 +49,23 @@
     "No language, dependency, runtime, workflow or publication changes",
     "R90-75 acceptance remains departmental"
   ],
-  "resume_instructions": "Finish only R90-131 using its persisted plan. Execute static review and delivery checks; behavioral, RC, scanner and knowledge suites remain delegated. Verify push/fetch before exact Vault synchronization. Do not begin another increment."
+  "resume_instructions": "R90-131 metadata implementation and feature Git/Vault delivery are complete. Verify the latest fetched tip and the docs-only closure exact range from Git, repairing synchronization only if actually missing. Do not repeat R90-131 feature/closure commit, push, sync or R90-59 publication. Audit the remaining queue from fresh evidence; no local ready increment is currently defined. Behavioral, RC, scanner, workflow execution and knowledge suites remain delegated; candidate evidence is not main acceptance.",
+  "delivery": {
+    "feature_commit": "7505be8457e99a89965a276694e9e22e9eae0913",
+    "verified_remote": "7505be8457e99a89965a276694e9e22e9eae0913",
+    "feature_vault_range": "1ec7c9555e7e4788618f88efb9050fb536c72ad1..7505be8457e99a89965a276694e9e22e9eae0913",
+    "iteration_note": "04-\u5f00\u53d1\u8fed\u4ee3\u8bb0\u5f55/2026-10-01-7505be8457-CI\u77e5\u8bc6\u540c\u6b65.md",
+    "index_and_moc": "verified",
+    "stable_notes_reconciled": 12,
+    "immutable_iteration_directory_notes_preserved": 294,
+    "vault_markdown_count": 342,
+    "vault_snapshot_json_sha256": "6a8b18f17ce5195153ed2412eeb00ef7c553114fa1381c7f15c67d9b50fdcfef",
+    "closure": "One docs-only delivery record follows the verified feature; resolve its final SHA from Git and verify its own exact range"
+  },
+  "remaining_risks": [
+    "Main compatibility, native/RC, scanner and knowledge execution evidence remains not run, delegated by user",
+    "Support and checksum metadata is a 2026-10-01 snapshot; archive bytes were not downloaded in this increment",
+    "R90-75 departmental SLO acceptance remains outstanding"
+  ],
+  "next_increment": "No local ready increment; audit fresh evidence on the next trigger; R90-75 acceptance remains departmental"
 }

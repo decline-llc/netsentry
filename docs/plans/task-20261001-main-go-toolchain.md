@@ -68,3 +68,30 @@ and subsequently builds from it. Native execution and Docker resolution remain
 delegated. Docs check, 149 task-state JSON parses, 135 unique matching roadmap
 row/Definition pairs, local link/fence, scope and diff review pass. No behavioral
 or vulnerability result is claimed. Delivery is the remaining work.
+
+## Delivery and deviations
+
+Feature `7505be8457e99a89965a276694e9e22e9eae0913` contains exactly the nine
+planned paths. Push and fresh fetch verified clean HEAD/origin/main/FETCH_HEAD
+at that SHA; the publication tag object and peeled candidate were unchanged.
+Exact range `1ec7c9555e7e4788618f88efb9050fb536c72ad1..7505be8457e99a89965a276694e9e22e9eae0913`
+was synchronized and its iteration note, index row and MOC link verified.
+
+Eleven stale current handoffs and one additional Actions/Docker stable note
+were reconciled. That extra local note surfaced during consumer review and
+expanded only stable knowledge coverage; repository scope stayed at nine paths.
+All 294 existing iteration-directory notes remained unchanged. Replay
+preserved the 342-file Markdown snapshot JSON hash
+`6a8b18f17ce5195153ed2412eeb00ef7c553114fa1381c7f15c67d9b50fdcfef`.
+The initial safety review stopped before staging because it scanned old pathname
+examples; rerunning the complete review on intended additions passed. No source
+or behavioral validation deviation occurred, and no tests were run. All
+execution/knowledge checks remain explicitly delegated.
+
+Every acceptance criterion has the promised static or delivery evidence; no
+direct behavioral regression was promised or claimed. This docs-only closure
+records the delivered feature as complete; its own final SHA and exact range
+must be resolved from Git, push/fetch-verified and synchronized before reporting
+final delivery. There is no additional local ready increment. R90-75 retains
+its independent departmental contract; re-audit fresh evidence on the next
+trigger without repeating this increment or release publication.
