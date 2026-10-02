@@ -96,3 +96,28 @@ to include all four suffixed IDs, and the complete comparison passed before any
 commit. This is a review-tool correction, not missing runtime evidence. The
 347-file Vault baseline and all 300 immutable iteration-directory notes are
 captured. Exact Git/Vault delivery and stable handoff reconciliation remain.
+
+## Delivery and acceptance closeout
+
+Audit `17361f8c0df8797ea6a033d5e8b3c3e18b4c7016` contains exactly the
+three planned paths. Push and fresh fetch verified matching clean refs. Exact
+range `31ba9196bb4b88ae1f0b7397fbaafb9276b66e05..17361f8c0df8797ea6a033d5e8b3c3e18b4c7016`
+has verified note/index/MOC; all 12 stable current notes carry the new reporter
+handoff. All 300 prior immutable iteration-directory notes are unchanged.
+Identical-range replay preserves the 348-file snapshot JSON hash
+`cc5f46236c67ff04573f40b84848f11a6423b2f64707881604547334155b2198`.
+
+Every audit acceptance criterion has its planned direct source, structural or
+Git/Vault evidence. No runtime change or direct behavioral regression is claimed;
+all future reader-specific departmental cases remain unexecuted. The fetch retry,
+corrected historical filename and full-ID structural review are recorded review
+corrections; scope and authority did not change. Final docs/152 JSON/139 full
+roadmap pairs/chronology/link/fence/scope/diff/sensitive checks pass.
+
+One docs-only closure records these verified audit facts. Resolve that closure
+SHA from Git and verify its own push/fetch and exact Vault range; do not create
+another closure just to embed a self-referential SHA. R90-134 audit is complete;
+R90-135 is ready and unstarted. The next trigger must verify latest remote and
+closure knowledge, then persist the separate implementation plan. R90-75 and
+all execution suites remain departmental. Do not repeat completed deliveries
+or start R90-135 in this trigger.

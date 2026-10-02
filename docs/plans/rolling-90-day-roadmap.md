@@ -211,8 +211,8 @@ formal SLO and evidence contract is unchanged.
 | R90-131 | Oct 1–Dec 29 | Complete metadata; execution delegated | Refresh the main execution toolchain to a supported reviewed Go line. | R90-59 delivery closure; R90-130 | Module toolchain, supply-chain lock and documentation agree on the latest reviewed patch in a supported selected line with official checksum/source; preserve the language baseline, dependencies and published release; execution evidence stays delegated and is not inferred from the old release candidate. |
 | R90-132 | Oct 1–Dec 29 | Complete documentation; execution delegated | Reconcile toolchain delivery and restore a bounded sender-input queue. | R90-131 feature/closure | Verify exact Git/Vault delivery and phase history; define source-grounded R90-133 with a complete input/compatibility/delegation contract; update current handoffs without runtime changes. |
 | R90-133 | Oct 1–Dec 29 | Complete implementation; tests delegated | Bound finalized fixture admission and retention before reference-sender submission. | R90-132; R90-117 sender; R90-129 collector boundary; R90-126/R90-127 replay compatibility | Admit and snapshot supplied regular fixture bytes with non-following/nonblocking handles and a configurable 64 GiB default input budget; reject nonregular, changed and over-budget acquisition before any send; preserve sender schedules, oracle, formats, partial evidence and independent acceptance boundary. |
-| R90-134 | Oct 1 | In progress; documentation only | Reconcile post-sender delivery and scope reporter input admission. | R90-133 verified feature/closure | Audit exact Git/Vault evidence and shared reporter reader; define complete R90-135 contract without implementation or tests. |
-| R90-135 | Oct 1–Dec 29 | Planned; awaiting R90-134 delivery | Admit bounded finalized observations through a stable reporter file handle. | R90-134; R90-114 reporter; R90-119/R90-122/R90-123 shared consumers | Reject symlink/nonregular/observed-changing and oversized acquisition through one non-following/nonblocking regular-file descriptor; retain 64 MiB cap, exact bytes/hash, JSON/report/status semantics and output preservation; tests delegated. |
+| R90-134 | Oct 1 | Complete documentation; execution delegated | Reconcile post-sender delivery and scope reporter input admission. | R90-133 verified feature/closure | Audit exact Git/Vault evidence and shared reporter reader; define complete R90-135 contract without implementation or tests. |
+| R90-135 | Oct 1–Dec 29 | Ready; tests delegated | Admit bounded finalized observations through a stable reporter file handle. | R90-134; R90-114 reporter; R90-119/R90-122/R90-123 shared consumers | Reject symlink/nonregular/observed-changing and oversized acquisition through one non-following/nonblocking regular-file descriptor; retain 64 MiB cap, exact bytes/hash, JSON/report/status semantics and output preservation; tests delegated. |
 
 ## R90-01 Definition
 
@@ -2982,7 +2982,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-134 Definition
 
-- **Goal/status:** documentation-only post-sender queue audit in progress; define
+- **Goal/status:** complete documentation-only post-sender queue audit; define
   the smallest source-grounded next increment without starting implementation.
 - **Dependencies/window:** completed R90-133 feature and closure; Oct 1.
 - **Risk:** low; stale handoffs can repeat completed delivery or hide a remaining
@@ -3004,7 +3004,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-135 Definition
 
-- **Goal/status:** planned pending R90-134 delivery; tighten finalized observation
+- **Goal/status:** ready after verified R90-134 audit delivery; tighten finalized observation
   admission at `slo_report.read_observations`. Implementation remains unstarted.
 - **Dependencies/window:** R90-134; completed R90-114 reporter and
   R90-119/R90-122/R90-123 shared comparison/reconstruction consumers; Oct 1–Dec 29.
@@ -6579,3 +6579,35 @@ is delivered and the next trigger persists its implementation plan. Current
 stable notes close R90-133 correctly and need the new handoff. Behavioral/CLI/
 traffic/acceptance/scanner/knowledge execution remains departmental; this audit
 claims no runtime rejection or compliance. No skill change is warranted.
+
+
+## R90-134 Completion and R90-135 Handoff (2026-10-01)
+
+Audit `17361f8c0df8797ea6a033d5e8b3c3e18b4c7016` contains exactly the
+three planned documentation paths, was pushed without force and freshly fetched
+at clean matching HEAD/origin/main/FETCH_HEAD. Exact range
+`31ba9196bb4b88ae1f0b7397fbaafb9276b66e05..17361f8c0df8797ea6a033d5e8b3c3e18b4c7016`
+has its iteration note, full-index row and MOC link. All 12 current stable notes
+now carry completed sender authority and the source-grounded reporter handoff;
+all 300 prior immutable iteration-directory notes are preserved. Exact-range
+replay preserves the 348-file snapshot JSON hash
+`cc5f46236c67ff04573f40b84848f11a6423b2f64707881604547334155b2198`.
+
+Acceptance maps to the plan: prior exact delivery/phase evidence verified;
+reader, all three call sites and standalone publication order directly reviewed;
+R90-75/R90-135 forward contracts complete; stable current handoffs reconciled.
+Docs, 152 task JSON parses, 139 unique full matching roadmap row/Definition
+multisets, chronology, local links/fences, exact scope, diff and sensitive additions
+review pass. Initial fetch transport failure recovered by the identical read-only
+retry; a guessed historical filename was replaced by actual plan evidence; the
+initial numeric-only structural script was corrected to include four suffixed
+IDs. All authoritative review completed before commit. No scope deviation or
+runtime/CLI/traffic/acceptance/scanner/knowledge execution occurred; these remain
+delegated and no behavioral rejection, acquisition or compliance is claimed.
+
+This single docs-only delivery record closes R90-134. Resolve its final SHA from
+Git, verify its own push/fetch and exact Vault range before reporting final
+delivery. R90-135 is the next ready increment, unstarted; on the next trigger
+verify the latest fetched tip/closure Vault evidence and persist its separate
+implementation plan. R90-75 retains its independent departmental contract.
+Do not repeat R90-133/R90-134 commits/synchronization or R90-59 publication.
