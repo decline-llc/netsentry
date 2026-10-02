@@ -210,7 +210,7 @@ formal SLO and evidence contract is unchanged.
 | R90-130 | Oct 1–Dec 29 | Complete documentation; execution delegated | Audit post-collector delivery and restore the forward queue. | R90-129 | Reconcile the three R90-129 Git/Vault ranges, phase history, task states and nine current stable notes; correct the stale next-session handoff, preserve immutable iteration notes, and leave only evidence-grounded work with exact blockers, without tests or acceptance claims. |
 | R90-131 | Oct 1–Dec 29 | Complete metadata; execution delegated | Refresh the main execution toolchain to a supported reviewed Go line. | R90-59 delivery closure; R90-130 | Module toolchain, supply-chain lock and documentation agree on the latest reviewed patch in a supported selected line with official checksum/source; preserve the language baseline, dependencies and published release; execution evidence stays delegated and is not inferred from the old release candidate. |
 | R90-132 | Oct 1–Dec 29 | Complete documentation; execution delegated | Reconcile toolchain delivery and restore a bounded sender-input queue. | R90-131 feature/closure | Verify exact Git/Vault delivery and phase history; define source-grounded R90-133 with a complete input/compatibility/delegation contract; update current handoffs without runtime changes. |
-| R90-133 | Oct 1–Dec 29 | In progress; tests delegated | Bound finalized fixture admission and retention before reference-sender submission. | R90-132; R90-117 sender; R90-129 collector boundary; R90-126/R90-127 replay compatibility | Admit and snapshot supplied regular fixture bytes with non-following/nonblocking handles and a configurable 64 GiB default input budget; reject nonregular, changed and over-budget acquisition before any send; preserve sender schedules, oracle, formats, partial evidence and independent acceptance boundary. |
+| R90-133 | Oct 1–Dec 29 | Complete implementation; tests delegated | Bound finalized fixture admission and retention before reference-sender submission. | R90-132; R90-117 sender; R90-129 collector boundary; R90-126/R90-127 replay compatibility | Admit and snapshot supplied regular fixture bytes with non-following/nonblocking handles and a configurable 64 GiB default input budget; reject nonregular, changed and over-budget acquisition before any send; preserve sender schedules, oracle, formats, partial evidence and independent acceptance boundary. |
 
 ## R90-01 Definition
 
@@ -2933,8 +2933,8 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-133 Definition
 
-- **Goal/status:** bounded reference-sender fixture admission and retention;
-  selected in progress after R90-132 delivery.
+- **Goal/status:** complete implementation of bounded reference-sender fixture
+  admission and retention after R90-132 delivery; tests remain delegated.
 - **Dependencies/window:** R90-132; R90-117 sender, R90-129 collector boundary,
   and R90-126/R90-127 replay contracts; Oct 1–Dec 29.
 - **Source evidence before this increment:** `slo_ingress.send_fixture` called
@@ -6455,3 +6455,35 @@ changes partial fixture retention; those deliberate effects are documented.
 Malformed semantic replay can still follow a submitted prefix. Tests/CLI/traffic/
 knowledge suites remain not run, delegated by user; this is source implementation
 with static review, not measured behavior or acquisition/SLO acceptance.
+
+
+## R90-133 Completion and Queue Refresh (2026-10-01)
+
+Feature `8a92cd99e16c599a1e9d99e614bba4cb5838e90e` contains exactly the six
+planned paths, was pushed without force and freshly fetched at matching clean
+HEAD/origin/main/FETCH_HEAD. The publication tag object and peeled candidate
+are unchanged. Exact range
+`e8d057963d3c655b4494ed1f3d74dc10a8303e6d..8a92cd99e16c599a1e9d99e614bba4cb5838e90e`
+has its iteration note, full-index row and MOC link. All 12 current stable notes
+now describe the implemented sender snapshot and its delegated validation;
+all 298 pre-existing iteration-directory notes remain unchanged. Exact-range
+replay preserved the 346-file snapshot JSON hash
+`4d8b0b7305afe7e0bbb903ba2c76191fba3e0afeb4e28c4ee65b34ea26e46537`.
+
+Closeout matches the acceptance map: the API/CLI budget and admission, raw-row/
+total-byte checks, full writer/source lifecycle before send, retained replay
+metadata/inventory and strict downstream schema compatibility have direct source
+and AST evidence. AST comparison retains the complete original send/semantic/
+timing/oracle loop and frame/checksum/link/ledger functions. Python/docs checks,
+151 task JSON parses, 137 unique matching roadmap row/Definition pairs, ordered
+history, links/fences, diff/scope and sensitive additions review pass. An initial
+AST inspection command mishandled a list; its corrected complete static review
+passed. Snapshot latency and full partial-input retention are planned changes,
+not scope deviations. No behavioral regression result is claimed: every listed
+case remains departmental and unexecuted. No traffic or acceptance run occurred.
+
+This single docs-only delivery record closes R90-133 implementation delivery.
+The refreshed queue has no additional local ready item; R90-75 retains its
+complete departmental contract. On the next trigger verify the fetched tip and
+this closure's exact Vault range, then audit fresh evidence rather than repeating
+completed work or inferring main/SLO acceptance. No next increment starts here.
