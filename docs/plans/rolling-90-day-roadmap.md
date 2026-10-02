@@ -213,6 +213,8 @@ formal SLO and evidence contract is unchanged.
 | R90-133 | Oct 1–Dec 29 | Complete implementation; tests delegated | Bound finalized fixture admission and retention before reference-sender submission. | R90-132; R90-117 sender; R90-129 collector boundary; R90-126/R90-127 replay compatibility | Admit and snapshot supplied regular fixture bytes with non-following/nonblocking handles and a configurable 64 GiB default input budget; reject nonregular, changed and over-budget acquisition before any send; preserve sender schedules, oracle, formats, partial evidence and independent acceptance boundary. |
 | R90-134 | Oct 1 | Complete documentation; execution delegated | Reconcile post-sender delivery and scope reporter input admission. | R90-133 verified feature/closure | Audit exact Git/Vault evidence and shared reporter reader; define complete R90-135 contract without implementation or tests. |
 | R90-135 | Oct 2–Dec 30 | Complete implementation; tests delegated | Admit bounded finalized observations through a stable reporter file handle. | R90-134; R90-114 reporter; R90-119/R90-122/R90-123 shared consumers | Reject symlink/nonregular/observed-changing and oversized acquisition through one non-following/nonblocking regular-file descriptor; retain 64 MiB cap, exact bytes/hash, JSON/report/status semantics and output preservation; tests delegated. |
+| R90-136 | Oct 2 | In progress; documentation only | Reconcile reporter delivery and scope inventory-bound bundle decoding. | R90-135 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record retained-decoder inventory gap and define complete R90-137 contract without runtime or test execution. |
+| R90-137 | Oct 2–Dec 30 | Planned; awaiting R90-136 delivery | Bind retained bundle decoding to captured byte/hash inventory. | R90-136; R90-118/R90-119/R90-122/R90-126 consumers; R90-135 boundary precedent | Admit one bounded non-following/nonblocking regular retained-file handle; verify exact inventory bytes/hash and descriptor metadata before publishing decoded state; preserve strict schemas, parsing/status and partial evidence; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3047,6 +3049,77 @@ formal SLO and evidence contract is unchanged.
 - **Stop condition:** format migration, shared caller contract contradiction,
   unavailable required primitives without fail-closed handling, ambiguous
   validation or new external/private/product authority.
+
+## R90-136 Definition
+
+- **Goal/status:** documentation-only post-reporter queue audit in progress;
+  define a source-grounded retained-decode follow-up without implementation.
+- **Dependencies/window:** completed R90-135 feature and closure; Oct 2.
+- **Risk:** low; an empty/stale handoff can repeat completed delivery or hide a
+  remaining inventory-binding gap. Static source evidence is not a runtime result.
+- **Acceptance:** verify fresh clean refs, both prior exact Git/Vault ranges and
+  snapshot; review phase history and all unfinished contracts; inspect snapshot
+  inventory versus retained decode and four consumers; establish complete
+  R90-137 status/dependencies/window/risk/acceptance/validation/stop; reconcile
+  stable notes while preserving immutable iteration history. R90-137 unstarted.
+- **Required review:** docs/JSON/full unique roadmap multisets/ordered history/
+  links/fences/diff/sensitive scope, focused Git/Vault ranges and identical-range
+  snapshot replay. All execution suites remain user-delegated and unrun.
+- **Non-goals:** runtime, tests, traffic, acceptance, dependency, toolchain,
+  workflow, release or implementation of R90-137.
+- **Stop condition:** contradictory delivery, ambiguous Vault discovery,
+  shared contract or format migration requirement, ambiguous review or new
+  external/private/product authority.
+- **Plan/state:** `task-20261002-bundle-decode-queue.md` and corresponding
+  `docs/tasks/task-state-20261002-bundle-decode-queue.json`.
+
+## R90-137 Definition
+
+- **Goal/status:** planned pending R90-136 delivery; bind `_Bundle.decode` to
+  the snapshot inventory at its own read boundary. Implementation unstarted.
+- **Dependencies/window:** R90-136; completed R90-118/R90-119/R90-122/R90-126
+  bundle/pair/adapter/sender consumers; R90-135 admission precedent; Oct 2–Dec 30.
+- **Source evidence:** `_Bundle.snapshot` already admits bounded non-following
+  regular sources and records retained bytes/hash/complete. It then calls decode
+  through check. Decode reopens retained JSONL with following `Path.open`, enforcing
+  only 256 KiB per row, or JSON with unbounded following `read_text`. Neither
+  decode lane checks captured inventory bytes/hash or descriptor metadata. Private
+  outputs and earlier source admission do not bind bytes actually decoded later.
+  This is source evidence, not executed failure or an authenticity claim.
+- **Risk:** medium; shared decoder changes affect ordinary bundle, pair metadata,
+  adapter reconstruction and sender reconstruction, including error ownership.
+- **Acceptance:** persist a separate implementation plan first. Preserve decode
+  interface, strict inventory/schema/status formats and existing JSON/submission
+  parsing semantics. Admit only complete captured inventory via one read-only
+  non-following/nonblocking regular-file handle with required integer dev/inode/
+  size/mtime_ns/ctime_ns metadata; fail closed on unavailable flags/metadata.
+  Check known size against captured bytes, bound reads by captured bytes plus
+  rejection probe, keep JSONL row limit and finite-float/duplicate/nonfinite/UTF-8/
+  object/submission diagnostics for unchanged admitted bytes. At EOF require exact
+  consumed bytes/SHA-256 and unchanged descriptor metadata; close before committing
+  decoded document or row count. Admission/decode/inventory failure cannot record
+  a completed decode check or new trusted decoded state. Preserve sources, existing
+  mismatch/error classifications and partial artifacts, without whole-operation
+  rollback. Inspect all four consumers and wrappers; no public metadata additions.
+- **Required review:** focused AST/source/inventory/read-limit/close/state-commit/
+  caller/schema review, docs/JSON/full unique roadmap/history/link/fence/diff/
+  sensitive scope and exact Git/Vault delivery. Departmental direct regressions
+  remain unrun: normal/space paths, missing/directory/FIFO/symlink, unavailable
+  flags/metadata/negative size, incomplete/missing inventory, empty/exact/over
+  captured bytes, short reads/same-size different digest, mutation/growth/
+  truncation/immediate replacement, JSONL row boundaries and exact bytes/hash/rows,
+  malformed/deep/duplicate/nonfinite/finite-float-overflow/UTF-8 and submission
+  diagnostics, open/fdopen/fstat/read/close faults, no trusted state/check completion,
+  independent byte preservation and all four consumers' schema/status/source-
+  digest/partial-output compatibility. Every rejection must reach this decoder;
+  nearby snapshot/source tests cannot substitute. No agent execution suites.
+- **Non-goals:** other readers, new budgets, schema/dependency/toolchain/workflow/
+  release changes, source authenticity, continuous writer exclusion, parent-
+  traversal security, protection of unrelated later reopens or SLO acceptance.
+- **Stop condition:** required format migration, incompatible shared error/state
+  ownership, unavailable primitives without safe rejection, ambiguous review or
+  new external/private/product authority. Never infer whole-bundle perpetual
+  integrity from a matching decode boundary.
 
 ### R90-71 Validation Deviation
 
@@ -6676,3 +6749,31 @@ reporting. No additional local ready increment is defined; the next trigger
 verifies this closure and audits fresh evidence, rather than repeating completed
 work or publication. R90-75 retains its complete independent departmental
 acceptance contract. No subsequent increment starts here.
+
+
+## R90-136 Selection and Queue Audit (2026-10-02)
+
+Fresh clean HEAD/origin/main/FETCH_HEAD is
+`4ea9cc6111e41c6302a175d0446dbb270e265363`; R90-135 feature/closure exact
+ranges have verified iteration/index/MOC. The 351-file snapshot JSON hash is
+`318b028feae906df6fc1e0aeba56040825cbd8206365a4ee12d1c3bf22d02928`.
+The 51-commit Sep 4–Oct 2 phase audit separates tooling/replay, collector/sender/
+reporter admission, queue repair, historical candidate publication and main
+metadata. No missing delivery or new qualifying department execution evidence
+appears. Only R90-75 remains unfinished; its full departmental contract is intact.
+The current horizon remains Oct 2–Dec 30.
+
+The persisted three-path plan/state selects exactly R90-136 queue repair.
+Source review identifies a distinct retained decoder boundary: `_Bundle.snapshot`
+records bounded bytes/hash, while `_Bundle.decode` reopens retained JSONL/JSON
+without revalidating those bytes against inventory. JSONL limits only rows;
+JSON uses unbounded `read_text`. Define R90-137 same-handle regular admission,
+captured-byte bounds, EOF digest/metadata and close-before-decoded-state commit,
+preserving strict formats/diagnostics and all four consumer error boundaries.
+Initial source snapshots, private output and R90-135 reporter hardening do not
+supply this decode evidence. Metadata/hash binding does not authenticate sources
+or protect unrelated later reads. R90-137 is planned/unstarted until this audit
+is delivered and the next trigger persists its implementation plan. Current
+stable notes close R90-135 correctly and need the new handoff; historical notes
+remain immutable. All execution suites remain not run, delegated by user.
+No runtime or next-increment implementation starts here; no skill edit warranted.

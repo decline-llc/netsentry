@@ -1,0 +1,50 @@
+{
+  "task": "r90-136-bundle-decode-queue-audit",
+  "timestamp": "2026-10-02",
+  "branch": "main",
+  "remote_baseline": "4ea9cc6111e41c6302a175d0446dbb270e265363",
+  "starting_remote_baseline": "4ea9cc6111e41c6302a175d0446dbb270e265363",
+  "risk_level": "Low",
+  "current_checkpoint": "queue_contracts_and_static_review_complete",
+  "completed": [
+    "Verified clean fetched refs and R90-135 feature/closure exact Vault evidence",
+    "Reproduced 351-file snapshot; audited 51-commit phase history and sole unfinished R90-75 contract",
+    "Inspected captured snapshot inventory versus retained decode reopen/limits and shared consumers",
+    "Persisted three-path documentation-only plan/state before roadmap edits",
+    "Defined complete R90-136/R90-137 contracts and audited unchanged departmental R90-75",
+    "Verified four shared Bundle consumers and all SLO runtime files unchanged",
+    "Docs/154 JSON/141 full unique roadmap pairs/history/links/fences/exact scope/diff/sensitive additions passed",
+    "Captured 304 immutable iteration notes and verified 351-file Vault baseline unchanged"
+  ],
+  "in_progress": [
+    "Focused audit commit and exact Git/Vault delivery"
+  ],
+  "todo": [
+    "Audit Git/Vault delivery and stable-note reconciliation/replay",
+    "One docs-only closure and exact range delivery"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_departmental",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "static_review": "pass:docs-check;unchanged-SLO-runtime;four-Bundle-consumers;154-task-json;141-full-roadmap-pairs;chronology;links;fences;scope;diff;sensitive-additions"
+  },
+  "authority_boundaries": [
+    "Exactly R90-136 documentation-only audit and three planned paths",
+    "R90-137 remains unstarted",
+    "All execution suites and R90-75 acceptance remain departmental",
+    "No runtime/schema/toolchain/dependency/workflow/publication changes"
+  ],
+  "remaining_risks": [
+    "Decoder inventory gap is source evidence, not executed failure",
+    "No departmental current-main acceptance evidence supplied"
+  ],
+  "resume_instructions": "Finish only R90-136 documentation queue repair and exact Git/Vault delivery; do not implement R90-137 or repeat completed deliveries/publication.",
+  "next_increment": {
+    "id": "R90-137",
+    "status": "planned_pending_R90-136_delivery",
+    "started": false
+  }
+}
