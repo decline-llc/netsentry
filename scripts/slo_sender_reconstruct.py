@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import stat
 import sys
 from typing import Any, BinaryIO, Sequence
 
@@ -28,16 +29,27 @@ LEDGERS = bundle.SOURCES["sender"][1:]
 class _Rows:
     """One bounded decoded row at a time, with a fresh inventory of consumed bytes."""
 
-    def __init__(self, stream: BinaryIO):
+    def __init__(self, stream: BinaryIO, expected: tuple[int, int, str]):
         self.stream = stream
+        self.expected = expected
+        self.fields = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
+        before = os.fstat(stream.fileno())
+        bundle._require(stat.S_ISREG(before.st_mode), "replay input must be a regular file")
+        bundle._require(all(type(getattr(before, field, None)) is int for field in self.fields),
+                        "stable replay metadata unavailable")
+        bundle._require(before.st_size == expected[0], "replay size differs from inventory")
+        self.before = tuple(getattr(before, field) for field in self.fields)
         self.digest = hashlib.sha256()
         self.size = self.count = 0
 
     def read(self) -> dict[str, Any] | None:
-        raw = self.stream.readline(collect.MAX_LINE_BYTES + 1)
+        remaining = self.expected[0] - self.size
+        raw = self.stream.readline(min(collect.MAX_LINE_BYTES, remaining) + 1)
         if not raw:
             return None
         bundle._require(len(raw) <= collect.MAX_LINE_BYTES, "row exceeds 256 KiB")
+        bundle._require(len(raw) <= remaining, "replay bytes exceed inventory")
+        bundle._require(self.count < self.expected[1], "replay rows exceed inventory")
         self.digest.update(raw)
         self.size += len(raw)
         self.count += 1
@@ -46,9 +58,14 @@ class _Rows:
         bundle._require(isinstance(row, dict), "row must be an object")
         return row
 
-    def verify(self, retained: dict[str, Any]) -> None:
+    def verify(self) -> None:
+        after = os.fstat(self.stream.fileno())
+        bundle._require(all(type(getattr(after, field, None)) is int for field in self.fields),
+                        "stable replay metadata unavailable")
+        bundle._require(self.before == tuple(getattr(after, field) for field in self.fields),
+                        "replay input changed while reading")
         bundle._same((self.size, self.count, self.digest.hexdigest()),
-                     (retained["bytes"], retained["rows"], retained["sha256"]),
+                     self.expected,
                      "replayed ledger differs from snapshot")
 
 
@@ -95,9 +112,34 @@ def _correlate(fixture: dict[str, Any], offer: dict[str, Any], submission: dict[
 
 
 def _replay(retained: bundle._Bundle, receipt: dict[str, Any], progress: dict[str, Any]) -> None:
+    inventories = []
+    for name in LEDGERS:
+        progress["boundary"] = "replay inventory " + name
+        key = "sender/" + name
+        entry = retained.inventory.get(key)
+        bundle._require(isinstance(entry, dict) and entry.get("complete") is True
+                        and entry.get("file") == key, "replay requires a complete captured inventory")
+        size = report._integer(entry.get("bytes"), "replay bytes")
+        count = report._integer(entry.get("rows"), "replay rows")
+        digest = entry.get("sha256")
+        bundle._hash(digest)
+        inventories.append((size, count, digest))
+    progress["boundary"] = "replay admission flags"
+    flags = tuple(getattr(os, name, None) for name in ("O_NOFOLLOW", "O_NONBLOCK"))
+    bundle._require(all(type(flag) is int and flag > 0 for flag in flags),
+                    "non-following/nonblocking replay admission unavailable")
     with ExitStack() as stack:
-        readers = [_Rows(stack.enter_context((retained.output / "sender" / name).open("rb")))
-                   for name in LEDGERS]
+        readers = []
+        for name, expected in zip(LEDGERS, inventories):
+            progress["boundary"] = "admit replay " + name
+            descriptor = os.open(retained.output / "sender" / name,
+                                 os.O_RDONLY | flags[0] | flags[1])
+            try:
+                stream = os.fdopen(descriptor, "rb")
+            except BaseException:
+                os.close(descriptor)
+                raise
+            readers.append(_Rows(stack.enter_context(stream), expected))
         previous = -1
         while True:
             progress.update(row=progress["rows_matched"] + 1, boundary="aligned ledger decode")
@@ -113,8 +155,8 @@ def _replay(retained: bundle._Bundle, receipt: dict[str, Any], progress: dict[st
             progress["rows_matched"] += 1
         bundle._require(progress["rows_matched"] > 0, "empty sender ledgers")
         progress.update(row=None, boundary="fresh replay inventory binding")
-        for name, reader in zip(LEDGERS, readers):
-            reader.verify(retained.inventory["sender/" + name])
+        for reader in readers:
+            reader.verify()
         progress["boundary"] = "close replay inputs"
     progress.update(row=None, boundary=None)
 

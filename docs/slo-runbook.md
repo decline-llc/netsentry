@@ -236,9 +236,18 @@ descriptor metadata must match at EOF, and close must succeed before decoded
 documents or row counts are committed. Keep failed retained files and inspect
 the mismatch/error/partial-output boundary; inventory `complete` alone describes
 source copying, not decode success. This boundary also applies to pair metadata
-and both reconstruction consumers. Other later readers are unchanged, so no
-continuous integrity or authenticity is implied. Direct decoder tests remain
+and both reconstruction consumers. Each later read requires its own evidence;
+no continuous integrity or authenticity is implied. Direct decoder tests remain
 departmental and unrun; see [the bundle decode contract](slo-bundle.md#inventory-bound-retained-decoding-r90-137).
+
+R90-139 separately binds the three retained sender replay handles after decoder
+close: complete captured bytes/rows/hash inventories, non-following/nonblocking
+regular descriptors, known-size checks before reads, bounded byte/row consumption,
+stable metadata and exact inventory at EOF. All three handles close before replay
+success/completion; failures retain diagnostic prefixes and existing mismatch/
+I/O-error/partial-output outcomes. Source digests change without weakening
+bundle/pair binding. These direct replay/shared-consumer cases remain departmental
+and unrun; see [sender replay admission](slo-sender-reconstruct.md#inventory-bound-replay-admission-r90-139).
 
 For separate derivation diagnostics, the existing standalone operation is:
 

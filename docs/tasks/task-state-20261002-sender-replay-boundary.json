@@ -1,0 +1,51 @@
+{
+  "task": "r90-139-sender-replay-boundary",
+  "timestamp": "2026-10-02",
+  "branch": "main",
+  "remote_baseline": "d05bcefb85476bbaf9b451484a203874290d2cf2",
+  "starting_remote_baseline": "d05bcefb85476bbaf9b451484a203874290d2cf2",
+  "risk_level": "Medium",
+  "current_checkpoint": "implementation_static_review_passed_awaiting_feature_delivery",
+  "completed": [
+    "Verified fresh clean refs and both exact R90-138 Git/Vault ranges",
+    "Reproduced 357-file baseline hash; captured 310 immutable iteration notes and 12 stable handoffs",
+    "Reviewed 57-commit phase history and complete R90-75/R90-139 forward contracts",
+    "Persisted six-path plan/state and direct static/departmental acceptance map",
+    "Implemented validated captured primitive inventories/flags and three regular non-following/nonblocking read-only handles",
+    "Registered wrapped handles before initialization; inspected ExitStack cleanup source and raw fdopen cleanup",
+    "Bound bytes/rows before extra decoding/correlation; verified EOF metadata and exact byte/row/hash inventory",
+    "Preserved close-before-success and standalone completion/check publication",
+    "AST verified all other definitions/constants/imports, replay signature, complete correlation loop and original JSON parsing/counter sequence unchanged",
+    "Reviewed standalone/integrated/bundle/pair schemas/status/partial artifacts/source hashes; consumer files unchanged",
+    "Python/docs/157 task JSON/143 full unique roadmap pairs/history/links/fences/six-path scope/diff/sensitive additions pass"
+  ],
+  "in_progress": [
+    "Verified feature delivery and stable Vault reconciliation"
+  ],
+  "todo": [
+    "Commit/push/fetch verify feature and exact Vault range",
+    "Reconcile stable knowledge and preserve immutable notes; replay exact snapshot",
+    "Record one docs-only closure and refresh future queue without implementation"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_departmental",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "static_review": "pass:python-check;docs-check;AST-unchanged-other-definitions-imports-constants-signature-correlation-loop-JSON-sequence;admission-limit-EOF-close-success-order;stdlib-ExitStack-source;four-consumer-flow;157-task-json;143-full-unique-roadmap-pairs;history;links;fences;six-path-scope;diff;sensitive-additions"
+  },
+  "authority_boundaries": [
+    "Exactly R90-139 and six planned paths",
+    "Only Rows/replay runtime logic and required stat import",
+    "Other source snapshots/readers/correlation/consumers/public formats unchanged",
+    "All execution remains departmental; no dependency/toolchain/workflow/publication change"
+  ],
+  "remaining_risks": [
+    "Direct replay and shared consumer regressions unexecuted",
+    "Metadata/hash binds these replay reads, not authenticity or continuous writer exclusion",
+    "Reconstruction source digest changes and does not waive comparability"
+  ],
+  "resume_instructions": "Finish only the persisted R90-139 implementation and exact feature/closure delivery. Do not run delegated suites or begin subsequent work.",
+  "deviations": []
+}

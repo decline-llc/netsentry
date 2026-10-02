@@ -216,7 +216,7 @@ formal SLO and evidence contract is unchanged.
 | R90-136 | Oct 2 | Complete documentation; execution delegated | Reconcile reporter delivery and scope inventory-bound bundle decoding. | R90-135 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record retained-decoder inventory gap and define complete R90-137 contract without runtime or test execution. |
 | R90-137 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind retained bundle decoding to captured byte/hash inventory. | R90-136; R90-118/R90-119/R90-122/R90-126 consumers; R90-135 boundary precedent | Admit one bounded non-following/nonblocking regular retained-file handle; verify exact inventory bytes/hash and descriptor metadata before publishing decoded state; preserve strict schemas, parsing/status and partial evidence; tests delegated. |
 | R90-138 | Oct 2 | Complete documentation; execution delegated | Reconcile decoder delivery and scope bounded sender replay. | R90-137 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record replay reopen/total-read gap and define complete R90-139 contract without runtime or test execution. |
-| R90-139 | Oct 2–Dec 30 | Ready; execution delegated | Bound and admit retained sender replay ledgers against captured inventory. | R90-138; R90-126/R90-127 sender consumers; R90-137 decoder precedent | Admit three non-following/nonblocking regular replay handles; bound bytes/rows, verify exact EOF inventory and descriptor metadata, close before success; preserve correlation/schema/status/partial evidence; tests delegated. |
+| R90-139 | Oct 2–Dec 30 | In progress implementation; tests delegated | Bound and admit retained sender replay ledgers against captured inventory. | R90-138; R90-126/R90-127 sender consumers; R90-137 decoder precedent | Admit three non-following/nonblocking regular replay handles; bound bytes/rows, verify exact EOF inventory and descriptor metadata, close before success; preserve correlation/schema/status/partial evidence; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3147,7 +3147,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-139 Definition
 
-- **Goal/status:** ready after verified R90-138 audit delivery; bind retained sender replay
+- **Goal/status:** implementation in progress after verified R90-138 delivery; bind retained sender replay
   reads to captured inventories, with all behavioral tests delegated.
 - **Dependencies/window:** R90-138; completed R90-126 standalone and R90-127
   bundle/pair sender integration; R90-137 decoder precedent; Oct 2–Dec 30.
@@ -7006,3 +7006,31 @@ latest fetched tip/closure knowledge and persist its separate implementation
 plan. R90-75 retains its complete independent departmental acceptance contract.
 Do not repeat completed R90-137/R90-138 delivery or R90-59 publication.
 No next-increment implementation starts here.
+
+
+## R90-139 Selection and Implementation (2026-10-02)
+
+Fresh clean HEAD/origin/main/FETCH_HEAD is
+`d05bcefb85476bbaf9b451484a203874290d2cf2`; both R90-138 exact ranges
+have verified ancestry/generated scope/note/index/MOC. The 357-file Vault snapshot
+JSON hash reproduces `8b7e29acbf657ae304b98799385db22077cd9d3f6b1b297dd5914660c50e8fff`.
+The 57-commit Sep 4–Oct 2 phase audit separates contracts/tooling/replay, input
+admission, queue repairs, historical candidate publication and main metadata.
+R90-139 dependencies are complete; R90-75 retains its independent full department
+contract without new qualifying measurements. Horizon remains Oct 2–Dec 30.
+
+The six-path `task-20261002-sender-replay-boundary.md` and matching state were
+persisted before behavior/docs edits. Runtime changes only `_Rows`/`_replay`
+and required stat import: validate/capture all three complete matching-key
+bytes/rows/hash inventories and required flags; admit each read-only non-following/
+nonblocking regular descriptor with integer metadata and known-size equality;
+register handle ownership before reader initialization or later acquisition.
+All three admissions precede correlation. Each read is bounded by remaining
+captured bytes+1 and the existing row cap; excess bytes/rows reject before extra
+decode/correlation. EOF requires stable metadata and exact bytes/rows/hash;
+ExitStack closes all registered inputs before cleared success progress/return
+and caller completion/completed check. Existing strict parsing, correlation,
+receipt/schema/status/partial evidence and standalone/integrated/bundle/pair
+contracts remain. Reconstruction source digest changes naturally; no authenticity,
+continuous integrity or acceptance claim. Every execution suite remains user-
+delegated and unrun. No subsequent increment begins here.

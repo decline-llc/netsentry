@@ -34,6 +34,36 @@ exhaustion retains a prefix and prevents replay. Parent directory traversal is
 not an authenticated filesystem boundary. Metadata/source hashes do not prove
 acquisition authenticity. Generated metadata is outside the input budget.
 
+## Inventory-bound replay admission (R90-139)
+
+Replay separately admits its three retained ledgers after source snapshot and
+receipt checks. All three inventory entries must be complete, match their fixed
+keys and carry nonnegative signed-64-bit integer bytes/rows (bool rejected) and
+lowercase SHA-256. Required non-following/nonblocking flags must be available.
+Validated primitive values are captured before replay reads.
+
+Each ledger uses one read-only non-following/nonblocking regular-file handle.
+Integer device/inode/size/mtime_ns/ctime_ns metadata is required; known size must
+match captured bytes before that ledger is read. All three handles are admitted
+before correlation. Wrapping failure closes its raw descriptor; registered
+handles close through ExitStack on later admission/read/verification/close errors.
+
+Each line read is limited to min(256 KiB, remaining captured bytes)+1. Excess
+bytes or rows reject before the extra row is decoded or correlated. At aligned
+EOF, every ledger must retain its descriptor metadata and match exact consumed
+bytes/rows/SHA-256. All handles close before success progress is cleared, replay
+returns, or reconstruction completion and its completed check are recorded.
+The original strict JSON and correlation rules remain unchanged for admitted
+bytes. Earlier admission can change error order for altered input. Matched-prefix
+progress remains diagnostic; failure cannot qualify full reconstruction.
+
+These checks bind the replay read to captured inventory. They do not authenticate
+sources, secure parent traversal, freeze writers or protect unrelated later
+reads. Public APIs, schemas, statuses, budgets and partial-artifact policy remain;
+the reconstruction source digest changes and does not waive bundle/pair binding
+or comparability. The implementation has static review only; direct replay and
+shared-consumer regressions remain **not run; delegated by user**.
+
 ## Correlation contract
 
 The original receipt must satisfy the sender schema and exact three-ledger
@@ -101,7 +131,11 @@ Unexecuted validation cases are enumerated in the
 [R90-126 plan](plans/task-20260930-slo-sender-reconstruct.md): each identity,
 sequence, oracle, timing and inventory mismatch; malformed payloads and size
 boundaries; missing/nonregular/mutating input, budgets, no-overwrite, I/O/fsync/
-close/interruption and scale. No behavioral, acceptance or knowledge suite ran.
+close/interruption and scale. The [R90-139 plan](plans/task-20261002-sender-replay-boundary.md)
+adds direct replay admission/inventory/total-byte/row/EOF-metadata/cleanup/success-
+order cases for each ledger, including space paths, growth/truncation/replacement
+and first/second/third handle faults. Nearby snapshot or decoder coverage cannot
+substitute for replay regressions. No behavioral, acceptance or knowledge suite ran.
 
 The standalone API remains available. [Bundle](slo-bundle.md) and
 [pair](slo-compare.md) review now offer `--reconstruct-sender`, which runs fresh
