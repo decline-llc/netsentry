@@ -349,7 +349,40 @@ def _summary(bundle: _Bundle, summary: dict[str, Any], observations: dict[str, A
     report._object(source, {"sha256", "raw_json"}, "report source")
     _hash(source["sha256"])
     _require(isinstance(source["raw_json"], str), "report source must retain raw JSON")
-    raw = (bundle.output / "adapter/observations.json").read_bytes()
+    key = "adapter/observations.json"
+    entry = bundle.inventory.get(key)
+    _require(isinstance(entry, dict) and entry.get("complete") is True
+             and entry.get("file") == key, "report binding requires a complete captured inventory")
+    expected_size = report._integer(entry.get("bytes"), "report binding bytes")
+    _require(expected_size <= report.MAX_INPUT_BYTES, "report binding input exceeds 64 MiB")
+    expected_hash = entry.get("sha256")
+    _hash(expected_hash)
+    flags = tuple(getattr(os, name, None) for name in ("O_NOFOLLOW", "O_NONBLOCK"))
+    _require(all(type(flag) is int and flag > 0 for flag in flags),
+             "non-following/nonblocking report binding admission unavailable")
+    fields = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
+    descriptor = os.open(bundle.output / key, os.O_RDONLY | flags[0] | flags[1])
+    try:
+        stream = os.fdopen(descriptor, "rb")
+    except BaseException:
+        os.close(descriptor)
+        raise
+    with stream:
+        before = os.fstat(stream.fileno())
+        _require(stat.S_ISREG(before.st_mode), "report binding input must be a regular file")
+        _require(all(type(getattr(before, field, None)) is int for field in fields),
+                 "stable report binding metadata unavailable")
+        _require(before.st_size == expected_size, "report binding size differs from inventory")
+        before_values = tuple(getattr(before, field) for field in fields)
+        raw = stream.read(expected_size + 1)
+        _require(len(raw) <= expected_size, "report binding bytes exceed inventory")
+        after = os.fstat(stream.fileno())
+        _require(all(type(getattr(after, field, None)) is int for field in fields),
+                 "stable report binding metadata unavailable")
+        _require(before_values == tuple(getattr(after, field) for field in fields),
+                 "report binding input changed while reading")
+        _require(len(raw) == expected_size and hashlib.sha256(raw).hexdigest() == expected_hash,
+                 "report binding bytes differ from captured inventory")
     _require(source["raw_json"].encode("utf-8") == raw, "embedded observations differ")
     _require(source["sha256"] == hashlib.sha256(raw).hexdigest(), "report source digest differs")
     expected = report.summarize(observations)

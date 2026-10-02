@@ -150,6 +150,38 @@ sizes and temporary copies; no measured scale or whole-bundle perpetual integrit
 is claimed. Implementation has static source/AST review only; direct departmental
 regressions remain unexecuted.
 
+## Inventory-bound report-source read (R90-141)
+
+`_summary` separately admits retained `adapter/observations.json` after the
+original report-source fields/hash/string checks. Its complete captured inventory
+must match that key, with nonnegative signed-64-bit bytes (bool rejected), the
+existing 64 MiB observations ceiling and lowercase SHA-256. Required nonzero
+integer `O_NOFOLLOW`/`O_NONBLOCK` flags must be available.
+
+One read-only non-following/nonblocking regular descriptor supplies the raw bytes.
+Integer device/inode/size/mtime_ns/ctime_ns metadata and known size equal to
+captured bytes are required before read. The read is bounded to captured bytes+1;
+the extra byte rejects. At EOF, metadata must remain unchanged and exact consumed
+bytes/SHA-256 must match inventory. Wrapping failure closes the raw descriptor;
+all wrapped admission/read/verification paths use context-managed close.
+
+Close precedes the original embedded UTF-8/raw-byte/hash equality and complete
+summary recomputation. Raw bytes are neither parsed nor newline-normalized here;
+original source diagnostics and semantic comparison remain. Failure cannot newly
+complete this check or qualify optional adapter/sender replay. Missing decoded
+documents still skip; Value/shape failures remain mismatch and OSError retains the
+existing non-success/partial-output boundary. Prior state/history and partial
+files are preserved without a whole-operation rollback guarantee.
+
+Bundle and fresh per-side pair reconciliation share this base check across
+default/context/adapter/sender/combined modes; public schemas/status/exits/budgets
+remain. The bundle source digest changes without waiving comparability. This
+binds this read only, without authenticity, continuous writer exclusion,
+parent-traversal security or protection of unrelated later reopens. The
+[R90-141 plan](plans/task-20261002-report-binding-boundary.md) maps direct inventory/
+admission/limit/EOF/cleanup/close/consumer cases; those regressions remain **not
+run; delegated by user**. Nearby snapshot/decoder/replay cases cannot substitute.
+
 ## Required departmental validation — not executed
 
 | Boundary | Required cases |

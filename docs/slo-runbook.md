@@ -240,6 +240,17 @@ and both reconstruction consumers. Each later read requires its own evidence;
 no continuous integrity or authenticity is implied. Direct decoder tests remain
 departmental and unrun; see [the bundle decode contract](slo-bundle.md#inventory-bound-retained-decoding-r90-137).
 
+R90-141 separately binds the report-source observations read after decoded
+metadata exists. It preserves original source diagnostics, then requires complete
+captured inventory within 64 MiB, one regular non-following/nonblocking handle,
+known size equality, a captured-bytes+1 read bound and EOF exact bytes/hash with
+stable descriptor metadata. Close precedes unchanged embedded raw-source equality
+and summary recomputation; failures cannot newly complete this base check or
+qualify optional replay. Keep the original bundle/pair mismatch/I/O/partial-output
+handling and exact tool comparability. Direct acquisition/preservation/cleanup/
+consumer cases remain departmental and unrun; see
+[report-source binding](slo-bundle.md#inventory-bound-report-source-read-r90-141).
+
 R90-139 separately binds the three retained sender replay handles after decoder
 close: complete captured bytes/rows/hash inventories, non-following/nonblocking
 regular descriptors, known-size checks before reads, bounded byte/row consumption,

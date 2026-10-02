@@ -218,7 +218,7 @@ formal SLO and evidence contract is unchanged.
 | R90-138 | Oct 2 | Complete documentation; execution delegated | Reconcile decoder delivery and scope bounded sender replay. | R90-137 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record replay reopen/total-read gap and define complete R90-139 contract without runtime or test execution. |
 | R90-139 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bound and admit retained sender replay ledgers against captured inventory. | R90-138; R90-126/R90-127 sender consumers; R90-137 decoder precedent | Admit three non-following/nonblocking regular replay handles; bound bytes/rows, verify exact EOF inventory and descriptor metadata, close before success; preserve correlation/schema/status/partial evidence; tests delegated. |
 | R90-140 | Oct 2 | Complete documentation; execution delegated | Reconcile sender replay delivery and scope report-source inventory binding. | R90-139 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record later observations read gap and define complete R90-141 contract without runtime/test execution. |
-| R90-141 | Oct 2–Dec 30 | Ready; execution delegated | Bind report-source observations read to captured inventory. | R90-140; R90-118/R90-119/R90-123/R90-127 bundle/pair consumers; R90-135/R90-137 precedents | Admit one bounded regular non-following/nonblocking observations handle; exact inventory/metadata/close before source comparison/recompute; preserve public formats/status/eligibility/partial evidence; tests delegated. |
+| R90-141 | Oct 2–Dec 30 | In progress implementation; tests delegated | Bind report-source observations read to captured inventory. | R90-140; R90-118/R90-119/R90-123/R90-127 bundle/pair consumers; R90-135/R90-137 precedents | Admit one bounded regular non-following/nonblocking observations handle; exact inventory/metadata/close before source comparison/recompute; preserve public formats/status/eligibility/partial evidence; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3220,15 +3220,15 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-141 Definition
 
-- **Goal/status:** ready after verified R90-140 audit delivery; bind later report-source
-  observations acquisition to captured inventory; behavioral tests delegated.
+- **Goal/status:** implementation in progress after verified R90-140 delivery;
+  bind report-source observations acquisition to inventory; behavioral tests delegated.
 - **Dependencies/window:** R90-140; completed R90-118 bundle/R90-119 pair and
   R90-123/R90-127 replay integration; R90-135/R90-137 admission precedents;
   Oct 2–Dec 30.
-- **Source evidence:** `_summary` validates embedded source shape/hash/string,
-  then uses unbounded following `read_bytes` on retained observations. Existing
-  embedded-byte/hash and recomputed-summary checks do not establish captured
-  inventory agreement or regular/nonblocking/stable descriptor acquisition.
+- **Source evidence before this increment:** `_summary` validated source shape/
+  hash/string, then used unbounded following `read_bytes` on retained observations.
+  Existing embedded-byte/hash and recomputed-summary checks did not establish
+  captured inventory agreement or regular/nonblocking/stable descriptor acquisition.
   Decoder close and sender replay cannot protect this later read. This is
   static source observation, not an executed failure or absent-hash claim.
 - **Risk:** medium; admission order and close faults affect shared bundle/pair
@@ -7212,3 +7212,31 @@ latest fetched tip/closure knowledge and persist its separate implementation
 plan. R90-75 retains its full independent departmental acceptance contract.
 Do not repeat completed R90-139/R90-140 delivery or R90-59 publication.
 No subsequent implementation begins here.
+
+
+## R90-141 Selection and Implementation (2026-10-02)
+
+Fresh clean HEAD/origin/main/FETCH_HEAD is
+`0e90cc3564a4eb0f44db1d186d9a5eabad69ea11`; both R90-140 exact ranges
+have verified ancestry/generated scope/note/index/MOC. The 361-file Vault snapshot
+JSON SHA-256 reproduces
+`748351ebd5b1786bbdab5b0c61259beeed4698e8c3c55f2091b5035039d16674`.
+The 61-commit Sep 4–Oct 2 phase audit separates tooling/replay, input boundaries,
+queue repair, historical candidate publication and main metadata. R90-141
+internal dependencies are complete; R90-75 retains its independent complete
+contract without new qualifying measurements. Horizon remains Oct 2–Dec 30.
+
+The six-path `task-20261002-report-binding-boundary.md` and matching state were
+persisted before source/docs edits. Runtime changes only `_summary` acquisition:
+retain original source-field/hash/string diagnostics, validate complete matching-
+key captured bytes/hash within the existing 64 MiB ceiling and available flags;
+open one read-only non-following/nonblocking regular handle with integer metadata
+and known-size match before reading. Raw wrapping failure closes the descriptor;
+stream context owns remaining paths. Captured bytes+1 probe, immutable before
+metadata tuple, EOF integer/stable metadata and exact bytes/hash precede close.
+Only then run original exact embedded UTF-8/raw/hash equality and complete summary
+recompute. No new parser/normalization or decoded-state mutation; failed action
+cannot complete the check or newly qualify replay. Existing check/snapshot/decoder/
+consumer/modes/schema/status/partial evidence remain; bundle source digest changes
+without weakening comparability. All behavioral/CLI/traffic/acceptance/scanner/
+knowledge cases remain departmental and unrun. No other increment begins here.

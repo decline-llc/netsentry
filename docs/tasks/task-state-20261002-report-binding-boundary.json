@@ -1,0 +1,51 @@
+{
+  "task": "r90-141-report-binding-boundary",
+  "timestamp": "2026-10-02",
+  "branch": "main",
+  "remote_baseline": "0e90cc3564a4eb0f44db1d186d9a5eabad69ea11",
+  "starting_remote_baseline": "0e90cc3564a4eb0f44db1d186d9a5eabad69ea11",
+  "risk_level": "Medium",
+  "current_checkpoint": "implementation_static_review_passed_awaiting_feature_delivery",
+  "completed": [
+    "Verified fresh clean refs and both R90-140 exact Git/Vault ranges",
+    "Reproduced 361-file baseline hash; captured 314 immutable notes and 12 stable handoffs",
+    "Reviewed 61-commit phase history and complete R90-75/R90-141 forward contracts",
+    "Reviewed base check/optional replay eligibility and fresh pair modes/errors",
+    "Persisted six-path plan/state and direct static/departmental acceptance map",
+    "Implemented complete inventory/count/64 MiB/hash/flags before one regular non-following/nonblocking read-only handle",
+    "Validated integer metadata/known size before captured-bytes+1 read, EOF immutable metadata and exact bytes/hash",
+    "Implemented raw wrapping cleanup and context-managed close before original source equality/recompute",
+    "AST verified every other definition/import/constant/signature and complete original diagnostic prefix/comparison-recompute suffix unchanged; no parser",
+    "Reviewed check/skip/completion, both optional replay eligibility and fresh pair modes/error/partial contracts; consumer files unchanged",
+    "Python/docs/159 JSON/145 full unique roadmap pairs/history/links/fences/six-path scope/diff/sensitive additions pass"
+  ],
+  "in_progress": [
+    "Verified feature delivery and current stable Vault reconciliation"
+  ],
+  "todo": [
+    "Commit/push/fetch verify feature and exact Vault range",
+    "Reconcile stable knowledge/preserve immutable notes/replay snapshot",
+    "Record one docs-only closure and refresh queue without implementation"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_departmental",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "static_review": "pass:python-check;docs-check;AST-unchanged-all-other-definitions-imports-constants-signature-full-diagnostic-prefix-and-comparison-recompute-suffix;inventory-admission-read-EOF-close-order;no-parser;check-replay-pair-source-review;159-task-json;145-full-unique-roadmap-pairs;history;links;fences;six-path-scope;diff;sensitive-additions"
+  },
+  "authority_boundaries": [
+    "Exactly R90-141 and six planned paths",
+    "Only Bundle._summary acquisition runtime logic; original diagnostics/comparison/recompute unchanged",
+    "No other readers/decoder/snapshot/consumer/schema/dependency/toolchain/workflow/publication changes",
+    "All execution and R90-75 acceptance remain departmental"
+  ],
+  "remaining_risks": [
+    "Direct acquisition/cleanup/preservation/shared consumer regressions unexecuted",
+    "Metadata/hash binds this read, not authenticity or continuous writer exclusion",
+    "Bundle source digest changes without waiving comparability"
+  ],
+  "resume_instructions": "Finish only persisted R90-141 implementation and exact feature/closure delivery. Do not run delegated suites or begin subsequent work.",
+  "deviations": []
+}
