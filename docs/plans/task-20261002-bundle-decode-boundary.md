@@ -128,3 +128,32 @@ observed decoder correctness or preservation result is claimed. The metadata
 newline normalization and early admission error order are planned compatibility
 choices; no scope/review deviation or skill change is warranted. Exact feature
 Git/Vault delivery and stable current knowledge reconciliation remain.
+
+## Delivery and acceptance closeout
+
+Feature `90ed9bba8a8f431a1906b0923110c0e3fa8de25f` contains exactly the
+six planned paths. Push and fresh fetch verified matching clean refs. Exact
+range `269b391f07b6b76bffaacb9516379f864bc1e9f6..90ed9bba8a8f431a1906b0923110c0e3fa8de25f`
+has verified note/index/MOC. Twelve stable current notes describe inventory-bound
+decoding and all retained authority/compatibility limits; all 306 pre-existing
+immutable iteration-directory notes are unchanged. Identical-range replay
+preserves the 354-file snapshot JSON hash
+`1ac717acfccf6729d515ce92dc3cf50166ab7eb33d66f146d6f822043fe2ff5f`.
+
+Each acceptance criterion maps to planned direct source/AST and delivery evidence:
+inventory/flags/ownership/regular metadata/size admission, bounded reads and EOF
+hash/metadata, context close-before-state, complete original JSONL semantics,
+JSON hooks/newline behavior and unchanged other methods/constants/interfaces/
+strict schemas/status/snapshot/publication plus four consumers. No source scope
+deviation occurred. All direct departmental regression cases remain unexecuted;
+static equality does not establish observed rejection/preservation/compatibility.
+Final Python/docs/155 JSON/141 full roadmap pairs/chronology/link/fence/scope/diff/
+sensitive review passes; no skill edit is warranted.
+
+One docs-only closure records verified feature facts. Resolve its SHA from Git,
+verify its own push/fetch/exact Vault range; do not add another closure merely to
+embed its self-referential hash. R90-137 implementation is complete, tests delegated.
+No additional local ready increment is queued; next trigger verifies closure
+knowledge and audits fresh evidence. R90-75 and all execution suites remain
+departmental. Do not repeat completed commits/push/sync/publication or start
+another increment in this trigger.

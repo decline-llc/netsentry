@@ -214,7 +214,7 @@ formal SLO and evidence contract is unchanged.
 | R90-134 | Oct 1 | Complete documentation; execution delegated | Reconcile post-sender delivery and scope reporter input admission. | R90-133 verified feature/closure | Audit exact Git/Vault evidence and shared reporter reader; define complete R90-135 contract without implementation or tests. |
 | R90-135 | Oct 2–Dec 30 | Complete implementation; tests delegated | Admit bounded finalized observations through a stable reporter file handle. | R90-134; R90-114 reporter; R90-119/R90-122/R90-123 shared consumers | Reject symlink/nonregular/observed-changing and oversized acquisition through one non-following/nonblocking regular-file descriptor; retain 64 MiB cap, exact bytes/hash, JSON/report/status semantics and output preservation; tests delegated. |
 | R90-136 | Oct 2 | Complete documentation; execution delegated | Reconcile reporter delivery and scope inventory-bound bundle decoding. | R90-135 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record retained-decoder inventory gap and define complete R90-137 contract without runtime or test execution. |
-| R90-137 | Oct 2–Dec 30 | In progress; tests delegated | Bind retained bundle decoding to captured byte/hash inventory. | R90-136; R90-118/R90-119/R90-122/R90-126 consumers; R90-135 boundary precedent | Admit one bounded non-following/nonblocking regular retained-file handle; verify exact inventory bytes/hash and descriptor metadata before publishing decoded state; preserve strict schemas, parsing/status and partial evidence; tests delegated. |
+| R90-137 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind retained bundle decoding to captured byte/hash inventory. | R90-136; R90-118/R90-119/R90-122/R90-126 consumers; R90-135 boundary precedent | Admit one bounded non-following/nonblocking regular retained-file handle; verify exact inventory bytes/hash and descriptor metadata before publishing decoded state; preserve strict schemas, parsing/status and partial evidence; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3075,15 +3075,16 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-137 Definition
 
-- **Goal/status:** implementation in progress after verified R90-136 delivery;
-  bind `_Bundle.decode` to snapshot inventory at its own read boundary.
+- **Goal/status:** complete implementation after verified R90-136 delivery;
+  `_Bundle.decode` binds to snapshot inventory at its own read boundary, with
+  direct behavioral and shared-consumer tests delegated.
 - **Dependencies/window:** R90-136; completed R90-118/R90-119/R90-122/R90-126
   bundle/pair/adapter/sender consumers; R90-135 admission precedent; Oct 2–Dec 30.
-- **Source evidence:** `_Bundle.snapshot` already admits bounded non-following
-  regular sources and records retained bytes/hash/complete. It then calls decode
-  through check. Decode reopens retained JSONL with following `Path.open`, enforcing
-  only 256 KiB per row, or JSON with unbounded following `read_text`. Neither
-  decode lane checks captured inventory bytes/hash or descriptor metadata. Private
+- **Source evidence before this increment:** `_Bundle.snapshot` already admits bounded non-following
+  regular sources and records retained bytes/hash/complete. It then called decode
+  through check. The previous decoder reopened retained JSONL with following `Path.open`, enforcing
+  only 256 KiB per row, or JSON with unbounded following `read_text`. Neither previous
+  decode lane checked captured inventory bytes/hash or descriptor metadata. Private
   outputs and earlier source admission do not bind bytes actually decoded later.
   This is source evidence, not executed failure or an authenticity claim.
 - **Risk:** medium; shared decoder changes affect ordinary bundle, pair metadata,
@@ -6836,3 +6837,40 @@ snapshot logic stay intact; tool source digests change naturally. This protects
 only this decode read, not authenticity, continuous stability or unrelated later
 reopens. Behavioral/CLI/traffic/acceptance/scanner/knowledge suites remain unrun,
 delegated by user. No other increment starts here.
+
+
+## R90-137 Completion and Queue Refresh (2026-10-02)
+
+Feature `90ed9bba8a8f431a1906b0923110c0e3fa8de25f` contains exactly the
+six planned paths, was pushed without force and freshly fetched at matching clean
+HEAD/origin/main/FETCH_HEAD. Exact range
+`269b391f07b6b76bffaacb9516379f864bc1e9f6..90ed9bba8a8f431a1906b0923110c0e3fa8de25f`
+has its iteration note, full-index row and MOC link. All 12 current stable notes
+now record implemented decoder inventory/read/close/state boundaries, compatibility
+and delegated tests. All 306 prior immutable iteration-directory notes remain
+unchanged. Identical-range replay preserves the 354-file snapshot JSON hash
+`1ac717acfccf6729d515ce92dc3cf50166ab7eb33d66f146d6f822043fe2ff5f`.
+
+Acceptance matches the map: complete captured inventory validation, single
+non-following/nonblocking regular descriptor admission, known-size/read probe/
+row limits, EOF exact bytes/hash/metadata and close-before-state have direct
+source review. AST confirms all other helpers/methods/constants/signature and
+complete original JSONL semantic sequence/JSON hooks unchanged. Explicit metadata
+newline normalization preserves prior parsing while hashing raw bytes. All four
+consumers and their schema/status/partial-error/source-digest contracts are
+reviewed without consumer/source snapshot/check/publication changes. Python/docs,
+155 task JSON parses, 141 full unique matching roadmap row/Definition multisets,
+ordered history/link/fence/scope/diff/sensitive additions pass. There was no scope
+or review deviation; early metadata admission errors and new bundle source digest
+are planned effects. No direct behavioral/CLI/traffic/acceptance/scanner/knowledge
+execution occurred; all named regressions remain departmental and unrun. This
+delivery establishes source implementation/static review, not measured decoder
+correctness, authenticity, continuous integrity or SLO acceptance. No skill change
+is warranted.
+
+This one docs-only record closes R90-137 implementation. Resolve its final SHA
+from Git and verify its own push/fetch/exact Vault range before final reporting.
+No additional local ready item is defined; the next trigger verifies this closure
+and audits fresh queue evidence without repeating completed work or publication.
+R90-75 retains its complete independent departmental acceptance contract.
+No subsequent increment starts here.
