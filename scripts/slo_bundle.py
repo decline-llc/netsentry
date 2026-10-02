@@ -148,12 +148,37 @@ class _Bundle:
             self.check(f"decode {key}", lambda: self.decode(key))
 
     def decode(self, key: str) -> None:
+        entry = self.inventory.get(key)
+        _require(isinstance(entry, dict) and entry.get("complete") is True
+                 and entry.get("file") == key, "decode requires a complete captured inventory")
+        expected_size = report._integer(entry.get("bytes"), "retained bytes")
+        expected_hash = entry.get("sha256")
+        _hash(expected_hash)
+        flags = tuple(getattr(os, name, None) for name in ("O_NOFOLLOW", "O_NONBLOCK"))
+        _require(all(type(flag) is int and flag > 0 for flag in flags),
+                 "non-following/nonblocking retained admission unavailable")
         path = self.output / key
-        if key.endswith(".jsonl"):
-            count = 0
-            with path.open("rb") as stream:
-                while raw := stream.readline(collect.MAX_LINE_BYTES + 1):
+        fields = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
+        digest = hashlib.sha256()
+        size = count = 0
+        descriptor = os.open(path, os.O_RDONLY | flags[0] | flags[1])
+        try:
+            stream = os.fdopen(descriptor, "rb")
+        except BaseException:
+            os.close(descriptor)
+            raise
+        with stream:
+            before = os.fstat(stream.fileno())
+            _require(stat.S_ISREG(before.st_mode), "retained input must be a regular file")
+            _require(all(type(getattr(before, field, None)) is int for field in fields),
+                     "stable retained metadata unavailable")
+            _require(before.st_size == expected_size, "retained size differs from inventory")
+            if key.endswith(".jsonl"):
+                while raw := stream.readline(min(collect.MAX_LINE_BYTES, expected_size - size) + 1):
                     _require(len(raw) <= collect.MAX_LINE_BYTES, "JSONL row exceeds 256 KiB")
+                    _require(len(raw) <= expected_size - size, "retained bytes exceed inventory")
+                    digest.update(raw)
+                    size += len(raw)
                     row = json.loads(raw.decode("utf-8"), object_pairs_hook=report._pairs,
                                      parse_constant=report._constant, parse_float=_finite_float)
                     _require(isinstance(row, dict), "JSONL row must be an object")
@@ -168,9 +193,24 @@ class _Bundle:
                                  "submission time order mismatch")
                         _hash(row["frame_sha256"])
                     count += 1
+            else:
+                raw = stream.read(expected_size + 1)
+                _require(len(raw) <= expected_size, "retained bytes exceed inventory")
+                digest.update(raw)
+                size = len(raw)
+            after = os.fstat(stream.fileno())
+            _require(all(type(getattr(after, field, None)) is int for field in fields),
+                     "stable retained metadata unavailable")
+            _require(all(getattr(before, field) == getattr(after, field) for field in fields),
+                     "retained input changed while decoding")
+            _require(size == expected_size and digest.hexdigest() == expected_hash,
+                     "decoded bytes differ from captured inventory")
+        if key.endswith(".jsonl"):
             self.inventory[key]["rows"] = count
         else:
-            document = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=report._pairs,
+            # Preserve read_text's universal-newline parsing; inventory hashes raw bytes.
+            text = raw.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n")
+            document = json.loads(text, object_pairs_hook=report._pairs,
                                   parse_constant=report._constant, parse_float=_finite_float)
             _require(isinstance(document, dict), "metadata must be an object")
             self.documents[key] = document

@@ -230,6 +230,16 @@ copies, raw row counts, run/origin/port, adapter/report binding and report recom
 must agree before bundle replay starts. All five fresh replay source entries bind
 to this enclosing bundle; previous reconstruction receipts cannot satisfy this.
 
+Complete snapshots are decoded through a separate bounded regular-file handle
+with non-following/nonblocking admission. Captured byte count/SHA-256 and
+descriptor metadata must match at EOF, and close must succeed before decoded
+documents or row counts are committed. Keep failed retained files and inspect
+the mismatch/error/partial-output boundary; inventory `complete` alone describes
+source copying, not decode success. This boundary also applies to pair metadata
+and both reconstruction consumers. Other later readers are unchanged, so no
+continuous integrity or authenticity is implied. Direct decoder tests remain
+departmental and unrun; see [the bundle decode contract](slo-bundle.md#inventory-bound-retained-decoding-r90-137).
+
 For separate derivation diagnostics, the existing standalone operation is:
 
 ```bash

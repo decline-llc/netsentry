@@ -214,7 +214,7 @@ formal SLO and evidence contract is unchanged.
 | R90-134 | Oct 1 | Complete documentation; execution delegated | Reconcile post-sender delivery and scope reporter input admission. | R90-133 verified feature/closure | Audit exact Git/Vault evidence and shared reporter reader; define complete R90-135 contract without implementation or tests. |
 | R90-135 | Oct 2–Dec 30 | Complete implementation; tests delegated | Admit bounded finalized observations through a stable reporter file handle. | R90-134; R90-114 reporter; R90-119/R90-122/R90-123 shared consumers | Reject symlink/nonregular/observed-changing and oversized acquisition through one non-following/nonblocking regular-file descriptor; retain 64 MiB cap, exact bytes/hash, JSON/report/status semantics and output preservation; tests delegated. |
 | R90-136 | Oct 2 | Complete documentation; execution delegated | Reconcile reporter delivery and scope inventory-bound bundle decoding. | R90-135 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record retained-decoder inventory gap and define complete R90-137 contract without runtime or test execution. |
-| R90-137 | Oct 2–Dec 30 | Ready; tests delegated | Bind retained bundle decoding to captured byte/hash inventory. | R90-136; R90-118/R90-119/R90-122/R90-126 consumers; R90-135 boundary precedent | Admit one bounded non-following/nonblocking regular retained-file handle; verify exact inventory bytes/hash and descriptor metadata before publishing decoded state; preserve strict schemas, parsing/status and partial evidence; tests delegated. |
+| R90-137 | Oct 2–Dec 30 | In progress; tests delegated | Bind retained bundle decoding to captured byte/hash inventory. | R90-136; R90-118/R90-119/R90-122/R90-126 consumers; R90-135 boundary precedent | Admit one bounded non-following/nonblocking regular retained-file handle; verify exact inventory bytes/hash and descriptor metadata before publishing decoded state; preserve strict schemas, parsing/status and partial evidence; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3075,8 +3075,8 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-137 Definition
 
-- **Goal/status:** ready after verified R90-136 delivery; bind `_Bundle.decode` to
-  the snapshot inventory at its own read boundary. Implementation unstarted.
+- **Goal/status:** implementation in progress after verified R90-136 delivery;
+  bind `_Bundle.decode` to snapshot inventory at its own read boundary.
 - **Dependencies/window:** R90-136; completed R90-118/R90-119/R90-122/R90-126
   bundle/pair/adapter/sender consumers; R90-135 admission precedent; Oct 2–Dec 30.
 - **Source evidence:** `_Bundle.snapshot` already admits bounded non-following
@@ -6809,3 +6809,30 @@ latest fetched tip and closure knowledge, then persist its independent
 implementation plan. R90-75 retains its complete departmental acceptance contract.
 Do not repeat completed R90-135/R90-136 commits/sync or R90-59 publication.
 No next-increment implementation starts here.
+
+
+## R90-137 Selection and Implementation (2026-10-02)
+
+Fresh clean HEAD/origin/main/FETCH_HEAD is
+`269b391f07b6b76bffaacb9516379f864bc1e9f6`; R90-136 audit/closure ranges
+have verified note/index/MOC. The 353-file snapshot JSON hash reproduces
+`fa9ab7f875f0761feac0d256be5cefb4eec3e47fc1f2512485edc021da3737c1`.
+The 53-commit Sep 4–Oct 2 phase audit separates tooling/replay, input admission,
+queue repair, historical candidate publication and main metadata. R90-137 internal
+dependencies are complete; R90-75 retains its complete independent department
+contract without qualifying new measurements. The horizon remains Oct 2–Dec 30.
+
+The six-path `task-20261002-bundle-decode-boundary.md` and matching state were
+persisted before source/documentation edits. Runtime changes only `_Bundle.decode`:
+validate complete captured inventory bytes/hash/key, available flags, one read-only
+non-following/nonblocking regular retained-file handle and required metadata;
+reject known size mismatch before read, bound JSON by captured bytes+1 and JSONL
+by remaining bytes/row-limit+1, verify exact EOF bytes/hash/metadata and close
+before trusted document/row state. Original JSONL semantic sequence and metadata
+JSON hooks/universal-newline behavior remain. Inventory complete remains the
+source-copy flag; failure adds no new trusted decode state or completed check.
+Existing shared consumers/error/partial evidence, public schemas/status and source
+snapshot logic stay intact; tool source digests change naturally. This protects
+only this decode read, not authenticity, continuous stability or unrelated later
+reopens. Behavioral/CLI/traffic/acceptance/scanner/knowledge suites remain unrun,
+delegated by user. No other increment starts here.

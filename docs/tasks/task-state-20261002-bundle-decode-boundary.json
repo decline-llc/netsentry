@@ -1,0 +1,49 @@
+{
+  "task": "r90-137-bundle-decode-boundary",
+  "timestamp": "2026-10-02",
+  "branch": "main",
+  "remote_baseline": "269b391f07b6b76bffaacb9516379f864bc1e9f6",
+  "starting_remote_baseline": "269b391f07b6b76bffaacb9516379f864bc1e9f6",
+  "risk_level": "Medium",
+  "current_checkpoint": "implementation_and_static_review_complete",
+  "completed": [
+    "Verified clean fresh refs and both R90-136 exact Git/Vault ranges",
+    "Reproduced 353-file baseline hash; reviewed 53-commit phase history",
+    "Audited complete R90-75/R90-137 forward contracts and all four consumers",
+    "Persisted six-path plan/state with inventory/read/close/state boundary, newline compatibility and direct departmental case map",
+    "Implemented complete inventory/flags/regular metadata/known-size admission and raw handle wrapping cleanup",
+    "Bounded JSON/JSONL reads and exact raw byte/hash plus EOF metadata checks before stream close",
+    "Published row/document state only after close; retained original JSONL validation and metadata newline/JSON hooks",
+    "AST equality verified all other methods/helpers/constants/signature and unchanged strict schema/status/source snapshot/check/publication logic",
+    "Reviewed all four consumers and unchanged error/partial-artifact/source-digest contracts",
+    "Python/docs/155 JSON/141 full unique roadmap pairs/history/links/fences/scope/diff/sensitive additions passed"
+  ],
+  "in_progress": [
+    "Feature commit and exact Git/Vault delivery"
+  ],
+  "todo": [
+    "Feature push/fetch and exact Vault stable-note reconciliation/replay",
+    "One docs-only closure and exact range delivery"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_departmental",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "static_review": "pass:python-check;docs-check;AST-unchanged-helpers-methods-constants-signature-JSONL-validation-JSON-hooks;close-before-state;four-consumers;155-task-json;141-full-roadmap-pairs;history;links;fences;scope;diff;sensitive-additions"
+  },
+  "authority_boundaries": [
+    "Exactly R90-137 and six planned paths",
+    "Only Bundle.decode runtime logic; other readers/snapshot/consumers/schemas unchanged",
+    "All execution remains departmental",
+    "No toolchain/dependency/workflow/publication changes"
+  ],
+  "remaining_risks": [
+    "Direct decoder/shared consumer/CLI tests unexecuted",
+    "Metadata/hash observes this read boundary, not authenticity or perpetual whole-bundle integrity",
+    "Bundle source digest changes; shared consumer identity review remains departmental",
+    "Bounded metadata parsing still needs memory proportional to retained JSON size"
+  ],
+  "resume_instructions": "Finish only R90-137 planned implementation and exact Git/Vault delivery; preserve testing split and do not repeat old publication/delivery or start next work."
+}
