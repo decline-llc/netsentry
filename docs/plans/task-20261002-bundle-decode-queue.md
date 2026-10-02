@@ -116,3 +116,28 @@ pass. All 304 immutable iteration-directory notes and the 351-file current Vault
 baseline are captured. No review failure, scope deviation, runtime or execution
 result occurred. R90-137 remains planned/unstarted. Exact Git/Vault delivery and
 current stable handoff reconciliation remain; no skill change is needed.
+
+## Delivery and acceptance closeout
+
+Audit `fb5e3702deebbf0bf58ba9c3db208de549b4cf1a` contains exactly the
+three planned paths. Push and fresh fetch verified matching clean refs. Exact
+range `4ea9cc6111e41c6302a175d0446dbb270e265363..fb5e3702deebbf0bf58ba9c3db208de549b4cf1a`
+has verified note/index/MOC. All 12 current stable notes record reporter closure
+and the new decode handoff. All 304 pre-existing immutable iteration-directory
+notes are unchanged. Identical-range replay preserves the 352-file snapshot
+JSON hash `f2f6d0dee3441a07fe701b9c7f23822d46ec9c8b9a8fcca3343674f0d0d4cb0b`.
+
+Each audit acceptance maps to planned direct source, structural and Git/Vault
+evidence. All SLO runtime files remain unchanged; this audit executes no decoder
+or test and does not claim behavioral correctness. Future R90-137 direct cases
+remain departmental and unrun. No scope/review deviation occurred. Final docs,
+154 task JSON, 141 full roadmap pairs, source/callers, chronology/link/fence/
+scope/diff/sensitive review passes. Existing skills already require the workflow;
+no skill edit is needed.
+
+One docs-only closure records verified audit facts. Resolve its SHA from Git and
+verify its own push/fetch/exact Vault range; do not create another closure merely
+to embed its self-referential hash. R90-136 is complete, R90-137 ready/unstarted.
+Next trigger verifies latest fetched tip and closure knowledge before persisting
+the separate implementation plan. R90-75 and all execution suites remain
+departmental. Do not repeat old deliveries/publication or start R90-137 here.

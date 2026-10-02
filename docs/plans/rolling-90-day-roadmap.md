@@ -213,8 +213,8 @@ formal SLO and evidence contract is unchanged.
 | R90-133 | Oct 1–Dec 29 | Complete implementation; tests delegated | Bound finalized fixture admission and retention before reference-sender submission. | R90-132; R90-117 sender; R90-129 collector boundary; R90-126/R90-127 replay compatibility | Admit and snapshot supplied regular fixture bytes with non-following/nonblocking handles and a configurable 64 GiB default input budget; reject nonregular, changed and over-budget acquisition before any send; preserve sender schedules, oracle, formats, partial evidence and independent acceptance boundary. |
 | R90-134 | Oct 1 | Complete documentation; execution delegated | Reconcile post-sender delivery and scope reporter input admission. | R90-133 verified feature/closure | Audit exact Git/Vault evidence and shared reporter reader; define complete R90-135 contract without implementation or tests. |
 | R90-135 | Oct 2–Dec 30 | Complete implementation; tests delegated | Admit bounded finalized observations through a stable reporter file handle. | R90-134; R90-114 reporter; R90-119/R90-122/R90-123 shared consumers | Reject symlink/nonregular/observed-changing and oversized acquisition through one non-following/nonblocking regular-file descriptor; retain 64 MiB cap, exact bytes/hash, JSON/report/status semantics and output preservation; tests delegated. |
-| R90-136 | Oct 2 | In progress; documentation only | Reconcile reporter delivery and scope inventory-bound bundle decoding. | R90-135 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record retained-decoder inventory gap and define complete R90-137 contract without runtime or test execution. |
-| R90-137 | Oct 2–Dec 30 | Planned; awaiting R90-136 delivery | Bind retained bundle decoding to captured byte/hash inventory. | R90-136; R90-118/R90-119/R90-122/R90-126 consumers; R90-135 boundary precedent | Admit one bounded non-following/nonblocking regular retained-file handle; verify exact inventory bytes/hash and descriptor metadata before publishing decoded state; preserve strict schemas, parsing/status and partial evidence; tests delegated. |
+| R90-136 | Oct 2 | Complete documentation; execution delegated | Reconcile reporter delivery and scope inventory-bound bundle decoding. | R90-135 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record retained-decoder inventory gap and define complete R90-137 contract without runtime or test execution. |
+| R90-137 | Oct 2–Dec 30 | Ready; tests delegated | Bind retained bundle decoding to captured byte/hash inventory. | R90-136; R90-118/R90-119/R90-122/R90-126 consumers; R90-135 boundary precedent | Admit one bounded non-following/nonblocking regular retained-file handle; verify exact inventory bytes/hash and descriptor metadata before publishing decoded state; preserve strict schemas, parsing/status and partial evidence; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3052,7 +3052,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-136 Definition
 
-- **Goal/status:** documentation-only post-reporter queue audit in progress;
+- **Goal/status:** complete documentation-only post-reporter queue audit;
   define a source-grounded retained-decode follow-up without implementation.
 - **Dependencies/window:** completed R90-135 feature and closure; Oct 2.
 - **Risk:** low; an empty/stale handoff can repeat completed delivery or hide a
@@ -3075,7 +3075,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-137 Definition
 
-- **Goal/status:** planned pending R90-136 delivery; bind `_Bundle.decode` to
+- **Goal/status:** ready after verified R90-136 delivery; bind `_Bundle.decode` to
   the snapshot inventory at its own read boundary. Implementation unstarted.
 - **Dependencies/window:** R90-136; completed R90-118/R90-119/R90-122/R90-126
   bundle/pair/adapter/sender consumers; R90-135 admission precedent; Oct 2–Dec 30.
@@ -6777,3 +6777,35 @@ is delivered and the next trigger persists its implementation plan. Current
 stable notes close R90-135 correctly and need the new handoff; historical notes
 remain immutable. All execution suites remain not run, delegated by user.
 No runtime or next-increment implementation starts here; no skill edit warranted.
+
+
+## R90-136 Completion and R90-137 Handoff (2026-10-02)
+
+Audit `fb5e3702deebbf0bf58ba9c3db208de549b4cf1a` contains exactly the
+three planned documentation paths, was pushed without force and freshly fetched
+at matching clean HEAD/origin/main/FETCH_HEAD. Exact range
+`4ea9cc6111e41c6302a175d0446dbb270e265363..fb5e3702deebbf0bf58ba9c3db208de549b4cf1a`
+has its iteration note, full-index row and MOC link. Twelve current stable notes
+now close reporter authority and carry the inventory-bound decode handoff;
+all 304 pre-existing immutable iteration-directory notes remain unchanged.
+Exact-range replay preserves the 352-file snapshot JSON hash
+`f2f6d0dee3441a07fe701b9c7f23822d46ec9c8b9a8fcca3343674f0d0d4cb0b`.
+
+Acceptance matches the map: exact R90-135 feature/closure and recent phase evidence
+verified; snapshot inventory versus decode reopen/read limits/hash and four
+shared consumers directly reviewed; R90-75/R90-137 forward contracts complete;
+current stable handoffs reconciled. Docs, 154 task JSON parses, 141 full unique
+matching roadmap row/Definition multisets, unchanged SLO runtime, ordered
+history, links/fences, exact scope, diff and sensitive additions review pass.
+No review failure, scope deviation, runtime change or test execution occurred.
+All direct future decoder regressions remain unrun; source observations do not
+establish runtime rejection, authenticity, perpetual whole-bundle integrity or
+SLO acceptance. Existing skills require no update.
+
+This one docs-only delivery record closes R90-136. Resolve its final SHA from Git
+and verify its own push/fetch/exact Vault range before final reporting. R90-137
+is the next ready increment and remains unstarted; on the next trigger verify
+latest fetched tip and closure knowledge, then persist its independent
+implementation plan. R90-75 retains its complete departmental acceptance contract.
+Do not repeat completed R90-135/R90-136 commits/sync or R90-59 publication.
+No next-increment implementation starts here.
