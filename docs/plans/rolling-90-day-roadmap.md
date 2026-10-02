@@ -212,7 +212,7 @@ formal SLO and evidence contract is unchanged.
 | R90-132 | Oct 1–Dec 29 | Complete documentation; execution delegated | Reconcile toolchain delivery and restore a bounded sender-input queue. | R90-131 feature/closure | Verify exact Git/Vault delivery and phase history; define source-grounded R90-133 with a complete input/compatibility/delegation contract; update current handoffs without runtime changes. |
 | R90-133 | Oct 1–Dec 29 | Complete implementation; tests delegated | Bound finalized fixture admission and retention before reference-sender submission. | R90-132; R90-117 sender; R90-129 collector boundary; R90-126/R90-127 replay compatibility | Admit and snapshot supplied regular fixture bytes with non-following/nonblocking handles and a configurable 64 GiB default input budget; reject nonregular, changed and over-budget acquisition before any send; preserve sender schedules, oracle, formats, partial evidence and independent acceptance boundary. |
 | R90-134 | Oct 1 | Complete documentation; execution delegated | Reconcile post-sender delivery and scope reporter input admission. | R90-133 verified feature/closure | Audit exact Git/Vault evidence and shared reporter reader; define complete R90-135 contract without implementation or tests. |
-| R90-135 | Oct 2–Dec 30 | In progress; tests delegated | Admit bounded finalized observations through a stable reporter file handle. | R90-134; R90-114 reporter; R90-119/R90-122/R90-123 shared consumers | Reject symlink/nonregular/observed-changing and oversized acquisition through one non-following/nonblocking regular-file descriptor; retain 64 MiB cap, exact bytes/hash, JSON/report/status semantics and output preservation; tests delegated. |
+| R90-135 | Oct 2–Dec 30 | Complete implementation; tests delegated | Admit bounded finalized observations through a stable reporter file handle. | R90-134; R90-114 reporter; R90-119/R90-122/R90-123 shared consumers | Reject symlink/nonregular/observed-changing and oversized acquisition through one non-following/nonblocking regular-file descriptor; retain 64 MiB cap, exact bytes/hash, JSON/report/status semantics and output preservation; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3004,12 +3004,14 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-135 Definition
 
-- **Goal/status:** implementation in progress after verified R90-134 delivery;
-  tighten finalized observation admission at `slo_report.read_observations`.
+- **Goal/status:** complete implementation after verified R90-134 delivery;
+  finalized observation admission at `slo_report.read_observations` is tightened,
+  with behavioral/shared-consumer tests delegated.
 - **Dependencies/window:** R90-134; completed R90-114 reporter and
   R90-119/R90-122/R90-123 shared comparison/reconstruction consumers; Oct 2–Dec 30.
-- **Source evidence:** the reader currently uses following `Path.open("rb")`,
-  bounds read to 64 MiB plus one byte and returns exact raw JSON bytes. It has no
+- **Source evidence before this increment:** the reader used following
+  `Path.open("rb")`, bounded read to 64 MiB plus one byte and returned exact raw
+  JSON bytes. It had no
   nonregular admission or descriptor metadata comparison. Standalone reporting
   calls it before summary and output publication; reconstruction and comparison
   also call it. Existing retained snapshots do not protect earlier standalone
@@ -6638,3 +6640,39 @@ readers retain their wrapper error and partial-artifact behavior. Reporter sourc
 identities naturally change and do not waive comparability. Metadata cannot
 prove authenticity or continuous writer exclusion. All behavioral/CLI/traffic/
 acceptance/scanner/knowledge suites remain unrun, delegated by user.
+
+
+## R90-135 Completion and Queue Refresh (2026-10-02)
+
+Feature `ac44f270c73938e650902c170af1e26564c6f801` contains exactly the
+six planned paths, was pushed without force and freshly fetched at matching clean
+HEAD/origin/main/FETCH_HEAD. Exact range
+`66cde661c06226e5953e0ba0ed936302c8f5ed05..ac44f270c73938e650902c170af1e26564c6f801`
+has its iteration note, full-index row and MOC link. All 12 current stable notes
+now describe reporter admission, compatibility, limits and delegated cases;
+all 302 prior immutable iteration-directory notes remain unchanged. Exact-range
+replay preserves the 350-file snapshot JSON hash
+`255b7bd03d478aaba496d428f097778b65f24c46e4599b878efc87cde84bb647`.
+
+Closeout matches the acceptance map: single read-only non-following/nonblocking
+regular-file acquisition, required integer metadata, known-size/cap+1/EOF checks,
+wrapping-error/context close before decode and standalone output order have direct
+source review. AST comparison confirms all other original definitions/constants,
+reader signature and complete JSON decode block unchanged. All three direct calls,
+shared reconstruction/comparison errors/partial evidence and source-digest binding
+are reviewed without consumer/schema edits. Python/docs, 153 task JSON parses,
+139 full unique matching roadmap row/Definition multisets, ordered history,
+links/fences, exact scope, diff and sensitive additions review pass. Initial
+read-only searches named absent test paths; corrected file discovery supplied
+source authority. No scope or runtime validation deviation occurred. Intentional
+admission-before-JSON rejection and new reporter source digest are planned effects.
+Every direct regression remains unexecuted under the standing departmental split;
+no behavioral rejection, whole-operation rollback, authenticity or SLO result
+is claimed. Existing skills need no update.
+
+This one docs-only delivery record closes R90-135 implementation. Resolve its
+final SHA from Git and verify its own push/fetch/exact Vault range before final
+reporting. No additional local ready increment is defined; the next trigger
+verifies this closure and audits fresh evidence, rather than repeating completed
+work or publication. R90-75 retains its complete independent departmental
+acceptance contract. No subsequent increment starts here.

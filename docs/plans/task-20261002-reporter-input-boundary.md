@@ -114,3 +114,32 @@ sequence was affected and no behavior was executed. All departmental cases
 remain unrun, including each added admission rejection, negative/unavailable
 metadata, wrapping/close failures and shared consumer outcomes. No scope change
 or skill improvement is warranted. Exact feature Git/Vault delivery remains.
+
+## Delivery and acceptance closeout
+
+Feature `ac44f270c73938e650902c170af1e26564c6f801` contains exactly the
+six planned paths. Push and fresh fetch verified matching clean refs. Exact
+range `66cde661c06226e5953e0ba0ed936302c8f5ed05..ac44f270c73938e650902c170af1e26564c6f801`
+has verified note/index/MOC. All 12 stable current notes carry the reporter
+implementation and direct departmental case handoff; all 302 pre-existing
+immutable iteration-directory notes are unchanged. Identical-range replay
+preserves the 350-file snapshot JSON hash
+`255b7bd03d478aaba496d428f097778b65f24c46e4599b878efc87cde84bb647`.
+
+Each implementation acceptance criterion has planned direct source/AST/evidence:
+flags/ownership/admission/read limits/EOF/close, unchanged signature/constants/
+decode/summary/writer/status and exact three shared callers. Departmental cases
+are explicitly unrun; static equality is not an executed preservation,
+compatibility or rejection result. No scope deviation occurred. Admission errors
+precede decode and source digest changes naturally as planned. Final Python/docs,
+153 JSON, 139 full roadmap pairs, ordered history/link/fence/six-path scope/diff/
+sensitive review passes. Existing skills already cover the observed workflow;
+no reusable skill change is needed.
+
+One docs-only closure records verified delivery facts. Resolve its SHA from Git,
+verify its own push/fetch and exact Vault range; do not add another closure to
+embed a self-referential hash. R90-135 implementation is complete with all
+behavioral/CLI/traffic/acceptance/scanner/knowledge execution delegated. No
+additional local ready item is queued; next trigger verifies closure knowledge
+and audits fresh evidence. R90-75 remains departmental. Do not repeat old
+commits/push/sync/publication or start another increment here.
