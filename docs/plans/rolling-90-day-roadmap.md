@@ -215,8 +215,8 @@ formal SLO and evidence contract is unchanged.
 | R90-135 | Oct 2–Dec 30 | Complete implementation; tests delegated | Admit bounded finalized observations through a stable reporter file handle. | R90-134; R90-114 reporter; R90-119/R90-122/R90-123 shared consumers | Reject symlink/nonregular/observed-changing and oversized acquisition through one non-following/nonblocking regular-file descriptor; retain 64 MiB cap, exact bytes/hash, JSON/report/status semantics and output preservation; tests delegated. |
 | R90-136 | Oct 2 | Complete documentation; execution delegated | Reconcile reporter delivery and scope inventory-bound bundle decoding. | R90-135 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record retained-decoder inventory gap and define complete R90-137 contract without runtime or test execution. |
 | R90-137 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind retained bundle decoding to captured byte/hash inventory. | R90-136; R90-118/R90-119/R90-122/R90-126 consumers; R90-135 boundary precedent | Admit one bounded non-following/nonblocking regular retained-file handle; verify exact inventory bytes/hash and descriptor metadata before publishing decoded state; preserve strict schemas, parsing/status and partial evidence; tests delegated. |
-| R90-138 | Oct 2 | In progress documentation; execution delegated | Reconcile decoder delivery and scope bounded sender replay. | R90-137 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record replay reopen/total-read gap and define complete R90-139 contract without runtime or test execution. |
-| R90-139 | Oct 2–Dec 30 | Planned; execution delegated | Bound and admit retained sender replay ledgers against captured inventory. | R90-138; R90-126/R90-127 sender consumers; R90-137 decoder precedent | Admit three non-following/nonblocking regular replay handles; bound bytes/rows, verify exact EOF inventory and descriptor metadata, close before success; preserve correlation/schema/status/partial evidence; tests delegated. |
+| R90-138 | Oct 2 | Complete documentation; execution delegated | Reconcile decoder delivery and scope bounded sender replay. | R90-137 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record replay reopen/total-read gap and define complete R90-139 contract without runtime or test execution. |
+| R90-139 | Oct 2–Dec 30 | Ready; execution delegated | Bound and admit retained sender replay ledgers against captured inventory. | R90-138; R90-126/R90-127 sender consumers; R90-137 decoder precedent | Admit three non-following/nonblocking regular replay handles; bound bytes/rows, verify exact EOF inventory and descriptor metadata, close before success; preserve correlation/schema/status/partial evidence; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3126,7 +3126,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-138 Definition
 
-- **Goal/status:** documentation-only post-decoder queue audit in progress;
+- **Goal/status:** complete documentation-only post-decoder queue audit;
   define the retained sender replay follow-up without implementation.
 - **Dependencies/window:** R90-137 verified feature/closure; Oct 2.
 - **Risk:** low; inaccurate source authority or stale stable handoff.
@@ -3147,7 +3147,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-139 Definition
 
-- **Goal/status:** planned until R90-138 delivery; bind retained sender replay
+- **Goal/status:** ready after verified R90-138 audit delivery; bind retained sender replay
   reads to captured inventories, with all behavioral tests delegated.
 - **Dependencies/window:** R90-138; completed R90-126 standalone and R90-127
   bundle/pair sender integration; R90-137 decoder precedent; Oct 2–Dec 30.
@@ -6971,3 +6971,38 @@ exact EOF inventory/metadata and close-before-success while preserving all
 standalone/integrated/bundle/pair contracts. R90-139 remains planned/unstarted
 until this audit delivery; no runtime or test execution begins here. All execution
 suites remain user-delegated, and no behavioral rejection or SLO result is claimed.
+
+
+## R90-138 Completion and R90-139 Handoff (2026-10-02)
+
+Audit `cf7376b5a3a15b17ee9d0b93a77b7c3e082cab0a` contains exactly the
+three planned documentation paths; push/fresh fetch verified clean matching
+HEAD/origin/main/FETCH_HEAD. Exact range
+`45ff1af40d7ff77b1a8b3a5a2d5680f9f83c9a75..cf7376b5a3a15b17ee9d0b93a77b7c3e082cab0a`
+has verified generated iteration scope, full-index row and MOC link. All 12
+current stable notes now close decoder authority and carry bounded sender replay
+handoff; all 308 pre-existing immutable iteration-directory notes are unchanged.
+Identical-range replay preserves the 356-file snapshot JSON SHA-256
+`495de996ed7741ddd4e314e83b2c0ca179b439c58c82780077e1725375562399`.
+
+Each audit acceptance maps to planned evidence: prior exact Git/Vault/phase
+review; replay reopen/row-only limits/EOF inventory and standalone/integrated/
+bundle/pair progress/error/close ownership; complete R90-75/R90-139 contracts;
+static docs/156 task JSON/143 full unique roadmap pairs/ordered history/links/
+fences/three-path scope/diff/sensitive additions; stable knowledge reconciliation
+and immutable history preservation. Runtime remains unchanged. Initial verifier
+assumed full hashes in generated prose; corrected from versioned generator
+format and verified full Git endpoints/ancestry plus exact generated scope.
+No missing delivery, scope deviation or ambiguous result remains. Every future
+direct replay regression remains departmental and unrun; no runtime rejection,
+authenticity, continuous integrity or acceptance claim is established. Existing
+skills need no change.
+
+This single docs-only delivery record closes R90-138. Resolve its final SHA from
+Git and verify its push/fresh fetch/exact Vault range before final reporting;
+do not create a second closure only to embed a self-reference. R90-139 is the
+next ready increment, implementation unstarted; on the next trigger verify
+latest fetched tip/closure knowledge and persist its separate implementation
+plan. R90-75 retains its complete independent departmental acceptance contract.
+Do not repeat completed R90-137/R90-138 delivery or R90-59 publication.
+No next-increment implementation starts here.

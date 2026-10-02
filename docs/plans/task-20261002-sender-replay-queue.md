@@ -138,3 +138,29 @@ result occurred. This verification-only correction does not change scope.
 Current stable handoff reconciliation and exact audit delivery remain. R90-139
 is planned/unstarted until this audit is delivered; every direct behavioral case
 remains unrun. Existing skills already require exact evidence and need no edit.
+
+## Delivery and acceptance closeout
+
+Audit `cf7376b5a3a15b17ee9d0b93a77b7c3e082cab0a` contains exactly the
+three intended paths. Push/fresh fetch verified matching clean refs. Exact range
+`45ff1af40d7ff77b1a8b3a5a2d5680f9f83c9a75..cf7376b5a3a15b17ee9d0b93a77b7c3e082cab0a`
+has verified note/scope/index/MOC. All 12 current stable notes now describe
+completed decoder authority and the distinct replay follow-up. All 308 prior
+immutable iteration-directory notes remain unchanged. Identical-range replay
+preserves the 356-file snapshot JSON SHA-256
+`495de996ed7741ddd4e314e83b2c0ca179b439c58c82780077e1725375562399`.
+
+Acceptance matches the evidence map: prior delivery/phase evidence, direct
+replay and all consumer/diagnostic ownership review, complete forward contracts,
+structural/static checks and current stable reconciliation. Every future direct
+regression remains unexecuted under departmental ownership; no source review
+establishes runtime rejection or measured SLO compliance. No runtime/source,
+scope or ambiguous review deviation remains. Corrected generated-note verifier
+assumption is recorded above; existing skills need no change.
+
+One docs-only closure records verified audit facts. Resolve its SHA from Git,
+verify push/fresh fetch and its exact Vault range before final reporting; avoid
+another closure merely to persist its self-reference. R90-138 is complete;
+R90-139 ready and unstarted. Next trigger verifies latest tip/closure knowledge
+and persists a distinct implementation plan. Preserve R90-75's independent
+contract and all delegated execution; do not repeat old deliveries/publication.
