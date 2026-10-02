@@ -135,3 +135,40 @@ pass. The 363-file Vault baseline is unchanged and all 316 immutable iteration
 notes are preserved. All execution remains delegated; no observed rejection or
 cleanup/acceptance claim. Audit exact delivery/stable handoff and one closure
 remain; no implementation begins here. Existing skills need no edit.
+
+
+## Delivery evidence and acceptance closeout
+
+Audit `ef1cd109ef69eab9f00627f3aeb73e37dd07ac94` contains exactly the
+three intended docs paths; trusted-host transient SSH-over-443 push/fresh fetch
+verified clean matching refs without changing remote configuration. Exact range
+`098d0ed0aa7f61ac6d6ff86bc9fa978e01195e83..ef1cd109ef69eab9f00627f3aeb73e37dd07ac94`
+has verified generated scope/note/index/MOC. Twelve current stable notes reconcile
+completed R90-141 and ready/unstarted R90-143; all 316 prior immutable iteration
+notes remain unchanged. Identical replay preserves the 364-file snapshot hash
+`27c0045910d063cee00de25db97c07d9e6575a56458f9b1a4d6190566bfa227d`.
+
+Each acceptance maps to the direct source/AST/structural/delivery evidence above.
+Four later receipt reads retain existing cap/parser and original/current binding;
+the proposed contract closes their distinct acquisition gap without modifying
+other readers. Direct source review confirms affected side qualification and CLI
+partial-output ownership. Docs/160 JSON/147 full unique roadmap pairs/complete
+forward contracts/history/links/fences/three-path scope/unchanged source/diff/
+sensitive additions pass. No source/scope/static-review/delivery deviation.
+All suites remain delegated/unrun; no direct runtime rejection/parser/fault/
+preservation or SLO claim. Every future named receipt/parser case retains its
+direct boundary obligation and exact inventory prerequisite.
+
+One docs-only closure records these verified facts. Resolve its final SHA/range
+from Git, verify push/fresh fetch/Vault, then stop. Do not create another record
+only to embed a self-reference or start R90-143. Next trigger verifies closure
+knowledge and persists its separate implementation plan. R90-75 stays independent
+and departmental; current horizon Oct 2–Dec 30 remains. Skills need no change.
+
+
+Stable-prose audit also found three older dated release-blocker/tag-only sections
+in the test-matrix note without explicit historical markers. Marked them historical
+and linked completed Oct 1 R90-59 publication authority while preserving their
+then-current facts and every immutable iteration note. Replayed the identical audit
+range and refreshed the complete snapshot hash above. This knowledge correction
+is the sole audit deviation; source/three-path repository scope remain unchanged.

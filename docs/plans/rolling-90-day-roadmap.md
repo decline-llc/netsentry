@@ -219,8 +219,8 @@ formal SLO and evidence contract is unchanged.
 | R90-139 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bound and admit retained sender replay ledgers against captured inventory. | R90-138; R90-126/R90-127 sender consumers; R90-137 decoder precedent | Admit three non-following/nonblocking regular replay handles; bound bytes/rows, verify exact EOF inventory and descriptor metadata, close before success; preserve correlation/schema/status/partial evidence; tests delegated. |
 | R90-140 | Oct 2 | Complete documentation; execution delegated | Reconcile sender replay delivery and scope report-source inventory binding. | R90-139 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record later observations read gap and define complete R90-141 contract without runtime/test execution. |
 | R90-141 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind report-source observations read to captured inventory. | R90-140; R90-118/R90-119/R90-123/R90-127 bundle/pair consumers; R90-135/R90-137 precedents | Admit one bounded regular non-following/nonblocking observations handle; exact inventory/metadata/close before source comparison/recompute; preserve public formats/status/eligibility/partial evidence; tests delegated. |
-| R90-142 | Oct 2 | In progress documentation; execution delegated | Reconcile report-binding delivery and scope pair receipt inventory reads. | R90-141 verified feature/closure | Verify exact prior Git/Vault/phase evidence; define complete R90-143 four-receipt acquisition/parser/qualification contract without runtime/test execution. |
-| R90-143 | Oct 2–Dec 30 | Planned until R90-142 delivery; tests delegated | Bind pair condition receipt reads to reconciled inventory. | R90-142; R90-119/R90-121/R90-123/R90-127 pair modes; R90-137/R90-141 precedents | Four fixed receipt reads validate complete matched inventory and bounded regular non-following/nonblocking handles; exact EOF metadata/hash and close before unchanged parser/projection; preserve all modes/error/partial contracts; tests delegated. |
+| R90-142 | Oct 2 | Complete documentation; execution delegated | Reconcile report-binding delivery and scope pair receipt inventory reads. | R90-141 verified feature/closure | Verify exact prior Git/Vault/phase evidence; define complete R90-143 four-receipt acquisition/parser/qualification contract without runtime/test execution. |
+| R90-143 | Oct 2–Dec 30 | Ready; tests delegated | Bind pair condition receipt reads to reconciled inventory. | R90-142; R90-119/R90-121/R90-123/R90-127 pair modes; R90-137/R90-141 precedents | Four fixed receipt reads validate complete matched inventory and bounded regular non-following/nonblocking handles; exact EOF metadata/hash and close before unchanged parser/projection; preserve all modes/error/partial contracts; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3274,8 +3274,8 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-142 Definition
 
-- **Goal/status:** in-progress documentation-only post-report-binding delivery
-  audit; restore local forward queue with distinct pair receipt acquisition work.
+- **Goal/status:** complete documentation-only post-report-binding delivery
+  audit; restored local forward queue with distinct pair receipt acquisition work.
 - **Dependencies/window:** verified R90-141 feature/closure; Oct 2.
 - **Risk:** low; stale handoff or inaccurate existing cap/parser/eligibility claims.
 - **Acceptance:** verify exact prior Git/Vault/phase evidence and stable knowledge;
@@ -3297,7 +3297,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-143 Definition
 
-- **Goal/status:** planned until R90-142 audit delivery, then ready/unstarted;
+- **Goal/status:** ready/unstarted after verified R90-142 audit delivery;
   bind four pair condition receipt reads to matched captured inventory.
 - **Dependencies/window:** R90-142; completed R90-119/R90-121/R90-123/R90-127
   default/context/adapter/sender pair modes; R90-137/R90-141 precedents;
@@ -7401,3 +7401,47 @@ projection/metrics and all pair modes/CLI/error/partial boundaries. Other later
 readers remain outside this scope. R90-143 stays planned/unstarted until audit
 delivery; no runtime/test work begins here. Suites remain delegated/unrun; static
 source review establishes no runtime failure, authenticity or SLO result.
+
+
+## R90-142 Completion and R90-143 Handoff (2026-10-02)
+
+Audit `ef1cd109ef69eab9f00627f3aeb73e37dd07ac94` contains exactly the
+three planned documentation paths. Push/fresh fetch verified clean matching
+HEAD/origin/main/FETCH_HEAD using existing trusted-host transient SSH-over-443,
+without remote configuration changes. Exact range
+`098d0ed0aa7f61ac6d6ff86bc9fa978e01195e83..ef1cd109ef69eab9f00627f3aeb73e37dd07ac94`
+has verified generated scope/note/full-index/MOC. All 12 stable current notes
+close report-source binding and carry the distinct four-receipt read handoff;
+all 316 prior immutable iteration notes remain unchanged. Identical audit-range
+replay preserves the complete 364-file snapshot JSON SHA-256
+`27c0045910d063cee00de25db97c07d9e6575a56458f9b1a4d6190566bfa227d`.
+
+Acceptance matches direct evidence: prior exact R90-141 Git/Vault/snapshot and
+phase review; four `_read` calls with existing cap and full parser versus later
+receipt inventory/descriptor gap; original/current manifest/status/inventory
+binding before affected projections/metrics/context identities; unchanged all
+pair modes and existing CLI OSError/ValueError/RecursionError exit 2/partial-output
+ownership; complete independent R90-75 and ready/unstarted R90-143 contracts;
+docs/160 task JSON/147 full unique row/Definition multisets/chronological history/
+links/fences/three-path scope/unchanged source/diff/sensitive additions; stable
+reconciliation and immutable preservation. No scope/static-review/delivery
+failure or new qualifying measurements. Three older dated release-blocker/tag-only
+sections in the stable test note lacked explicit historical markers; marked them
+historical and linked completed Oct 1 R90-59 authority without altering their
+then-current facts or immutable notes. Identical audit replay preserves this
+knowledge correction; it is the sole audit deviation. Existing skills need no edit.
+
+No behavioral rejection, parser execution, injected-fault cleanup/preservation,
+authenticity, continuous integrity, performance or SLO result is established.
+All suites remain user-delegated and unrun. Future direct regressions must reach
+the named receipt `_read`; parser cases must supply matching inventory bytes/hash
+rather than fail earlier integrity checks. Other reads remain independent duties.
+
+This single docs-only record closes R90-142. Resolve its final SHA from Git,
+verify push/fresh fetch/exact Vault range before final reporting, and do not
+create another closure merely to embed a self-reference. R90-143 is the next
+ready increment, implementation unstarted: next trigger verifies latest fetched
+tip/closure knowledge and persists its separate implementation plan. R90-75
+retains its complete independent departmental acceptance contract. Do not repeat
+completed R90-141/R90-142 delivery or R90-59 publication. No subsequent runtime
+implementation begins here. Oct 2–Dec 30 horizon remains current.
