@@ -138,3 +138,32 @@ occurred. Every future direct acquisition/consumer regression remains unrun unde
 departmental ownership; no runtime rejection or SLO result is claimed. Exact
 audit Git/Vault delivery and current stable reconciliation remain; no skill edit
 is warranted. Do not implement R90-141 in this trigger.
+
+## Delivery and acceptance closeout
+
+Audit `edb9b6798c72ebc5be54b63ccb44c3e277022fc9` contains exactly the
+three planned paths. Push/fresh fetch verified matching clean refs. Exact range
+`a09297eb98031871466ac050482a83f69e89450f..edb9b6798c72ebc5be54b63ccb44c3e277022fc9`
+has verified generated scope/note/index/MOC. All 12 current stable notes now
+record completed sender replay and the distinct report-source read follow-up.
+All 312 prior immutable iteration-directory notes are preserved; identical-range
+replay retains the 360-file snapshot JSON SHA-256
+`4c8144d871d45eeb10f15817a46c9fa5c88bbdbb81856725ee25dd605a947f50`.
+
+Every acceptance maps to planned direct evidence: prior delivery/phase, source
+validation/later reopen/comparison/recompute/check/replay eligibility and pair
+modes/error ownership; complete forward contracts; structural/scope/sensitive
+review and current stable reconciliation. All runtime files remain unchanged.
+No scope or static-review deviation occurred; already verified SSH-over-443
+transport delivered the audit without changing remote configuration. Every
+future direct regression remains departmental and unrun. Existing skills need
+no change, and this source review establishes no runtime correctness or SLO
+acceptance.
+
+One docs-only closure records these verified facts. Resolve its final SHA from
+Git and verify push/fresh fetch/exact Vault range before final reporting; avoid
+another closure merely to embed its self-reference. R90-140 is complete;
+R90-141 ready and unstarted. Next trigger verifies latest tip/closure knowledge
+and persists its separate implementation plan. Preserve R90-75 and execution
+ownership; do not repeat old deliveries/publication or implement the next task
+in this trigger.

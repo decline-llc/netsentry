@@ -217,8 +217,8 @@ formal SLO and evidence contract is unchanged.
 | R90-137 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind retained bundle decoding to captured byte/hash inventory. | R90-136; R90-118/R90-119/R90-122/R90-126 consumers; R90-135 boundary precedent | Admit one bounded non-following/nonblocking regular retained-file handle; verify exact inventory bytes/hash and descriptor metadata before publishing decoded state; preserve strict schemas, parsing/status and partial evidence; tests delegated. |
 | R90-138 | Oct 2 | Complete documentation; execution delegated | Reconcile decoder delivery and scope bounded sender replay. | R90-137 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record replay reopen/total-read gap and define complete R90-139 contract without runtime or test execution. |
 | R90-139 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bound and admit retained sender replay ledgers against captured inventory. | R90-138; R90-126/R90-127 sender consumers; R90-137 decoder precedent | Admit three non-following/nonblocking regular replay handles; bound bytes/rows, verify exact EOF inventory and descriptor metadata, close before success; preserve correlation/schema/status/partial evidence; tests delegated. |
-| R90-140 | Oct 2 | In progress documentation; execution delegated | Reconcile sender replay delivery and scope report-source inventory binding. | R90-139 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record later observations read gap and define complete R90-141 contract without runtime/test execution. |
-| R90-141 | Oct 2–Dec 30 | Planned; execution delegated | Bind report-source observations read to captured inventory. | R90-140; R90-118/R90-119/R90-123/R90-127 bundle/pair consumers; R90-135/R90-137 precedents | Admit one bounded regular non-following/nonblocking observations handle; exact inventory/metadata/close before source comparison/recompute; preserve public formats/status/eligibility/partial evidence; tests delegated. |
+| R90-140 | Oct 2 | Complete documentation; execution delegated | Reconcile sender replay delivery and scope report-source inventory binding. | R90-139 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record later observations read gap and define complete R90-141 contract without runtime/test execution. |
+| R90-141 | Oct 2–Dec 30 | Ready; execution delegated | Bind report-source observations read to captured inventory. | R90-140; R90-118/R90-119/R90-123/R90-127 bundle/pair consumers; R90-135/R90-137 precedents | Admit one bounded regular non-following/nonblocking observations handle; exact inventory/metadata/close before source comparison/recompute; preserve public formats/status/eligibility/partial evidence; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3199,7 +3199,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-140 Definition
 
-- **Goal/status:** documentation-only post-sender-replay queue audit in progress;
+- **Goal/status:** complete documentation-only post-sender-replay queue audit;
   define a distinct report-source binding follow-up without implementation.
 - **Dependencies/window:** R90-139 verified feature/closure; Oct 2.
 - **Risk:** low; stale knowledge or inaccurate source/consumer authority.
@@ -3220,7 +3220,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-141 Definition
 
-- **Goal/status:** planned until R90-140 delivery; bound later report-source
+- **Goal/status:** ready after verified R90-140 audit delivery; bind later report-source
   observations acquisition to captured inventory; behavioral tests delegated.
 - **Dependencies/window:** R90-140; completed R90-118 bundle/R90-119 pair and
   R90-123/R90-127 replay integration; R90-135/R90-137 admission precedents;
@@ -7177,3 +7177,38 @@ both optional replay eligibility/error/partial contracts must remain. R90-141
 stays planned/unstarted until audit delivery; no runtime/test execution begins
 here. All execution remains delegated; source observations establish no runtime
 rejection, authenticity, whole-bundle integrity or SLO result. No skill edit needed.
+
+
+## R90-140 Completion and R90-141 Handoff (2026-10-02)
+
+Audit `edb9b6798c72ebc5be54b63ccb44c3e277022fc9` contains exactly the
+three planned documentation paths. Push/fresh fetch verified clean matching
+HEAD/origin/main/FETCH_HEAD. Exact range
+`a09297eb98031871466ac050482a83f69e89450f..edb9b6798c72ebc5be54b63ccb44c3e277022fc9`
+has verified generated scope/note/index/MOC. All 12 current stable notes close
+sender replay authority and carry the distinct report-source read handoff;
+all 312 prior immutable iteration-directory notes remain unchanged. Identical-
+range replay preserves the 360-file snapshot JSON SHA-256
+`4c8144d871d45eeb10f15817a46c9fa5c88bbdbb81856725ee25dd605a947f50`.
+
+Acceptance matches the evidence map: prior exact Git/Vault and phase evidence;
+existing source checks, later unbounded reopen versus decoder/replay, exact raw/
+hash comparison and summary recompute; check/document prerequisites, both replay
+eligibility/error boundaries and fresh pair modes/status; complete R90-75/
+R90-141 forward contracts; docs/158 task JSON/145 full unique roadmap pairs/
+ordered history/links/fences/three-path scope/unchanged runtime/diff/sensitive
+additions; stable reconciliation and immutable history preservation. Push/fetch
+used the already verified trusted-host SSH-over-443 transport, leaving remote
+configuration unchanged. No scope/static-review/delivery failure occurred.
+Every future direct `_summary` case remains departmental and unrun; no runtime
+rejection, authenticity, continuous integrity or SLO result is established.
+Existing skills need no edit.
+
+This one docs-only delivery record closes R90-140. Resolve its final SHA from
+Git and verify its push/fresh fetch/exact Vault range before final reporting;
+do not create another closure only to embed a self-reference. R90-141 is the
+next ready increment, implementation unstarted; on the next trigger verify
+latest fetched tip/closure knowledge and persist its separate implementation
+plan. R90-75 retains its full independent departmental acceptance contract.
+Do not repeat completed R90-139/R90-140 delivery or R90-59 publication.
+No subsequent implementation begins here.
