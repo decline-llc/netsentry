@@ -19,10 +19,22 @@ For an Action update:
 `engine/go.mod` separates the module language baseline from the CI compiler:
 
 - `go 1.22.2` preserves the current language/module semantics.
-- `toolchain go1.25.14` pins the latest reviewed security patch in NetSentry's
-  selected Go 1.25 execution line. The 2026-08-23 review used the official Go
-  release history and download metadata; the Linux amd64 archive SHA-256 is
-  `a21ae5633a269bcd7e90cf767e48225633795e99d831742cbf3397064fee7712`.
+- `toolchain go1.26.8` pins the latest reviewed patch in the selected supported
+  Go 1.26 execution line. The 2026-10-01 review used the
+  [official release policy/history](https://go.dev/doc/devel/release) and
+  [download metadata](https://go.dev/dl/?mode=json): the supported lines are
+  1.27 and 1.26, with latest patches 1.27.1 and 1.26.8. Selecting 1.26 limits
+  the version jump from main's prior 1.25.14 pin.
+- The lock records the official Linux amd64 archive identity: 66,897,291 bytes,
+  SHA-256 `d0f743b33e8d8945e6b1f432edd15785c70507121d6e2a723b21285eddf8b57b`.
+  This is upstream metadata; this increment did not download/rehash the archive.
+
+R90-131 updates current-main metadata with static review. Behavioral, native/RC,
+workflow execution, vulnerability scanning and knowledge suites remain **not run;
+delegated by user**. R90-59's successful Go 1.26.8 candidate validation does not
+establish current-main compatibility or zero reachable findings. The language
+baseline, dependency versions, security tools and workflow sources retain their
+prior definitions.
 
 `actions/setup-go` reads the toolchain directive. The supply-chain checker also runs `go env GOVERSION` inside `engine/` and rejects a runtime that differs from the lock. CI installs `govulncheck` and `actionlint` from exact Go module versions; their upstream release commits are recorded in the lock. `govulncheck ./...` must report zero reachable vulnerabilities.
 

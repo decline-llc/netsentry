@@ -1,0 +1,53 @@
+{
+  "task": "r90-131-main-supported-go-toolchain",
+  "timestamp": "2026-10-01",
+  "branch": "main",
+  "remote_baseline": "1ec7c9555e7e4788618f88efb9050fb536c72ad1",
+  "starting_remote_baseline": "1ec7c9555e7e4788618f88efb9050fb536c72ad1",
+  "risk_level": "Medium",
+  "current_checkpoint": "static_review_complete_awaiting_delivery",
+  "completed": [
+    "Verified clean fetched baseline and prior closure exact Vault note/index/MOC",
+    "Reviewed recent SLO, collector, queue and publication phases and independent acceptance boundaries",
+    "Live official metadata identifies supported latest patches 1.27.1 and 1.26.8; selected 1.26.8 to bound the version jump",
+    "Persisted scope, evidence map, non-goals and stop conditions before implementation",
+    "Aligned module/lock/latest supported patches and recorded official Linux amd64 archive metadata",
+    "Reviewed setup-go consumers in all three workflows and Docker module-driven toolchain selection",
+    "Docs check, 149 task JSON parses, 135 unique roadmap row/Definition pairs, scope/link/fence/diff review passed"
+  ],
+  "in_progress": [
+    "Scoped commit/push/fetch and exact Vault delivery"
+  ],
+  "todo": [
+    "Reconcile 11 stable current handoffs and verify immutable notes and range replay",
+    "One docs-only delivery closure"
+  ],
+  "toolchain": {
+    "previous": "1.25.14",
+    "selected": "1.26.8",
+    "language_baseline": "1.22.2",
+    "supported_patches_at_review": [
+      "1.27.1",
+      "1.26.8"
+    ],
+    "source": "https://go.dev/dl/?mode=json",
+    "policy_source": "https://go.dev/doc/devel/release",
+    "linux_amd64_archive": "go1.26.8.linux-amd64.tar.gz",
+    "archive_bytes": 66897291,
+    "archive_sha256": "d0f743b33e8d8945e6b1f432edd15785c70507121d6e2a723b21285eddf8b57b",
+    "archive_download": "not_run_metadata_identity_only"
+  },
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "native_rc": "not_run_user_delegated",
+    "supply_chain_scan": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "static_review": "pass:official-metadata;module-lock;3-workflow-consumers;unchanged-dependencies;docs;json;135-roadmap-pairs;diff"
+  },
+  "authority_boundaries": [
+    "R90-59 test grant does not extend to main",
+    "No language, dependency, runtime, workflow or publication changes",
+    "R90-75 acceptance remains departmental"
+  ],
+  "resume_instructions": "Finish only R90-131 using its persisted plan. Execute static review and delivery checks; behavioral, RC, scanner and knowledge suites remain delegated. Verify push/fetch before exact Vault synchronization. Do not begin another increment."
+}
