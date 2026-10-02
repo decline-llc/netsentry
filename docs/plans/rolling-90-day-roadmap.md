@@ -211,6 +211,8 @@ formal SLO and evidence contract is unchanged.
 | R90-131 | Oct 1–Dec 29 | Complete metadata; execution delegated | Refresh the main execution toolchain to a supported reviewed Go line. | R90-59 delivery closure; R90-130 | Module toolchain, supply-chain lock and documentation agree on the latest reviewed patch in a supported selected line with official checksum/source; preserve the language baseline, dependencies and published release; execution evidence stays delegated and is not inferred from the old release candidate. |
 | R90-132 | Oct 1–Dec 29 | Complete documentation; execution delegated | Reconcile toolchain delivery and restore a bounded sender-input queue. | R90-131 feature/closure | Verify exact Git/Vault delivery and phase history; define source-grounded R90-133 with a complete input/compatibility/delegation contract; update current handoffs without runtime changes. |
 | R90-133 | Oct 1–Dec 29 | Complete implementation; tests delegated | Bound finalized fixture admission and retention before reference-sender submission. | R90-132; R90-117 sender; R90-129 collector boundary; R90-126/R90-127 replay compatibility | Admit and snapshot supplied regular fixture bytes with non-following/nonblocking handles and a configurable 64 GiB default input budget; reject nonregular, changed and over-budget acquisition before any send; preserve sender schedules, oracle, formats, partial evidence and independent acceptance boundary. |
+| R90-134 | Oct 1 | In progress; documentation only | Reconcile post-sender delivery and scope reporter input admission. | R90-133 verified feature/closure | Audit exact Git/Vault evidence and shared reporter reader; define complete R90-135 contract without implementation or tests. |
+| R90-135 | Oct 1–Dec 29 | Planned; awaiting R90-134 delivery | Admit bounded finalized observations through a stable reporter file handle. | R90-134; R90-114 reporter; R90-119/R90-122/R90-123 shared consumers | Reject symlink/nonregular/observed-changing and oversized acquisition through one non-following/nonblocking regular-file descriptor; retain 64 MiB cap, exact bytes/hash, JSON/report/status semantics and output preservation; tests delegated. |
 
 ## R90-01 Definition
 
@@ -2977,6 +2979,72 @@ formal SLO and evidence contract is unchanged.
   migration, contradictory snapshot/receipt identity or ambiguous validation;
   never infer acquisition or compliance from an incomplete or matching prefix.
 
+
+## R90-134 Definition
+
+- **Goal/status:** documentation-only post-sender queue audit in progress; define
+  the smallest source-grounded next increment without starting implementation.
+- **Dependencies/window:** completed R90-133 feature and closure; Oct 1.
+- **Risk:** low; stale handoffs can repeat completed delivery or hide a remaining
+  shared reader boundary. Source review is not runtime failure evidence.
+- **Acceptance:** verify fresh clean Git refs, exact prior feature/closure Vault
+  note/index/MOC and snapshot; review recent phase history and all unfinished
+  contracts; record reporter reader/call-site/publication evidence; define
+  R90-135 dependency/window/risk/acceptance/validation/stop and unstarted status;
+  reconcile stable current notes while preserving immutable iteration history.
+- **Required review:** docs/JSON/full unique roadmap multisets/ordered history/
+  links/fences/diff/sensitive scope, exact Git/Vault delivery and identical-range
+  snapshot replay. All execution suites remain user-delegated and unrun.
+- **Non-goals:** implementation, testing, traffic, acceptance, dependency,
+  toolchain, workflow or release changes; do not start R90-135.
+- **Stop condition:** contradictory delivery, ambiguous Vault discovery,
+  new external/private/product authority or required schema migration.
+- **Plan/state:** `task-20261001-reporter-input-queue.md` and corresponding
+  `docs/tasks/task-state-20261001-reporter-input-queue.json`.
+
+## R90-135 Definition
+
+- **Goal/status:** planned pending R90-134 delivery; tighten finalized observation
+  admission at `slo_report.read_observations`. Implementation remains unstarted.
+- **Dependencies/window:** R90-134; completed R90-114 reporter and
+  R90-119/R90-122/R90-123 shared comparison/reconstruction consumers; Oct 1–Dec 29.
+- **Source evidence:** the reader currently uses following `Path.open("rb")`,
+  bounds read to 64 MiB plus one byte and returns exact raw JSON bytes. It has no
+  nonregular admission or descriptor metadata comparison. Standalone reporting
+  calls it before summary and output publication; reconstruction and comparison
+  also call it. Existing retained snapshots do not protect earlier standalone
+  reads. This is static source evidence, not an executed failure.
+- **Risk:** medium; shared reader error/order changes can affect retained replay.
+  Following/blocking inputs or observed mutation undermine admission; metadata
+  cannot authenticate content, freeze writers or secure parent traversal.
+- **Acceptance:** persist a separate implementation plan first. Keep the reader
+  signature/tuple and 64 MiB cap; use one non-following/nonblocking regular-file
+  descriptor, required device/inode/size/mtime/ctime capture, known-size rejection,
+  bounded read and consumed-size/metadata comparison at EOF. Close source before
+  decoding/returning its immutable raw bytes for summary and report publication.
+  Fail closed if required primitives/metadata are absent. Standalone missing,
+  directory, FIFO, symlink, changed and over-limit acquisition must publish no
+  report and preserve input/existing output. Shared consumers must retain their
+  existing partial evidence/error outcomes; no whole-operation rollback claim.
+  Preserve exact raw JSON/hash binding, strict UTF-8/JSON/member/nonfinite and
+  semantic diagnostics, report schema, thresholds, status/exit meanings and
+  non-overwriting publication. Inspect every direct shared caller and wrapper.
+- **Required review:** static AST/source/admission-order/call-site/schema review,
+  docs/JSON/full unique roadmap/history/link/fence/diff/sensitive scope checks and
+  exact Git/Vault delivery. Departmental direct regressions remain unrun: valid
+  and space paths, missing/directory/FIFO/symlink, unavailable flags/metadata,
+  empty/exact-cap/over-cap, mutation/growth/truncation/immediate replacement,
+  read/close failures, exact bytes/digest, malformed/deep/duplicate/nonfinite/
+  invalid UTF-8 and semantic JSON errors, preservation/no-overwrite and all
+  shared consumer compatibility/status outcomes. Each promised rejection must
+  reach this reader; no nearby snapshot test substitutes. No agent runtime,
+  CLI, traffic, acceptance, scanner or knowledge suite execution.
+- **Non-goals:** other reader hardening, new budget option, schema/dependency/
+  toolchain/workflow/release change, authentication, continuous writer exclusion,
+  physical acquisition/compliance claims or department acceptance execution.
+- **Stop condition:** format migration, shared caller contract contradiction,
+  unavailable required primitives without fail-closed handling, ambiguous
+  validation or new external/private/product authority.
 
 ### R90-71 Validation Deviation
 
@@ -6487,3 +6555,27 @@ The refreshed queue has no additional local ready item; R90-75 retains its
 complete departmental contract. On the next trigger verify the fetched tip and
 this closure's exact Vault range, then audit fresh evidence rather than repeating
 completed work or inferring main/SLO acceptance. No next increment starts here.
+
+
+## R90-134 Selection and Queue Audit (2026-10-01)
+
+Fresh clean HEAD/origin/main/FETCH_HEAD is
+`31ba9196bb4b88ae1f0b7397fbaafb9276b66e05` after a successful identical
+read-only retry of an initial port-22 fetch failure. Both R90-133 exact ranges
+have verified iteration/index/MOC evidence; the 347-file snapshot JSON hash is
+`cc30a418d58b7cab133e250033750e62c6f7f08dca791cc20966c7318cee0e64`.
+The 47-commit Sep 3–Oct 1 phase audit distinguishes SLO tooling/replay,
+input hardening, queue repairs, candidate publication and main metadata.
+All completed delivery remains intact; no new department execution evidence
+appears. R90-75 alone is unfinished, with its complete independent contract.
+
+The persisted three-path plan/state selects only R90-134 queue repair.
+`read_observations` still follows paths and lacks regular-file/metadata admission
+while reading bounded exact JSON. Its standalone and two shared consumers
+supply direct source authority for R90-135. R90-129/R90-133 did not change this
+reader. Define stable same-handle admission preserving all reporter/raw-byte/
+JSON/status/output contracts; planned R90-135 remains unstarted until this audit
+is delivered and the next trigger persists its implementation plan. Current
+stable notes close R90-133 correctly and need the new handoff. Behavioral/CLI/
+traffic/acceptance/scanner/knowledge execution remains departmental; this audit
+claims no runtime rejection or compliance. No skill change is warranted.
