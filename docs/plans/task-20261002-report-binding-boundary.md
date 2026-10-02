@@ -121,3 +121,50 @@ review establishes source structure, not fault-injected cleanup/preservation,
 observed rejection, performance or SLO acceptance. Existing skills cover this
 workflow and need no edit. Feature delivery, stable reconciliation and one
 docs-only closure remain; do not start another increment.
+
+
+## Resumed delivery scope (2026-10-02)
+
+Fresh fetch proves feature `14ca92c92d3ce16ecf13c1023116ced9430f794b`
+is already delivered at clean HEAD/origin/main/FETCH_HEAD. Its exact range
+`0e90cc3564a4eb0f44db1d186d9a5eabad69ea11..14ca92c92d3ce16ecf13c1023116ced9430f794b`
+has the intended six-path generated note, full-index row and MOC link. The
+62-commit Sep 4–Oct 2 phase audit has no new qualifying departmental evidence;
+R90-75 retains its full independent contract. All 314 baseline immutable
+iteration notes remain unchanged. Static syntax/docs/AST/order/scope checks
+were rerun successfully; delegated suites remain unrun.
+
+Recovery completes only R90-141: reconcile the 12 stale current stable notes,
+replay the identical feature range and compare the complete Markdown snapshot,
+then update only this plan, matching task state and roadmap for one docs-only
+closure. Verify closure push/fresh fetch/exact Vault range and stable handoff;
+do not repeat the delivered feature or select another increment. No new local
+ready item is defined; the next trigger audits fresh evidence. No runtime or
+consumer source changes are necessary.
+
+
+## Delivery evidence and acceptance closeout
+
+Feature `14ca92c92d3ce16ecf13c1023116ced9430f794b` and its exact generated
+Vault range are verified. Twelve current stable notes reconcile implemented
+behavior, shared consumer ownership and next-trigger authority; all 314 prior
+immutable iteration notes are preserved. Identical feature-range replay preserves
+the complete 362-file snapshot JSON SHA-256
+`3227ee9fef72fd02d63df4ce1da7103fc798bd39d2ad17b422d486c1a159dcb0`.
+
+Every acceptance maps to the static/source/AST/consumer/delivery evidence above.
+Rechecked original diagnostic prefix and complete semantic suffix, all other
+definitions/imports/constants, inventory/descriptor/read/EOF/close order and
+unchanged consumer files. Python/docs/159 task JSON/145 full unique roadmap
+pairs/history/links/fences/six-path feature and three-path closure scope/diff/
+sensitive additions pass. Every direct behavioral rejection, fault cleanup,
+preservation and shared-mode regression remains unrun and delegated; no weaker
+nearby case is counted as execution evidence.
+
+The only recovery deviation was stale task-state/current stable knowledge after
+already successful feature delivery. Fresh evidence avoided duplicate commit/
+push and completed the planned reconciliation. No scope or static-review failure;
+existing recovery instructions need no edit. One docs-only closure records these
+facts; resolve its final SHA/exact range from Git, verify push/fresh fetch/Vault,
+and stop. No additional local ready increment is defined; next trigger audits
+fresh evidence, with R90-75 independent and departmental.

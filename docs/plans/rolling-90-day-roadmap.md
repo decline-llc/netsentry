@@ -218,7 +218,7 @@ formal SLO and evidence contract is unchanged.
 | R90-138 | Oct 2 | Complete documentation; execution delegated | Reconcile decoder delivery and scope bounded sender replay. | R90-137 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record replay reopen/total-read gap and define complete R90-139 contract without runtime or test execution. |
 | R90-139 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bound and admit retained sender replay ledgers against captured inventory. | R90-138; R90-126/R90-127 sender consumers; R90-137 decoder precedent | Admit three non-following/nonblocking regular replay handles; bound bytes/rows, verify exact EOF inventory and descriptor metadata, close before success; preserve correlation/schema/status/partial evidence; tests delegated. |
 | R90-140 | Oct 2 | Complete documentation; execution delegated | Reconcile sender replay delivery and scope report-source inventory binding. | R90-139 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record later observations read gap and define complete R90-141 contract without runtime/test execution. |
-| R90-141 | Oct 2–Dec 30 | In progress implementation; tests delegated | Bind report-source observations read to captured inventory. | R90-140; R90-118/R90-119/R90-123/R90-127 bundle/pair consumers; R90-135/R90-137 precedents | Admit one bounded regular non-following/nonblocking observations handle; exact inventory/metadata/close before source comparison/recompute; preserve public formats/status/eligibility/partial evidence; tests delegated. |
+| R90-141 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind report-source observations read to captured inventory. | R90-140; R90-118/R90-119/R90-123/R90-127 bundle/pair consumers; R90-135/R90-137 precedents | Admit one bounded regular non-following/nonblocking observations handle; exact inventory/metadata/close before source comparison/recompute; preserve public formats/status/eligibility/partial evidence; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3220,8 +3220,9 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-141 Definition
 
-- **Goal/status:** implementation in progress after verified R90-140 delivery;
-  bind report-source observations acquisition to inventory; behavioral tests delegated.
+- **Goal/status:** implementation and feature delivery complete at verified
+  `14ca92c92d3ce16ecf13c1023116ced9430f794b`; report-source observations
+  acquisition binds to inventory; behavioral tests remain delegated.
 - **Dependencies/window:** R90-140; completed R90-118 bundle/R90-119 pair and
   R90-123/R90-127 replay integration; R90-135/R90-137 admission precedents;
   Oct 2–Dec 30.
@@ -7240,3 +7241,55 @@ cannot complete the check or newly qualify replay. Existing check/snapshot/decod
 consumer/modes/schema/status/partial evidence remain; bundle source digest changes
 without weakening comparability. All behavioral/CLI/traffic/acceptance/scanner/
 knowledge cases remain departmental and unrun. No other increment begins here.
+
+
+## R90-141 Completion and Queue Refresh (2026-10-02)
+
+Feature `14ca92c92d3ce16ecf13c1023116ced9430f794b` contains exactly the
+six intended paths. Resumed fresh fetch verified clean matching HEAD/origin/main/
+FETCH_HEAD: feature push and generated knowledge had already completed despite
+stale task-state resume instructions. Exact range
+`0e90cc3564a4eb0f44db1d186d9a5eabad69ea11..14ca92c92d3ce16ecf13c1023116ced9430f794b`
+has verified generated scope/note/full-index/MOC. No duplicate feature commit or
+push was needed. All 12 current stable notes now describe implemented report
+source inventory/admission/bounded read/EOF metadata/hash/close-before-comparison
+and unchanged recomputation/consumer contracts. All 314 prior immutable iteration
+notes remain unchanged. Identical feature-range replay preserves the complete
+362-file snapshot JSON SHA-256
+`3227ee9fef72fd02d63df4ce1da7103fc798bd39d2ad17b422d486c1a159dcb0`.
+
+Acceptance matches direct static evidence: preserved source-field/hash/string
+diagnostics before complete captured inventory/count/64 MiB/hash/flags; regular
+non-following/nonblocking descriptor and integer metadata/known-size checks
+before captured-bytes+1 read; immutable metadata and exact bytes/hash at EOF;
+raw wrapping cleanup/context-managed close before original complete embedded
+UTF-8/raw/hash equality and summary recomputation. AST confirms all other
+definitions/imports/constants/signature and full original prefix/suffix unchanged,
+no parser or normalization, and unchanged consumer source. Direct source review
+confirms check skip/mismatch/OSError/completed ownership, both optional replay
+eligibility boundaries and fresh pair default/context/adapter/sender/combined
+modes/status/errors/partial evidence. Every promised rejection, cleanup and
+preservation regression must directly reach `_summary`; none was executed.
+
+Python/docs/static AST/order/source checks were rerun; 159 task JSON, 145 complete
+unique row/Definition multisets, ordered history/links/fences/six-path feature and
+three-path closure scope/diff/sensitive additions pass. Every behavioral/CLI/
+traffic/acceptance/scanner/knowledge suite remains delegated and unrun. Static
+review does not establish runtime rejection, injected-fault cleanup/preservation,
+authenticity, continuous integrity, performance or SLO acceptance. Changed source
+digest and earlier acquisition diagnostics are planned, with comparability intact.
+
+The resumed 62-commit Sep 4–Oct 2 phase audit separates contracts/tooling/replay,
+input boundaries, queue repair, historical candidate publication and main metadata.
+No missing feature delivery or new qualifying departmental evidence appears.
+Deviation was incomplete closeout authority after interrupted delivery; recovery
+reconciled current notes and resume instructions. Existing skill recovery rules
+handled it without a new skill edit. Oct 2–Dec 30 horizon remains current.
+
+This single docs-only record closes R90-141. Resolve its final SHA from Git,
+verify push/fresh fetch/exact Vault range before final reporting, and do not
+create another closure merely to embed a self-reference. No additional local
+ready increment is defined; next trigger verifies latest fetched tip/closure
+knowledge and audits fresh evidence. R90-75 retains its complete independent
+departmental acceptance contract. Do not repeat completed R90-140/R90-141
+delivery or R90-59 publication. No subsequent increment begins here.
