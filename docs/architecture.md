@@ -334,10 +334,19 @@ Current build:
   `length - offset` before computing the end index. Programmatic `Store.Query`
   can request a large representable limit with a nonzero offset even when
   only a few rows exist; this no longer overflows the merged slice boundary.
-  Offsets at/past the total remain empty; sorting, filters, totals, existing
-  limit/offset normalization and HTTP pagination are unchanged. R90-150 helper
+  Offsets at/past the total remain empty; sorting, filters, totals and HTTP
+  pagination are unchanged. R90-150 helper
   and public primary/daily SQLite regressions are authored and compiled only;
   execution remains delegated to the user's test department.
+- R90-151 aligns programmatic `Store.Query` limit semantics: any negative
+  limit returns all collected filtered rows after offset in both primary and
+  daily-shard modes; zero retains the default 1000 and positive values retain
+  their explicit size. Negative offsets still normalize to zero. Daily mode
+  already collects the entire filtered set before slicing; this repair only
+  changes the returned slice size. HTTP per_page/offset policy, SQL and storage
+  lifecycle are unchanged. Authored primary/daily SQLite regressions use 1005
+  rows (1003 high-severity) across two dates to expose the old truncation;
+  they are compiled only, with execution delegated.
 - Rule, severity, source, and destination query filters explicitly use SQLite
   binary comparison, preserving case-sensitive exact-match behavior even when
   a compatible operator schema declares a different column collation. Protocol

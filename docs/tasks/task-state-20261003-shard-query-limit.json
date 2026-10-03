@@ -1,0 +1,59 @@
+{
+  "task": "r90-151-shard-query-limit",
+  "timestamp": "2026-10-03",
+  "branch": "fix/r90-151-shard-query-limit",
+  "remote_baseline": "ae191f620abf6145c91a4722c0eed36d876fe311",
+  "starting_remote_baseline": "ae191f620abf6145c91a4722c0eed36d876fe311",
+  "risk_level": "Medium",
+  "current_checkpoint": "static_compile_only_complete_feature_delivery_pending",
+  "completed": [
+    "Fresh clean fetched main and both R90-150 exact Git/Vault ranges verified",
+    "81-commit phase audited; R90-75 independent; empty ready queue reconciled within source-grounded repair",
+    "Captured 381-file Vault, 14 stable full-content backups and 334 immutable hashes",
+    "Identified negative-limit truncation in daily Query versus existing primary behavior; prior R90-150 non-goal preserved",
+    "Preflighted pinned Go 1.26.8 owning engine module",
+    "Persisted six-path plan and >1000 direct evidence map before source/docs edits",
+    "Exactly one daily limit normalization block repaired; negative uncapped/zero1000/positive unchanged, other tracked engine and SQL/HTTP/bounds source preserved",
+    "Two direct functions: 1005 rows/1003 high/two daily files/encoded path, 13 public Query cases per mode plus 64 empty combinations, full copied values/count/order/health/final logical rows",
+    "Pinned Go 1.26.8 final alert/API complete compile-only chain passed; no binary invoked",
+    "Static source/direct-boundary/Go-format/docs/169 JSON/155 full unique roadmap/full contract/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive checks passed",
+    "Local-only generic skill refinement requires truncation fixtures exceeding boundary plus count/content assertions; Markdown validated separately",
+    "381-file Vault baseline unchanged; topic/current prose backups captured"
+  ],
+  "in_progress": [
+    "Feature commit and fresh fast-forward main delivery"
+  ],
+  "todo": [
+    "Exact feature push/fetch/Vault/stable reconciliation",
+    "One three-path docs-only closure and exact Git/Vault verification"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "pass:Go 1.26.8 final alert/API complete go test -c chain; external binaries unexecuted",
+    "static_review": "pass:exact daily-limit transform;two >1000 real Query direct functions;other engine/SQL/HTTP/bounds preserved;Go parse-format;docs;169 JSON;155 full unique roadmap/full contract/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive"
+  },
+  "authority_boundaries": [
+    "Six paths; runtime daily Query limit normalization only",
+    "Preserve zero/positive/offset/HTTP/SQL/schema/lifecycle/recovery/writer",
+    "All execution suites delegated; R90-75 independent; no publication"
+  ],
+  "remaining_risks": [
+    "Direct >1000 real-store regressions unexecuted; no runtime/SQL/performance pass"
+  ],
+  "deviations": [
+    "Empty local ready queue repaired within source-grounded core store-mode compatibility increment"
+  ],
+  "resume_instructions": "Finish only six-path R90-151 plan with authored >1000 public real-store regressions and static/compile-only evidence. No suites executed. Deliver exact feature plus one closure Git/Vault, refresh queue and stop.",
+  "skill_improvement": {
+    "location": "netsentry-next/SKILL.md",
+    "scope": "generic truncation regression boundary; separate local-only edit",
+    "effect": "Require fixture larger than boundary plus returned count/content assertions",
+    "validation": "pass:Markdown frontmatter/numbering/fences"
+  }
+}

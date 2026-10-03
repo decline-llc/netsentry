@@ -2562,7 +2562,9 @@ func (s *Store) queryDailyShards(ctx context.Context, query Query) ([]*model.Ale
 
 	sortAlerts(all)
 	limit := query.Limit
-	if limit <= 0 {
+	if limit < 0 {
+		limit = len(all)
+	} else if limit == 0 {
 		limit = 1000
 	}
 	offset := query.Offset
