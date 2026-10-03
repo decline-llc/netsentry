@@ -224,7 +224,7 @@ formal SLO and evidence contract is unchanged.
 | R90-144 | Oct 2–Dec 30 | Complete implementation; tests delegated | Isolate core rule reload snapshots from caller-owned inputs. | R90-143; existing rule engine and serialized API transactions | Deep-copy Rule/Config/MITRE before validation/sort/compile; publish one owned state; preserve diagnostics, failed-reload state and schemas; author direct regression cases with execution delegated. |
 | R90-145 | Oct 2–Dec 30 | Complete implementation; tests delegated | Add a packet-completion counter to the core processing pipeline. | R90-144; R90-116 lifecycle boundary | Count only successful terminal packet processing after optional observer success; retain existing processed/received counters, API fields and SLO exporter semantics; author direct failure/no-alert/suppression/success cases with execution delegated. |
 | R90-146 | Oct 2–Dec 30 | Complete implementation; tests delegated | Serialize suppression reload reads with management mutations. | R90-145; R90-79 suppression persistence | Hold existing manager lock across authoritative reload read, validation and publication; prevent stale reload overwriting successful Add/Update/Delete; preserve loader/API/file/filter contracts; direct regression execution delegated. |
-| R90-147 | Oct 2–Dec 30 | In progress; tests delegated | Preserve concurrent hello and heartbeat updates. | R90-146; existing concurrent receiver control contract | Serialize compound state writes while retaining atomic reads, frame fields and last-setter/mixed-session semantics; author direct setter/receiver regressions with execution delegated. |
+| R90-147 | Oct 2–Dec 30 | Complete implementation; tests delegated | Preserve concurrent hello and heartbeat updates. | R90-146; existing concurrent receiver control contract | Serialize compound state writes while retaining atomic reads, frame fields and last-setter/mixed-session semantics; author direct setter/receiver regressions with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3459,12 +3459,14 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-147 Definition
 
-- **Goal/status:** implementation in progress; prevent stale global control-state
-  read-modify-store writes from losing unrelated hello/heartbeat updates.
+- **Goal/status:** implementation complete; whole global control-state writes are
+  serialized, preserving unrelated hello/heartbeat updates. Regressions authored
+  and compiled; execution delegated.
 - **Dependencies/window:** completed R90-146 and existing concurrent receiver
   control-frame contract; Oct 2–Dec 30. R90-75 independent asynchronous.
-- **Source evidence:** SetHello/SetHeartbeat independently atomic-load and Store
-  modified copies; concurrent connection handlers can overwrite each other's fields.
+- **Source evidence:** at selection SetHello/SetHeartbeat independently loaded and
+  stored modified copies. Delivered setters serialize their whole transactions
+  with one writer mutex; atomic readers and connection handlers are unchanged.
 - **Risk:** low-to-medium; writer contention and unintended session-policy claims.
 - **Acceptance:** persist separate plan/state; private writer mutex covers each
   setter from before Snapshot through existing single Store. Preserve all value
@@ -7899,3 +7901,55 @@ Direct setter/real receiver regressions are authored; all execution suites remai
 delegated and unrun, only static/compile review is local. R90-75 independent
 asynchronous and Oct 2–Dec 30 horizon remain. No subsequent increment starts here;
 existing skills cover the workflow without a selection-time edit.
+
+
+## R90-147 Completion and Forward Queue Refresh (2026-10-02)
+
+Feature `8b8b7703f447391e2296813dc7b95023afd143e6` contains exactly six planned paths. Isolated local
+implementation branch `fix/r90-147-control-state-serialization` was fast-forwarded
+to freshly verified main; push/fresh-fetch verified clean HEAD/origin/main/
+FETCH_HEAD at that SHA. Exact range `410104eb05bfaf03d4234802fc836ee64ca6ae09..8b8b7703f447391e2296813dc7b95023afd143e6` has six-path
+generated scope, iteration note `04-开发迭代记录/2026-10-02-8b8b7703f4-CI知识同步.md`,
+full index and MOC verified. Fourteen current stable notes were reconciled with
+every original substantive topic tail retained exactly. All 326 baseline
+immutable iteration hashes are unchanged. Identical range replay preserves the
+374-file Markdown snapshot; snapshot JSON SHA-256 is `6054b8ec198a04ff967f4146c4cfbdcd4c35aa1bdec58f0e14ac1445f7f504a3`.
+The unique existing local sibling Vault was selected explicitly.
+
+Acceptance matches the plan: one private mutex encloses both complete setter
+read-modify-publish transactions, while atomic Snapshot, State/frame fields,
+constructor, UTC clock update and single Store remain. Receiver/API/Stats and
+other core source are unchanged. Hello preserves heartbeat/time, heartbeat
+preserves hello. Latest-per-frame global aggregate may contain different sessions;
+last setter determines SessionID. No frame/session policy, ordering, active-
+capture, listener/queue/shutdown/API/metrics or production test seam was added.
+
+Five direct regression functions cover sequential zero/order/replacements/time,
+256 joined setter pairs, 1024 updates per writer with a reader that must observe
+both first frames before writers continue, 128 real receiver hello/heartbeat
+pairs on independent valid connections with final State/session/counter checks,
+and independent returned value mutation. Final complete pinned Go 1.26.8
+receiver/API/pipeline compile-only chain and static source/direct-boundary/value/
+Go-format/docs/165 JSON/151 full unique roadmap/full forward contract/unchanged
+R90-75/history/links/fences/six-path/diff/sensitive review pass. No binary or
+behavioral/race/CLI/full-suite/scanner/knowledge/acceptance suite was executed;
+all execution is user-delegated, without a runtime/race/SLO outcome claim.
+
+The sole planning deviation registered this source-grounded core correctness
+repair within the empty queue; there was no scope or implementation/static/
+compile/delivery failure or Vault topic loss. A generic lesson refined the local
+skill concurrency rule to review synchronization over the whole snapshot
+read-modify-publish transaction; atomic load/store safety alone can still lose
+updates. Markdown frontmatter/numbering/fences pass; skill edit is local-only
+and separate from the repository commits.
+
+One three-path docs-only record closes this increment. Resolve its full SHA from
+Git, push/fresh-fetch and verify exact feature-tip..closure-tip Vault before
+reporting; no extra closure merely for self-reference. Queue refresh: R90-147
+implementation is complete; no further dependency-ready local item is defined.
+R90-75 retains its full independent asynchronous departmental acceptance contract
+and does not block development. Next trigger verifies fetched closure/Vault,
+audits fresh core-code evidence and forward queue, then persists a separate
+eligible plan before edits. No subsequent implementation starts here. Oct 2–Dec 30
+horizon remains; IPv6 and external publication remain separate authority. Do not
+repeat completed R90-146/R90-147 delivery or R90-59 publication.

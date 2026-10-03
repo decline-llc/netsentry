@@ -1,11 +1,11 @@
 {
   "task": "r90-147-control-state-serialization",
   "timestamp": "2026-10-02",
-  "branch": "fix/r90-147-control-state-serialization",
-  "remote_baseline": "410104eb05bfaf03d4234802fc836ee64ca6ae09",
+  "branch": "main",
+  "remote_baseline": "8b8b7703f447391e2296813dc7b95023afd143e6",
   "starting_remote_baseline": "410104eb05bfaf03d4234802fc836ee64ca6ae09",
   "risk_level": "Low-to-medium",
-  "current_checkpoint": "static_compile_only_complete_feature_delivery_pending",
+  "current_checkpoint": "implementation_complete_feature_verified_single_docs_closure",
   "completed": [
     "Verified clean fetched main and both exact R90-146 Git/Vault ranges",
     "Captured 373-file Vault snapshot, 14 full stable-content backups and 326 immutable notes",
@@ -19,15 +19,16 @@
     "Pinned Go 1.26.8 complete receiver/API/pipeline compile-only chain passed, then passed again after final reader-readiness regression refinement; binaries never invoked",
     "Exact runtime/test-boundary/Go-format/docs/165 JSON/151 full unique roadmap/full forward contract/unchanged R90-75/history/six-path/links/fences/diff/sensitive review passed",
     "373-file Vault baseline unchanged; 14 stable full-content backups and 326 immutable hashes preserved",
-    "Refined local skill concurrency instruction: synchronize full snapshot read-modify-publish transactions, not just atomic loads/stores; Markdown validated separately"
+    "Refined local skill concurrency instruction: synchronize full snapshot read-modify-publish transactions, not just atomic loads/stores; Markdown validated separately",
+    "Six-path feature commit pushed and freshly fetched clean main refs verified at 8b8b7703f447391e2296813dc7b95023afd143e6",
+    "Exact feature Git/Vault generated scope/note/index/MOC verified",
+    "Fourteen stable status sections reconciled; all original substantive topic tails and 326 immutable hashes retained exactly",
+    "Identical feature-range replay stable at 374 Markdown files",
+    "Refreshed queue: no defined local ready increment; R90-75 independent asynchronous unchanged",
+    "Prepared one three-path docs-only closure; full SHA resolves from Git and exact closure evidence is verified before final report"
   ],
-  "in_progress": [
-    "Feature commit and fresh fast-forward main delivery"
-  ],
-  "todo": [
-    "Exact feature push/fetch/Vault and stable prose reconciliation",
-    "One three-path docs-only closure and exact verification"
-  ],
+  "in_progress": [],
+  "todo": [],
   "validation": {
     "behavioral_tests": "not_run_user_delegated",
     "race_tests": "not_run_user_delegated",
@@ -53,11 +54,34 @@
   "deviations": [
     "Empty queue reconciled within source-grounded core correctness implementation; no standalone audit increment"
   ],
-  "resume_instructions": "Complete only persisted R90-147 six-path plan with direct source/static/compile-only and exact feature plus one closure delivery. Do not execute suites or start another increment. R90-75 remains independent asynchronous.",
+  "resume_instructions": "R90-147 implementation complete. Resolve this single docs-only closure from Git and verify fetched main/exact feature..closure Vault range if evidence is absent; otherwise do not repeat feature commit/push/sync or create another closure. Next trigger audits fresh core-code evidence/queue before separate selection. All execution suites remain user-delegated; R90-75 independent asynchronous. No subsequent increment started.",
   "skill_improvement": {
     "location": "netsentry-next/SKILL.md",
     "scope": "generic snapshot transaction ownership; separate local-only skill edit",
     "effect": "Review synchronization around the full read-modify-publish transaction; atomic Load/Store alone can lose concurrent updates",
     "validation": "pass:Markdown frontmatter/numbering/fences"
+  },
+  "implementation_branch": "fix/r90-147-control-state-serialization",
+  "delivery": {
+    "feature_commit": "8b8b7703f447391e2296813dc7b95023afd143e6",
+    "feature_range": "410104eb05bfaf03d4234802fc836ee64ca6ae09..8b8b7703f447391e2296813dc7b95023afd143e6",
+    "verified_remote": "clean main HEAD/origin/main/FETCH_HEAD at feature SHA after fresh fetch",
+    "feature_paths": 6,
+    "vault_note": "04-\u5f00\u53d1\u8fed\u4ee3\u8bb0\u5f55/2026-10-02-8b8b7703f4-CI\u77e5\u8bc6\u540c\u6b65.md",
+    "index_moc": "verified",
+    "stable_notes": 14,
+    "topic_prose_preservation": "all original substantive tails unchanged across replacement",
+    "baseline_immutable_notes": 326,
+    "feature_snapshot_files": 374,
+    "feature_snapshot_json_sha256": "6054b8ec198a04ff967f4146c4cfbdcd4c35aa1bdec58f0e14ac1445f7f504a3",
+    "identical_feature_replay": "all Markdown hashes unchanged",
+    "closure": "single three-path docs-only record of this increment; resolve full SHA from Git; push/fresh-fetch and exact feature..closure Vault verified before reporting; no extra self-reference closure"
+  },
+  "next_increment": {
+    "id": null,
+    "status": "no_defined_local_ready_increment",
+    "started": false,
+    "departmental_acceptance": "R90-75 full independent asynchronous contract unchanged",
+    "next_trigger": "Verify fetched closure/Vault; audit fresh core-code evidence and forward queue; persist a separate eligible plan before editing"
   }
 }
