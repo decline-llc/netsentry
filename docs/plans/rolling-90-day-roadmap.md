@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-10-02 through 2026-12-30. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-10-03 through 2026-12-31. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -225,6 +225,7 @@ formal SLO and evidence contract is unchanged.
 | R90-145 | Oct 2–Dec 30 | Complete implementation; tests delegated | Add a packet-completion counter to the core processing pipeline. | R90-144; R90-116 lifecycle boundary | Count only successful terminal packet processing after optional observer success; retain existing processed/received counters, API fields and SLO exporter semantics; author direct failure/no-alert/suppression/success cases with execution delegated. |
 | R90-146 | Oct 2–Dec 30 | Complete implementation; tests delegated | Serialize suppression reload reads with management mutations. | R90-145; R90-79 suppression persistence | Hold existing manager lock across authoritative reload read, validation and publication; prevent stale reload overwriting successful Add/Update/Delete; preserve loader/API/file/filter contracts; direct regression execution delegated. |
 | R90-147 | Oct 2–Dec 30 | Complete implementation; tests delegated | Preserve concurrent hello and heartbeat updates. | R90-146; existing concurrent receiver control contract | Serialize compound state writes while retaining atomic reads, frame fields and last-setter/mixed-session semantics; author direct setter/receiver regressions with execution delegated. |
+| R90-148 | Oct 3–Dec 31 | In progress; tests delegated | Redact entire escaped JSON credential values. | R90-147; existing optional pre-write redactor | Recognize escape pairs in quoted password/token values; preserve formatting/header/pair/switch semantics; author direct scalar/batch and real Worker pre-write regressions with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3488,6 +3489,37 @@ formal SLO and evidence contract is unchanged.
   State fields, competing edits, contradictory evidence or new external authority.
 - **Plan/state:** `task-20261002-control-state-serialization.md` and matching
   `docs/tasks/task-state-20261002-control-state-serialization.json`.
+
+
+## R90-148 Definition
+
+- **Goal/status:** implementation in progress; remove entire recognized JSON
+  credential strings despite escaped quotes/backslashes in their values.
+- **Dependencies/window:** completed R90-147; existing optional pipeline redaction;
+  Oct 3–Dec 31. R90-75 independent asynchronous departmental acceptance.
+- **Source evidence:** sensitiveJSONRe treats escaped quotes as string terminators,
+  allowing the credential suffix to remain in persisted alert previews.
+- **Risk:** medium; privacy, quote parity, adjacent-field formatting and scope claims.
+- **Acceptance:** persist separate plan/state; change only JSON value matching to
+  consume backslash/non-CRLF escape pairs and ordinary non-quote/non-backslash/non-
+  CRLF characters. Preserve two captures/replacement, literal case-insensitive
+  password/token keys, header/pair expressions/order, batch nil behavior and all
+  Worker/config/API/schema contracts. Direct scalar exact-output/JSON/idempotence,
+  multiple/nested/formatting/batch metadata and real Worker pre-write enabled/
+  disabled/error cases; no runtime or exhaustive sanitizer claim.
+- **Required validation:** exact one-pattern transform and unchanged other runtime
+  source; direct full-value/capture/parity/pre-write source review; Go parse/format;
+  pinned alert/pipeline/API compile-only; docs/166 JSON/152 full unique roadmap/
+  complete forward contracts/unchanged R90-75/ordered history/90-day horizon/
+  links/fences/eight-path/diff/sensitive review; exact feature/closure Git/Vault,
+  stable-topic preservation/immutable hashes/idempotence. All suites unrun/delegated.
+- **Non-goals:** JSON key decoding/new sensitive lists, full parsing/serialization,
+  malformed/truncated fail-closed policy, header/pair redesign, switch/API/schema/
+  storage/matcher/metrics/shutdown, IPv6/dependency/toolchain/suite/publication changes.
+- **Stop condition:** incompatible formatting/groups, required new privacy/product
+  policy, ambiguous lexical boundary, competing edits or new external authority.
+- **Plan/state:** `task-20261003-json-value-redaction.md` and matching
+  `docs/tasks/task-state-20261003-json-value-redaction.json`.
 
 
 ### R90-71 Validation Deviation
@@ -7953,3 +7985,26 @@ audits fresh core-code evidence and forward queue, then persists a separate
 eligible plan before edits. No subsequent implementation starts here. Oct 2–Dec 30
 horizon remains; IPv6 and external publication remain separate authority. Do not
 repeat completed R90-146/R90-147 delivery or R90-59 publication.
+
+
+## R90-148 Selection and JSON Value Redaction Repair (2026-10-03)
+
+Fresh fetched clean main/HEAD/origin/main/FETCH_HEAD is
+`2fb0cfd10e24c9927df060b386f9a1fa536b6a0e`. Both R90-147 feature/closure
+exact Git/Vault scope/note/index/MOC are verified. The 375-file snapshot JSON
+SHA-256 is `ed6d777484b86d9e01be2ade47c339a767079b05acee365805e1ed18ab630ac1`;
+14 stable full-content backups and 328 immutable history hashes are captured.
+The 75-commit Sep 5–Oct 3 phase audit finds no missing delivery or new qualifying
+R90-75 measurement. Active 90-day horizon advances to Oct 3–Dec 31; completed
+history remains. R90-75 retains its complete independent asynchronous contract.
+
+The empty defined queue is reconciled within this source-grounded privacy repair,
+without separate audit-only delivery. Existing sensitiveJSONRe stops at an escaped
+quote and can leave credential suffix bytes. R90-148 is ready after completed
+dependencies; eight-path plan/state was persisted before runtime/roadmap edits on
+`fix/r90-148-json-value-redaction`. Only the JSON value pattern changes, preserving
+capture groups/formatting/header/pair/order and optional pre-write behavior. Direct
+scalar/batch and real Worker pre-write regressions are authored, all execution
+suites remain user-delegated and unrun. No malformed/truncated/exhaustive sanitizer
+policy or subsequent implementation starts here. Existing skills need no edit at
+selection; static/compile evidence does not establish runtime leakage outcomes.

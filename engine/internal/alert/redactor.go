@@ -12,7 +12,7 @@ var (
 	sensitiveHeaderRe       = regexp.MustCompile(`(?i)\b(authorization|cookie|set-cookie)\s*:\s*[^\r\n]*`)
 	sensitiveHeaderPrefixRe = regexp.MustCompile(`(?i)^\s*(authorization|cookie|set-cookie)\s*:`)
 	sensitivePairRe         = regexp.MustCompile(`(?i)\b(password|token)\b\s*([=:])\s*[^&\s;\r\n]+`)
-	sensitiveJSONRe         = regexp.MustCompile(`(?i)("(?:password|token)"\s*:\s*")[^"\r\n]*(")`)
+	sensitiveJSONRe         = regexp.MustCompile(`(?i)("(?:password|token)"\s*:\s*")(?:\\[^\r\n]|[^"\\\r\n])*(")`)
 )
 
 // RedactSensitivePayloads removes common credentials from alert payload previews.

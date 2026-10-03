@@ -267,6 +267,12 @@ Current limitations:
 - Optional pprof runs on a separate localhost-only server when `engine.pprof_enabled` is true.
 - Suppressions load from `engine.suppressions_file` at startup; create, update, delete, and reload operations persist or reload that file before swapping the active in-memory filter.
 - Payload previews are redacted before SQLite writes when `engine.redact_sensitive_fields` is true; current redaction covers Authorization, Cookie, Set-Cookie, password, and token patterns.
+- Complete quoted JSON password/token values recognize escape pairs, including
+  escaped quotes and backslashes, while preserving surrounding formatting.
+  Keys retain literal case-insensitive matching. Redaction remains best effort
+  on bounded previews; escaped keys, extra sensitive fields and malformed or
+  truncated values have no new sanitization guarantee. Existing configuration,
+  endpoint fields, header/pair behavior and replacement marker are unchanged.
 
 ---
 
