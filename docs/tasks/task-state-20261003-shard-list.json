@@ -1,11 +1,11 @@
 {
   "task": "r90-152-shard-list",
   "timestamp": "2026-10-03",
-  "branch": "fix/r90-152-shard-list",
+  "branch": "main",
   "starting_remote_baseline": "4cde70cf49df6ea2f2b7e250f311603dbff86819",
-  "remote_baseline": "4cde70cf49df6ea2f2b7e250f311603dbff86819",
+  "remote_baseline": "492d6a285c2ff7669db68ec66ccf3623d5b6db05",
   "risk_level": "Medium",
-  "current_checkpoint": "implementation_statically_verified_delivery_pending",
+  "current_checkpoint": "implementation_complete_feature_verified_single_docs_closure",
   "completed": [
     "Fresh fetched clean main and R90-151 exact feature/closure Git/Vault verified",
     "83-commit phase audited; empty ready queue reconciled within core repair; R90-75 independent",
@@ -14,11 +14,15 @@
     "Exactly four-line daily List dispatch; all other tracked engine and primary SQL contracts unchanged",
     "Four direct real-store regression functions authored for global cap/order/history/errors/lifecycle; no execution",
     "Pinned Go 1.26.8 final alert/API complete compile-only chain passed; binaries not executed",
-    "Final static/docs/170 JSON/156 unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive review passed"
+    "Final static/docs/170 JSON/156 unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive review passed",
+    "Six-path feature pushed/freshly fetched clean main refs verified at 492d6a285c2ff7669db68ec66ccf3623d5b6db05",
+    "Exact feature generated scope/note/index/MOC verified",
+    "14 stable current notes reconciled; entire prior prose archived; topic tails and 336 immutable hashes retained",
+    "Identical feature replay preserves all 384 Markdown hashes",
+    "No defined local ready item; independent R90-75 full contract unchanged",
+    "Prepared single three-path docs-only closure; resolve full SHA and verify exact delivery before reporting"
   ],
-  "in_progress": [
-    "Feature delivery and one docs-only closure"
-  ],
+  "in_progress": [],
   "validation": {
     "behavioral_tests": "not_run_user_delegated",
     "race_tests": "not_run_user_delegated",
@@ -42,7 +46,38 @@
   ],
   "deviations": [
     "Empty ready queue repaired inside source-grounded core List mode compatibility increment",
-    "One added prior Definition separator newline detected, restored; complete static/docs/diff chain rerun passed"
+    "One added prior Definition separator newline detected, restored; complete static/docs/diff chain rerun passed",
+    "First topic-tail assertion included documented generated MOC refresh; source-verified comparison excludes only generated region; full preservation/replay passed"
   ],
-  "resume_instructions": "Complete only R90-152 using persisted plan; do not start following implementation; all execution delegated."
+  "resume_instructions": "R90-152 implementation complete. Resolve this single docs-only closure from Git and verify fetched main/exact feature..closure Vault if evidence absent; otherwise do not repeat feature/closure commit/push/sync or create another closure. Next trigger audits fresh code/queue before separate selection. All execution remains user-delegated; R90-75 independent asynchronous. No subsequent increment started.",
+  "implementation_branch": "fix/r90-152-shard-list",
+  "todo": [],
+  "skill_improvement": {
+    "location": "netsentry-next/SKILL.md",
+    "scope": "local-only generic generated-region versus topic-prose preservation comparison",
+    "effect": "Exclude only documented generated regions; compare remaining substantive prose exactly",
+    "validation": "pass:Markdown frontmatter/numbering/fences"
+  },
+  "delivery": {
+    "feature_commit": "492d6a285c2ff7669db68ec66ccf3623d5b6db05",
+    "feature_range": "4cde70cf49df6ea2f2b7e250f311603dbff86819..492d6a285c2ff7669db68ec66ccf3623d5b6db05",
+    "verified_remote": "clean main HEAD/origin/main/FETCH_HEAD after fresh fetch",
+    "feature_paths": 6,
+    "vault_note": "04-\u5f00\u53d1\u8fed\u4ee3\u8bb0\u5f55/2026-10-03-492d6a285c-CI\u77e5\u8bc6\u540c\u6b65.md",
+    "index_moc": "verified",
+    "stable_notes": 14,
+    "topic_prose_preservation": "entire previous current prose archived; topic tails retained excluding documented generated MOC refresh",
+    "baseline_immutable_notes": 336,
+    "feature_snapshot_files": 384,
+    "feature_snapshot_json_sha256": "9749911b3eaa32240afd7bc6c8d21a6dffd8b45f48758f92ee4e789436238433",
+    "identical_feature_replay": "all Markdown hashes unchanged",
+    "closure": "single three-path docs-only record; resolve full SHA from Git; push/fresh-fetch and exact feature..closure Vault verified before reporting; no self-reference closure"
+  },
+  "next_increment": {
+    "id": null,
+    "status": "no_defined_local_ready_increment",
+    "started": false,
+    "departmental_acceptance": "R90-75 full independent asynchronous contract unchanged",
+    "next_trigger": "Verify fetched closure/Vault; audit fresh code/queue; persist separate eligible plan before edits"
+  }
 }

@@ -229,7 +229,7 @@ formal SLO and evidence contract is unchanged.
 | R90-149 | Oct 3–Dec 31 | Complete implementation; tests delegated | Check alert pagination offset and bound arithmetic. | R90-148; existing public alert pagination | Reject unrepresentable offsets before List/Query; clamp remaining length before end addition; preserve representable pages, defaults/filter/envelope/SQL source; author direct parser/bounds/HTTP regressions with execution delegated. |
 | R90-150 | Oct 3–Dec 31 | Complete implementation; tests delegated | Prevent daily-shard query end-index overflow. | R90-149; existing Store.Query shard merge | Clamp query limit to remaining slice length before end addition; preserve normalization/filter/sort/count/SQL/HTTP semantics; author helper and real primary/daily public Query regressions with execution delegated. |
 | R90-151 | Oct 3–Dec 31 | Complete implementation; tests delegated | Align negative Query limits across store modes. | R90-150; existing primary uncapped negative limit | Negative daily limits return all collected filtered rows after offset; zero stays 1000/positive unchanged; preserve SQL/HTTP/bounds; author >1000 real primary/daily and empty-result regressions with execution delegated. |
-| R90-152 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Include historical daily shards in Store.List. | R90-151; existing cross-shard Query reader | Daily List returns globally ordered newest 1000 rows including historical shards; retain primary SQL/lifecycle and reuse query error/health handling; direct regression execution delegated. |
+| R90-152 | Oct 3–Dec 31 | Complete implementation; tests delegated | Include historical daily shards in Store.List. | R90-151; existing cross-shard Query reader | Daily List returns globally ordered newest 1000 rows including historical shards; retain primary SQL/lifecycle and reuse query error/health handling; direct regression execution delegated. |
 
 ## R90-01 Definition
 
@@ -3616,7 +3616,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-152 Definition
 
-- **Goal/status:** implemented; delivery pending; make public daily Store.List include
+- **Goal/status:** implementation delivered; make public daily Store.List include
   historical alerts consistently with the existing Query/Count store mode.
 - **Dependencies/window:** completed R90-151 and existing cross-shard query
   reader; Oct 3–Dec 31 forecasts, no calendar eligibility gate.
@@ -8524,3 +8524,55 @@ boundary; restored it and reran complete static/docs/diff chain successfully.
 No source/compile failure or scope change. Existing skill instructions suffice;
 no generic skill update. Feature and one docs-only delivery closure remain;
 no subsequent increment is started.
+
+
+## R90-152 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `492d6a285c2ff7669db68ec66ccf3623d5b6db05` contains exactly six planned paths. Isolated
+fix/r90-152-shard-list fast-forwarded freshly verified main; push/fresh-fetch
+verified clean HEAD/origin/main/FETCH_HEAD at that SHA. Exact range
+`4cde70cf49df6ea2f2b7e250f311603dbff86819..492d6a285c2ff7669db68ec66ccf3623d5b6db05` six-path scope, iteration note
+`04-开发迭代记录/2026-10-03-492d6a285c-CI知识同步.md`, full index and MOC verified. Fourteen current stable notes
+reconciled; entire previous substantive current prose archived under explicit
+R90-151 historical headings. Original topic tails and all 336 baseline immutable
+iteration hashes retained. Identical exact-range replay preserves 384 Markdown
+files; snapshot JSON SHA-256 `9749911b3eaa32240afd7bc6c8d21a6dffd8b45f48758f92ee4e789436238433`.
+The unique existing sibling local Vault was selected explicitly.
+
+Acceptance matches persisted plan: only four daily List dispatch lines added
+under existing lifecycle ownership; explicit 1000 cap through private shard
+reader. Primary List SQL and all other tracked engine/Query/Count/API/filter/
+sort/read-only/lifecycle/recovery/writer source preserved. Four direct real-store
+regression functions reach public List: 1005 rows/two actual daily files/encoded
+path, reverse insertion and timestamp ties, 1000 complete copied Alert values
+including history, health/Count/all logical rows; current-empty historical-only;
+both-mode empty/pre-canceled/closed; corrupt historical error/degraded diagnostic
+and unchanged-byte assertion. Tests are authored and compiled, unexecuted.
+Merged daily List scans/collects all rows before cap, as Query already does;
+no performance or snapshot guarantee. This additional historical read can expose
+existing historical errors that current-only List previously omitted.
+
+Pinned Go 1.26.8 final alert/API complete compile-only chain passed; binaries not
+invoked. Exact source/direct-boundary/Go-format/docs/170 JSON/156 unique complete
+roadmap/prior Definitions/R90-75/history/horizon/links/fences/six-path/diff/sensitive
+review passes. Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance
+execution **not run; delegated by user**. No runtime/SQL/performance/race/physical-
+preservation/SLO outcome claim. One prior Definition separator newline corrected
+and complete static/docs/diff chain rerun. First Vault topic-tail assertion
+included documented generated MOC entries; exact source showed only the expected
+bounded link refresh, so comparison now excludes only that generated region.
+Full topic prose/current-section archive/immutable preservation and identical
+replay subsequently pass; no sync failure or content loss. Local generic skill
+refinement makes that comparison explicit; Markdown frontmatter/numbering/fences
+pass, separate from repository commit. Empty ready queue repair remains the
+planning deviation. Horizon and all completed historical Definitions preserved.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git, push/fresh-fetch and verify exact feature-tip..closure-tip
+Vault note/index/MOC and stable prose before reporting; do not create another
+self-reference closure. No currently defined dependency-ready local item after
+queue refresh. R90-75 full contract stays independent asynchronous departmental
+acceptance, without blocking development. Next trigger verifies fetched closure/
+Vault, audits fresh code/queue and persists a separate eligible plan before edits.
+No subsequent increment started. Do not repeat R90-151/R90-152 delivery or
+R90-59 publication; IPv6/external publication needs separate authority.
