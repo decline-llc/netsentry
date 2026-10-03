@@ -88,3 +88,50 @@ changes. Existing skills suffice; no generic edit warranted.
 under explicit historical heading and original topic tails/332 immutable hashes
 when refreshing current authority. Exact feature and one three-path docs-only
 closure delivery remain; no subsequent increment starts here.
+
+
+## Delivery and queue closeout
+
+Feature `da7b5cc8ecf33ce60ad4a7a28a63ea2ab5aa6a6a` contains exactly six planned paths. Isolated
+`fix/r90-150-shard-query-bounds` fast-forwarded freshly verified main;
+push/fresh-fetch verified clean HEAD/origin/main/FETCH_HEAD at that SHA.
+Exact range `8cd3b430384e3727d91ecb8e1783a4bb34998fc0..da7b5cc8ecf33ce60ad4a7a28a63ea2ab5aa6a6a` six-path generated scope, iteration note
+`04-开发迭代记录/2026-10-03-da7b5cc8ec-CI知识同步.md`, full index and MOC are verified. Fourteen stable
+current sections are reconciled; their entire prior R90-149 current prose is
+retained under explicit historical headings and original topic tails remain.
+All 332 baseline immutable iteration hashes are unchanged; identical replay
+preserves the 380-file Markdown snapshot, JSON SHA-256 `43fc60de4e70798afe2904e0a40ca7592a4e88e3c2507d4365a68d774e26694a`.
+Unique existing local sibling Vault selected explicitly; no extra empty Vault.
+
+Acceptance matches the persisted plan: runtime changes only sliceBounds to
+clamp limit to length-offset before adding. All other tracked engine files and
+surrounding normalization/sort/filter/count/SQL/HTTP/lifecycle/recovery/writer
+source match baseline. At/past-end remains empty, no arbitrary cap or new
+negative-limit mode policy. Two authored direct functions contain 11 helper
+bounds and 10 real public Store.Query cases per primary/daily mode in an encoded
+path. Daily fixture requires two actual files. Full Alert values are copied
+before boundary queries, then checked against hardcoded indices; large limits
+at nonzero/filtered offsets, ordinary/default/negative-offset, empty cases,
+count/order/health and final logical rows are directly asserted. No fake Query,
+recover/skip or shared-pointer observation weakens the regression boundary.
+
+Pinned Go 1.26.8 final alert/API complete compile-only chain and source/direct-
+boundary/Go-format/docs/168 JSON/154 full unique roadmap/full contracts/all prior
+Definitions/R90-75/history/horizon/links/fences/six-path/diff/sensitive checks pass.
+No test binary or behavioral/race/CLI/full-suite/scanner/knowledge/acceptance
+execution; all remain not run, delegated by user. No runtime/SQL/file-byte/race/
+SLO pass is claimed. No implementation/validation/compile/delivery failure or
+Vault topic loss occurred. Existing skills sufficient; no generic edit. Prior
+heading separators preserved. The only planning deviation is empty ready-queue
+repair within this source-grounded increment; current Oct 3–Dec 31 horizon and
+completed history unchanged.
+
+One three-path docs-only record closes the same increment: resolve full SHA
+from Git, push/fresh-fetch and exact feature-tip..closure-tip Vault verification
+before reporting, without another self-reference closure. Queue refresh: no
+currently defined dependency-ready local item. R90-75 full independent
+asynchronous departmental contract is unchanged and does not block development.
+Next trigger verifies fetched closure/Vault, audits fresh core-code evidence/
+queue and persists a separate eligible plan before editing. No subsequent
+implementation starts here. IPv6/external publication require separate authority;
+do not repeat R90-149/R90-150 delivery or R90-59 publication.
