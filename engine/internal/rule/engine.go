@@ -76,7 +76,11 @@ func (e *Engine) Reload(rules []*model.Rule) error {
 
 // RuleCount returns the number of rules currently loaded.
 func (e *Engine) RuleCount() int {
-	return len(e.state.Load().allByPriority)
+	s := e.state.Load()
+	if s == nil {
+		return 0
+	}
+	return len(s.allByPriority)
 }
 
 // Rules returns a defensive copy of the currently loaded rules.

@@ -135,6 +135,13 @@ and SLO acceptance execution remains **not run; delegated by user**. This is an
 ownership repair, without a measured throughput or race-test outcome. See
 [the implementation plan](plans/task-20261002-rule-snapshot-isolation.md).
 
+R90-156 makes `Engine.RuleCount` return zero before a non-nil zero-value engine
+publishes its first snapshot, matching existing `Rules` and `Match` empty-state
+handling. It reads the atomic snapshot once; initialized counting still includes
+enabled and disabled loaded rules. Direct engine reload lifecycle and actual
+engine-backed health/metrics/rules-list regressions are authored and compiled
+only; execution remains delegated. Nil Engine receivers gain no new guarantee.
+
 Supported rule types in the current code:
 
 - `payload_match`

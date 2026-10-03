@@ -1,0 +1,53 @@
+{
+  "task": "r90-156-zero-rule-count",
+  "timestamp": "2026-10-03",
+  "branch": "fix/r90-156-zero-rule-count",
+  "remote_baseline": "f0ab2b5d1f6cbc33c52795ad687c19787922bc39",
+  "starting_remote_baseline": "f0ab2b5d1f6cbc33c52795ad687c19787922bc39",
+  "risk_level": "Low",
+  "current_checkpoint": "implementation_static_compile_complete_delivery_pending",
+  "completed": [
+    "Fresh fetched clean main/R90-155 exact Git/Vault verified with actual generated short-identifier format",
+    "91-commit phase audit; R90-75 sole unfinished independent departmental contract; no new acceptance",
+    "391 Markdown hashes/14 complete stable backups captured",
+    "Pinned owning engine Go 1.26.8 preflighted",
+    "RuleCount-only single-load nil-state guard; all other tracked engine source preserved",
+    "Two direct public functions: Engine zero/constructor/enabled-disabled/failed/empty lifecycle/full rules and alert; actual Engine four API endpoints across four phases/status/content type/count/JSON/metrics authored",
+    "Pinned Go 1.26.8 final rule/API/pipeline complete compile-only chain passed; binaries unexecuted",
+    "Source/direct-boundary/Go format/docs/174 JSON/160 complete unique roadmap pairs/prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/sensitive passed",
+    "Separate local skill refinement: resolve abbreviated generated identifiers through Git; full sync inputs unchanged; Markdown checked",
+    "391 baseline Vault hashes unchanged"
+  ],
+  "in_progress": [
+    "Feature delivery and one docs-only closure"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "pass:Go 1.26.8 rule/API/pipeline complete go test -c chain; external binaries unexecuted",
+    "static_review": "pass:RuleCount-only diff/all other tracked engine source/direct public regressions/format/docs/174 JSON/160 complete unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/sensitive"
+  },
+  "authority_boundaries": [
+    "Runtime RuleCount only; seven paths",
+    "Non-nil zero Engine aligns existing Rules/Match/Reload; no nil receiver guarantee",
+    "All suite execution delegated; no publication"
+  ],
+  "remaining_risks": [
+    "Authored regressions unexecuted; no runtime/race/SLO pass",
+    "Initialized state and atomic publication policies unchanged"
+  ],
+  "deviations": [
+    "Empty local ready queue restored within source-grounded RuleCount repair"
+  ],
+  "resume_instructions": "Complete only R90-156 source/direct regressions/static/compile, feature push/fetch/exact Vault, single docs-only closure push/fetch/exact Vault; refresh queue and stop; no suites.",
+  "todo": [
+    "Focused feature push/fresh fetch/exact Vault",
+    "One docs-only closure push/fresh fetch/exact Vault; refresh queue"
+  ],
+  "local_skill_improvement": "Resolve generated abbreviated metadata through Git before comparing recorded full endpoints; full synchronizer inputs remain mandatory; separately validated local skill only"
+}

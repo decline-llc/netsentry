@@ -233,6 +233,7 @@ formal SLO and evidence contract is unchanged.
 | R90-153 | Oct 3–Dec 31 | Complete implementation; tests delegated | Record committed HTTP audit response status. | R90-152; existing audit middleware | Preserve first final status and implicit 200; non-101 1xx stays informational, 101 terminal; existing audit fields/auth policy unchanged; direct wire/log/header regression execution delegated. |
 | R90-154 | Oct 3–Dec 31 | Complete implementation; tests delegated | Exclude nil entries from generated-alert counts. | R90-153; existing Stats and Worker counters | Non-nil entry total matches severity counts; retain fallback/dynamic labels and entry semantics; Worker/renderer/API/store unchanged; direct counter/concurrency/Worker regressions with execution delegated. |
 | R90-155 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject negative duration observations. | R90-154; existing public Stats observers | Negative samples change no count/sum/bucket; retain zero/positive/nil semantics and renderer; direct boundary/concurrency assertions authored with execution delegated. |
+| R90-156 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Count unpublished rule snapshots as empty. | R90-155; existing atomic rule.Engine | Non-nil zero-value Engine RuleCount returns zero; retain reload/match/count semantics; direct engine/API lifecycle assertions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -3703,6 +3704,16 @@ formal SLO and evidence contract is unchanged.
 - **Required validation:** pinned Go 1.26.8 stats/pipeline/API compile-only chain; static source/direct boundaries/format/docs/JSON/complete unique roadmap/history/R90-75/horizon/links/fences/path/diff/sensitive; all behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
 - **Non-goals:** labels/buckets/renderer/API/Worker/store, positive accumulated overflow policy, dependencies/toolchain/suites/publication/private inputs/IPv6; no runtime/race/SLO acceptance claim.
 - **Stop condition:** competing edits, ambiguous static/compile/Git/Vault, new private/product/external authority, or following increment.
+
+## R90-156 Definition
+
+- **Goal/status:** implemented; delivery pending; RuleCount returns zero for unpublished state instead of dereferencing nil.
+- **Dependencies/window:** R90-155 verified delivered; existing atomic rule engine; Oct 3–Dec 31 forecast, no date gate.
+- **Risk:** low; unpublished state only; one atomic load, existing initialized counts/publication preserved.
+- **Acceptance:** RuleCount-only diff; public zero/constructor/valid/disabled/failed/empty reload engine lifecycle and actual rule engine in four API endpoints across four phases; seven-path feature and one docs-only closure exact Git/Vault.
+- **Required validation:** pinned Go 1.26.8 rule/API/pipeline compile-only chain; static source/direct boundaries/format/docs/JSON/complete unique roadmap/history/R90-75/horizon/links/fences/path/diff/sensitive; all behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
+- **Non-goals:** nil receiver, rule validation/priority/defaults/match/reload, API/auth/schema/labels/storage/queue, dependencies/toolchain/suites/private inputs/IPv6/publication; no runtime/race/SLO claim.
+- **Stop condition:** competing edits, ambiguous static/compile/Git/Vault, new private/product/external authority or next increment.
 
 ### R90-71 Validation Deviation
 
@@ -8948,3 +8959,52 @@ Next trigger verifies fetched closure/Vault and audits fresh code/queue before
 persisting a separate eligible plan. No following increment started; do not repeat
 R90-154/R90-155 delivery or R90-59 publication. IPv6/external publication needs
 separate authority.
+
+
+## R90-156 Selection and Zero Rule Count Repair (2026-10-03)
+
+Fresh fetched clean main HEAD/origin/main/FETCH_HEAD:
+`f0ab2b5d1f6cbc33c52795ad687c19787922bc39`; prior R90-155 exact six-path
+feature and three-path closure Git/Vault scope/note/index/MOC verified with
+actual generated ten-character identifiers uniquely resolving through Git.
+91-commit Sep 5–Oct 3 phase retains core correctness trend, no new qualifying
+R90-75 acceptance. Sole unfinished R90-75 departmental asynchronous contract and
+Oct 3–Dec 31 horizon unchanged. 391 Markdown hashes/14 full stable backups taken;
+pinned owning engine module Go 1.26.8 preflighted.
+
+Empty ready queue reconciled within source-grounded R90-156: zero-value Engine
+Rules/Match/Reload safely handle unpublished state, but RuleCount panics, including
+API health/metrics calls. Seven-path plan/state persisted before source/docs edits
+on fix/r90-156-zero-rule-count. Load once and return zero when unpublished, keep
+all other source. Public Engine lifecycle and actual Engine-backed four API
+endpoint regressions authored/compiled only; suite execution remains delegated.
+No nil receiver promise, observed incident, publication or following increment.
+
+
+## R90-156 Implementation and Validation Checkpoint (2026-10-03)
+
+Runtime only RuleCount: load atomic snapshot once, return zero if unpublished,
+otherwise retain length of allByPriority. Every other tracked engine file, Rules/
+Match/Reload/immutable ownership/priority/validation/API/renderer/store source
+preserved exactly; no typed nil receiver support or new publication semantics.
+Two direct public regression functions authored. Engine begins with count call
+before any Reload, compares constructor empty behavior, then loads two rules
+(including disabled), verifies exact priority order and full expected alert,
+rejects null-rule Reload while retaining count/rules/match, then clears via nil
+Reload. Actual rule.Engine backs API Handler across unpublished/loaded/rejected/
+cleared phases: all four health/verbose-health/metrics/rules endpoints assert
+status/content type, expected JSON rule identity/count/shape and zero metrics/
+queue/storage values. Existing fakeStore/fakeQueue isolate unrelated dependencies;
+no rule mock, SQL or wire evidence claim. All assertions remain unexecuted.
+
+Pinned Go 1.26.8 rule/API/pipeline complete compile-only chain passed, binaries
+not invoked. Exact runtime/source/direct-boundary/Go-format/docs/174 JSON/160
+complete unique roadmap pairs/prior Definitions/R90-75/history/horizon/links/
+fences/seven paths/diff/sensitive review passed. No implementation/compilation/
+static deviation. All behavioral/race/CLI/full-suite/scanner/knowledge/traffic/
+acceptance execution **not run; delegated by user**; no runtime/race/SLO outcome.
+391 baseline Vault hashes unchanged. Separate local netsentry-next skill
+refinement: resolve generated abbreviated metadata through Git before comparing
+full recorded endpoints, while synchronization input still requires full SHAs.
+Markdown structure checked; no repository feature path or authority expansion.
+Feature plus one docs-only closure remains; no subsequent implementation started.
