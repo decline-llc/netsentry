@@ -227,6 +227,7 @@ formal SLO and evidence contract is unchanged.
 | R90-147 | Oct 2–Dec 30 | Complete implementation; tests delegated | Preserve concurrent hello and heartbeat updates. | R90-146; existing concurrent receiver control contract | Serialize compound state writes while retaining atomic reads, frame fields and last-setter/mixed-session semantics; author direct setter/receiver regressions with execution delegated. |
 | R90-148 | Oct 3–Dec 31 | Complete implementation; tests delegated | Redact entire escaped JSON credential values. | R90-147; existing optional pre-write redactor | Recognize escape pairs in quoted password/token values; preserve formatting/header/pair/switch semantics; author direct scalar/batch and real Worker pre-write regressions with execution delegated. |
 | R90-149 | Oct 3–Dec 31 | Complete implementation; tests delegated | Check alert pagination offset and bound arithmetic. | R90-148; existing public alert pagination | Reject unrepresentable offsets before List/Query; clamp remaining length before end addition; preserve representable pages, defaults/filter/envelope/SQL source; author direct parser/bounds/HTTP regressions with execution delegated. |
+| R90-150 | Oct 3–Dec 31 | In progress; tests delegated | Prevent daily-shard query end-index overflow. | R90-149; existing Store.Query shard merge | Clamp query limit to remaining slice length before end addition; preserve normalization/filter/sort/count/SQL/HTTP semantics; author helper and real primary/daily public Query regressions with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3552,6 +3553,35 @@ formal SLO and evidence contract is unchanged.
 - **Stop condition:** unexpected competing changes, ambiguous validation or
   Git/Vault mismatch; new product/private-data/external authority; stop after
   this increment and its one closure, without another implementation.
+
+## R90-150 Definition
+
+- **Goal/status:** implementation in progress; prevent large public daily-shard
+  Query limits overflowing the merged slice end even for tiny result sets.
+- **Dependencies/window:** completed R90-149; existing Store.Query daily merge;
+  Oct 3–Dec 31. R90-75 independent asynchronous departmental acceptance.
+- **Source evidence:** sliceBounds computes offset+limit before clamping; a
+  MaxInt limit with offset 1 and three records can overflow its end index.
+- **Risk:** medium; integer bounds and store-mode result compatibility.
+- **Acceptance:** persist separate six-path plan/state before source/docs edits;
+  runtime sliceBounds only, clamp limit to length-offset before adding; retain
+  empty at/past-end and all normalization/sorting/filter/count/SQL/HTTP source.
+  Author direct helper small/near-MaxInt bounds and real public primary/daily
+  Query cases in encoded paths across two daily files. Check large limit at
+  nonzero offset, filtered count/order/full copied Alert values, default limit,
+  negative-offset normalization, empty and full-query logical preservation.
+  Exact feature plus one docs-only closure Git/Vault; retain stable prior current
+  prose, topic tails and immutable iteration hashes.
+- **Required validation:** pinned Go 1.26.8 alert/API compile-only complete chain;
+  source/direct-boundary/Go-format/docs/JSON/full unique roadmap/full contracts/
+  prior Definitions/R90-75/history/horizon/links/fences/six-path/diff/sensitive
+  checks. All execution suites not run; delegated by user. No runtime/SQL pass.
+- **Non-goals:** HTTP/parser/filter/SQL/schema/lifecycle/recovery/writer changes,
+  negative-limit mode reconciliation/count overflow, arbitrary cap, dependency/
+  toolchain changes, test execution, IPv6/publication.
+- **Stop condition:** competing changes, ambiguous validation/Git/Vault, new
+  product/private-data/external authority; stop after this one increment and
+  its single docs-only closure, without subsequent implementation.
 
 ### R90-71 Validation Deviation
 
@@ -8196,3 +8226,50 @@ verifies fetched closure/Vault, audits fresh core-code evidence and queue, then
 persists a separate eligible plan before editing. No subsequent implementation
 starts here. IPv6/external publication require independent authority; do not
 repeat completed R90-148/R90-149 delivery or R90-59 publication.
+
+
+## R90-150 Selection and Shard Query Bounds Repair (2026-10-03)
+
+Fresh fetched clean main HEAD/origin/main/FETCH_HEAD is
+`8cd3b430384e3727d91ecb8e1783a4bb34998fc0`. R90-149 exact seven-path feature
+and three-path closure Git/Vault scope/note/index/MOC are verified. Captured
+379-file snapshot JSON SHA-256
+`704c24031f30d9245b1756d2a8b746f3de015aff4b6693d492b1f4c7788b37d2`,
+14 full stable backups and 332 immutable iteration hashes. The 79-commit
+Sep 5–Oct 3 phase audit finds no missing delivery or new qualifying R90-75
+outcome. Horizon Oct 3–Dec 31 and completed history remain unchanged.
+
+R90-75 remains the sole unfinished item under its full independent asynchronous
+contract. Reconcile the empty local ready queue inside this bounded core repair,
+without separate audit-only delivery. Programmatic daily Store.Query bypasses
+HTTP page-size limits and permits limits that overflow offset+limit even on
+three rows. Six-path plan/state persisted on `fix/r90-150-shard-query-bounds`
+before source/docs/roadmap edits. Select R90-150 after completed dependencies;
+clamp to remaining length before addition, author helper plus real primary/daily
+queries and delegate all execution. No SQL/HTTP/lifecycle changes, arbitrary
+cap or runtime result claim. Existing skills suffice; no workflow repair needed
+at selection. No subsequent increment starts here.
+
+
+## R90-150 Implementation and Validation Checkpoint (2026-10-03)
+
+Runtime is exactly one sliceBounds transform: clamp positive normalized limit to
+length-offset before adding. All other tracked engine files and surrounding
+query normalization/filter/sort/count/SQL/HTTP/lifecycle source match baseline.
+Two direct functions author 11 helper bounds and 10 public real SQLite Query
+cases per primary/daily mode. Source reaches two actual shard files in an
+encoded directory, copied complete Alert baseline values, large nonzero-offset
+limits, filters/count/order/health/default/negative-offset/past-end and final
+logical row preservation. No fake Query/recover/skip substitutes this boundary.
+Pinned Go 1.26.8 full alert/API compile-only chain passed on final source; output
+binaries outside repository never invoked. Exact transform/direct-boundary/
+Go-format/docs/168 JSON/154 full unique roadmap/full contracts/prior Definitions/
+R90-75/history/horizon/links/fences/six-path/diff/sensitive checks pass.
+All execution suites remain not run; delegated by user. No runtime/SQL outcome
+is claimed. No validation, compile or implementation failure occurred. Prior
+Definition separators were reused, avoiding historical-section formatting
+changes. Existing skills suffice; no generic edit warranted.
+379-file Vault baseline is unchanged. Retain entire prior current-section prose
+under explicit historical heading and original topic tails/332 immutable hashes
+when refreshing current authority. Exact feature and one three-path docs-only
+closure delivery remain; no subsequent increment starts here.

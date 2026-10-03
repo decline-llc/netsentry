@@ -330,6 +330,14 @@ Current build:
   inconsistent SHM under an encoded historical path; rejection preserves the
   database and both sidecars.
 - Cross-shard alert querying and alert counting in daily-shard mode; time range filters narrow the shard files scanned before applying the regular SQL filters and API pagination across the merged result.
+- Daily-shard query slicing clamps positive normalized limits to
+  `length - offset` before computing the end index. Programmatic `Store.Query`
+  can request a large representable limit with a nonzero offset even when
+  only a few rows exist; this no longer overflows the merged slice boundary.
+  Offsets at/past the total remain empty; sorting, filters, totals, existing
+  limit/offset normalization and HTTP pagination are unchanged. R90-150 helper
+  and public primary/daily SQLite regressions are authored and compiled only;
+  execution remains delegated to the user's test department.
 - Rule, severity, source, and destination query filters explicitly use SQLite
   binary comparison, preserving case-sensitive exact-match behavior even when
   a compatible operator schema declares a different column collation. Protocol

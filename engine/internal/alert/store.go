@@ -2681,11 +2681,12 @@ func sliceBounds(length, limit, offset int) (int, int) {
 	if offset >= length {
 		return length, length
 	}
-	end := offset + limit
-	if end > length {
-		end = length
+	// Clamp before adding; a large query limit can overflow even on a small slice.
+	remaining := length - offset
+	if limit > remaining {
+		limit = remaining
 	}
-	return offset, end
+	return offset, offset + limit
 }
 
 // Count returns the number of aggregated alert rows.

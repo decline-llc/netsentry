@@ -1,0 +1,53 @@
+{
+  "task": "r90-150-shard-query-bounds",
+  "timestamp": "2026-10-03",
+  "branch": "fix/r90-150-shard-query-bounds",
+  "remote_baseline": "8cd3b430384e3727d91ecb8e1783a4bb34998fc0",
+  "starting_remote_baseline": "8cd3b430384e3727d91ecb8e1783a4bb34998fc0",
+  "risk_level": "Medium",
+  "current_checkpoint": "static_compile_only_complete_feature_delivery_pending",
+  "completed": [
+    "Fresh clean fetched main and both exact R90-149 Git/Vault ranges verified",
+    "Audited 79-commit phase; R90-75 independent; empty local queue repaired inside source-grounded increment",
+    "Captured 379-file Vault, 14 stable full-content backups and 332 immutable hashes",
+    "Identified offset+limit overflow for public daily Store.Query on small merged result",
+    "Pinned Go 1.26.8 owning engine module preflighted",
+    "Six-path plan/direct acceptance map persisted before source/docs/roadmap edits",
+    "Exactly one sliceBounds remaining-length clamp transform; all other engine and surrounding query source preserved",
+    "Two regressions authored: 11 helper cases plus 10 public real Query cases per primary/daily mode, two actual shards in encoded directory, full value snapshots/filter/count/health/final logical rows",
+    "Pinned Go 1.26.8 final complete alert/API compile-only chain passed; no binary invoked",
+    "Static source/direct boundaries/Go-format/docs/168 JSON/154 full unique roadmap/full contracts/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive checks passed",
+    "No validation or compile failure; prior Definition separators reused; existing skills sufficient",
+    "379-file baseline Vault unchanged; prior current prose and topic backups captured"
+  ],
+  "in_progress": [
+    "Feature commit and fresh fast-forward main delivery"
+  ],
+  "todo": [
+    "Exact feature push/fetch/Vault/stable reconciliation",
+    "One three-path docs-only closure and exact Git/Vault verification"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "pass:Go 1.26.8 final alert/API go test -c complete chain; external binaries unexecuted",
+    "static_review": "pass:exact sliceBounds transform;two direct functions;all other engine source unchanged;Go parse-format;docs;168 JSON;154 full unique roadmap/full contract/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive additions"
+  },
+  "authority_boundaries": [
+    "Six planned paths; runtime sliceBounds only",
+    "No HTTP/SQL/schema/lifecycle/recovery/writer change",
+    "All execution suites delegated; R90-75 independent asynchronous; no publication"
+  ],
+  "remaining_risks": [
+    "Direct regressions unexecuted; no runtime/SQL pass from static/compile review"
+  ],
+  "deviations": [
+    "Empty local ready queue repaired inside source-grounded core shard-query correctness increment"
+  ],
+  "resume_instructions": "Finish only six-path R90-150 plan with authored direct real-store regressions and static/compile-only validation; no executed suites. Exact feature plus one closure Git/Vault delivery, refresh queue and stop."
+}
