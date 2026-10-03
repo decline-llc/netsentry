@@ -231,7 +231,7 @@ formal SLO and evidence contract is unchanged.
 | R90-151 | Oct 3–Dec 31 | Complete implementation; tests delegated | Align negative Query limits across store modes. | R90-150; existing primary uncapped negative limit | Negative daily limits return all collected filtered rows after offset; zero stays 1000/positive unchanged; preserve SQL/HTTP/bounds; author >1000 real primary/daily and empty-result regressions with execution delegated. |
 | R90-152 | Oct 3–Dec 31 | Complete implementation; tests delegated | Include historical daily shards in Store.List. | R90-151; existing cross-shard Query reader | Daily List returns globally ordered newest 1000 rows including historical shards; retain primary SQL/lifecycle and reuse query error/health handling; direct regression execution delegated. |
 | R90-153 | Oct 3–Dec 31 | Complete implementation; tests delegated | Record committed HTTP audit response status. | R90-152; existing audit middleware | Preserve first final status and implicit 200; non-101 1xx stays informational, 101 terminal; existing audit fields/auth policy unchanged; direct wire/log/header regression execution delegated. |
-| R90-154 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Exclude nil entries from generated-alert counts. | R90-153; existing Stats and Worker counters | Non-nil entry total matches severity counts; retain fallback/dynamic labels and entry semantics; Worker/renderer/API/store unchanged; direct counter/concurrency/Worker regressions with execution delegated. |
+| R90-154 | Oct 3–Dec 31 | Complete implementation; tests delegated | Exclude nil entries from generated-alert counts. | R90-153; existing Stats and Worker counters | Non-nil entry total matches severity counts; retain fallback/dynamic labels and entry semantics; Worker/renderer/API/store unchanged; direct counter/concurrency/Worker regressions with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3668,7 +3668,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-154 Definition
 
-- **Goal/status:** implemented; delivery pending; exclude nil alert entries from the total
+- **Goal/status:** implementation delivered; exclude nil alert entries from the total
   consistently with existing severity accounting and storage normalization.
 - **Dependencies/window:** completed R90-153 and existing Stats/Worker counters;
   Oct 3–Dec 31 forecasts, without calendar eligibility gates.
@@ -8789,3 +8789,56 @@ SQL/durability/race/SLO pass inferred. No source, compilation or validation
 failure; 387-file Vault baseline unchanged. Existing skills suffice; no generic
 outcome-only skill edit. Feature and one docs-only closure remain, without a
 following implementation or publication action.
+
+
+## R90-154 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `dffafd3b02739d8d9b2b748c72255bf2939cf502` contains exactly seven planned paths. Isolated
+fix/r90-154-nil-alert-count fast-forwarded freshly verified main; push/fresh-fetch
+verified clean HEAD/origin/main/FETCH_HEAD at that SHA. Exact range
+`d57c634ad4ba4bbc3d6966d97e5e319f8ad43294..dffafd3b02739d8d9b2b748c72255bf2939cf502` seven-path scope, iteration note
+`04-开发迭代记录/2026-10-03-dffafd3b02-CI知识同步.md`, full index and MOC verified. Fourteen current stable notes
+reconciled; entire previous substantive current prose archived under explicit
+R90-153 historical headings. Original topic tails and all 340 baseline immutable
+iteration hashes retained; documented generated MOC entries refreshed. Identical
+exact-range replay preserves 388 Markdown files, snapshot JSON SHA-256
+`1ea63f2a52005054a511ae9b527db70d3c37778e1652a994395c8e025ce287c3`. Existing unique sibling local Vault
+selected explicitly, without a second empty or remote Vault.
+
+Acceptance matches persisted plan: exact ObserveAlerts-only one-loop count after
+existing nil skip and total publication under existing lock. Nil/empty guards,
+low fallback, dynamic labels/repeated-entry semantics/input values and every
+other tracked engine/Worker/renderer/API/store/lifecycle/export/rate/schema source
+preserved. No extra traversal/allocation; no performance guarantee. Individually
+sampled counters remain without a general transactional snapshot contract.
+
+Four direct authored functions reach the promised boundaries: nine public
+Stats/Snapshot/renderer cases observed twice with exact hardcoded totals/full
+severity maps/metric lines/types, nil receiver and unchanged pointers/full
+values. Concurrent mixed/all-nil public observations synchronize start and join
+before 800 total/400 high/400 low aggregate/renderer assertions. Actual Worker.Run
+uses an encoded primary SQLite Store for mixed two-row/all-nil zero-row cases,
+fixed row IDs/order/severity/timestamp/count/health/packet values and all expected
+processing/completion/write/error/severity counters. Four injected writer/export
+cases retain publication/completion gates and original batch pointers; these
+fault fixtures are separate from real SQL normal paths. All assertions compiled,
+unexecuted; no SQL/durability/physical-preservation/race/SLO outcome inferred.
+
+Final pinned Go 1.26.8 stats/pipeline/API/alert complete compile-only chain and
+source/direct-boundary/Go-format/docs/172 JSON/158 unique complete roadmap/prior
+Definitions/R90-75/history/horizon/links/fences/seven-path/diff/sensitive review
+passed. All behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance
+execution **not run; delegated by user**; binaries not invoked. No implementation,
+compilation/validation/delivery failure or Vault topic loss. Existing skills
+sufficed, without an outcome-only generic edit. Sole planning deviation: empty
+ready queue restored inside source-grounded core metric repair.
+
+This single three-path docs-only record closes the same increment: resolve full
+SHA from Git, push/fresh-fetch and verify exact feature-tip..closure-tip Vault
+note/index/MOC/stable prose before reporting. No self-reference follow-up closure.
+No currently defined dependency-ready local item after queue refresh. R90-75 full
+independent asynchronous departmental contract and Oct 3–Dec 31 horizon unchanged.
+Next trigger verifies fetched closure/Vault, audits fresh code/queue and persists
+a separate eligible plan before edits. No following increment started; do not
+repeat R90-153/R90-154 delivery or R90-59 publication. IPv6/external publication
+needs separate authority.
