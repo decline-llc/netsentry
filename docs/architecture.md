@@ -420,6 +420,15 @@ Current build:
   historical row decoding before aggregation-identity derivation.
 - Row-level TTL pruning in the opened database using `engine.alert_retention_days`.
 - Startup cleanup of old `netsentry-YYYY-MM-DD.db` daily shard files and their WAL/SHM sidecars when retention is enabled.
+- R90-158 requires a valid calendar date before deleting an expired shard set.
+  Impossible dates (including non-leap February 29, invalid month/day and days
+  outside a month's length) retain their base, WAL and SHM bytes. Valid expired
+  dates, including leap days and the existing supported year range, retain the
+  same deletion behavior; the cutoff date itself remains. Public startup/direct
+  file-preservation and exact deletion-count regressions, plus disabled-retention
+  and canceled-context cases, are authored and compiled only. Test execution is
+  delegated; this is no observed filesystem or SQLite pass. Discovery and query
+  behavior are unchanged; retained unrelated files may still cause read errors.
 - Before journal or schema initialization, an existing non-empty primary
   database must pass read-only SQLite `quick_check` plus required `alerts` and
   `alert_events` table/column definitions and the binary-collated aggregation

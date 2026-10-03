@@ -2782,7 +2782,7 @@ func (s *Store) PruneExpired(ctx context.Context) (int64, error) {
 var dailyShardNameRe = regexp.MustCompile(`^netsentry-(\d{4}-\d{2}-\d{2})\.db$`)
 
 // PruneExpiredShardFiles deletes old daily shard database files and their WAL/SHM
-// sidecars. It only touches files named netsentry-YYYY-MM-DD.db.
+// sidecars. It only touches files named netsentry-YYYY-MM-DD.db with valid dates.
 func (s *Store) PruneExpiredShardFiles(ctx context.Context, dir string) (int, error) {
 	release, err := s.acquireLifecycleShared(ctx)
 	if err != nil {
@@ -2814,6 +2814,9 @@ func (s *Store) PruneExpiredShardFiles(ctx context.Context, dir string) (int, er
 		}
 		match := dailyShardNameRe.FindStringSubmatch(entry.Name())
 		if match == nil || match[1] >= cutoffDate {
+			continue
+		}
+		if _, err := time.Parse("2006-01-02", match[1]); err != nil {
 			continue
 		}
 		base := filepath.Join(defaultDBDir(dir), entry.Name())

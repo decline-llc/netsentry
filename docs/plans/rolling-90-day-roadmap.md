@@ -235,6 +235,7 @@ formal SLO and evidence contract is unchanged.
 | R90-155 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject negative duration observations. | R90-154; existing public Stats observers | Negative samples change no count/sum/bucket; retain zero/positive/nil semantics and renderer; direct boundary/concurrency assertions authored with execution delegated. |
 | R90-156 | Oct 3–Dec 31 | Complete implementation; tests delegated | Count unpublished rule snapshots as empty. | R90-155; existing atomic rule.Engine | Non-nil zero-value Engine RuleCount returns zero; retain reload/match/count semantics; direct engine/API lifecycle assertions authored, execution delegated. |
 | R90-157 | Oct 3–Dec 31 | Complete implementation; tests delegated | Isolate Aho-Corasick pattern snapshots. | R90-156; existing matcher and candidate gate | Getter edits cannot change compiled pattern metadata; candidate set avoids getter copy per hit; retain matching/ordering/filter semantics; direct/concurrent regressions authored, execution delegated. |
+| R90-158 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Validate calendar dates before expired shard cleanup. | R90-157; existing daily retention cleanup | Invalid calendar filenames/base/WAL/SHM remain byte-identical; valid expired sets deleted with exact count, cutoff and lifecycle unchanged; direct/startup preservation regressions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -3725,6 +3726,16 @@ formal SLO and evidence contract is unchanged.
 - **Required validation:** pinned Go 1.26.8 Aho-Corasick/rule/API/pipeline compile-only chain; static source/direct boundaries/format/docs/JSON/complete unique roadmap/history/R90-75/horizon/links/fences/path/diff/sensitive; all behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
 - **Non-goals:** trie/normalization/matching/index guards/filters/priority/early exit/reload/nil receiver, API/storage/metrics/benchmark performance/dependencies/toolchain/suites/private inputs/IPv6/publication; no runtime/race/SLO pass.
 - **Stop condition:** competing edits, ambiguous static/compile/Git/Vault, new private/product/external authority or following increment.
+
+## R90-158 Definition
+
+- **Goal/status:** implemented; delivery pending; require real calendar dates before deleting expired daily shard sets.
+- **Dependencies/window:** R90-157 verified delivered; existing retention cleanup; Oct 3–Dec 31 forecast, no date gate.
+- **Risk:** low; invalid-date files remain for operator inspection; discovery behavior and existing supported year range unchanged.
+- **Acceptance:** parse/error-skip-only runtime diff; direct/startup public malformed-calendar exact base/WAL/SHM preservation; exact valid/leap/year-zero expired deletion counts; cutoff/current/fresh/noncanonical/orphan/directory retention; disabled/canceled byte preservation; six-path feature/one closure exact Git/Vault.
+- **Required validation:** pinned Go 1.26.8 alert/API/pipeline compile-only chain; static exact source/direct boundaries/format/docs/JSON/complete unique roadmap/history/R90-75/horizon/links/fences/paths/diff/sensitive; all behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
+- **Non-goals:** discovery/query/write/SQLite schema/recovery/active-handle retention/cutoff/filename/year policy/API/metrics/dependencies/toolchain/suites/private inputs/IPv6/publication; no filesystem/SQL/runtime/SLO pass.
+- **Stop condition:** competing edits, ambiguous static/compile/Git/Vault or new private/product/external authority; following increment requires separate trigger.
 
 ### R90-71 Validation Deviation
 
@@ -9174,3 +9185,54 @@ asynchronous departmental contract and Oct 3–Dec 31 horizon unchanged. Next tr
 verifies fetched closure/Vault and audits fresh code/queue before a separate
 eligible plan. No following increment started; do not repeat R90-156/R90-157
 delivery or R90-59 publication. IPv6/external publication needs separate authority.
+
+
+## R90-158 Selection and Shard Calendar Guard (2026-10-03)
+
+Fresh fetched clean main HEAD/origin/main/FETCH_HEAD:
+`7cd71694b25f99349bd1c8da1331280fe3ca85ef`; R90-157 exact eight-path
+feature/three-path closure Git/Vault scope/note/index/MOC/identifier resolution
+verified. 95-commit phase remains core correctness after SLO tooling; no new
+qualifying R90-75 outcome. R90-75 sole unfinished independent asynchronous
+contract and Oct 3–Dec 31 horizon unchanged. Existing unique local Vault's 395
+Markdown hashes/14 complete stable backups captured; owning Go 1.26.8 preflighted.
+
+Empty ready queue reconciled inside source-grounded retention deletion guard:
+cleanup's digit-shaped names accept impossible calendar dates and delete their
+arbitrary contents/sidecars. Six-path plan/state persisted before source/docs
+edits on fix/r90-158-shard-calendar. Parse candidate calendar date before deletion;
+retain existing cutoff equality, valid leap days/year range/count/lifecycle.
+Direct/startup public byte preservation and disabled/canceled regressions authored
+and compiled only. All execution delegated; no observed incident, filesystem/SQL/
+runtime/SLO pass, publication or following implementation claim.
+
+
+## R90-158 Implementation and Validation Checkpoint (2026-10-03)
+
+Runtime diff is only time.Parse/error-skip before expired set deletion and comment
+clarification. Every other tracked engine source remains byte-identical. Existing
+regex/cutoff equality/removal ordering/count/context/lifecycle/year range and
+shard discovery/query/schema/recovery unchanged. Seven impossible-calendar
+fixtures preserve arbitrary base/WAL/SHM bytes; no broader filename policy.
+
+Two direct public regression functions authored/compiled only. Startup fixtures
+precede Open; direct fixtures follow Open. Seven invalid dates, noncanonical and
+unrelated names/sidecars, orphan sidecars and directory/nested file retain bytes.
+Three valid expired sets (leap day, ordinary day, supported year zero) remove nine
+files; explicit cleanup counts nine then zero, startup leaves zero further
+removals. Cutoff/fresh/current retained; close precedes final byte checks.
+Disabled retention and pre-canceled public cleanup retain all bytes, count zero
+and preserve errors.Is(context.Canceled). No private fields, sleeps or skips.
+
+Pinned Go 1.26.8 alert/API/pipeline complete compile-only chain passed; binaries
+and benchmarks unexecuted. Exact source/direct boundaries/Go-format/docs/176 JSON/
+162 unique complete roadmap pairs/prior Definitions/R90-75/history/horizon/links/
+fences/six paths/diff/sensitive passed. Initial temporary static-review adaptation
+pointed its prior-completion assertion at current R90-158; corrected to unique
+R90-157 completion and reran the entire static/docs/diff chain successfully. No
+repository behavior change or unresolved validation ambiguity from that tool
+error. All behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance
+execution **not run; delegated by user**; no filesystem/SQL/runtime/SLO pass.
+395 baseline Vault hashes unchanged. Existing skills already cover unique markers
+and preservation; no redundant update. Feature and single docs-only closure
+remain; no next increment or publication started.
