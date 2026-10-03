@@ -140,3 +140,49 @@ remain delegated and unrun. No implementation/static/compilation failure occurre
 Commit exact ten paths, fast-forward fresh main and verify feature delivery;
 then create only one docs-only closure. Skills contain the separately validated
 generic concurrency improvement; no further skill change is needed.
+
+
+## Delivery, deviation and queue closeout
+
+Feature `1027b5a2ca7553e62c037c3e76c191ad140bf31f` contains exactly the planned ten paths. After isolated branch
+implementation, fresh baseline verification and fast-forward main, push/fresh
+fetch verified clean HEAD/origin/main/FETCH_HEAD at that full SHA. Exact range
+`36d2cd49761308b9884cdbe47dd7ed9f5c2b2b42..1027b5a2ca7553e62c037c3e76c191ad140bf31f` has its generated ten-path scope, iteration note
+`04-开发迭代记录/2026-10-02-1027b5a2ca-CI知识同步.md`, full index and MOC verified.
+Fourteen current stable notes are reconciled; all 322 baseline immutable
+iteration-directory notes retain their hashes. The resulting 370-file snapshot
+JSON SHA-256 is `b9eff975bc08a86170716773c68f3178c286f852c2b99a691b9fa537175bd9d9`. Identical feature-range replay preserves
+every Markdown hash. Local-only Vault discovery used the unique existing sibling
+explicitly; no second Vault or remote artifact was created.
+
+The sole reconciliation deviation was two stable notes whose unheaded substantive
+topic prose shared the current-status replacement boundary. Source-grounded rule
+ownership and configuration/management-transaction explanations were reconstructed
+under explicit topic headings before closure; this is not a byte-for-byte recovery
+claim. Immutable history was unaffected. The local skill's existing Vault
+instruction now preserves topic prose and establishes explicit boundaries before
+status replacement. This and the atomic-quiescence refinement were validated as
+generic local-only Markdown changes, separate from the feature commit.
+
+The runtime and direct evidence meet the planned boundaries: eight regression
+functions cover 17 Run terminal/error/panic cases plus observer-return readiness,
+nil/cancelled empty input, joined workers, Stats and HTTP compatibility. Final
+pinned Go 1.26.8 pipeline/stats/API compile-only chain and full static review
+passed; no generated binary or behavioral/race/CLI/full-suite/scanner/knowledge/
+acceptance suite was executed. All such execution remains user-delegated.
+Completion is process-local, not a loss oracle, durable-export receipt or SLO
+gate; independently sampled atomics require quiescence for cross-counter checks.
+
+One three-path docs-only delivery record closes this same increment. Its final
+SHA is resolved from Git after commit, then push/fresh-fetch and exact feature-tip
+to closure-tip Vault synchronization are verified before reporting. No second
+closure is created merely to embed its own SHA.
+
+Queue refresh: R90-145 implementation is complete; no further dependency-ready
+local increment is currently defined. R90-75 retains its complete independent
+asynchronous departmental acceptance contract and does not block development.
+Next trigger verifies the fetched closure and Vault, audits fresh core-code
+evidence and the forward queue, and persists a separate plan for any eligible
+work before editing. No subsequent implementation begins here. Oct 2–Dec 30
+horizon remains current; IPv6 remains separate product/protocol scope. Do not
+repeat completed R90-144/R90-145 delivery or R90-59 publication.

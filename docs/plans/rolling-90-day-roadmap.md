@@ -222,7 +222,7 @@ formal SLO and evidence contract is unchanged.
 | R90-142 | Oct 2 | Complete documentation; execution delegated | Reconcile report-binding delivery and scope pair receipt inventory reads. | R90-141 verified feature/closure | Verify exact prior Git/Vault/phase evidence; define complete R90-143 four-receipt acquisition/parser/qualification contract without runtime/test execution. |
 | R90-143 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind pair condition receipt reads to reconciled inventory. | R90-142; R90-119/R90-121/R90-123/R90-127 pair modes; R90-137/R90-141 precedents | Four fixed receipt reads validate complete matched inventory and bounded regular non-following/nonblocking handles; exact EOF metadata/hash and close before unchanged parser/projection; preserve all modes/error/partial contracts; tests delegated. |
 | R90-144 | Oct 2–Dec 30 | Complete implementation; tests delegated | Isolate core rule reload snapshots from caller-owned inputs. | R90-143; existing rule engine and serialized API transactions | Deep-copy Rule/Config/MITRE before validation/sort/compile; publish one owned state; preserve diagnostics, failed-reload state and schemas; author direct regression cases with execution delegated. |
-| R90-145 | Oct 2–Dec 30 | In progress; tests delegated | Add a packet-completion counter to the core processing pipeline. | R90-144; R90-116 lifecycle boundary | Count only successful terminal packet processing after optional observer success; retain existing processed/received counters, API fields and SLO exporter semantics; author direct failure/no-alert/suppression/success cases with execution delegated. |
+| R90-145 | Oct 2–Dec 30 | Complete implementation; tests delegated | Add a packet-completion counter to the core processing pipeline. | R90-144; R90-116 lifecycle boundary | Count only successful terminal packet processing after optional observer success; retain existing processed/received counters, API fields and SLO exporter semantics; author direct failure/no-alert/suppression/success cases with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3387,13 +3387,15 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-145 Definition
 
-- **Goal/status:** implementation in progress after verified R90-144; add completed-packet visibility to the
-  actual core Worker terminal boundary after R90-144 delivery.
+- **Goal/status:** implementation complete; direct regressions authored and compiled,
+  execution delegated. Completed-packet visibility is added at the actual core
+  Worker terminal boundary after verified R90-144 delivery.
 - **Dependencies/window:** R90-144; completed R90-116 optional lifecycle export;
   Oct 2–Dec 30. R90-75 acceptance remains independent and asynchronous.
-- **Source evidence:** processPacket increments packetsProcessed before matching;
-  processed() is reached only after no alerts, full suppression or successful
-  persistence/export. Stats has no separate packets-completed counter.
+- **Source evidence:** at selection, processPacket incremented packetsProcessed before
+  matching and Stats lacked a separate completion count. Delivered processed()
+  increments the new atomic count only after a successful optional observer return
+  in the no-alert, full-suppression or successful persistence/export terminal path.
 - **Risk:** medium; implying started work is completion or changing existing metrics.
 - **Acceptance:** persist separate implementation plan; add atomic completed
   count/Snapshot field/Prometheus counter at processed(), after successful optional
@@ -7683,3 +7685,49 @@ compile-only and binaries are never executed. All behavioral/race/CLI/full-suite
 scanner/knowledge/acceptance execution remains delegated and unrun. No subsequent
 increment begins here. A reusable independent-atomic sampling lesson is recorded
 at static closeout and refined in the local skill concurrency instruction.
+
+
+## R90-145 Completion and Forward Queue Refresh (2026-10-02)
+
+Feature `1027b5a2ca7553e62c037c3e76c191ad140bf31f` contains exactly the planned ten paths. After isolated branch
+implementation, fresh baseline verification and fast-forward main, push/fresh
+fetch verified clean HEAD/origin/main/FETCH_HEAD at that full SHA. Exact range
+`36d2cd49761308b9884cdbe47dd7ed9f5c2b2b42..1027b5a2ca7553e62c037c3e76c191ad140bf31f` has its generated ten-path scope, iteration note
+`04-开发迭代记录/2026-10-02-1027b5a2ca-CI知识同步.md`, full index and MOC verified.
+Fourteen current stable notes are reconciled; all 322 baseline immutable
+iteration-directory notes retain their hashes. The resulting 370-file snapshot
+JSON SHA-256 is `b9eff975bc08a86170716773c68f3178c286f852c2b99a691b9fa537175bd9d9`. Identical feature-range replay preserves
+every Markdown hash. Local-only Vault discovery used the unique existing sibling
+explicitly; no second Vault or remote artifact was created.
+
+The sole reconciliation deviation was two stable notes whose unheaded substantive
+topic prose shared the current-status replacement boundary. Source-grounded rule
+ownership and configuration/management-transaction explanations were reconstructed
+under explicit topic headings before closure; this is not a byte-for-byte recovery
+claim. Immutable history was unaffected. The local skill's existing Vault
+instruction now preserves topic prose and establishes explicit boundaries before
+status replacement. This and the atomic-quiescence refinement were validated as
+generic local-only Markdown changes, separate from the feature commit.
+
+The runtime and direct evidence meet the planned boundaries: eight regression
+functions cover 17 Run terminal/error/panic cases plus observer-return readiness,
+nil/cancelled empty input, joined workers, Stats and HTTP compatibility. Final
+pinned Go 1.26.8 pipeline/stats/API compile-only chain and full static review
+passed; no generated binary or behavioral/race/CLI/full-suite/scanner/knowledge/
+acceptance suite was executed. All such execution remains user-delegated.
+Completion is process-local, not a loss oracle, durable-export receipt or SLO
+gate; independently sampled atomics require quiescence for cross-counter checks.
+
+One three-path docs-only delivery record closes this same increment. Its final
+SHA is resolved from Git after commit, then push/fresh-fetch and exact feature-tip
+to closure-tip Vault synchronization are verified before reporting. No second
+closure is created merely to embed its own SHA.
+
+Queue refresh: R90-145 implementation is complete; no further dependency-ready
+local increment is currently defined. R90-75 retains its complete independent
+asynchronous departmental acceptance contract and does not block development.
+Next trigger verifies the fetched closure and Vault, audits fresh core-code
+evidence and the forward queue, and persists a separate plan for any eligible
+work before editing. No subsequent implementation begins here. Oct 2–Dec 30
+horizon remains current; IPv6 remains separate product/protocol scope. Do not
+repeat completed R90-144/R90-145 delivery or R90-59 publication.
