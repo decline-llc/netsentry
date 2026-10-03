@@ -1,11 +1,11 @@
 {
   "task": "r90-157-pattern-snapshots",
   "timestamp": "2026-10-03",
-  "branch": "fix/r90-157-pattern-snapshots",
-  "remote_baseline": "1bafc66e775d0bb22c6e22fa45b4449dfcb9af22",
+  "branch": "main",
+  "remote_baseline": "bb98065a2a232459c3e9cfd19787cda803b3654e",
   "starting_remote_baseline": "1bafc66e775d0bb22c6e22fa45b4449dfcb9af22",
   "risk_level": "Medium",
-  "current_checkpoint": "implementation_static_compile_complete_delivery_pending",
+  "current_checkpoint": "implementation_complete_feature_verified_single_docs_closure",
   "completed": [
     "Fresh fetched clean main/R90-156 exact Git/Vault scopes/identifier resolution verified",
     "93-commit phase audit; R90-75 sole unfinished independent departmental contract; no new acceptance",
@@ -15,11 +15,15 @@
     "Three public direct functions: getter/input/normalized/duplicate/suffix/empty/reslice/append ownership; four joined callers x100; eight actual Engine full alerts/order/count/packet cases authored",
     "Pinned Go 1.26.8 final Aho-Corasick/rule/API/pipeline complete compile-only chain passed after guard review; binaries/benchmarks unexecuted",
     "Exact source/direct-boundary/Go format/docs/175 JSON/161 complete unique roadmap pairs/prior Definitions/R90-75/history/horizon/links/fences/eight paths/diff/sensitive passed",
-    "393 baseline Vault hashes unchanged; existing skills suffice, no redundant edit"
+    "393 baseline Vault hashes unchanged; existing skills suffice, no redundant edit",
+    "Eight-path feature pushed/freshly fetched clean main refs verified at bb98065a2a232459c3e9cfd19787cda803b3654e",
+    "Exact feature scope/note/index/MOC/generated identifiers uniquely resolved through Git verified",
+    "14 current stable notes reconciled; entire prior prose archived; topic tails/346 baseline immutable hashes retained",
+    "Identical feature replay preserves all 394 Markdown hashes",
+    "No following local ready item; R90-75 full contract/horizon unchanged",
+    "Prepared single three-path docs-only closure; resolve full SHA and verify exact delivery before reporting"
   ],
-  "in_progress": [
-    "Feature delivery and one docs-only closure"
-  ],
+  "in_progress": [],
   "validation": {
     "behavioral_tests": "not_run_user_delegated",
     "race_tests": "not_run_user_delegated",
@@ -43,9 +47,29 @@
   "deviations": [
     "Empty local ready queue restored within source-grounded matcher ownership repair"
   ],
-  "resume_instructions": "Complete only R90-157 source/direct regressions/static/compile, feature push/fetch/exact Vault, single docs-only closure push/fetch/exact Vault; refresh queue and stop; no suites.",
-  "todo": [
-    "Focused feature push/fresh fetch/exact Vault",
-    "One docs-only closure push/fresh fetch/exact Vault; refresh queue"
-  ]
+  "resume_instructions": "R90-157 implementation complete. Resolve this single docs-only closure from Git and verify fetched main/exact feature..closure Vault if evidence absent; otherwise do not repeat feature/closure commit/push/sync or create another closure. Next trigger audits fresh code/queue before separate selection. All execution user-delegated; R90-75 independent asynchronous. No subsequent increment started.",
+  "todo": [],
+  "implementation_branch": "fix/r90-157-pattern-snapshots",
+  "delivery": {
+    "feature_commit": "bb98065a2a232459c3e9cfd19787cda803b3654e",
+    "feature_range": "1bafc66e775d0bb22c6e22fa45b4449dfcb9af22..bb98065a2a232459c3e9cfd19787cda803b3654e",
+    "verified_remote": "clean main HEAD/origin/main/FETCH_HEAD after fresh fetch",
+    "feature_paths": 8,
+    "vault_note": "04-\u5f00\u53d1\u8fed\u4ee3\u8bb0\u5f55/2026-10-03-bb98065a2a-CI\u77e5\u8bc6\u540c\u6b65.md",
+    "index_moc": "verified; generated abbreviated identifiers uniquely resolved through Git",
+    "stable_notes": 14,
+    "topic_prose_preservation": "entire prior current prose archived; topic tails retained; only documented generated MOC entries refreshed",
+    "baseline_immutable_notes": 346,
+    "feature_snapshot_files": 394,
+    "feature_snapshot_json_sha256": "d7c369b9f0d1c1de067a33ef957148fd9f60ad25818e55f0c1cab86018b4653d",
+    "identical_feature_replay": "all Markdown hashes unchanged",
+    "closure": "single three-path docs-only record; resolve full SHA from Git; push/fresh-fetch/exact feature..closure Vault before reporting; no self-reference closure"
+  },
+  "next_increment": {
+    "id": null,
+    "status": "no_defined_local_ready_increment",
+    "started": false,
+    "departmental_acceptance": "R90-75 full independent asynchronous contract unchanged",
+    "next_trigger": "Verify fetched closure/Vault; audit fresh code/queue; persist separate eligible plan before edits"
+  }
 }

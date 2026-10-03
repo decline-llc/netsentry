@@ -234,7 +234,7 @@ formal SLO and evidence contract is unchanged.
 | R90-154 | Oct 3–Dec 31 | Complete implementation; tests delegated | Exclude nil entries from generated-alert counts. | R90-153; existing Stats and Worker counters | Non-nil entry total matches severity counts; retain fallback/dynamic labels and entry semantics; Worker/renderer/API/store unchanged; direct counter/concurrency/Worker regressions with execution delegated. |
 | R90-155 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject negative duration observations. | R90-154; existing public Stats observers | Negative samples change no count/sum/bucket; retain zero/positive/nil semantics and renderer; direct boundary/concurrency assertions authored with execution delegated. |
 | R90-156 | Oct 3–Dec 31 | Complete implementation; tests delegated | Count unpublished rule snapshots as empty. | R90-155; existing atomic rule.Engine | Non-nil zero-value Engine RuleCount returns zero; retain reload/match/count semantics; direct engine/API lifecycle assertions authored, execution delegated. |
-| R90-157 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Isolate Aho-Corasick pattern snapshots. | R90-156; existing matcher and candidate gate | Getter edits cannot change compiled pattern metadata; candidate set avoids getter copy per hit; retain matching/ordering/filter semantics; direct/concurrent regressions authored, execution delegated. |
+| R90-157 | Oct 3–Dec 31 | Complete implementation; tests delegated | Isolate Aho-Corasick pattern snapshots. | R90-156; existing matcher and candidate gate | Getter edits cannot change compiled pattern metadata; candidate set avoids getter copy per hit; retain matching/ordering/filter semantics; direct/concurrent regressions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -3718,7 +3718,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-157 Definition
 
-- **Goal/status:** implemented; delivery pending; return independent Patterns snapshots, retaining metadata/trie agreement; engine uses candidate rule-ID set.
+- **Goal/status:** implementation delivered; return independent Patterns snapshots, retaining metadata/trie agreement; engine uses candidate rule-ID set.
 - **Dependencies/window:** R90-156 verified delivered; existing matcher/candidate gate; Oct 3–Dec 31 forecast, no date gate.
 - **Risk:** medium; getter copies nonempty patterns; engine avoids per-hit getter copies; no measured performance outcome.
 - **Acceptance:** getter make/copy plus candidate-set-only diff; public normalization/duplicates/suffix/empty/input/getter mutation and joined concurrency; actual engine duplicate/shared/original-keyword/mixed-case/windows/disabled/filter/early-exit alerts; eight-path feature/one closure exact Git/Vault.
@@ -9120,3 +9120,57 @@ All behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance executio
 ambiguity; 393 baseline Vault hashes unchanged. Existing skills cover this
 boundary and generated identifiers; no redundant generic edit. Feature plus one
 docs-only closure remains; no following implementation or publication started.
+
+
+## R90-157 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `bb98065a2a232459c3e9cfd19787cda803b3654e` contains exactly eight planned paths. Isolated
+fix/r90-157-pattern-snapshots fast-forwarded freshly verified main; push/fresh
+fetch verified clean HEAD/origin/main/FETCH_HEAD at that full SHA. Exact range
+`1bafc66e775d0bb22c6e22fa45b4449dfcb9af22..bb98065a2a232459c3e9cfd19787cda803b3654e` note `04-开发迭代记录/2026-10-03-bb98065a2a-CI知识同步.md`, eight-path scope, full index and MOC verified.
+Generated ten-character identifiers uniquely resolve through Git to recorded
+full endpoints. Fourteen current stable notes reconciled; entire previous current
+substantive prose archived under explicit R90-156 historical headings. Original
+topic tails and all 346 baseline immutable iteration hashes retained; only
+bounded documented generated MOC entries refreshed. Identical replay preserves
+394 Markdown files; snapshot JSON SHA-256
+`d7c369b9f0d1c1de067a33ef957148fd9f60ad25818e55f0c1cab86018b4653d`. Existing unique sibling local Vault selected
+explicitly; no second empty or remote Vault.
+
+Acceptance matches persisted plan: Patterns getter make/copy and Engine candidate
+value changed from unused keyword text to rule-ID set. Existing duplicate-hit
+and index guards retained; no getter/copy per engine hit. Trie/normalization/
+matching/per-rule keyword/filter/priority/early-exit/reload/publication and all
+other tracked engine source preserved exactly. Getter retains normalized order,
+duplicates/non-nil empty result; public nonempty copy deliberate, without measured
+throughput/allocation guarantee, nil-receiver or empty-pattern policy expansion.
+
+Three authored direct public functions reach promised boundaries: sensitive/
+insensitive getter normalization, duplicate/suffix fixed indices, constructor
+input edits and independently mutable successive snapshots/entry/reslice/append,
+empty no-hit shape; four synchronized callers each 100 snapshots/edits/fixed
+hits, joined before final metadata/match assertions. Eight actual Engine.Reload/
+Match cases cover duplicate/shared/original-keyword-versus-first-hit selection,
+mixed case/windows/disabled/protocol-port/critical early exit, exact full alerts/
+count/order and packet preservation. No private fields, injected matcher, sleeps
+or weakened skip paths. Assertions authored/compiled only; no runtime/race/SLO
+outcome or throughput evidence inferred.
+
+Final pinned Go 1.26.8 Aho-Corasick/rule/API/pipeline complete compile-only chain
+passed after duplicate-guard review; binaries/benchmarks unexecuted. Exact source/
+direct boundaries/Go-format/docs/175 JSON/161 complete unique roadmap pairs/prior
+Definitions/R90-75/history/horizon/links/fences/eight paths/diff/sensitive passed.
+All behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution
+**not run; delegated by user**. No unresolved implementation/compile/static/Git/
+Vault ambiguity or topic loss. Existing skills suffice; no redundant generic
+edit. Planning deviation: empty queue restored inside source-grounded ownership
+repair.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git; push/fresh-fetch and verify exact feature..closure Vault scope/
+note/index/MOC/stable prose before reporting. No self-reference follow-up closure.
+Refreshed queue has no defined local dependency-ready item. R90-75 full independent
+asynchronous departmental contract and Oct 3–Dec 31 horizon unchanged. Next trigger
+verifies fetched closure/Vault and audits fresh code/queue before a separate
+eligible plan. No following increment started; do not repeat R90-156/R90-157
+delivery or R90-59 publication. IPv6/external publication needs separate authority.
