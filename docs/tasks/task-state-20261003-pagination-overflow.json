@@ -1,0 +1,60 @@
+{
+  "task": "r90-149-pagination-overflow",
+  "timestamp": "2026-10-03",
+  "branch": "fix/r90-149-pagination-overflow",
+  "remote_baseline": "6ba400fb15d238846a0441be02b516cd7d775e9a",
+  "starting_remote_baseline": "6ba400fb15d238846a0441be02b516cd7d775e9a",
+  "risk_level": "Medium",
+  "current_checkpoint": "static_compile_only_complete_feature_delivery_pending",
+  "completed": [
+    "Fresh clean fetched main refs and both R90-148 exact Git/Vault ranges verified",
+    "Reviewed 77-commit Sep 5\u2013Oct 3 phase and independent R90-75; empty local queue reconciled inside source-grounded repair",
+    "Captured 377-file Vault, 14 stable full-content backups and 330 immutable hashes",
+    "Identified unchecked offset multiplication and end addition in public alerts pagination",
+    "Preflighted owning engine module pinned Go 1.26.8",
+    "Persisted seven-path plan and direct evidence map before source/roadmap edits",
+    "Runtime parser guard after existing diagnostics and remaining-length bounds implemented; all other tracked engine files unchanged",
+    "Four direct regression functions: 17 parser, nine bounds, four reject-before-store and eight accepted/filter/exact-offset HTTP cases authored",
+    "Pinned Go 1.26.8 complete api/alert compile-only chain passed on final source; external test binaries never invoked",
+    "One extra prior-Definition separator newline restored; full static/docs/diff rerun passed",
+    "Go parse-format/docs/167 JSON/153 full unique roadmap/full contract/all prior Definitions/R90-75/history/horizon/links/fences/seven-path/diff/sensitive checks passed",
+    "Existing structural skill guidance sufficient; no edit",
+    "Complete 377-file Vault baseline unchanged; previous R90-148 current-section prose and topical tails will be retained"
+  ],
+  "in_progress": [
+    "Feature commit and fresh fast-forward main delivery"
+  ],
+  "todo": [
+    "Exact feature push/fetch/Vault/stable reconciliation",
+    "One three-path docs-only closure and exact Git/Vault verification"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "pass:Go 1.26.8 final api/alert complete go test -c chain; binaries unexecuted",
+    "static_review": "pass_after_separator_restore:exact parser/bounds source transform;4 direct functions;all other engine files preserved;Go parse-format;docs;167 JSON;153 full unique roadmap/full contracts/prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/sensitive additions"
+  },
+  "authority_boundaries": [
+    "Seven planned paths; runtime pagination.go only",
+    "No execution suites or SQL/store/filter/router changes",
+    "R90-75 independent asynchronous; no external publication"
+  ],
+  "remaining_risks": [
+    "Direct regressions unexecuted; compile/static alone prove no runtime pass"
+  ],
+  "deviations": [
+    "Empty ready queue reconciled inside source-grounded core pagination arithmetic repair",
+    {
+      "kind": "roadmap_insertion_separator",
+      "observed": "First static check found one extra separator newline in prior R90-148 Definition; first diagnostic assertion overcounted separators and made no mutation",
+      "resolution": "Restored exact single separator; all prior Definition bytes and complete static/docs/diff rerun pass",
+      "impact": "Formatting only; no runtime edit or compilation failure"
+    }
+  ],
+  "resume_instructions": "Finish only R90-149 seven-path plan with static/compile-only validation; all execution delegated. Deliver one feature plus one docs-only closure, verify exact fetched refs/Vault, refresh queue and stop."
+}

@@ -73,6 +73,14 @@ Query parameters:
 | `matched_keyword` | Case-insensitive substring match against the recorded matched keyword. |
 | `min_count` | Minimum `aggregated_count`; must be a positive integer. |
 
+Pagination requires both the positive `page` value and `(page - 1) * per_page`
+to fit the engine platform's signed `int`. An unrepresentable offset returns
+HTTP 400 `VALIDATION_ERROR` with detail
+`page and per_page exceed maximum pagination offset`, before a storage call.
+A representable page beyond the filtered total returns an empty `data` array
+with the requested pagination and filtered `total`; no additional page cap is
+imposed. Defaults and the `per_page <= 100` limit are unchanged.
+
 ```json
 {
   "data": [

@@ -226,6 +226,7 @@ formal SLO and evidence contract is unchanged.
 | R90-146 | Oct 2–Dec 30 | Complete implementation; tests delegated | Serialize suppression reload reads with management mutations. | R90-145; R90-79 suppression persistence | Hold existing manager lock across authoritative reload read, validation and publication; prevent stale reload overwriting successful Add/Update/Delete; preserve loader/API/file/filter contracts; direct regression execution delegated. |
 | R90-147 | Oct 2–Dec 30 | Complete implementation; tests delegated | Preserve concurrent hello and heartbeat updates. | R90-146; existing concurrent receiver control contract | Serialize compound state writes while retaining atomic reads, frame fields and last-setter/mixed-session semantics; author direct setter/receiver regressions with execution delegated. |
 | R90-148 | Oct 3–Dec 31 | Complete implementation; tests delegated | Redact entire escaped JSON credential values. | R90-147; existing optional pre-write redactor | Recognize escape pairs in quoted password/token values; preserve formatting/header/pair/switch semantics; author direct scalar/batch and real Worker pre-write regressions with execution delegated. |
+| R90-149 | Oct 3–Dec 31 | In progress; tests delegated | Check alert pagination offset and bound arithmetic. | R90-148; existing public alert pagination | Reject unrepresentable offsets before List/Query; clamp remaining length before end addition; preserve representable pages, defaults/filter/envelope/SQL source; author direct parser/bounds/HTTP regressions with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3523,6 +3524,34 @@ formal SLO and evidence contract is unchanged.
 - **Plan/state:** `task-20261003-json-value-redaction.md` and matching
   `docs/tasks/task-state-20261003-json-value-redaction.json`.
 
+
+## R90-149 Definition
+
+- **Goal/status:** implementation in progress; prevent overflow in alert offset
+  multiplication and fallback end addition.
+- **Dependencies/window:** completed R90-148; existing public alerts List/Query
+  backends; Oct 3–Dec 31. R90-75 independent asynchronous acceptance.
+- **Source evidence:** parsePagination permits positive int pages whose computed
+  offsets overflow; fallback adds page size before clamping to total.
+- **Risk:** medium; arithmetic boundaries and consistent validation/backend behavior.
+- **Acceptance:** separate seven-path plan/state before source/docs/roadmap edits;
+  runtime pagination.go only; reject page-1 greater than maxInt/per_page after
+  existing diagnostics with explicit maximum-offset detail before storage access;
+  retain all representable pages/defaults/filters/envelope. Clamp fallback length
+  before end addition. Author direct parser int/offset/diagnostic boundaries,
+  near-MaxInt bounds and public HTTP rejection-before-store/acceptance for both
+  interfaces. Deliver exact feature plus one docs-only closure Git/Vault;
+  preserve all prior Definitions, R90-75, 14 stable topics and immutable history.
+- **Required validation:** pinned Go 1.26.8 api/alert compile-only complete chain;
+  Go parse-format/docs/JSON/full unique roadmap multisets/full contract/prior
+  Definitions/R90-75/ordered history/horizon/links/fences/seven-path/diff/sensitive
+  source review. All behavioral/race/CLI/full-suite/scanner/knowledge/acceptance
+  execution not run; delegated by user, with no runtime pass claim.
+- **Non-goals:** SQL/store/filter/router changes, arbitrary page cap, cursor
+  pagination/count overflow, test execution, dependency/toolchain/IPv6/publication.
+- **Stop condition:** unexpected competing changes, ambiguous validation or
+  Git/Vault mismatch; new product/private-data/external authority; stop after
+  this increment and its one closure, without another implementation.
 
 ### R90-71 Validation Deviation
 
@@ -8067,3 +8096,53 @@ core-code evidence and forward queue, then persists a separate eligible plan.
 No subsequent implementation starts here. Oct 3–Dec 31 remains current; IPv6/
 external publication remain separate authority. Do not repeat completed
 R90-147/R90-148 delivery or R90-59 publication.
+
+
+## R90-149 Selection and Pagination Arithmetic Repair (2026-10-03)
+
+Fresh fetched clean main HEAD/origin/main/FETCH_HEAD is
+`6ba400fb15d238846a0441be02b516cd7d775e9a`. R90-148 exact eight-path feature
+and three-path closure Git/Vault note/index/MOC are verified. The 377-file
+snapshot JSON SHA-256 is
+`b9a3b7888fffcf9b9249ec332a022b07f8056ee02ba9425c8c7befe57115bf3d`;
+14 stable full-content backups and 330 immutable hashes are captured. The
+77-commit Sep 5–Oct 3 phase audit finds no missing delivery or new qualifying
+R90-75 outcome. Oct 3–Dec 31 horizon and all completed history remain unchanged.
+
+Only R90-75 is unfinished, retaining its full independent asynchronous contract.
+The empty local ready queue is reconciled inside this bounded correctness repair:
+accepted extreme page values can overflow their multiplied offset; fallback end
+addition can also overflow before clamping. Seven-path plan/state persisted on
+`fix/r90-149-pagination-overflow` before runtime/docs/roadmap edits. Select ready
+R90-149 after completed dependencies; protect both public store interfaces at
+parser entry and clamp remaining length before addition. No SQL/filter/router
+source changes or arbitrary page cap. Direct tests are authored with execution
+delegated; compilation/static evidence is not a runtime/SQL correctness outcome.
+Existing skills are sufficient; no generic workflow repair is currently needed.
+No subsequent increment starts here.
+
+
+## R90-149 Implementation and Validation Checkpoint (2026-10-03)
+
+Runtime change is confined to pagination.go: the division guard follows all
+existing diagnostics; fallback clamps remaining length before end addition.
+All other tracked engine files match fetched baseline. Four authored regressions
+contain 17 parser boundary/compatibility cases, nine bound cases including
+MaxInt total, four HTTP reject-before-store cases and eight HTTP accepted/filter/
+exact-offset cases across both interfaces. No recovery masks a fallback panic.
+Final source was compiled with pinned Go 1.26.8 in the complete api/alert
+`go test -c` chain; binaries outside the repository were never invoked.
+Static source/direct-boundary/Go-format/docs/167 JSON/153 full unique roadmap/
+full contract/prior Definitions/R90-75/history/horizon/links/fences/seven-path/
+diff/sensitive review passes. Every execution suite remains user-delegated.
+
+First static preservation check detected one separator newline appended to the
+prior R90-148 Definition by insertion. A diagnostic assertion initially counted
+two newlines and failed without mutation; exact comparison then restored the
+single extra newline and the complete static/docs/diff chain reran successfully.
+No runtime edit was needed for this formatting deviation; no compile failure.
+Existing generic structural skill guidance is sufficient, so no skill change.
+377-file Vault baseline is unchanged. In addition to original topic tails,
+retain the previous current section's substantive R90-148 material under an
+explicit historical heading before replacing current status. Feature delivery
+and one three-path docs-only closure remain; no subsequent increment starts.

@@ -199,6 +199,15 @@ Planned modules:
 - `internal/api`: router, pagination request parsing, rule CRUD/reload, suppressions API, PSK auth for mutations, errors, health, audit middleware, and metrics.
 - `internal/stats`: counters and Prometheus text rendering for process, queue, rule, alert, worker, and capture heartbeat metrics.
 
+Alert pagination validates signed-int offset representability before either
+SQL Query or fallback List access. It compares `page - 1` with the platform
+maximum divided by `per_page` before multiplication. The fallback clamps the
+remaining length to `total - start` before adding it, including near the signed
+integer limit; representable pages past the total remain empty. Four R90-149
+direct regressions cover parser boundaries, index arithmetic and public HTTP
+rejection/acceptance with both store interfaces. They are authored and compiled
+only; execution remains delegated to the user's test department.
+
 ---
 
 ## 6. Backpressure and Shutdown
