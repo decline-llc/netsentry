@@ -228,7 +228,7 @@ formal SLO and evidence contract is unchanged.
 | R90-148 | Oct 3–Dec 31 | Complete implementation; tests delegated | Redact entire escaped JSON credential values. | R90-147; existing optional pre-write redactor | Recognize escape pairs in quoted password/token values; preserve formatting/header/pair/switch semantics; author direct scalar/batch and real Worker pre-write regressions with execution delegated. |
 | R90-149 | Oct 3–Dec 31 | Complete implementation; tests delegated | Check alert pagination offset and bound arithmetic. | R90-148; existing public alert pagination | Reject unrepresentable offsets before List/Query; clamp remaining length before end addition; preserve representable pages, defaults/filter/envelope/SQL source; author direct parser/bounds/HTTP regressions with execution delegated. |
 | R90-150 | Oct 3–Dec 31 | Complete implementation; tests delegated | Prevent daily-shard query end-index overflow. | R90-149; existing Store.Query shard merge | Clamp query limit to remaining slice length before end addition; preserve normalization/filter/sort/count/SQL/HTTP semantics; author helper and real primary/daily public Query regressions with execution delegated. |
-| R90-151 | Oct 3–Dec 31 | In progress; tests delegated | Align negative Query limits across store modes. | R90-150; existing primary uncapped negative limit | Negative daily limits return all collected filtered rows after offset; zero stays 1000/positive unchanged; preserve SQL/HTTP/bounds; author >1000 real primary/daily and empty-result regressions with execution delegated. |
+| R90-151 | Oct 3–Dec 31 | Complete implementation; tests delegated | Align negative Query limits across store modes. | R90-150; existing primary uncapped negative limit | Negative daily limits return all collected filtered rows after offset; zero stays 1000/positive unchanged; preserve SQL/HTTP/bounds; author >1000 real primary/daily and empty-result regressions with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3586,12 +3586,12 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-151 Definition
 
-- **Goal/status:** implementation in progress; align negative public Query limit
-  semantics so daily filtered results are not truncated to the default 1000.
+- **Goal/status:** implementation complete; daily negative limits return all
+  collected filtered rows after offset. Direct execution remains delegated.
 - **Dependencies/window:** completed R90-150; existing primary negative-limit
   behavior; Oct 3–Dec 31. R90-75 independent asynchronous acceptance.
-- **Source evidence:** primary negative limit uses filtered total; daily maps
-  nonpositive limits to 1000 despite already collecting all filtered rows.
+- **Source evidence:** at selection, daily nonpositive limits mapped to 1000
+  while primary negative was uncapped. Delivered negative uses len(all); zero 1000.
 - **Risk:** medium; over-1000 truncation and store-mode filtering/count/order parity.
 - **Acceptance:** persist six-path plan/state before source/docs/roadmap edits;
   daily negative limit uses len(all), zero remains 1000, positive/offset/bounds
@@ -8400,3 +8400,53 @@ and adds no repository detail. No skill edit merely narrates the outcome.
 381-file Vault baseline unchanged. Archive entire prior current prose before
 replacement; retain original topic tails and 334 immutable hashes. Exact feature
 and one three-path docs-only closure remain; no subsequent increment starts.
+
+
+## R90-151 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `e55c784f5dee3fe45b42b9e802608f5fc2a99760` contains exactly six planned paths. Isolated
+`fix/r90-151-shard-query-limit` fast-forwarded freshly verified main;
+push/fresh-fetch verified clean HEAD/origin/main/FETCH_HEAD at that SHA.
+Exact range `ae191f620abf6145c91a4722c0eed36d876fe311..e55c784f5dee3fe45b42b9e802608f5fc2a99760` six-path scope, iteration note
+`04-开发迭代记录/2026-10-03-e55c784f5d-CI知识同步.md`, full index and MOC are verified. Fourteen stable
+current sections reconciled; entire prior R90-150 current prose retained under
+explicit historical headings and original topic tails intact. All 334 baseline
+immutable hashes unchanged; identical replay preserves 382 Markdown files,
+snapshot JSON SHA-256 `b79bb3e1447875dc16a67792e394ac8969e848a00fefc526ddc67c858ed7c7d0`. Unique existing local sibling Vault
+selected explicitly.
+
+Acceptance matches plan: runtime changes only daily Query limit normalization.
+Negative uses len(all), zero remains default 1000, positive unchanged; offset
+normalization and safe bounds retain behavior. Existing collection already reads
+all filtered rows; this only changes returned slice length. All other tracked
+engine files and primary SQL/HTTP/filter/count/sort/lifecycle/recovery/writer
+source match baseline. Historical R90-150 negative-limit non-goal remains.
+Two authored direct functions use 1005 rows, 1003 high-severity rows across two
+dates/two actual daily files/encoded path. Thirteen public real Query cases per
+primary/daily mode cover negative -1/-2, filtered nonzero-offset >1000 returns,
+zero/positive/offset compatibility; 64 empty store/filter combinations cover
+limit/offset boundaries. Positive-limit baseline verifies fixed fixture order/
+severity/aggregation, then copies full Alert values before boundary queries.
+Expected indices/count/full content/health/Count/final logical rows are asserted,
+without fake Query/recover/skip or a too-small fixture masking the truncation.
+
+Final Go 1.26.8 alert/API complete compile-only chain and source/direct-boundary/
+Go-format/docs/169 JSON/155 full unique roadmap/full contracts/prior Definitions/
+R90-75/history/horizon/links/fences/six-path/diff/sensitive checks pass. No binary
+or behavioral/race/CLI/full-suite/scanner/knowledge/acceptance suite executed;
+all delegated by user. No runtime/SQL/performance/file-byte/race/SLO pass claim,
+implementation/validation/compile/delivery failure or Vault topic loss.
+Generic local skill refinement requires truncation fixtures exceeding boundary
+with count/content assertions; frontmatter/numbering/fences pass, separate from
+repository commit. Only planning deviation: empty ready queue repaired inside
+source-grounded compatibility increment. Oct 3–Dec 31 horizon/history unchanged.
+
+One three-path docs-only record closes this increment: resolve full SHA from
+Git, push/fresh-fetch and exact feature-tip..closure-tip Vault verification before
+reporting; no self-reference follow-up closure. No currently defined dependency-
+ready local item after queue refresh. R90-75 retains its full independent
+asynchronous departmental contract without blocking development. Next trigger
+verifies fetched closure/Vault, audits fresh core-code evidence/queue and persists
+separate eligible plan before edits. No subsequent implementation starts here.
+IPv6/external publication need separate authority; do not repeat R90-150/R90-151
+delivery or R90-59 publication.
