@@ -225,7 +225,7 @@ formal SLO and evidence contract is unchanged.
 | R90-145 | Oct 2–Dec 30 | Complete implementation; tests delegated | Add a packet-completion counter to the core processing pipeline. | R90-144; R90-116 lifecycle boundary | Count only successful terminal packet processing after optional observer success; retain existing processed/received counters, API fields and SLO exporter semantics; author direct failure/no-alert/suppression/success cases with execution delegated. |
 | R90-146 | Oct 2–Dec 30 | Complete implementation; tests delegated | Serialize suppression reload reads with management mutations. | R90-145; R90-79 suppression persistence | Hold existing manager lock across authoritative reload read, validation and publication; prevent stale reload overwriting successful Add/Update/Delete; preserve loader/API/file/filter contracts; direct regression execution delegated. |
 | R90-147 | Oct 2–Dec 30 | Complete implementation; tests delegated | Preserve concurrent hello and heartbeat updates. | R90-146; existing concurrent receiver control contract | Serialize compound state writes while retaining atomic reads, frame fields and last-setter/mixed-session semantics; author direct setter/receiver regressions with execution delegated. |
-| R90-148 | Oct 3–Dec 31 | In progress; tests delegated | Redact entire escaped JSON credential values. | R90-147; existing optional pre-write redactor | Recognize escape pairs in quoted password/token values; preserve formatting/header/pair/switch semantics; author direct scalar/batch and real Worker pre-write regressions with execution delegated. |
+| R90-148 | Oct 3–Dec 31 | Complete implementation; tests delegated | Redact entire escaped JSON credential values. | R90-147; existing optional pre-write redactor | Recognize escape pairs in quoted password/token values; preserve formatting/header/pair/switch semantics; author direct scalar/batch and real Worker pre-write regressions with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3493,12 +3493,14 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-148 Definition
 
-- **Goal/status:** implementation in progress; remove entire recognized JSON
-  credential strings despite escaped quotes/backslashes in their values.
+- **Goal/status:** implementation complete; recognized JSON credential values are
+  redacted through their unescaped closing quote. Direct regressions authored and
+  compiled; execution delegated.
 - **Dependencies/window:** completed R90-147; existing optional pipeline redaction;
   Oct 3–Dec 31. R90-75 independent asynchronous departmental acceptance.
-- **Source evidence:** sensitiveJSONRe treats escaped quotes as string terminators,
-  allowing the credential suffix to remain in persisted alert previews.
+- **Source evidence:** at selection sensitiveJSONRe treated escaped quotes as
+  terminators. Delivered value matching consumes escape pairs before recognizing
+  an unescaped terminator; original captures/replacement and all other source remain.
 - **Risk:** medium; privacy, quote parity, adjacent-field formatting and scope claims.
 - **Acceptance:** persist separate plan/state; change only JSON value matching to
   consume backslash/non-CRLF escape pairs and ordinary non-quote/non-backslash/non-
@@ -8008,3 +8010,60 @@ scalar/batch and real Worker pre-write regressions are authored, all execution
 suites remain user-delegated and unrun. No malformed/truncated/exhaustive sanitizer
 policy or subsequent implementation starts here. Existing skills need no edit at
 selection; static/compile evidence does not establish runtime leakage outcomes.
+
+
+## R90-148 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `d5addcb22226404e2d6a43c3e0df800fde3a646b` contains exactly eight planned paths. Isolated branch
+`fix/r90-148-json-value-redaction` was fast-forwarded to freshly verified main;
+push/fresh-fetch verified clean HEAD/origin/main/FETCH_HEAD at that SHA.
+Exact range `2fb0cfd10e24c9927df060b386f9a1fa536b6a0e..d5addcb22226404e2d6a43c3e0df800fde3a646b` has eight-path generated scope, iteration
+note `04-开发迭代记录/2026-10-03-d5addcb222-CI知识同步.md`, full index and MOC
+verified. Fourteen stable status sections are current for Oct 3; every original
+substantive topic tail is retained exactly, and all 328 baseline immutable
+iteration hashes are unchanged. Identical replay preserves the 376-file Markdown
+snapshot; snapshot JSON SHA-256 is `d362bbd1c5bf7a73e1e82382c5ade51c5b7d2c6939b4421797684a58e3c37ff9`. The unique existing
+local sibling Vault was selected explicitly.
+
+Acceptance matches the plan: only sensitiveJSONRe's string-value expression
+changes, consuming escape pairs until an unescaped closing quote. The same two
+captures/replacement preserve keys/whitespace/colon/quotes. Header/pair/batch,
+Worker/config/main/API/schema/store/receiver/rule/Stats/exporter source remains.
+Literal case-insensitive password/token keys, optional pre-write invocation and
+marker remain. Best-effort preview handling does not add key decoding, a full
+JSON sanitizer or malformed/truncated-value fail-closed policy.
+
+Five direct regression functions contain 32 generated key/value combinations,
+nine raw lexical/parity/format/nested/repeated/fragment cases, exact output/JSON/
+idempotence/canaries, batch nil/empty/order/metadata, header/pair/non-goal fixtures,
+and three public Worker.Run cases using the real redactor. Writer copies complete
+Alert values at entry before returning success/error; enabled paths are redacted
+and disabled path remains original, with packet/metadata/counters preserved.
+Pinned Go 1.26.8 complete alert/pipeline/API compile-only chain and final static
+source/direct-boundary/Go-format/docs/166 JSON/152 full unique roadmap/full forward
+contract/all prior Definitions/R90-75/history/horizon/links/fences/eight-path/
+diff/sensitive checks pass. No binary or behavioral/race/CLI/full-suite/scanner/
+knowledge/acceptance suite was executed; all remain user-delegated, without a
+runtime leakage, race or SLO outcome claim.
+
+The first static Definition comparison falsely included an adjacent historical
+level-three subsection. Checker boundaries were corrected; complete static/docs/
+diff rerun proved prior Definition bodies unchanged. This recorded validation-
+tool deviation required no runtime source edit; there was no implementation or
+compile failure. Generic local skill structural review now verifies boundaries
+exclude neighboring historical subsections before claiming section changes;
+Markdown frontmatter/numbering/fences pass and skill edit is separate from Git.
+The other planning adjustments are source-grounded empty-queue repair inside
+this increment and active 90-day horizon advancing to Oct 3–Dec 31; completed
+history remains. No delivery failure or Vault topic loss occurred.
+
+One three-path docs-only record closes this same increment. Resolve its full SHA
+from Git, push/fresh-fetch and verify exact feature-tip..closure-tip Vault before
+reporting; no extra self-reference closure. Queue refresh: R90-148 implementation
+is complete and no further dependency-ready local item is currently defined.
+R90-75 retains its full independent asynchronous departmental contract and does
+not block development. Next trigger verifies fetched closure/Vault, audits fresh
+core-code evidence and forward queue, then persists a separate eligible plan.
+No subsequent implementation starts here. Oct 3–Dec 31 remains current; IPv6/
+external publication remain separate authority. Do not repeat completed
+R90-147/R90-148 delivery or R90-59 publication.

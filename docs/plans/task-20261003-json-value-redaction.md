@@ -131,3 +131,60 @@ Oct 3–Dec 31 horizon, links/fences, eight-path scope, diff and sensitive revie
 pass. The full 375-file Vault baseline is unchanged. Full stable-content backups
 support topical preservation and 328 immutable hashes remain captured. Feature
 plus one docs-only closure delivery remain; no subsequent increment starts here.
+
+
+## Delivery and queue closeout
+
+Feature `d5addcb22226404e2d6a43c3e0df800fde3a646b` contains exactly eight planned paths. Isolated branch
+`fix/r90-148-json-value-redaction` was fast-forwarded to freshly verified main;
+push/fresh-fetch verified clean HEAD/origin/main/FETCH_HEAD at that SHA.
+Exact range `2fb0cfd10e24c9927df060b386f9a1fa536b6a0e..d5addcb22226404e2d6a43c3e0df800fde3a646b` has eight-path generated scope, iteration
+note `04-开发迭代记录/2026-10-03-d5addcb222-CI知识同步.md`, full index and MOC
+verified. Fourteen stable status sections are current for Oct 3; every original
+substantive topic tail is retained exactly, and all 328 baseline immutable
+iteration hashes are unchanged. Identical replay preserves the 376-file Markdown
+snapshot; snapshot JSON SHA-256 is `d362bbd1c5bf7a73e1e82382c5ade51c5b7d2c6939b4421797684a58e3c37ff9`. The unique existing
+local sibling Vault was selected explicitly.
+
+Acceptance matches the plan: only sensitiveJSONRe's string-value expression
+changes, consuming escape pairs until an unescaped closing quote. The same two
+captures/replacement preserve keys/whitespace/colon/quotes. Header/pair/batch,
+Worker/config/main/API/schema/store/receiver/rule/Stats/exporter source remains.
+Literal case-insensitive password/token keys, optional pre-write invocation and
+marker remain. Best-effort preview handling does not add key decoding, a full
+JSON sanitizer or malformed/truncated-value fail-closed policy.
+
+Five direct regression functions contain 32 generated key/value combinations,
+nine raw lexical/parity/format/nested/repeated/fragment cases, exact output/JSON/
+idempotence/canaries, batch nil/empty/order/metadata, header/pair/non-goal fixtures,
+and three public Worker.Run cases using the real redactor. Writer copies complete
+Alert values at entry before returning success/error; enabled paths are redacted
+and disabled path remains original, with packet/metadata/counters preserved.
+Pinned Go 1.26.8 complete alert/pipeline/API compile-only chain and final static
+source/direct-boundary/Go-format/docs/166 JSON/152 full unique roadmap/full forward
+contract/all prior Definitions/R90-75/history/horizon/links/fences/eight-path/
+diff/sensitive checks pass. No binary or behavioral/race/CLI/full-suite/scanner/
+knowledge/acceptance suite was executed; all remain user-delegated, without a
+runtime leakage, race or SLO outcome claim.
+
+The first static Definition comparison falsely included an adjacent historical
+level-three subsection. Checker boundaries were corrected; complete static/docs/
+diff rerun proved prior Definition bodies unchanged. This recorded validation-
+tool deviation required no runtime source edit; there was no implementation or
+compile failure. Generic local skill structural review now verifies boundaries
+exclude neighboring historical subsections before claiming section changes;
+Markdown frontmatter/numbering/fences pass and skill edit is separate from Git.
+The other planning adjustments are source-grounded empty-queue repair inside
+this increment and active 90-day horizon advancing to Oct 3–Dec 31; completed
+history remains. No delivery failure or Vault topic loss occurred.
+
+One three-path docs-only record closes this same increment. Resolve its full SHA
+from Git, push/fresh-fetch and verify exact feature-tip..closure-tip Vault before
+reporting; no extra self-reference closure. Queue refresh: R90-148 implementation
+is complete and no further dependency-ready local item is currently defined.
+R90-75 retains its full independent asynchronous departmental contract and does
+not block development. Next trigger verifies fetched closure/Vault, audits fresh
+core-code evidence and forward queue, then persists a separate eligible plan.
+No subsequent implementation starts here. Oct 3–Dec 31 remains current; IPv6/
+external publication remain separate authority. Do not repeat completed
+R90-147/R90-148 delivery or R90-59 publication.
