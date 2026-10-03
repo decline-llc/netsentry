@@ -226,7 +226,7 @@ formal SLO and evidence contract is unchanged.
 | R90-146 | Oct 2–Dec 30 | Complete implementation; tests delegated | Serialize suppression reload reads with management mutations. | R90-145; R90-79 suppression persistence | Hold existing manager lock across authoritative reload read, validation and publication; prevent stale reload overwriting successful Add/Update/Delete; preserve loader/API/file/filter contracts; direct regression execution delegated. |
 | R90-147 | Oct 2–Dec 30 | Complete implementation; tests delegated | Preserve concurrent hello and heartbeat updates. | R90-146; existing concurrent receiver control contract | Serialize compound state writes while retaining atomic reads, frame fields and last-setter/mixed-session semantics; author direct setter/receiver regressions with execution delegated. |
 | R90-148 | Oct 3–Dec 31 | Complete implementation; tests delegated | Redact entire escaped JSON credential values. | R90-147; existing optional pre-write redactor | Recognize escape pairs in quoted password/token values; preserve formatting/header/pair/switch semantics; author direct scalar/batch and real Worker pre-write regressions with execution delegated. |
-| R90-149 | Oct 3–Dec 31 | In progress; tests delegated | Check alert pagination offset and bound arithmetic. | R90-148; existing public alert pagination | Reject unrepresentable offsets before List/Query; clamp remaining length before end addition; preserve representable pages, defaults/filter/envelope/SQL source; author direct parser/bounds/HTTP regressions with execution delegated. |
+| R90-149 | Oct 3–Dec 31 | Complete implementation; tests delegated | Check alert pagination offset and bound arithmetic. | R90-148; existing public alert pagination | Reject unrepresentable offsets before List/Query; clamp remaining length before end addition; preserve representable pages, defaults/filter/envelope/SQL source; author direct parser/bounds/HTTP regressions with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3527,12 +3527,12 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-149 Definition
 
-- **Goal/status:** implementation in progress; prevent overflow in alert offset
-  multiplication and fallback end addition.
+- **Goal/status:** implementation complete; parser rejects unrepresentable offsets
+  and fallback clamps remaining length before addition. Direct execution delegated.
 - **Dependencies/window:** completed R90-148; existing public alerts List/Query
   backends; Oct 3–Dec 31. R90-75 independent asynchronous acceptance.
-- **Source evidence:** parsePagination permits positive int pages whose computed
-  offsets overflow; fallback adds page size before clamping to total.
+- **Source evidence:** at selection, positive int pages could overflow offsets and
+  fallback end addition could overflow. Delivered guard/clamping repairs both.
 - **Risk:** medium; arithmetic boundaries and consistent validation/backend behavior.
 - **Acceptance:** separate seven-path plan/state before source/docs/roadmap edits;
   runtime pagination.go only; reject page-1 greater than maxInt/per_page after
@@ -8146,3 +8146,53 @@ Existing generic structural skill guidance is sufficient, so no skill change.
 retain the previous current section's substantive R90-148 material under an
 explicit historical heading before replacing current status. Feature delivery
 and one three-path docs-only closure remain; no subsequent increment starts.
+
+
+## R90-149 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `3e792e53739b8ca9d1f4bfdcd1ce39f7e480ea08` contains exactly seven planned paths. Isolated
+`fix/r90-149-pagination-overflow` fast-forwarded freshly verified main; push and
+fresh fetch verified clean HEAD/origin/main/FETCH_HEAD at that SHA. Exact
+range `6ba400fb15d238846a0441be02b516cd7d775e9a..3e792e53739b8ca9d1f4bfdcd1ce39f7e480ea08` generated seven-path scope, iteration note
+`04-开发迭代记录/2026-10-03-3e792e5373-CI知识同步.md`, full index and MOC are verified.
+Fourteen stable current sections are reconciled; their entire previous R90-148
+current prose is retained under explicit historical headings and original topic
+tails are intact. All 330 baseline immutable iteration hashes are unchanged.
+Identical feature replay preserves the 378-file Markdown snapshot; snapshot JSON
+SHA-256 `2040667cb24d12c0df290e2cd3c8d532db45f710dd93ebce04040aff375dc8fb`. Unique existing local sibling Vault selected explicitly.
+
+Acceptance matches the plan: offset representability is checked by division
+after all existing pagination diagnostics, before either store path can multiply;
+fallback clamps remaining length before end addition. Representable extreme
+pages, defaults/filter/error/list envelopes remain. Runtime pagination.go only;
+all other tracked engine source/metadata, including router/filter/SQL/store,
+match the original fetched baseline. No arbitrary page cap or SQL change.
+Four direct functions cover 17 parser/diagnostic cases, nine bounds including
+MaxInt total, four public HTTP reject-before-store cases and eight public HTTP
+accepted/filter/exact-offset cases across both store interfaces. They check the
+actual public Handler, zero invalid-request List/Query/Count calls, preserved
+empty/envelope/alert results and exact query offset/limit/severity. No recovery
+masks slicing failure. No real DB/runtime result is claimed.
+
+Final Go 1.26.8 api/alert complete compile-only chain and source/direct-boundary/
+Go-format/docs/167 JSON/153 full unique roadmap/full contract/prior Definitions/
+R90-75/history/horizon/links/fences/seven-path/diff/sensitive checks pass. No test
+binary or behavioral/race/CLI/full-suite/scanner/knowledge/acceptance suite was
+executed; all remain delegated by user. The first static preservation check
+found one extra insertion separator newline in the prior Definition. An initial
+diagnostic assertion overcounted separators and made no mutation; exact single
+newline restoration and complete static/docs/diff rerun passed. Formatting-only
+deviation is recorded, with no compile failure/runtime edit. Existing skill
+structural guidance suffices; no skill edit. No Vault topic loss or delivery
+failure occurred. Empty local queue repair is inside this source-grounded
+increment; Oct 3–Dec 31 horizon and completed history remain unchanged.
+
+One three-path docs-only record closes this same increment: resolve full SHA
+from Git, push/fresh-fetch and exact feature-tip..closure-tip Vault verification
+before reporting, without another self-reference closure. Queue refresh has no
+currently defined dependency-ready local item. R90-75 retains its full independent
+asynchronous departmental contract and does not block development. Next trigger
+verifies fetched closure/Vault, audits fresh core-code evidence and queue, then
+persists a separate eligible plan before editing. No subsequent implementation
+starts here. IPv6/external publication require independent authority; do not
+repeat completed R90-148/R90-149 delivery or R90-59 publication.

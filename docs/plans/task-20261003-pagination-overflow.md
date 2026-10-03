@@ -99,3 +99,53 @@ Existing generic structural skill guidance is sufficient, so no skill change.
 retain the previous current section's substantive R90-148 material under an
 explicit historical heading before replacing current status. Feature delivery
 and one three-path docs-only closure remain; no subsequent increment starts.
+
+
+## Delivery and queue closeout
+
+Feature `3e792e53739b8ca9d1f4bfdcd1ce39f7e480ea08` contains exactly seven planned paths. Isolated
+`fix/r90-149-pagination-overflow` fast-forwarded freshly verified main; push and
+fresh fetch verified clean HEAD/origin/main/FETCH_HEAD at that SHA. Exact
+range `6ba400fb15d238846a0441be02b516cd7d775e9a..3e792e53739b8ca9d1f4bfdcd1ce39f7e480ea08` generated seven-path scope, iteration note
+`04-开发迭代记录/2026-10-03-3e792e5373-CI知识同步.md`, full index and MOC are verified.
+Fourteen stable current sections are reconciled; their entire previous R90-148
+current prose is retained under explicit historical headings and original topic
+tails are intact. All 330 baseline immutable iteration hashes are unchanged.
+Identical feature replay preserves the 378-file Markdown snapshot; snapshot JSON
+SHA-256 `2040667cb24d12c0df290e2cd3c8d532db45f710dd93ebce04040aff375dc8fb`. Unique existing local sibling Vault selected explicitly.
+
+Acceptance matches the plan: offset representability is checked by division
+after all existing pagination diagnostics, before either store path can multiply;
+fallback clamps remaining length before end addition. Representable extreme
+pages, defaults/filter/error/list envelopes remain. Runtime pagination.go only;
+all other tracked engine source/metadata, including router/filter/SQL/store,
+match the original fetched baseline. No arbitrary page cap or SQL change.
+Four direct functions cover 17 parser/diagnostic cases, nine bounds including
+MaxInt total, four public HTTP reject-before-store cases and eight public HTTP
+accepted/filter/exact-offset cases across both store interfaces. They check the
+actual public Handler, zero invalid-request List/Query/Count calls, preserved
+empty/envelope/alert results and exact query offset/limit/severity. No recovery
+masks slicing failure. No real DB/runtime result is claimed.
+
+Final Go 1.26.8 api/alert complete compile-only chain and source/direct-boundary/
+Go-format/docs/167 JSON/153 full unique roadmap/full contract/prior Definitions/
+R90-75/history/horizon/links/fences/seven-path/diff/sensitive checks pass. No test
+binary or behavioral/race/CLI/full-suite/scanner/knowledge/acceptance suite was
+executed; all remain delegated by user. The first static preservation check
+found one extra insertion separator newline in the prior Definition. An initial
+diagnostic assertion overcounted separators and made no mutation; exact single
+newline restoration and complete static/docs/diff rerun passed. Formatting-only
+deviation is recorded, with no compile failure/runtime edit. Existing skill
+structural guidance suffices; no skill edit. No Vault topic loss or delivery
+failure occurred. Empty local queue repair is inside this source-grounded
+increment; Oct 3–Dec 31 horizon and completed history remain unchanged.
+
+One three-path docs-only record closes this same increment: resolve full SHA
+from Git, push/fresh-fetch and exact feature-tip..closure-tip Vault verification
+before reporting, without another self-reference closure. Queue refresh has no
+currently defined dependency-ready local item. R90-75 retains its full independent
+asynchronous departmental contract and does not block development. Next trigger
+verifies fetched closure/Vault, audits fresh core-code evidence and queue, then
+persists a separate eligible plan before editing. No subsequent implementation
+starts here. IPv6/external publication require independent authority; do not
+repeat completed R90-148/R90-149 delivery or R90-59 publication.
