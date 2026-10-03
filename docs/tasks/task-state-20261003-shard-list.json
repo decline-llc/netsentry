@@ -1,0 +1,48 @@
+{
+  "task": "r90-152-shard-list",
+  "timestamp": "2026-10-03",
+  "branch": "fix/r90-152-shard-list",
+  "starting_remote_baseline": "4cde70cf49df6ea2f2b7e250f311603dbff86819",
+  "remote_baseline": "4cde70cf49df6ea2f2b7e250f311603dbff86819",
+  "risk_level": "Medium",
+  "current_checkpoint": "implementation_statically_verified_delivery_pending",
+  "completed": [
+    "Fresh fetched clean main and R90-151 exact feature/closure Git/Vault verified",
+    "83-commit phase audited; empty ready queue reconciled within core repair; R90-75 independent",
+    "Vault hash and full stable prose backups captured",
+    "Pinned owning engine module Go 1.26.8 preflighted",
+    "Exactly four-line daily List dispatch; all other tracked engine and primary SQL contracts unchanged",
+    "Four direct real-store regression functions authored for global cap/order/history/errors/lifecycle; no execution",
+    "Pinned Go 1.26.8 final alert/API complete compile-only chain passed; binaries not executed",
+    "Final static/docs/170 JSON/156 unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive review passed"
+  ],
+  "in_progress": [
+    "Feature delivery and one docs-only closure"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "pass:Go 1.26.8 complete alert/API go test -c chain; binaries unexecuted",
+    "static_review": "pass:exact source transform and other engine preservation;four direct boundaries;Go-format/docs/170 JSON/156 unique complete roadmap/prior Definitions/R90-75/history/horizon/links/fences/six-path/diff/sensitive"
+  },
+  "authority_boundaries": [
+    "Six intended paths; runtime daily List dispatch only",
+    "Primary SQL and Query/Count/API/lifecycle/writer/recovery unchanged",
+    "Execution suites delegated; no publication"
+  ],
+  "remaining_risks": [
+    "Historical shard failures become visible to daily List",
+    "Existing merged query scans all rows; no performance or runtime pass claim",
+    "Four real-store regression functions authored but unexecuted; no runtime/SQL/file-preservation pass"
+  ],
+  "deviations": [
+    "Empty ready queue repaired inside source-grounded core List mode compatibility increment",
+    "One added prior Definition separator newline detected, restored; complete static/docs/diff chain rerun passed"
+  ],
+  "resume_instructions": "Complete only R90-152 using persisted plan; do not start following implementation; all execution delegated."
+}

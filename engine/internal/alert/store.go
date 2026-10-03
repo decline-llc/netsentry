@@ -2419,6 +2419,10 @@ func (s *Store) List(ctx context.Context) ([]*model.Alert, error) {
 		return nil, err
 	}
 	defer release()
+	if s.dailyShard {
+		alerts, _, err := s.queryDailyShards(ctx, Query{Limit: 1000})
+		return alerts, err
+	}
 	rows, err := s.db.QueryContext(ctx, `
 SELECT id, event_id, rule_id, rule_name, severity, protocol, src_ip, dst_ip, dst_port,
        mitre_tactic, mitre_technique_id, mitre_technique_name,

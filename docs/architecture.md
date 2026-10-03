@@ -347,6 +347,16 @@ Current build:
   lifecycle are unchanged. Authored primary/daily SQLite regressions use 1005
   rows (1003 high-severity) across two dates to expose the old truncation;
   they are compiled only, with execution delegated.
+- R90-152 makes `Store.List` include historical daily shards using the same
+  merged read-only reader as `Query`, under the existing lifecycle ownership.
+  It returns the newest 1000 rows ordered by last activity, then ID, across
+  the shard set; primary-mode List SQL keeps its existing behavior. An empty
+  current shard can still return historical alerts. Historical read failures
+  return an error and update storage health through the existing query path.
+  Daily List now scans/collects the full set before applying its cap, as Query
+  does; no performance or snapshot-isolation guarantee is added. Authored
+  real-store ordering/cap/history/error/lifecycle regressions are compiled only,
+  with execution delegated to the user's test department.
 - Rule, severity, source, and destination query filters explicitly use SQLite
   binary comparison, preserving case-sensitive exact-match behavior even when
   a compatible operator schema declares a different column collation. Protocol

@@ -229,6 +229,7 @@ formal SLO and evidence contract is unchanged.
 | R90-149 | Oct 3–Dec 31 | Complete implementation; tests delegated | Check alert pagination offset and bound arithmetic. | R90-148; existing public alert pagination | Reject unrepresentable offsets before List/Query; clamp remaining length before end addition; preserve representable pages, defaults/filter/envelope/SQL source; author direct parser/bounds/HTTP regressions with execution delegated. |
 | R90-150 | Oct 3–Dec 31 | Complete implementation; tests delegated | Prevent daily-shard query end-index overflow. | R90-149; existing Store.Query shard merge | Clamp query limit to remaining slice length before end addition; preserve normalization/filter/sort/count/SQL/HTTP semantics; author helper and real primary/daily public Query regressions with execution delegated. |
 | R90-151 | Oct 3–Dec 31 | Complete implementation; tests delegated | Align negative Query limits across store modes. | R90-150; existing primary uncapped negative limit | Negative daily limits return all collected filtered rows after offset; zero stays 1000/positive unchanged; preserve SQL/HTTP/bounds; author >1000 real primary/daily and empty-result regressions with execution delegated. |
+| R90-152 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Include historical daily shards in Store.List. | R90-151; existing cross-shard Query reader | Daily List returns globally ordered newest 1000 rows including historical shards; retain primary SQL/lifecycle and reuse query error/health handling; direct regression execution delegated. |
 
 ## R90-01 Definition
 
@@ -3612,6 +3613,30 @@ formal SLO and evidence contract is unchanged.
 - **Stop condition:** competing changes, ambiguous validation/Git/Vault or new
   product/private-input/external authority; stop after this increment and one
   docs-only closure, no subsequent implementation.
+
+## R90-152 Definition
+
+- **Goal/status:** implemented; delivery pending; make public daily Store.List include
+  historical alerts consistently with the existing Query/Count store mode.
+- **Dependencies/window:** completed R90-151 and existing cross-shard query
+  reader; Oct 3–Dec 31 forecasts, no calendar eligibility gate.
+- **Risk:** medium; historical read failures become visible; existing merged
+  reader collects all rows before cap, without a performance guarantee.
+- **Acceptance:** daily-only dispatch under existing lifecycle ownership to
+  queryDailyShards with explicit 1000 limit; primary SQL and other engine source
+  unchanged; real >1000 two-shard cap/order/complete-value, historical-only,
+  empty/pre-canceled/closed and corrupt-history preservation regressions authored.
+- **Required validation:** Go 1.26.8 alert/API compile-only chain and source,
+  Go-format/docs/JSON/roadmap multiset/prior Definitions/R90-75/history/horizon/
+  scope/links/fences/diff/sensitive review; exact push/fetch/Vault evidence.
+  All execution suites **not run; delegated by user**.
+- **Non-goals:** primary SQL, Query/Count/API/lifecycle/writer/recovery/retention,
+  schema/toolchain/dependency, execution suites, IPv6/publication or new guarantees.
+- **Stop condition:** competing edits, ambiguous static/compile/Git/Vault, new
+  product/private-input/external authority, or starting another increment.
+- **Selected plan:** [task-20261003-shard-list.md](task-20261003-shard-list.md).
+
+
 
 ### R90-71 Validation Deviation
 
@@ -8450,3 +8475,52 @@ verifies fetched closure/Vault, audits fresh core-code evidence/queue and persis
 separate eligible plan before edits. No subsequent implementation starts here.
 IPv6/external publication need separate authority; do not repeat R90-150/R90-151
 delivery or R90-59 publication.
+
+
+## R90-152 Selection and Daily List Shard Repair (2026-10-03)
+
+Fresh fetched clean main HEAD/origin/main/FETCH_HEAD is
+`4cde70cf49df6ea2f2b7e250f311603dbff86819`. R90-151 exact six-path feature and
+three-path closure Git/Vault scope/note/index/MOC verified. Sep 5–Oct 3 phase
+review covers 83 commits: supplied SLO evidence tools then core correctness
+repairs, without a new departmental acceptance outcome. R90-75 full independent
+asynchronous contract and Oct 3–Dec 31 horizon unchanged. Captured 383-file Vault
+hash baseline and complete contents of 14 current stable notes before edits.
+
+Empty ready queue reconciled inside source-grounded R90-152: List currently
+reads only s.db while Query/Count include historical daily files. Six-path plan/
+state persisted on fix/r90-152-shard-list before source/architecture/roadmap edits.
+Daily-only List dispatch uses the private query reader with limit 1000 under
+existing lifecycle ownership; no recursive public Query lock acquisition.
+Primary SQL and all surrounding contracts preserved. Execution suites delegated;
+static/compile evidence cannot establish runtime/SQL/performance/SLO success.
+Existing skills suffice; no generic edit solely to narrate this delivery.
+
+
+## R90-152 Implementation and Validation Checkpoint (2026-10-03)
+
+Runtime adds exactly four lines in List after shared lifecycle acquisition:
+daily-only private queryDailyShards call with explicit limit 1000, return its
+alerts/error. Primary List SQL and all other tracked engine files plus Query/
+Count/filter/sort/read-only/lifecycle/writer/recovery/API source match baseline.
+Four direct regression functions are authored: real 1005-row primary/daily
+fixtures across two dates/two actual files/encoded directory, reversed insertion
+and paired equal timestamps exercise ordering/ID tie break; repeated List checks
+exactly 1000 full copied Alert values including historical rows, healthy state,
+Count and all logical rows. Current-empty historical-only case confirms empty
+primary does not imply empty daily List. Empty/pre-canceled/closed cases cover
+both modes; corrupt historical List asserts shard error/degraded diagnostic and
+unchanged corrupt bytes. No fake List/recover/skip hides the promised boundary.
+
+Pinned Go 1.26.8 alert/API complete compile-only chain passed; external binaries
+not invoked. Exact source/direct-boundary/Go-format/docs/170 JSON/156 full unique
+roadmap pairs/all prior Definitions/R90-75/history/horizon/links/fences/six-path/
+diff/sensitive review passes. Behavioral/race/CLI/full-suite/scanner/knowledge/
+traffic/acceptance execution **not run; delegated by user**. No runtime/SQL/
+performance/race/physical-preservation/SLO success is inferred from compilation.
+
+First static comparison found one added separator newline at previous Definition
+boundary; restored it and reran complete static/docs/diff chain successfully.
+No source/compile failure or scope change. Existing skill instructions suffice;
+no generic skill update. Feature and one docs-only delivery closure remain;
+no subsequent increment is started.
