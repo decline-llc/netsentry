@@ -2657,6 +2657,9 @@ func (s *Store) alertShardPaths(ctx context.Context, query Query) ([]string, err
 		if match == nil || !shardDateMatchesQuery(match[1], query) {
 			continue
 		}
+		if _, err := time.Parse("2006-01-02", match[1]); err != nil {
+			continue
+		}
 		addPath(filepath.Join(s.dir, entry.Name()))
 	}
 	addPath(s.path)

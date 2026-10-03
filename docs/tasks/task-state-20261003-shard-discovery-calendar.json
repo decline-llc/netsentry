@@ -1,0 +1,53 @@
+{
+  "task": "r90-159-shard-discovery-calendar",
+  "timestamp": "2026-10-03",
+  "branch": "fix/r90-159-shard-discovery-calendar",
+  "remote_baseline": "7c4fb4757684bcdb517c791eec95afc2cc3df732",
+  "starting_remote_baseline": "7c4fb4757684bcdb517c791eec95afc2cc3df732",
+  "risk_level": "Low",
+  "current_checkpoint": "implementation_static_compile_complete_delivery_pending",
+  "completed": [
+    "Fresh fetched clean main; R90-158 exact Git/Vault scopes/note/index/MOC/identifier resolution verified",
+    "97-commit phase audit; R90-75 sole unfinished full independent departmental contract/horizon unchanged",
+    "397 Markdown hashes/14 complete stable note backups; no AGENTS",
+    "Pinned owning engine Go 1.26.8 preflighted",
+    "Exact three-line discovery parse/error-skip diff; all other tracked engine including cleanup byte-identical",
+    "Two public actual-store functions authored: empty/populated current/leap/ordinary fixed full-row baselines, seven invalid-calendar base/WAL/SHM preservation, repeated/paged/range/count/health/canceled, three valid-date corruption controls",
+    "Pinned Go 1.26.8 alert/API/pipeline complete compile-only chain passed; binaries/benchmarks unexecuted",
+    "Static source/direct boundaries/Go-format/docs/177 JSON/163 complete unique roadmap pairs/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive passed",
+    "Temporary static preservation call count corrected and post-close ordering strengthened; full static/docs/diff rerun passed",
+    "397 baseline Vault hashes unchanged; existing skills suffice"
+  ],
+  "in_progress": [
+    "Feature delivery and one docs-only closure"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "pass: pinned Go 1.26.8 alert/API/pipeline complete go test -c chain; binaries/benchmarks unexecuted",
+    "static_review": "pass: exact source/all other tracked engine preservation/direct boundaries/Go-format/docs/177 JSON/163 complete unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive; full rerun after temporary call-count correction"
+  },
+  "authority_boundaries": [
+    "Only time.Parse/error-skip in discovery; valid filenames/current owned path/error semantics retained",
+    "No cleanup/deletion/retention/SQL/recovery/API/metrics/dependency/publication changes",
+    "All suite execution delegated by user"
+  ],
+  "remaining_risks": [
+    "Invalid-calendar files are ignored and retained for separate operator inspection",
+    "Authored filesystem/SQLite regressions unexecuted; no runtime/SLO pass"
+  ],
+  "deviations": [
+    "Empty local queue restored inside source-grounded shard recognition guard",
+    "Temporary static check expected four preservation call sites instead of three; corrected/added post-close ordering and full static/docs/diff rerun passed"
+  ],
+  "resume_instructions": "Complete only R90-159 public read preservation/control regressions/static/compile, feature exact push/fetch/Vault, single docs-only closure exact push/fetch/Vault; refresh queue and stop. No suites.",
+  "todo": [
+    "Focused feature push/fetch/exact Vault",
+    "One docs-only closure push/fetch/exact Vault; refresh queue"
+  ]
+}

@@ -346,6 +346,15 @@ Current build:
   inconsistent SHM under an encoded historical path; rejection preserves the
   database and both sidecars.
 - Cross-shard alert querying and alert counting in daily-shard mode; time range filters narrow the shard files scanned before applying the regular SQL filters and API pagination across the merged result.
+- R90-159 requires a valid calendar date before discovering daily shard files.
+  Impossible-calendar filenames and their sidecars remain untouched and are
+  ignored by `Store.List`, `Query` and `Count`; unrelated bytes under those names
+  cannot become SQLite shard read failures. The current owned path remains
+  explicitly included. Valid leap-day and ordinary historical files retain
+  existing read, filter, order and pagination behavior; corrupt files with valid
+  shard dates still return errors and degrade health. Public full-row/count/
+  health/preservation/cancellation/control regressions are authored and compiled
+  only; test execution is delegated, with no SQLite or filesystem pass inferred.
 - Daily-shard query slicing clamps positive normalized limits to
   `length - offset` before computing the end index. Programmatic `Store.Query`
   can request a large representable limit with a nonzero offset even when
@@ -427,8 +436,9 @@ Current build:
   same deletion behavior; the cutoff date itself remains. Public startup/direct
   file-preservation and exact deletion-count regressions, plus disabled-retention
   and canceled-context cases, are authored and compiled only. Test execution is
-  delegated; this is no observed filesystem or SQLite pass. Discovery and query
-  behavior are unchanged; retained unrelated files may still cause read errors.
+  delegated; this is no observed filesystem or SQLite pass. At R90-158 delivery,
+  discovery was unchanged; R90-159 now excludes impossible-calendar names from
+  read discovery as documented above.
 - Before journal or schema initialization, an existing non-empty primary
   database must pass read-only SQLite `quick_check` plus required `alerts` and
   `alert_events` table/column definitions and the binary-collated aggregation
