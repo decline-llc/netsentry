@@ -223,6 +223,7 @@ formal SLO and evidence contract is unchanged.
 | R90-143 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind pair condition receipt reads to reconciled inventory. | R90-142; R90-119/R90-121/R90-123/R90-127 pair modes; R90-137/R90-141 precedents | Four fixed receipt reads validate complete matched inventory and bounded regular non-following/nonblocking handles; exact EOF metadata/hash and close before unchanged parser/projection; preserve all modes/error/partial contracts; tests delegated. |
 | R90-144 | Oct 2–Dec 30 | Complete implementation; tests delegated | Isolate core rule reload snapshots from caller-owned inputs. | R90-143; existing rule engine and serialized API transactions | Deep-copy Rule/Config/MITRE before validation/sort/compile; publish one owned state; preserve diagnostics, failed-reload state and schemas; author direct regression cases with execution delegated. |
 | R90-145 | Oct 2–Dec 30 | Complete implementation; tests delegated | Add a packet-completion counter to the core processing pipeline. | R90-144; R90-116 lifecycle boundary | Count only successful terminal packet processing after optional observer success; retain existing processed/received counters, API fields and SLO exporter semantics; author direct failure/no-alert/suppression/success cases with execution delegated. |
+| R90-146 | Oct 2–Dec 30 | In progress; tests delegated | Serialize suppression reload reads with management mutations. | R90-145; R90-79 suppression persistence | Hold existing manager lock across authoritative reload read, validation and publication; prevent stale reload overwriting successful Add/Update/Delete; preserve loader/API/file/filter contracts; direct regression execution delegated. |
 
 ## R90-01 Definition
 
@@ -3419,6 +3420,39 @@ formal SLO and evidence contract is unchanged.
   metric compatibility, required migration or new product/external authority.
 - **Plan/state:** `task-20261002-packet-completion-counter.md` and matching
   `docs/tasks/task-state-20261002-packet-completion-counter.json`.
+
+
+## R90-146 Definition
+
+- **Goal/status:** implementation in progress; repair suppression reload's stale
+  read-to-publication interleaving within one manager.
+- **Dependencies/window:** completed R90-145 and R90-79 suppression persistence;
+  Oct 2–Dec 30. R90-75 stays independent asynchronous departmental acceptance.
+- **Source evidence:** ReloadFromFile currently reads canonical rules before the
+  manager lock, so a successful mutation can be overwritten by stale publication.
+- **Risk:** medium; correctness and longer manager lock duration during reload I/O.
+- **Acceptance:** persist separate plan/state; keep nil/unconfigured guards,
+  take existing exclusive lock before authoritative load, hold through unchanged
+  validation/compilation/publication. Default a private instance-local loader to
+  unchanged LoadSuppressionsFromFile for deterministic read-boundary regression.
+  Preserve old state and release lock on read/parse/set/compile errors; missing
+  file still clears without writes. Keep public schemas/errors/persistence
+  classifications, List/Filter behavior and all other core source unchanged.
+  Author direct public reload/add/update/delete overlap and final disk/list/filter,
+  error-preservation/retry, guard/missing-file/defensive-copy cases; no test execution.
+- **Required validation:** exact runtime-source transform and unchanged loader/
+  persistence/API/rule/store/pipeline/metrics review; regression boundary review;
+  Go parse/format and pinned alert/API/pipeline compile-only; docs/164 JSON/150
+  full unique roadmap pairs/unchanged R90-75/ordered history/links/fences/seven-path
+  scope/diff/sensitive additions; exact feature/closure Git/Vault with stable
+  topic preservation/immutable hashes/idempotence. All suites delegated and unrun.
+- **Non-goals:** new API/config/schema, atomic filter redesign, bounded reload I/O,
+  cancellation/retries, external-writer coordination, migration, metrics/SLO,
+  IPv6/dependency/toolchain/test execution/publication changes.
+- **Stop condition:** incompatible diagnostics, required new public option,
+  ambiguous interleaving, cross-process guarantees, competing edits or new authority.
+- **Plan/state:** `task-20261002-suppression-reload-serialization.md` and matching
+  `docs/tasks/task-state-20261002-suppression-reload-serialization.json`.
 
 
 ### R90-71 Validation Deviation
@@ -7731,3 +7765,26 @@ evidence and the forward queue, and persists a separate plan for any eligible
 work before editing. No subsequent implementation begins here. Oct 2–Dec 30
 horizon remains current; IPv6 remains separate product/protocol scope. Do not
 repeat completed R90-144/R90-145 delivery or R90-59 publication.
+
+
+## R90-146 Selection and Suppression Transaction Repair (2026-10-02)
+
+Freshly fetched clean main/HEAD/origin/main/FETCH_HEAD is
+`b2086d9769d2b253e443daf5fee28b4f7c4079a7`. Both R90-145 exact feature/closure
+Git/Vault scope/note/index/MOC are verified. The 371-file snapshot JSON SHA-256
+is `6fc1f38a24b167ef66587ccf450b8e32d0b4a1a6525a3d30f7ee078753551ce8`;
+14 current stable notes and 324 immutable iteration-directory notes are captured.
+The 71-commit Sep 4–Oct 2 phase audit finds no missing delivery or new qualifying
+R90-75 measurement; the last stable topic-boundary deviation is repaired.
+
+The empty queue is reconciled inside this source-grounded implementation increment.
+ReloadFromFile reads before locking, permitting stale publication after successful
+Add/Update/Delete. R90-146 is ready after completed dependencies and selected as
+bounded core correctness work; no separate audit-only delivery. Seven-path plan/
+state was persisted before runtime and roadmap edits on isolated local branch
+`fix/r90-146-suppression-reload-serialization`. Existing manager lock now covers
+read-to-publication, with private default-real loader seam for direct regressions.
+Loader/persistence/API/filter contracts remain; reload I/O may delay readers.
+All execution suites remain user-delegated and unrun; static/compile-only evidence
+is not runtime/race proof. R90-75 remains independent asynchronous; horizon stays
+Oct 2–Dec 30. No subsequent increment starts here; skills need no edit at selection.

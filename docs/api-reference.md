@@ -192,6 +192,13 @@ Deletes an existing suppression, persists the full suppressions file when config
 
 Reloads suppressions from `engine.suppressions_file` and atomically swaps the active in-memory filter when validation succeeds.
 
+Within one suppression manager, the mutation lock serializes the authoritative
+reload read through publication with create, update and delete. Reload errors
+leave the prior active rules/filter intact; a missing file clears the active set
+without creating a file. Reload I/O may delay other manager operations, including
+List/Filter readers. External writers and standalone file helpers are outside
+this coordination boundary; endpoint schemas and errors are unchanged.
+
 ```json
 {
   "reloaded": 1

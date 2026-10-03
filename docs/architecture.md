@@ -273,6 +273,15 @@ Current build:
   prior disk/filter state; post-rename durability failure publishes the
   committed candidate filter and reports `SUPPRESSIONS_DURABILITY_UNCERTAIN`.
 - `/api/suppressions/reload` hot reloads suppressions from disk and swaps the active filter after validation succeeds.
+- The same manager mutation lock covers reload's authoritative file read through
+  validation, compilation and filter publication, serializing the whole reload
+  with Add/Update/Delete. A reload error preserves the prior rules/filter and
+  releases the lock; a missing file retains the existing empty-set behavior.
+  Reload I/O can delay List/Filter while this lock is held. Only operations through
+  the same manager are coordinated; external writers and standalone file helpers
+  are outside this boundary. R90-146 direct public reload/mutation/error regression
+  source is authored and compile-reviewed; behavioral/race execution remains
+  **not run; delegated by user**.
 
 ---
 

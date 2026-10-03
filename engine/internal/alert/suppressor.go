@@ -30,6 +30,7 @@ type SuppressionManager struct {
 	rules          []Suppression
 	suppressor     *Suppressor
 	filePath       string
+	loadFromFile   func(string) ([]Suppression, error)
 	replacementOps suppressionReplacementOps
 }
 
@@ -121,6 +122,7 @@ func NewSuppressionManagerWithFile(rules []Suppression, path string) (*Suppressi
 		rules:          cloneSuppressions(rules),
 		suppressor:     suppressor,
 		filePath:       path,
+		loadFromFile:   LoadSuppressionsFromFile,
 		replacementOps: osSuppressionReplacementOps,
 	}, nil
 }
@@ -294,7 +296,7 @@ func (m *SuppressionManager) Delete(id string) error {
 	return m.replaceLocked(candidate, true)
 }
 
-// ReloadFromFile reloads configured suppressions from disk and atomically swaps the compiled filter.
+// ReloadFromFile serializes the disk read through filter publication with mutations.
 func (m *SuppressionManager) ReloadFromFile() error {
 	if m == nil {
 		return fmt.Errorf("suppression manager is not configured")
@@ -302,12 +304,12 @@ func (m *SuppressionManager) ReloadFromFile() error {
 	if m.filePath == "" {
 		return fmt.Errorf("suppressions file is not configured")
 	}
-	rules, err := LoadSuppressionsFromFile(m.filePath)
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	rules, err := m.loadFromFile(m.filePath)
 	if err != nil {
 		return err
 	}
-	m.mu.Lock()
-	defer m.mu.Unlock()
 	return m.replaceLocked(rules, false)
 }
 
