@@ -1,0 +1,59 @@
+{
+  "task": "r90-144-rule-snapshot-isolation",
+  "timestamp": "2026-10-02",
+  "branch": "main",
+  "implementation_branch": "feat/r90-144-rule-snapshot-isolation",
+  "remote_baseline": "e96e6524f3e24a1b508120b47b06da4bb1464ed0",
+  "starting_remote_baseline": "e96e6524f3e24a1b508120b47b06da4bb1464ed0",
+  "risk_level": "Medium",
+  "current_checkpoint": "static_and_compile_only_review_complete_delivery_pending",
+  "completed": [
+    "Fresh clean fetched main and both R90-143 exact Git/Vault ranges verified",
+    "367-file snapshot, 12 stable notes and 320 immutable iteration notes captured",
+    "67-commit phase audit; standing test delegation and full independent R90-75 contract reviewed",
+    "User-directed core-code priority reconciled to bounded rule snapshot isolation",
+    "Created isolated local feature branch and persisted six-path plan/state before edits",
+    "Registered complete R90-144/R90-145 contracts before code edits; R90-75 independent",
+    "Implemented owned Rule/Config/MITRE slice before validation/sort/compilation",
+    "Authored five direct regression functions; concurrent case observes first post-return mutation before reads",
+    "Updated architecture ownership/caller-concurrency/delegated validation contract",
+    "Preflight engine module pinned Go 1.26.8; compile-only succeeded before final synchronization refinement",
+    "Exact runtime-source comparison verifies only planned ownership transformation; Rule mutable graph and nil/rejection/API callers reviewed",
+    "Direct regression source: 39 separate three-type mutation cases plus input order/defensive output/rejection/nil-empty/synchronized concurrency",
+    "Pinned Go 1.26.8 compile-only passes after final edit; no binary/test execution",
+    "Go parse/format/docs/162 task JSON/149 full unique roadmap pairs/forward contracts/unchanged R90-75/history/links/fences/six-path scope/diff/sensitive additions pass",
+    "Complete 367-file Vault baseline unchanged"
+  ],
+  "in_progress": [
+    "Feature commit and fast-forward main delivery"
+  ],
+  "todo": [
+    "Exact feature push/fetch/Vault/stable reconciliation",
+    "One docs-only closure and exact range verification"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "pass:Go 1.26.8 go test -c ./internal/rule; binary outside repository and never invoked",
+    "static_review": "pass:exact-source-transformation;owned-rule-graph;direct-regression-boundaries;Go-parse-format;docs-check;162-task-json;149-full-unique-roadmap-pairs;forward-contracts;unchanged-R90-75;history;links;fences;six-path-scope;diff;sensitive-additions"
+  },
+  "authority_boundaries": [
+    "Exactly R90-144 six intended paths",
+    "Author direct regression source; all test execution remains departmental",
+    "R90-75 async; R90-145 and IPv6 not started",
+    "Input ownership after Reload return; callers must not mutate during Reload",
+    "No API/schema/persistence/dependency/toolchain/publication changes"
+  ],
+  "remaining_risks": [
+    "Tests unexecuted; static evidence alone cannot prove runtime alias/race outcomes"
+  ],
+  "deviations": [
+    "Restored empty ready queue within user-directed core implementation plan; no additional standalone audit increment."
+  ],
+  "resume_instructions": "Follow persisted R90-144 plan only. Register complete queue before implementation; complete static development review and exact main/Vault feature plus one closure delivery. Do not execute test suites or start R90-145."
+}

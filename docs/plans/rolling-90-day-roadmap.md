@@ -221,6 +221,8 @@ formal SLO and evidence contract is unchanged.
 | R90-141 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind report-source observations read to captured inventory. | R90-140; R90-118/R90-119/R90-123/R90-127 bundle/pair consumers; R90-135/R90-137 precedents | Admit one bounded regular non-following/nonblocking observations handle; exact inventory/metadata/close before source comparison/recompute; preserve public formats/status/eligibility/partial evidence; tests delegated. |
 | R90-142 | Oct 2 | Complete documentation; execution delegated | Reconcile report-binding delivery and scope pair receipt inventory reads. | R90-141 verified feature/closure | Verify exact prior Git/Vault/phase evidence; define complete R90-143 four-receipt acquisition/parser/qualification contract without runtime/test execution. |
 | R90-143 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind pair condition receipt reads to reconciled inventory. | R90-142; R90-119/R90-121/R90-123/R90-127 pair modes; R90-137/R90-141 precedents | Four fixed receipt reads validate complete matched inventory and bounded regular non-following/nonblocking handles; exact EOF metadata/hash and close before unchanged parser/projection; preserve all modes/error/partial contracts; tests delegated. |
+| R90-144 | Oct 2–Dec 30 | In progress; tests delegated | Isolate core rule reload snapshots from caller-owned inputs. | R90-143; existing rule engine and serialized API transactions | Deep-copy Rule/Config/MITRE before validation/sort/compile; publish one owned state; preserve diagnostics, failed-reload state and schemas; author direct regression cases with execution delegated. |
+| R90-145 | Oct 2–Dec 30 | Planned; tests delegated | Add a packet-completion counter to the core processing pipeline. | R90-144; R90-116 lifecycle boundary | Count only successful terminal packet processing after optional observer success; retain existing processed/received counters, API fields and SLO exporter semantics; author direct failure/no-alert/suppression/success cases with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3348,6 +3350,71 @@ formal SLO and evidence contract is unchanged.
 - **Stop condition:** required format migration, incompatible error/qualification
   ownership, missing primitives without safe rejection, ambiguous static review
   or new external/private/product authority.
+
+
+## R90-144 Definition
+
+- **Goal/status:** core-code implementation in progress; own all Rule data before reload
+  validation, sorting, compilation and atomic publication.
+- **Dependencies/window:** verified R90-143 feature/closure; established rule
+  engine and API transaction contracts; Oct 2–Dec 30.
+- **Source evidence:** buildState copies only the input pointer slice; Match
+  and Rules read retained Rule pointers. Existing cloneRule already deep-copies
+  Config and MITRETechs. This is a source observation, not an executed failure.
+- **Risk:** medium; ownership timing, unchanged validation and matcher behavior.
+- **Acceptance:** clone every input Rule through existing helper into an owned
+  slice before validateRuleSet; validate/sort/compile/retain this same set;
+  preserve input order/data, nil diagnostics, nil/empty clearing, failed-reload
+  old snapshot, Match/Rules/API/file/schema behavior and single Store on success.
+  Post-return caller mutation cannot affect snapshot/alerts. Document the caller
+  obligation not to mutate during Reload. Add meaningful direct public-boundary
+  regression source for all three rule types, caller fields/slice/Config/MITRE,
+  defensive output, rejected reload and synchronized post-return concurrency.
+- **Required validation:** static clone/model graph/order/compiler/publication/
+  consumer/source review; regression boundary review; Go parse/format, docs/JSON/
+  full unique row/Definition multisets/history/links/fences/six-path scope/diff/
+  sensitive additions; exact feature/one closure main/Git/Vault/stable notes.
+  Behavioral/race/CLI/full-suite/scanner/knowledge/acceptance execution remains
+  not run; delegated by user. Department runs direct snapshot cases and broader
+  rule/API/pipeline/native checks; no clone-helper-only case substitutes.
+- **Non-goals:** rule matcher optimization, pipeline/IPv6/API/schema/MITRE policy,
+  storage refactor, concurrent mutation during Reload, dependencies/toolchains,
+  test execution or external publication; R90-145 remains unstarted.
+- **Stop condition:** incompatible diagnostics, unknown mutable model fields,
+  migration, competing edits, contradictory delivery or new external/product authority.
+- **Plan/state:** `task-20261002-rule-snapshot-isolation.md` and matching
+  `docs/tasks/task-state-20261002-rule-snapshot-isolation.json`.
+
+## R90-145 Definition
+
+- **Goal/status:** planned/unstarted; add completed-packet visibility to the
+  actual core Worker terminal boundary after R90-144 delivery.
+- **Dependencies/window:** R90-144; completed R90-116 optional lifecycle export;
+  Oct 2–Dec 30. R90-75 acceptance remains independent and asynchronous.
+- **Source evidence:** processPacket increments packetsProcessed before matching;
+  processed() is reached only after no alerts, full suppression or successful
+  persistence/export. Stats has no separate packets-completed counter.
+- **Risk:** medium; implying started work is completion or changing existing metrics.
+- **Acceptance:** persist separate implementation plan; add atomic completed
+  count/Snapshot field/Prometheus counter at processed(), after successful optional
+  Processed observer return. Nil packets, panic, writer or observer failure must
+  not increment it. No-alert, fully suppressed and persisted/exported success
+  each increment exactly once. Preserve original received/processed counters,
+  JSON/API compatibility, exporter behavior, shutdown and all failure ownership.
+  Process-local completion is not a per-packet loss oracle, hardware evidence or
+  SLO gate. Author direct Worker/Stats boundary regressions, execution delegated.
+- **Required validation:** static full caller/terminal/error/observer/stats/export/
+  API review; Go parse/format, docs/JSON/complete roadmap/history/scope/sensitive
+  review; exact feature/closure Git/Vault. Departmental direct cases: no alerts,
+  full suppression, persisted success, writer failure, Arrival/Durable/Processed
+  observer failures, nil packets, panic, cancellation before work, concurrent
+  workers and unchanged original counts/JSON/text exports; focused/race/broader
+  pipeline/stats/API checks remain delegated and unrun.
+- **Non-goals:** moving/removing legacy counters, changing SLO schemas or
+  acceptance policy, retries, batching, draining/shutdown refactor, new budgets,
+  queue-loss claims, dependencies/toolchains or test execution/publication.
+- **Stop condition:** ambiguous terminal/observer semantics, breaking public
+  metric compatibility, required migration or new product/external authority.
 
 
 ### R90-71 Validation Deviation
@@ -7516,3 +7583,30 @@ local ready increment; next trigger verifies latest fetched closure knowledge
 and audits fresh evidence/forward queue before selecting a separate bounded
 increment. Do not repeat completed R90-142/R90-143 delivery or R90-59 publication.
 No subsequent implementation begins here.
+
+
+## R90-144 Selection and Core Implementation Plan (2026-10-02)
+
+Clean freshly fetched main is `e96e6524f3e24a1b508120b47b06da4bb1464ed0`;
+both R90-143 feature/closure exact Git/Vault scope/note/index/MOC are verified.
+The 367-file snapshot JSON SHA-256 reproduces
+`d00356a3e58dbfafa3266086a31a4c7357a224e6b58a3f716fc24d7229001d9b`;
+12 stable current notes and 320 immutable iteration-directory notes are captured.
+The 67-commit Sep 4–Oct 2 phase review shows sustained measurement/tooling/input-
+boundary work and repeated queue audits, with no missing delivery or qualifying
+R90-75 measurement. The user now prioritizes core-code output; the agreed first
+scope is rule snapshot isolation. Register R90-144 as ready and R90-145 as planned
+within the persisted six-path implementation plan, without another standalone
+audit delivery. No private/product/schema decision is needed for ownership repair.
+R90-75 remains independent asynchronous department acceptance, with its complete
+contract unchanged. Oct 2–Dec 30 horizon remains current.
+
+Implement on `feat/r90-144-rule-snapshot-isolation`, then fast-forward main only
+after static review. Reuse cloneRule before validateRuleSet so validation/sort/
+compile/publication share one owned Rule set, including Config/MITRE backing
+arrays; preserve all other matching, diagnostic, file/API and failure contracts.
+Caller must keep input stable during Reload; post-return mutation is isolated.
+Add direct public-boundary regression source without executing tests. All
+behavioral/race/CLI/full-suite/scanner/knowledge/acceptance execution remains
+user-delegated and unrun. R90-145 is defined but unstarted; IPv6 requires its own
+future protocol scope. This trigger completes exactly R90-144. Skills need no edit.

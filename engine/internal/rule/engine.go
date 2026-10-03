@@ -63,7 +63,8 @@ func NewEngine() *Engine {
 	return e
 }
 
-// Reload atomically replaces the rule set.
+// Reload atomically replaces the rule set with an owned snapshot.
+// Callers must keep inputs stable during Reload; later changes are isolated.
 func (e *Engine) Reload(rules []*model.Rule) error {
 	s, err := buildState(rules)
 	if err != nil {
@@ -163,7 +164,11 @@ func cloneRule(r *model.Rule) *model.Rule {
 }
 
 func buildState(rules []*model.Rule) (*ruleState, error) {
-	if err := validateRuleSet(rules); err != nil {
+	sorted := make([]*model.Rule, len(rules))
+	for i, r := range rules {
+		sorted[i] = cloneRule(r)
+	}
+	if err := validateRuleSet(sorted); err != nil {
 		return nil, err
 	}
 	s := &ruleState{
@@ -172,8 +177,6 @@ func buildState(rules []*model.Rule) (*ruleState, error) {
 		portRules:    make(map[string]compiledPortRule),
 	}
 
-	sorted := make([]*model.Rule, len(rules))
-	copy(sorted, rules)
 	sort.Slice(sorted, func(i, j int) bool {
 		return sorted[i].Priority > sorted[j].Priority
 	})

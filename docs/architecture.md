@@ -103,6 +103,26 @@ type Engine struct {
 
 Reload builds a full new state and swaps it with `Store`. Match reads one snapshot with `Load` and does not lock.
 
+Reload first copies every Rule into an owned slice, including separate Config
+bytes and MITRETechs backing arrays, using the existing clone helper. Validation,
+priority sorting and compilation all use that same owned set. Only a fully valid
+state is published; rejected reloads retain the previous snapshot, and nil/empty
+sets still clear it. Caller order/data remain unchanged. `Rules()` continues to
+return defensive copies, and post-return changes to either input or returned
+objects cannot alter matching or alert metadata. Copies occur during reload,
+outside the matching path; existing rule/alert/API/file formats and semantics
+are preserved. Callers must keep their input stable during Reload itself.
+
+R90-144 adds direct regression source in
+`engine/internal/rule/engine_snapshot_test.go`: all three rule types with isolated
+caller field/slice/Config/MITRE changes, unchanged input ordering/data, defensive
+Rules output, rejected reload/old-state preservation, nil/empty clearing and
+synchronized post-return mutation concurrent with Match/Rules. Regression source
+receives static and compile-only review; behavioral/race/CLI/full-suite/knowledge
+and SLO acceptance execution remains **not run; delegated by user**. This is an
+ownership repair, without a measured throughput or race-test outcome. See
+[the implementation plan](plans/task-20261002-rule-snapshot-isolation.md).
+
 Supported rule types in the current code:
 
 - `payload_match`
