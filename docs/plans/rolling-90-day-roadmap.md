@@ -233,7 +233,7 @@ formal SLO and evidence contract is unchanged.
 | R90-153 | Oct 3–Dec 31 | Complete implementation; tests delegated | Record committed HTTP audit response status. | R90-152; existing audit middleware | Preserve first final status and implicit 200; non-101 1xx stays informational, 101 terminal; existing audit fields/auth policy unchanged; direct wire/log/header regression execution delegated. |
 | R90-154 | Oct 3–Dec 31 | Complete implementation; tests delegated | Exclude nil entries from generated-alert counts. | R90-153; existing Stats and Worker counters | Non-nil entry total matches severity counts; retain fallback/dynamic labels and entry semantics; Worker/renderer/API/store unchanged; direct counter/concurrency/Worker regressions with execution delegated. |
 | R90-155 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject negative duration observations. | R90-154; existing public Stats observers | Negative samples change no count/sum/bucket; retain zero/positive/nil semantics and renderer; direct boundary/concurrency assertions authored with execution delegated. |
-| R90-156 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Count unpublished rule snapshots as empty. | R90-155; existing atomic rule.Engine | Non-nil zero-value Engine RuleCount returns zero; retain reload/match/count semantics; direct engine/API lifecycle assertions authored, execution delegated. |
+| R90-156 | Oct 3–Dec 31 | Complete implementation; tests delegated | Count unpublished rule snapshots as empty. | R90-155; existing atomic rule.Engine | Non-nil zero-value Engine RuleCount returns zero; retain reload/match/count semantics; direct engine/API lifecycle assertions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -3707,7 +3707,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-156 Definition
 
-- **Goal/status:** implemented; delivery pending; RuleCount returns zero for unpublished state instead of dereferencing nil.
+- **Goal/status:** implementation delivered; RuleCount returns zero for unpublished state instead of dereferencing nil.
 - **Dependencies/window:** R90-155 verified delivered; existing atomic rule engine; Oct 3–Dec 31 forecast, no date gate.
 - **Risk:** low; unpublished state only; one atomic load, existing initialized counts/publication preserved.
 - **Acceptance:** RuleCount-only diff; public zero/constructor/valid/disabled/failed/empty reload engine lifecycle and actual rule engine in four API endpoints across four phases; seven-path feature and one docs-only closure exact Git/Vault.
@@ -9008,3 +9008,52 @@ refinement: resolve generated abbreviated metadata through Git before comparing
 full recorded endpoints, while synchronization input still requires full SHAs.
 Markdown structure checked; no repository feature path or authority expansion.
 Feature plus one docs-only closure remains; no subsequent implementation started.
+
+
+## R90-156 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `adcc5e792b371007e9cae8d124e499f76bf5c6c4` contains exactly seven planned paths. Isolated
+fix/r90-156-zero-rule-count fast-forwarded freshly verified main; push/fresh
+fetch verified clean HEAD/origin/main/FETCH_HEAD at that full SHA. Exact range
+`f0ab2b5d1f6cbc33c52795ad687c19787922bc39..adcc5e792b371007e9cae8d124e499f76bf5c6c4` note `04-开发迭代记录/2026-10-03-adcc5e792b-CI知识同步.md`, seven-path scope, full index and MOC verified.
+Generated ten-character identifiers uniquely resolve through Git to recorded
+full endpoints. Fourteen current stable notes reconciled; entire previous
+substantive current prose archived under explicit R90-155 historical headings.
+Original topic tails and all 344 baseline immutable iteration hashes retained;
+only documented generated MOC entries refreshed. Identical replay preserves
+392 Markdown files; snapshot JSON SHA-256
+`c9a3c9e88d51a1c6014a9b6946ff1a304453b884441c009f29afceae47f37cf9`. Existing unique sibling local Vault selected
+explicitly; no second empty or remote Vault.
+
+Acceptance matches persisted plan: RuleCount only, one atomic snapshot load,
+zero for unpublished state, otherwise same loaded-rule length. Other tracked
+engine source/ownership/Rules/Match/Reload/priority/validation/API/store unchanged.
+Two direct authored public functions reach promised boundaries. Non-nil zero
+Engine count before Reload; constructor empty equivalence; enabled/disabled
+loaded count 2, exact priority-ordered rules and full expected alert; rejected
+null-rule Reload retains count/rules/match; nil Reload clears. Actual rule.Engine
+backs four API endpoints across unpublished/loaded/rejected/cleared phases,
+exact status/content types/JSON identity/count/shape/metrics/queue/storage values.
+Existing fakeStore/fakeQueue isolate unrelated dependencies; no rule mock or
+SQL/wire evidence claim. No typed nil receiver guarantee, runtime/race/SLO pass.
+
+Pinned Go 1.26.8 rule/API/pipeline complete compile-only chain passed; binaries
+unexecuted. Exact source/direct public boundaries/format/docs/174 JSON/160
+complete unique roadmap pairs/prior Definitions/R90-75/history/horizon/links/
+fences/seven paths/diff/sensitive review passed. All behavioral/race/CLI/full-suite/
+scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
+No implementation/compile/static/delivery ambiguity or Vault topic loss.
+Separate local netsentry-next skill refinement resolves generated abbreviations
+through Git before full endpoint comparison; full sync inputs still mandatory,
+Markdown checked. No repository scope or authority expansion. Planning deviation:
+empty local ready queue restored inside source-grounded RuleCount repair.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git; push/fresh-fetch and verify exact feature..closure Vault scope/
+note/index/MOC/stable prose before reporting. No self-reference follow-up closure.
+Refreshed queue has no defined local dependency-ready item. R90-75 full independent
+asynchronous departmental contract and Oct 3–Dec 31 horizon unchanged. Next
+trigger verifies fetched closure/Vault and audits fresh code/queue before a
+separate eligible plan. No following increment started; do not repeat R90-155/
+R90-156 delivery or R90-59 publication. IPv6/external publication needs separate
+authority.

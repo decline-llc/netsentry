@@ -91,3 +91,52 @@ refinement: resolve generated abbreviated metadata through Git before comparing
 full recorded endpoints, while synchronization input still requires full SHAs.
 Markdown structure checked; no repository feature path or authority expansion.
 Feature plus one docs-only closure remains; no subsequent implementation started.
+
+
+## Delivery and queue closeout
+
+Feature `adcc5e792b371007e9cae8d124e499f76bf5c6c4` contains exactly seven planned paths. Isolated
+fix/r90-156-zero-rule-count fast-forwarded freshly verified main; push/fresh
+fetch verified clean HEAD/origin/main/FETCH_HEAD at that full SHA. Exact range
+`f0ab2b5d1f6cbc33c52795ad687c19787922bc39..adcc5e792b371007e9cae8d124e499f76bf5c6c4` note `04-开发迭代记录/2026-10-03-adcc5e792b-CI知识同步.md`, seven-path scope, full index and MOC verified.
+Generated ten-character identifiers uniquely resolve through Git to recorded
+full endpoints. Fourteen current stable notes reconciled; entire previous
+substantive current prose archived under explicit R90-155 historical headings.
+Original topic tails and all 344 baseline immutable iteration hashes retained;
+only documented generated MOC entries refreshed. Identical replay preserves
+392 Markdown files; snapshot JSON SHA-256
+`c9a3c9e88d51a1c6014a9b6946ff1a304453b884441c009f29afceae47f37cf9`. Existing unique sibling local Vault selected
+explicitly; no second empty or remote Vault.
+
+Acceptance matches persisted plan: RuleCount only, one atomic snapshot load,
+zero for unpublished state, otherwise same loaded-rule length. Other tracked
+engine source/ownership/Rules/Match/Reload/priority/validation/API/store unchanged.
+Two direct authored public functions reach promised boundaries. Non-nil zero
+Engine count before Reload; constructor empty equivalence; enabled/disabled
+loaded count 2, exact priority-ordered rules and full expected alert; rejected
+null-rule Reload retains count/rules/match; nil Reload clears. Actual rule.Engine
+backs four API endpoints across unpublished/loaded/rejected/cleared phases,
+exact status/content types/JSON identity/count/shape/metrics/queue/storage values.
+Existing fakeStore/fakeQueue isolate unrelated dependencies; no rule mock or
+SQL/wire evidence claim. No typed nil receiver guarantee, runtime/race/SLO pass.
+
+Pinned Go 1.26.8 rule/API/pipeline complete compile-only chain passed; binaries
+unexecuted. Exact source/direct public boundaries/format/docs/174 JSON/160
+complete unique roadmap pairs/prior Definitions/R90-75/history/horizon/links/
+fences/seven paths/diff/sensitive review passed. All behavioral/race/CLI/full-suite/
+scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
+No implementation/compile/static/delivery ambiguity or Vault topic loss.
+Separate local netsentry-next skill refinement resolves generated abbreviations
+through Git before full endpoint comparison; full sync inputs still mandatory,
+Markdown checked. No repository scope or authority expansion. Planning deviation:
+empty local ready queue restored inside source-grounded RuleCount repair.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git; push/fresh-fetch and verify exact feature..closure Vault scope/
+note/index/MOC/stable prose before reporting. No self-reference follow-up closure.
+Refreshed queue has no defined local dependency-ready item. R90-75 full independent
+asynchronous departmental contract and Oct 3–Dec 31 horizon unchanged. Next
+trigger verifies fetched closure/Vault and audits fresh code/queue before a
+separate eligible plan. No following increment started; do not repeat R90-155/
+R90-156 delivery or R90-59 publication. IPv6/external publication needs separate
+authority.
