@@ -527,6 +527,27 @@ and point NetSentry at a new or operator-recovered path only after review.
 
 Current build: zap startup and match logs, verbose health with storage status and available bytes, Prometheus metrics for process/current and high-water queue depth/process-lifetime packet and alert rates/rule latency/alert write latency/alert/storage/worker/capture heartbeat state, structured audit logs for non-GET API requests, optional localhost-only pprof, SQLite JSONL recovery-log replay, and configurable payload preview redaction before alert writes.
 
+R90-145 adds a separate atomic `PacketsCompleted` Stats snapshot field and
+`netsentry_packets_completed_total` Prometheus counter at Worker.processed().
+The increment follows successful optional Processed export; the three terminal
+calls remain no-alert, fully suppressed and successful alert write/export paths.
+Writer/Arrival/Durable failures, terminal Processed failure and panic recovery
+leave completion unchanged. The old processed counter still increments before
+matching; received counters, rate gauges, verbose-health JSON and SLO exporter
+schemas remain unchanged. API runtime source automatically exposes the additive
+text counter through the existing renderer. Nil packets and pre-cancelled empty
+input begin no work; cancellation/shutdown scheduling is otherwise unchanged.
+
+Successful terminal processing is process-local: no-alert/suppression requires
+no storage write, writer success alone does not establish universal durability,
+and export return is earlier than final synced measurement receipt publication.
+Counters reset at restart and active snapshots sample atomics independently;
+aggregate subtraction is not an offered-load loss oracle or SLO gate.
+Direct terminal/error/observer-seam/concurrency/Stats/HTTP compatibility regression
+source is authored, statically reviewed and compiled without execution. All
+behavioral/race/CLI/full-suite/knowledge and acceptance suites remain delegated
+and unrun; see [the plan](plans/task-20261002-packet-completion-counter.md).
+
 v0.1.0 target:
 
 - `/api/metrics` Prometheus endpoint with process counters, process-lifetime packet and alert rate gauges, rule match and alert write latency buckets, current/high-water queue depth, rule/alert/storage gauges, worker counters, and capture heartbeat gauges.

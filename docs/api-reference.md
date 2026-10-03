@@ -107,6 +107,26 @@ Query parameters:
 
 Returns Prometheus text format with process counters, process-lifetime packet and alert rate gauges, current and high-water packet queue depth, loaded rules, alert counts, storage availability and health gauges, worker counters, rule match latency buckets, alert write latency buckets, and the latest capture heartbeat state when available. The `netsentry_packets_processed_per_second` and `netsentry_alerts_generated_per_second` gauges are process-lifetime averages derived from local counters, not sliding-window throughput guarantees.
 
+R90-145 adds `netsentry_packets_completed_total` (counter): successful terminal
+Worker processing, including any enabled lifecycle export. No-alert and fully
+suppressed packets count once without a write; alert-producing packets count
+only after writer success and any enabled Durable/Processed export succeeds.
+Write/export errors and recovered panics do not count completion. The counter
+appears at zero before work, including when stats are absent.
+
+`netsentry_packets_processed_total` retains its pre-match increment, and the
+existing received counter, processed-rate gauge and verbose-health JSON keep
+their original fields and values. Use the new counter to observe terminal work;
+write success is not a universal durability proof, and exporter acceptance does
+not mean final receipt/fsync publication. Counts reset on process restart and
+active Stats snapshots sample atomics independently. Aggregate count differences
+do not establish offered-load loss or SLO acceptance.
+
+Direct Worker/Stats/HTTP regression source is authored and compile-reviewed;
+behavioral/race/CLI/full-suite/knowledge and acceptance execution remains
+**not run; delegated by user**. See
+[the implementation plan](plans/task-20261002-packet-completion-counter.md).
+
 ### `GET /api/rules`
 
 Returns the currently loaded rule snapshot in priority order.

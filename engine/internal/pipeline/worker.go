@@ -62,9 +62,10 @@ func (w *Worker) observed(err error) bool {
 }
 
 func (w *Worker) processed(pkt *model.PacketInfo) {
-	if w.observer != nil {
-		w.observed(w.observer.Processed(pkt, w.now()))
+	if w.observer != nil && !w.observed(w.observer.Processed(pkt, w.now())) {
+		return
 	}
+	w.stats.IncPacketCompleted()
 }
 
 // Run processes packets until the input channel is closed or ctx is cancelled.

@@ -222,7 +222,7 @@ formal SLO and evidence contract is unchanged.
 | R90-142 | Oct 2 | Complete documentation; execution delegated | Reconcile report-binding delivery and scope pair receipt inventory reads. | R90-141 verified feature/closure | Verify exact prior Git/Vault/phase evidence; define complete R90-143 four-receipt acquisition/parser/qualification contract without runtime/test execution. |
 | R90-143 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind pair condition receipt reads to reconciled inventory. | R90-142; R90-119/R90-121/R90-123/R90-127 pair modes; R90-137/R90-141 precedents | Four fixed receipt reads validate complete matched inventory and bounded regular non-following/nonblocking handles; exact EOF metadata/hash and close before unchanged parser/projection; preserve all modes/error/partial contracts; tests delegated. |
 | R90-144 | Oct 2–Dec 30 | Complete implementation; tests delegated | Isolate core rule reload snapshots from caller-owned inputs. | R90-143; existing rule engine and serialized API transactions | Deep-copy Rule/Config/MITRE before validation/sort/compile; publish one owned state; preserve diagnostics, failed-reload state and schemas; author direct regression cases with execution delegated. |
-| R90-145 | Oct 2–Dec 30 | Ready; tests delegated | Add a packet-completion counter to the core processing pipeline. | R90-144; R90-116 lifecycle boundary | Count only successful terminal packet processing after optional observer success; retain existing processed/received counters, API fields and SLO exporter semantics; author direct failure/no-alert/suppression/success cases with execution delegated. |
+| R90-145 | Oct 2–Dec 30 | In progress; tests delegated | Add a packet-completion counter to the core processing pipeline. | R90-144; R90-116 lifecycle boundary | Count only successful terminal packet processing after optional observer success; retain existing processed/received counters, API fields and SLO exporter semantics; author direct failure/no-alert/suppression/success cases with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3387,7 +3387,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-145 Definition
 
-- **Goal/status:** ready/unstarted after verified R90-144; add completed-packet visibility to the
+- **Goal/status:** implementation in progress after verified R90-144; add completed-packet visibility to the
   actual core Worker terminal boundary after R90-144 delivery.
 - **Dependencies/window:** R90-144; completed R90-116 optional lifecycle export;
   Oct 2–Dec 30. R90-75 acceptance remains independent and asynchronous.
@@ -3415,6 +3415,8 @@ formal SLO and evidence contract is unchanged.
   queue-loss claims, dependencies/toolchains or test execution/publication.
 - **Stop condition:** ambiguous terminal/observer semantics, breaking public
   metric compatibility, required migration or new product/external authority.
+- **Plan/state:** `task-20261002-packet-completion-counter.md` and matching
+  `docs/tasks/task-state-20261002-packet-completion-counter.json`.
 
 
 ### R90-71 Validation Deviation
@@ -7653,3 +7655,31 @@ fetched closure knowledge and persists a separate R90-145 implementation plan.
 R90-75 remains complete-contract independent asynchronous departmental acceptance;
 Oct 2–Dec 30 horizon is current. Do not repeat completed R90-143/R90-144 delivery
 or R90-59 publication. No subsequent implementation begins here.
+
+
+## R90-145 Selection and Core Implementation (2026-10-02)
+
+Clean freshly fetched main/HEAD/origin/main/FETCH_HEAD is
+`36d2cd49761308b9884cdbe47dd7ed9f5c2b2b42`. Both R90-144 feature/closure
+exact Git/Vault scope/note/index/MOC are verified. The 369-file snapshot JSON
+SHA-256 reproduces `52c2acd1c86030707bec2dbb3fee3a86870dc50bdbe0645d5c8a3a7d28ede3da`;
+14 current stable notes identify R90-145 and 322 immutable iteration-directory
+notes are captured. The 69-commit Sep 4–Oct 2 phase review separates measurement/
+tooling/replay, admission, queue audits, historical candidate/main metadata and
+core rule ownership. No missing delivery or qualifying R90-75 measurement appears.
+R90-145 is the sole ready local item with completed dependencies; R90-75 retains
+its full independent asynchronous departmental contract. Horizon stays Oct 2–Dec 30.
+
+Ten-path plan/state persisted before code/docs edits; isolated implementation
+branch is `feat/r90-145-packet-completion-counter`. Add atomic Stats completed
+count, nil-safe increment, Snapshot field and Prometheus HELP/TYPE/value. Only
+Worker.processed changes runtime terminal logic: failed optional Processed export
+returns before the sole increment; all three original terminal callers and all
+other processing/error/observer/panic/shutdown semantics remain. Original
+received/processed/rate/health JSON and exporter contracts remain. Counts are
+process-local and independently sampled, not a loss oracle or SLO gate.
+Direct Run/Stats/HTTP regression source is authored; pinned Go 1.26.8 checks are
+compile-only and binaries are never executed. All behavioral/race/CLI/full-suite/
+scanner/knowledge/acceptance execution remains delegated and unrun. No subsequent
+increment begins here. A reusable independent-atomic sampling lesson is recorded
+at static closeout and refined in the local skill concurrency instruction.
