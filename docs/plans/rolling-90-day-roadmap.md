@@ -231,6 +231,7 @@ formal SLO and evidence contract is unchanged.
 | R90-151 | Oct 3–Dec 31 | Complete implementation; tests delegated | Align negative Query limits across store modes. | R90-150; existing primary uncapped negative limit | Negative daily limits return all collected filtered rows after offset; zero stays 1000/positive unchanged; preserve SQL/HTTP/bounds; author >1000 real primary/daily and empty-result regressions with execution delegated. |
 | R90-152 | Oct 3–Dec 31 | Complete implementation; tests delegated | Include historical daily shards in Store.List. | R90-151; existing cross-shard Query reader | Daily List returns globally ordered newest 1000 rows including historical shards; retain primary SQL/lifecycle and reuse query error/health handling; direct regression execution delegated. |
 | R90-153 | Oct 3–Dec 31 | Complete implementation; tests delegated | Record committed HTTP audit response status. | R90-152; existing audit middleware | Preserve first final status and implicit 200; non-101 1xx stays informational, 101 terminal; existing audit fields/auth policy unchanged; direct wire/log/header regression execution delegated. |
+| R90-154 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Exclude nil entries from generated-alert counts. | R90-153; existing Stats and Worker counters | Non-nil entry total matches severity counts; retain fallback/dynamic labels and entry semantics; Worker/renderer/API/store unchanged; direct counter/concurrency/Worker regressions with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3663,6 +3664,33 @@ formal SLO and evidence contract is unchanged.
 - **Stop condition:** ambiguous static/compile/Git/Vault, unsupported semantics,
   competing work, new product/private/external authority, or a second increment.
 - **Selected plan:** [task-20261003-audit-status.md](task-20261003-audit-status.md).
+
+
+## R90-154 Definition
+
+- **Goal/status:** implemented; delivery pending; exclude nil alert entries from the total
+  consistently with existing severity accounting and storage normalization.
+- **Dependencies/window:** completed R90-153 and existing Stats/Worker counters;
+  Oct 3–Dec 31 forecasts, without calendar eligibility gates.
+- **Risk:** medium; corrected totals affect derived rates; independently sampled
+  counters remain nontransactional, with no runtime/performance/SLO pass claim.
+- **Acceptance:** exact ObserveAlerts-only one-loop count/publish under existing
+  lock; preserve nil/empty guards, empty-severity low fallback, repeated entry
+  and dynamic-label behavior, input values and all other engine source. Author
+  direct nine-case Stats/Snapshot/renderer plus nil receiver, quiescent concurrent
+  observations, actual Worker/SQLite mixed/all-nil, and injected failure/export
+  gate cases; all execution delegated.
+- **Required validation:** pinned Go 1.26.8 stats/pipeline/API/alert compile-only
+  complete chain and source/direct-boundary/Go-format/docs/JSON/unique complete
+  roadmap/prior Definitions/R90-75/history/horizon/links/fences/seven-path/diff/
+  sensitive review; exact push/fetch/Vault scope/note/index/MOC/stable preservation.
+  All suites **not run; delegated by user**, without runtime/SQL/race proof.
+- **Non-goals:** metric names/labels/schema/rate formulas, Worker/renderer/API/store/
+  lifecycle/export/dedup/input validation, general snapshot guarantee, other
+  modules/dependencies/toolchain/suites/private inputs/IPv6/publication.
+- **Stop condition:** ambiguous static/compile/Git/Vault, competing edits, new
+  product/private/external authority, or beginning a second increment.
+- **Selected plan:** [task-20261003-nil-alert-count.md](task-20261003-nil-alert-count.md).
 
 
 ### R90-71 Validation Deviation
@@ -8708,3 +8736,56 @@ horizon remain unchanged. Next trigger verifies fetched closure/Vault, audits
 fresh code/queue and persists a separate eligible plan before edits. No next
 increment started; do not repeat R90-152/R90-153 delivery or R90-59 publication.
 IPv6/external publication needs separate authority.
+
+
+## R90-154 Selection and Nil Alert Counter Repair (2026-10-03)
+
+Fresh fetched clean main HEAD/origin/main/FETCH_HEAD is
+`d57c634ad4ba4bbc3d6966d97e5e319f8ad43294`. R90-153 exact six-path feature and
+three-path closure Git/Vault note/scope/index/MOC verified. Sep 5–Oct 3 phase
+covers 87 commits: supplied SLO evidence tools then core correctness repairs,
+without new qualifying acceptance. Full R90-75 independent asynchronous contract
+and Oct 3–Dec 31 horizon unchanged. Captured 387-file Vault hash baseline and
+complete 14 stable current note contents before edits.
+
+Empty ready queue reconciled inside source-grounded R90-154. ObserveAlerts adds
+len(alerts) to total while severity loop and storage normalization skip nil;
+Worker can report phantom totals for successful mixed/all-nil batches. Seven-
+path plan/state persisted on fix/r90-154-nil-alert-count before source/docs edits.
+Scope only count passing existing nil skip in severity loop and publish under
+same lock. Preserve names/labels/default/dynamic/repeated-entry semantics and
+worker/API/renderer/store/source. Direct Stats/renderer/quiescent concurrency/
+real Worker-Store and injected failure/export regressions authored; all execution
+delegated. No observed incident or runtime/SQL/race/SLO outcome claim. Existing
+skills suffice, without outcome-only edit or subsequent implementation.
+
+
+## R90-154 Implementation and Validation Checkpoint (2026-10-03)
+
+Runtime changes only ObserveAlerts: remove total=len(alerts), count entries after
+existing nil skip within severity loop, then add that count inside existing lock.
+Nil-receiver/empty-batch guards, low fallback, repeated-entry/dynamic labels and
+all other tracked engine/Worker/renderer/API/store/export/lifecycle/rate/schema
+source remain unchanged. No extra traversal or allocation; no performance claim.
+
+Four direct functions authored: nine public Stats/Snapshot/renderer cases,
+observed twice, exact totals/full severity maps/one exact metric line per label
+and type, nil receiver and original input pointers/full values. Four concurrent
+writers each perform 100 mixed and all-nil observations, synchronized start and
+join before asserting 800 total/400 high/400 low and matching metric lines.
+Actual Worker.Run with encoded primary SQLite store covers mixed two-row and
+all-nil zero-row success, fixed row IDs/order/severity/timestamp/count, health,
+packet values and exact processing/completion/write/error/severity counters.
+Four injected writer/export cases retain publication/completion gates and original
+writer batch pointers. No fake storage replaces real SQL normal-path evidence;
+failure fixtures explicitly remain injected boundary checks. All unexecuted.
+
+Pinned Go 1.26.8 final stats/pipeline/API/alert complete compile-only chain passed;
+external binaries unexecuted. Source/direct-boundary/Go-format/docs/172 JSON/
+158 unique complete roadmap/prior Definitions/R90-75/history/horizon/links/fences/
+seven-path/diff/sensitive review passed. All behavioral/race/CLI/full-suite/scanner/
+knowledge/traffic/acceptance suites **not run; delegated by user**. No runtime/
+SQL/durability/race/SLO pass inferred. No source, compilation or validation
+failure; 387-file Vault baseline unchanged. Existing skills suffice; no generic
+outcome-only skill edit. Feature and one docs-only closure remain, without a
+following implementation or publication action.

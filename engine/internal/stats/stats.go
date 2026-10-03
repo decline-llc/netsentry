@@ -164,19 +164,21 @@ func (s *Stats) ObserveAlerts(alerts []*model.Alert) {
 	if s == nil || len(alerts) == 0 {
 		return
 	}
-	s.alertsGenerated.Add(uint64(len(alerts)))
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	var count uint64
 	for _, alert := range alerts {
 		if alert == nil {
 			continue
 		}
+		count++
 		sev := alert.Severity
 		if sev == "" {
 			sev = model.SeverityLow
 		}
 		s.alertsBySeverity[sev]++
 	}
+	s.alertsGenerated.Add(count)
 }
 
 // Snapshot holds individually sampled exported counters.

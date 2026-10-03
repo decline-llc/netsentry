@@ -605,6 +605,17 @@ schemas remain unchanged. API runtime source automatically exposes the additive
 text counter through the existing renderer. Nil packets and pre-cancelled empty
 input begin no work; cancellation/shutdown scheduling is otherwise unchanged.
 
+R90-154 makes `Stats.ObserveAlerts` count only non-nil alert entries in the
+same loop that records severity counts. Empty severity still uses the low label;
+repeated non-nil pointers remain separate entries, and existing dynamic labels
+are preserved. All-nil batches contribute zero rather than phantom alerts.
+Metric names, labels, API fields, derived rate formulas, and Worker write/export/
+completion gates are unchanged. The method does not mutate input alerts. Direct
+counter/renderer, joined-writer concurrency, and real Worker/SQLite plus injected
+failure/export regressions are authored and compiled only; execution remains
+**not run; delegated by user**. Cross-counter comparisons use quiescent writers;
+this adds no general transactional snapshot or SLO measurement guarantee.
+
 Successful terminal processing is process-local: no-alert/suppression requires
 no storage write, writer success alone does not establish universal durability,
 and export return is earlier than final synced measurement receipt publication.

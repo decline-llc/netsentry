@@ -1,0 +1,48 @@
+{
+  "task": "r90-154-nil-alert-count",
+  "timestamp": "2026-10-03",
+  "branch": "fix/r90-154-nil-alert-count",
+  "remote_baseline": "d57c634ad4ba4bbc3d6966d97e5e319f8ad43294",
+  "starting_remote_baseline": "d57c634ad4ba4bbc3d6966d97e5e319f8ad43294",
+  "risk_level": "Medium",
+  "current_checkpoint": "implementation_statically_verified_delivery_pending",
+  "completed": [
+    "Fresh fetched clean main/R90-153 exact feature and closure Git/Vault verified",
+    "87-commit phase audit; empty queue restored inside core counter repair; R90-75 independent",
+    "387-file Vault hashes and 14 complete stable backups captured",
+    "Pinned owning engine module Go 1.26.8 preflighted",
+    "Exact ObserveAlerts-only one-loop non-nil counting; all other tracked engine and counter policies preserved",
+    "Four direct functions: nine Stats cases twice/nil receiver/input/renderer, joined concurrent writers, actual Worker+SQLite mixed/all-nil and four injected failure/export gates authored",
+    "Pinned Go 1.26.8 final stats/pipeline/API/alert complete compile-only chain passed; binaries unexecuted",
+    "Source/direct boundaries/Go-format/docs/172 JSON/158 unique complete roadmap/prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/sensitive review passed",
+    "387-file Vault baseline hashes unchanged"
+  ],
+  "in_progress": [
+    "Feature push/fetch/Vault and single docs-only closure"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "pass:Go 1.26.8 complete stats/pipeline/API/alert go test -c chain; external binaries unexecuted",
+    "static_review": "pass:ObserveAlerts-only transform and other engine preservation;four direct functions;Go-format/docs/172 JSON/158 complete unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/sensitive"
+  },
+  "authority_boundaries": [
+    "Seven paths; runtime ObserveAlerts only",
+    "Metrics names/labels/rates/API/Worker/store/lifecycle/export semantics unchanged",
+    "Execution delegated; no publication"
+  ],
+  "remaining_risks": [
+    "Derived rates now exclude nil entries; no runtime/performance claim",
+    "Independently sampled atomics remain nontransactional; concurrent assertions after join only",
+    "Synthetic real-store regressions unexecuted; no SQL/durability/race/SLO pass"
+  ],
+  "deviations": [
+    "Empty ready queue restored within source-grounded generated-alert count repair"
+  ],
+  "resume_instructions": "Complete only R90-154 using persisted plan; all execution delegated; do not start following implementation."
+}
