@@ -135,6 +135,15 @@ and SLO acceptance execution remains **not run; delegated by user**. This is an
 ownership repair, without a measured throughput or race-test outcome. See
 [the implementation plan](plans/task-20261002-rule-snapshot-isolation.md).
 
+R90-157 makes Aho-Corasick `Matcher.Patterns` return an independent copy,
+retaining normalized order, duplicate indices and the non-nil empty slice.
+Editing a getter result cannot change metadata associated with the compiled trie.
+The engine tracks candidate rule IDs in a set and drops its unused per-hit keyword
+lookup, keeping getter copies out of packet matching. Per-rule keyword selection,
+filters, priority and early exit remain unchanged. Direct getter/concurrent and
+actual engine regressions are authored and compiled only; execution is delegated.
+The public getter copies nonempty metadata; no measured performance claim.
+
 R90-156 makes `Engine.RuleCount` return zero before a non-nil zero-value engine
 publishes its first snapshot, matching existing `Rules` and `Match` empty-state
 handling. It reads the atomic snapshot once; initialized counting still includes

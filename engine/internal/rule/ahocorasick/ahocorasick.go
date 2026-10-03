@@ -110,7 +110,9 @@ func (m *Matcher) Match(text []byte) []int {
 	return result
 }
 
-// Patterns returns the (possibly normalised) patterns this matcher was built from.
+// Patterns returns an independent copy of the (possibly normalised) patterns.
 func (m *Matcher) Patterns() []string {
-	return m.patterns
+	patterns := make([]string, len(m.patterns))
+	copy(patterns, m.patterns)
+	return patterns
 }

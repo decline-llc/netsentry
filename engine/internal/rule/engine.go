@@ -109,7 +109,7 @@ func (e *Engine) Match(pkt *model.PacketInfo) []*model.Alert {
 	payload := decodePayload(pkt.PayloadPreview)
 
 	// Run AC automaton once; collect which rule indices matched.
-	acHitRules := map[string]string{} // rule ID → matched keyword
+	acHitRules := map[string]struct{}{} // candidate rule IDs
 	if s.acMatcher != nil && len(payload) > 0 {
 		for _, patIdx := range s.acMatcher.Match(payload) {
 			if patIdx < len(s.acRuleIdx) {
@@ -117,7 +117,7 @@ func (e *Engine) Match(pkt *model.PacketInfo) []*model.Alert {
 				if ruleIdx < len(s.allByPriority) {
 					r := s.allByPriority[ruleIdx]
 					if _, seen := acHitRules[r.ID]; !seen {
-						acHitRules[r.ID] = s.acMatcher.Patterns()[patIdx]
+						acHitRules[r.ID] = struct{}{}
 					}
 				}
 			}

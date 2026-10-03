@@ -234,6 +234,7 @@ formal SLO and evidence contract is unchanged.
 | R90-154 | Oct 3–Dec 31 | Complete implementation; tests delegated | Exclude nil entries from generated-alert counts. | R90-153; existing Stats and Worker counters | Non-nil entry total matches severity counts; retain fallback/dynamic labels and entry semantics; Worker/renderer/API/store unchanged; direct counter/concurrency/Worker regressions with execution delegated. |
 | R90-155 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject negative duration observations. | R90-154; existing public Stats observers | Negative samples change no count/sum/bucket; retain zero/positive/nil semantics and renderer; direct boundary/concurrency assertions authored with execution delegated. |
 | R90-156 | Oct 3–Dec 31 | Complete implementation; tests delegated | Count unpublished rule snapshots as empty. | R90-155; existing atomic rule.Engine | Non-nil zero-value Engine RuleCount returns zero; retain reload/match/count semantics; direct engine/API lifecycle assertions authored, execution delegated. |
+| R90-157 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Isolate Aho-Corasick pattern snapshots. | R90-156; existing matcher and candidate gate | Getter edits cannot change compiled pattern metadata; candidate set avoids getter copy per hit; retain matching/ordering/filter semantics; direct/concurrent regressions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -3714,6 +3715,16 @@ formal SLO and evidence contract is unchanged.
 - **Required validation:** pinned Go 1.26.8 rule/API/pipeline compile-only chain; static source/direct boundaries/format/docs/JSON/complete unique roadmap/history/R90-75/horizon/links/fences/path/diff/sensitive; all behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
 - **Non-goals:** nil receiver, rule validation/priority/defaults/match/reload, API/auth/schema/labels/storage/queue, dependencies/toolchain/suites/private inputs/IPv6/publication; no runtime/race/SLO claim.
 - **Stop condition:** competing edits, ambiguous static/compile/Git/Vault, new private/product/external authority or next increment.
+
+## R90-157 Definition
+
+- **Goal/status:** implemented; delivery pending; return independent Patterns snapshots, retaining metadata/trie agreement; engine uses candidate rule-ID set.
+- **Dependencies/window:** R90-156 verified delivered; existing matcher/candidate gate; Oct 3–Dec 31 forecast, no date gate.
+- **Risk:** medium; getter copies nonempty patterns; engine avoids per-hit getter copies; no measured performance outcome.
+- **Acceptance:** getter make/copy plus candidate-set-only diff; public normalization/duplicates/suffix/empty/input/getter mutation and joined concurrency; actual engine duplicate/shared/original-keyword/mixed-case/windows/disabled/filter/early-exit alerts; eight-path feature/one closure exact Git/Vault.
+- **Required validation:** pinned Go 1.26.8 Aho-Corasick/rule/API/pipeline compile-only chain; static source/direct boundaries/format/docs/JSON/complete unique roadmap/history/R90-75/horizon/links/fences/path/diff/sensitive; all behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
+- **Non-goals:** trie/normalization/matching/index guards/filters/priority/early exit/reload/nil receiver, API/storage/metrics/benchmark performance/dependencies/toolchain/suites/private inputs/IPv6/publication; no runtime/race/SLO pass.
+- **Stop condition:** competing edits, ambiguous static/compile/Git/Vault, new private/product/external authority or following increment.
 
 ### R90-71 Validation Deviation
 
@@ -9057,3 +9068,55 @@ trigger verifies fetched closure/Vault and audits fresh code/queue before a
 separate eligible plan. No following increment started; do not repeat R90-155/
 R90-156 delivery or R90-59 publication. IPv6/external publication needs separate
 authority.
+
+
+## R90-157 Selection and Pattern Snapshot Repair (2026-10-03)
+
+Fresh fetched clean main HEAD/origin/main/FETCH_HEAD:
+`1bafc66e775d0bb22c6e22fa45b4449dfcb9af22`; R90-156 exact seven-path
+feature and three-path closure Git/Vault scope/note/index/MOC/short identifier
+resolution verified. 93-commit Sep 5–Oct 3 phase retains core correctness trend,
+no new qualifying R90-75 acceptance. Sole unfinished R90-75 full independent
+asynchronous contract and Oct 3–Dec 31 horizon unchanged. 393 Markdown hashes/
+14 complete stable backups captured; pinned owning engine Go 1.26.8 preflighted.
+
+Empty ready queue reconciled inside source-grounded R90-157: public Patterns
+returns internal slice, permitting metadata edits while compiled trie remains
+unchanged. Eight-path plan/state persisted before source/docs edits on
+fix/r90-157-pattern-snapshots. Getter copies owned metadata; Engine candidate
+tracking drops unused keyword lookup for rule-ID set, avoiding per-hit getter
+copy. Direct public snapshot/match/concurrent and actual Engine semantics
+regressions authored/compiled only. All suite execution delegated; no performance,
+observed incident, publication or following implementation claim.
+
+
+## R90-157 Implementation and Validation Checkpoint (2026-10-03)
+
+Runtime only Patterns getter make/copy plus Engine candidate map value changed
+from unused keyword string to rule-ID set. Final review retained existing
+first-hit guard and index checks. No getter in packet path; trie/normalization/
+Match/per-rule keyword/filter/priority/early exit/reload/publication and every
+other tracked engine source preserved exactly. Getter keeps normalized order,
+duplicates/non-nil empty result; public nonempty copies are deliberate, without
+measured throughput/allocation, new empty-pattern or nil-receiver guarantees.
+
+Three direct public regression functions authored. Sensitive/insensitive getter
+cases verify fixed duplicate/suffix indices, constructor input independence,
+successive snapshot/entry/reslice/append edits and nil/empty no-hit shape. Four
+start-synchronized callers each perform 100 owned snapshot edits and fixed
+Match checks; joined callers precede final metadata/hit assertions. Eight actual
+Engine.Reload/Match cases cover duplicate/shared/original-keyword selection,
+mixed case, window hit/miss, disabled shared keyword, protocol/port rejection,
+critical early exit; exact full alert count/fields/order and packet values.
+No internal-field writes, injected matcher, sleeps or weakened skips. All
+assertions authored/compiled only; no runtime/race/SLO outcome inferred.
+
+Pinned Go 1.26.8 final Aho-Corasick/rule/API/pipeline complete compile-only chain
+passed after duplicate-guard review; binaries/benchmarks unexecuted. Exact source/
+direct boundaries/Go-format/docs/175 JSON/161 complete unique roadmap pairs/prior
+Definitions/R90-75/history/horizon/links/fences/eight paths/diff/sensitive passed.
+All behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution
+**not run; delegated by user**. No unresolved implementation/compile/static
+ambiguity; 393 baseline Vault hashes unchanged. Existing skills cover this
+boundary and generated identifiers; no redundant generic edit. Feature plus one
+docs-only closure remains; no following implementation or publication started.

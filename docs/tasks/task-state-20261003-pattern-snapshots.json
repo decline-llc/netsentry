@@ -1,0 +1,51 @@
+{
+  "task": "r90-157-pattern-snapshots",
+  "timestamp": "2026-10-03",
+  "branch": "fix/r90-157-pattern-snapshots",
+  "remote_baseline": "1bafc66e775d0bb22c6e22fa45b4449dfcb9af22",
+  "starting_remote_baseline": "1bafc66e775d0bb22c6e22fa45b4449dfcb9af22",
+  "risk_level": "Medium",
+  "current_checkpoint": "implementation_static_compile_complete_delivery_pending",
+  "completed": [
+    "Fresh fetched clean main/R90-156 exact Git/Vault scopes/identifier resolution verified",
+    "93-commit phase audit; R90-75 sole unfinished independent departmental contract; no new acceptance",
+    "393 Markdown hashes/14 complete stable backups captured",
+    "Pinned owning engine Go 1.26.8 preflighted",
+    "Exact Patterns copy/Engine candidate membership value change, retained duplicate/index guards; no getter in packet path; every other tracked engine source preserved",
+    "Three public direct functions: getter/input/normalized/duplicate/suffix/empty/reslice/append ownership; four joined callers x100; eight actual Engine full alerts/order/count/packet cases authored",
+    "Pinned Go 1.26.8 final Aho-Corasick/rule/API/pipeline complete compile-only chain passed after guard review; binaries/benchmarks unexecuted",
+    "Exact source/direct-boundary/Go format/docs/175 JSON/161 complete unique roadmap pairs/prior Definitions/R90-75/history/horizon/links/fences/eight paths/diff/sensitive passed",
+    "393 baseline Vault hashes unchanged; existing skills suffice, no redundant edit"
+  ],
+  "in_progress": [
+    "Feature delivery and one docs-only closure"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "pass:Go 1.26.8 final Aho-Corasick/rule/API/pipeline complete go test -c chain; binaries/benchmarks unexecuted",
+    "static_review": "pass:exact getter/candidate map transform/all other tracked engine source/direct public regressions/format/docs/175 JSON/161 complete unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/eight paths/diff/sensitive"
+  },
+  "authority_boundaries": [
+    "Patterns getter copy plus Engine candidate membership set; eight paths",
+    "No trie/matching/filter/priority/publication policy changes",
+    "All suite execution delegated; no release/publication"
+  ],
+  "remaining_risks": [
+    "Public nonempty getter copy allocates; no measured throughput/allocation claim",
+    "Direct/concurrent regressions authored only; no runtime/race/SLO pass"
+  ],
+  "deviations": [
+    "Empty local ready queue restored within source-grounded matcher ownership repair"
+  ],
+  "resume_instructions": "Complete only R90-157 source/direct regressions/static/compile, feature push/fetch/exact Vault, single docs-only closure push/fetch/exact Vault; refresh queue and stop; no suites.",
+  "todo": [
+    "Focused feature push/fresh fetch/exact Vault",
+    "One docs-only closure push/fresh fetch/exact Vault; refresh queue"
+  ]
+}
