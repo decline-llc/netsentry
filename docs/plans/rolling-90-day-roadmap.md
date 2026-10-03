@@ -230,6 +230,7 @@ formal SLO and evidence contract is unchanged.
 | R90-150 | Oct 3–Dec 31 | Complete implementation; tests delegated | Prevent daily-shard query end-index overflow. | R90-149; existing Store.Query shard merge | Clamp query limit to remaining slice length before end addition; preserve normalization/filter/sort/count/SQL/HTTP semantics; author helper and real primary/daily public Query regressions with execution delegated. |
 | R90-151 | Oct 3–Dec 31 | Complete implementation; tests delegated | Align negative Query limits across store modes. | R90-150; existing primary uncapped negative limit | Negative daily limits return all collected filtered rows after offset; zero stays 1000/positive unchanged; preserve SQL/HTTP/bounds; author >1000 real primary/daily and empty-result regressions with execution delegated. |
 | R90-152 | Oct 3–Dec 31 | Complete implementation; tests delegated | Include historical daily shards in Store.List. | R90-151; existing cross-shard Query reader | Daily List returns globally ordered newest 1000 rows including historical shards; retain primary SQL/lifecycle and reuse query error/health handling; direct regression execution delegated. |
+| R90-153 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Record committed HTTP audit response status. | R90-152; existing audit middleware | Preserve first final status and implicit 200; non-101 1xx stays informational, 101 terminal; existing audit fields/auth policy unchanged; direct wire/log/header regression execution delegated. |
 
 ## R90-01 Definition
 
@@ -3636,6 +3637,32 @@ formal SLO and evidence contract is unchanged.
   product/private-input/external authority, or starting another increment.
 - **Selected plan:** [task-20261003-shard-list.md](task-20261003-shard-list.md).
 
+
+
+## R90-153 Definition
+
+- **Goal/status:** implemented; delivery pending; align logged audit status with the first
+  committed final HTTP response, retaining informational header semantics.
+- **Dependencies/window:** completed R90-152 and existing API audit wrapper;
+  Oct 3–Dec 31 forecasts, without calendar eligibility gates.
+- **Risk:** medium; bookkeeping affects evidence and status-derived authorization
+  indicator, while endpoint authorization policy stays unchanged.
+- **Acceptance:** exact WriteHeader-only guard/forward/commit transformation;
+  non-101 1xx uncommitted, 101 terminal, repeated final ignored, rejected headers
+  do not poison status. Preserve Write/default-200/other audit fields and source.
+  Author real HTTP client/middleware status/log/body/1xx/request-ID and GET/no-
+  logger cases, plus direct 101 forwarding/rejected-code cases; execution delegated.
+- **Required validation:** pinned Go 1.26.8 API/alert compile-only chain, exact
+  source and local net/http contract mapping, Go-format/docs/JSON/unique complete
+  roadmap/prior Definitions/R90-75/history/horizon/links/fences/six-path/diff/
+  sensitive review; exact push/fetch/Vault scope/note/index/MOC/stable preservation.
+  All execution suites **not run; delegated by user**; no runtime audit pass.
+- **Non-goals:** actual router/auth/schema/log fields/Write/request IDs/GET/storage
+  phase, optional writer interfaces, async/panic recovery, other core modules,
+  dependencies/toolchain/suite execution/IPv6/publication changes.
+- **Stop condition:** ambiguous static/compile/Git/Vault, unsupported semantics,
+  competing work, new product/private/external authority, or a second increment.
+- **Selected plan:** [task-20261003-audit-status.md](task-20261003-audit-status.md).
 
 
 ### R90-71 Validation Deviation
@@ -8576,3 +8603,58 @@ acceptance, without blocking development. Next trigger verifies fetched closure/
 Vault, audits fresh code/queue and persists a separate eligible plan before edits.
 No subsequent increment started. Do not repeat R90-151/R90-152 delivery or
 R90-59 publication; IPv6/external publication needs separate authority.
+
+
+## R90-153 Selection and HTTP Audit Status Repair (2026-10-03)
+
+Fresh fetched clean main HEAD/origin/main/FETCH_HEAD is
+`a18e66babf7b17d012e874574f77fa00861d9375`. R90-152 exact six-path feature and
+three-path closure Git/Vault note/scope/index/MOC verified. Sep 5–Oct 3 phase
+covers 85 commits: supplied SLO evidence tools then core correctness repairs,
+without new departmental acceptance. R90-75 full independent asynchronous
+contract and Oct 3–Dec 31 horizon unchanged. Captured 385-file Vault hash
+baseline and complete 14 stable current notes before edits.
+
+Empty local ready queue reconciled inside source-grounded R90-153. audit writer
+currently overwrites status after final headers and records non-101 1xx as final;
+audit status and status-derived authorization can differ from committed wire
+response. Pinned local net/http source directly establishes first-final-only,
+non-101 informational and terminal-101 semantics. Six-path plan/state persisted
+on fix/r90-153-audit-status before source/docs/roadmap edits. Scope only wrapper
+WriteHeader bookkeeping; preserve endpoint policy, fields and other source.
+Real wire/middleware and direct forwarding/rejected-code regressions authored
+with all execution delegated; no observed incident or runtime correctness claim.
+Existing skills suffice; no outcome-only skill edit. No subsequent work started.
+
+
+## R90-153 Implementation and Validation Checkpoint (2026-10-03)
+
+Runtime changes only auditResponseWriter.WriteHeader: after an existing final
+commit, return before forwarding; otherwise forward before recording status,
+then record >=200 or terminal 101. Other 1xx leave status zero. Implicit Write
+200/no-write default 200 and all other tracked engine/audit fields/request IDs/
+GET skip/storage phase/status-derived authorization/router/auth source unchanged.
+Pinned Go net/http source directly confirms the same state transitions and
+client trace behavior. No new endpoint authorization semantics or panic recovery.
+
+Three direct regression functions authored: 12 actual net/http server/client
+cases through wrapped audit middleware, comparing wire status/body/request ID,
+trace-observed 1xx and completed audit status/authorization/target/path/method;
+explicit/repeated finals, unauthorized-first/success-first/failure/no-content,
+implicit body, no-write, informational explicit/body/handler-return, GET skip,
+absent logger. Request/client deadlines and handler-completion channel avoid
+fixed sleeps and log timing races. Five direct forwarding cases include terminal
+101 and ignored later headers; two real ResponseRecorder invalid-code cases
+assert underlying panic propagation with zero cached status, then final 401
+retained through attempted 200. Recovery exists only in this deliberate panic
+assertion. Spy does not replace real informational wire evidence.
+
+Pinned Go 1.26.8 final API/alert complete compile-only chain passed; external
+binaries unexecuted. Exact source/local standard mapping/direct-boundary/Go-format/
+docs/171 JSON/157 unique complete roadmap/prior Definitions/R90-75/history/horizon/
+links/fences/six-path/diff/sensitive review passed. Behavioral/race/CLI/full-suite/
+scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
+No live HTTP/audit/runtime/SLO success inferred. No implementation, compilation
+or validation failure; baseline Vault hashes unchanged. Existing skills suffice;
+no generic skill edit. Feature plus one docs-only closure remain, without next
+implementation or release action.

@@ -14,8 +14,13 @@ type auditResponseWriter struct {
 }
 
 func (w *auditResponseWriter) WriteHeader(status int) {
-	w.status = status
+	if w.status != 0 {
+		return
+	}
 	w.ResponseWriter.WriteHeader(status)
+	if status >= 200 || status == http.StatusSwitchingProtocols {
+		w.status = status
+	}
 }
 
 func (w *auditResponseWriter) Write(b []byte) (int, error) {

@@ -272,6 +272,14 @@ Current limitations:
 - Optional PSK Bearer authentication protects modifying rule and suppression endpoints when `engine.api_auth_enabled` is true.
 - The HTTP listener has explicit read/header/write/idle timeouts, a 16 KiB header limit, and loopback-only defaults.
 - Non-GET API requests emit structured zap audit logs with request ID, method, path, status, authorization outcome, target, remote address, and duration.
+  Audit status retains the first committed final response, including terminal
+  101 Switching Protocols; before final commitment, other informational 1xx
+  headers are forwarded without committing the logged status. A body write commits implicit 200, and a handler
+  that never commits a final header or body logs the normal default 200. Later
+  headers cannot replace the final audit status or its existing status-derived
+  authorization indicator. Endpoint authorization policy and audit fields are
+  unchanged. Direct real-HTTP status/log regressions are authored and compiled
+  only; execution remains delegated to the user's test department.
 - Optional pprof runs on a separate localhost-only server when `engine.pprof_enabled` is true.
 - Suppressions load from `engine.suppressions_file` at startup; create, update, delete, and reload operations persist or reload that file before swapping the active in-memory filter.
 - Payload previews are redacted before SQLite writes when `engine.redact_sensitive_fields` is true; current redaction covers Authorization, Cookie, Set-Cookie, password, and token patterns.
