@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import stat
 import sys
 from typing import Any, Sequence
 
@@ -108,11 +109,39 @@ def _digest_rows(rows: Any) -> str:
     return digest.hexdigest()
 
 
-def _read(path: Path) -> dict[str, Any]:
-    # Called only for our successfully reconciled, bounded metadata snapshots.
-    with path.open("rb") as stream:
-        raw = stream.read(bundle.META_LIMIT + 1)
-    bundle._require(len(raw) <= bundle.META_LIMIT, "metadata exceeds 1 MiB")
+def _read(path: Path, key: str, entry: Any) -> dict[str, Any]:
+    bundle._require(isinstance(entry, dict) and entry.get("complete") is True
+                    and entry.get("file") == key, "receipt requires a complete captured inventory")
+    expected_size = report._integer(entry.get("bytes"), "receipt bytes")
+    bundle._require(expected_size <= bundle.META_LIMIT, "metadata exceeds 1 MiB")
+    expected_hash = entry.get("sha256")
+    bundle._hash(expected_hash)
+    flags = tuple(getattr(os, name, None) for name in ("O_NOFOLLOW", "O_NONBLOCK"))
+    bundle._require(all(type(flag) is int and flag > 0 for flag in flags),
+                    "non-following/nonblocking receipt admission unavailable")
+    fields = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
+    descriptor = os.open(path, os.O_RDONLY | flags[0] | flags[1])
+    try:
+        stream = os.fdopen(descriptor, "rb")
+    except BaseException:
+        os.close(descriptor)
+        raise
+    with stream:
+        before = os.fstat(stream.fileno())
+        bundle._require(stat.S_ISREG(before.st_mode), "receipt input must be a regular file")
+        bundle._require(all(type(getattr(before, field, None)) is int for field in fields),
+                        "stable receipt metadata unavailable")
+        bundle._require(before.st_size == expected_size, "receipt size differs from inventory")
+        before_values = tuple(getattr(before, field) for field in fields)
+        raw = stream.read(expected_size + 1)
+        bundle._require(len(raw) <= expected_size, "receipt bytes exceed inventory")
+        after = os.fstat(stream.fileno())
+        bundle._require(all(type(getattr(after, field, None)) is int for field in fields),
+                        "stable receipt metadata unavailable")
+        bundle._require(before_values == tuple(getattr(after, field) for field in fields),
+                        "receipt input changed while reading")
+        bundle._require(len(raw) == expected_size and hashlib.sha256(raw).hexdigest() == expected_hash,
+                        "receipt bytes differ from captured inventory")
     value = json.loads(raw.decode("utf-8"), object_pairs_hook=report._pairs,
                        parse_constant=report._constant, parse_float=bundle._finite_float)
     bundle._require(isinstance(value, dict), "metadata must be an object")
@@ -206,10 +235,15 @@ def _bind(original: dict[str, Any], current: dict[str, Any]) -> None:
 def _conditions(root: Path, original: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
     observations, _ = report.read_observations(root / "adapter/observations.json")
     report._validate(observations)
-    sender = _read(root / "sender/submission.json")
-    adapter = _read(root / "adapter/receipt.json")
-    capture = _read(root / "capture/summary.json")
-    engine = _read(root / "engine/close.json")
+    inventory = {entry["file"]: entry for entry in original["inventory"]}
+    sender = _read(root / "sender/submission.json", "sender/submission.json",
+                   inventory.get("sender/submission.json"))
+    adapter = _read(root / "adapter/receipt.json", "adapter/receipt.json",
+                    inventory.get("adapter/receipt.json"))
+    capture = _read(root / "capture/summary.json", "capture/summary.json",
+                    inventory.get("capture/summary.json"))
+    engine = _read(root / "engine/close.json", "engine/close.json",
+                   inventory.get("engine/close.json"))
     conditions = {key: observations[key] for key in ("profile", "duration_seconds", "drain_seconds")}
     for section in ("policy", "resources", "measurement", "provenance"):
         for key, value in observations[section].items():

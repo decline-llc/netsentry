@@ -251,6 +251,20 @@ handling and exact tool comparability. Direct acquisition/preservation/cleanup/
 consumer cases remain departmental and unrun; see
 [report-source binding](slo-bundle.md#inventory-bound-report-source-read-r90-141).
 
+R90-143 separately binds the four pair condition receipt reopens after original
+manifest/status/inventory binding. Each fixed key uses its complete matching
+original inventory entry, signed-64-bit bytes within the existing 1 MiB ceiling,
+lowercase SHA-256, one regular non-following/nonblocking handle and integer
+known-size metadata. Captured-bytes+1 probing, exact EOF bytes/hash and stable
+immutable metadata precede close, then the original strict parser. All receipts
+finish before affected-side conditions/metrics/identity installation. Existing
+CLI exit 2 and retained partial-output handling remain; prior evidence/state is
+preserved without rollback. Default/context/adapter/sender/combined contracts
+and exact source comparability remain. Direct per-receipt admission/inventory/
+EOF/parser/fault/cleanup/preservation/qualification cases remain departmental
+and unrun; parser cases need matching inventory. See
+[pair receipt reads](slo-compare.md#inventory-bound-pair-receipt-reads-r90-143).
+
 R90-139 separately binds the three retained sender replay handles after decoder
 close: complete captured bytes/rows/hash inventories, non-following/nonblocking
 regular descriptors, known-size checks before reads, bounded byte/row consumption,

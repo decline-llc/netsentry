@@ -220,7 +220,7 @@ formal SLO and evidence contract is unchanged.
 | R90-140 | Oct 2 | Complete documentation; execution delegated | Reconcile sender replay delivery and scope report-source inventory binding. | R90-139 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record later observations read gap and define complete R90-141 contract without runtime/test execution. |
 | R90-141 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind report-source observations read to captured inventory. | R90-140; R90-118/R90-119/R90-123/R90-127 bundle/pair consumers; R90-135/R90-137 precedents | Admit one bounded regular non-following/nonblocking observations handle; exact inventory/metadata/close before source comparison/recompute; preserve public formats/status/eligibility/partial evidence; tests delegated. |
 | R90-142 | Oct 2 | Complete documentation; execution delegated | Reconcile report-binding delivery and scope pair receipt inventory reads. | R90-141 verified feature/closure | Verify exact prior Git/Vault/phase evidence; define complete R90-143 four-receipt acquisition/parser/qualification contract without runtime/test execution. |
-| R90-143 | Oct 2–Dec 30 | Ready; tests delegated | Bind pair condition receipt reads to reconciled inventory. | R90-142; R90-119/R90-121/R90-123/R90-127 pair modes; R90-137/R90-141 precedents | Four fixed receipt reads validate complete matched inventory and bounded regular non-following/nonblocking handles; exact EOF metadata/hash and close before unchanged parser/projection; preserve all modes/error/partial contracts; tests delegated. |
+| R90-143 | Oct 2–Dec 30 | In progress; tests delegated | Bind pair condition receipt reads to reconciled inventory. | R90-142; R90-119/R90-121/R90-123/R90-127 pair modes; R90-137/R90-141 precedents | Four fixed receipt reads validate complete matched inventory and bounded regular non-following/nonblocking handles; exact EOF metadata/hash and close before unchanged parser/projection; preserve all modes/error/partial contracts; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3297,7 +3297,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-143 Definition
 
-- **Goal/status:** ready/unstarted after verified R90-142 audit delivery;
+- **Goal/status:** implementation in progress after verified R90-142 audit delivery;
   bind four pair condition receipt reads to matched captured inventory.
 - **Dependencies/window:** R90-142; completed R90-119/R90-121/R90-123/R90-127
   default/context/adapter/sender pair modes; R90-137/R90-141 precedents;
@@ -7445,3 +7445,34 @@ tip/closure knowledge and persists its separate implementation plan. R90-75
 retains its complete independent departmental acceptance contract. Do not repeat
 completed R90-141/R90-142 delivery or R90-59 publication. No subsequent runtime
 implementation begins here. Oct 2–Dec 30 horizon remains current.
+
+
+## R90-143 Selection and Implementation (2026-10-02)
+
+Clean freshly fetched HEAD/origin/main/FETCH_HEAD is
+`50b63fe7dbaa993b1cd2b14646fd010ae9b3f9f8`. Both R90-142 audit/closure
+exact ranges have verified ancestry/generated scope/note/index/MOC. The 365-file
+Vault baseline snapshot JSON SHA-256 is
+`d6c7b9a9d5775816dfd3f42145c720e70396435b4021b2e6c0b44165c7049359`;
+12 stable handoffs and 318 immutable iteration-directory notes are captured.
+The 65-commit Sep 4–Oct 2 phase audit separates contracts/tooling/replay,
+input admission, queue audits, historical patched-candidate publication and
+main metadata. No missing delivery or qualifying new R90-75 measurement appears.
+R90-143 is the sole ready local item and all internal dependencies are complete;
+R90-75 retains its independent complete departmental contract and Oct 2–Dec 30
+horizon. Six-path plan/state persisted before source/docs edits.
+
+Only `_read` acquisition/signature, four fixed receipt private call-site routing
+and stat import change runtime behavior. Complete matching-key bound original
+inventory, captured signed-64-bit count/1 MiB/hash/available flags precede one
+regular non-following/nonblocking descriptor, integer metadata/known size and
+immutable before tuple. Raw wrapping failure closes its handle; stream context
+owns remaining paths. Captured bytes+1 probe, stable integer EOF metadata and
+exact bytes/hash precede close and unchanged complete strict parser/return.
+All four finish before projection/metrics/identity installation. Complete
+observations/projection/metrics/binding/compare branches and every pair mode/
+schema/status/exit/partial contract remain. Earlier admission diagnostics and
+comparison source digest change intentionally; no comparability waiver. All
+execution suites remain delegated and unrun. No runtime rejection, injected-fault
+cleanup/preservation, authenticity, continuous integrity or SLO result follows.
+No subsequent increment starts here; existing skills need no edit.

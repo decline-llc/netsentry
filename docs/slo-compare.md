@@ -395,3 +395,48 @@ substitution; context eligibility after sender failure; unchanged measurement
 outcomes; separate budgets, I/O/close/fsync/interruption and partial manifests.
 The [implementation plan](plans/task-20260930-slo-sender-integration.md) records
 static acceptance mapping. No tests, CLI execution or knowledge suite ran.
+
+
+## Inventory-bound pair receipt reads (R90-143)
+
+After original manifest validation, both review-required statuses and original/
+fresh inventory binding, `_conditions` passes the four fixed keys and their
+bound original inventory entries to `_read`: `sender/submission.json`,
+`adapter/receipt.json`, `capture/summary.json`, `engine/close.json`.
+Each entry must be complete and match its key, with nonnegative signed-64-bit
+bytes (bool rejected), at most the existing 1 MiB metadata limit and lowercase
+SHA-256. Count/hash are captured before opening. Required non-following and
+nonblocking flags must be available as positive integers; absence rejects safely.
+
+Each read opens one read-only non-following/nonblocking descriptor, requires a
+regular file, integer device/inode/size/mtime_ns/ctime_ns and known size equality,
+and captures immutable metadata values. Wrapping failure closes the raw handle;
+the stream context owns remaining paths. A captured-bytes+1 probe rejects excess;
+EOF requires integer unchanged metadata and exact consumed bytes/hash. Close
+precedes the complete existing strict UTF-8/JSON duplicate-member/constant/
+finite-float/object parser and successful return. No newline normalization or
+new parser is added. Admission/integrity failures may precede parsing errors.
+
+Projection/metrics, observations reading, `_bind`, comparison branches and all
+default/context/adapter/sender/combined modes, schemas and exits are preserved.
+All four receipts finish before affected-side conditions/metrics/identity are
+installed. Helper failures retain CLI I/O/value/recursion exit 2 and partial
+output ownership; they are not converted into published invalid-evidence results.
+Previously retained files and earlier state remain, without whole-operation
+rollback. Comparison source digest changes without relaxing comparability.
+These checks bind the individual reads only; they do not authenticate sources,
+freeze writers, protect parent traversal or prove continuous bundle integrity.
+Other observations/manifest/reconstruction/context/source readers remain separate.
+
+Static source/AST review is the local evidence. All execution suites remain
+**not run; delegated by user**. For each named receipt the department must directly
+reach `_read` with ordinary and space-containing paths; missing/directory/FIFO/
+symlink/replacement inputs; missing/incomplete/mis-keyed inventory; bool/negative/
+out-of-range/over-ceiling sizes or invalid hashes/flags; unavailable metadata or
+known-size mismatch; empty/exact/over/short reads; same-size digest drift/growth/
+truncation/metadata mutation; open/fdopen/fstat/read/close faults and independent
+byte-preservation/cleanup/no new side qualification checks. Parser cases cover
+UTF-8/duplicate/constant/finite-float/object errors with matching inventory so
+integrity rejection does not hide the parser. Check unchanged complete projections,
+metrics, modes, status/exits and partial artifacts. Nearby snapshot/decoder/reporter
+cases cannot substitute. See [the implementation plan](plans/task-20261002-pair-receipt-boundary.md).
