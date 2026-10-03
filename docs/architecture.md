@@ -329,6 +329,16 @@ Current build:
 - SQLite using `modernc.org/sqlite`.
 - UPSERT aggregation by `(rule_id, src_ip, dst_ip, dst_port, window_start)`.
 - Fixed aggregation window from `engine.alert_aggregation_window`.
+- R90-160 validates `engine.alert_aggregation_window` and
+  `engine.health_freshness_limit_seconds` as representable whole-second durations
+  during configuration loading: -9223372036 through 9223372036 seconds, inclusive.
+  Values outside that range would overflow the CLI's signed nanosecond conversion
+  and now return named configuration errors before startup. This is a numeric
+  representation bound; defaults and representable positive, zero and negative
+  values retain their existing downstream behavior. Native integer parsing
+  bounds still apply. Public file/env boundary, full-config/default, combined
+  diagnostic and input-preservation regressions are authored and compiled only;
+  execution is delegated, with no startup or runtime pass inferred.
 - Optional daily shard pathing with `engine.db_shard_daily`, which writes each alert to `engine.db_dir/netsentry-YYYY-MM-DD.db` based on the alert timestamp.
 - Before opening an existing non-current daily shard for a write, the store
   runs the same separate read-only integrity and required-schema preflight used

@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -132,6 +133,8 @@ func defaults() *Config {
 	}
 }
 
+const maxDurationSeconds = int64((1<<63 - 1) / time.Second)
+
 func validate(cfg *Config) error {
 	var errs []string
 	if mode, err := strconv.ParseUint(cfg.Engine.UDSSocketMode, 8, 32); err != nil || mode == 0 || mode > 0o777 {
@@ -142,6 +145,12 @@ func validate(cfg *Config) error {
 	}
 	if cfg.Engine.UDSReadTimeoutSeconds < 1 || cfg.Engine.UDSReadTimeoutSeconds > 3600 {
 		errs = append(errs, "engine.uds_read_timeout_seconds must be between 1 and 3600")
+	}
+	if seconds := int64(cfg.Engine.AlertAggregationWindow); seconds < -maxDurationSeconds || seconds > maxDurationSeconds {
+		errs = append(errs, fmt.Sprintf("engine.alert_aggregation_window must be between %d and %d seconds", -maxDurationSeconds, maxDurationSeconds))
+	}
+	if seconds := int64(cfg.Engine.HealthFreshnessLimitSeconds); seconds < -maxDurationSeconds || seconds > maxDurationSeconds {
+		errs = append(errs, fmt.Sprintf("engine.health_freshness_limit_seconds must be between %d and %d seconds", -maxDurationSeconds, maxDurationSeconds))
 	}
 	if cfg.Logging.Format != "json" && cfg.Logging.Format != "console" {
 		errs = append(errs, "logging.format must be json or console")

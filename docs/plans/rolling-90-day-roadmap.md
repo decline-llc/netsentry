@@ -237,6 +237,7 @@ formal SLO and evidence contract is unchanged.
 | R90-157 | Oct 3–Dec 31 | Complete implementation; tests delegated | Isolate Aho-Corasick pattern snapshots. | R90-156; existing matcher and candidate gate | Getter edits cannot change compiled pattern metadata; candidate set avoids getter copy per hit; retain matching/ordering/filter semantics; direct/concurrent regressions authored, execution delegated. |
 | R90-158 | Oct 3–Dec 31 | Complete implementation; tests delegated | Validate calendar dates before expired shard cleanup. | R90-157; existing daily retention cleanup | Invalid calendar filenames/base/WAL/SHM remain byte-identical; valid expired sets deleted with exact count, cutoff and lifecycle unchanged; direct/startup preservation regressions authored, execution delegated. |
 | R90-159 | Oct 3–Dec 31 | Complete implementation; tests delegated | Require valid calendar dates in daily shard discovery. | R90-158; existing shard discovery | List/Query/Count ignore impossible-calendar unrelated files with byte preservation; valid historical/current rows and corrupt valid-date errors retained; direct regressions authored, execution delegated. |
+| R90-160 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Reject unrepresentable duration settings before startup. | R90-159; existing config second conversions | Two whole-second settings reject signed duration overflow with named diagnostics; representable negative/zero/positive/default/env semantics retained; direct public regressions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -3746,6 +3747,16 @@ formal SLO and evidence contract is unchanged.
 - **Acceptance:** time.Parse/error-skip-only discovery diff; actual public List/Query/Count with seven invalid-calendar base/WAL/SHM byte-preservation cases; valid leap/ordinary/current rows, page/range/full-row baselines and health retained; canceled sentinels/bytes and corrupt valid-date shard errors preserved; six-path feature/one closure exact Git/Vault.
 - **Required validation:** pinned Go 1.26.8 alert/API/pipeline compile-only chain; static exact source/direct boundaries/format/docs/JSON/complete unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/paths/diff/sensitive; all behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
 - **Non-goals:** cleanup/deletion/retention/write/schema/recovery/active owner/SQL/filter/order/pagination/count policy, new filename/year range/API/metrics/dependencies/toolchain/suites/private inputs/IPv6/publication; no filesystem/SQLite/runtime/SLO pass.
+- **Stop condition:** competing edits, ambiguous static/compile/Git/Vault, new private/product/external authority or following increment.
+
+## R90-160 Definition
+
+- **Goal/status:** implemented; delivery pending; reject unrepresentable aggregation and health-freshness seconds during config.Load.
+- **Dependencies/window:** R90-159 verified delivered; existing config/main second conversions; Oct 3–Dec 31 forecast, no date gate.
+- **Risk:** low; overflowing configs now reject before startup; no tighter operational bound, default or fallback change.
+- **Acceptance:** derived whole-second bound and two named checks only; public Load both signed endpoints/first overflows/int64 extremes/-1/0/1/defaults/full-config/input preservation; combined diagnostics and numeric env expansion; native int parse bounds retained; six-path feature/one closure exact Git/Vault.
+- **Required validation:** pinned Go 1.26.8 config/CLI/alert/API compile-only chain; static source/direct boundaries/format/docs/JSON/complete unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/paths/diff/sensitive; all behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
+- **Non-goals:** operational duration policy/positive-only/default/fallback/main conversions/programmatic option validation/other numeric fields/API/schema/metrics/dependencies/toolchain/suites/private inputs/IPv6/publication; no startup/runtime/SLO pass.
 - **Stop condition:** competing edits, ambiguous static/compile/Git/Vault, new private/product/external authority or following increment.
 
 ### R90-71 Validation Deviation
@@ -9412,3 +9423,56 @@ asynchronous departmental contract and Oct 3–Dec 31 horizon unchanged. Next tr
 verifies fetched closure/Vault and audits fresh code/queue before separate
 eligible plan. No following increment started; do not repeat R90-158/R90-159
 delivery or R90-59 publication. IPv6/external publication needs separate authority.
+
+
+## R90-160 Selection and Duration Config Bounds (2026-10-03)
+
+Fresh fetched clean main HEAD/origin/main/FETCH_HEAD:
+`88bb30dcac46385b3f354b77aaf636ef5c005f68`; R90-159 exact six-path
+feature/three-path closure Git/Vault scope/note/index/MOC/identifier resolution
+verified. 99-commit phase remains core correctness after SLO tooling; no new
+qualifying R90-75 evidence. R90-75 sole unfinished full independent asynchronous
+contract and Oct 3–Dec 31 horizon unchanged. Existing unique local Vault's 399
+Markdown hashes/14 complete stable backups captured; owning Go 1.26.8 preflighted.
+
+Empty ready queue reconciled inside source-grounded representability repair:
+aggregation/health freshness seconds multiply into signed nanosecond durations
+without bounds, allowing sign flips and altered defaults/windows. Six-path
+plan/state persisted before source/docs edits on fix/r90-160-duration-config.
+Validate both fields within representable whole seconds, without new operational
+limits or representable negative/zero/default behavior changes. Public Load
+signed-boundary/default/full-config/combined diagnostic/env/input-preservation
+regressions authored/compiled only. All execution delegated; no observed incident,
+startup/runtime/SLO pass, publication or following implementation claim.
+
+
+## R90-160 Implementation and Validation Checkpoint (2026-10-03)
+
+Runtime diff adds time import, derived whole-second bound and two named signed
+range checks only. Static arithmetic confirms [-9223372036, 9223372036] whole
+seconds fit signed nanoseconds; first positive/negative values outside flip sign
+under wrapping conversion. Every other tracked engine source/default/main
+conversion/fallback/validator/env/strict-decoder byte-identical. Representable
+negative/zero/positive values retained; formerly overflowing config now rejects
+before startup with named bounds. No operational cap or target policy introduced.
+
+Three direct external public Load regression functions authored/compiled only.
+Both settings cover signed endpoints/-1/0/1, first signed overflow and int64
+extremes; complete config including unrelated defaults/path remains equal for
+accepted values, with duration round-trip/sign assertions. Overflow rejects nil
+config with exact field/bounds diagnostics. Omitted defaults stay 60/30. Combined
+both overflows plus invalid API port retain three exact ordered diagnostics.
+Numeric env expansion covers accepted 60 and first signed overflows for both
+fields. Native 32-bit out-of-int fixtures require parse errors rather than skips;
+all Load input bytes compared before/after. No private validator/default access,
+sleeps or weakened tests. No startup/runtime outcome inferred.
+
+Pinned Go 1.26.8 config/owning CLI/alert/API complete compile-only chain passed;
+binaries and benchmarks unexecuted. Exact source/direct boundaries/arithmetic/
+Go-format/docs/178 JSON/164 complete unique roadmap pairs/prior Definitions/
+R90-75/history/horizon/links/fences/six paths/diff/sensitive passed. No unresolved
+validation failure or deviation; all behavioral/race/CLI/full-suite/scanner/
+knowledge/traffic/acceptance execution **not run; delegated by user**. No startup/
+SQLite/filesystem/runtime/SLO pass. 399 baseline Vault hashes unchanged. Existing
+skills cover rejection boundaries/portable comparisons; no redundant update.
+Feature plus one docs-only closure remains; no following increment/publication.
