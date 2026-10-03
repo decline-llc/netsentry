@@ -102,3 +102,57 @@ knowledge/traffic/acceptance execution **not run; delegated by user**. No startu
 SQLite/filesystem/runtime/SLO pass. 399 baseline Vault hashes unchanged. Existing
 skills cover rejection boundaries/portable comparisons; no redundant update.
 Feature plus one docs-only closure remains; no following increment/publication.
+
+
+## Delivery and queue closeout
+
+Feature `0608c1dfdf95be119927d666e5fa131182e5c6b2` contains exactly six planned paths. Isolated
+fix/r90-160-duration-config fast-forwarded freshly verified main; push/fresh-fetch
+verified clean HEAD/origin/main/FETCH_HEAD at that full SHA. Exact range
+`88bb30dcac46385b3f354b77aaf636ef5c005f68..0608c1dfdf95be119927d666e5fa131182e5c6b2` note `04-开发迭代记录/2026-10-03-0608c1dfdf-CI知识同步.md`, six-path scope/index/MOC verified. Generated
+short identifiers uniquely resolve through Git to full endpoints. Fourteen
+current stable notes reconciled; entire prior current substantive prose archived
+under R90-159 historical headings. Original topic tails and all
+352 baseline immutable hashes retained, excluding only bounded documented
+generated MOC regions. Identical replay preserves 400 Markdown hashes;
+snapshot JSON SHA-256 `c2c4c2c63cc43953e316947dac2f97f4cff0f53be73cc353bfa0b277fefdd10f`. Existing unique sibling
+local Vault selected explicitly; no second empty or remote Vault.
+
+Acceptance matches persisted plan. Only time import, derived whole-second bound
+and two named range checks added. Every other tracked engine source/default/
+main conversion/fallback/validator/env/strict-decoder byte-identical. Both settings
+require [-9223372036, 9223372036] seconds, inclusive; static arithmetic establishes
+representability and first signed-overflow sign flips. Representable negative/
+zero/positive/default behavior unchanged. Formerly overflowing configs now reject
+before startup and must be corrected. No tighter operational cap, target policy
+or programmatic Store/API option validation introduced.
+
+Three direct external public Load functions authored/compiled only. Both fields
+cover signed endpoints/-1/0/1/first signed overflows/int64 extremes; accepted
+integer values and complete config/defaults/path retained with duration round-trip/
+sign assertions. Rejections require nil config/exact named bound diagnostic.
+Omitted defaults stay 60/30. Combined both overflows and invalid API port preserve
+three exact ordered diagnostics. Numeric env expansion covers accepted 60 and
+first signed overflows for both fields. Native 32-bit out-of-int fixtures require
+parse errors rather than skips; every Load input file byte-preserved. No private
+validator/default access, sleeps or weakened assertions. No startup/runtime/SLO
+pass inferred from unexecuted regressions or static arithmetic.
+
+Pinned Go 1.26.8 config/owning CLI/alert/API complete compile-only chain passed;
+binaries and benchmarks unexecuted. Static source/direct boundaries/arithmetic/
+Go-format/docs/178 JSON/164 complete unique roadmap pairs/prior Definitions/
+R90-75/history/horizon/links/fences/six paths/diff/sensitive passed. No unresolved
+source/compile/static/Git/Vault ambiguity or validation failure. Existing skills
+cover rejection boundaries/portable comparisons; no redundant update. All
+behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution
+**not run; delegated by user**. Planning deviation: empty ready queue restored
+inside source-grounded representability repair.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git; push/fresh-fetch and verify exact feature..closure Vault scope/
+note/index/MOC/current stable prose before reporting; no self-reference closure.
+Refreshed queue has no defined local dependency-ready item. R90-75 full independent
+asynchronous departmental contract and Oct 3–Dec 31 horizon unchanged. Next trigger
+verifies fetched closure/Vault and audits fresh code/queue before separate
+eligible plan. No following increment started; do not repeat R90-159/R90-160
+delivery or R90-59 publication. IPv6/external publication needs separate authority.
