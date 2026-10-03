@@ -1,11 +1,11 @@
 {
   "task": "r90-159-shard-discovery-calendar",
   "timestamp": "2026-10-03",
-  "branch": "fix/r90-159-shard-discovery-calendar",
-  "remote_baseline": "7c4fb4757684bcdb517c791eec95afc2cc3df732",
+  "branch": "main",
+  "remote_baseline": "48c26dc4b67b175b0be8ed06716c347c0411ec80",
   "starting_remote_baseline": "7c4fb4757684bcdb517c791eec95afc2cc3df732",
   "risk_level": "Low",
-  "current_checkpoint": "implementation_static_compile_complete_delivery_pending",
+  "current_checkpoint": "implementation_complete_feature_verified_single_docs_closure",
   "completed": [
     "Fresh fetched clean main; R90-158 exact Git/Vault scopes/note/index/MOC/identifier resolution verified",
     "97-commit phase audit; R90-75 sole unfinished full independent departmental contract/horizon unchanged",
@@ -16,11 +16,15 @@
     "Pinned Go 1.26.8 alert/API/pipeline complete compile-only chain passed; binaries/benchmarks unexecuted",
     "Static source/direct boundaries/Go-format/docs/177 JSON/163 complete unique roadmap pairs/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive passed",
     "Temporary static preservation call count corrected and post-close ordering strengthened; full static/docs/diff rerun passed",
-    "397 baseline Vault hashes unchanged; existing skills suffice"
+    "397 baseline Vault hashes unchanged; existing skills suffice",
+    "Six-path feature pushed/fresh fetched clean main refs verified at 48c26dc4b67b175b0be8ed06716c347c0411ec80",
+    "Exact feature scope/note/index/MOC/generated short identifiers uniquely resolved through Git verified",
+    "14 current stable notes reconciled; entire prior prose archived; topic tails/350 immutable hashes preserved",
+    "Identical replay preserves 398 Markdown hashes",
+    "Refreshed queue: no defined local ready item; R90-75 full independent contract/horizon unchanged",
+    "Prepared single three-path docs-only closure; resolve SHA and verify exact delivery before reporting"
   ],
-  "in_progress": [
-    "Feature delivery and one docs-only closure"
-  ],
+  "in_progress": [],
   "validation": {
     "behavioral_tests": "not_run_user_delegated",
     "race_tests": "not_run_user_delegated",
@@ -45,9 +49,29 @@
     "Empty local queue restored inside source-grounded shard recognition guard",
     "Temporary static check expected four preservation call sites instead of three; corrected/added post-close ordering and full static/docs/diff rerun passed"
   ],
-  "resume_instructions": "Complete only R90-159 public read preservation/control regressions/static/compile, feature exact push/fetch/Vault, single docs-only closure exact push/fetch/Vault; refresh queue and stop. No suites.",
-  "todo": [
-    "Focused feature push/fetch/exact Vault",
-    "One docs-only closure push/fetch/exact Vault; refresh queue"
-  ]
+  "resume_instructions": "R90-159 implementation complete. Resolve this single docs-only closure from Git and verify fetched main/exact feature..closure Vault if evidence absent; otherwise do not repeat feature/closure commit/push/sync or create another closure. Next trigger audits fresh code/queue before separate selection. All execution user-delegated; R90-75 independent asynchronous. No subsequent increment started.",
+  "todo": [],
+  "implementation_branch": "fix/r90-159-shard-discovery-calendar",
+  "delivery": {
+    "feature_commit": "48c26dc4b67b175b0be8ed06716c347c0411ec80",
+    "feature_range": "7c4fb4757684bcdb517c791eec95afc2cc3df732..48c26dc4b67b175b0be8ed06716c347c0411ec80",
+    "verified_remote": "clean main HEAD/origin/main/FETCH_HEAD after fresh fetch",
+    "feature_paths": 6,
+    "vault_note": "04-\u5f00\u53d1\u8fed\u4ee3\u8bb0\u5f55/2026-10-03-48c26dc4b6-CI\u77e5\u8bc6\u540c\u6b65.md",
+    "index_moc": "verified; generated short identifiers uniquely resolved through Git",
+    "stable_notes": 14,
+    "topic_prose_preservation": "entire prior current prose archived; topic tails retained excluding bounded documented generated MOC regions",
+    "baseline_immutable_notes": 350,
+    "feature_snapshot_files": 398,
+    "feature_snapshot_json_sha256": "512944f621bbe79c5cc492de9b5eea8c30f4473c225c10504dd990686f6d1da9",
+    "identical_feature_replay": "all Markdown hashes unchanged",
+    "closure": "single three-path docs-only record; resolve full SHA from Git; push/fresh-fetch/exact feature..closure Vault before reporting; no self-reference closure"
+  },
+  "next_increment": {
+    "id": null,
+    "status": "no_defined_local_ready_increment",
+    "started": false,
+    "departmental_acceptance": "R90-75 full independent asynchronous contract unchanged",
+    "next_trigger": "Verify fetched closure/Vault; audit fresh code/queue; persist separate eligible plan before edits"
+  }
 }
