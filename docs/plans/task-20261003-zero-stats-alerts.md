@@ -109,3 +109,60 @@ execution **not run; delegated by user**. 401 baseline Vault hashes unchanged.
 Existing skills cover locked first use, direct boundaries and joined invariants;
 no redundant update. Feature plus one docs-only closure remains; no next increment
 or publication started.
+
+
+## Delivery and queue closeout
+
+Feature `b233859ef0fc48a5c973e7d5d3963716d993a326` contains exactly seven planned paths. Isolated
+fix/r90-161-zero-stats-alerts fast-forwarded freshly verified main; push/fresh-fetch
+verified clean HEAD/origin/main/FETCH_HEAD at that full SHA. Exact range
+`de68278a8886eaf07a44d576e5ffe98afb6a0d08..b233859ef0fc48a5c973e7d5d3963716d993a326` note `04-开发迭代记录/2026-10-03-b233859ef0-CI知识同步.md`, seven-path scope/index/MOC verified. Generated
+short identifiers uniquely resolve through Git to full endpoints. Fourteen
+current stable notes reconciled; entire prior current substantive prose archived
+under R90-160 historical headings. Original topic tails and all
+354 baseline immutable hashes retained, excluding only bounded documented
+generated MOC regions. Identical replay preserves 402 Markdown hashes;
+snapshot JSON SHA-256 `5e765cdaddb3900ad6124316bc7e13c7b33faf2000105eaaa59ec3328d723dbf`. Existing unique sibling
+local Vault selected explicitly; no second empty or remote Vault.
+
+Acceptance matches persisted plan. Only three-line severity-map lazy allocation
+added inside existing locked non-nil loop. All other tracked engine/New/Snapshot/
+renderer/Worker source byte-identical. Nil/empty/all-nil no-op, blank-to-low/dynamic/
+repeated counts, input ownership and write/export/terminal gates unchanged. Zero
+StartedAt and observed-only labels retained; New keeps four stable labels and
+initialized start time. No new start-time/default-label policy, live transactional
+snapshot, allocation/throughput/race guarantee or observed incident claim.
+
+Four external public functions authored/compiled only. Zero/New nine batch cases
+are each observed twice, comparing full snapshots after seeding unrelated counters/
+durations/buckets/queue/start time, explicit initial labels, exact severity sum/
+Prometheus lines, pointers/values/map-copy isolation; typed nil Stats remains safe.
+Four synchronized zero Stats writers each 100 mixed nil/high/blank/custom plus
+all-nil observations join before exact full snapshot/exposition/input assertions:
+total 1200, high/low/custom 400 each, zero start time. Actual public Worker.Run with
+zero Stats and real SQLite writer verifies two mixed-nil valid stored rows/count/
+timestamps/health and generated/severity/processed/completed/write/panic counters,
+unchanged packet and matcher calls. Public no-alert/injected writer-failure
+controls preserve completion/error/write/empty-label gates. Encoded SQLite path,
+small matcher fixture explicitly used; no actual matching/durability claim. No
+private-state writes/sleeps/test panic-catching/weakened skips; no runtime/SQLite/
+race/SLO pass inferred from unexecuted assertions.
+
+Final pinned Go 1.26.8 Stats/pipeline/API complete compile-only chain passed after
+explicit constructor initial-label review; binaries/benchmarks unexecuted. Static
+source/direct boundaries/Go-format/docs/179 JSON/165 complete unique roadmap
+pairs/prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/
+sensitive passed. No unresolved source/compile/static/Git/Vault ambiguity or
+validation failure. Existing skills cover locked first use/direct boundaries/
+joined invariants; no redundant update. All behavioral/race/CLI/full-suite/scanner/
+knowledge/traffic/acceptance execution **not run; delegated by user**. Planning
+deviation: empty queue restored inside source-grounded zero-map panic repair.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git; push/fresh-fetch and verify exact feature..closure Vault scope/
+note/index/MOC/current stable prose before reporting; no self-reference closure.
+Refreshed queue has no defined local dependency-ready item. R90-75 full independent
+asynchronous departmental contract and Oct 3–Dec 31 horizon unchanged. Next trigger
+verifies fetched closure/Vault and audits fresh code/queue before separate
+eligible plan. No following increment started; do not repeat R90-160/R90-161
+delivery or R90-59 publication. IPv6/external publication needs separate authority.
