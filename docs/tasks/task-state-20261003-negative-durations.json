@@ -1,11 +1,11 @@
 {
   "task": "r90-155-negative-durations",
   "timestamp": "2026-10-03",
-  "branch": "fix/r90-155-negative-durations",
-  "remote_baseline": "f55595c21d55e3933ae2f9048fe48a8d44297705",
+  "branch": "main",
+  "remote_baseline": "5c28c131c6432136e8453da169ffee7add9c4299",
   "starting_remote_baseline": "f55595c21d55e3933ae2f9048fe48a8d44297705",
   "risk_level": "Medium",
-  "current_checkpoint": "implementation_static_compile_complete_delivery_pending",
+  "current_checkpoint": "implementation_complete_feature_verified_single_docs_closure",
   "completed": [
     "Fresh fetched clean main and R90-154 exact feature/closure Git/Vault verified",
     "89-commit phase audit; no qualifying new R90-75 acceptance; empty queue reconciled inside core metrics repair",
@@ -16,11 +16,15 @@
     "Pinned Go 1.26.8 stats/pipeline/API complete compile-only chain passed; binaries unexecuted",
     "Static/source/direct-boundary/format/docs/173 JSON/159 unique complete roadmap/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive passed",
     "Historical whitespace insertion deviation caught and restored; complete static/docs chain rerun",
-    "389-file Vault baseline hashes unchanged"
+    "389-file Vault baseline hashes unchanged",
+    "Six-path feature pushed/freshly fetched clean main refs verified at 5c28c131c6432136e8453da169ffee7add9c4299",
+    "Exact feature scope/note/index/MOC verified",
+    "14 stable current notes reconciled; entire prior prose archived; topic tails and 342 baseline immutable hashes retained",
+    "Identical feature replay preserves all 390 Markdown hashes",
+    "No defined local ready item; R90-75 full independent asynchronous contract and horizon unchanged",
+    "Prepared single three-path docs-only closure; resolve full SHA and verify exact delivery before reporting"
   ],
-  "in_progress": [
-    "Feature delivery and one docs-only closure"
-  ],
+  "in_progress": [],
   "validation": {
     "behavioral_tests": "not_run_user_delegated",
     "race_tests": "not_run_user_delegated",
@@ -46,9 +50,29 @@
     "Empty ready queue restored inside source-grounded signed duration repair",
     "Initial prior-Definition static check caught extra blank line; exact whitespace restored, complete static/docs rerun passed"
   ],
-  "resume_instructions": "Complete only R90-155: source/regressions/static/compile, feature push/fresh-fetch/exact Vault, one docs-only closure push/fetch/exact Vault; no suites or following increment.",
-  "todo": [
-    "Focused feature push/fresh fetch/exact Vault",
-    "Single docs-only closure push/fetch/exact Vault; refresh queue"
-  ]
+  "resume_instructions": "R90-155 implementation complete. Resolve this single docs-only closure from Git and verify fetched main/exact feature..closure Vault if evidence absent; otherwise do not repeat feature/closure commit/push/sync or create another closure. Next trigger audits fresh code/queue before separate selection. All execution user-delegated; R90-75 independent asynchronous. No subsequent increment started.",
+  "todo": [],
+  "implementation_branch": "fix/r90-155-negative-durations",
+  "delivery": {
+    "feature_commit": "5c28c131c6432136e8453da169ffee7add9c4299",
+    "feature_range": "f55595c21d55e3933ae2f9048fe48a8d44297705..5c28c131c6432136e8453da169ffee7add9c4299",
+    "verified_remote": "clean main HEAD/origin/main/FETCH_HEAD after fresh fetch",
+    "feature_paths": 6,
+    "vault_note": "04-\u5f00\u53d1\u8fed\u4ee3\u8bb0\u5f55/2026-10-03-5c28c131c6-CI\u77e5\u8bc6\u540c\u6b65.md",
+    "index_moc": "verified",
+    "stable_notes": 14,
+    "topic_prose_preservation": "entire prior current prose archived; topic tails retained; only documented generated MOC entries refreshed",
+    "baseline_immutable_notes": 342,
+    "feature_snapshot_files": 390,
+    "feature_snapshot_json_sha256": "3efd82adca5630392ece79e45fc1238604879788844f70957edc48ebe8db6ef4",
+    "identical_feature_replay": "all Markdown hashes unchanged",
+    "closure": "single three-path docs-only record; resolve full SHA from Git; push/fresh-fetch/exact feature..closure Vault before reporting; no self-reference closure"
+  },
+  "next_increment": {
+    "id": null,
+    "status": "no_defined_local_ready_increment",
+    "started": false,
+    "departmental_acceptance": "R90-75 full independent asynchronous contract unchanged",
+    "next_trigger": "Verify fetched closure/Vault; audit fresh code/queue; persist separate eligible plan before edits"
+  }
 }

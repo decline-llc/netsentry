@@ -232,7 +232,7 @@ formal SLO and evidence contract is unchanged.
 | R90-152 | Oct 3–Dec 31 | Complete implementation; tests delegated | Include historical daily shards in Store.List. | R90-151; existing cross-shard Query reader | Daily List returns globally ordered newest 1000 rows including historical shards; retain primary SQL/lifecycle and reuse query error/health handling; direct regression execution delegated. |
 | R90-153 | Oct 3–Dec 31 | Complete implementation; tests delegated | Record committed HTTP audit response status. | R90-152; existing audit middleware | Preserve first final status and implicit 200; non-101 1xx stays informational, 101 terminal; existing audit fields/auth policy unchanged; direct wire/log/header regression execution delegated. |
 | R90-154 | Oct 3–Dec 31 | Complete implementation; tests delegated | Exclude nil entries from generated-alert counts. | R90-153; existing Stats and Worker counters | Non-nil entry total matches severity counts; retain fallback/dynamic labels and entry semantics; Worker/renderer/API/store unchanged; direct counter/concurrency/Worker regressions with execution delegated. |
-| R90-155 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Reject negative duration observations. | R90-154; existing public Stats observers | Negative samples change no count/sum/bucket; retain zero/positive/nil semantics and renderer; direct boundary/concurrency assertions authored with execution delegated. |
+| R90-155 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject negative duration observations. | R90-154; existing public Stats observers | Negative samples change no count/sum/bucket; retain zero/positive/nil semantics and renderer; direct boundary/concurrency assertions authored with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3696,7 +3696,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-155 Definition
 
-- **Goal/status:** implemented; delivery pending; reject negative samples before unsigned duration sums, operation counts and histogram buckets change.
+- **Goal/status:** implementation delivered; reject negative samples before unsigned duration sums, operation counts and histogram buckets change.
 - **Dependencies/window:** R90-154 verified delivered; existing Stats observers; Oct 3–Dec 31 forecast, no date gate.
 - **Risk:** medium; malformed observations no longer contribute to metrics; accepted samples and individually sampled snapshot semantics retained.
 - **Acceptance:** exact two-guard runtime diff; public negative-only/seeded/signed-minimum/nil and every finite bucket boundary/+1 ns regressions, exact snapshot/renderer, joined concurrent writers; six-path feature and one closure exact Git/Vault delivery.
@@ -8900,3 +8900,51 @@ execution **not run; delegated by user**. Positive cumulative overflow outside
 scope; no runtime/SLO outcome inferred. 389 baseline Vault hashes unchanged.
 Existing skills cover this boundary; no redundant generic edit. Feature plus one
 docs-only closure remains, without another increment or publication action.
+
+
+## R90-155 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `5c28c131c6432136e8453da169ffee7add9c4299` contains exactly six planned paths. Isolated
+fix/r90-155-negative-durations fast-forwarded freshly verified main; push/fresh
+fetch verified clean HEAD/origin/main/FETCH_HEAD at that full SHA. Exact range
+`f55595c21d55e3933ae2f9048fe48a8d44297705..5c28c131c6432136e8453da169ffee7add9c4299` note `04-开发迭代记录/2026-10-03-5c28c131c6-CI知识同步.md`, six-path scope, full index and MOC verified.
+Fourteen current stable notes reconciled; entire previous substantive current
+prose archived under explicit R90-154 historical headings. Original topic tails
+and all 342 baseline immutable iteration hashes retained; documented generated
+MOC entries refreshed. Identical exact-range replay preserves 390 Markdown files;
+snapshot JSON SHA-256 `3efd82adca5630392ece79e45fc1238604879788844f70957edc48ebe8db6ef4`. Existing unique sibling local Vault
+selected explicitly; no second empty or remote Vault.
+
+Acceptance matches persisted plan: runtime only d < 0 in both existing nil
+observer guards, before count/sum/bucket changes. Zero/positive/nil semantics,
+bounds/renderer and every other tracked engine file remain exactly unchanged.
+Three authored direct public functions cover both observers with fresh/zero/
+250 ms seeds and -1 ns/-1 second/signed minimum rejection, whole snapshot and
+exposition preservation, exact full metric/bucket lines and nil receivers.
+58 accepted boundary subcases cover zero/1 ns/all 13 finite bounds/+1 ns/above
+largest; full snapshot isolates other/unrelated counters. Four synchronized
+writers join before both observer counts 800/sums 100 seconds and full bucket/
+renderer checks (first eight finite buckets 400, last five 800). No fixture
+rewrites internal atomics or replaces the public snapshot/renderer boundary.
+All assertions authored/compiled only; no runtime/race/SLO acceptance inferred.
+
+Pinned Go 1.26.8 stats/pipeline/API complete compile-only chain and exact source/
+direct boundaries/format/docs/173 JSON/159 complete unique roadmap pairs/prior
+Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive passed.
+All behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution
+**not run; delegated by user**; binaries unexecuted. Initial historical whitespace
+check caught one insertion blank line; restored exact prior section, reran complete
+static/docs chain successfully. No unresolved validation ambiguity or topic loss.
+Positive accumulated sum overflow and transactional live snapshots outside scope.
+Existing skills sufficient; no redundant generic edit. Planning deviation: empty
+ready queue reconciled inside source-grounded signed-duration counter repair.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git; push/fresh-fetch and verify exact feature..closure Vault scope/
+note/index/MOC/stable prose before reporting. No self-reference follow-up closure.
+Refreshed queue has no defined local dependency-ready item. R90-75 full independent
+asynchronous departmental contract and Oct 3–Dec 31 horizon remain unchanged.
+Next trigger verifies fetched closure/Vault and audits fresh code/queue before
+persisting a separate eligible plan. No following increment started; do not repeat
+R90-154/R90-155 delivery or R90-59 publication. IPv6/external publication needs
+separate authority.
