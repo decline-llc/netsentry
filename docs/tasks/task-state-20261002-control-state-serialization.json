@@ -1,0 +1,63 @@
+{
+  "task": "r90-147-control-state-serialization",
+  "timestamp": "2026-10-02",
+  "branch": "fix/r90-147-control-state-serialization",
+  "remote_baseline": "410104eb05bfaf03d4234802fc836ee64ca6ae09",
+  "starting_remote_baseline": "410104eb05bfaf03d4234802fc836ee64ca6ae09",
+  "risk_level": "Low-to-medium",
+  "current_checkpoint": "static_compile_only_complete_feature_delivery_pending",
+  "completed": [
+    "Verified clean fetched main and both exact R90-146 Git/Vault ranges",
+    "Captured 373-file Vault snapshot, 14 full stable-content backups and 326 immutable notes",
+    "Audited 73-commit phase history and empty defined local queue; R90-75 independent",
+    "Identified hello/heartbeat atomic load-modify-store lost-update boundary across concurrent receiver handlers",
+    "Reviewed value State fields, setters, real receiver callers and pinned Go 1.26.8 module",
+    "Persisted six-path plan and acceptance/evidence map before edits",
+    "Registered complete R90-147 contract and chronologically ordered source-grounded selection",
+    "Implemented only one writer mutex and full setter Lock/defer before Snapshot; all State fields/reader/receiver/API/metrics source preserved",
+    "Authored five direct regression functions with sequential/repeated/value cases, 256 joined setter pairs, 1024 updates per writer with observable first-pair read, and 128 real receiver control pairs/counters",
+    "Pinned Go 1.26.8 complete receiver/API/pipeline compile-only chain passed, then passed again after final reader-readiness regression refinement; binaries never invoked",
+    "Exact runtime/test-boundary/Go-format/docs/165 JSON/151 full unique roadmap/full forward contract/unchanged R90-75/history/six-path/links/fences/diff/sensitive review passed",
+    "373-file Vault baseline unchanged; 14 stable full-content backups and 326 immutable hashes preserved",
+    "Refined local skill concurrency instruction: synchronize full snapshot read-modify-publish transactions, not just atomic loads/stores; Markdown validated separately"
+  ],
+  "in_progress": [
+    "Feature commit and fresh fast-forward main delivery"
+  ],
+  "todo": [
+    "Exact feature push/fetch/Vault and stable prose reconciliation",
+    "One three-path docs-only closure and exact verification"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "pass:Go 1.26.8 go test -c ./internal/receiver, ./internal/api, ./internal/pipeline complete chain after final test edit; binaries outside repository and unexecuted",
+    "static_review": "pass:exact mutex/whole-setter transform;5 direct regressions including first-pair observable reader;value State/frame/timestamp/reader/receiver/API/metrics preserved;Go parse-format;docs-check;165 JSON;151 full unique roadmap pairs;full forward contract;R90-75;ordered history;six paths;links;fences;diff;sensitive additions"
+  },
+  "authority_boundaries": [
+    "Exactly six planned paths",
+    "One private writer mutex; unchanged atomic readers and value State fields",
+    "Preserve last-setter SessionID and mixed-session aggregate semantics",
+    "No protocol/API/metrics/sequence/listener/shutdown changes or new test seam",
+    "All execution suites delegated; no external/IPv6/toolchain/publication changes"
+  ],
+  "remaining_risks": [
+    "Unexecuted regressions; static/compile review proves no runtime/race pass",
+    "No ordering/fairness/per-session ownership policy added"
+  ],
+  "deviations": [
+    "Empty queue reconciled within source-grounded core correctness implementation; no standalone audit increment"
+  ],
+  "resume_instructions": "Complete only persisted R90-147 six-path plan with direct source/static/compile-only and exact feature plus one closure delivery. Do not execute suites or start another increment. R90-75 remains independent asynchronous.",
+  "skill_improvement": {
+    "location": "netsentry-next/SKILL.md",
+    "scope": "generic snapshot transaction ownership; separate local-only skill edit",
+    "effect": "Review synchronization around the full read-modify-publish transaction; atomic Load/Store alone can lose concurrent updates",
+    "validation": "pass:Markdown frontmatter/numbering/fences"
+  }
+}

@@ -49,6 +49,18 @@ C sends one JSON object per line. String fields are escaped before serialization
 
 Control frames:
 
+The receiver publishes control state through `atomic.Value`. A private writer
+mutex serializes each hello/heartbeat read-modify-store transaction so concurrent
+connections cannot overwrite the other frame type's update with an old snapshot.
+Snapshot readers retain the atomic load without taking that writer lock. Hello
+preserves the heartbeat and its receipt timestamp; heartbeat preserves hello.
+This remains global latest-per-frame state: hello and heartbeat may belong to
+different sessions, and top-level SessionID comes from the last published setter.
+Connection-local validation is unchanged; no active-capture selection, sequence
+ordering or cross-session coherence policy is introduced. R90-147 direct setter
+and receiver regression source is compile-reviewed; execution remains
+**not run; delegated by user**.
+
 ```json
 {"type":"hello","version":"0.1.0","session_id":"...","pid":1234,"hostname":"...","max_payload_len":4096}
 ```

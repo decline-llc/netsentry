@@ -1,6 +1,7 @@
 package receiver
 
 import (
+	"sync"
 	"sync/atomic"
 	"time"
 )
@@ -37,6 +38,7 @@ type State struct {
 }
 
 type heartbeatState struct {
+	mu    sync.Mutex   // serializes complete control-frame updates; readers use value
 	value atomic.Value // stores State
 }
 
@@ -52,6 +54,8 @@ func (s *heartbeatState) Snapshot() State {
 }
 
 func (s *heartbeatState) SetHello(h HelloFrame) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	cur := s.Snapshot()
 	cur.SessionID = h.SessionID
 	cur.Hello = h
@@ -59,6 +63,8 @@ func (s *heartbeatState) SetHello(h HelloFrame) {
 }
 
 func (s *heartbeatState) SetHeartbeat(h HeartbeatFrame) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	cur := s.Snapshot()
 	cur.SessionID = h.SessionID
 	cur.Heartbeat = h

@@ -224,6 +224,7 @@ formal SLO and evidence contract is unchanged.
 | R90-144 | Oct 2–Dec 30 | Complete implementation; tests delegated | Isolate core rule reload snapshots from caller-owned inputs. | R90-143; existing rule engine and serialized API transactions | Deep-copy Rule/Config/MITRE before validation/sort/compile; publish one owned state; preserve diagnostics, failed-reload state and schemas; author direct regression cases with execution delegated. |
 | R90-145 | Oct 2–Dec 30 | Complete implementation; tests delegated | Add a packet-completion counter to the core processing pipeline. | R90-144; R90-116 lifecycle boundary | Count only successful terminal packet processing after optional observer success; retain existing processed/received counters, API fields and SLO exporter semantics; author direct failure/no-alert/suppression/success cases with execution delegated. |
 | R90-146 | Oct 2–Dec 30 | Complete implementation; tests delegated | Serialize suppression reload reads with management mutations. | R90-145; R90-79 suppression persistence | Hold existing manager lock across authoritative reload read, validation and publication; prevent stale reload overwriting successful Add/Update/Delete; preserve loader/API/file/filter contracts; direct regression execution delegated. |
+| R90-147 | Oct 2–Dec 30 | In progress; tests delegated | Preserve concurrent hello and heartbeat updates. | R90-146; existing concurrent receiver control contract | Serialize compound state writes while retaining atomic reads, frame fields and last-setter/mixed-session semantics; author direct setter/receiver regressions with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3454,6 +3455,37 @@ formal SLO and evidence contract is unchanged.
   ambiguous interleaving, cross-process guarantees, competing edits or new authority.
 - **Plan/state:** `task-20261002-suppression-reload-serialization.md` and matching
   `docs/tasks/task-state-20261002-suppression-reload-serialization.json`.
+
+
+## R90-147 Definition
+
+- **Goal/status:** implementation in progress; prevent stale global control-state
+  read-modify-store writes from losing unrelated hello/heartbeat updates.
+- **Dependencies/window:** completed R90-146 and existing concurrent receiver
+  control-frame contract; Oct 2–Dec 30. R90-75 independent asynchronous.
+- **Source evidence:** SetHello/SetHeartbeat independently atomic-load and Store
+  modified copies; concurrent connection handlers can overwrite each other's fields.
+- **Risk:** low-to-medium; writer contention and unintended session-policy claims.
+- **Acceptance:** persist separate plan/state; private writer mutex covers each
+  setter from before Snapshot through existing single Store. Preserve all value
+  fields, UTC receipt time, constructor and unchanged atomic Snapshot readers.
+  Hello preserves heartbeat/time; heartbeat preserves hello; last setter SessionID
+  and existing mixed-session aggregate remain. Direct sequential/repeated/zero,
+  concurrent whole-frame/final joined state, independent-value and real receiver
+  concurrent hello/heartbeat/counters regression source; all execution delegated.
+- **Required validation:** exact source transform and value-graph/caller review;
+  Go parse/format; pinned receiver/API/pipeline compile-only; docs/165 JSON/151
+  full unique roadmap pairs/complete unfinished contracts/unchanged R90-75/ordered
+  history/links/fences/six-path scope/diff/sensitive review; exact feature/closure
+  Git/Vault/stable topics/immutable hashes/idempotence. No runtime/race pass claim.
+- **Non-goals:** per-session model, active capture, frame ordering/fairness/sequence
+  policy, timestamp injection or production test seam, API/metrics/protocol,
+  listener/queue/shutdown, other core modules, IPv6/dependencies/toolchain/suite
+  execution/publication changes.
+- **Stop condition:** required session/product/protocol decision, reference-bearing
+  State fields, competing edits, contradictory evidence or new external authority.
+- **Plan/state:** `task-20261002-control-state-serialization.md` and matching
+  `docs/tasks/task-state-20261002-control-state-serialization.json`.
 
 
 ### R90-71 Validation Deviation
@@ -7843,3 +7875,27 @@ and the forward queue, then persists a separate eligible plan before editing.
 No subsequent implementation starts here. Oct 2–Dec 30 remains current; IPv6
 and external publication remain separate authority. Do not repeat completed
 R90-145/R90-146 delivery or R90-59 publication.
+
+
+## R90-147 Selection and Control State Repair (2026-10-02)
+
+Clean fresh fetched main/HEAD/origin/main/FETCH_HEAD is
+`410104eb05bfaf03d4234802fc836ee64ca6ae09`. Both R90-146 feature/closure
+exact scope/note/index/MOC records are verified; the 373-file snapshot JSON
+SHA-256 is `f83f7e6ad487d703ca1a78b85e032ac0e56a9e027d0d006808008a5cbd43880e`.
+Fourteen stable full-content backups and 326 immutable history hashes are captured.
+The 73-commit Sep 4–Oct 2 phase audit finds no missing delivery or new qualifying
+R90-75 measurement. The empty defined queue is reconciled within this bounded
+source-grounded correctness increment, without standalone audit delivery.
+
+Concurrent receiver hello/heartbeat handlers perform atomic Snapshot/Store on
+separate modified copies, allowing stale replacement to lose unrelated fields.
+R90-147 is ready after completed dependencies; six-path plan/state was persisted
+before runtime/roadmap edits on `fix/r90-147-control-state-serialization`.
+One private writer mutex serializes full setters; atomic readers and all value
+fields remain. Existing global mixed-session/last-setter policy and per-connection
+validation remain, without selecting an active capture or introducing ordering.
+Direct setter/real receiver regressions are authored; all execution suites remain
+delegated and unrun, only static/compile review is local. R90-75 independent
+asynchronous and Oct 2–Dec 30 horizon remain. No subsequent increment starts here;
+existing skills cover the workflow without a selection-time edit.
