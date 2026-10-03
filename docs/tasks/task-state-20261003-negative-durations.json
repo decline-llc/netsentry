@@ -1,0 +1,54 @@
+{
+  "task": "r90-155-negative-durations",
+  "timestamp": "2026-10-03",
+  "branch": "fix/r90-155-negative-durations",
+  "remote_baseline": "f55595c21d55e3933ae2f9048fe48a8d44297705",
+  "starting_remote_baseline": "f55595c21d55e3933ae2f9048fe48a8d44297705",
+  "risk_level": "Medium",
+  "current_checkpoint": "implementation_static_compile_complete_delivery_pending",
+  "completed": [
+    "Fresh fetched clean main and R90-154 exact feature/closure Git/Vault verified",
+    "89-commit phase audit; no qualifying new R90-75 acceptance; empty queue reconciled inside core metrics repair",
+    "389 Markdown hashes/14 complete stable notes backed up",
+    "Pinned owning engine Go 1.26.8 preflighted",
+    "Exact two existing guards only; all other tracked engine source preserved",
+    "Three public direct functions: negative fresh/seeded/minimum/nil; 58 accepted boundary cases; joined four-writer full snapshot/renderer assertions authored",
+    "Pinned Go 1.26.8 stats/pipeline/API complete compile-only chain passed; binaries unexecuted",
+    "Static/source/direct-boundary/format/docs/173 JSON/159 unique complete roadmap/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive passed",
+    "Historical whitespace insertion deviation caught and restored; complete static/docs chain rerun",
+    "389-file Vault baseline hashes unchanged"
+  ],
+  "in_progress": [
+    "Feature delivery and one docs-only closure"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "pass:Go 1.26.8 complete stats/pipeline/API go test -c chain; external binaries unexecuted",
+    "static_review": "pass:exact two guards/all other tracked engine source/direct boundaries/format/docs/173 JSON/159 unique complete roadmap/history/R90-75/horizon/links/fences/six paths/diff/sensitive"
+  },
+  "authority_boundaries": [
+    "Six paths; runtime only two duration observer nil guards",
+    "Zero/positive semantics, bucket boundaries/renderer/Worker/API/store unchanged",
+    "All execution delegated; no publication"
+  ],
+  "remaining_risks": [
+    "Negative samples no longer contribute to metrics",
+    "Positive accumulated sum overflow and individually sampled atomics outside scope",
+    "Authored regressions unexecuted; no runtime/race/SLO pass"
+  ],
+  "deviations": [
+    "Empty ready queue restored inside source-grounded signed duration repair",
+    "Initial prior-Definition static check caught extra blank line; exact whitespace restored, complete static/docs rerun passed"
+  ],
+  "resume_instructions": "Complete only R90-155: source/regressions/static/compile, feature push/fresh-fetch/exact Vault, one docs-only closure push/fetch/exact Vault; no suites or following increment.",
+  "todo": [
+    "Focused feature push/fresh fetch/exact Vault",
+    "Single docs-only closure push/fetch/exact Vault; refresh queue"
+  ]
+}

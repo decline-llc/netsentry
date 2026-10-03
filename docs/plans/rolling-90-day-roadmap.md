@@ -232,6 +232,7 @@ formal SLO and evidence contract is unchanged.
 | R90-152 | Oct 3–Dec 31 | Complete implementation; tests delegated | Include historical daily shards in Store.List. | R90-151; existing cross-shard Query reader | Daily List returns globally ordered newest 1000 rows including historical shards; retain primary SQL/lifecycle and reuse query error/health handling; direct regression execution delegated. |
 | R90-153 | Oct 3–Dec 31 | Complete implementation; tests delegated | Record committed HTTP audit response status. | R90-152; existing audit middleware | Preserve first final status and implicit 200; non-101 1xx stays informational, 101 terminal; existing audit fields/auth policy unchanged; direct wire/log/header regression execution delegated. |
 | R90-154 | Oct 3–Dec 31 | Complete implementation; tests delegated | Exclude nil entries from generated-alert counts. | R90-153; existing Stats and Worker counters | Non-nil entry total matches severity counts; retain fallback/dynamic labels and entry semantics; Worker/renderer/API/store unchanged; direct counter/concurrency/Worker regressions with execution delegated. |
+| R90-155 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Reject negative duration observations. | R90-154; existing public Stats observers | Negative samples change no count/sum/bucket; retain zero/positive/nil semantics and renderer; direct boundary/concurrency assertions authored with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3692,6 +3693,16 @@ formal SLO and evidence contract is unchanged.
   product/private/external authority, or beginning a second increment.
 - **Selected plan:** [task-20261003-nil-alert-count.md](task-20261003-nil-alert-count.md).
 
+
+## R90-155 Definition
+
+- **Goal/status:** implemented; delivery pending; reject negative samples before unsigned duration sums, operation counts and histogram buckets change.
+- **Dependencies/window:** R90-154 verified delivered; existing Stats observers; Oct 3–Dec 31 forecast, no date gate.
+- **Risk:** medium; malformed observations no longer contribute to metrics; accepted samples and individually sampled snapshot semantics retained.
+- **Acceptance:** exact two-guard runtime diff; public negative-only/seeded/signed-minimum/nil and every finite bucket boundary/+1 ns regressions, exact snapshot/renderer, joined concurrent writers; six-path feature and one closure exact Git/Vault delivery.
+- **Required validation:** pinned Go 1.26.8 stats/pipeline/API compile-only chain; static source/direct boundaries/format/docs/JSON/complete unique roadmap/history/R90-75/horizon/links/fences/path/diff/sensitive; all behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
+- **Non-goals:** labels/buckets/renderer/API/Worker/store, positive accumulated overflow policy, dependencies/toolchain/suites/publication/private inputs/IPv6; no runtime/race/SLO acceptance claim.
+- **Stop condition:** competing edits, ambiguous static/compile/Git/Vault, new private/product/external authority, or following increment.
 
 ### R90-71 Validation Deviation
 
@@ -8842,3 +8853,50 @@ Next trigger verifies fetched closure/Vault, audits fresh code/queue and persist
 a separate eligible plan before edits. No following increment started; do not
 repeat R90-153/R90-154 delivery or R90-59 publication. IPv6/external publication
 needs separate authority.
+
+
+## R90-155 Selection and Negative Duration Repair (2026-10-03)
+
+Fresh fetched clean main HEAD/origin/main/FETCH_HEAD is
+`f55595c21d55e3933ae2f9048fe48a8d44297705`; R90-154 exact seven-path feature
+and three-path closure Git/Vault verified. 89-commit Sep 5–Oct 3 phase retains
+core correctness trend without new qualifying R90-75 outcome; full independent
+contract and Oct 3–Dec 31 horizon unchanged. 389 Markdown hashes and 14 complete
+stable notes captured before edits. Pinned owning module Go 1.26.8 preflighted.
+
+Empty ready queue restored inside source-grounded R90-155: negative duration
+casts create huge unsigned sums yet populate all histogram buckets. Six-path
+plan/state persisted before edits on fix/r90-155-negative-durations. Reject in
+both public observer guards, retain zero/positive/nil semantics and other source.
+Direct public boundary/snapshot/renderer/quiescent concurrency assertions will
+be authored and compiled only. All suite execution delegated. No observed
+incident or publication authority; no following implementation started.
+
+
+## R90-155 Implementation and Validation Checkpoint (2026-10-03)
+
+Runtime diff adds d < 0 only to both existing nil guards. Negative samples return
+before count/sum/bucket updates; zero/positive/nil-receiver semantics, histogram
+bounds/renderer and every other tracked engine file preserved exactly.
+Three direct public regression functions authored: both observers with fresh/
+zero/250 ms seeds reject -1 ns, -1 second and signed minimum; full snapshot and
+entire metrics text unchanged, exact histogram/counter lines, nil receiver.
+58 accepted boundary subcases cover zero/1 ns/each of 13 exact bounds and +1 ns/
+above largest bound; complete snapshot checks isolate other and unrelated counters.
+Four start-synchronized writers each perform 100 rounds on both APIs including
+negative/zero/250 ms. Joined writers precede full snapshot/renderer assertions:
+800 counts/100-second sums per observer; first eight finite buckets 400, final
+five 800. No live transactional snapshot or race-pass claim. All unexecuted.
+
+Pinned Go 1.26.8 stats/pipeline/API complete compile-only chain passed; external
+binaries unexecuted. Static two-guard transform/all other tracked engine source/
+direct boundaries/Go format/docs/173 JSON/159 complete unique roadmap pairs/prior
+Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive passed.
+Initial historical preservation check caught one extra blank line at new
+Definition insertion; exact previous whitespace restored, complete static/docs
+chain rerun successfully. No behavior/compile failure; validation deviation
+resolved. All behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance
+execution **not run; delegated by user**. Positive cumulative overflow outside
+scope; no runtime/SLO outcome inferred. 389 baseline Vault hashes unchanged.
+Existing skills cover this boundary; no redundant generic edit. Feature plus one
+docs-only closure remains, without another increment or publication action.

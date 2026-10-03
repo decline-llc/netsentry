@@ -121,7 +121,7 @@ func (s *Stats) IncAlertWriteError() {
 }
 
 func (s *Stats) ObserveMatchDuration(d time.Duration) {
-	if s == nil {
+	if s == nil || d < 0 {
 		return
 	}
 	s.matchCount.Add(1)
@@ -130,7 +130,7 @@ func (s *Stats) ObserveMatchDuration(d time.Duration) {
 }
 
 func (s *Stats) ObserveAlertWriteDuration(d time.Duration) {
-	if s == nil {
+	if s == nil || d < 0 {
 		return
 	}
 	s.alertWriteCount.Add(1)

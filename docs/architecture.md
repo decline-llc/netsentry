@@ -605,6 +605,15 @@ schemas remain unchanged. API runtime source automatically exposes the additive
 text counter through the existing renderer. Nil packets and pre-cancelled empty
 input begin no work; cancellation/shutdown scheduling is otherwise unchanged.
 
+R90-155 makes both `Stats.ObserveMatchDuration` and
+`Stats.ObserveAlertWriteDuration` ignore negative durations before updating any
+operation count, unsigned sum or histogram bucket. Nil receivers remain safe;
+zero and positive samples retain the existing cumulative bucket semantics and
+metric names/types. Direct public snapshot/exposition, signed minimum, every
+finite boundary and boundary +1 ns, and joined concurrent observation regressions
+are authored and compiled only; execution remains delegated. Positive accumulated
+sum overflow and transactional live snapshots remain outside this repair.
+
 R90-154 makes `Stats.ObserveAlerts` count only non-nil alert entries in the
 same loop that records severity counts. Empty severity still uses the low label;
 repeated non-nil pointers remain separate entries, and existing dynamic labels
