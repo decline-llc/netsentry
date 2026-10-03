@@ -101,3 +101,49 @@ closure remain; no following increment started.
 Initial sensitive scanning included unchanged historical prose and matched a prior
 Vault path; manual review confirmed it was outside this increment. The corrected
 review checks changed additions and new files; the complete static chain is rerun.
+
+
+## Delivery and queue closeout
+
+Feature `6f3781a36b5997f2c11a35e5d7f2ee379627c080` contains exactly the six intended paths. The
+isolated branch fast-forwarded freshly verified main; push/fresh-fetch proved
+clean HEAD/origin/main/FETCH_HEAD equality. Exact full-SHA range
+`df55f0501a5bc53334aae9ce14543b56a42d0728..6f3781a36b5997f2c11a35e5d7f2ee379627c080` is synchronized to
+`04-开发迭代记录/2026-10-03-6f3781a36b-CI知识同步.md`. Note scope, full index/MOC and short
+identifiers uniquely resolved through Git are verified. Fourteen current stable
+notes are reconciled; complete prior current prose is archived and historical/
+topic tails are preserved. One current SLO topic sentence is corrected from
+undeveloped collection adaptation to delivered native ingress/lifecycle/collector/
+reconstruction tooling and still-pending departmental qualifying measurements.
+All 358 prior immutable notes remain unchanged. Identical range replay preserves
+406 Markdown hashes; snapshot JSON SHA-256
+`453f82b968015f6556c8e252aed3e74313fd4c905c2f63b876da88099feec6ee`. The existing unique
+sibling local Vault was passed explicitly; no second or remote Vault was created.
+
+Acceptance matches the persisted plan: three-line guard after all parsers and
+before append; 68 other tracked engine paths unchanged. Public constructors
+cover nine rejection shapes and six empty/disabled controls; twelve direction/
+IPv4/IPv6 matching controls plus unscoped and exact/CIDR-in-one-list checks; nine
+ordered parse/whitespace diagnostics. Twenty-seven real file-backed mutation
+cases preserve List/filter/whole bytes and allow valid retry; 21 nonempty empty-
+entry cases reach the new compiled guard, six retain structural validation. Two
+raw-empty Reload cases retain the exact loader wrapper. All regression assertions
+are authored/compiled only, with no runtime/file/race/SLO pass implied. No loader/
+save validation expansion, whitespace normalization or disabled/IP-family policy
+change. Review corrected the two wrapped-error assertions before compilation.
+
+Pinned Go 1.26.8 alert/API/pipeline compile-only chain and complete static review
+passed. The initial sensitive scan matched only an unchanged historical path;
+manual review, changed-additions/new-files scanning and complete clean static
+rerun resolved it. Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/
+acceptance execution **not run; delegated by user**. No unresolved validation
+ambiguity. Existing skills cover the lessons; no redundant skill change.
+
+This single three-path docs-only delivery record closes the same increment.
+Resolve its full SHA from Git; push/fresh-fetch/exact feature..closure Vault
+verification before reporting, without an additional self-reference closure.
+After delivery, do not repeat feature/closure commit/push/sync. Queue refresh:
+no defined local ready increment; R90-75 remains independent asynchronous
+departmental acceptance with its full contract and Oct 3–Dec 31 horizon unchanged.
+The next trigger verifies fetched closure/Vault, audits fresh code/queue and
+persists a separate eligible plan. No following increment started.
