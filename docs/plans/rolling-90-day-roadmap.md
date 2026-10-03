@@ -240,6 +240,7 @@ formal SLO and evidence contract is unchanged.
 | R90-160 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject unrepresentable duration settings before startup. | R90-159; existing config second conversions | Two whole-second settings reject signed duration overflow with named diagnostics; representable negative/zero/positive/default/env semantics retained; direct public regressions authored, execution delegated. |
 | R90-161 | Oct 3–Dec 31 | Complete implementation; tests delegated | Make zero-value Stats alert observation safe. | R90-160; existing Stats/Worker metric gates | First non-nil observation lazily initializes severity map under existing lock; exact counts/input/snapshot/constructor/Worker write-completion gates retained; direct regressions authored, execution delegated. |
 | R90-162 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject IP blacklists with no compiled addresses. | R90-161; existing rule validation/snapshot contract | Blank-only address lists reject before publication; valid mixed entries and filters retain behavior; direct public regressions authored, execution delegated. |
+| R90-163 | Oct 3–Dec 31 | Implemented; delivery pending | Reject enabled suppressions with no compiled prefixes. | R90-162 verified feature/closure; existing suppression manager contract | Empty-only prefix lists reject before filter publication/persistence; disabled and mixed empty/valid behavior retained; public constructor and file-backed mutation/reload regressions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -3780,6 +3781,16 @@ formal SLO and evidence contract is unchanged.
 - **Required validation:** pinned Go 1.26.8 rule/API/pipeline compile-only; static source/direct boundaries/format/docs/JSON/complete unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/paths/diff/sensitive. All execution **not run; delegated by user**.
 - **Non-goals:** individual blank rejection within valid lists, address normalization, IPv6 expansion, parser/serializer/API runtime/schema/suppression/dependency/toolchain changes, runtime/race/SLO/performance claims.
 - **Stop condition:** competing edits, ambiguous static/compile/Git/Vault or new product/private/external authority; following increment.
+
+## R90-163 Definition
+
+- **Goal/status:** implemented; delivery pending; reject enabled suppressions with no compiled source/destination/any prefixes.
+- **Dependencies/window:** verified R90-162 feature/closure; existing suppression manager contract; Oct 3–Dec 31 forecast, dates not gates.
+- **Risk:** low; previously accepted enabled empty-only lists now reject; disabled rules keep existing skip behavior.
+- **Acceptance:** three-line post-prefix compiled-emptiness guard only; direct public constructors reject all-empty lists and preserve inputs; mixed exact/CIDR/direction/masking/rule-scope/IPv6 compatibility and prior parse-error controls; actual file-backed Add/Update/Reload retain prior List/filter and entire file bytes on failure, allow valid retry; six-path feature/one closure exact Git/Vault.
+- **Required validation:** pinned Go 1.26.8 alert/API/pipeline compile-only; static source/direct boundaries/format/docs/JSON/complete roadmap multisets/prior Definitions/R90-75/history/horizon/links/fences/paths/diff/sensitive. All execution **not run; delegated by user**.
+- **Non-goals:** whitespace trimming, per-element empty rejection within valid lists, disabled validation changes, rule-ID or IP-family policy, parser/save/API runtime/persistence algorithm/dependency/toolchain changes, runtime/race/performance/SLO or publication claims.
+- **Stop condition:** competing edits, ambiguous static/compile/Git/Vault or new product/private/external authority; following increment requires another trigger.
 
 ### R90-71 Validation Deviation
 
@@ -9765,3 +9776,56 @@ asynchronous departmental contract and Oct 3–Dec 31 horizon unchanged. Next tr
 verifies fetched closure/Vault and audits fresh code/queue before separate
 eligible plan. No following increment started; do not repeat R90-161/R90-162
 delivery or R90-59 publication. IPv6/external publication needs separate authority.
+
+
+## R90-163 Selection and Empty Compiled Suppressions (2026-10-03)
+
+Fresh fetched clean main `df55f0501a5bc53334aae9ce14543b56a42d0728`; exact
+R90-162 feature/closure Git/Vault verified. 105-commit phase audit covers SLO
+tooling through core correctness, with execution delegated and no new qualifying
+R90-75 evidence. 166 original row/Definition pairs have no duplicates; sole
+unfinished R90-75 contract and Oct 3–Dec 31 horizon unchanged. No AGENTS or
+pre-existing edits; owning Go 1.26.8 preflighted. 405 Vault Markdown files, fourteen
+current notes and 358 immutable notes captured before mutation. One current SLO
+topic sentence still claims actual collection adaptation is undeveloped;
+reconcile it with delivered tooling while preserving the substantive contract
+and historical snapshots.
+
+Empty local queue restored inside source-grounded compiled-filter repair:
+raw nonempty empty-string CIDR lists pass structural validation but compile to
+no prefixes. Persisted six-path plan/state on fix/r90-163-empty-suppressions
+precedes source/other docs. Add only post-prefix emptiness guard, preserving
+disabled skips, mixed lists, prefix/scoping semantics and earlier diagnostics.
+Public regressions will be authored/compiled only; all execution delegated.
+No following increment started.
+
+
+## R90-163 Implementation and Validation Checkpoint (2026-10-03)
+
+The only runtime change is a three-line compiled src/dst/any emptiness guard after
+all parsers and before append. All other 68 tracked engine paths are unchanged.
+Disabled skipping, mixed lists, prefix masking/scoping, existing IP-family behavior
+and earlier parse/structural diagnostics remain. Five external public regression
+functions are authored: nine rejection shapes across three constructors with nil
+results/input/file preservation; six empty/disabled controls; twelve direction/IP-
+family matching controls plus unscoped and mixed exact/CIDR controls; nine ordered
+invalid/whitespace diagnostics; twenty-seven actual file-backed Add/Update/Reload
+rejection/preservation/valid-retry cases. Twenty-one nonempty empty-entry mutation
+cases reach the new compiled guard; six nil/empty raw-list cases retain the earlier
+structural path. Reload's two raw-empty cases preserve the loader error wrapper.
+Static review corrected those two assertions before compilation; no executed test
+failure or ambiguous result occurred. No private seams, sleeps, panic swallowing
+or test skips. Regressions remain unexecuted.
+
+Pinned Go 1.26.8 alert/API/pipeline complete compile-only chain passed; binaries
+unexecuted. Static exact source/format/docs/181 task JSON/167 unique roadmap row
+and Definition pairs/all 166 prior Definitions/R90-75/history/horizon/local links/
+fences/six paths/diff/sensitive review passed. Baseline Vault hashes are unchanged.
+Existing skills already cover direct boundaries and preservation; no redundant
+skill update. Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance
+execution **not run; delegated by user**. Feature and one docs-only delivery
+closure remain; no following increment started.
+
+Initial sensitive scanning included unchanged historical prose and matched a prior
+Vault path; manual review confirmed it was outside this increment. The corrected
+review checks changed additions and new files; the complete static chain is rerun.

@@ -434,6 +434,9 @@ func NewSuppressor(rules []Suppression) (*Suppressor, error) {
 		if c.any, err = compilePrefixes(rule.AnyCIDRs); err != nil {
 			return nil, fmt.Errorf("suppression %s any cidrs: %w", rule.ID, err)
 		}
+		if len(c.src) == 0 && len(c.dst) == 0 && len(c.any) == 0 {
+			return nil, fmt.Errorf("suppression %q must include at least one CIDR", rule.ID)
+		}
 		compiled = append(compiled, c)
 	}
 	return &Suppressor{rules: compiled}, nil

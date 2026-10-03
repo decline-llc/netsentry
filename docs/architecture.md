@@ -330,6 +330,15 @@ Current build:
   source is authored and compile-reviewed; behavioral/race execution remains
   **not run; delegated by user**.
 
+Enabled suppressions must compile to at least one source, destination or any-IP
+prefix. Empty-string-only lists reject before filter publication or manager
+persistence, using the existing at-least-one-CIDR diagnostic. Mixed empty/valid
+lists retain matching, and disabled rules retain their existing skip behavior.
+File load/save perform structural validation; `NewSuppressor` and manager
+construction/mutations/reload enforce the compiled-prefix requirement.
+Direct constructor and file-backed manager preservation regressions are authored
+for departmental execution; static/compile-only review is no runtime or SLO pass.
+
 ---
 
 ## 8. Storage
