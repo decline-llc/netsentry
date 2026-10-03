@@ -238,6 +238,7 @@ formal SLO and evidence contract is unchanged.
 | R90-158 | Oct 3–Dec 31 | Complete implementation; tests delegated | Validate calendar dates before expired shard cleanup. | R90-157; existing daily retention cleanup | Invalid calendar filenames/base/WAL/SHM remain byte-identical; valid expired sets deleted with exact count, cutoff and lifecycle unchanged; direct/startup preservation regressions authored, execution delegated. |
 | R90-159 | Oct 3–Dec 31 | Complete implementation; tests delegated | Require valid calendar dates in daily shard discovery. | R90-158; existing shard discovery | List/Query/Count ignore impossible-calendar unrelated files with byte preservation; valid historical/current rows and corrupt valid-date errors retained; direct regressions authored, execution delegated. |
 | R90-160 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject unrepresentable duration settings before startup. | R90-159; existing config second conversions | Two whole-second settings reject signed duration overflow with named diagnostics; representable negative/zero/positive/default/env semantics retained; direct public regressions authored, execution delegated. |
+| R90-161 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Make zero-value Stats alert observation safe. | R90-160; existing Stats/Worker metric gates | First non-nil observation lazily initializes severity map under existing lock; exact counts/input/snapshot/constructor/Worker write-completion gates retained; direct regressions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -3757,6 +3758,16 @@ formal SLO and evidence contract is unchanged.
 - **Acceptance:** derived whole-second bound and two named checks only; public Load both signed endpoints/first overflows/int64 extremes/-1/0/1/defaults/full-config/input preservation; combined diagnostics and numeric env expansion; native int parse bounds retained; six-path feature/one closure exact Git/Vault.
 - **Required validation:** pinned Go 1.26.8 config/CLI/alert/API compile-only chain; static source/direct boundaries/format/docs/JSON/complete unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/paths/diff/sensitive; all behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
 - **Non-goals:** operational duration policy/positive-only/default/fallback/main conversions/programmatic option validation/other numeric fields/API/schema/metrics/dependencies/toolchain/suites/private inputs/IPv6/publication; no startup/runtime/SLO pass.
+- **Stop condition:** competing edits, ambiguous static/compile/Git/Vault, new private/product/external authority or following increment.
+
+## R90-161 Definition
+
+- **Goal/status:** implemented; delivery pending; prevent zero Stats first-alert nil-map panic and consequent Worker completion loss.
+- **Dependencies/window:** R90-160 verified delivered; existing Stats/Worker gates; Oct 3–Dec 31 forecast, no date gate.
+- **Risk:** low; first non-nil observation allocates map; zero start time/observed-only labels remain, no constructor policy change.
+- **Acceptance:** three-line locked non-nil-loop initialization only; public zero/New full snapshots/exposition/nil/default/dynamic/repeated/input/map-copy checks; joined 4x100 first-use writers; actual Worker/SQLite success and public no-alert/writer-failure controls; seven-path feature/one closure exact Git/Vault.
+- **Required validation:** pinned Go 1.26.8 Stats/pipeline/API compile-only chain; static source/direct boundaries/format/docs/JSON/complete unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/paths/diff/sensitive; all behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
+- **Non-goals:** start-time/default-label/New/Snapshot/renderer/API/Worker runtime/write-export-terminal policy/live transaction/overflow/storage/rule/config/schema/dependency/toolchain/suites/private inputs/IPv6/publication; no runtime/SQLite/race/SLO pass.
 - **Stop condition:** competing edits, ambiguous static/compile/Git/Vault, new private/product/external authority or following increment.
 
 ### R90-71 Validation Deviation
@@ -9530,3 +9541,60 @@ asynchronous departmental contract and Oct 3–Dec 31 horizon unchanged. Next tr
 verifies fetched closure/Vault and audits fresh code/queue before separate
 eligible plan. No following increment started; do not repeat R90-159/R90-160
 delivery or R90-59 publication. IPv6/external publication needs separate authority.
+
+
+## R90-161 Selection and Zero Stats Alert Observation (2026-10-03)
+
+Fresh fetched clean main HEAD/origin/main/FETCH_HEAD:
+`de68278a8886eaf07a44d576e5ffe98afb6a0d08`; R90-160 exact six-path
+feature/three-path closure Git/Vault scope/note/index/MOC/identifier resolution
+verified. 101-commit phase remains core correctness after SLO tooling; no new
+qualifying R90-75 evidence. R90-75 sole unfinished full independent asynchronous
+contract and Oct 3–Dec 31 horizon unchanged. Existing unique local Vault's 401
+Markdown hashes/14 complete stable backups captured; owning Go 1.26.8 preflighted.
+
+Empty ready queue reconciled inside source-grounded nil-map panic repair:
+zero Stats' first non-nil ObserveAlerts writes an uninitialized severity map;
+Worker can catch panic after successful write but before packet completion.
+Seven-path plan/state persisted before source/docs edits on
+fix/r90-161-zero-stats-alerts. Lazy map initialization under existing locked
+non-nil entry loop preserves all other runtime/New/snapshot/exposition/gates.
+Public zero/New/concurrent/actual Worker-SQLite/control regressions authored and
+compiled only. All execution delegated; no observed incident, runtime/SQLite/
+race/SLO pass, publication or following implementation claim.
+
+
+## R90-161 Implementation and Validation Checkpoint (2026-10-03)
+
+Runtime diff adds only three-line nil severity-map allocation inside existing
+locked loop after nil-entry skip. All other tracked engine/New/Snapshot/renderer/
+Worker source byte-identical. Zero StartedAt and observed-only labels remain;
+New retains four initialized labels and nonzero start time. Nil/empty/all-nil,
+blank-to-low/dynamic/repeated counts, input ownership and write/export/terminal
+policies unchanged. No throughput/allocation or transactional-live-snapshot claim.
+
+Four external public regression functions authored/compiled only. Zero/New nine
+batch cases each twice compare entire snapshots after seeding unrelated counters/
+durations/buckets/queue/start time, exact initial label shapes, total/severity
+sum/Prometheus lines, pointers/values and returned map-copy isolation. Typed nil
+Stats remains exact zero snapshot. Four start-synchronized zero Stats writers each
+100 mixed nil/high/blank/custom plus all-nil observations join before full snapshot/
+exposition/input assertions: total 1200, high/low/custom each 400, zero start time.
+Actual public Worker.Run with zero Stats and real SQLite writer records two mixed
+nil-batch rows with expected count/timestamps/healthy store, processed/completed/
+write/generated/severity/panic counters and unchanged packet/matcher calls.
+Separate public no-alert and injected writer-failure controls preserve completion/
+write-error/empty-label gates. Encoded SQLite path exercised; small matcher fixture
+explicitly used, no claim of actual rule matching. No private state, sleeps,
+panic-catching test code or weakened skip paths. No runtime/SQLite/race pass.
+
+Final pinned Go 1.26.8 Stats/pipeline/API complete compile-only chain passed after
+adding explicit constructor initial-label assertions; binaries/benchmarks
+unexecuted. Static exact source/direct boundaries/Go-format/docs/179 JSON/165
+complete unique roadmap pairs/prior Definitions/R90-75/history/horizon/links/
+fences/seven paths/diff/sensitive passed. No unresolved validation failure or
+ambiguity. All behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance
+execution **not run; delegated by user**. 401 baseline Vault hashes unchanged.
+Existing skills cover locked first use, direct boundaries and joined invariants;
+no redundant update. Feature plus one docs-only closure remains; no next increment
+or publication started.

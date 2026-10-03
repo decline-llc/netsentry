@@ -171,6 +171,9 @@ func (s *Stats) ObserveAlerts(alerts []*model.Alert) {
 		if alert == nil {
 			continue
 		}
+		if s.alertsBySeverity == nil {
+			s.alertsBySeverity = make(map[model.Severity]uint64)
+		}
 		count++
 		sev := alert.Severity
 		if sev == "" {

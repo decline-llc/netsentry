@@ -670,6 +670,17 @@ failure/export regressions are authored and compiled only; execution remains
 **not run; delegated by user**. Cross-counter comparisons use quiescent writers;
 this adds no general transactional snapshot or SLO measurement guarantee.
 
+R90-161 makes `Stats.ObserveAlerts` safe for a non-nil zero-value Stats by lazily
+allocating its severity map at the first non-nil entry under the existing mutex.
+Nil, empty and all-nil batches retain no-op behavior. Zero Stats retains zero
+start time and only observed severity labels; `Stats.New` keeps its initialized
+start time and four stable labels. This removes the nil-map panic that a Worker
+could recover after a successful write and before recording packet completion.
+All other Stats, snapshot, renderer and Worker runtime code is unchanged. Public
+zero/New/input/snapshot/exposition, joined first-use concurrency and actual
+Worker/SQLite plus no-alert/writer-failure regressions are authored and compiled
+only; execution remains delegated, with no runtime, SQLite or race pass inferred.
+
 Successful terminal processing is process-local: no-alert/suppression requires
 no storage write, writer success alone does not establish universal durability,
 and export return is earlier than final synced measurement receipt publication.

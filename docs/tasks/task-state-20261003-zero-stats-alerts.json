@@ -1,0 +1,51 @@
+{
+  "task": "r90-161-zero-stats-alerts",
+  "timestamp": "2026-10-03",
+  "branch": "fix/r90-161-zero-stats-alerts",
+  "remote_baseline": "de68278a8886eaf07a44d576e5ffe98afb6a0d08",
+  "starting_remote_baseline": "de68278a8886eaf07a44d576e5ffe98afb6a0d08",
+  "risk_level": "Low",
+  "current_checkpoint": "implementation_static_compile_complete_delivery_pending",
+  "completed": [
+    "Fresh fetched clean main; R90-160 exact Git/Vault scopes/note/index/MOC/identifier resolution verified",
+    "101-commit phase audit; R90-75 sole unfinished full independent departmental contract/horizon unchanged",
+    "401 Markdown hashes/14 complete stable backups; no AGENTS",
+    "Pinned owning engine Go 1.26.8 preflighted",
+    "Exact three-line map initialization under existing lock after nil skip; all other tracked engine/New/Snapshot/renderer/Worker source byte-identical",
+    "Four external public functions authored: zero/New nine batches/full snapshots/exposition/input/map-copy/initial labels; joined 4x100 exact counts; actual Worker/SQLite success and no-alert/writer-failure controls",
+    "Pinned Go 1.26.8 final Stats/pipeline/API complete compile-only chain passed after explicit initial-label assertion review; binaries/benchmarks unexecuted",
+    "Static exact source/direct boundaries/Go-format/docs/179 JSON/165 complete unique roadmap pairs/prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/sensitive passed",
+    "401 baseline Vault hashes unchanged; no unresolved validation failure; existing skills suffice"
+  ],
+  "in_progress": [
+    "Feature delivery and one docs-only closure"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "pass: pinned Go 1.26.8 final Stats/pipeline/API complete go test -c chain after initial-label assertion review; binaries/benchmarks unexecuted",
+    "static_review": "pass: exact source/all other tracked engine preservation/direct boundaries/Go-format/docs/179 JSON/165 complete unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/sensitive"
+  },
+  "authority_boundaries": [
+    "Only lazy severity-map initialization inside locked non-nil loop; all other engine source retained",
+    "Zero StartedAt and observed-only labels retained; no Worker/runtime/API/constructor policy change",
+    "All execution user-delegated"
+  ],
+  "remaining_risks": [
+    "Zero Stats retains zero start time and lacks unobserved constructor labels; first non-nil batch allocates map",
+    "Authored Stats/Worker/SQLite regressions unexecuted; no runtime/race/SLO pass"
+  ],
+  "deviations": [
+    "Empty ready queue restored within source-grounded zero severity-map panic repair"
+  ],
+  "resume_instructions": "Complete only R90-161 public Stats/table/concurrency/Worker/SQLite/failure regressions/static/compile, feature exact push/fetch/Vault, single docs-only closure exact push/fetch/Vault; refresh queue and stop. No suites.",
+  "todo": [
+    "Focused feature push/fetch/exact Vault",
+    "One docs-only closure push/fetch/exact Vault; refresh queue"
+  ]
+}
