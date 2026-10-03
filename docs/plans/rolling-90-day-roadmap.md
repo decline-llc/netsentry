@@ -223,7 +223,7 @@ formal SLO and evidence contract is unchanged.
 | R90-143 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind pair condition receipt reads to reconciled inventory. | R90-142; R90-119/R90-121/R90-123/R90-127 pair modes; R90-137/R90-141 precedents | Four fixed receipt reads validate complete matched inventory and bounded regular non-following/nonblocking handles; exact EOF metadata/hash and close before unchanged parser/projection; preserve all modes/error/partial contracts; tests delegated. |
 | R90-144 | Oct 2–Dec 30 | Complete implementation; tests delegated | Isolate core rule reload snapshots from caller-owned inputs. | R90-143; existing rule engine and serialized API transactions | Deep-copy Rule/Config/MITRE before validation/sort/compile; publish one owned state; preserve diagnostics, failed-reload state and schemas; author direct regression cases with execution delegated. |
 | R90-145 | Oct 2–Dec 30 | Complete implementation; tests delegated | Add a packet-completion counter to the core processing pipeline. | R90-144; R90-116 lifecycle boundary | Count only successful terminal packet processing after optional observer success; retain existing processed/received counters, API fields and SLO exporter semantics; author direct failure/no-alert/suppression/success cases with execution delegated. |
-| R90-146 | Oct 2–Dec 30 | In progress; tests delegated | Serialize suppression reload reads with management mutations. | R90-145; R90-79 suppression persistence | Hold existing manager lock across authoritative reload read, validation and publication; prevent stale reload overwriting successful Add/Update/Delete; preserve loader/API/file/filter contracts; direct regression execution delegated. |
+| R90-146 | Oct 2–Dec 30 | Complete implementation; tests delegated | Serialize suppression reload reads with management mutations. | R90-145; R90-79 suppression persistence | Hold existing manager lock across authoritative reload read, validation and publication; prevent stale reload overwriting successful Add/Update/Delete; preserve loader/API/file/filter contracts; direct regression execution delegated. |
 
 ## R90-01 Definition
 
@@ -3424,12 +3424,13 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-146 Definition
 
-- **Goal/status:** implementation in progress; repair suppression reload's stale
-  read-to-publication interleaving within one manager.
+- **Goal/status:** implementation complete; suppression reload read-to-publication
+  is serialized within one manager. Direct regressions authored/compiled, execution delegated.
 - **Dependencies/window:** completed R90-145 and R90-79 suppression persistence;
   Oct 2–Dec 30. R90-75 stays independent asynchronous departmental acceptance.
-- **Source evidence:** ReloadFromFile currently reads canonical rules before the
-  manager lock, so a successful mutation can be overwritten by stale publication.
+- **Source evidence:** at selection ReloadFromFile read canonical rules before the
+  manager lock, allowing stale publication over a mutation. Delivered reload now
+  takes the existing lock before load and holds it through publication.
 - **Risk:** medium; correctness and longer manager lock duration during reload I/O.
 - **Acceptance:** persist separate plan/state; keep nil/unconfigured guards,
   take existing exclusive lock before authoritative load, hold through unchanged
@@ -7788,3 +7789,57 @@ Loader/persistence/API/filter contracts remain; reload I/O may delay readers.
 All execution suites remain user-delegated and unrun; static/compile-only evidence
 is not runtime/race proof. R90-75 remains independent asynchronous; horizon stays
 Oct 2–Dec 30. No subsequent increment starts here; skills need no edit at selection.
+
+
+## R90-146 Completion and Forward Queue Refresh (2026-10-02)
+
+Feature `5e6d9211a14a31622f589d0a8be18a6afd30768a` contains exactly seven planned paths and was implemented on
+`fix/r90-146-suppression-reload-serialization`, then fast-forwarded to freshly
+verified main. Push/fresh-fetch verified clean HEAD/origin/main/FETCH_HEAD at
+that full SHA. Exact range `b2086d9769d2b253e443daf5fee28b4f7c4079a7..5e6d9211a14a31622f589d0a8be18a6afd30768a` has seven-path generated
+scope, iteration note `04-开发迭代记录/2026-10-02-5e6d9211a1-CI知识同步.md`,
+full index and MOC verified. Fourteen stable notes are current; every substantive
+topic tail is preserved exactly across status replacement, and all 324 baseline
+immutable iteration-directory hashes remain unchanged. Identical feature-range
+replay preserves the 372-file Markdown snapshot; snapshot JSON SHA-256 is
+`8ed7c936eb9c8f6cd9f361beb8f7a817b023f447895873fd257c484d461f6503`. The unique existing sibling Vault was selected explicitly.
+
+Acceptance matches the plan: nil/unconfigured guards precede the existing
+exclusive lock, authoritative load occurs inside it, and validation/compilation/
+publication retain that lock. Private instance-local load defaults to the
+unchanged public loader. All other loader/mutation/filter/persistence bodies and
+API/store/rule/pipeline/Stats/exporter/config source remain unchanged. Reload
+errors preserve old state and release the lock; missing files clear without
+creation. Reload I/O can delay List/Filter; no external-writer coordination,
+bounded I/O, FIFO or lock-free-filter claim is introduced.
+
+Five direct regression functions cover exclusive real-read observation, three
+channel-held reload/Add/Update/Delete overlaps and exact final file/list/filter
+after joins, four failure-preservation/unlock/subsequent-mutation cases, public
+guards/missing-file clearing/absence and four defensive nested List slices.
+The read-lock assertion directly detects the original boundary independently of
+contender scheduling; no FIFO or queued-contender claim is inferred. Pinned Go
+1.26.8 alert/API/pipeline complete compile-only chain and final static source/
+regression/Go-format/docs/164 JSON/150 full unique roadmap/full forward contract/
+unchanged R90-75/history/links/fences/seven-path/diff/sensitive review pass.
+No binary or behavioral/race/CLI/full-suite/scanner/knowledge/acceptance suite was
+executed; all execution remains user-delegated, without a runtime/race/SLO pass.
+
+The sole planning deviation registered the bounded source-grounded correctness
+repair within the empty local queue, avoiding a separate audit-only increment.
+There was no implementation/static/compile/delivery failure or Vault topic loss.
+Existing skill readiness and explicit topic-boundary preservation rules applied;
+full stable-content backups support the byte-preservation checks. No skill edit
+was warranted at selection, static review or delivery.
+
+One three-path docs-only record closes this same increment. Resolve its final
+full SHA from Git, push/fresh-fetch and verify the exact feature-tip..closure-tip
+Vault range before reporting; no further closure merely for self-reference.
+Queue refresh: R90-146 implementation is complete and no further dependency-ready
+local increment is currently defined. R90-75 retains its full independent
+asynchronous departmental contract and does not block development. Next trigger
+verifies the latest fetched closure and Vault, audits fresh core-code evidence
+and the forward queue, then persists a separate eligible plan before editing.
+No subsequent implementation starts here. Oct 2–Dec 30 remains current; IPv6
+and external publication remain separate authority. Do not repeat completed
+R90-145/R90-146 delivery or R90-59 publication.
