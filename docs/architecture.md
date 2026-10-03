@@ -163,6 +163,16 @@ Current rule semantics:
 - `ip_blacklist` enforces `ips`, `direction`, and optional `protocols` per rule. Exact IPs and CIDRs stay scoped to the owning rule.
 - `port_blacklist` enforces `ports`, `direction`, and optional `protocols` per rule.
 
+R90-162 rejects IP blacklists whose trimmed entries produce neither an exact IP
+nor a CIDR, using the existing at-least-one-IP-or-CIDR diagnostic. Validation
+applies to enabled and disabled rules; a rejected reload retains the previous
+snapshot. Mixed blank/valid lists still skip blanks, with trimming, duplicates,
+per-rule scoping and direction/protocol filters preserved. LoadFromFile and
+SaveToFile remain parsing/serialization APIs; Engine.Reload validates the loaded
+set. Direct public rejection, matching/filter and canonical/legacy wrapped/array
+load-to-reload preservation regressions are authored and compiled only; execution
+remains delegated. No address normalization or expanded IPv6 authority.
+
 Current rule management:
 
 - Rule management can list the active snapshot, create/update/delete rules with seed-file persistence, and hot reload from the configured seed file.

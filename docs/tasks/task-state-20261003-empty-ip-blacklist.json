@@ -1,0 +1,51 @@
+{
+  "task": "r90-162-empty-ip-blacklist",
+  "timestamp": "2026-10-03",
+  "branch": "fix/r90-162-empty-ip-blacklist",
+  "remote_baseline": "ca989a4cf363c9b0fe7e42145ceb4d306ddadb53",
+  "starting_remote_baseline": "ca989a4cf363c9b0fe7e42145ceb4d306ddadb53",
+  "risk_level": "Low",
+  "current_checkpoint": "implementation_static_compile_complete_delivery_pending",
+  "completed": [
+    "Fresh fetched clean main; R90-161 exact feature/closure Git/Vault verified",
+    "103-commit phase audit; sole unfinished R90-75 contract/horizon unchanged",
+    "403 Markdown hashes/14 entire stable notes backed up; no AGENTS",
+    "Owning engine Go 1.26.8 preflighted",
+    "Exact three-line compiled-address guard; all other tracked engine/runtime/loader/API source byte-identical",
+    "Three external public functions authored: twelve rejections/four prior diagnostics/twelve matching controls/two scope checks/eight schema/file-preservation cases",
+    "Pinned Go 1.26.8 rule/API/pipeline full compile-only chain passed; binaries unexecuted",
+    "Static source/direct boundaries/format/docs/180 JSON/166 unique complete roadmap/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive passed",
+    "403 baseline Vault hashes unchanged; no validation failure or ambiguity; no skill update needed"
+  ],
+  "in_progress": [
+    "Feature delivery and one docs-only closure"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "pass: pinned Go 1.26.8 rule/API/pipeline full go test -c chain; binaries/benchmarks unexecuted",
+    "static_review": "pass: exact source/all other tracked engine/direct boundaries/format/docs/180 JSON/166 unique complete roadmap/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive"
+  },
+  "authority_boundaries": [
+    "Only empty compiled address guard; mixed blank/valid compatibility retained",
+    "Parser/serializer remain unchanged; no expanded IPv6 or publication authority",
+    "Execution user-delegated"
+  ],
+  "remaining_risks": [
+    "Blank-only enabled/disabled rules now reject",
+    "Authored regressions unexecuted; no runtime/race/SLO pass"
+  ],
+  "deviations": [
+    "Empty ready queue restored inside source-grounded empty compiled match-set repair"
+  ],
+  "resume_instructions": "Complete only R90-162 direct public regressions/static/compile, exact feature delivery/Vault, one docs-only closure delivery/Vault; refresh queue and stop. No suites.",
+  "todo": [
+    "Feature exact push/fetch/Vault",
+    "One docs-only closure exact push/fetch/Vault; refresh queue"
+  ]
+}

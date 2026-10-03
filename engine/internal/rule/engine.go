@@ -326,6 +326,9 @@ func compileIPRule(cfg model.IPBlacklistConfig) (compiledIPRule, error) {
 		}
 		compiled.ips[ipStr] = struct{}{}
 	}
+	if len(compiled.ips) == 0 && len(compiled.nets) == 0 {
+		return compiledIPRule{}, fmt.Errorf("ip blacklist requires at least one IP or CIDR")
+	}
 	return compiled, nil
 }
 

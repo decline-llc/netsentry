@@ -239,6 +239,7 @@ formal SLO and evidence contract is unchanged.
 | R90-159 | Oct 3–Dec 31 | Complete implementation; tests delegated | Require valid calendar dates in daily shard discovery. | R90-158; existing shard discovery | List/Query/Count ignore impossible-calendar unrelated files with byte preservation; valid historical/current rows and corrupt valid-date errors retained; direct regressions authored, execution delegated. |
 | R90-160 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject unrepresentable duration settings before startup. | R90-159; existing config second conversions | Two whole-second settings reject signed duration overflow with named diagnostics; representable negative/zero/positive/default/env semantics retained; direct public regressions authored, execution delegated. |
 | R90-161 | Oct 3–Dec 31 | Complete implementation; tests delegated | Make zero-value Stats alert observation safe. | R90-160; existing Stats/Worker metric gates | First non-nil observation lazily initializes severity map under existing lock; exact counts/input/snapshot/constructor/Worker write-completion gates retained; direct regressions authored, execution delegated. |
+| R90-162 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Reject IP blacklists with no compiled addresses. | R90-161; existing rule validation/snapshot contract | Blank-only address lists reject before publication; valid mixed entries and filters retain behavior; direct public regressions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -3769,6 +3770,16 @@ formal SLO and evidence contract is unchanged.
 - **Required validation:** pinned Go 1.26.8 Stats/pipeline/API compile-only chain; static source/direct boundaries/format/docs/JSON/complete unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/paths/diff/sensitive; all behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
 - **Non-goals:** start-time/default-label/New/Snapshot/renderer/API/Worker runtime/write-export-terminal policy/live transaction/overflow/storage/rule/config/schema/dependency/toolchain/suites/private inputs/IPv6/publication; no runtime/SQLite/race/SLO pass.
 - **Stop condition:** competing edits, ambiguous static/compile/Git/Vault, new private/product/external authority or following increment.
+
+## R90-162 Definition
+
+- **Goal/status:** implemented; delivery pending; reject empty compiled IP blacklists.
+- **Dependencies/window:** verified R90-161; existing rule validation/snapshot contract; Oct 3–Dec 31 forecast, dates not gates.
+- **Risk:** low; blank-only lists previously accepted now reject, including disabled rules under existing validation policy.
+- **Acceptance:** exact three-line compiled-address emptiness guard; public enabled/disabled blank/nil/empty rejection with snapshot/input preservation; exact/CIDR/mixed/duplicates/filter/scoping controls; canonical/legacy wrapped/array LoadFromFile-to-Reload file-preservation boundaries; six-path feature/one closure exact Git/Vault.
+- **Required validation:** pinned Go 1.26.8 rule/API/pipeline compile-only; static source/direct boundaries/format/docs/JSON/complete unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/paths/diff/sensitive. All execution **not run; delegated by user**.
+- **Non-goals:** individual blank rejection within valid lists, address normalization, IPv6 expansion, parser/serializer/API runtime/schema/suppression/dependency/toolchain changes, runtime/race/SLO/performance claims.
+- **Stop condition:** competing edits, ambiguous static/compile/Git/Vault or new product/private/external authority; following increment.
 
 ### R90-71 Validation Deviation
 
@@ -9655,3 +9666,49 @@ asynchronous departmental contract and Oct 3–Dec 31 horizon unchanged. Next tr
 verifies fetched closure/Vault and audits fresh code/queue before separate
 eligible plan. No following increment started; do not repeat R90-160/R90-161
 delivery or R90-59 publication. IPv6/external publication needs separate authority.
+
+
+## R90-162 Selection and Empty Compiled IP Blacklists (2026-10-03)
+
+Fresh fetched clean main `ca989a4cf363c9b0fe7e42145ceb4d306ddadb53`;
+R90-161 seven-path feature/three-path closure exact Git/Vault/note/index/MOC
+verified. 103-commit phase remains core correctness after SLO tooling; no new
+qualifying R90-75 evidence. Sole unfinished R90-75 independent departmental
+contract and Oct 3–Dec 31 horizon unchanged. 403 Vault hashes/14 entire stable
+notes backed up; no AGENTS; pinned owning Go 1.26.8 preflighted.
+
+Empty queue reconciled inside source-grounded match-set validation repair: raw
+nonempty blank-only IP list passes validation then compiles to zero addresses.
+Six-path plan/state persisted before source/other docs on
+fix/r90-162-empty-ip-blacklist. Add three-line post-loop empty compiled IP/CIDR
+guard; retain valid mixed lists, trimming, filters, scoping and disabled validation.
+LoadFromFile/SaveToFile remain parsing/serialization APIs. Direct public regressions
+will be authored/compiled only; execution delegated, no runtime/race/SLO claim.
+
+
+## R90-162 Implementation and Validation Checkpoint (2026-10-03)
+
+Exact runtime diff is three-line post-loop compiled IP/CIDR emptiness guard;
+all other tracked engine/runtime/loader/API source byte-identical. Existing
+rule-ID/at-least-one-address diagnostic reused, including disabled validation.
+Mixed blank/valid lists still skip blanks; trimming, duplicates, ownership,
+per-rule scoping, direction/protocol filters and prior diagnostics retain behavior.
+LoadFromFile and SaveToFile remain parser/serializer APIs; Reload validates.
+
+Three external public functions authored/compiled only: twelve enabled/disabled
+nil/empty/ASCII/Unicode/multiple blank rejection cases with old Rules/RuleCount/
+Match and candidate/packet preservation plus valid retry; four prior direction/
+protocol/IP/CIDR diagnostic controls; twelve exact/CIDR/mixed/duplicate/direction/
+protocol/disabled/outside matching controls and two owning-rule scope checks;
+eight canonical/legacy wrapped/array load-to-actual-Reload cases with valid mixed
+matching/blank rejection/published state and entire file-byte preservation.
+No private-state manipulation, sleeps, skips or panic swallowing. No runtime pass.
+
+Pinned Go 1.26.8 rule/API/pipeline complete compile-only chain passed;
+binaries/benchmarks unexecuted. Static exact source/direct boundaries/Go-format/
+docs/180 JSON/166 complete unique roadmap pairs/prior Definitions/R90-75/history/
+horizon/links/fences/six paths/diff/sensitive passed. All execution **not run;
+delegated by user**. 403 baseline Vault hashes unchanged; no unresolved validation
+failure or ambiguity. Existing skills cover rejection boundaries/preservation;
+no redundant skill update. Feature and one docs-only closure remain; next increment
+not started. No normalization/IPv6 expansion/publication/SLO evidence claim.
