@@ -235,7 +235,7 @@ formal SLO and evidence contract is unchanged.
 | R90-155 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject negative duration observations. | R90-154; existing public Stats observers | Negative samples change no count/sum/bucket; retain zero/positive/nil semantics and renderer; direct boundary/concurrency assertions authored with execution delegated. |
 | R90-156 | Oct 3–Dec 31 | Complete implementation; tests delegated | Count unpublished rule snapshots as empty. | R90-155; existing atomic rule.Engine | Non-nil zero-value Engine RuleCount returns zero; retain reload/match/count semantics; direct engine/API lifecycle assertions authored, execution delegated. |
 | R90-157 | Oct 3–Dec 31 | Complete implementation; tests delegated | Isolate Aho-Corasick pattern snapshots. | R90-156; existing matcher and candidate gate | Getter edits cannot change compiled pattern metadata; candidate set avoids getter copy per hit; retain matching/ordering/filter semantics; direct/concurrent regressions authored, execution delegated. |
-| R90-158 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Validate calendar dates before expired shard cleanup. | R90-157; existing daily retention cleanup | Invalid calendar filenames/base/WAL/SHM remain byte-identical; valid expired sets deleted with exact count, cutoff and lifecycle unchanged; direct/startup preservation regressions authored, execution delegated. |
+| R90-158 | Oct 3–Dec 31 | Complete implementation; tests delegated | Validate calendar dates before expired shard cleanup. | R90-157; existing daily retention cleanup | Invalid calendar filenames/base/WAL/SHM remain byte-identical; valid expired sets deleted with exact count, cutoff and lifecycle unchanged; direct/startup preservation regressions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -3729,7 +3729,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-158 Definition
 
-- **Goal/status:** implemented; delivery pending; require real calendar dates before deleting expired daily shard sets.
+- **Goal/status:** implementation delivered; require real calendar dates before deleting expired daily shard sets.
 - **Dependencies/window:** R90-157 verified delivered; existing retention cleanup; Oct 3–Dec 31 forecast, no date gate.
 - **Risk:** low; invalid-date files remain for operator inspection; discovery behavior and existing supported year range unchanged.
 - **Acceptance:** parse/error-skip-only runtime diff; direct/startup public malformed-calendar exact base/WAL/SHM preservation; exact valid/leap/year-zero expired deletion counts; cutoff/current/fresh/noncanonical/orphan/directory retention; disabled/canceled byte preservation; six-path feature/one closure exact Git/Vault.
@@ -9236,3 +9236,56 @@ execution **not run; delegated by user**; no filesystem/SQL/runtime/SLO pass.
 395 baseline Vault hashes unchanged. Existing skills already cover unique markers
 and preservation; no redundant update. Feature and single docs-only closure
 remain; no next increment or publication started.
+
+
+## R90-158 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `f78e2ce1386d4f3c20c68bfd9eb5e0ea5a32941e` contains exactly six planned paths. Isolated
+fix/r90-158-shard-calendar fast-forwarded freshly verified main; push/fresh-fetch
+verified clean HEAD/origin/main/FETCH_HEAD at that full SHA. Exact range
+`7cd71694b25f99349bd1c8da1331280fe3ca85ef..f78e2ce1386d4f3c20c68bfd9eb5e0ea5a32941e` note `04-开发迭代记录/2026-10-03-f78e2ce138-CI知识同步.md`, six-path scope/index/MOC verified. Generated
+short identifiers uniquely resolve through Git to full endpoints. Fourteen
+current stable notes reconciled; entire prior substantive current prose archived
+under R90-157 historical headings. Original topic tails and all
+348 baseline immutable iteration hashes retained, excluding only bounded
+documented generated MOC regions. Identical replay preserves 396 Markdown
+hashes; snapshot JSON SHA-256 `34eff76b4c473fa4be6dd84afab06ecc719232fc96b0908bc8fd76e992be5877`. Existing unique
+sibling local Vault selected explicitly; no second empty or remote Vault.
+
+Acceptance matches persisted plan. Runtime adds calendar time.Parse/error-skip
+before expired set deletion plus comment; every other tracked engine source
+byte-identical. Existing cutoff equality/supported year range/valid leap days/
+removal order/count/context/lifecycle/discovery/query/schema/recovery unchanged.
+Invalid-date files remain for operator inspection; discovery can still report
+unrelated-file read errors. No new filename/year/retention/active-handle policy.
+
+Two direct public functions authored/compiled only. Startup fixtures precede
+Open; direct fixtures follow Open. Seven impossible calendar dates preserve
+exact arbitrary base/WAL/SHM bytes; noncanonical/unrelated names/sidecars, orphan
+sidecars and date-shaped directory/nested file retained. Three valid expired
+sets (leap day, ordinary day, supported year zero) remove nine files; direct
+count nine then zero, startup leaves zero further removals. Cutoff/fresh/current
+retained; Close precedes final retained-byte assertions. Disabled retention and
+pre-canceled cleanup preserve all bytes/count zero/errors.Is(context.Canceled).
+No private-field injection, sleeps or skips; no filesystem/SQL/runtime/race/SLO
+pass inferred from unexecuted assertions.
+
+Pinned Go 1.26.8 alert/API/pipeline complete compile-only chain passed; binaries
+and benchmarks unexecuted. Exact source/direct boundaries/Go-format/docs/176 JSON/
+162 unique complete roadmap pairs/prior Definitions/R90-75/history/horizon/links/
+fences/six paths/diff/sensitive passed. Initial temporary static-review marker
+pointed to current completion before it existed; corrected unique prior R90-157
+marker and entire static/docs/diff rerun passed. No unresolved source/compile/
+static/Git/Vault ambiguity. Existing skills cover marker/preservation, no redundant
+update. All behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance
+execution **not run; delegated by user**. Planning deviation: empty ready queue
+restored inside source-grounded deletion guard.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git; push/fresh-fetch and verify exact feature..closure Vault scope/
+note/index/MOC/current stable prose before reporting; no self-reference closure.
+Refreshed queue has no defined local dependency-ready item. R90-75 full independent
+asynchronous departmental contract and Oct 3–Dec 31 horizon unchanged. Next trigger
+verifies fetched closure/Vault and audits fresh code/queue before separate
+eligible plan. No following increment started; do not repeat R90-157/R90-158
+delivery or R90-59 publication. IPv6/external publication needs separate authority.
