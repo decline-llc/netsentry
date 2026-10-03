@@ -221,8 +221,8 @@ formal SLO and evidence contract is unchanged.
 | R90-141 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind report-source observations read to captured inventory. | R90-140; R90-118/R90-119/R90-123/R90-127 bundle/pair consumers; R90-135/R90-137 precedents | Admit one bounded regular non-following/nonblocking observations handle; exact inventory/metadata/close before source comparison/recompute; preserve public formats/status/eligibility/partial evidence; tests delegated. |
 | R90-142 | Oct 2 | Complete documentation; execution delegated | Reconcile report-binding delivery and scope pair receipt inventory reads. | R90-141 verified feature/closure | Verify exact prior Git/Vault/phase evidence; define complete R90-143 four-receipt acquisition/parser/qualification contract without runtime/test execution. |
 | R90-143 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind pair condition receipt reads to reconciled inventory. | R90-142; R90-119/R90-121/R90-123/R90-127 pair modes; R90-137/R90-141 precedents | Four fixed receipt reads validate complete matched inventory and bounded regular non-following/nonblocking handles; exact EOF metadata/hash and close before unchanged parser/projection; preserve all modes/error/partial contracts; tests delegated. |
-| R90-144 | Oct 2–Dec 30 | In progress; tests delegated | Isolate core rule reload snapshots from caller-owned inputs. | R90-143; existing rule engine and serialized API transactions | Deep-copy Rule/Config/MITRE before validation/sort/compile; publish one owned state; preserve diagnostics, failed-reload state and schemas; author direct regression cases with execution delegated. |
-| R90-145 | Oct 2–Dec 30 | Planned; tests delegated | Add a packet-completion counter to the core processing pipeline. | R90-144; R90-116 lifecycle boundary | Count only successful terminal packet processing after optional observer success; retain existing processed/received counters, API fields and SLO exporter semantics; author direct failure/no-alert/suppression/success cases with execution delegated. |
+| R90-144 | Oct 2–Dec 30 | Complete implementation; tests delegated | Isolate core rule reload snapshots from caller-owned inputs. | R90-143; existing rule engine and serialized API transactions | Deep-copy Rule/Config/MITRE before validation/sort/compile; publish one owned state; preserve diagnostics, failed-reload state and schemas; author direct regression cases with execution delegated. |
+| R90-145 | Oct 2–Dec 30 | Ready; tests delegated | Add a packet-completion counter to the core processing pipeline. | R90-144; R90-116 lifecycle boundary | Count only successful terminal packet processing after optional observer success; retain existing processed/received counters, API fields and SLO exporter semantics; author direct failure/no-alert/suppression/success cases with execution delegated. |
 
 ## R90-01 Definition
 
@@ -3354,7 +3354,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-144 Definition
 
-- **Goal/status:** core-code implementation in progress; own all Rule data before reload
+- **Goal/status:** complete core implementation with tests delegated; own all Rule data before reload
   validation, sorting, compilation and atomic publication.
 - **Dependencies/window:** verified R90-143 feature/closure; established rule
   engine and API transaction contracts; Oct 2–Dec 30.
@@ -3387,7 +3387,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-145 Definition
 
-- **Goal/status:** planned/unstarted; add completed-packet visibility to the
+- **Goal/status:** ready/unstarted after verified R90-144; add completed-packet visibility to the
   actual core Worker terminal boundary after R90-144 delivery.
 - **Dependencies/window:** R90-144; completed R90-116 optional lifecycle export;
   Oct 2–Dec 30. R90-75 acceptance remains independent and asynchronous.
@@ -7610,3 +7610,46 @@ Add direct public-boundary regression source without executing tests. All
 behavioral/race/CLI/full-suite/scanner/knowledge/acceptance execution remains
 user-delegated and unrun. R90-145 is defined but unstarted; IPv6 requires its own
 future protocol scope. This trigger completes exactly R90-144. Skills need no edit.
+
+
+## R90-144 Completion and R90-145 Handoff (2026-10-02)
+
+Feature `87c6a92976d0e5f24782d765665b31ed74b89a3a` contains exactly the six planned paths.
+Isolated local branch implementation was fast-forwarded into main from fresh
+verified `e96e6524f3e24a1b508120b47b06da4bb1464ed0`. Trusted-host transient SSH-over-443
+push/fresh fetch verified clean matching HEAD/origin/main/FETCH_HEAD without
+remote configuration changes. Exact range `e96e6524f3e24a1b508120b47b06da4bb1464ed0..87c6a92976d0e5f24782d765665b31ed74b89a3a`
+has verified generated scope/note/index/MOC. Fourteen current stable notes now
+record owned rule snapshots and next core scope, including atomic and config
+ownership notes; all 320 prior immutable iteration-directory notes are preserved.
+Identical replay preserves the 368-file Vault snapshot JSON SHA-256
+`9d72461532c09fdc7041f62c41151c74ac886fa7d5e170c00378f5e57e7f7a7e`.
+
+Acceptance matches exact runtime-source and mutable Rule graph review: owned
+Rule/Config/MITRE copies before validation, then same-set sorting/compilation and
+single success-only Store; no retained input pointers. Match/Rules/clone helpers/
+compilers/priority/diagnostics/empty/rejected-state/API/schema/file contracts remain.
+Five direct regression functions cover 39 isolated three-type input mutations,
+input order/data/priority, defensive returned objects/slices, rejected reload/
+prior caller mutation, nil/empty clearing and synchronized post-return mutation
+concurrent with reads. All reach public Reload and Rules/Match; no helper-only
+substitute. Caller input must remain stable during Reload itself.
+
+Pinned Go 1.26.8 compile-only passes after final source edit; binary is outside
+repository and unexecuted. Go parse/format/docs/162 task JSON/149 complete unique
+roadmap pairs/full forward contracts/unchanged R90-75/ordered history/links/fences/
+six-path scope/diff/sensitive additions pass. Behavioral/race/CLI/full-suite/
+scanner/knowledge/acceptance execution remains delegated and unrun. No observed
+runtime race outcome, measured speedup or SLO claim. The sole planning adjustment
+registered source-grounded core work within the empty queue as directed by the
+user, without another standalone audit increment. No implementation/static-review/
+delivery failure; skills need no edit.
+
+One docs-only record closes this same increment. Resolve its final SHA from Git,
+verify push/fresh fetch/exact Vault range before reporting and do not create a
+second closure merely for self-reference. R90-145 is now ready/unstarted, with
+its complete completed-packet-counter contract. Next trigger verifies latest
+fetched closure knowledge and persists a separate R90-145 implementation plan.
+R90-75 remains complete-contract independent asynchronous departmental acceptance;
+Oct 2–Dec 30 horizon is current. Do not repeat completed R90-143/R90-144 delivery
+or R90-59 publication. No subsequent implementation begins here.

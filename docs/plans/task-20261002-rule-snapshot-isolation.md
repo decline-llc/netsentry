@@ -131,3 +131,42 @@ acceptance execution remains delegated and unrun. Queue restoration within the
 core implementation is the recorded planning adjustment; no implementation or
 validation failure occurred. No runtime/race/SLO claim. Skills need no edit.
 Feature commit/main delivery/Vault and one closure remain; R90-145 unstarted.
+
+
+## Delivery evidence and acceptance closeout
+
+Feature `87c6a92976d0e5f24782d765665b31ed74b89a3a` contains exactly the six planned paths.
+It was committed on the isolated implementation branch, then fast-forwarded
+into main from the fresh verified baseline. Trusted-host transient SSH-over-443
+push/fresh fetch verified clean matching HEAD/origin/main/FETCH_HEAD, with no
+remote configuration change. Exact range
+`e96e6524f3e24a1b508120b47b06da4bb1464ed0..87c6a92976d0e5f24782d765665b31ed74b89a3a` has verified generated six-path
+scope, iteration note, full index and MOC. Fourteen stable notes reconcile current
+core development and next scope, including the ownership-focused atomic and
+configuration notes; all 320 prior immutable iteration-directory notes remain
+unchanged. Identical-range replay preserves the 368-file Vault snapshot JSON
+SHA-256 `9d72461532c09fdc7041f62c41151c74ac886fa7d5e170c00378f5e57e7f7a7e`.
+
+Acceptance maps to exact runtime-source/Rule-model/caller review, five direct
+regression source functions, pinned compile-only and structural/delivery evidence.
+All 39 isolated mutations reach public Reload/Rules/Match, as do failure/output/
+input-order/nil-empty/concurrent cases. No weaker helper test is counted.
+Post-return synchronization observes actual caller mutation before asserting;
+mutation during Reload is excluded. All runtime algorithms other than the
+owned-slice construction/validation input are unchanged. Compilation and static
+checks pass; behavioral/race/CLI/full-suite/scanner/knowledge/acceptance execution
+remains delegated and unrun. No observed race fix, performance or SLO result.
+
+The planning adjustment restores the empty queue within this user-directed core
+implementation increment, avoiding another standalone audit delivery. No
+implementation/static-review/delivery failure occurred; skills need no edit.
+R90-144 development delivery is complete. R90-145 is next ready/unstarted with a
+full completed-packet-counter contract; R90-75 remains independent asynchronous
+departmental acceptance. No next implementation begins in this trigger.
+
+One docs-only closure records these verified facts. Resolve its SHA from Git and
+verify push/fresh fetch/exact Vault range before final reporting; do not create
+another closure only for self-reference. Next trigger verifies that latest
+fetched closure and knowledge, audits the complete queue and persists a separate
+R90-145 implementation plan. Do not repeat completed R90-143/R90-144 delivery or
+R90-59 publication. Oct 2–Dec 30 horizon remains current.
