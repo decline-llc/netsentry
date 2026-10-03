@@ -220,7 +220,7 @@ formal SLO and evidence contract is unchanged.
 | R90-140 | Oct 2 | Complete documentation; execution delegated | Reconcile sender replay delivery and scope report-source inventory binding. | R90-139 verified feature/closure | Verify exact prior Git/Vault and phase evidence; record later observations read gap and define complete R90-141 contract without runtime/test execution. |
 | R90-141 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind report-source observations read to captured inventory. | R90-140; R90-118/R90-119/R90-123/R90-127 bundle/pair consumers; R90-135/R90-137 precedents | Admit one bounded regular non-following/nonblocking observations handle; exact inventory/metadata/close before source comparison/recompute; preserve public formats/status/eligibility/partial evidence; tests delegated. |
 | R90-142 | Oct 2 | Complete documentation; execution delegated | Reconcile report-binding delivery and scope pair receipt inventory reads. | R90-141 verified feature/closure | Verify exact prior Git/Vault/phase evidence; define complete R90-143 four-receipt acquisition/parser/qualification contract without runtime/test execution. |
-| R90-143 | Oct 2–Dec 30 | In progress; tests delegated | Bind pair condition receipt reads to reconciled inventory. | R90-142; R90-119/R90-121/R90-123/R90-127 pair modes; R90-137/R90-141 precedents | Four fixed receipt reads validate complete matched inventory and bounded regular non-following/nonblocking handles; exact EOF metadata/hash and close before unchanged parser/projection; preserve all modes/error/partial contracts; tests delegated. |
+| R90-143 | Oct 2–Dec 30 | Complete implementation; tests delegated | Bind pair condition receipt reads to reconciled inventory. | R90-142; R90-119/R90-121/R90-123/R90-127 pair modes; R90-137/R90-141 precedents | Four fixed receipt reads validate complete matched inventory and bounded regular non-following/nonblocking handles; exact EOF metadata/hash and close before unchanged parser/projection; preserve all modes/error/partial contracts; tests delegated. |
 
 ## R90-01 Definition
 
@@ -3297,7 +3297,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-143 Definition
 
-- **Goal/status:** implementation in progress after verified R90-142 audit delivery;
+- **Goal/status:** complete implementation with tests delegated after verified delivery;
   bind four pair condition receipt reads to matched captured inventory.
 - **Dependencies/window:** R90-142; completed R90-119/R90-121/R90-123/R90-127
   default/context/adapter/sender pair modes; R90-137/R90-141 precedents;
@@ -7476,3 +7476,43 @@ comparison source digest change intentionally; no comparability waiver. All
 execution suites remain delegated and unrun. No runtime rejection, injected-fault
 cleanup/preservation, authenticity, continuous integrity or SLO result follows.
 No subsequent increment starts here; existing skills need no edit.
+
+
+## R90-143 Completion and Queue Refresh (2026-10-02)
+
+Feature `00801deed72a13c918ec75a736dd2a88b862440e` contains exactly the six intended paths.
+Trusted-host transient SSH-over-443 push/fresh fetch verified clean matching
+HEAD/origin/main/FETCH_HEAD without changing remote configuration. Exact range
+`50b63fe7dbaa993b1cd2b14646fd010ae9b3f9f8..00801deed72a13c918ec75a736dd2a88b862440e` has verified generated six-path
+scope/note/index/MOC. All 12 current stable notes reconcile receipt-read delivery
+and departmental ownership; all 318 prior immutable iteration-directory notes
+are unchanged. Identical replay preserves the 366-file Vault snapshot JSON SHA-256
+`fc693b53d323715807ce94d9974783543ab53532192a29928f46500181c7749b`.
+
+Acceptance matches direct source/AST evidence: four fixed key/path/original
+entry routes after unchanged original schema/status/_bind; complete matched
+inventory/count/1 MiB/hash/flags; one regular descriptor/integer known-size
+metadata/immutable tuple; wrapping and stream cleanup ownership; bounded probe,
+integer stable EOF/exact bytes/hash and close before full original strict parser.
+AST proves complete original observations prefix/projection/metrics suffix,
+other functions/module constants/imports except stat unchanged; consumer/modes/
+schemas/status/exits/error/partial-output and affected-side qualification ownership
+are reviewed. Python/docs/161 task JSON/147 complete unique roadmap pairs/full
+unfinished contracts/ordered history/links/fences/six-path scope/diff/sensitive
+additions pass. Planned earlier acquisition diagnostics and comparison source
+digest change remain; no waiver or static-review deviation. Skills need no edit.
+
+Every behavioral/CLI/traffic/acceptance/scanner/knowledge suite remains delegated
+and unrun. Required regressions must reach each named receipt `_read`, and parser
+cases require matching inventory so admission rejection cannot masquerade as
+parser evidence. Static review does not prove runtime rejection, injected-fault
+cleanup/preservation, authenticity, continuous integrity, performance or SLO
+acceptance. R90-75 retains its complete independent departmental contract.
+
+This single docs-only record closes R90-143. Resolve its final SHA from Git,
+verify its push/fresh fetch/exact Vault range before reporting and do not create
+another closure only for self-reference. The refreshed queue has no further
+local ready increment; next trigger verifies latest fetched closure knowledge
+and audits fresh evidence/forward queue before selecting a separate bounded
+increment. Do not repeat completed R90-142/R90-143 delivery or R90-59 publication.
+No subsequent implementation begins here.

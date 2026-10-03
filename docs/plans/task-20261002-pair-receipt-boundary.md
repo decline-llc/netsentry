@@ -106,3 +106,36 @@ All behavioral/CLI/traffic/acceptance/scanner/knowledge suites remain delegated
 and unrun. Static source evidence meets the development contract without claiming
 runtime fault cleanup/preservation or SLO evidence. No scope or static-review
 deviation; feature delivery and one closure remain. Existing skills need no edit.
+
+
+## Delivery evidence and acceptance closeout
+
+Feature `00801deed72a13c918ec75a736dd2a88b862440e` contains exactly the six planned paths.
+Trusted-host transient SSH-over-443 push and fresh fetch verified clean matching
+HEAD/origin/main/FETCH_HEAD without remote configuration changes. Exact range
+`50b63fe7dbaa993b1cd2b14646fd010ae9b3f9f8..00801deed72a13c918ec75a736dd2a88b862440e` has verified six-path generated scope,
+iteration note, full commit index and MOC link. Twelve current stable notes now
+record implemented receipt reads and preserve the department split; all 318
+prior immutable iteration-directory notes are unchanged. Identical-range replay
+preserves the 366-file Vault snapshot JSON SHA-256
+`fc693b53d323715807ce94d9974783543ab53532192a29928f46500181c7749b`.
+
+Every acceptance item maps to source/AST/docs/structural/delivery evidence:
+original inventory routes; complete/key/count/hash/ceiling/flags; regular
+admission/integer metadata/known size; wrapping/stream ownership; immutable
+metadata/bytes+1/exact EOF/close-before-full-original-parser; unchanged full
+projection/metrics/observations/other functions and consumer/mode/schema/error/
+partial contracts; no new affected-side qualification before receipts finish.
+Departmental direct cases remain unrun and require each named receipt boundary;
+parser cases require matching inventory. No nearby test is counted as evidence.
+No scope/static-review/delivery deviation; skills need no edit. No runtime
+rejection, injected-fault cleanup/preservation, authenticity, continuous integrity,
+measured scale or SLO result is claimed.
+
+One docs-only record closes this same increment. Resolve its final SHA from Git
+and verify push/fresh fetch/exact Vault range before final reporting; do not create
+another record merely for self-reference. No local ready item is defined or
+started. Next trigger verifies latest fetched closure knowledge, audits fresh
+source/evidence/forward queue and persists a separate plan only after selection.
+R90-75 remains independent departmental acceptance. Do not repeat completed
+R90-142/R90-143 delivery or R90-59 publication.
