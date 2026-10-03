@@ -230,7 +230,7 @@ formal SLO and evidence contract is unchanged.
 | R90-150 | Oct 3–Dec 31 | Complete implementation; tests delegated | Prevent daily-shard query end-index overflow. | R90-149; existing Store.Query shard merge | Clamp query limit to remaining slice length before end addition; preserve normalization/filter/sort/count/SQL/HTTP semantics; author helper and real primary/daily public Query regressions with execution delegated. |
 | R90-151 | Oct 3–Dec 31 | Complete implementation; tests delegated | Align negative Query limits across store modes. | R90-150; existing primary uncapped negative limit | Negative daily limits return all collected filtered rows after offset; zero stays 1000/positive unchanged; preserve SQL/HTTP/bounds; author >1000 real primary/daily and empty-result regressions with execution delegated. |
 | R90-152 | Oct 3–Dec 31 | Complete implementation; tests delegated | Include historical daily shards in Store.List. | R90-151; existing cross-shard Query reader | Daily List returns globally ordered newest 1000 rows including historical shards; retain primary SQL/lifecycle and reuse query error/health handling; direct regression execution delegated. |
-| R90-153 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Record committed HTTP audit response status. | R90-152; existing audit middleware | Preserve first final status and implicit 200; non-101 1xx stays informational, 101 terminal; existing audit fields/auth policy unchanged; direct wire/log/header regression execution delegated. |
+| R90-153 | Oct 3–Dec 31 | Complete implementation; tests delegated | Record committed HTTP audit response status. | R90-152; existing audit middleware | Preserve first final status and implicit 200; non-101 1xx stays informational, 101 terminal; existing audit fields/auth policy unchanged; direct wire/log/header regression execution delegated. |
 
 ## R90-01 Definition
 
@@ -3641,7 +3641,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-153 Definition
 
-- **Goal/status:** implemented; delivery pending; align logged audit status with the first
+- **Goal/status:** implementation delivered; align logged audit status with the first
   committed final HTTP response, retaining informational header semantics.
 - **Dependencies/window:** completed R90-152 and existing API audit wrapper;
   Oct 3–Dec 31 forecasts, without calendar eligibility gates.
@@ -8658,3 +8658,53 @@ No live HTTP/audit/runtime/SLO success inferred. No implementation, compilation
 or validation failure; baseline Vault hashes unchanged. Existing skills suffice;
 no generic skill edit. Feature plus one docs-only closure remain, without next
 implementation or release action.
+
+
+## R90-153 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `6f443423ea3d5eb83ec4319acb84774eaba65241` contains exactly six planned paths. Isolated
+fix/r90-153-audit-status fast-forwarded freshly verified main; push/fresh-fetch
+verified clean HEAD/origin/main/FETCH_HEAD at that SHA. Exact range
+`a18e66babf7b17d012e874574f77fa00861d9375..6f443423ea3d5eb83ec4319acb84774eaba65241` six-path scope, iteration note
+`04-开发迭代记录/2026-10-03-6f443423ea-CI知识同步.md`, full index and MOC verified. Fourteen stable current notes
+reconciled; entire previous substantive current prose archived under explicit
+R90-152 historical headings. Original topic tails and all 338 baseline immutable
+iteration hashes retained; only the documented generated MOC region refreshes.
+Identical exact-range replay preserves 386 Markdown files; snapshot JSON SHA-256
+`c3d9747620fd54fe0d4dcff79c39630d3cba4499c9f31ed90430360af698b086`. Unique existing sibling local Vault
+selected explicitly; no remote Vault or new empty Vault created.
+
+Acceptance matches persisted plan: exact WriteHeader-only guard/forward/commit
+transform retains first final status, non-101 informational headers do not
+commit status, terminal 101 does, underlying invalid-code validation precedes
+cache mutation. Implicit Write/default audit 200 and all other tracked engine/
+audit fields/request IDs/GET skip/storage phase/status-derived indicator/router/
+endpoint authorization policy remain unchanged. Pinned net/http server/client
+source establishes the same final/informational and trace semantics.
+
+Three direct regression functions reach promised boundaries: 12 actual net/http
+server/client wrapped-audit cases compare wire status/body/request ID, trace-
+observed 1xx and completed audit fields, with client/context deadlines and an
+observable completion channel; five forwarding cases include terminal 101;
+two real ResponseRecorder invalid-code cases explicitly assert deliberate
+underlying panic/zero cached status then final 401 retained through 200. The
+spy only observes forwarding, not substitutes real informational-wire evidence.
+All are authored/compiled, unexecuted. Final Go 1.26.8 API/alert complete
+compile-only chain and source/local-standard/direct-boundary/Go-format/docs/
+171 JSON/157 unique complete roadmap/prior Definitions/R90-75/history/horizon/
+links/fences/six-path/diff/sensitive review pass. Behavioral/race/CLI/full-suite/
+scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
+No live HTTP/audit/runtime/race/SLO pass, observed incident, source/compilation/
+validation/delivery failure or Vault topic loss claimed. Existing skills
+sufficed; no generic outcome-only edit. The sole planning deviation is empty
+ready queue restored inside this source-grounded core repair.
+
+This single three-path docs-only record closes the same increment: resolve its
+full SHA from Git, push/fresh-fetch and verify exact feature-tip..closure-tip
+Vault note/index/MOC/stable prose before reporting. No self-reference follow-up
+closure. No currently defined dependency-ready local item after queue refresh.
+R90-75 full independent asynchronous departmental contract and Oct 3–Dec 31
+horizon remain unchanged. Next trigger verifies fetched closure/Vault, audits
+fresh code/queue and persists a separate eligible plan before edits. No next
+increment started; do not repeat R90-152/R90-153 delivery or R90-59 publication.
+IPv6/external publication needs separate authority.
