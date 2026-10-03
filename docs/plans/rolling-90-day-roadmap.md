@@ -239,7 +239,7 @@ formal SLO and evidence contract is unchanged.
 | R90-159 | Oct 3–Dec 31 | Complete implementation; tests delegated | Require valid calendar dates in daily shard discovery. | R90-158; existing shard discovery | List/Query/Count ignore impossible-calendar unrelated files with byte preservation; valid historical/current rows and corrupt valid-date errors retained; direct regressions authored, execution delegated. |
 | R90-160 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject unrepresentable duration settings before startup. | R90-159; existing config second conversions | Two whole-second settings reject signed duration overflow with named diagnostics; representable negative/zero/positive/default/env semantics retained; direct public regressions authored, execution delegated. |
 | R90-161 | Oct 3–Dec 31 | Complete implementation; tests delegated | Make zero-value Stats alert observation safe. | R90-160; existing Stats/Worker metric gates | First non-nil observation lazily initializes severity map under existing lock; exact counts/input/snapshot/constructor/Worker write-completion gates retained; direct regressions authored, execution delegated. |
-| R90-162 | Oct 3–Dec 31 | Implemented; delivery pending; tests delegated | Reject IP blacklists with no compiled addresses. | R90-161; existing rule validation/snapshot contract | Blank-only address lists reject before publication; valid mixed entries and filters retain behavior; direct public regressions authored, execution delegated. |
+| R90-162 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject IP blacklists with no compiled addresses. | R90-161; existing rule validation/snapshot contract | Blank-only address lists reject before publication; valid mixed entries and filters retain behavior; direct public regressions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -3773,7 +3773,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-162 Definition
 
-- **Goal/status:** implemented; delivery pending; reject empty compiled IP blacklists.
+- **Goal/status:** implementation delivered; reject empty compiled IP blacklists.
 - **Dependencies/window:** verified R90-161; existing rule validation/snapshot contract; Oct 3–Dec 31 forecast, dates not gates.
 - **Risk:** low; blank-only lists previously accepted now reject, including disabled rules under existing validation policy.
 - **Acceptance:** exact three-line compiled-address emptiness guard; public enabled/disabled blank/nil/empty rejection with snapshot/input preservation; exact/CIDR/mixed/duplicates/filter/scoping controls; canonical/legacy wrapped/array LoadFromFile-to-Reload file-preservation boundaries; six-path feature/one closure exact Git/Vault.
@@ -9712,3 +9712,56 @@ delegated by user**. 403 baseline Vault hashes unchanged; no unresolved validati
 failure or ambiguity. Existing skills cover rejection boundaries/preservation;
 no redundant skill update. Feature and one docs-only closure remain; next increment
 not started. No normalization/IPv6 expansion/publication/SLO evidence claim.
+
+
+## R90-162 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `c6a22b1c3e59ea452dbbc34c4e45c55dba9ba3a3` contains exactly six planned paths. Isolated
+fix/r90-162-empty-ip-blacklist fast-forwarded freshly verified main; push/fresh-fetch
+verified clean HEAD/origin/main/FETCH_HEAD at that full SHA. Exact range
+`ca989a4cf363c9b0fe7e42145ceb4d306ddadb53..c6a22b1c3e59ea452dbbc34c4e45c55dba9ba3a3` note `04-开发迭代记录/2026-10-03-c6a22b1c3e-CI知识同步.md`, six-path scope/index/MOC verified. Generated
+short identifiers uniquely resolve through Git to full endpoints. Fourteen
+current stable notes reconciled; entire prior current substantive prose archived
+under R90-161 historical headings. Original topic tails and all
+356 baseline immutable hashes retained, excluding only bounded documented
+generated MOC regions. Identical replay preserves 404 Markdown hashes;
+snapshot JSON SHA-256 `d3af3210a373431476abdfddf698e43059f561d323c72a206b88e6ec7943027b`. Existing unique sibling
+local Vault selected explicitly; no second empty or remote Vault.
+
+Acceptance matches persisted plan. Exact runtime diff adds only three-line empty
+compiled IP/CIDR guard after existing loop, reusing prior at-least-one-address
+rule-ID diagnostic; all other tracked engine/runtime/loader/API source unchanged.
+Enabled and disabled rules retain existing validation. Mixed blank/valid lists,
+trimming, duplicates, ownership, filters and per-rule scoping preserved. Prior
+direction/protocol/IP/CIDR diagnostics retain order. LoadFromFile and SaveToFile
+remain parsing/serialization APIs; actual Reload validates loaded sets. No new
+normalization/individual blank-element rejection within valid lists/IPv6 authority.
+
+Three external public regression functions authored/compiled only: twelve enabled/
+disabled nil/empty/ASCII/Unicode/multiple blank cases assert exact rejection and old
+Rules/RuleCount/Match, candidate/packet preservation and valid retry; four earlier
+diagnostic controls. Twelve padded exact/CIDR/mixed/duplicate/source/dest/any/TCP/
+UDP/disabled/outside controls plus two owning-rule scope checks retain matching
+and inputs. Eight canonical/legacy wrapped/array LoadFromFile-to-actual-Reload
+cases assert valid mixed matching, blank rejection, old snapshot and entire file
+bytes. No private state manipulation/sleeps/skips/panic swallowing. Regression
+assertions have not executed; no observed runtime/race/SLO outcome.
+
+Pinned Go 1.26.8 rule/API/pipeline complete compile-only chain passed; binaries/
+benchmarks unexecuted. Static source/direct boundaries/Go-format/docs/180 JSON/
+166 complete unique roadmap pairs/prior Definitions/R90-75/history/horizon/links/
+fences/six paths/diff/sensitive passed. No validation failure or unresolved source/
+compile/static/Git/Vault ambiguity. Existing skills cover direct rejection/input/
+snapshot preservation; no redundant update. All behavioral/race/CLI/full-suite/
+scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
+Planning deviation: empty queue restored inside source-grounded empty compiled
+match-set repair; no qualifying independent R90-75 evidence appeared.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git; push/fresh-fetch and verify exact feature..closure Vault scope/
+note/index/MOC/current stable prose before reporting; no self-reference closure.
+Refreshed queue has no defined local dependency-ready item. R90-75 full independent
+asynchronous departmental contract and Oct 3–Dec 31 horizon unchanged. Next trigger
+verifies fetched closure/Vault and audits fresh code/queue before separate
+eligible plan. No following increment started; do not repeat R90-161/R90-162
+delivery or R90-59 publication. IPv6/external publication needs separate authority.
