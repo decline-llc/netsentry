@@ -2,10 +2,10 @@
   "task": "r90-167-store-path-encoding",
   "timestamp": "2026-10-03",
   "branch": "main",
-  "remote_baseline": "ffc308e71cd4cb14d6191108547f6d5742321389",
+  "remote_baseline": "029af21905d9b4fd6cd4d8a86495dc1ed1d2a528",
   "starting_remote_baseline": "ffc308e71cd4cb14d6191108547f6d5742321389",
   "risk_level": "Low",
-  "current_checkpoint": "compile_static_complete_feature_delivery_pending",
+  "current_checkpoint": "feature_push_fetch_vault_verified_single_docs_closure_record",
   "completed": [
     "Fresh fetched clean main and exact R90-166 feature/closure Git/Vault verified",
     "113-commit phase audit; 170 unique roadmap pairs; independent R90-75 unchanged",
@@ -14,11 +14,13 @@
     "Helper-only runtime repair; 12 primary, 6 daily, 2 preservation public cases authored",
     "Complete pinned Go 1.26.8 alert/API/CLI/pipeline compile-only chain passed; binaries unexecuted",
     "Static exact helper transform/73 other engine paths/Go format/docs/185 JSON/171 unique roadmap pairs/170 prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive passed",
-    "413 Vault Markdown baseline hashes unchanged"
+    "413 Vault Markdown baseline hashes unchanged",
+    "Six-path feature committed/non-force pushed/fresh fetched; clean HEAD/origin/main/FETCH_HEAD equality",
+    "Full-SHA feature range exact note/index/MOC; 366 immutable notes preserved",
+    "Fourteen stable current notes reconciled; all prior substantive prose archived exactly",
+    "Identical feature replay preserves all 414 Markdown hashes; forward queue refreshed"
   ],
-  "in_progress": [
-    "Feature delivery"
-  ],
+  "in_progress": [],
   "validation": {
     "behavioral_tests": "not_run_user_delegated",
     "race_tests": "not_run_user_delegated",
@@ -28,7 +30,9 @@
     "knowledge_check": "not_run_user_delegated",
     "traffic_and_acceptance": "not_run_user_delegated",
     "compile_only": "passed_go1.26.8_alert_api_cmd_netsentry_pipeline_binaries_unexecuted",
-    "static_review": "passed_exact_helper_transform_73_other_engine_paths_docs_185_json_171_unique_pairs_170_prior_definitions_r90_75_history_scope_sensitive"
+    "static_review": "passed_exact_helper_transform_73_other_engine_paths_docs_185_json_171_unique_pairs_170_prior_definitions_r90_75_history_scope_sensitive",
+    "feature_delivery": "verified_nonforce_push_fresh_fetch_clean_exact_six_paths",
+    "vault_feature": "verified_full_range_exact_note_index_moc_14_stable_prior_prose_366_immutable_414_replay_hashes"
   },
   "authority_boundaries": [
     "Writable filesystem filenames containing question marks only; raw safe paths and durable semantics retained",
@@ -42,9 +46,25 @@
     "Empty local ready queue restored from pinned driver and writable helper evidence",
     "Initial compile chain stopped at nonexistent CLI package path; resolved owning module path and successfully reran entire fail-fast chain"
   ],
-  "resume_instructions": "Finish only R90-167 under persisted plan; compile/static only; feature/closure push/fetch/exact Vault required. Do not start next increment.",
-  "todo": [
-    "Feature push/fetch/Vault",
-    "Single docs-only closure"
-  ]
+  "resume_instructions": "R90-167 feature is already pushed/fetched/Vault reconciled and identical replay verified. This record is the single docs-only closure of the same increment; resolve full SHA from Git and verify fresh origin/main/FETCH_HEAD and exact feature..closure Vault note/index/MOC. Repair only missing evidence; do not duplicate completed feature/closure commit/push/sync or add self-reference closure. Before another increment audit fresh history/code/queue and persist a separate eligible plan. All execution remains delegated; R90-75 independent full contract and Oct 3\u2013Dec 31 horizon unchanged. No next increment started.",
+  "todo": [],
+  "feature_commit": "029af21905d9b4fd6cd4d8a86495dc1ed1d2a528",
+  "next_increment": {
+    "id": null,
+    "status": "no_other_defined_local_ready_increment",
+    "started": false,
+    "departmental_acceptance": "R90-75 independent asynchronous full contract unchanged"
+  },
+  "delivery": {
+    "feature_range": "ffc308e71cd4cb14d6191108547f6d5742321389..029af21905d9b4fd6cd4d8a86495dc1ed1d2a528",
+    "feature_paths": 6,
+    "verified_remote": "029af21905d9b4fd6cd4d8a86495dc1ed1d2a528",
+    "vault_note": "04-\u5f00\u53d1\u8fed\u4ee3\u8bb0\u5f55/2026-10-03-029af21905-CI\u77e5\u8bc6\u540c\u6b65.md",
+    "stable_notes": 14,
+    "baseline_immutable_notes": 366,
+    "feature_snapshot_files": 414,
+    "feature_snapshot_json_sha256": "47b0f1b88abee59a54e502b3ad230f4b2809ee25bc32801be91d77dafd2c256e",
+    "identical_feature_replay": "all Markdown hashes unchanged",
+    "closure": "Single docs-only record; resolve SHA from Git and push/fetch/exact feature..closure sync before reporting; no self-reference closure"
+  }
 }

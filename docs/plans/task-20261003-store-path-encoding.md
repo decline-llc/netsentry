@@ -106,3 +106,49 @@ sensitive review. All 413 Vault baseline hashes remain unchanged. Existing
 historical documented paths were excluded from new-content sensitive review;
 no new sensitive paths or credential matches. Initial CLI path deviation fully
 resolved by complete rerun. Feature delivery and single docs-only closure remain.
+
+
+## R90-167 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `029af21905d9b4fd6cd4d8a86495dc1ed1d2a528` contains exactly the six intended paths. Recorded old remote tip,
+non-force push and immediate fresh fetch verified clean main HEAD/origin/main/
+FETCH_HEAD equality. Full-SHA range `ffc308e71cd4cb14d6191108547f6d5742321389..029af21905d9b4fd6cd4d8a86495dc1ed1d2a528` synchronized to
+`04-开发迭代记录/2026-10-03-029af21905-CI知识同步.md`; exact six-path scope,
+Git-resolved short identifiers, full index and MOC links verified. Fourteen stable
+current notes reconciled; all prior substantive topic/history/current prose
+archived exactly, excluding only documented bounded generated MOC regions.
+All 366 baseline immutable iteration notes preserved. Identical feature replay
+preserves all 414 Markdown hashes; snapshot JSON SHA-256 `47b0f1b88abee59a54e502b3ad230f4b2809ee25bc32801be91d77dafd2c256e`.
+Existing unique sibling local Vault supplied explicitly; no second/remote Vault.
+
+Acceptance matches plan: helper-only runtime diff and 73 other engine paths
+unchanged. Ordinary question-mark filenames use existing absolute encoded URI
+builder without query options; other ordinary raw paths and durable FULL pragma
+unchanged. Twelve primary cases cover six path shapes/two modes with real create,
+write/read/reopen and repeated aggregation; six daily cases cover current and
+historical writable opens, existing historical preflight, cross-shard query/list/
+count and reopen. Independent encoded mode=ro per-file row/aggregate observations,
+input preservation and exact expected non-sidecar files/empty recovery logs are
+asserted. Only legitimate sidecars beside expected literal DBs allowed. Two
+malformed recovery cases prove integrity sentinel/nil Store/whole tree bytes/modes
+preservation before writable open. Three public functions directly reach planned
+boundaries; no mocks/private seams/sleeps/skips/panic swallowing. All authored/
+compiled only, unexecuted; no runtime/SQLite/durability/race/SLO pass inferred.
+
+Pinned Go 1.26.8 complete alert/API/cmd/netsentry/pipeline compile-only chain and
+static exact helper transform/73 other paths/format/docs/185 JSON/171 unique
+roadmap pairs/170 prior Definitions/R90-75/history/horizon/links/fences/six paths/
+diff/sensitive passed. Initial incorrect CLI path resolved; entire fail-fast
+chain rerun, partial results discarded. Initial added-content sensitive review
+included existing historical documented paths; final review scoped to added/new
+content with no sensitive matches. Behavioral/race/CLI/full-suite/scanner/knowledge/
+traffic/acceptance execution **not run; delegated by user**. Existing skill rules
+cover URI regressions/module roots and preflight; no redundant update.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git; push/fresh-fetch/exact feature..closure Vault verification
+before reporting. Do not create another self-reference closure or repeat verified
+feature/closure delivery. Forward queue refreshed: no other defined local ready
+increment. R90-75 full independent asynchronous departmental contract and Oct 3–
+Dec 31 horizon unchanged. Next trigger verifies fetched closure/Vault, audits
+fresh code/queue and persists a separate eligible plan. No next implementation.
