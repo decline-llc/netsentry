@@ -3,10 +3,10 @@
   "timestamp": "2026-10-03",
   "branch": "main",
   "implementation_branch": "fix/r90-166-store-open-cancellation",
-  "remote_baseline": "6bf857cdef5490167df4ad658af2a483631a9654",
+  "remote_baseline": "2dcd6d46bb38d5807ff41dff94a2e9086aae4f34",
   "starting_remote_baseline": "6bf857cdef5490167df4ad658af2a483631a9654",
   "risk_level": "Low",
-  "current_checkpoint": "compile_static_passed_ready_for_feature_delivery",
+  "current_checkpoint": "feature_push_fetch_vault_verified_single_docs_closure_record",
   "completed": [
     "Clean fetched main; exact R90-165 feature/closure Git/Vault verified",
     "111-commit phase audit; 169 unique roadmap pairs; R90-75 full contract/horizon unchanged",
@@ -14,11 +14,12 @@
     "Source-grounded already-canceled Open entry guard selected; six-path plan persisted",
     "Three-line Store.Open entry guard; three public preservation/precedence/live regressions authored",
     "Pinned owning Go 1.26.8 alert/API/CLI/pipeline compile-only chain passed; binaries unexecuted",
-    "Static exact source/72 other engine paths/format/docs/184 JSON/170 unique roadmap pairs/169 prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive passed"
+    "Static exact source/72 other engine paths/format/docs/184 JSON/170 unique roadmap pairs/169 prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive passed",
+    "Six-path feature committed/pushed/fresh fetched; HEAD/origin/main/FETCH_HEAD clean equality",
+    "Full-SHA feature range exact note/index/MOC; 364 immutable notes preserved; fourteen stable current reconciliations/prior prose archived",
+    "Identical feature replay preserves all 412 Markdown hashes; forward queue refreshed without next implementation"
   ],
-  "in_progress": [
-    "Feature commit/push/fresh fetch/exact Vault reconciliation"
-  ],
+  "in_progress": [],
   "validation": {
     "behavioral_tests": "not_run_user_delegated",
     "race_tests": "not_run_user_delegated",
@@ -28,7 +29,9 @@
     "knowledge_check": "not_run_user_delegated",
     "traffic_and_acceptance": "not_run_user_delegated",
     "compile_only": "passed_go1.26.8_alert_api_cli_pipeline_binaries_unexecuted",
-    "static_review": "passed_exact_source_direct_boundaries_72_other_paths_docs_184_json_170_pairs_history_scope_sensitive"
+    "static_review": "passed_exact_source_direct_boundaries_72_other_paths_docs_184_json_170_pairs_history_scope_sensitive",
+    "feature_delivery": "verified_nonforce_push_fresh_fetch_clean_exact_six_paths",
+    "vault_feature": "verified_full_range_exact_note_index_moc_14_stable_prior_prose_364_immutable_412_replay_hashes"
   },
   "authority_boundaries": [
     "Only cancellation already present at Store.Open entry; context error precedes options/filesystem/recovery",
@@ -40,17 +43,16 @@
     "Regressions remain authored/compiled only"
   ],
   "deviations": [
-    "Empty local ready queue restored within source-grounded store startup guard"
+    "Empty local ready queue restored within source-grounded store startup guard",
+    "Resolved Vault verification boundary: initial topic-tail compare included bounded CI generated MOC entries; source-defined generated markers verified/excluded, all remaining prose exactly preserved"
   ],
-  "resume_instructions": "Complete only R90-166; prior R90-165 delivery is verified. Preserve delegated execution and independent R90-75 contract; verify feature/single closure Git/Vault before future work.",
-  "todo": [
-    "Feature push/fetch/Vault",
-    "Single docs-only closure"
-  ],
+  "resume_instructions": "R90-166 feature is already pushed/fetched/Vault reconciled and replay verified. This record is the single docs-only closure of the same increment; resolve its full SHA from Git and verify fresh origin/main/FETCH_HEAD and exact feature..closure Vault note/index/MOC. Repair only missing evidence; do not duplicate completed feature/closure commit/push/sync or make self-reference closure. Before another increment audit fresh history/code/queue and persist a separate eligible plan. All execution remains delegated; R90-75 independent full contract and Oct 3–Dec 31 horizon unchanged; no next increment started.",
+  "todo": [],
   "next_increment": {
     "id": null,
     "status": "no_other_defined_local_ready_increment",
     "started": false,
     "departmental_acceptance": "R90-75 independent asynchronous full contract unchanged"
-  }
+  },
+  "feature_commit": "2dcd6d46bb38d5807ff41dff94a2e9086aae4f34"
 }

@@ -96,3 +96,51 @@ Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution
 **not run; delegated by user**. No filesystem/SQLite/runtime/race/SLO pass inferred.
 Existing skill instructions cover entry cancellation/read-only preservation/URI
 encoding; no redundant skill update. Feature/single closure remain; no next work.
+
+
+## R90-166 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `2dcd6d46bb38d5807ff41dff94a2e9086aae4f34` contains exactly the six intended paths. Isolated branch
+fast-forwarded freshly verified main; recorded old remote tip, non-force push
+and immediate fresh fetch verified clean HEAD/origin/main/FETCH_HEAD equality.
+Full-SHA range `6bf857cdef5490167df4ad658af2a483631a9654..2dcd6d46bb38d5807ff41dff94a2e9086aae4f34` synchronized to
+`04-开发迭代记录/2026-10-03-2dcd6d46bb-CI知识同步.md`; exact six-path note scope,
+Git-resolved short identifiers, full index/MOC verified. Fourteen current stable
+notes reconciled; entire prior current prose archived and original topic/history
+tails preserved exactly outside bounded generated MOC regions. All 364 baseline
+immutable iteration notes preserved. Identical feature range replay preserves
+412 Markdown hashes; snapshot JSON SHA-256
+`f47d7a1f338e8c23a0bc610802b69f159cb85b931ce0652f900acdfd4b5c66b2`.
+Existing unique sibling local Vault passed explicitly; no second/remote Vault.
+
+Acceptance matches plan: three-line entry guard only; 72 other tracked engine
+paths unchanged. Twenty public preservation cases cover canceled/expired contexts,
+ordinary/space directory paths and all five named persistent/absent fixtures.
+Exact sentinel/errors.Is/nil Store and complete membership/bytes/modes asserted;
+healthy independent URI-encoded read-only observer established/query before
+snapshot/rejection and reused afterward. Two invalid durable-mode policy precedence
+controls and four background/live-cancelable real create/write/List/Count/Close/
+read-only controls directly reach promised public boundaries. No private seams,
+fake drivers/sleeps/skips/panic swallowing. All assertions authored/compiled only;
+no active-startup cancellation/nil-context or filesystem/SQLite/runtime claim.
+
+Complete pinned Go 1.26.8 alert/API/CLI/pipeline compile-only chain and static
+source/direct boundaries/72 other engine paths/format/docs/184 JSON/170 unique
+roadmap pairs/169 prior Definitions/R90-75/history/horizon/links/fences/six paths/
+diff/sensitive review passed. Binaries unexecuted. Behavioral/race/CLI/full-suite/
+scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
+Resolved verification deviation: initial topic-tail comparison included the CI
+MOC generator's bounded region. Source-defined generated markers were verified;
+exclude only both bounded generated regions and compare all remaining prose
+exactly. No topic loss or unresolved ambiguity. Existing skill instructions cover
+entry cancellation/preservation/encoded URI/generated-region boundaries; no
+redundant skill update.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git; push/fresh-fetch/exact feature..closure Vault verification before
+reporting, without another self-reference closure. After verification, do not
+repeat feature/closure commit/push/sync. Future queue refreshed: no other defined
+local ready increment. R90-75 remains independent asynchronous departmental
+acceptance with full contract and Oct 3–Dec 31 horizon unchanged. Next trigger
+verifies fetched closure/Vault, audits fresh code/queue and persists a separate
+eligible plan before edits. No next increment started.

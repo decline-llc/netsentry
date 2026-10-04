@@ -243,7 +243,7 @@ formal SLO and evidence contract is unchanged.
 | R90-163 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject enabled suppressions with no compiled prefixes. | R90-162 verified feature/closure; existing suppression manager contract | Empty-only prefix lists reject before filter publication/persistence; disabled and mixed empty/valid behavior retained; public constructor and file-backed mutation/reload regressions authored, execution delegated. |
 | R90-164 | Oct 3–Dec 31 | Complete implementation; tests delegated | Redact JSON credential values cut at preview end. | R90-163 verified feature/closure; existing 200-byte preview/redaction boundary | Open quoted password/token values redact visible suffix through preview end; complete-value behavior retained; direct scalar/batch and real Engine/Worker regressions authored, execution delegated. |
 | R90-165 | Oct 3–Dec 31 | Complete implementation; tests delegated | Preserve malformed legacy rule decode failures. | R90-164 verified feature/closure; existing rule loader/API reload contract | Original wrapped decoder type errors cannot disappear through weaker fallback or reach null-entry defaults; valid formats/defaults retained; direct public loader and real-engine HTTP reload regressions authored, execution delegated. |
-| R90-166 | Oct 3–Dec 31 | Ready; selected implementation | Reject already-canceled store startup before side effects. | R90-165 verified feature/closure; existing Store.Open contract | Exact context error and nil Store before options/recovery/filesystem; preservation/precedence/live controls authored, execution delegated. |
+| R90-166 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject already-canceled store startup before side effects. | R90-165 verified feature/closure; existing Store.Open contract | Exact context error and nil Store before options/recovery/filesystem; preservation/precedence/live controls authored, execution delegated. |
 
 
 ## R90-01 Definition
@@ -3820,7 +3820,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-166 Definition
 
-- **Goal/status:** selected implementation; reject an already-done context at Store.Open entry before side effects.
+- **Goal/status:** implementation delivered; reject an already-done context at Store.Open entry before side effects.
 - **Dependencies/window:** verified R90-165 feature/closure; existing store startup contract; Oct 3–Dec 31 forecast, dates not gates.
 - **Risk:** low; context error now precedes existing option/filesystem/recovery diagnostics for already-done callers; live startup unchanged.
 - **Acceptance:** three-line entry guard only; twenty public canceled/expired ordinary/space-path absent/healthy/corrupt-artifact/malformed-recovery/file-parent preservation cases, read-only observer before rejection, exact sentinel/nil Store/full tree bytes/modes; two durable-policy precedence and four live create/write/read controls; six-path feature/one closure exact Git/Vault.
@@ -10161,3 +10161,51 @@ Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution
 **not run; delegated by user**. No filesystem/SQLite/runtime/race/SLO pass inferred.
 Existing skill instructions cover entry cancellation/read-only preservation/URI
 encoding; no redundant skill update. Feature/single closure remain; no next work.
+
+
+## R90-166 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `2dcd6d46bb38d5807ff41dff94a2e9086aae4f34` contains exactly the six intended paths. Isolated branch
+fast-forwarded freshly verified main; recorded old remote tip, non-force push
+and immediate fresh fetch verified clean HEAD/origin/main/FETCH_HEAD equality.
+Full-SHA range `6bf857cdef5490167df4ad658af2a483631a9654..2dcd6d46bb38d5807ff41dff94a2e9086aae4f34` synchronized to
+`04-开发迭代记录/2026-10-03-2dcd6d46bb-CI知识同步.md`; exact six-path note scope,
+Git-resolved short identifiers, full index/MOC verified. Fourteen current stable
+notes reconciled; entire prior current prose archived and original topic/history
+tails preserved exactly outside bounded generated MOC regions. All 364 baseline
+immutable iteration notes preserved. Identical feature range replay preserves
+412 Markdown hashes; snapshot JSON SHA-256
+`f47d7a1f338e8c23a0bc610802b69f159cb85b931ce0652f900acdfd4b5c66b2`.
+Existing unique sibling local Vault passed explicitly; no second/remote Vault.
+
+Acceptance matches plan: three-line entry guard only; 72 other tracked engine
+paths unchanged. Twenty public preservation cases cover canceled/expired contexts,
+ordinary/space directory paths and all five named persistent/absent fixtures.
+Exact sentinel/errors.Is/nil Store and complete membership/bytes/modes asserted;
+healthy independent URI-encoded read-only observer established/query before
+snapshot/rejection and reused afterward. Two invalid durable-mode policy precedence
+controls and four background/live-cancelable real create/write/List/Count/Close/
+read-only controls directly reach promised public boundaries. No private seams,
+fake drivers/sleeps/skips/panic swallowing. All assertions authored/compiled only;
+no active-startup cancellation/nil-context or filesystem/SQLite/runtime claim.
+
+Complete pinned Go 1.26.8 alert/API/CLI/pipeline compile-only chain and static
+source/direct boundaries/72 other engine paths/format/docs/184 JSON/170 unique
+roadmap pairs/169 prior Definitions/R90-75/history/horizon/links/fences/six paths/
+diff/sensitive review passed. Binaries unexecuted. Behavioral/race/CLI/full-suite/
+scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
+Resolved verification deviation: initial topic-tail comparison included the CI
+MOC generator's bounded region. Source-defined generated markers were verified;
+exclude only both bounded generated regions and compare all remaining prose
+exactly. No topic loss or unresolved ambiguity. Existing skill instructions cover
+entry cancellation/preservation/encoded URI/generated-region boundaries; no
+redundant skill update.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git; push/fresh-fetch/exact feature..closure Vault verification before
+reporting, without another self-reference closure. After verification, do not
+repeat feature/closure commit/push/sync. Future queue refreshed: no other defined
+local ready increment. R90-75 remains independent asynchronous departmental
+acceptance with full contract and Oct 3–Dec 31 horizon unchanged. Next trigger
+verifies fetched closure/Vault, audits fresh code/queue and persists a separate
+eligible plan before edits. No next increment started.
