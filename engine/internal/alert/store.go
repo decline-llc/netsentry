@@ -247,6 +247,15 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 	if opts.BusyTimeoutMS > maxSQLiteBusyTimeoutMS {
 		return nil, fmt.Errorf("sqlite busy timeout must not exceed %d milliseconds", maxSQLiteBusyTimeoutMS)
 	}
+	journalMode := strings.ToUpper(strings.TrimSpace(opts.JournalMode))
+	if journalMode == "" {
+		journalMode = "WAL"
+	}
+	switch journalMode {
+	case "DELETE", "TRUNCATE", "PERSIST", "MEMORY", "WAL", "OFF":
+	default:
+		return nil, fmt.Errorf("unsupported sqlite journal mode %q", opts.JournalMode)
+	}
 	if opts.BusyTimeoutMS <= 0 {
 		opts.BusyTimeoutMS = 5000
 	}
@@ -1207,11 +1216,6 @@ func (s *Store) init(ctx context.Context, opts Options) error {
 	journalMode := strings.ToUpper(strings.TrimSpace(opts.JournalMode))
 	if journalMode == "" {
 		journalMode = "WAL"
-	}
-	switch journalMode {
-	case "DELETE", "TRUNCATE", "PERSIST", "MEMORY", "WAL", "OFF":
-	default:
-		return fmt.Errorf("unsupported sqlite journal mode %q", opts.JournalMode)
 	}
 	if _, err := s.db.ExecContext(ctx, "PRAGMA journal_mode="+journalMode); err != nil {
 		return fmt.Errorf("set sqlite journal mode: %w", err)

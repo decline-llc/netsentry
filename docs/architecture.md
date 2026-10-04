@@ -524,6 +524,14 @@ Current build:
   compatible existing-file and rejected-input preservation regressions are
   authored and compiled only; execution remains delegated and no runtime or
   durability pass is inferred.
+- R90-172 checks the existing SQLite journal-mode allowlist in `Store.Open`
+  before path/clock resolution, recovery inspection, directory creation or
+  database preflight. Unsupported ordinary options retain their raw-value
+  diagnostic; context, durable-WAL and busy-timeout-bound errors still precede
+  this check. Supported modes, case/space normalization and ordinary blank WAL
+  defaults retain their behavior. Direct rejection/preservation/precedence and
+  actual-PRAGMA/write/query/reopen regressions are authored and compiled only;
+  execution is delegated, with no runtime/durability/SLO pass inferred.
 - R90-171 rejects positive `engine.db_busy_timeout` and direct
   `Options.BusyTimeoutMS` values above `2147483647` milliseconds, the pinned
   SQLite pragma parser's signed 32-bit maximum. Larger values previously became

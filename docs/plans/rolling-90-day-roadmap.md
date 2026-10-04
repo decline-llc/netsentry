@@ -254,6 +254,7 @@ formal SLO and evidence contract is unchanged.
 | R90-170 | Oct 3–Dec 31 | Complete implementation; tests delegated | Match equivalent exact IP blacklist addresses. | R90-169 verified feature/closure; existing parsed IP acceptance | Exact addresses compare parsed identities; canonical fast path, original alert/config text, CIDR/filter/publication semantics retained; direct regressions authored, execution delegated. |
 
 | R90-171 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject unrepresentable SQLite busy timeouts before startup. | R90-170 verified feature/closure; pinned signed-32-bit pragma parser | Config and direct Open reject larger positive ints before side effects; nonpositive defaults and diagnostic precedence retained; direct config/preservation/effective-pragma assertions authored, execution delegated. |
+| R90-172 | Oct 3–Dec 31 | In progress; tests delegated | Validate journal modes before startup side effects. | R90-171 verified feature/closure; existing journal allowlist | Existing unsupported-mode diagnostic precedes filesystem/recovery/DB inspection; supported modes/defaults and earlier validation precedence retained; direct regressions authored, execution delegated. |
 
 
 ## R90-01 Definition
@@ -3910,6 +3911,25 @@ formal SLO and evidence contract is unchanged.
   static source/format/docs/JSON/roadmap/prior Definitions/R90-75/split/horizon/
   scope/sensitive; exact Git/Vault delivery, stable prose and immutable-note
   preservation, identical replay. Behavioral/knowledge execution delegated.
+- **Stop condition:** competing edits, ambiguous compile/static/Git/Vault
+  evidence, new authority or unrelated increment.
+
+## R90-172 Definition
+
+- **Goal/status:** in progress; move existing journal allowlist to Open before
+  recovery inspection, directory creation and existing database preflight.
+- **Dependencies:** verified R90-171 feature/closure; existing mode semantics;
+  no new authority or external input.
+- **Window:** Oct 3–Dec 31 forecast only.
+- **Risk:** low; unsupported ordinary mode rejects earlier with raw diagnostic;
+  supported normalization/defaults and context/durable/busy precedence retained.
+- **Acceptance:** direct primary/daily rejection tree and read-only row
+  preservation; accepted real PRAGMA/write/query/reopen and precedence tests
+  authored/compiled, explicitly unexecuted; no runtime/durability/SLO claim.
+- **Required validation:** pinned Go 1.26.8 alert/API/cmd/pipeline compile-only;
+  static exact source/format/docs/JSON/roadmap/prior Definitions/authority/
+  sensitive/scope; exact Git/Vault delivery, stable prose/immutable preservation
+  and identical replay. Behavioral/knowledge execution delegated.
 - **Stop condition:** competing edits, ambiguous compile/static/Git/Vault
   evidence, new authority or unrelated increment.
 
@@ -10848,3 +10868,50 @@ refreshed: no other defined local ready increment. R90-75 independent full
 asynchronous departmental contract and Oct 3–Dec 31 horizon retained. Next
 trigger verifies closure/Vault, audits fresh history/code/queue and persists a
 separate eligible plan before editing. No next implementation started.
+
+
+## R90-172 Selection and Journal Mode Preflight (2026-10-03)
+
+Clean fresh-fetched main `65dda10dbea44262ce21509281f186fb261be0a8`;
+R90-171 exact feature/closure Git/Vault notes/index/MOC and fourteen current
+stable references verified. All 123 Sep 12–Oct 3 phase commits have note/index
+coverage; latest ranges have bounded MOC links. No missing delivery or supplied
+R90-75 outcome. All 175 prior row/Definition pairs agree; independent R90-75
+full departmental contract, testing split and Oct 3–Dec 31 horizon retained.
+Captured 423 Vault hashes, 376 immutable notes and fourteen prose backups.
+Empty ready queue restored from source: journal allowlist validation currently
+follows recovery inspection, parent creation and database preflight. Move only
+that existing rejection before side effects; preserve supported behavior and
+earlier diagnostics. Source inference, not executed failure. Six-path plan/state
+persisted before behavior/architecture/queue edits. All execution delegated;
+no publication or next increment started.
+
+
+## R90-172 Compile and Static Checkpoint (2026-10-03)
+
+Exact runtime diff moves the existing six-mode allowlist from init to Open,
+after unchanged context/durable-WAL/busy-bound guards and before path/clock/
+recovery/filesystem/DB work. Supported normalization/defaults and raw invalid
+mode diagnostic retained; all other runtime unchanged. Three direct functions
+authored: forty primary/daily invalid-mode cases across four strings and five
+fixtures; six earlier-diagnostic controls on native64 (unrepresentable busy
+positive overflow omitted on native32); thirty-two accepted mode/store cases
+with two opens each, including all six modes, blank/default and lower/padded
+spellings plus durable empty/padded-WAL. Healthy rejection observes retained
+rows through an independently encoded mode=ro handle opened/warmed before
+rejection and reused afterward. Full tree bytes/modes/membership, no clock,
+caller options and public alert preservation asserted. Positive controls reach
+actual live-connection PRAGMA and public write/query/close/reopen. Reused real
+fixture/snapshot helpers; no driver injection, private synchronization seam,
+sleep or timing claim. All assertions unexecuted.
+
+Preflighted exact Go 1.26.8 and owning packages; fail-fast alert/API/cmd/pipeline
+compile-only passed, binaries unexecuted. Static exact source/format/docs/190
+JSON/176 unique roadmap pairs/175 preserved Definitions/R90-75/split/history/
+horizon/links/fences/six-path scope/diff/sensitive review passed. All 423 Vault
+baseline Markdown hashes unchanged. Behavioral/race/CLI/full/scanner/knowledge/
+traffic/acceptance **not run; delegated by user**. No runtime/persistence/
+durability/race/SLO pass inferred; regression debt remains departmental.
+No failure or scope deviation; existing skill instructions suffice. Initial
+audit count refined to include every historical iteration note, not only CI
+notes: 376 immutable notes captured/preserved. No next increment started.

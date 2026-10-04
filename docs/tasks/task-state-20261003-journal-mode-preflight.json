@@ -1,0 +1,53 @@
+{
+  "task": "r90-172-journal-mode-preflight",
+  "timestamp": "2026-10-03",
+  "branch": "main",
+  "remote_baseline": "65dda10dbea44262ce21509281f186fb261be0a8",
+  "starting_remote_baseline": "65dda10dbea44262ce21509281f186fb261be0a8",
+  "risk_level": "Low",
+  "current_checkpoint": "implementation_authored_compile_static_passed_before_feature_delivery",
+  "completed": [
+    "Clean fetched R90-171 feature/closure Git/Vault audit",
+    "123 phase commit notes/index and 175 unique pairs verified",
+    "423 Vault hashes/376 immutable notes/14 stable backups captured",
+    "Exact existing journal allowlist moved before side effects; all other runtime unchanged",
+    "Three direct regression functions authored: 40 rejection/6 native64 precedence/32 accepted with two opens each",
+    "Pinned Go1.26.8 four-package fail-fast compile-only passed; binaries unexecuted",
+    "Static exact source/format/docs/190 JSON/176 unique pairs/175 prior Definitions/authority/sensitive/scope passed",
+    "All 423 baseline Vault hashes unchanged"
+  ],
+  "in_progress": [
+    "Feature commit/non-force push/fresh fetch/exact Vault reconciliation"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "passed_go1.26.8_alert_api_cmd_pipeline_unexecuted",
+    "static_review": "passed_exact_source_scope_authority_sensitive"
+  },
+  "authority_boundaries": [
+    "One existing journal option boundary only; no publication",
+    "All execution delegated; compile/static only"
+  ],
+  "remaining_risks": [
+    "Direct assertions unexecuted"
+  ],
+  "deviations": [
+    "Empty ready queue restored from late journal validation in existing source"
+  ],
+  "resume_instructions": "Finish exactly R90-172; compile/static only; verify exact non-force push/fetch/Vault and preserve history; no next increment.",
+  "todo": [
+    "Feature delivery/Vault",
+    "Single docs-only closure"
+  ],
+  "next_increment": {
+    "id": null,
+    "status": "no_other_defined_local_ready_increment",
+    "started": false
+  }
+}
