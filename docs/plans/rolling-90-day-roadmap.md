@@ -263,7 +263,7 @@ formal SLO and evidence contract is unchanged.
 
 | R90-175 | Oct 4–Jan 1 | Complete implementation; tests delegated | Reject an explicit suppression scope with no compiled rule IDs. | R90-174 verified feature/closure; existing exact rule-ID suppression | Enabled nonempty empty-string-only scopes reject before publication/persistence; nil/empty all-rule and mixed/exact/disabled semantics retained; direct constructor/file-backed/HTTP regressions authored, execution delegated. |
 
-| R90-176 | Oct 4–Jan 1 | In progress; tests delegated | Retain explicit any protocol wildcard semantics. | R90-175 verified feature/closure; existing protocol compiler | Any dominates named entries in all three types after complete validation; blank/named-only and other gates retained; direct engine/file-backed HTTP regressions authored, execution delegated. |
+| R90-176 | Oct 4–Jan 1 | Complete implementation; tests delegated | Retain explicit any protocol wildcard semantics. | R90-175 verified feature/closure; existing protocol compiler | Any dominates named entries in all three types after complete validation; blank/named-only and other gates retained; direct engine/file-backed HTTP regressions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -11365,3 +11365,51 @@ Existing skill instructions suffice; no redundant skill update is warranted.
 Behavioral/race/full/scanner/knowledge/traffic/acceptance checks are **not run;
 delegated by user**. No runtime, HTTP, race, release or SLO pass is inferred.
 R90-75 remains independent; no next increment started. Feature delivery pending.
+
+
+## R90-176 Completion and Forward Queue Refresh (2026-10-04)
+
+Feature `e5cc1f8ee9a1e85c7b6610ddcc6fbc378b76cd78` contains exactly the nine planned paths. Non-force push and
+immediate fresh fetch verify clean HEAD/origin/main/FETCH_HEAD equality. Exact
+full-SHA range `d89966e53ed45903f6b101cfebea19aea25a3984..e5cc1f8ee9a1e85c7b6610ddcc6fbc378b76cd78` synchronized to
+`04-开发迭代记录/2026-10-04-e5cc1f8ee9-CI知识同步.md`; Git-resolved endpoints,
+nine-path note, full index and bounded generated MOC verified. Fourteen current
+stable notes reconciled; every prior substantive body paragraph retained exactly
+under explicit R90-175 history, excluding only the actual versioned generated
+CI MOC region from prose comparisons. Every baseline immutable iteration note
+preserved. Identical feature replay preserves all 432 Markdown hashes; snapshot
+JSON SHA-256: `f9567ed711a8c793daa7e42302e682bc4763791c4f094a6cddd61524fd16dd61`. Existing unique sibling local Vault explicitly supplied;
+no second/remote Vault created. No push/fetch/synchronization failure.
+
+Acceptance comparison confirms all three compilers reach the shared helper;
+every entry validates before its wildcard clears the owned map. Payload compiler
+reuse preserves the exact former protocol error and prior direction/window plus
+later port checks. Matching/publication/file/API runtime code is unchanged.
+Four public declarations reach every planned boundary: complete Engine alerts
+for five representative protocols and wildcard/blank/named controls; other gates,
+disabled behavior and original inputs/config; invalid-before/after/between,
+enabled/disabled retained snapshot and valid retry, earlier diagnostics;
+real file-backed create/update/reload for every type and both invalid orders,
+400 validation envelopes and complete bytes/mode/membership/count/rules/matching
+preservation, canonical original protocol lists and valid retry responses and
+alert contents. All declarations remain unexecuted. The repository seed has no
+explicit any protocol marker. No unsupported protocol is newly accepted.
+
+Pinned Go 1.26.8 complete rule/API/pipeline/cmd compile-only and docs/static exact
+transform/format/194 JSON/180 unique pairs/179 prior Definitions plus full roadmap
+history/authority/handoff/links/fences/nine-path/sensitive/diff passed. Temporary
+static-harness generation and authored HTTP assertion corrections are recorded
+above; complete checks passed after correction. No scope, compile or unresolved
+static deviation. Existing skill instructions suffice; no redundant skill edit.
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. No runtime, HTTP, race, release or SLO pass inferred.
+
+This single three-path docs-only delivery record closes the same increment.
+Resolve its full SHA from Git and verify non-force push/fresh fetched equality
+plus exact feature..closure Vault note/index/MOC before reporting; do not add a
+self-reference closure or repeat completed feature delivery. Forward queue
+refreshed without starting a next increment: no other defined local ready item.
+R90-75 retains its independent full departmental acceptance contract; no
+qualifying outcome supplied. Oct 4–Jan 1 forecast unchanged. Next trigger verifies
+closure/Vault and audits fresh source/history/queue before persisting a separate
+eligible plan. Repair only missing delivery evidence.
