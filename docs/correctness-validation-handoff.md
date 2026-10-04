@@ -549,3 +549,39 @@ The existing owning-package commands include rule/API. Execution is **not run;
 delegated by user**. Compile-only success does not establish runtime, HTTP,
 race or SLO acceptance. Explicit `any` broadens mixed lists as requested by the
 wildcard; blank entries continue to be ignored. R90-75 remains independent.
+
+## R90-177: active daily-shard pathname aliases
+
+This supplement leaves the frozen R90-144..172 inventory unchanged.
+[Plan](plans/task-20261004-shard-path-alias.md) ·
+[state](tasks/task-state-20261004-shard-path-alias.json).
+
+[engine/internal/alert/shard_path_alias_test.go](../engine/internal/alert/shard_path_alias_test.go):
+
+- `TestDailyShardLexicalActivePathAliasesCountRowsOnce`
+- `TestDailyShardAliasPreservesMissingDirectoryAndHistoricalErrors`
+
+[engine/internal/api/shard_path_alias_test.go](../engine/internal/api/shard_path_alias_test.go):
+
+- `TestDailyShardAliasHTTPListHealthAndMetricsUseActualCounts`
+
+Review the actual public Options.Path/Dir spellings: relative directory with
+absolute active file, absolute directory with relative active file, two relative
+spellings with dot components, absolute dot spelling and identical control.
+Each main active-store fixture uses WAL and DELETE and seeds two current rows
+plus one DELETE historical row through separate non-daily stores. Read-only observers use
+independently encoded absolute paths and open before query/count/list calls;
+reuse them to assert real row counts. Compare complete rows, totals, filters,
+ordering, page offsets, original Path, caller inputs and full persistent
+bytes/modes/membership. Preserve missing-directory fallback, invalid-calendar
+skip and actual corrupt historical errors. The HTTP test uses the real daily
+store and checks list pages, ordinary/verbose health totals and the current
+alert gauge across repeated exports, retaining file bytes/mode/membership.
+
+Three declarations in two files are authored and compile-reviewed; behavioral,
+race, full-suite, scanner, knowledge, traffic and acceptance checks are
+**not run; delegated by user**. Compile success does not establish read-only,
+HTTP, durability or race behavior. Execute owning alert/API package correctness
+and the established serial full/knowledge sequence under the department's
+existing authority; preserve exact revision, commands, logs, skips and failures.
+No new SLO profile acceptance or publication authority is implied.

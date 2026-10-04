@@ -441,6 +441,15 @@ Current build:
   inconsistent SHM under an encoded historical path; rejection preserves the
   database and both sidecars.
 - Cross-shard alert querying and alert counting in daily-shard mode; time range filters narrow the shard files scanned before applying the regular SQL filters and API pagination across the merged result.
+- R90-177 compares the active database and discovery directory as cleaned
+  absolute pathnames. A relative/absolute or dot-component alias of the active
+  daily filename is excluded from historical discovery; the original active
+  path remains included once and selects the live database handle. This avoids
+  duplicate rows and inflated counts without changing `Store.Path`, historical
+  read-only behavior, filtering, sorting or pagination. The comparison is
+  lexical and does not resolve symlink or hardlink aliases. Public WAL/DELETE
+  storage and real-store HTTP regression assertions are authored and compiled
+  only; execution remains delegated, with no SQLite or HTTP pass inferred.
 - R90-159 requires a valid calendar date before discovering daily shard files.
   Impossible-calendar filenames and their sidecars remain untouched and are
   ignored by `Store.List`, `Query` and `Count`; unrelated bytes under those names

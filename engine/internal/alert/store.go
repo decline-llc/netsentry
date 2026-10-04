@@ -2657,6 +2657,14 @@ func (s *Store) alertShardPaths(ctx context.Context, query Query) ([]string, err
 		}
 		return nil, fmt.Errorf("read alert shard dir: %w", err)
 	}
+	activePath, err := filepath.Abs(s.path)
+	if err != nil {
+		return nil, fmt.Errorf("resolve active alert shard path: %w", err)
+	}
+	shardDir, err := filepath.Abs(s.dir)
+	if err != nil {
+		return nil, fmt.Errorf("resolve alert shard dir: %w", err)
+	}
 	seen := map[string]bool{}
 	var paths []string
 	addPath := func(path string) {
@@ -2678,6 +2686,11 @@ func (s *Store) alertShardPaths(ctx context.Context, query Query) ([]string, err
 			continue
 		}
 		if _, err := time.Parse("2006-01-02", match[1]); err != nil {
+			continue
+		}
+		// Keep the active database's original pathname so callers use s.db,
+		// even when directory discovery spells that same pathname differently.
+		if filepath.Join(shardDir, entry.Name()) == activePath {
 			continue
 		}
 		addPath(filepath.Join(s.dir, entry.Name()))

@@ -265,6 +265,8 @@ formal SLO and evidence contract is unchanged.
 
 | R90-176 | Oct 4–Jan 1 | Complete implementation; tests delegated | Retain explicit any protocol wildcard semantics. | R90-175 verified feature/closure; existing protocol compiler | Any dominates named entries in all three types after complete validation; blank/named-only and other gates retained; direct engine/file-backed HTTP regressions authored, execution delegated. |
 
+| R90-177 | Oct 4–Jan 1 | In progress; compile/static complete | Deduplicate lexical aliases of the active daily shard. | R90-176 verified feature/closure; existing daily discovery | Relative/absolute/dot path aliases count active rows once; preserve current live handle, historical reads, filtering/pagination and original Path; public storage/HTTP regressions authored, execution delegated. |
+
 ## R90-01 Definition
 
 - **Goal:** establish one versioned 90-day delivery authority and a
@@ -11413,3 +11415,88 @@ R90-75 retains its independent full departmental acceptance contract; no
 qualifying outcome supplied. Oct 4–Jan 1 forecast unchanged. Next trigger verifies
 closure/Vault and audits fresh source/history/queue before persisting a separate
 eligible plan. Repair only missing delivery evidence.
+
+
+## R90-177 Definition
+
+- **Goal:** avoid duplicate active daily rows when configured path spellings differ.
+- **Dependency:** R90-176 verified feature/closure; existing daily discovery.
+- **Window:** Oct 4–Jan 1; forecast only.
+- **Risk:** low; lexical aliases deduplicate, original active handle/path retained.
+- **Acceptance:** cleaned absolute active/directory comparisons exclude the alias;
+  public WAL/DELETE storage calls assert exact contents/counts, original Path,
+  historical/current controls, filters/pagination and independent read-only
+  observation with persistent artifact preservation. Real-store HTTP list, health
+  and metrics export actual counts. Authored declarations compiled; execution
+  delegated. No symlink/hardlink, deletion, write or schema change.
+- **Required validation:** pinned Go 1.26.8 alert/API/pipeline/cmd compile-only;
+  exact source/format/docs/JSON/roadmap multisets/prior history/authority/links/
+  fences/nine-path/sensitive/diff and exact non-force push/fetch/Vault replay.
+  Behavioral/race/full/scanner/knowledge/traffic/acceptance not run; delegated by user.
+- **Stop condition:** ambiguous compile/static/Git/Vault evidence, competing edits,
+  private input, new authority or a second increment.
+
+## R90-177 Selection and Source Audit (2026-10-04)
+
+Fresh clean fetched baseline `9b5f4e61792d5aa087dc6f7145d8942618791ced`.
+R90-176 feature and single closure exact Git/Vault ranges, note/index/bounded
+MOC verified. All 133 four-week phase commits have iteration/index coverage;
+180 unique prior roadmap row/Definition pairs agree. Captured 433 Vault hashes,
+386 immutable iteration hashes and fourteen full stable backups. No missing
+delivery or qualifying R90-75 outcome supplied. Recent SLO adapters, candidate/
+toolchain and correctness delivery retains delegated execution debt.
+
+Empty local ready queue restored from raw-string active-shard deduplication:
+relative/absolute/dot aliases can include one database as both historical and
+active. Source inference only, not an executed failure. Persisted plan/state
+before implementation/docs changes. Selected lexical absolute comparison while
+retaining original active Path/live handle; no filesystem identity/deletion or
+write change. Nine-path scope, Oct 4–Jan 1 horizon and standing department split
+retained. Sole other unfinished R90-75 retains its independent full acceptance
+contract. No following increment started.
+
+
+## R90-177 Compile and Static Checkpoint (2026-10-04)
+
+Runtime change is exactly thirteen added lines in alertShardPaths: resolve the
+active pathname and discovery directory with filepath.Abs after successful
+ReadDir, skip their cleaned lexical equality after existing filename/date/time
+checks, and retain the original active entry for the unchanged live-handle
+branch. Missing-directory fallback, historical errors/readonly helper, filtering,
+ordering, slicing, writes and retention remain source-identical. No symlink or
+hardlink identity promise. All nine intended paths are isolated from a clean
+baseline; no competing edit or tool/version failure.
+
+Three direct public declarations in two files are authored. Ten active-store
+fixtures span identical, relative-directory, relative-path, relative-dot and
+absolute-dot spellings under WAL and DELETE with a separate DELETE historical
+fixture. Separate non-daily seeds establish two current complete rows and one
+historical row without using the affected discovery path. Actual Options.Path
+retains its relative/dot form at Open; independent URI-encoded absolute observers
+open before read calls and are reused before/after. Count/List/Query assert exact
+complete contents/totals, default/negative limits, global page offsets, at/past
+end, inclusive time/rule filters, original Path and caller inputs. Full tree
+bytes/modes/membership and healthy state are asserted. Missing-directory and
+invalid-calendar controls retain one row; a real corrupt historical file
+returns errors without partial output and retains all artifacts.
+
+Real-store HTTP uses relative Dir and absolute active daily Path; repeated list
+pages assert the exact normalized row, total one and empty pages beyond it.
+Ordinary/verbose health and current-alert gauge assert actual count one; file
+bytes/mode/directory membership and original Path remain. No fake store or
+private-state seam; all three declarations remain unexecuted. Historical DELETE
+was chosen to keep these regressions focused on active pathname aliasing.
+
+Pinned Go 1.26.8 preflight and the complete fail-fast alert/API/pipeline/cmd
+compile-only chain passed after final fixture/source edits; binaries are outside
+the repository and unexecuted. Static exact thirteen-line source transform,
+pinned Go format, docs-check, 195 task JSON, 181 unique row/Definition pairs, all
+180 prior Definitions and full roadmap history/authority/horizon, frozen handoff,
+links/fences, nine-path scope, sensitive/diff review passed. All 433 baseline
+Vault Markdown hashes remain unchanged. No failed or ambiguous validation.
+Existing skill instructions cover the workflow; no reusable skill edit warranted.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance checks are **not run;
+delegated by user**. Compilation does not establish runtime, artifact preservation,
+HTTP, race, release or SLO passes. R90-75 retains its independent full acceptance
+contract. No next increment started; feature delivery remains pending.
