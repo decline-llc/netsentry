@@ -3,10 +3,10 @@
   "timestamp": "2026-10-03",
   "branch": "main",
   "implementation_branch": "fix/r90-165-legacy-rule-decode",
-  "remote_baseline": "6f974967581efbfd571d53076a204a9a1ecfead6",
+  "remote_baseline": "0930bc7bd25c394a6bac72e1afedf347b9956d57",
   "starting_remote_baseline": "6f974967581efbfd571d53076a204a9a1ecfead6",
   "risk_level": "Low",
-  "current_checkpoint": "implementation_static_and_compile_reviewed_ready_for_feature_delivery",
+  "current_checkpoint": "implementation_delivered_feature_verified_single_docs_closure",
   "completed": [
     "Clean fetched main; exact R90-164 feature/closure Git/Vault verified",
     "109-commit phase audit; 168 unique roadmap pairs; R90-75 full contract/horizon unchanged",
@@ -17,11 +17,15 @@
     "Six public real Handler/LoadFromFile/Engine rejection and valid-repair retry cases authored",
     "Complete final Go 1.26.8 rule/API/CLI/pipeline compile-only chain passed; binaries unexecuted",
     "Local skill instruction 17 refined for recognized-field error preservation across compatibility fallbacks; Markdown valid",
-    "Complete static source/70 other engine paths/format/docs/183 JSON/169 unique roadmap pairs/168 prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/sensitive review passed"
+    "Complete static source/70 other engine paths/format/docs/183 JSON/169 unique roadmap pairs/168 prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/sensitive review passed",
+    "Seven-path feature pushed and fresh fetched clean main HEAD/origin/main/FETCH_HEAD verified",
+    "Exact feature range note/scope/Git-resolved metadata/full index/MOC verified",
+    "Fourteen stable notes reconciled; entire prior current prose archived; historical/topic tails preserved",
+    "362 baseline immutable iteration notes unchanged; feature replay preserves 410 Markdown hashes",
+    "Forward queue refreshed; R90-75 full independent contract/horizon unchanged; no next implementation",
+    "Single three-path docs-only closure prepared; resolve full SHA and verify delivery before reporting"
   ],
-  "in_progress": [
-    "Feature push/fresh-fetch verification and exact Vault sync"
-  ],
+  "in_progress": [],
   "validation": {
     "behavioral_tests": "not_run_user_delegated",
     "race_tests": "not_run_user_delegated",
@@ -45,16 +49,29 @@
   "deviations": [
     "Empty local ready queue restored within source-grounded decoder fallback repair"
   ],
-  "resume_instructions": "Complete only R90-165; prior R90-164 delivery is verified. Preserve delegated execution and independent R90-75 authority; verify feature/single closure Git/Vault before future work.",
-  "todo": [
-    "Feature push/fetch/Vault",
-    "Single docs-only closure"
-  ],
+  "resume_instructions": "R90-165 implementation delivered. Resolve single docs-only closure from Git and verify fresh fetched main/exact feature..closure Vault if evidence is absent. Once verified, do not repeat feature/closure commit/push/sync or create another closure. Next trigger audits fresh code/queue and persists separate eligible plan. All execution user-delegated; R90-75 independent asynchronous. No next increment started.",
+  "todo": [],
   "next_increment": {
     "id": null,
-    "status": "no_other_defined_local_ready_increment",
+    "status": "no_defined_local_ready_increment",
     "started": false,
-    "departmental_acceptance": "R90-75 independent asynchronous full contract unchanged"
+    "departmental_acceptance": "R90-75 full independent asynchronous contract unchanged",
+    "next_trigger": "Verify fetched closure/Vault; audit fresh code/queue and persist separate eligible plan before edits"
   },
-  "skill_improvement": "Local netsentry-next instruction 17 preserves recognized-field failures across weaker compatibility fallbacks; direct accepting-fallback regression required; Markdown validated; separate from repository commit"
+  "skill_improvement": "Local netsentry-next instruction 17 preserves recognized-field failures across weaker compatibility fallbacks; direct accepting-fallback regression required; Markdown validated; separate from repository commit",
+  "delivery": {
+    "feature_commit": "0930bc7bd25c394a6bac72e1afedf347b9956d57",
+    "feature_range": "6f974967581efbfd571d53076a204a9a1ecfead6..0930bc7bd25c394a6bac72e1afedf347b9956d57",
+    "feature_paths": 7,
+    "verified_remote": "fresh fetched HEAD/origin/main/FETCH_HEAD equal; clean main",
+    "vault_note": "04-开发迭代记录/2026-10-03-0930bc7bd2-CI知识同步.md",
+    "index_moc": "verified",
+    "stable_notes": 14,
+    "topic_prose_preservation": "Complete prior current prose archived; original historical/topic tails exactly preserved outside documented generated MOC regions",
+    "baseline_immutable_notes": 362,
+    "feature_snapshot_files": 410,
+    "feature_snapshot_json_sha256": "b0783e2500732ebc6c2dc7d9a584e8c42fade31d3de7bced1ce0c3dfcfa0eab8",
+    "identical_feature_replay": "410 Markdown hashes unchanged",
+    "closure": "single three-path docs-only record; resolve full SHA from Git; push/fresh-fetch/exact feature..closure Vault verification before reporting; no self-reference closure"
+  }
 }

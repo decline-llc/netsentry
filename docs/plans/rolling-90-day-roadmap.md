@@ -242,7 +242,7 @@ formal SLO and evidence contract is unchanged.
 | R90-162 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject IP blacklists with no compiled addresses. | R90-161; existing rule validation/snapshot contract | Blank-only address lists reject before publication; valid mixed entries and filters retain behavior; direct public regressions authored, execution delegated. |
 | R90-163 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject enabled suppressions with no compiled prefixes. | R90-162 verified feature/closure; existing suppression manager contract | Empty-only prefix lists reject before filter publication/persistence; disabled and mixed empty/valid behavior retained; public constructor and file-backed mutation/reload regressions authored, execution delegated. |
 | R90-164 | Oct 3–Dec 31 | Complete implementation; tests delegated | Redact JSON credential values cut at preview end. | R90-163 verified feature/closure; existing 200-byte preview/redaction boundary | Open quoted password/token values redact visible suffix through preview end; complete-value behavior retained; direct scalar/batch and real Engine/Worker regressions authored, execution delegated. |
-| R90-165 | Oct 3–Dec 31 | Ready | Preserve malformed legacy rule decode failures. | R90-164 verified feature/closure; existing rule loader/API reload contract | Original wrapped decoder type errors cannot disappear through weaker fallback or reach null-entry defaults; valid formats/defaults retained; direct public loader and real-engine HTTP reload regressions authored, execution delegated. |
+| R90-165 | Oct 3–Dec 31 | Complete implementation; tests delegated | Preserve malformed legacy rule decode failures. | R90-164 verified feature/closure; existing rule loader/API reload contract | Original wrapped decoder type errors cannot disappear through weaker fallback or reach null-entry defaults; valid formats/defaults retained; direct public loader and real-engine HTTP reload regressions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -3807,7 +3807,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-165 Definition
 
-- **Goal/status:** ready; reject successful weaker model fallback after original wrapped legacy decode error.
+- **Goal/status:** implementation delivered; reject successful weaker model fallback after original wrapped legacy decode error.
 - **Dependencies/window:** verified R90-164 feature/closure; existing rule loader/API reload contract; Oct 3–Dec 31 forecast, dates not gates.
 - **Risk:** low; malformed recognized legacy fields previously ignored now reject at load; valid normalization/tolerant container semantics unchanged.
 - **Acceptance:** original-error capture/return guard only; 48 public loader wrong-field/kind/config/null-prefix cases preserve files/snapshot and diagnostic; positive wrapped/array legacy/canonical/default/empty/null/unknown-field controls; six actual HTTP reload rejection/preservation/valid retry cases use real Engine; seven-path feature/one closure exact Git/Vault.
@@ -10049,3 +10049,52 @@ Reusable decoder-fallback lesson added to local netsentry-next skill instruction
 must not discard a recognized-field failure; cover an input it would otherwise
 accept. Markdown structure verified; separate from repository feature commit.
 No next increment started; feature and single docs-only closure remain.
+
+
+## R90-165 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `0930bc7bd25c394a6bac72e1afedf347b9956d57` contains exactly the seven intended paths. The
+isolated branch fast-forwarded freshly verified main; recorded old tip,
+non-force push and fresh fetch verified clean HEAD/origin/main/FETCH_HEAD equality.
+Exact full-SHA range `6f974967581efbfd571d53076a204a9a1ecfead6..0930bc7bd25c394a6bac72e1afedf347b9956d57` synchronized to
+`04-开发迭代记录/2026-10-03-0930bc7bd2-CI知识同步.md`; exact note scope, generated short
+identifiers resolved through Git, full index/MOC verified. Fourteen current stable
+notes reconciled; entire prior current prose archived, original historical/topic
+tails exactly preserved outside documented bounded generated MOC regions. All
+362 baseline immutable iteration notes unchanged. Identical range replay preserves
+410 Markdown hashes; snapshot JSON SHA-256
+`b0783e2500732ebc6c2dc7d9a584e8c42fade31d3de7bced1ce0c3dfcfa0eab8`.
+Existing unique sibling local Vault supplied explicitly; no second/remote Vault.
+
+Acceptance matches plan: original wrapped-error capture and successful-fallback
+return guard/comment only; distinct fallback error name avoids shadowing. All
+other 70 tracked engine paths unchanged. 48 direct loader cases cover three legacy
+fields/four wrong kinds/two config formats/null-prefix presence with original
+field/string target/kind/parse wrapper, nil results/whole bytes/old snapshot.
+Four canonical/legacy wrapped/array positives, six exact empty nil/non-nil shapes,
+two lone-null normalization/downstream-id controls, three syntax/byte controls.
+Six public real HTTP Handler/LoadFromFile/Engine cases use canonical configs the
+weaker decoder would otherwise accept; assert 500 load envelope/old matching/
+whole rejected bytes, then explicit repair 200/one-rule/full tuple/match/input/
+valid bytes. No fake manager/private seams/sleeps/skips/panic swallowing. Authored
+assertions directly reach the planned decoder and HTTP boundaries; all unexecuted.
+No new strict container/unknown-field/default/catalog/save/API-runtime policy.
+
+Final complete pinned Go 1.26.8 rule/API/CLI/pipeline compile-only chain and full
+static review passed: exact source/70 other paths/format/docs/183 JSON/169 unique
+roadmap pairs/168 prior Definitions/R90-75/history/horizon/links/fences/seven paths/
+diff/sensitive. Binaries unexecuted. Behavioral/race/CLI/full-suite/scanner/
+knowledge/traffic/acceptance execution **not run; delegated by user**. No runtime/
+file/API/race/SLO pass inferred, no unresolved validation ambiguity. Local
+netsentry-next instruction 17 refined for recognized-field errors across weaker
+compatibility fallbacks and direct accepting-fallback regressions; Markdown valid,
+separate from repository commit.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git; push/fresh-fetch/exact feature..closure Vault verification before
+reporting, without another self-reference closure. After verification, do not
+repeat feature/closure commit/push/sync. Future queue refreshed: no other defined
+local ready increment. R90-75 remains independent asynchronous departmental
+acceptance with its full contract and Oct 3–Dec 31 horizon unchanged. Next trigger
+verifies fetched closure/Vault, audits fresh code/queue and persists a separate
+eligible plan before edits. No next increment started.
