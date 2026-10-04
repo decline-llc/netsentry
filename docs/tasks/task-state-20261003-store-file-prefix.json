@@ -1,0 +1,56 @@
+{
+  "task": "r90-168-store-file-prefix",
+  "timestamp": "2026-10-03",
+  "branch": "main",
+  "remote_baseline": "4cf106a67ac142d478f6f7a0294872c26c6ce2f6",
+  "starting_remote_baseline": "4cf106a67ac142d478f6f7a0294872c26c6ce2f6",
+  "risk_level": "Low",
+  "current_checkpoint": "amended_implementation_compile_static_complete_feature_pending",
+  "completed": [
+    "Fresh fetched clean main; exact R90-167 feature/closure Git/Vault and fourteen stable refs verified",
+    "115-commit phase audit; 171 unique roadmap pairs; independent R90-75 unchanged",
+    "415 Vault hashes/fourteen stable backups captured",
+    "Pinned driver URI flag and bundled exact file: parser identified; six-path plan persisted",
+    "One condition/comment runtime repair; 14 primary/6 daily/4 rejection cases authored",
+    "Eight healthy alternate-target preservation cases with preopened reused independent read-only observer",
+    "Pinned Go 1.26.8 directories preflighted; complete final alert/API/CLI/pipeline compile-only chain passed, binaries unexecuted",
+    "Local skill instruction 11 refined for relative/prefix public fixtures and independent absolute observation; Markdown checked",
+    "Read-only resolved path made absolute before sidecar inspection/URI; corrupt regression requires real SQLite diagnostic",
+    "Final complete preflighted Go 1.26.8 alert/API/CLI/pipeline compile-only chain passed after amended source; binaries unexecuted",
+    "Static exact two-helper transform/pinned parser/74 other engine paths/format/docs/186 JSON/172 unique pairs/171 prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive passed",
+    "415 Vault baseline hashes unchanged"
+  ],
+  "in_progress": [
+    "Feature delivery"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "passed_final_amended_scope_go1.26.8_alert_api_cmd_netsentry_pipeline_binaries_unexecuted",
+    "static_review": "passed_exact_two_helper_transform_pinned_parser_74_other_paths_format_docs_186_json_172_unique_pairs_171_prior_definitions_r90_75_scope_sensitive"
+  },
+  "authority_boundaries": [
+    "Exact file: ordinary writable prefix plus required absolute normalization of resolved read-only relative paths",
+    "Question-mark/durable/query/sidecar/symlink/error classifications retained",
+    "All execution delegated; compile/static only; no publication"
+  ],
+  "remaining_risks": [
+    "Authored direct regressions remain unexecuted",
+    "Relative file: names now target literal paths instead of URI aliases"
+  ],
+  "deviations": [
+    "Empty local ready queue restored from writable guard and pinned SQLite URI prefix evidence",
+    "Static pinned Go URL serializer/SQLite URI parser review exposed relative read-only authority error; amended same six-path plan before prerequisite change; no runtime failure claimed",
+    "Temporary static-review script quoting syntax repaired; complete static review rerun successfully"
+  ],
+  "resume_instructions": "Finish only R90-168 under persisted six-path plan; compile/static only; feature/single closure exact push/fetch/Vault required. No next increment.",
+  "todo": [
+    "Feature push/fetch/Vault",
+    "Single docs-only closure"
+  ]
+}

@@ -247,6 +247,8 @@ formal SLO and evidence contract is unchanged.
 
 | R90-167 | Oct 3–Dec 31 | Complete implementation; tests delegated | Preserve question marks in writable SQLite filenames. | R90-166 verified feature/closure; pinned driver path semantics | Ordinary question-mark paths use encoded file URIs without driver options; primary/daily/preservation regressions authored, execution delegated. |
 
+| R90-168 | Oct 3–Dec 31 | Ready | Preserve relative file-prefixed SQLite filenames. | R90-167 verified feature/closure; pinned SQLite URI prefix semantics | Ordinary file-prefixed writes and resolved relative read-only paths use absolute file URIs; primary/decoy/daily/rejection regressions authored, execution delegated. |
+
 
 ## R90-01 Definition
 
@@ -3840,6 +3842,18 @@ formal SLO and evidence contract is unchanged.
 - **Required validation:** owning Go 1.26.8 alert/API/CLI/pipeline compile-only, binaries unexecuted; static source/format/docs/JSON/complete unique roadmap multisets/prior history/R90-75/scope/diff/sensitive review. Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
 - **Non-goals:** new URI/in-memory/path/symlink policy, read-only DSNs, other ordinary filenames, recovery/schema/lifecycle/retention/cancellation/journal/default/durability/API policy, suites/private inputs/dependencies/toolchain/publication/SLO pass.
 - **Stop condition:** competing edits, ambiguous compile/static/Git/Vault, or new authority; no next increment in this trigger.
+
+
+## R90-168 Definition
+
+- **Goal/status:** ready; preserve literal relative file-prefixed writable filenames.
+- **Dependencies/window:** verified R90-167 feature/closure; pinned SQLite exact file: URI-prefix semantics; Oct 3–Dec 31 forecast, dates not gates.
+- **Risk:** low; relative file: names now target literal files rather than URI aliases.
+- **Acceptance:** writable guard/comment and read-only absolute-path normalization only; question-mark repair/durable FULL/other ordinary writes and mode=ro/readonly_shm unchanged; public relative primary/reopen/alternate-target preservation, current/historical daily writes/reads, independent absolute read-only observation, exact non-sidecar files and rejected persistent-input tree preservation with actual corrupt SQLite diagnostic; six-path feature/one closure exact Git/Vault.
+- **Required validation:** owning Go 1.26.8 alert/API/cmd/netsentry/pipeline directory preflight/compile-only, binaries unexecuted; static source/format/docs/JSON/unique roadmap multisets/prior Definitions/R90-75/history/horizon/links/fences/scope/diff/sensitive. Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
+- **Non-goals:** URI/in-memory/symlink/path/API policy beyond necessary read-only absolute-path normalization, schema/recovery/lifecycle/retention/cancellation/journal/durability/CLI/API algorithms, suites/private inputs/toolchain/dependencies/publication/SLO pass.
+- **Stop condition:** competing edits, ambiguous compile/static/Git/Vault or new authority; no next increment this trigger.
+
 
 
 
@@ -10329,3 +10343,121 @@ feature/closure delivery. Forward queue refreshed: no other defined local ready
 increment. R90-75 full independent asynchronous departmental contract and Oct 3–
 Dec 31 horizon unchanged. Next trigger verifies fetched closure/Vault, audits
 fresh code/queue and persists a separate eligible plan. No next implementation.
+
+
+## R90-168 Selection and Relative File-Prefix Paths (2026-10-03)
+
+Clean freshly fetched main `4cf106a67ac142d478f6f7a0294872c26c6ce2f6`;
+R90-167 six-path feature/three-path closure exact Git/Vault notes/index/MOC and
+fourteen stable refs verified. Sep 5–Oct 3 115-commit phase audit covers SLO tools,
+patched release/toolchain and core correctness; no new qualifying R90-75 outcome
+or missing delivery. All 171 prior unique roadmap pairs intact; independent
+R90-75 full contract and Oct 3–Dec 31 horizon unchanged. 415 Vault hashes captured.
+
+Empty local ready queue restored from pinned driver SQLITE_OPEN_URI and bundled
+SQLite's exact five-byte file: prefix recognition/stripping. Ordinary writable
+helper still returns relative file-prefixed filenames raw when no question mark
+occurs; writable target can differ from preflight/recovery/Store.Path. Six-path
+plan/state persisted before runtime/docs. Add exact prefix exclusion to existing
+raw-path guard only; existing URI builder and question-mark/durable semantics
+retained. Primary/decoy/daily/rejection direct regressions authored/compiled only;
+all execution delegated. No next increment started.
+
+
+## R90-168 Implementation and Compile/Static Checkpoint (2026-10-03)
+
+Runtime diff is one raw-path guard condition and one relevant comment only:
+ordinary exact file-prefixed paths use existing absolute encoded URI builder;
+question-mark handling, durable FULL pragma and other ordinary paths retained.
+Pinned SQLite's five-byte case-sensitive file: recognition confirmed from bundled
+parser and string table. No read-only, recovery, Store.Path or other runtime edit.
+
+Three external public regression functions authored: fourteen primary controls
+(seven relative path shapes, ordinary DELETE/durable WAL), six daily controls
+(three relative directories/both modes), four recovery/database rejection controls.
+Temporary t.Chdir preserves relative file: public input; an absolute fixture would
+miss this branch. Primary cases include exact `file:` filename, uppercase FILE:
+and ordinary controls, prefixed basename/directory and spaces/percent/hash. Eight
+prefixed primary cases preseed the stripped healthy alternate target, establish/
+query an independent encoded absolute mode=ro observer before writer, reuse it
+after Close/reopen/repeated aggregation, and compare complete decoy DB/recovery
+bytes and modes. Exact-prefix-only file: has no persistent alternate target.
+All positive cases assert exact Store.Path, Query count/content/timestamps/
+aggregates, List equality/Count, input preservation, independent per-file logical
+reads and exact expected non-sidecar files/cleared recovery logs. Only legitimate
+sidecars beside expected databases allowed. Daily historical writes and second
+historical retry reach actual openShard and existing read-only preflight. Four
+rejections assert established integrity sentinel/nil Store and full tree bytes/
+modes/membership preservation without writable reopen. No fake/private seam/
+sleep/skip/panic swallowing; assertions authored/compiled, unexecuted.
+
+Owning engine Go 1.26.8 and alert/API/cmd/netsentry/pipeline directories preflighted;
+complete fail-fast compile-only chain passed after final boundary fixture added,
+binaries unexecuted. Static source/format/docs/JSON/roadmap/history/R90-75/scope/
+sensitive review required before staging. Behavioral/race/CLI/full-suite/scanner/
+knowledge/traffic/acceptance execution **not run; delegated by user**. No runtime/
+SQLite/durability/race/SLO pass inferred; no compile-chain failure.
+
+Reusable local netsentry-next instruction 11 refined: preserve relative/reserved-
+prefix form in the public call so fixtures cannot bypass the affected branch;
+observe artifacts via an independent encoded absolute path. Markdown checked;
+separate from repository commit. No next increment started.
+
+
+## R90-168 Plan Amendment: Read-Only Relative URI Prerequisite (2026-10-03)
+
+Static review of pinned Go 1.26.8 net/url.URL.String and bundled SQLite URI parser
+found a necessary prerequisite before delivery: relative resolved paths passed as
+URL.Path serialize as file://relative-component/... with the first component in
+URI authority position. SQLite rejects that authority. Thus a writable-only guard
+cannot fulfill the promised public relative reopen/historical-read contract.
+This is source evidence, not a behavioral test result; no failing runtime claimed.
+
+Amend this same increment before prerequisite edit. The six-path scope is unchanged.
+In readOnlyDatabaseDSN, make the EvalSymlinks result absolute before sidecar lookup
+and URI serialization, using existing resolve-path error wording. Preserve mode=ro,
+readonly_shm, symlink resolution, sidecar classification and rejection diagnostics.
+Runtime scope is now two exact helpers: writable guard/comment and read-only
+absolute-path normalization; every other runtime path retained. Primary reopen,
+daily historical query/count/retry and uppercase/ordinary relative controls
+already directly reach this prerequisite. Corrupt-input regressions additionally
+require the real SQLite not-a-database diagnostic, so an invalid-authority error
+cannot satisfy their integrity-sentinel assertion. Recompile complete owning
+chain after final source/assertions and redo static review. No separate increment,
+URI API, dependency, publication or testing authority is needed.
+
+Earlier read-only-change non-goal is superseded only by this necessary path
+normalization. Other non-goals, delegated execution, R90-75 and horizon unchanged.
+
+
+## R90-168 Final Amended-Scope Validation (2026-10-03)
+
+Final runtime is confined to readOnlyDatabaseDSN absolute normalization of the
+EvalSymlinks result, and writableDatabaseDSN exact file: exclusion/comment. Existing
+mode=ro/readonly_shm/sidecar/symlink/error classification and question-mark/durable
+query behavior retained. All other 74 tracked engine paths unchanged. The pinned
+Go URL serializer/SQLite parser comparison explains why both helpers are required.
+
+Fourteen primary, six daily and four rejection controls directly cover the amended
+scope. Inputs remain relative via isolated t.Chdir; exact file: and uppercase FILE:
+controls included. Eight seeded healthy alternate targets use a preopened/query-
+warmed independent encoded absolute mode=ro observer reused after actual writes
+and reopen; their full DB/recovery bytes/modes and one-row aggregate are asserted.
+Daily first/second historical writes reach non-current openShard, existing-file
+preflight and historical Query/List/Count; independent reads use absolute URIs.
+Corrupt database rejection additionally requires actual SQLite not-a-database
+text, excluding a weaker invalid-authority rejection. Full expected file sets,
+recovery clearing, inputs and rejected trees remain asserted. All unexecuted.
+
+Final complete preflighted Go 1.26.8 alert/API/cmd/netsentry/pipeline compile-only
+chain passed after both source helpers and corrupt-diagnostic assertion settled;
+binaries unexecuted. Static exact two-helper transform/pinned parser/74 other
+paths/format/docs/186 JSON/172 unique roadmap pairs/171 prior Definitions/R90-75/
+ordered history/horizon/links/fences/six paths/diff/added-content sensitive review
+passed. Temporary static-review script quoting syntax was repaired and the entire
+static review rerun successfully; no partial validation retained. All 415 Vault
+baseline Markdown hashes unchanged. Behavioral/race/CLI/full-suite/scanner/knowledge/
+traffic/acceptance execution **not run; delegated by user**. No runtime/SQLite/
+durability/race/SLO pass inferred. Only deviation is the source-evidenced necessary
+read-only prerequisite within the same six paths, plus repaired temporary tooling.
+Local skill instruction 11 fixture refinement is separate; no next increment.

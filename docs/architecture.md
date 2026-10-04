@@ -357,6 +357,17 @@ for departmental execution; static/compile-only review is no runtime or SLO pass
 Current build:
 
 - SQLite using `modernc.org/sqlite`.
+- R90-168 routes ordinary relative filesystem paths beginning with the exact
+  `file:` prefix through the existing absolute encoded file-URI builder. SQLite
+  otherwise treats that prefix as a URI scheme and opens a different filename
+  from filesystem preflight, recovery and Store.Path. No ordinary driver options
+  are added; R90-167 question-mark encoding, other ordinary raw paths and durable
+  FULL pragma remain. The read-only helper makes resolved paths absolute before
+  sidecar inspection and URI construction so a relative first component cannot
+  become an invalid URI authority; mode=ro/readonly_shm and symlink resolution stay
+  unchanged. Direct relative primary/reopen/alternate-target preservation,
+  historical daily-shard and rejected-input assertions are authored/compiled only,
+  unexecuted.
 - R90-167 encodes ordinary writable filesystem paths containing `?` as absolute
   file URIs, so the SQLite driver opens the complete literal filename rather than
   truncating it or treating its suffix as driver options. Other ordinary paths

@@ -929,7 +929,10 @@ func readOnlyDatabaseDSN(path string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("resolve sqlite database path: %w", err)
 	}
-	path = resolvedPath
+	path, err = filepath.Abs(resolvedPath)
+	if err != nil {
+		return "", fmt.Errorf("resolve sqlite database path: %w", err)
+	}
 
 	query := url.Values{"mode": {"ro"}}
 	sidecarPresent := false
@@ -947,10 +950,10 @@ func readOnlyDatabaseDSN(path string) (string, error) {
 }
 
 // The driver applies _pragma to every new connection, including replacements.
-// Encode literal question marks so the driver cannot parse filenames as options.
+// Encode question marks and file: prefixes so filenames cannot become DSN options or URIs.
 // Preserve other ordinary DSN paths when measurement is disabled.
 func writableDatabaseDSN(path string, durable bool) (string, error) {
-	if !durable && !strings.Contains(path, "?") {
+	if !durable && !strings.Contains(path, "?") && !strings.HasPrefix(path, "file:") {
 		return path, nil
 	}
 	abs, err := filepath.Abs(path)
