@@ -2,10 +2,10 @@
   "task": "r90-169-store-memory-filename",
   "timestamp": "2026-10-03",
   "branch": "main",
-  "remote_baseline": "fa299d7493486b0c660b652c2973069e801c249a",
+  "remote_baseline": "5df8af0637bb64dbc1de9d12ef29e9fa9822b819",
   "starting_remote_baseline": "fa299d7493486b0c660b652c2973069e801c249a",
   "risk_level": "Low",
-  "current_checkpoint": "feature_ready_after_compile_static",
+  "current_checkpoint": "feature_push_fetch_vault_verified_single_docs_closure_record",
   "completed": [
     "Fresh clean fetched baseline and exact R90-168 delivery/Vault verified",
     "Phase audit; 172 unique roadmap pairs; independent R90-75 retained",
@@ -13,11 +13,15 @@
     "Exact guard/comment-only repair; fourteen public regression cases authored",
     "Pinned Go 1.26.8 full alert/API/cmd/netsentry/pipeline compile-only chain passed; binaries unexecuted",
     "Static source/format/docs/187 JSON/173 unique pairs/172 prior Definitions/R90-75/split/history/horizon/links/fences/scope/diff/sensitive passed",
-    "All 417 Vault baseline hashes unchanged"
+    "All 417 Vault baseline hashes unchanged",
+    "Six-path feature non-force pushed/immediately fresh fetched; clean HEAD/origin/main/FETCH_HEAD equality",
+    "Exact full-SHA feature Vault note/index/MOC and fourteen stable notes reconciled",
+    "All prior substantive stable prose and 370 immutable notes preserved",
+    "Identical feature replay preserves all 418 Markdown hashes",
+    "Phase audit verified all 117 baseline commit note/index coverage; no new R90-75 acceptance",
+    "Forward queue refreshed; no next increment started"
   ],
-  "in_progress": [
-    "Exact SQLite sentinel filename repair"
-  ],
+  "in_progress": [],
   "validation": {
     "behavioral_tests": "not_run_user_delegated",
     "race_tests": "not_run_user_delegated",
@@ -27,7 +31,9 @@
     "knowledge_check": "not_run_user_delegated",
     "traffic_and_acceptance": "not_run_user_delegated",
     "compile_only": "passed_go1.26.8_four_package_chain_binaries_unexecuted",
-    "static_review": "passed_exact_guard_comment_format_docs_json_roadmap_prior_definitions_scope_sensitive"
+    "static_review": "passed_exact_guard_comment_format_docs_json_roadmap_prior_definitions_scope_sensitive",
+    "feature_delivery": "verified_nonforce_push_fresh_fetch_clean_exact_six_paths",
+    "vault_feature": "verified_exact_full_range_note_index_moc_14_stable_prior_prose_370_immutable_418_replay_hashes"
   },
   "authority_boundaries": [
     "Exact literal filesystem filename only; no in-memory API",
@@ -40,15 +46,24 @@
   "deviations": [
     "Empty local ready queue restored from pinned SQLite exact sentinel source evidence"
   ],
-  "resume_instructions": "Finish only R90-169 against persisted plan; compile/static only; verify Git/Vault delivery before closeout.",
-  "todo": [
-    "Feature commit/push/fetch verification",
-    "Exact Vault sync/stable reconciliation/replay",
-    "Single docs-only delivery record"
-  ],
+  "resume_instructions": "R90-169 feature is already pushed/fetched/Vault reconciled and identical replay verified. This is the single docs-only closure of the same increment; resolve its full SHA from Git and verify fresh origin/main/FETCH_HEAD and exact feature..closure Vault note/index/MOC. Repair missing evidence only; do not duplicate completed feature/closure delivery or add a self-reference closure. Next trigger audits fresh history/code/queue and persists a separate eligible plan. All execution remains delegated; R90-75 independent full contract and Oct 3\u2013Dec 31 horizon retained. No next increment started.",
+  "todo": [],
   "next_increment": {
     "id": null,
     "status": "no_other_defined_local_ready_increment",
     "started": false
+  },
+  "feature_commit": "5df8af0637bb64dbc1de9d12ef29e9fa9822b819",
+  "delivery": {
+    "feature_range": "fa299d7493486b0c660b652c2973069e801c249a..5df8af0637bb64dbc1de9d12ef29e9fa9822b819",
+    "feature_paths": 6,
+    "verified_remote": "5df8af0637bb64dbc1de9d12ef29e9fa9822b819",
+    "vault_note": "04-\u5f00\u53d1\u8fed\u4ee3\u8bb0\u5f55/2026-10-03-5df8af0637-CI\u77e5\u8bc6\u540c\u6b65.md",
+    "stable_notes": 14,
+    "baseline_immutable_notes": 370,
+    "feature_snapshot_files": 418,
+    "feature_snapshot_json_sha256": "f79b1d12d0f311d68d935865115e0925da09c2485b056d5fd3218c44c49e25d0",
+    "identical_feature_replay": "all Markdown hashes unchanged",
+    "closure": "Single docs-only record; derive SHA from Git and verify exact feature..closure push/fetch/Vault before reporting; no self-reference closure"
   }
 }

@@ -249,7 +249,7 @@ formal SLO and evidence contract is unchanged.
 
 | R90-168 | Oct 3–Dec 31 | Complete implementation; tests delegated | Preserve relative file-prefixed SQLite filenames. | R90-167 verified feature/closure; pinned SQLite URI prefix semantics | Ordinary file-prefixed writes and resolved relative read-only paths use absolute file URIs; primary/decoy/daily/rejection regressions authored, execution delegated. |
 
-| R90-169 | Oct 3–Dec 31 | In progress; tests delegated | Preserve the literal SQLite :memory: filename. | R90-168 verified feature/closure; pinned SQLite exact sentinel semantics | Ordinary exact sentinel uses existing absolute file URI; persistence/reopen/compatible-existing/rejection regressions authored, execution delegated. |
+| R90-169 | Oct 3–Dec 31 | Complete implementation; tests delegated | Preserve the literal SQLite :memory: filename. | R90-168 verified feature/closure; pinned SQLite exact sentinel semantics | Ordinary exact sentinel uses existing absolute file URI; persistence/reopen/compatible-existing/rejection regressions authored, execution delegated. |
 
 
 ## R90-01 Definition
@@ -3859,7 +3859,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-169 Definition
 
-- **Goal/status:** in progress; persist exact :memory: as a literal filesystem filename in ordinary mode, consistent with durable mode.
+- **Goal/status:** implementation delivered; persist exact :memory: as a literal filesystem filename in ordinary mode, consistent with durable mode.
 - **Dependencies/window:** verified R90-168 feature/closure; pinned SQLite exact sentinel recognition; Oct 3–Dec 31 forecast, dates not gates.
 - **Risk:** low; formerly ephemeral exact ordinary input now targets its named persistent file.
 - **Acceptance:** writable guard/comment only; unchanged other runtime paths; public exact relative sentinel and prefixed/uppercase/spaced controls in both modes; create/write/query/list/count/close/reopen/aggregation and independent absolute read-only observation; compatible existing file with preopened reused observer; recovery/database rejection preserves entire tree with established diagnostics; six-path feature/one closure exact Git/Vault.
@@ -10571,3 +10571,47 @@ full-suite/scanner/knowledge/traffic/acceptance **not run; delegated by user**.
 Growing authored regression debt remains departmental; no runtime/SQLite/
 durability/race/SLO pass inferred. No validation failure or plan deviation;
 existing generic skill rules suffice. No next increment started.
+
+
+## R90-169 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `5df8af0637bb64dbc1de9d12ef29e9fa9822b819` contains exactly the six planned paths. Non-force
+push and immediate fresh fetch verified clean main HEAD/origin/main/FETCH_HEAD
+equality. Exact full-SHA range `fa299d7493486b0c660b652c2973069e801c249a..5df8af0637bb64dbc1de9d12ef29e9fa9822b819`
+synchronized to `04-开发迭代记录/2026-10-03-5df8af0637-CI知识同步.md`;
+Git-resolved identifiers, note/index/MOC and six-path scope verified. Fourteen
+stable current notes reconciled; all prior substantive current/topic/history
+prose retained exactly outside documented bounded generated MOC regions. All
+370 baseline immutable iteration notes unchanged. Identical range replay
+preserves all 418 Markdown hashes; snapshot JSON SHA-256
+`f79b1d12d0f311d68d935865115e0925da09c2485b056d5fd3218c44c49e25d0`.
+Existing unique sibling local Vault supplied explicitly; no second/remote Vault.
+Phase audit confirms note/index coverage of all 117 Sep 12–Oct 3 baseline
+commits; no new qualifying R90-75 acceptance. Unexecuted regression debt remains.
+
+Acceptance matches plan: exact ordinary :memory: guard condition/comment only,
+all other runtime retained. Other ordinary paths/durable FULL unchanged; no
+in-memory API/daily algorithm/read-only helper change. Fourteen authored direct
+cases reach exact relative public input, prefixed/uppercase/spaced controls,
+create/write/Query/List/Count/close/reopen/repeated aggregation/unchanged alerts,
+independent absolute read-only observation and exact files/cleared logs. Two
+compatible-existing controls seed literal file via absolute public Open, preopen/
+query-warm independent observer before relative writer and reuse it across both
+opens. Four rejection controls preserve whole tree bytes/modes/membership with
+established sentinel/nil Store; corrupt cases require actual SQLite diagnostic.
+No fake/private seam/sleeps/skips/writable rejected reopen. All unexecuted.
+
+Go 1.26.8 four-package preflight/full compile-only and static source/format/docs/
+187 JSON/173 unique pairs/172 prior Definitions/R90-75/testing split/history/
+horizon/links/fences/six paths/diff/sensitive passed; binaries unexecuted.
+Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance **not run;
+delegated by user**. No runtime/SQLite/durability/race/SLO pass inferred. No
+validation failure or scope deviation; existing skill rules cover this repair.
+
+This single three-path docs record closes the same increment. Resolve its full
+SHA from Git and verify fetched remote plus exact feature..closure Vault note/
+index/MOC; repair missing evidence only, without duplicate delivery or another
+self-reference closure. Forward queue refreshed: no other defined local ready
+increment. R90-75 independent asynchronous full contract and Oct 3–Dec 31 horizon
+retained. Next trigger verifies completed closure, audits fresh history/code/
+queue and persists a separate eligible plan. No next implementation started.

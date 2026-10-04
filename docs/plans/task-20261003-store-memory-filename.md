@@ -100,3 +100,47 @@ user**. Recent implementation throughput still adds unexecuted regression debt;
 compile success is no runtime, SQLite, durability, race or SLO evidence. No
 validation failure or scope deviation. Existing skill filename/observer rules
 cover the repair; no reusable new workflow lesson warrants a redundant update.
+
+
+## R90-169 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `5df8af0637bb64dbc1de9d12ef29e9fa9822b819` contains exactly the six planned paths. Non-force
+push and immediate fresh fetch verified clean main HEAD/origin/main/FETCH_HEAD
+equality. Exact full-SHA range `fa299d7493486b0c660b652c2973069e801c249a..5df8af0637bb64dbc1de9d12ef29e9fa9822b819`
+synchronized to `04-开发迭代记录/2026-10-03-5df8af0637-CI知识同步.md`;
+Git-resolved identifiers, note/index/MOC and six-path scope verified. Fourteen
+stable current notes reconciled; all prior substantive current/topic/history
+prose retained exactly outside documented bounded generated MOC regions. All
+370 baseline immutable iteration notes unchanged. Identical range replay
+preserves all 418 Markdown hashes; snapshot JSON SHA-256
+`f79b1d12d0f311d68d935865115e0925da09c2485b056d5fd3218c44c49e25d0`.
+Existing unique sibling local Vault supplied explicitly; no second/remote Vault.
+Phase audit confirms note/index coverage of all 117 Sep 12–Oct 3 baseline
+commits; no new qualifying R90-75 acceptance. Unexecuted regression debt remains.
+
+Acceptance matches plan: exact ordinary :memory: guard condition/comment only,
+all other runtime retained. Other ordinary paths/durable FULL unchanged; no
+in-memory API/daily algorithm/read-only helper change. Fourteen authored direct
+cases reach exact relative public input, prefixed/uppercase/spaced controls,
+create/write/Query/List/Count/close/reopen/repeated aggregation/unchanged alerts,
+independent absolute read-only observation and exact files/cleared logs. Two
+compatible-existing controls seed literal file via absolute public Open, preopen/
+query-warm independent observer before relative writer and reuse it across both
+opens. Four rejection controls preserve whole tree bytes/modes/membership with
+established sentinel/nil Store; corrupt cases require actual SQLite diagnostic.
+No fake/private seam/sleeps/skips/writable rejected reopen. All unexecuted.
+
+Go 1.26.8 four-package preflight/full compile-only and static source/format/docs/
+187 JSON/173 unique pairs/172 prior Definitions/R90-75/testing split/history/
+horizon/links/fences/six paths/diff/sensitive passed; binaries unexecuted.
+Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance **not run;
+delegated by user**. No runtime/SQLite/durability/race/SLO pass inferred. No
+validation failure or scope deviation; existing skill rules cover this repair.
+
+This single three-path docs record closes the same increment. Resolve its full
+SHA from Git and verify fetched remote plus exact feature..closure Vault note/
+index/MOC; repair missing evidence only, without duplicate delivery or another
+self-reference closure. Forward queue refreshed: no other defined local ready
+increment. R90-75 independent asynchronous full contract and Oct 3–Dec 31 horizon
+retained. Next trigger verifies completed closure, audits fresh history/code/
+queue and persists a separate eligible plan. No next implementation started.
