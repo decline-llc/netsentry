@@ -251,7 +251,7 @@ formal SLO and evidence contract is unchanged.
 
 | R90-169 | Oct 3–Dec 31 | Complete implementation; tests delegated | Preserve the literal SQLite :memory: filename. | R90-168 verified feature/closure; pinned SQLite exact sentinel semantics | Ordinary exact sentinel uses existing absolute file URI; persistence/reopen/compatible-existing/rejection regressions authored, execution delegated. |
 
-| R90-170 | Oct 3–Dec 31 | In progress; tests delegated | Match equivalent exact IP blacklist addresses. | R90-169 verified feature/closure; existing parsed IP acceptance | Exact addresses compare parsed identities; canonical fast path, original alert/config text, CIDR/filter/publication semantics retained; direct regressions authored, execution delegated. |
+| R90-170 | Oct 3–Dec 31 | Complete implementation; tests delegated | Match equivalent exact IP blacklist addresses. | R90-169 verified feature/closure; existing parsed IP acceptance | Exact addresses compare parsed identities; canonical fast path, original alert/config text, CIDR/filter/publication semantics retained; direct regressions authored, execution delegated. |
 
 
 ## R90-01 Definition
@@ -3874,7 +3874,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-170 Definition
 
-- **Goal:** compare exact blacklist address identities across accepted mapped,
+- **Goal/status:** implementation delivered; compare exact blacklist address identities across accepted mapped,
   compressed, expanded and case-variant IP spellings, retaining original text.
 - **Dependencies:** verified R90-169 feature/closure and existing parsed-IP rule
   acceptance; no new external input.
@@ -10683,3 +10683,46 @@ full-suite/scanner/knowledge/traffic/acceptance **not run; delegated by user**.
 Authored regression debt remains departmental; no runtime/race/SLO pass or
 performance result inferred. No unresolved validation ambiguity. Existing skill
 rules suffice; no separate skill update or next increment.
+
+
+## R90-170 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `c7e6a56b67f724ebc7a36252df9f0c790780c9a4` contains exactly the six planned paths. Non-force push
+and immediate fresh fetch verified clean main HEAD/origin/main/FETCH_HEAD
+equality. Exact full-SHA range `6bcbdcee40dd0a8b2c9077be7361e7127a64a663..c7e6a56b67f724ebc7a36252df9f0c790780c9a4` synchronized to
+`04-开发迭代记录/2026-10-03-c7e6a56b67-CI知识同步.md`; Git-resolved identifiers, note/index/MOC and six-path scope verified.
+Fourteen stable current notes reconciled; all prior substantive current/topic/
+history prose archived exactly, excluding only the actual generated CI MOC
+region resolved from versioned constants. Legacy MOC content remains exact.
+All 372 baseline immutable iteration notes unchanged. Identical feature replay
+preserves all 420 Markdown hashes; snapshot JSON SHA-256 `ba9170dd590dc2d658715b45ca686604e7e3351c55c28c605f5843b9843dab6e`.
+Existing unique sibling local Vault supplied explicitly; no second/remote Vault.
+
+Acceptance matches plan: two-function parsed exact-key/fallback repair, canonical
+raw lookup and CIDR traversal retained; every other runtime path unchanged.
+Four public authored functions reach sixteen address spelling/equality/invalid
+packet cases, nine filter/disabled/exact-before-CIDR checks, per-rule priority
+and critical early exit, three invalid reload preservation cases/valid retry,
+and public file SaveToFile/LoadFromFile/Reload spelling preservation. Complete
+alert values, packet/caller config/snapshot and file bytes checked directly;
+no mock/private seam/sleep/skip. All assertions compiled but unexecuted. Engine
+IPv6 cases imply no native capture/receiver/storage IPv6 support. Original alert
+address/reason and published rule text preserved. No performance claim.
+
+Preflighted exact Go 1.26.8 four-package fail-fast compile-only chain and complete
+static exact source/format/docs/188 JSON/174 unique pairs/173 prior Definitions/
+R90-75/testing split/history/horizon/links/fences/scope/diff/sensitive review
+passed. Binaries unexecuted. Behavioral/race/CLI/full-suite/scanner/knowledge/
+traffic/acceptance **not run; delegated by user**. No runtime/race/SLO pass
+inferred; growing authored regression debt remains departmental. Temporary
+audit expectation corrected for bounded MOC policy and entire audit rerun;
+no missing delivery or unresolved ambiguity. Existing skill rules sufficient.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git; verify non-force push/fresh fetched refs and exact
+feature..closure Vault note/index/MOC before reporting. Do not repeat verified
+feature/closure delivery or add a self-reference closure. Forward queue refreshed:
+no other defined local ready increment. R90-75 independent asynchronous full
+contract and Oct 3–Dec 31 horizon retained. Next trigger verifies completed
+closure/Vault, audits fresh history/code/queue and persists a separate eligible
+plan before editing. No next implementation started.
