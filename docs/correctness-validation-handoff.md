@@ -585,3 +585,43 @@ HTTP, durability or race behavior. Execute owning alert/API package correctness
 and the established serial full/knowledge sequence under the department's
 existing authority; preserve exact revision, commands, logs, skips and failures.
 No new SLO profile acceptance or publication authority is implied.
+
+
+## R90-178: preserve the active database during file retention
+
+This supplement preserves the original frozen inventory and prior follow-ups.
+[Plan](plans/task-20261004-shard-active-retention.md) ·
+[state](tasks/task-state-20261004-shard-active-retention.json).
+
+[engine/internal/alert/shard_active_retention_test.go](../engine/internal/alert/shard_active_retention_test.go):
+
+- `TestExpiredActiveShardSurvivesStartupAndLexicalCleanup`
+- `TestLongLivedActiveShardCleanupPreservesFileAndSeparateRowTTL`
+- `TestActiveShardCleanupGuardsAndOtherDirectory`
+
+Review twenty public startup/direct fixtures spanning WAL/DELETE, primary/daily
+and five identical/relative/absolute/dot pathname spellings. The expired active
+filename contains a current durable alert. Startup asserts base inode/mode/Path
+and all alerts/events columns through an independently encoded read-only handle;
+ordinary expired controls disappear while cutoff and invalid-calendar controls
+retain bytes/modes. Writable initialization does not promise byte preservation.
+Direct cleanup observers are established before removal and reused; actual WAL
+sidecars must exist. Verify exact active bytes/modes/artifact identities and tree
+membership, complete public List/Query/Count, full independent durable rows,
+three-artifact ordinary deletion then repeated zero, original input/Path/health,
+continued primary/daily routing and close/reopen plus fresh observer counts/rows.
+The independent raw-column reader and existing public fixture/tree/encoded
+observer helpers are declared in the owning alert test package.
+
+Clock advancement expires a generated initially current pathname; file cleanup
+must preserve it, while a separate public PruneExpired still removes its expired
+row. Missing-directory, disabled and pre-canceled calls preserve artifacts; an
+identical basename in another cleanup directory remains removable. No
+symlink/hardlink identity or concurrent independent-store ownership is promised.
+
+Three declarations are authored and compile-reviewed. Behavioral/race/full/
+scanner/knowledge/traffic/acceptance **not run; delegated by user**. Compilation
+is no deletion, preservation, durability, race or SLO acceptance result. Execute
+under the department's existing authority, retain exact SHA/commands/logs/skips/
+failures, and compare every asserted boundary with the plan. R90-75 independent
+full acceptance and publication boundaries are unchanged.

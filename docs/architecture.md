@@ -543,6 +543,16 @@ Current build:
   delegated; this is no observed filesystem or SQLite pass. At R90-158 delivery,
   discovery was unchanged; R90-159 now excludes impossible-calendar names from
   read discovery as documented above.
+- R90-178 excludes the active database's cleaned absolute lexical pathname
+  from daily-file cleanup, retaining its base, WAL and SHM even when its valid
+  filename predates the retention cutoff. This applies at startup and explicit
+  cleanup in both primary and daily modes, including relative/absolute/dot
+  spellings. Other expired sets still remove with the existing artifact count;
+  row TTL pruning in the open database remains separate. A same basename in
+  another cleanup directory is eligible. This does not resolve symlinks or
+  hardlinks or coordinate other stores. Public WAL/DELETE startup, direct,
+  long-lived-clock and guard regressions are authored and compiled only;
+  execution is delegated, with no observed preservation or durability pass.
 - R90-169 treats the exact `Options.Path` filename `:memory:` as a literal
   persistent file in ordinary mode, using the existing absolute encoded URI
   builder as durable mode already does. This aligns writable opening with

@@ -2819,6 +2819,7 @@ var dailyShardNameRe = regexp.MustCompile(`^netsentry-(\d{4}-\d{2}-\d{2})\.db$`)
 
 // PruneExpiredShardFiles deletes old daily shard database files and their WAL/SHM
 // sidecars. It only touches files named netsentry-YYYY-MM-DD.db with valid dates.
+// The active database's lexical pathname and its sidecars are always retained.
 func (s *Store) PruneExpiredShardFiles(ctx context.Context, dir string) (int, error) {
 	release, err := s.acquireLifecycleShared(ctx)
 	if err != nil {
@@ -2840,6 +2841,15 @@ func (s *Store) PruneExpiredShardFiles(ctx context.Context, dir string) (int, er
 		return 0, fmt.Errorf("read alert shard dir: %w", err)
 	}
 
+	activePath, err := filepath.Abs(s.path)
+	if err != nil {
+		return 0, fmt.Errorf("resolve active alert shard path: %w", err)
+	}
+	shardDir, err := filepath.Abs(defaultDBDir(dir))
+	if err != nil {
+		return 0, fmt.Errorf("resolve alert shard cleanup dir: %w", err)
+	}
+
 	deleted := 0
 	for _, entry := range entries {
 		if err := ctx.Err(); err != nil {
@@ -2853,6 +2863,9 @@ func (s *Store) PruneExpiredShardFiles(ctx context.Context, dir string) (int, er
 			continue
 		}
 		if _, err := time.Parse("2006-01-02", match[1]); err != nil {
+			continue
+		}
+		if filepath.Join(shardDir, entry.Name()) == activePath {
 			continue
 		}
 		base := filepath.Join(defaultDBDir(dir), entry.Name())

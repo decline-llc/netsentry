@@ -266,6 +266,7 @@ formal SLO and evidence contract is unchanged.
 | R90-176 | Oct 4–Jan 1 | Complete implementation; tests delegated | Retain explicit any protocol wildcard semantics. | R90-175 verified feature/closure; existing protocol compiler | Any dominates named entries in all three types after complete validation; blank/named-only and other gates retained; direct engine/file-backed HTTP regressions authored, execution delegated. |
 
 | R90-177 | Oct 4–Jan 1 | Complete implementation; tests delegated | Deduplicate lexical aliases of the active daily shard. | R90-176 verified feature/closure; existing daily discovery | Relative/absolute/dot path aliases count active rows once; preserve current live handle, historical reads, filtering/pagination and original Path; public storage/HTTP regressions authored, execution delegated. |
+| R90-178 | Oct 4–Jan 1 | In progress; tests delegated | Preserve the active database during expired daily-file cleanup. | R90-177 verified feature/closure; existing retention cleanup | Startup and direct cleanup retain the active lexical pathname and WAL/SHM; other expired sets and row TTL preserve their contracts; direct public declarations authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -11551,3 +11552,69 @@ departmental acceptance contract; no qualifying outcome supplied. Oct 4–Jan 1
 forecast unchanged. Next trigger verifies closure/Vault, audits fresh source/
 history/queue and persists a separate eligible plan before editing. Repair
 only missing delivery evidence.
+
+
+## R90-178 Definition
+
+- **Goal:** exclude the active database set from expired daily-file removal.
+- **Dependency:** R90-177 verified feature/closure; existing retention cleanup.
+- **Window:** Oct 4–Jan 1; forecast only.
+- **Risk:** low; lexical active pathname is retained, row TTL unchanged.
+- **Acceptance:** public startup/direct cleanup under WAL/DELETE, primary/daily
+  and relative/absolute/dot spellings preserves active set, durable rows, original
+  Path and caller input; exact other-set removal/count, cutoff/calendar/guard/
+  other-directory compatibility and long-lived clock advancement; continued
+  writes and close/reopen. Authored declarations compiled, execution delegated.
+- **Required validation:** pinned Go 1.26.8 alert/API/pipeline/cmd compile-only;
+  exact source/pinned format/docs/JSON/roadmap multisets/prior history/authority/
+  handoff/links/fences/seven-path/sensitive/diff; exact push/fetch/Vault replay.
+  Behavioral/race/full/scanner/knowledge/traffic/acceptance not run; delegated by user.
+- **Stop condition:** ambiguous compile/static/Git/Vault, competing edits, private
+  input, new authority or a second increment.
+
+## R90-178 Selection and Source Audit (2026-10-04)
+
+Clean fetched baseline `398f91bf8d387bfc84a2c92af7c0cec76edf1c49` and R90-177
+exact feature/closure Git/Vault note/index/bounded MOC verified. Four-week phase
+audit covers 135 commits, 181 unique roadmap pairs, 435 Vault Markdown snapshots,
+388 immutable iteration hashes and fourteen current stable backups. No missing
+delivery or qualifying R90-75 result. Prior closure fetch retry is recorded in
+current stable authority; recent SLO/candidate/toolchain/correctness execution
+debt remains delegated. Sole unfinished R90-75 has its complete independent
+contract, unchanged. Empty ready queue restored from source-supported active
+pathname deletion: explicit old dated Path or a long-lived store can be removed
+by startup/direct file retention. Source inference, not executed failure.
+Selected bounded lexical absolute exclusion before removeShardSet. Seven-path
+plan/state persisted before implementation/docs changes. Preserve horizon and
+standing department split; no following increment started.
+
+
+## R90-178 Compile and Static Checkpoint (2026-10-04)
+
+Exactly thirteen added source lines exclude the active lexical pathname after
+successful ReadDir and existing valid-calendar/cutoff checks; original Path and
+removeShardSet are retained. Disabled/canceled/missing-directory branches, row
+TTL, writes, recovery, queries and schemas are source-identical. No symlink/
+hardlink or independent-store ownership claim. Three public declarations are
+authored: twenty WAL/DELETE primary/daily and five-spelling startup/direct
+fixtures; long-lived clock advancement plus separate row TTL; guard/other-dir
+controls. They assert actual WAL sidecars, complete artifacts/identity/durable
+columns, public rows/counts, exact ordinary removal, continued writes/reopen
+and independent observation. Startup writable initialization has no byte-
+preservation claim. All declarations remain unexecuted.
+
+Pinned Go 1.26.8 complete alert/API/pipeline/cmd compile-only passed after final
+source/fixture edits; binaries are outside the repository and unexecuted. Static
+exact source/pinned format/docs/196 JSON/182 unique roadmap multisets/preserved
+181 prior Definitions and full history/R90-75 contract/frozen handoff/links/
+fences/seven-path/sensitive/diff passed. All 435 baseline Vault hashes unchanged.
+The initial temporary static-harness generation had an unterminated string and
+performed no validation; corrected by writing the literal script, then the
+complete static chain passed. No repository compile or unresolved static failure.
+Existing skill instructions suffice; no reusable skill edit warranted.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. Compilation/static review establishes no deletion, artifact preservation,
+durability, race, HTTP or SLO pass. No scope or acceptance deviation; R90-75 full
+independent departmental acceptance remains outstanding. Feature delivery is
+pending; no next increment started.
