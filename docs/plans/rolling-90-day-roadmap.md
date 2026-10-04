@@ -257,7 +257,7 @@ formal SLO and evidence contract is unchanged.
 | R90-172 | Oct 3–Dec 31 | Complete implementation; tests delegated | Validate journal modes before startup side effects. | R90-171 verified feature/closure; existing journal allowlist | Existing unsupported-mode diagnostic precedes filesystem/recovery/DB inspection; supported modes/defaults and earlier validation precedence retained; direct regressions authored, execution delegated. |
 
 
-| R90-173 | Oct 4–Jan 1 | In progress; execution delegated | Consolidate the departmental native correctness regression handoff. | R90-172 verified feature/closure; R90-144..172 source plans and tests | Exact source-linked inventory of 29 repairs, 38 changed test files and 106 current declarations; execution/evidence instructions distinguish authored debt from passes; active forecast and stable handoffs reconciled without runtime changes. |
+| R90-173 | Oct 4–Jan 1 | Complete documentation; execution delegated | Consolidate the departmental native correctness regression handoff. | R90-172 verified feature/closure; R90-144..172 source plans and tests | Exact source-linked inventory of 29 repairs, 38 changed test files and 106 current declarations; execution/evidence instructions distinguish authored debt from passes; active forecast and stable handoffs reconciled without runtime changes. |
 
 ## R90-01 Definition
 
@@ -11020,3 +11020,44 @@ traffic/acceptance execution; **not run; delegated by user**. The initial count
 was refined for a shared source file: 112 references correspond to 106 unique
 declarations. No test failure or new runtime claim. Existing skill rules suffice.
 No following increment started; delivery pending.
+
+
+## R90-173 Completion and Forward Queue Refresh (2026-10-04)
+
+Feature `d17a7fc4a7a29f1efad8d7e30cb9576e49b63d58` contains exactly the five planned documentation paths.
+Initial ordinary SSH push failed on port 22; transient SSH-over-443 fetch showed
+the remote still at `cb49e6ebf56c2eb8895be4e4016a76e9a2d411ee` and authentication succeeded. Non-force retry and
+immediate fresh fetch verified clean main HEAD/origin/main/FETCH_HEAD equality;
+configured remote unchanged. Exact full-SHA range `cb49e6ebf56c2eb8895be4e4016a76e9a2d411ee..d17a7fc4a7a29f1efad8d7e30cb9576e49b63d58` synchronized
+to `04-开发迭代记录/2026-10-04-d17a7fc4a7-CI知识同步.md`. Git-resolved note/index/MOC and exact path scope verified.
+Fourteen stable current-authority notes reconciled; all prior substantive topic
+prose archived exactly outside only the actual versioned generated CI MOC region.
+All 378 immutable baseline iteration notes preserved. Identical feature replay
+preserves all 426 Markdown hashes. Existing unique sibling local Vault explicitly
+supplied; no new/remote Vault. No department contact or publication.
+
+Acceptance comparison: handoff reaches every R90-144..172 feature/state/plan and
+changed Go test file; distinct source path/function counts and per-increment
+multisets checked separately. There are 29 repairs, 38 distinct files/39 file
+references, 106 distinct declarations/112 function references and eight owning
+packages. This is a file-level authored inventory, including prior companions,
+not executed coverage. Direct acceptance-boundary review remains required before
+execution: nearby tests are insufficient. Uncached pinned module-relative commands,
+serial full correctness/race/knowledge sequence, full failure/skip/deviation evidence
+and independent R90-75 contract are documented. No runtime/test/build/config change.
+
+Docs-check and static inventory/191 JSON/177 unique pairs/176 prior Definitions/
+R90-75/split/history/90-day forecast/links/fences/five paths/sensitive/diff passed.
+All behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated
+by user**. No compiler invocation needed for documentation. Inventory count
+refinement and transient transport recovery recorded; no unresolved static result.
+Generic skill multiset/push-recovery rules sufficed; no redundant skill edit.
+
+This single three-path docs-only delivery record closes the same increment.
+Resolve its full SHA from Git and verify exact feature..closure push/fresh fetch/
+Vault note/index/MOC before reporting; do not create a self-reference closure.
+Future queue refreshed without starting another item: no other defined local
+ready increment; R90-75 full independent departmental contract remains outstanding
+within the Oct 4–Jan 1 forecast. Next trigger verifies this completed closure
+and audits fresh history/source/queue before selecting and persisting a separate
+eligible increment. Repair missing evidence only; do not repeat verified delivery.

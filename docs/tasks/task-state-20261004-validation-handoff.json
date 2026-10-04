@@ -3,20 +3,24 @@
   "timestamp": "2026-10-04",
   "branch": "main",
   "starting_remote_baseline": "cb49e6ebf56c2eb8895be4e4016a76e9a2d411ee",
-  "remote_baseline": "cb49e6ebf56c2eb8895be4e4016a76e9a2d411ee",
+  "remote_baseline": "d17a7fc4a7a29f1efad8d7e30cb9576e49b63d58",
   "risk_level": "Low",
-  "current_checkpoint": "documentation_static_review_complete_delivery_pending",
+  "current_checkpoint": "feature_delivery_verified_single_docs_closure",
   "completed": [
     "Fetched clean refs; verified prior exact Git/Vault ranges and phase note/index coverage",
     "176 unique prior roadmap pairs; authored regression inventory sourced from Git/test declarations",
     "Source-linked 29-repair handoff and development entrypoint completed",
     "38 distinct files/106 declarations (39/112 references)/8 package paths verified",
     "docs-check and static inventory/191 JSON/177 unique pairs/176 preserved Definitions/history/authority/links/fences/scope/sensitive/diff passed",
-    "425 Vault baseline Markdown hashes unchanged"
+    "425 Vault baseline Markdown hashes unchanged",
+    "Five-path documentation feature committed, non-force pushed and freshly fetched exact clean refs",
+    "SSH port-22 failure recovered via authenticated transient SSH-over-443 after confirming remote behind",
+    "Exact full-SHA feature Vault note/index/MOC verified",
+    "14 stable current notes reconciled; prior substantive prose/378 immutable iteration notes preserved",
+    "Identical feature replay preserves all 426 Markdown hashes",
+    "Acceptance mapped to exact declaration inventory and explicit departmental boundary review; no next increment started"
   ],
-  "in_progress": [
-    "Focused documentation delivery and exact Vault reconciliation"
-  ],
+  "in_progress": [],
   "validation": {
     "behavioral_tests": "not_run_user_delegated",
     "race_tests": "not_run_user_delegated",
@@ -25,7 +29,9 @@
     "knowledge_check": "not_run_user_delegated",
     "traffic_and_acceptance": "not_run_user_delegated",
     "static_review": "passed_exact_inventory_source_docs_json_roadmap_history_scope_sensitive_diff",
-    "docs_check": "passed"
+    "docs_check": "passed",
+    "feature_delivery": "verified_nonforce_push_fresh_fetch_clean_exact_five_paths",
+    "vault_feature": "verified_exact_note_index_moc_14_stable_378_immutable_426_replay_hashes"
   },
   "authority_boundaries": [
     "Documentation only; no testing, department messages, publication or private input",
@@ -37,14 +43,17 @@
   "deviations": [
     "Empty local ready queue restored with consolidated authored-regression handoff",
     "Active rolling forecast refreshed one day; no eligibility change",
-    "Inventory refined: shared test file yields 106 distinct declarations and 112 per-increment references, not 112 unique tests"
+    "Inventory refined: shared test file yields 106 distinct declarations and 112 per-increment references, not 112 unique tests",
+    "Initial SSH push port-22 failure recovered via authenticated transient SSH-over-443; configured remote unchanged"
   ],
-  "resume_instructions": "Finish only R90-173 documentation, static review, exact push/fetch/Vault and one optional delivery closure. Tests remain delegated.",
+  "resume_instructions": "R90-173 documentation feature delivered and exact Vault replay verified. This is its single docs-only closure: resolve full closure SHA from Git and verify current fetched origin/main/FETCH_HEAD plus exact feature..closure Vault note/index/MOC; repair only missing evidence, do not repeat verified delivery or create self-reference closure. Next trigger audits fresh source/history/queue before a separate eligible plan. No next local ready item; R90-75 independent full departmental contract outstanding. Tests remain delegated.",
   "todo": [],
   "next_increment": {
     "id": null,
-    "status": "audit_after_delivery",
-    "started": false
+    "status": "no_other_defined_local_ready_increment",
+    "started": false,
+    "departmental_acceptance": "R90-75 independent full contract outstanding",
+    "next_trigger": "Verify closure/Vault; audit fresh source/history/queue before separate eligible plan"
   },
   "audit": {
     "baseline": "cb49e6ebf56c2eb8895be4e4016a76e9a2d411ee",
@@ -58,5 +67,18 @@
     "test_functions": 106,
     "function_references": 112,
     "file_references": 39
+  },
+  "feature_commit": "d17a7fc4a7a29f1efad8d7e30cb9576e49b63d58",
+  "delivery": {
+    "feature_range": "cb49e6ebf56c2eb8895be4e4016a76e9a2d411ee..d17a7fc4a7a29f1efad8d7e30cb9576e49b63d58",
+    "feature_paths": 5,
+    "verified_remote": "d17a7fc4a7a29f1efad8d7e30cb9576e49b63d58",
+    "vault_note": "04-\u5f00\u53d1\u8fed\u4ee3\u8bb0\u5f55/2026-10-04-d17a7fc4a7-CI\u77e5\u8bc6\u540c\u6b65.md",
+    "stable_notes": 14,
+    "baseline_immutable_notes": 378,
+    "feature_snapshot_files": 426,
+    "feature_snapshot_json_sha256": "0e48b41806fc4d974ce875eb65070141cfcb7c2ad31537c2a17512c74cbfff9f",
+    "identical_feature_replay": "all Markdown hashes unchanged",
+    "closure": "Single docs-only delivery record of same increment; resolve Git SHA and verify exact feature..closure push/fetch/Vault before reporting; no self-reference closure"
   }
 }
