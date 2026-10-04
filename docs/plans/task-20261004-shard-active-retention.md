@@ -42,7 +42,7 @@ ambiguous compile/static/Git/Vault evidence, new authority or a second increment
 
 | Acceptance | Evidence |
 |---|---|
-| Startup retains expired active file | Real public Open of an old date-named active file with current durable alert, WAL/DELETE and primary/daily modes; same pathname inode/mode, independent encoded read-only full row observation and public List/Query/Count; ordinary expired sets still disappear. Writable initialization may mutate bytes, so no startup byte-preservation claim. |
+| Startup retains expired active file | Real public Open of an old date-named active file with current durable alert, WAL/DELETE and primary/daily modes (primary explicit Path; daily Dir/clock resolution then clock advancement); same pathname inode/mode, independent encoded read-only full row observation and public List/Query/Count; ordinary expired sets still disappear. Writable initialization may mutate bytes, so no startup byte-preservation claim. |
 | Direct cleanup preserves complete active set | Relative-dir/absolute-path, absolute-dir/relative-path, relative/dot, absolute/dot and identical control spellings at public Open/PruneExpiredShardFiles; WAL/DELETE, primary/daily; independent observers open before cleanup; active base/WAL/SHM exact bytes/modes/identity and directory membership, repeated zero count; ordinary expired sets removed with exact file count, cutoff/invalid-date retained. |
 | Cleanup remains useful elsewhere | Same basename in a different cleanup directory is removed; missing-directory, disabled and pre-canceled calls preserve artifacts; original Path/input and healthy state retained. Continued writes and close/reopen prove durable rows through public APIs and independent observation. |
 | Delivery is reviewable | Pinned Go 1.26.8 alert/API/pipeline/cmd compile-only, binaries unexecuted; exact source/pinned format/docs/JSON/full roadmap multisets/prior history/authority/links/fences/seven-path/sensitive/diff checks; non-force push/fresh refs/exact Vault stable reconciliation and replay. |
@@ -60,8 +60,8 @@ the unique existing sibling local Vault. Reconcile changed stable authority,
 preserve substantive topic prose and all immutable notes, replay identical
 range and compare Markdown hashes. Record verified facts in one three-path
 docs-only closure of the same increment and deliver/sync its exact second range.
-No self-reference closure. No other local ready item is defined; next trigger
-audits fresh evidence/source/queue before a separate plan. R90-75 remains the
+No self-reference closure. R90-179 is the planned separate fixture/evidence repair after verified R90-178
+delivery; next trigger audits fresh evidence/source/queue before a separate plan. R90-75 remains the
 sole other unfinished increment with its full departmental evidence contract.
 
 
@@ -94,3 +94,54 @@ user**. Compilation/static review establishes no deletion, artifact preservation
 durability, race, HTTP or SLO pass. No scope or acceptance deviation; R90-75 full
 independent departmental acceptance remains outstanding. Feature delivery is
 pending; no next increment started.
+
+
+## Direct-boundary Correction (2026-10-04)
+
+After feature push and first Vault reconciliation, closeout inspection of
+resolveDBPath proved DailyShard ignores Options.Path and derives the filename
+from Dir/Now. The initial daily fixtures therefore did not reach their claimed
+expired active-file boundary or original-Path assertions. No behavioral pass
+was claimed. Keep delivery unresolved until the fixtures and current prose are
+corrected, the complete compile/static chain reruns and this corrective range
+is pushed/fetched/synchronized. The thirteen-line runtime repair is unchanged.
+
+Corrected daily startup uses the public clock: first Now selects Sep 1 for the
+active pathname; subsequent calls advance to Oct 4 before startup retention.
+Direct cleanup supplies relative/absolute/dot aliases independently of Dir;
+expected Path is explicitly derived from Dir and the first date. Reopen resets
+that initial path clock. Primary fixtures still pass their original Path forms.
+There are twenty main fixtures, with no fixed sleeps or private-state seams.
+
+R90-177 has the same source-proven fixture assumption in its daily declarations;
+record R90-179 as a separate ready repair of those assertions/coverage. Do not
+edit its test files or execute them in R90-178. This is a material direct-boundary
+audit deviation, not a runtime failure. One corrective six-path commit closes
+the implementation/evidence correction within R90-178; its single docs-only
+closure still follows all verified feature/corrective ranges. No other increment
+starts. Behavioral and knowledge execution remain delegated.
+
+
+## Corrected Compile and Static Checkpoint (2026-10-04)
+
+All twenty main fixtures now respect resolveDBPath: primary Path is honored;
+daily Path is ignored, the first public Now/Dir selects Sep 1 and later clock
+calls advance to Oct 4 for startup cleanup. Expected daily Path is derived
+explicitly; direct cleanup receives independent directory aliases and reopen
+resets the path clock. The long-lived regression also uses generated startup
+Path then advances time before direct cleanup and separate row TTL. No private
+state or sleep seam. Prior R90-177 source/fixtures remain unchanged; R90-179 is
+planned to reconcile their unavailable Path-based daily alias claim and public
+compatibility coverage, with a full bounded contract.
+
+Complete pinned Go 1.26.8 alert/API/pipeline/cmd compile-only rerun passed after
+correction; binaries unexecuted. Full static exact source/format/docs/196 JSON/
+183 unique roadmap pairs/preserved prior history/R90-75 contract/frozen handoff/
+links/fences/cumulative seven-path scope/sensitive/diff passed. The runtime
+source remains the original thirteen-line repair. Initial feature exact range
+was replayed and all 436 current Markdown hashes were unchanged; prior stable
+prose/iteration records remain historical evidence until current correction
+reconciliation. Corrective commit contains six changed paths within the original
+seven-path scope. No behavioral/race/full/scanner/knowledge/traffic/acceptance
+execution; delegated by user. This direct-boundary deviation requires corrective
+delivery before completion. No next increment started.

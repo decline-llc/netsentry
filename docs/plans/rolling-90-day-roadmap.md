@@ -267,6 +267,7 @@ formal SLO and evidence contract is unchanged.
 
 | R90-177 | Oct 4–Jan 1 | Complete implementation; tests delegated | Deduplicate lexical aliases of the active daily shard. | R90-176 verified feature/closure; existing daily discovery | Relative/absolute/dot path aliases count active rows once; preserve current live handle, historical reads, filtering/pagination and original Path; public storage/HTTP regressions authored, execution delegated. |
 | R90-178 | Oct 4–Jan 1 | In progress; tests delegated | Preserve the active database during expired daily-file cleanup. | R90-177 verified feature/closure; existing retention cleanup | Startup and direct cleanup retain the active lexical pathname and WAL/SHM; other expired sets and row TTL preserve their contracts; direct public declarations authored, execution delegated. |
+| R90-179 | Oct 4–Jan 1 | Planned | Correct active-shard alias fixtures to the public daily path contract. | R90-178 verified delivery; source-proven R90-177 fixture deviation | Daily Dir/clock-derived Path and ignored Options.Path are represented honestly; public storage/HTTP declarations cover reachable paths/counts, and unsupported alias reproduction claims are reconciled; execution delegated. |
 
 ## R90-01 Definition
 
@@ -11618,3 +11619,71 @@ user**. Compilation/static review establishes no deletion, artifact preservation
 durability, race, HTTP or SLO pass. No scope or acceptance deviation; R90-75 full
 independent departmental acceptance remains outstanding. Feature delivery is
 pending; no next increment started.
+
+
+## R90-178 Direct-boundary Correction (2026-10-04)
+
+After feature `7678017be9328396d274db5e854a43c9cc7938d4` push/fresh fetch and
+first Vault reconciliation, closeout source review found DailyShard ignores
+Options.Path and derives its pathname from Dir/Now. Initial daily fixtures did
+not reach the promised active expired-file boundary. No behavioral pass was
+claimed. Delivery remains unresolved until corrected fixtures, full compile/
+static rerun and corrective exact Git/Vault range are verified. The thirteen-line
+runtime repair is unchanged. Corrected daily startup selects Sep 1 on its first
+public clock call and advances to Oct 4 for retention; independent directory
+aliases reach direct cleanup and expected Path derives from Dir/Sep 1. Primary
+Path fixtures retain their original spellings. Reopen resets the path clock.
+
+R90-177 declarations have the same source-proven assumption. Its claimed
+Options.Path-driven daily alias reproduction is unavailable through current
+public startup. Define R90-179 below as a separate fixture/evidence repair;
+do not edit those earlier files in this increment. Current correction uses six
+paths within the original seven-path scope, one corrective commit and exact
+range sync, followed by the same single docs-only closure. The first feature
+is historical evidence; active delivery authority will use the final freshly
+fetched boundary. R90-75 remains unchanged; no next increment started.
+
+## R90-179 Definition
+
+- **Goal:** correct R90-177 public fixtures and evidence to actual daily startup.
+- **Dependency:** R90-178 verified delivery and source-proven fixture audit.
+- **Window:** Oct 4–Jan 1; forecast only.
+- **Risk:** low; test/documentation correction, runtime implementation unchanged.
+- **Acceptance:** public daily fixtures derive Path from Dir/Now and assert
+  Options.Path is ignored; relative/absolute/dot directory spellings cover actual
+  storage/HTTP rows/counts/filters/pages/artifacts. Clearly distinguish reachable
+  compatibility coverage from unavailable Path-versus-Dir alias reproduction;
+  correct current claims while preserving immutable historical evidence.
+- **Required validation:** inspect resolveDBPath and actual public fixture forms;
+  pinned Go compile-only for owning storage/API and consumers; format/docs/JSON/
+  full roadmap multisets/frozen inventory/links/fences/scope/sensitive/diff;
+  verified non-force push/fetch/exact Vault stable reconciliation/replay.
+  Behavioral/race/full/scanner/knowledge/traffic/acceptance not run; delegated by user.
+- **Stop condition:** new runtime/product/compatibility authority, ambiguous static/
+  compile/Git/Vault evidence, competing edits, private input or another increment.
+- **Selection:** planned until R90-178 delivery completes; no work started.
+
+
+## R90-178 Corrected Compile and Static Checkpoint (2026-10-04)
+
+All twenty main fixtures now respect resolveDBPath: primary Path is honored;
+daily Path is ignored, the first public Now/Dir selects Sep 1 and later clock
+calls advance to Oct 4 for startup cleanup. Expected daily Path is derived
+explicitly; direct cleanup receives independent directory aliases and reopen
+resets the path clock. The long-lived regression also uses generated startup
+Path then advances time before direct cleanup and separate row TTL. No private
+state or sleep seam. Prior R90-177 source/fixtures remain unchanged; R90-179 is
+planned to reconcile their unavailable Path-based daily alias claim and public
+compatibility coverage, with a full bounded contract.
+
+Complete pinned Go 1.26.8 alert/API/pipeline/cmd compile-only rerun passed after
+correction; binaries unexecuted. Full static exact source/format/docs/196 JSON/
+183 unique roadmap pairs/preserved prior history/R90-75 contract/frozen handoff/
+links/fences/cumulative seven-path scope/sensitive/diff passed. The runtime
+source remains the original thirteen-line repair. Initial feature exact range
+was replayed and all 436 current Markdown hashes were unchanged; prior stable
+prose/iteration records remain historical evidence until current correction
+reconciliation. Corrective commit contains six changed paths within the original
+seven-path scope. No behavioral/race/full/scanner/knowledge/traffic/acceptance
+execution; delegated by user. This direct-boundary deviation requires corrective
+delivery before completion. No next increment started.

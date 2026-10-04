@@ -547,7 +547,9 @@ Current build:
   from daily-file cleanup, retaining its base, WAL and SHM even when its valid
   filename predates the retention cutoff. This applies at startup and explicit
   cleanup in both primary and daily modes, including relative/absolute/dot
-  spellings. Other expired sets still remove with the existing artifact count;
+  spellings. Primary mode honors Options.Path; daily mode derives the active
+  filename from Dir and the initial Now value, ignoring Options.Path. Direct
+  cleanup can independently supply an alias of that directory. Other expired sets still remove with the existing artifact count;
   row TTL pruning in the open database remains separate. A same basename in
   another cleanup directory is eligible. This does not resolve symlinks or
   hardlinks or coordinate other stores. Public WAL/DELETE startup, direct,

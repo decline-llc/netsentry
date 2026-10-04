@@ -3,9 +3,9 @@
   "timestamp": "2026-10-04",
   "branch": "main",
   "starting_remote_baseline": "398f91bf8d387bfc84a2c92af7c0cec76edf1c49",
-  "remote_baseline": "398f91bf8d387bfc84a2c92af7c0cec76edf1c49",
+  "remote_baseline": "7678017be9328396d274db5e854a43c9cc7938d4",
   "risk_level": "Low",
-  "current_checkpoint": "compile_static_complete_pending_feature_delivery",
+  "current_checkpoint": "corrected_compile_static_complete_pending_corrective_delivery",
   "completed": [
     "Fresh fetched clean baseline and R90-177 exact feature/closure Git/Vault verified",
     "Four-week phase history, full roadmap multisets, fourteen stable authority notes and sole unfinished R90-75 audited",
@@ -15,15 +15,20 @@
     "Three direct public declarations authored: twenty main startup/direct fixtures, long-lived clock/row TTL, guards/other-directory",
     "Pinned Go 1.26.8 complete alert/API/pipeline/cmd compile-only passed; test binaries unexecuted",
     "Complete source/format/docs/196 JSON/182 unique pairs/prior history/authority/handoff/links/fences/seven-path/sensitive/diff static review passed",
-    "All 435 baseline Vault hashes unchanged"
+    "All 435 baseline Vault hashes unchanged",
+    "Initial seven-path feature non-force pushed and freshly fetched; exact note/index/bounded MOC and fourteen stable notes reconciled",
+    "Initial feature identical range replay preserves all 436 Markdown hashes",
+    "Closeout found actual daily Dir/clock contract; twenty main fixtures corrected without runtime-source changes",
+    "Corrected complete pinned four-package compile-only and 196 JSON/183 unique pairs/full static review passed",
+    "R90-179 complete bounded fixture/evidence contract planned; no next increment started"
   ],
   "in_progress": [
-    "Feature commit/push/fetch/Vault delivery"
+    "Corrective six-path commit/push/fetch/Vault"
   ],
   "validation": {
     "behavioral_race_full_scanner_knowledge_traffic_acceptance": "not run; delegated by user",
-    "compile_only": "pass: Go 1.26.8 alert/API/pipeline/cmd; binaries unexecuted",
-    "static": "pass: exact source/format/docs/JSON/roadmap multisets/prior history/authority/handoff/links/fences/scope/sensitive/diff"
+    "compile_only": "pass after correction: Go 1.26.8 alert/API/pipeline/cmd; binaries unexecuted",
+    "static": "pass after correction: exact source/format/docs/JSON/183 roadmap multisets/prior history/authority/handoff/links/fences/scope/sensitive/diff"
   },
   "authority_boundaries": [
     "Exactly one increment; standing departmental test delegation",
@@ -35,11 +40,12 @@
   ],
   "deviations": [
     "Empty ready queue restored from source-supported active-database removal risk",
-    "Temporary static-harness generation syntax failure; no validation performed by failed harness; literal script corrected and full static chain passed"
+    "Temporary static-harness generation syntax failure; no validation performed by failed harness; literal script corrected and full static chain passed",
+    "Post-push source boundary audit found daily mode ignores Options.Path; initial daily fixture assertions were invalid. Corrected within same increment; no behavioral passes claimed. Prior R90-177 fixture debt queued separately as R90-179."
   ],
-  "resume_instructions": "Continue only R90-178 from persisted plan; do not start another increment. Compile/static evidence required before commit; execution remains delegated. Verify fresh Git/Vault at delivery.",
+  "resume_instructions": "Complete only R90-178 corrective delivery and single closure; prior initial feature is verified historical evidence. R90-179 is separately planned and unstarted. Tests remain delegated; R90-75 full acceptance remains outstanding.",
   "todo": [
-    "Feature commit/push/fetch/Vault",
+    "Corrective commit/push/fetch/Vault",
     "Single docs-only delivery closure"
   ],
   "audit": {
@@ -51,9 +57,10 @@
     "stable_notes": 14
   },
   "next_increment": {
-    "id": null,
-    "status": "no_other_defined_local_ready_increment",
+    "id": "R90-179",
+    "status": "planned_until_R90_178_delivery",
     "started": false,
     "departmental_acceptance": "R90-75 outstanding"
-  }
+  },
+  "feature_commit": "7678017be9328396d274db5e854a43c9cc7938d4"
 }

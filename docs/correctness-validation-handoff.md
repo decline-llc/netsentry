@@ -600,8 +600,12 @@ This supplement preserves the original frozen inventory and prior follow-ups.
 - `TestActiveShardCleanupGuardsAndOtherDirectory`
 
 Review twenty public startup/direct fixtures spanning WAL/DELETE, primary/daily
-and five identical/relative/absolute/dot pathname spellings. The expired active
-filename contains a current durable alert. Startup asserts base inode/mode/Path
+and five identical/relative/absolute/dot pathname spellings. Primary mode passes
+Options.Path directly. Daily mode ignores Path: the first public Now call chooses
+Sep 1, later clock calls return Oct 4 before startup retention; expected Path is
+derived from Dir/Sep 1 and direct cleanup supplies its own directory alias.
+Reopen resets this initial path clock. The expired active filename contains a
+current durable alert. Startup asserts base inode/mode/Path
 and all alerts/events columns through an independently encoded read-only handle;
 ordinary expired controls disappear while cutoff and invalid-calendar controls
 retain bytes/modes. Writable initialization does not promise byte preservation.
@@ -625,3 +629,9 @@ is no deletion, preservation, durability, race or SLO acceptance result. Execute
 under the department's existing authority, retain exact SHA/commands/logs/skips/
 failures, and compare every asserted boundary with the plan. R90-75 independent
 full acceptance and publication boundaries are unchanged.
+
+Closeout source review caught the original daily Options.Path assumption after
+its first feature push; corrected declarations must be reviewed at the final
+checkout. R90-177's earlier daily alias fixtures share that source-proven
+assumption and remain separate R90-179 repair debt. They do not establish the
+original claimed direct boundary. No executed test result was changed.

@@ -122,8 +122,19 @@ func TestExpiredActiveShardSurvivesStartupAndLexicalCleanup(t *testing.T) {
 					if err != nil {
 						t.Fatal(err)
 					}
+					// Daily mode resolves its initial path from Dir/Now and ignores
+					// Path. Advance the injected clock after that resolution so
+					// startup cleanup sees an expired, genuinely active daily file.
+					pathClock := true
 					opts := alert.Options{Path: active, Dir: dir, DailyShard: daily, JournalMode: mode,
-						RetentionDays: 7, Now: func() time.Time { return now }}
+						RetentionDays: 7, Now: func() time.Time {
+							if daily && pathClock {
+								pathClock = false
+								return time.Date(2026, 9, 1, 12, 0, 0, 0, time.UTC)
+							}
+							return now
+						}}
+					cleanupDir := dir
 					switch spelling {
 					case "relative_dir":
 						opts.Dir = relDir
@@ -134,13 +145,31 @@ func TestExpiredActiveShardSurvivesStartupAndLexicalCleanup(t *testing.T) {
 					case "absolute_dot":
 						opts.Path = dir + "/./" + filepath.Base(active)
 					}
+					if daily {
+						switch spelling {
+						case "relative_dir":
+							opts.Dir, cleanupDir = dir, relDir
+						case "relative_path":
+							opts.Dir, cleanupDir = relDir, dir
+						case "both_relative_dot":
+							opts.Dir, cleanupDir = relDir, "./"+relDir+"/./"
+						case "absolute_dot":
+							cleanupDir = dir + "/./"
+						}
+					} else {
+						cleanupDir = opts.Dir
+					}
+					expectedPath := opts.Path
+					if daily {
+						expectedPath = filepath.Join(opts.Dir, filepath.Base(active))
+					}
 					store, err := alert.Open(ctx, opts)
 					if err != nil {
 						t.Fatal(err)
 					}
 					t.Cleanup(func() { _ = store.Close() })
 					info, err := os.Stat(active)
-					if err != nil || !os.SameFile(initialInfo, info) || initialInfo.Mode() != info.Mode() || store.Path() != opts.Path {
+					if err != nil || !os.SameFile(initialInfo, info) || initialInfo.Mode() != info.Mode() || store.Path() != expectedPath {
 						t.Fatalf("startup active identity/path changed: info=%v error=%v Path=%q", info, err, store.Path())
 					}
 					for _, path := range removedAtStartup {
@@ -190,7 +219,7 @@ func TestExpiredActiveShardSurvivesStartupAndLexicalCleanup(t *testing.T) {
 					}
 					removed := activeRetentionSet(t, dir, "netsentry-2026-09-03.db")
 					for repeat := 0; repeat < 2; repeat++ {
-						deleted, err := store.PruneExpiredShardFiles(ctx, opts.Dir)
+						deleted, err := store.PruneExpiredShardFiles(ctx, cleanupDir)
 						wantDeleted := 3
 						if repeat > 0 {
 							wantDeleted = 0
@@ -217,11 +246,11 @@ func TestExpiredActiveShardSurvivesStartupAndLexicalCleanup(t *testing.T) {
 							}
 						}
 					}
-					if *input[0] != original || store.Path() != opts.Path || store.Health().Status != "ok" {
+					if *input[0] != original || store.Path() != expectedPath || store.Health().Status != "ok" {
 						t.Fatal("caller input, original Path or health changed")
 					}
 					// Primary writes still target the protected pathname; daily writes
-					// route to today's separate shard while retaining the explicit active file.
+					// route to today's separate shard while retaining the clock-chosen active file.
 					next := shardAliasAlert(now.Add(time.Minute), "continued")
 					nextBefore := *next
 					if err := store.WriteBatch(ctx, []*model.Alert{next}); err != nil {
@@ -247,6 +276,7 @@ func TestExpiredActiveShardSurvivesStartupAndLexicalCleanup(t *testing.T) {
 					if err := store.Close(); err != nil {
 						t.Fatal(err)
 					}
+					pathClock = true // Reopen the same daily pathname through its public clock.
 					store, err = alert.Open(ctx, opts)
 					if err != nil {
 						t.Fatal(err)
