@@ -357,6 +357,15 @@ for departmental execution; static/compile-only review is no runtime or SLO pass
 Current build:
 
 - SQLite using `modernc.org/sqlite`.
+- R90-166 checks `ctx.Err()` at `Store.Open` entry. An already-canceled or
+  already-expired context returns its unchanged context error and nil Store
+  before option validation, path resolution, recovery reads, directory creation
+  or database initialization. This context error takes precedence over existing
+  option/filesystem/recovery diagnostics; live-context startup stays unchanged.
+  Public regressions cover absent/healthy/corrupt/artifact/recovery/occupied-parent
+  preservation under ordinary and encoded paths, policy-error precedence and live
+  write/read controls. Assertions are authored and compiled only; execution is
+  delegated. No active-startup cancellation or nil-context guarantee is added.
 - UPSERT aggregation by `(rule_id, src_ip, dst_ip, dst_port, window_start)`.
 - Fixed aggregation window from `engine.alert_aggregation_window`.
 - R90-160 validates `engine.alert_aggregation_window` and

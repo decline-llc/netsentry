@@ -243,6 +243,8 @@ formal SLO and evidence contract is unchanged.
 | R90-163 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject enabled suppressions with no compiled prefixes. | R90-162 verified feature/closure; existing suppression manager contract | Empty-only prefix lists reject before filter publication/persistence; disabled and mixed empty/valid behavior retained; public constructor and file-backed mutation/reload regressions authored, execution delegated. |
 | R90-164 | Oct 3–Dec 31 | Complete implementation; tests delegated | Redact JSON credential values cut at preview end. | R90-163 verified feature/closure; existing 200-byte preview/redaction boundary | Open quoted password/token values redact visible suffix through preview end; complete-value behavior retained; direct scalar/batch and real Engine/Worker regressions authored, execution delegated. |
 | R90-165 | Oct 3–Dec 31 | Complete implementation; tests delegated | Preserve malformed legacy rule decode failures. | R90-164 verified feature/closure; existing rule loader/API reload contract | Original wrapped decoder type errors cannot disappear through weaker fallback or reach null-entry defaults; valid formats/defaults retained; direct public loader and real-engine HTTP reload regressions authored, execution delegated. |
+| R90-166 | Oct 3–Dec 31 | Ready; selected implementation | Reject already-canceled store startup before side effects. | R90-165 verified feature/closure; existing Store.Open contract | Exact context error and nil Store before options/recovery/filesystem; preservation/precedence/live controls authored, execution delegated. |
+
 
 ## R90-01 Definition
 
@@ -3813,6 +3815,17 @@ formal SLO and evidence contract is unchanged.
 - **Acceptance:** original-error capture/return guard only; 48 public loader wrong-field/kind/config/null-prefix cases preserve files/snapshot and diagnostic; positive wrapped/array legacy/canonical/default/empty/null/unknown-field controls; six actual HTTP reload rejection/preservation/valid retry cases use real Engine; seven-path feature/one closure exact Git/Vault.
 - **Required validation:** pinned Go 1.26.8 rule/API/CLI/pipeline compile-only; static source/format/docs/183 JSON/169 unique roadmap pairs/prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/sensitive. All execution **not run; delegated by user**.
 - **Non-goals:** unknown/duplicate/missing/null container policy/lone-null load rejection/MITRE catalog/default/config precedence/load-save semantic validation/API status/auth/serialization/replacement/suites/private inputs/IPv6/publication; no runtime/file/API/race/SLO pass.
+- **Stop condition:** competing edits, ambiguous static/compile/Git/Vault or new product/private/external authority; next increment requires another trigger.
+
+
+## R90-166 Definition
+
+- **Goal/status:** selected implementation; reject an already-done context at Store.Open entry before side effects.
+- **Dependencies/window:** verified R90-165 feature/closure; existing store startup contract; Oct 3–Dec 31 forecast, dates not gates.
+- **Risk:** low; context error now precedes existing option/filesystem/recovery diagnostics for already-done callers; live startup unchanged.
+- **Acceptance:** three-line entry guard only; twenty public canceled/expired ordinary/space-path absent/healthy/corrupt-artifact/malformed-recovery/file-parent preservation cases, read-only observer before rejection, exact sentinel/nil Store/full tree bytes/modes; two durable-policy precedence and four live create/write/read controls; six-path feature/one closure exact Git/Vault.
+- **Required validation:** pinned Go 1.26.8 alert/API/CLI/pipeline compile-only; static source/format/docs/184 JSON/170 unique roadmap pairs/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive. All execution **not run; delegated by user**.
+- **Non-goals:** active-startup cancellation/nil-context support/new option policy/recovery or SQLite/lifecycle/retention/driver/API algorithms/suites/private inputs/IPv6/publication; no filesystem/SQLite/runtime/race/SLO pass.
 - **Stop condition:** competing edits, ambiguous static/compile/Git/Vault or new product/private/external authority; next increment requires another trigger.
 
 
@@ -10098,3 +10111,53 @@ local ready increment. R90-75 remains independent asynchronous departmental
 acceptance with its full contract and Oct 3–Dec 31 horizon unchanged. Next trigger
 verifies fetched closure/Vault, audits fresh code/queue and persists a separate
 eligible plan before edits. No next increment started.
+
+
+## R90-166 Selection and Store Startup Cancellation (2026-10-03)
+
+Clean freshly fetched main `6bf857cdef5490167df4ad658af2a483631a9654`;
+R90-165 seven-path feature/three-path closure exact Git/Vault verified. Sep 5–Oct 3
+111-commit phase audit covers SLO tooling, patched release/toolchain and core
+correctness; no new qualifying R90-75 evidence or missing delivery. All 169 prior
+unique roadmap pairs and Definitions intact; R90-75 independent full contract
+and Oct 3–Dec 31 horizon unchanged. No AGENTS or pre-existing edits; engine
+Go 1.26.8 preflight. 411 Vault Markdown hashes/fourteen stable backups captured.
+
+Empty local queue restored from source-grounded Store.Open entry gap: recovery
+reads and directory creation precede any cancellation check. Six-path plan/state
+persisted before runtime/other docs. Add ctx.Err entry guard only; exact canceled/
+expired error precedes option/filesystem/recovery diagnostics, live startup intact.
+Direct public preservation/precedence/live controls authored and compiled only;
+all execution delegated. Existing skill rules cover these boundaries, no redundant
+update. Exactly one increment; no next increment started.
+
+
+## R90-166 Implementation and Static/Compile Checkpoint (2026-10-03)
+
+Three-line ctx.Err guard at public Open entry only; all other 72 tracked engine
+paths unchanged. Already-canceled and already-expired callers return unchanged
+context sentinel/nil Store before option validation, path resolution, recovery
+reads, directory creation or DB initialization; live startup code remains intact.
+No active-cancellation or nil-context guarantee is introduced.
+
+Three public external regression functions are authored: twenty cases span two
+cancellation causes/two directory shapes/five fixtures (absent nested target,
+healthy populated DB, corrupt DB/WAL/SHM/recovery artifacts, malformed recovery
+with absent DB, regular-file parent occupant). Exact sentinel/errors.Is/nil Store
+and complete tree membership/file bytes/modes are asserted. Healthy DB uses DELETE
+journal mode during seeding, then an independent URI-encoded mode=ro observer
+queries before snapshot/rejection and reuses that handle afterward, without a
+writable reopen. Two invalid durable-mode controls assert cancellation precedes
+policy validation and preserve the tree. Four background/live-cancelable controls
+create real stores, WriteBatch/List/Count one fixture row, Close and verify one
+row through read-only observation. No private fields/fake drivers/sleeps/skips/
+panic swallowing; all assertions authored and compiled only, not executed.
+
+Pinned owning Go 1.26.8 alert/API/CLI/pipeline complete compile-only chain passed;
+binaries unexecuted. Static exact source/72 other engine paths/format/docs/184
+JSON/170 complete unique roadmap pairs/169 prior Definitions/R90-75/history/
+horizon/links/fences/six paths/diff/sensitive review passed before staging.
+Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution
+**not run; delegated by user**. No filesystem/SQLite/runtime/race/SLO pass inferred.
+Existing skill instructions cover entry cancellation/read-only preservation/URI
+encoding; no redundant skill update. Feature/single closure remain; no next work.

@@ -232,6 +232,9 @@ type Query struct {
 
 // Open creates the SQLite database and initializes its schema.
 func Open(ctx context.Context, opts Options) (*Store, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	if opts.JournalMode == "" {
 		opts.JournalMode = "WAL"
 	}

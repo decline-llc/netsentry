@@ -1,0 +1,56 @@
+{
+  "task": "r90-166-store-open-cancellation",
+  "timestamp": "2026-10-03",
+  "branch": "main",
+  "implementation_branch": "fix/r90-166-store-open-cancellation",
+  "remote_baseline": "6bf857cdef5490167df4ad658af2a483631a9654",
+  "starting_remote_baseline": "6bf857cdef5490167df4ad658af2a483631a9654",
+  "risk_level": "Low",
+  "current_checkpoint": "compile_static_passed_ready_for_feature_delivery",
+  "completed": [
+    "Clean fetched main; exact R90-165 feature/closure Git/Vault verified",
+    "111-commit phase audit; 169 unique roadmap pairs; R90-75 full contract/horizon unchanged",
+    "411 Vault Markdown hashes/fourteen stable backups; engine Go 1.26.8 preflight",
+    "Source-grounded already-canceled Open entry guard selected; six-path plan persisted",
+    "Three-line Store.Open entry guard; three public preservation/precedence/live regressions authored",
+    "Pinned owning Go 1.26.8 alert/API/CLI/pipeline compile-only chain passed; binaries unexecuted",
+    "Static exact source/72 other engine paths/format/docs/184 JSON/170 unique roadmap pairs/169 prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive passed"
+  ],
+  "in_progress": [
+    "Feature commit/push/fresh fetch/exact Vault reconciliation"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "passed_go1.26.8_alert_api_cli_pipeline_binaries_unexecuted",
+    "static_review": "passed_exact_source_direct_boundaries_72_other_paths_docs_184_json_170_pairs_history_scope_sensitive"
+  },
+  "authority_boundaries": [
+    "Only cancellation already present at Store.Open entry; context error precedes options/filesystem/recovery",
+    "Live contexts/active cancellation/nil context/SQLite/lifecycle algorithms unchanged",
+    "All execution delegated; one feature/closure; no publication"
+  ],
+  "remaining_risks": [
+    "Already-canceled callers now receive context error before other diagnostics",
+    "Regressions remain authored/compiled only"
+  ],
+  "deviations": [
+    "Empty local ready queue restored within source-grounded store startup guard"
+  ],
+  "resume_instructions": "Complete only R90-166; prior R90-165 delivery is verified. Preserve delegated execution and independent R90-75 contract; verify feature/single closure Git/Vault before future work.",
+  "todo": [
+    "Feature push/fetch/Vault",
+    "Single docs-only closure"
+  ],
+  "next_increment": {
+    "id": null,
+    "status": "no_other_defined_local_ready_increment",
+    "started": false,
+    "departmental_acceptance": "R90-75 independent asynchronous full contract unchanged"
+  }
+}
