@@ -193,14 +193,19 @@ func parseRules(data []byte) ([]*model.Rule, error) {
 	var wrapped struct {
 		Rules []rawRule `json:"rules"`
 	}
-	if err := json.Unmarshal(data, &wrapped); err == nil && wrapped.Rules != nil {
+	wrappedErr := json.Unmarshal(data, &wrapped)
+	if wrappedErr == nil && wrapped.Rules != nil {
 		return normalizeRules(wrapped.Rules), nil
 	}
 
 	var list []rawRule
 	if err := json.Unmarshal(data, &list); err != nil {
 		var rf rulesFile
-		if wrappedErr := json.Unmarshal(data, &rf); wrappedErr == nil {
+		if fallbackErr := json.Unmarshal(data, &rf); fallbackErr == nil {
+			// The simpler model decoder must not hide malformed legacy fields.
+			if wrappedErr != nil {
+				return nil, wrappedErr
+			}
 			return rf.Rules, nil
 		}
 		return nil, err

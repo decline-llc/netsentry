@@ -242,6 +242,7 @@ formal SLO and evidence contract is unchanged.
 | R90-162 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject IP blacklists with no compiled addresses. | R90-161; existing rule validation/snapshot contract | Blank-only address lists reject before publication; valid mixed entries and filters retain behavior; direct public regressions authored, execution delegated. |
 | R90-163 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject enabled suppressions with no compiled prefixes. | R90-162 verified feature/closure; existing suppression manager contract | Empty-only prefix lists reject before filter publication/persistence; disabled and mixed empty/valid behavior retained; public constructor and file-backed mutation/reload regressions authored, execution delegated. |
 | R90-164 | Oct 3–Dec 31 | Complete implementation; tests delegated | Redact JSON credential values cut at preview end. | R90-163 verified feature/closure; existing 200-byte preview/redaction boundary | Open quoted password/token values redact visible suffix through preview end; complete-value behavior retained; direct scalar/batch and real Engine/Worker regressions authored, execution delegated. |
+| R90-165 | Oct 3–Dec 31 | Ready | Preserve malformed legacy rule decode failures. | R90-164 verified feature/closure; existing rule loader/API reload contract | Original wrapped decoder type errors cannot disappear through weaker fallback or reach null-entry defaults; valid formats/defaults retained; direct public loader and real-engine HTTP reload regressions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -3802,6 +3803,17 @@ formal SLO and evidence contract is unchanged.
 - **Required validation:** pinned Go 1.26.8 alert/pipeline/API compile-only; static source/direct boundaries/format/docs/JSON/complete unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/paths/diff/sensitive. All execution **not run; delegated by user**.
 - **Non-goals:** key decoding/new sensitive fields/whole JSON/multiline malformed policy/RawPayload/cap change/matching/storage/API/pipeline runtime/dependencies/toolchain/suites/private inputs/IPv6/publication; no runtime/privacy/SLO pass.
 - **Stop condition:** competing edits, ambiguous static/compile/Git/Vault or new product/private/external authority; next increment needs another trigger.
+
+
+## R90-165 Definition
+
+- **Goal/status:** ready; reject successful weaker model fallback after original wrapped legacy decode error.
+- **Dependencies/window:** verified R90-164 feature/closure; existing rule loader/API reload contract; Oct 3–Dec 31 forecast, dates not gates.
+- **Risk:** low; malformed recognized legacy fields previously ignored now reject at load; valid normalization/tolerant container semantics unchanged.
+- **Acceptance:** original-error capture/return guard only; 48 public loader wrong-field/kind/config/null-prefix cases preserve files/snapshot and diagnostic; positive wrapped/array legacy/canonical/default/empty/null/unknown-field controls; six actual HTTP reload rejection/preservation/valid retry cases use real Engine; seven-path feature/one closure exact Git/Vault.
+- **Required validation:** pinned Go 1.26.8 rule/API/CLI/pipeline compile-only; static source/format/docs/183 JSON/169 unique roadmap pairs/prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/sensitive. All execution **not run; delegated by user**.
+- **Non-goals:** unknown/duplicate/missing/null container policy/lone-null load rejection/MITRE catalog/default/config precedence/load-save semantic validation/API status/auth/serialization/replacement/suites/private inputs/IPv6/publication; no runtime/file/API/race/SLO pass.
+- **Stop condition:** competing edits, ambiguous static/compile/Git/Vault or new product/private/external authority; next increment requires another trigger.
 
 
 ### R90-71 Validation Deviation
@@ -9980,3 +9992,60 @@ local ready increment. R90-75 remains independent asynchronous departmental
 acceptance with its full contract and Oct 3–Dec 31 horizon unchanged. Next trigger
 verifies fetched closure/Vault, audits fresh code/queue and persists a separate
 eligible plan before edits. No next increment started.
+
+
+## R90-165 Selection and Legacy Rule Decoder Failure Preservation (2026-10-03)
+
+Fresh fetched clean main `6f974967581efbfd571d53076a204a9a1ecfead6`; prior
+R90-164 seven-path feature/three-path closure exact Git/Vault verified. 109-commit
+Sep 5–Oct 3 phase audit spans SLO tooling, patched release/toolchain and core
+correctness; no new qualifying R90-75 evidence or missing delivery. 168 original
+unique roadmap pairs; sole unfinished R90-75 independent contract and Oct 3–Dec 31
+horizon unchanged. No AGENTS or pre-existing edits; engine Go 1.26.8 available.
+409 Vault Markdown hashes and fourteen full stable backups captured.
+
+Empty local queue restored from decoder fallback gap: rawRule rejects malformed
+legacy MITRE strings but rulesFile/model.Rule may ignore them and publish or
+return a null entry to defaults. Seven-path plan/state persisted before source/
+other docs. Capture and return original error before successful weaker fallback;
+keep valid normalization/default/empty/null container policy. Public loader and
+actual HTTP reload/real Engine regressions will be authored/compiled only; all
+execution delegated. No next increment started.
+
+
+## R90-165 Implementation and Static/Compile Checkpoint (2026-10-03)
+
+Runtime changes only first wrapped-error capture and a return guard with comment
+inside successful simpler-model fallback. The fallback error has a distinct name
+so it cannot shadow the retained original error. All other 70 tracked engine paths
+unchanged. Valid normalization/defaults and permissive empty/null/unknown-field
+parsing remain; no loader/save semantic validation or API runtime/status change.
+
+Three public loader regression functions are authored: 48 wrong legacy-field/
+JSON-kind/config/null-prefix cases assert original json.UnmarshalTypeError field,
+string target/kind, nil result and full file-byte preservation; prior real Engine
+Rules/RuleCount/Match retained. Four positive canonical/legacy wrapped/array cases
+check default priority, entire normalized tuple, actual matching and original
+bytes. Six empty-container shapes assert exact nil/non-nil forms, two lone-null
+cases retain default normalization/downstream id diagnostic, three malformed
+syntax cases retain parse rejection/bytes. Directories containing spaces included.
+One public API regression has six real Handler/LoadFromFile/Engine rejection and
+valid-repair retry cases. Canonical config makes the old weaker fallback candidate
+otherwise compilable, while legacy metadata error cannot disappear. Existing 500
+load envelope/request ID/content type/details, old snapshot/match/bad bytes and
+200 one-rule retry with correct tuple/match/good bytes/input are asserted. Null
+prefix reaches the formerly unsafe defaults branch. No private seams/fake rule
+manager/sleeps/skips/panic swallowing; all assertions authored/compiled only.
+
+Final complete pinned Go 1.26.8 rule/API/CLI/pipeline compile-only chain passed;
+binaries unexecuted. Static source/70 other tracked engine paths/format/docs/183
+JSON/169 unique roadmap pairs/168 prior Definitions/R90-75/history/horizon/links/
+fences/seven paths/diff/sensitive review passed before staging. All behavioral/
+race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run;
+delegated by user**. No runtime/file/API/race/SLO pass inferred.
+
+Reusable decoder-fallback lesson added to local netsentry-next skill instruction
+17: once input is identified as a supported format, a weaker compatibility decoder
+must not discard a recognized-field failure; cover an input it would otherwise
+accept. Markdown structure verified; separate from repository feature commit.
+No next increment started; feature and single docs-only closure remain.

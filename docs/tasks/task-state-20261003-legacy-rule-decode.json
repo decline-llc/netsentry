@@ -1,0 +1,60 @@
+{
+  "task": "r90-165-legacy-rule-decode",
+  "timestamp": "2026-10-03",
+  "branch": "main",
+  "implementation_branch": "fix/r90-165-legacy-rule-decode",
+  "remote_baseline": "6f974967581efbfd571d53076a204a9a1ecfead6",
+  "starting_remote_baseline": "6f974967581efbfd571d53076a204a9a1ecfead6",
+  "risk_level": "Low",
+  "current_checkpoint": "implementation_static_and_compile_reviewed_ready_for_feature_delivery",
+  "completed": [
+    "Clean fetched main; exact R90-164 feature/closure Git/Vault verified",
+    "109-commit phase audit; 168 unique roadmap pairs; R90-75 full contract/horizon unchanged",
+    "409 Vault Markdown hashes/fourteen stable backups; owning Go 1.26.8 preflight",
+    "Source-grounded legacy decode fallback gap selected; seven-path plan persisted",
+    "Original wrapped error retained before successful weaker fallback; 70 other engine paths unchanged",
+    "48 direct loader rejects/four normalization positives/six empties/two lone-nulls/three syntax controls authored",
+    "Six public real Handler/LoadFromFile/Engine rejection and valid-repair retry cases authored",
+    "Complete final Go 1.26.8 rule/API/CLI/pipeline compile-only chain passed; binaries unexecuted",
+    "Local skill instruction 17 refined for recognized-field error preservation across compatibility fallbacks; Markdown valid",
+    "Complete static source/70 other engine paths/format/docs/183 JSON/169 unique roadmap pairs/168 prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/sensitive review passed"
+  ],
+  "in_progress": [
+    "Feature push/fresh-fetch verification and exact Vault sync"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "pass: pinned Go 1.26.8 rule/API/CLI/pipeline go test -c; binaries unexecuted",
+    "static_review": "pass: exact loader diff/70 other engine paths/direct regressions/format/docs/183 JSON/169 complete unique roadmap pairs/168 prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/sensitive"
+  },
+  "authority_boundaries": [
+    "Only reject successful weaker fallback after original wrapped decode error",
+    "Preserve tolerant container/null/unknown-field parsing; semantic validation stays downstream",
+    "All execution delegated; one feature/closure; no publication"
+  ],
+  "remaining_risks": [
+    "Malformed legacy metadata previously ignored now rejects at load",
+    "Regressions remain authored/compiled only"
+  ],
+  "deviations": [
+    "Empty local ready queue restored within source-grounded decoder fallback repair"
+  ],
+  "resume_instructions": "Complete only R90-165; prior R90-164 delivery is verified. Preserve delegated execution and independent R90-75 authority; verify feature/single closure Git/Vault before future work.",
+  "todo": [
+    "Feature push/fetch/Vault",
+    "Single docs-only closure"
+  ],
+  "next_increment": {
+    "id": null,
+    "status": "no_other_defined_local_ready_increment",
+    "started": false,
+    "departmental_acceptance": "R90-75 independent asynchronous full contract unchanged"
+  },
+  "skill_improvement": "Local netsentry-next instruction 17 preserves recognized-field failures across weaker compatibility fallbacks; direct accepting-fallback regression required; Markdown validated; separate from repository commit"
+}

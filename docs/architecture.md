@@ -173,6 +173,17 @@ set. Direct public rejection, matching/filter and canonical/legacy wrapped/array
 load-to-reload preservation regressions are authored and compiled only; execution
 remains delegated. No address normalization or expanded IPv6 authority.
 
+Rule file loading accepts canonical and legacy wrapped/array formats and applies
+existing defaults before Engine.Reload validates the complete rule set. R90-165
+retains the wrapped raw-rule decoder's error when a simpler model fallback would
+otherwise ignore malformed legacy MITRE string fields. This prevents silent
+metadata loss and avoids returning a null rule from that fallback to defaulting.
+Valid normalization, unknown-field tolerance and existing empty/null container
+parsing remain; LoadFromFile does not gain semantic validation or a strict-wrapper
+policy. HTTP reload reports the existing load-error envelope before replacing the
+active snapshot. Direct loader and real-engine HTTP regressions are authored and
+compile-reviewed; execution remains **not run; delegated by user**.
+
 Current rule management:
 
 - Rule management can list the active snapshot, create/update/delete rules with seed-file persistence, and hot reload from the configured seed file.
