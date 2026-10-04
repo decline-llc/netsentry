@@ -357,6 +357,14 @@ for departmental execution; static/compile-only review is no runtime or SLO pass
 Current build:
 
 - SQLite using `modernc.org/sqlite`.
+- R90-167 encodes ordinary writable filesystem paths containing `?` as absolute
+  file URIs, so the SQLite driver opens the complete literal filename rather than
+  truncating it or treating its suffix as driver options. Other ordinary paths
+  retain their raw DSN; durable mode retains its `synchronous(FULL)` connection
+  pragma. Primary and non-current daily-shard writable opens share this helper;
+  Store.Path, recovery paths and read-only handling retain their existing contracts.
+  Direct primary/reopen, historical-shard and rejected-recovery preservation
+  assertions are authored and compiled only; execution is delegated.
 - R90-166 checks `ctx.Err()` at `Store.Open` entry. An already-canceled or
   already-expired context returns its unchanged context error and nil Store
   before option validation, path resolution, recovery reads, directory creation

@@ -245,6 +245,8 @@ formal SLO and evidence contract is unchanged.
 | R90-165 | Oct 3–Dec 31 | Complete implementation; tests delegated | Preserve malformed legacy rule decode failures. | R90-164 verified feature/closure; existing rule loader/API reload contract | Original wrapped decoder type errors cannot disappear through weaker fallback or reach null-entry defaults; valid formats/defaults retained; direct public loader and real-engine HTTP reload regressions authored, execution delegated. |
 | R90-166 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject already-canceled store startup before side effects. | R90-165 verified feature/closure; existing Store.Open contract | Exact context error and nil Store before options/recovery/filesystem; preservation/precedence/live controls authored, execution delegated. |
 
+| R90-167 | Oct 3–Dec 31 | Ready | Preserve question marks in writable SQLite filenames. | R90-166 verified feature/closure; pinned driver path semantics | Ordinary question-mark paths use encoded file URIs without driver options; primary/daily/preservation regressions authored, execution delegated. |
+
 
 ## R90-01 Definition
 
@@ -3827,6 +3829,18 @@ formal SLO and evidence contract is unchanged.
 - **Required validation:** pinned Go 1.26.8 alert/API/CLI/pipeline compile-only; static source/format/docs/184 JSON/170 unique roadmap pairs/prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive. All execution **not run; delegated by user**.
 - **Non-goals:** active-startup cancellation/nil-context support/new option policy/recovery or SQLite/lifecycle/retention/driver/API algorithms/suites/private inputs/IPv6/publication; no filesystem/SQLite/runtime/race/SLO pass.
 - **Stop condition:** competing edits, ambiguous static/compile/Git/Vault or new product/private/external authority; next increment requires another trigger.
+
+
+## R90-167 Definition
+
+- **Goal/status:** ready; encode literal question marks in ordinary writable filenames.
+- **Dependencies/window:** verified R90-166 feature/closure; pinned SQLite driver path semantics; Oct 3–Dec 31 forecast, dates not gates.
+- **Risk:** low; query-looking filename suffixes become literal paths instead of DSN options.
+- **Acceptance:** helper-only runtime diff; other ordinary paths/durable pragma unchanged; public primary create/write/query/list/count/close/reopen, current/historical daily writes/reads, read-only observation/exact file tree and malformed recovery preservation; six-path feature and one docs closure exact Git/Vault.
+- **Required validation:** owning Go 1.26.8 alert/API/CLI/pipeline compile-only, binaries unexecuted; static source/format/docs/JSON/complete unique roadmap multisets/prior history/R90-75/scope/diff/sensitive review. Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
+- **Non-goals:** new URI/in-memory/path/symlink policy, read-only DSNs, other ordinary filenames, recovery/schema/lifecycle/retention/cancellation/journal/default/durability/API policy, suites/private inputs/dependencies/toolchain/publication/SLO pass.
+- **Stop condition:** competing edits, ambiguous compile/static/Git/Vault, or new authority; no next increment in this trigger.
+
 
 
 ### R90-71 Validation Deviation
@@ -10209,3 +10223,63 @@ local ready increment. R90-75 remains independent asynchronous departmental
 acceptance with full contract and Oct 3–Dec 31 horizon unchanged. Next trigger
 verifies fetched closure/Vault, audits fresh code/queue and persists a separate
 eligible plan before edits. No next increment started.
+
+
+## R90-167 Selection and Writable Path Encoding (2026-10-03)
+
+Clean freshly fetched main `ffc308e71cd4cb14d6191108547f6d5742321389`;
+R90-166 six-path feature and three-path closure exact Git/Vault notes/index/MOC
+and fourteen stable current records verified. Sep 5–Oct 3 113-commit phase audit
+covers SLO tooling, patched release/toolchain and core correctness; no qualifying
+R90-75 acceptance or missing delivery. All 170 prior unique roadmap pairs intact.
+Independent R90-75 full contract and Oct 3–Dec 31 horizon unchanged.
+
+Empty local queue restored from pinned modernc.org/sqlite v1.34.5 newConn splitting
+raw filenames at question marks and interpreting suffixes as driver options.
+Existing helper passes ordinary paths raw, so writable open can differ from the
+preflighted filesystem path. Six-path plan/state persisted before runtime/docs.
+Encode question-mark paths using existing URI builder; no ordinary driver query,
+durable synchronous(FULL) unchanged. Primary/daily/recovery preservation direct
+regressions authored/compiled only; all execution delegated. Existing URI regression
+skill rule applies, no redundant update. Exactly one increment, no next work.
+
+
+## R90-167 Implementation and Compile/Static Checkpoint (2026-10-03)
+
+Runtime changes only writableDatabaseDSN: ordinary filenames with literal `?`
+join the existing absolute encoded URI path; ordinary mode has no query options,
+durable mode retains synchronous(FULL). All other engine runtime paths unchanged.
+Store.Path and recovery names retain the caller's actual filename.
+
+Three external public regressions authored: twelve primary controls spanning six
+path shapes and ordinary DELETE/durable WAL; six daily controls spanning three
+directory shapes/both modes, current/historical writes and existing historical
+preflight on retry; two malformed-recovery preservation controls. Primary and
+daily cases assert exact Store.Path, Query count/content/aggregation/timestamps,
+List equality/Count, unchanged input, Close/reopen, independent encoded mode=ro
+observations of rows/aggregates, complete expected non-sidecar file set and cleared
+recovery logs. Only sidecars beside exact expected database names are allowed;
+read-only observers can legitimately leave WAL sidecars. Query-looking pragma
+suffix stays literal. Malformed recovery asserts integrity sentinel/nil Store
+and complete tree membership/bytes/modes preservation. No private seams/mocks/
+sleeps/skips/panic swallowing; all assertions authored/compiled, unexecuted.
+
+Initial compile chain stopped at an incorrect CLI package path after alert/API
+compilation. Resolved actual engine/cmd/netsentry module path and reran the complete
+fail-fast Go 1.26.8 alert/API/CLI/pipeline compile-only chain successfully; no
+partial-chain evidence retained. Binaries unexecuted. Static format/docs/JSON,
+unique roadmap multisets/prior Definitions/R90-75/history/horizon/scope/diff/
+sensitive review required before staging. Behavioral/race/CLI/full-suite/scanner/
+knowledge/traffic/acceptance execution **not run; delegated by user**. No filesystem/
+SQLite/runtime/durability/race/SLO pass inferred. Existing skill preflight and URI
+rules cover the workflow; no redundant update. No next increment started.
+
+
+Final static review passed: exact helper-only transform, 73 other tracked engine
+paths unchanged, Go formatting, docs-check, 185 task JSON files, 171 complete
+unique roadmap row/Definition pairs, all 170 prior Definitions/R90-75 contract,
+ordered history/active horizon/local links/fences, six paths, diff and added-content
+sensitive review. All 413 Vault baseline hashes remain unchanged. Existing
+historical documented paths were excluded from new-content sensitive review;
+no new sensitive paths or credential matches. Initial CLI path deviation fully
+resolved by complete rerun. Feature delivery and single docs-only closure remain.

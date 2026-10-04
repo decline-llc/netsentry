@@ -1,0 +1,50 @@
+{
+  "task": "r90-167-store-path-encoding",
+  "timestamp": "2026-10-03",
+  "branch": "main",
+  "remote_baseline": "ffc308e71cd4cb14d6191108547f6d5742321389",
+  "starting_remote_baseline": "ffc308e71cd4cb14d6191108547f6d5742321389",
+  "risk_level": "Low",
+  "current_checkpoint": "compile_static_complete_feature_delivery_pending",
+  "completed": [
+    "Fresh fetched clean main and exact R90-166 feature/closure Git/Vault verified",
+    "113-commit phase audit; 170 unique roadmap pairs; independent R90-75 unchanged",
+    "413 Vault Markdown hashes and fourteen stable backups captured",
+    "Source-grounded pinned driver question-mark splitting identified; six-path plan persisted",
+    "Helper-only runtime repair; 12 primary, 6 daily, 2 preservation public cases authored",
+    "Complete pinned Go 1.26.8 alert/API/CLI/pipeline compile-only chain passed; binaries unexecuted",
+    "Static exact helper transform/73 other engine paths/Go format/docs/185 JSON/171 unique roadmap pairs/170 prior Definitions/R90-75/history/horizon/links/fences/six paths/diff/sensitive passed",
+    "413 Vault Markdown baseline hashes unchanged"
+  ],
+  "in_progress": [
+    "Feature delivery"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "passed_go1.26.8_alert_api_cmd_netsentry_pipeline_binaries_unexecuted",
+    "static_review": "passed_exact_helper_transform_73_other_engine_paths_docs_185_json_171_unique_pairs_170_prior_definitions_r90_75_history_scope_sensitive"
+  },
+  "authority_boundaries": [
+    "Writable filesystem filenames containing question marks only; raw safe paths and durable semantics retained",
+    "All execution delegated; compile/static only; no publication"
+  ],
+  "remaining_risks": [
+    "Authored regressions will remain unexecuted",
+    "Query-looking path suffix becomes literal filename"
+  ],
+  "deviations": [
+    "Empty local ready queue restored from pinned driver and writable helper evidence",
+    "Initial compile chain stopped at nonexistent CLI package path; resolved owning module path and successfully reran entire fail-fast chain"
+  ],
+  "resume_instructions": "Finish only R90-167 under persisted plan; compile/static only; feature/closure push/fetch/exact Vault required. Do not start next increment.",
+  "todo": [
+    "Feature push/fetch/Vault",
+    "Single docs-only closure"
+  ]
+}
