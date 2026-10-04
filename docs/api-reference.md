@@ -188,6 +188,16 @@ Returns the active suppression rules in insertion order. At startup, suppression
 
 Adds a suppression rule and immediately applies it to newly generated alerts. Enabled suppressions require at least one `src_cidrs`, `dst_cidrs`, or `any_cidrs` entry. When `engine.suppressions_file` is configured, successful creates are persisted to that JSON file before the in-memory snapshot is updated.
 
+For enabled suppressions, omitted/null/empty `rule_ids` means all rules. A
+nonempty list must contain at least one nonempty ID; `[""]` and `["", ""]`
+are rejected rather than widening the scope. Empty entries mixed with valid IDs
+are skipped; IDs otherwise match exactly without trimming or existence checks.
+Disabled suppressions retain their existing compilation skip. Create/update
+rejections use `400 VALIDATION_ERROR`; invalid file reload retains the existing
+`500 INTERNAL_ERROR`. Rejection preserves the active rules/filter and does not
+rewrite the suppression file. Structural standalone file load/save helpers do
+not enforce this compiler requirement.
+
 ### `PUT /api/suppressions/{id}`
 
 Replaces an existing suppression, persists the full suppressions file when configured, and atomically swaps the active in-memory filter. If the request body includes `id`, it must match the path ID.

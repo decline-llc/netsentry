@@ -261,6 +261,8 @@ formal SLO and evidence contract is unchanged.
 
 | R90-174 | Oct 4–Jan 1 | Complete implementation; tests delegated | Encode severity labels using the Prometheus text format. | R90-173 verified feature/closure; existing dynamic Stats labels | Only backslash/quote/newline escaped; raw severity identity/sort/counts and other metrics/health unchanged; renderer and HTTP regressions authored, execution delegated. |
 
+| R90-175 | Oct 4–Jan 1 | In progress; tests delegated | Reject an explicit suppression scope with no compiled rule IDs. | R90-174 verified feature/closure; existing exact rule-ID suppression | Enabled nonempty empty-string-only scopes reject before publication/persistence; nil/empty all-rule and mixed/exact/disabled semantics retained; direct constructor/file-backed/HTTP regressions authored, execution delegated. |
+
 ## R90-01 Definition
 
 - **Goal:** establish one versioned 90-day delivery authority and a
@@ -11159,3 +11161,79 @@ no other defined local ready increment. R90-75 independent full departmental
 contract remains outstanding; Oct 4–Jan 1 horizon unchanged. Next trigger verifies
 closure/Vault and audits fresh Git/source/history/queue before a separate eligible
 plan. Repair only missing evidence; do not repeat verified delivery.
+
+
+## R90-175 Definition
+
+- **Goal:** prevent an explicit empty-string-only rule-ID suppression scope from
+  silently compiling as an unrestricted filter.
+- **Dependency:** R90-174 verified feature/closure; existing exact suppression IDs.
+- **Window:** Oct 4–Jan 1; forecast only.
+- **Risk:** low; deliberate input tightening for enabled empty-only scopes.
+- **Acceptance:** reject one/multiple empty IDs after existing prefix checks,
+  preserve no partial result, nil/empty all-rule scopes, mixed/duplicate/exact
+  whitespace IDs and disabled skip; real manager file/list/filter preservation,
+  valid retries and existing HTTP status/envelope behavior. Declarations compiled;
+  execution delegated. Standalone structural load/save remain unchanged.
+- **Required validation:** pinned owning-module alert/API/pipeline/cmd compile-only;
+  exact source/format/docs/JSON/full roadmap multisets/history/authority/links/
+  fences/nine-path/sensitive/diff and exact push/fetch/Vault stable/replay evidence.
+  Behavioral/race/full/scanner/knowledge/traffic/acceptance not run; delegated by user.
+- **Stop condition:** ambiguous static/compile/Git/Vault evidence, competing edits,
+  new authority, private input or a second increment.
+
+## R90-175 Selection and Source Audit (2026-10-04)
+
+Fresh clean fetched baseline `e4cf2c78a316b22f9439604f88d52d7a26c0c911`. Previous R90-174 feature/closure exact
+Git/Vault ranges, note/index/MOC verified. All 129 four-week phase commits have
+iteration note/index coverage; 178 unique prior row/Definition pairs agree.
+Captured 429 Markdown hashes, 382 immutable iteration hashes and full stable
+backups. No missing delivery or independent qualifying R90-75 outcome supplied.
+
+Empty local ready queue restored from NewSuppressor/matchesRuleID source: a
+nonempty raw rule_ids list made entirely of empty strings becomes an empty
+compiled map, interpreted as all rules. Source inference, not executed failure.
+Persisted plan/state before runtime/documentation edits. Selected smallest
+fail-closed default after existing prefix checks; no trimming or disabled-policy
+change. Nine intended paths; persistent departmental test delegation retained.
+Oct 4–Jan 1 horizon unchanged; no next increment started.
+
+
+## R90-175 Compile and Static Checkpoint (2026-10-04)
+
+Runtime source differs only in the public constructor comment and a three-line
+check after all existing prefix validation. Nil/empty unrestricted lists,
+nonempty literal IDs (including whitespace), mixed empties, duplicates and
+disabled skip retain their established source branches. No manager/file/API
+runtime implementation changes. Current repository suppression config
+contains an empty suppression set and is unaffected by the new guard.
+
+Five direct declarations in two files are authored. Constructors assert nil
+results for one/multiple empty IDs across source/destination/any ranges with a
+valid earlier candidate; caller rules remain intact. Compatibility asserts
+literal exact IDs, nil/empty all-rule scopes, duplicates/empties, disabled skip,
+both source/destination probes, range misses, Filter contents and alert/input
+identity. Diagnostic cases reach missing/invalid source/destination/any prefixes
+before the new guard. Real file-backed Add/Update/Reload reject, compare complete
+bytes/mode/directory membership/List/Filter/input, then retry the same operation
+with a valid scoped candidate and observe canonical file plus published filter.
+HTTP Handler uses the real file-backed manager, exact details/request ID,
+POST/PUT 400 and reload 500 semantics, file/list/filter preservation, valid retry
+statuses/responses and loaded canonical persistence. All declarations unexecuted.
+
+Pinned Go 1.26.8 preflight and the complete fail-fast alert/API/pipeline/cmd
+compile-only chain passed; binaries remain outside the repository and unexecuted.
+docs-check and static exact transform/Go format/193 JSON/179 unique roadmap
+pairs/all 178 prior Definitions and full roadmap history/unchanged split/R90-75/
+horizon/historical handoff/local links/fences/nine-path/sensitive/diff pass.
+All 429 baseline Vault Markdown hashes remain unchanged. The first local static
+checker trimmed Git porcelain leading spaces and misread one path; its parser
+was corrected and the entire static chain rerun successfully. No competing edit,
+code/compile failure, scope or acceptance deviation occurred. Existing skill
+instructions cover this work; no reusable skill update is warranted.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance checks are **not run;
+delegated by user**. No runtime, HTTP, race or SLO pass is inferred. Recent phase
+progress spans supplied-evidence SLO tooling, patched candidate/toolchain and
+native correctness repairs; execution debt remains delegated rather than cleared
+by implementation volume. No next increment started; feature delivery pending.

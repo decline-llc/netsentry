@@ -408,7 +408,8 @@ type compiledSuppression struct {
 	any     []netip.Prefix
 }
 
-// NewSuppressor compiles suppression rules. Empty rule IDs match every rule.
+// NewSuppressor compiles suppression rules. A nil or empty rule-ID list matches
+// every rule; a nonempty list must compile at least one nonempty ID.
 func NewSuppressor(rules []Suppression) (*Suppressor, error) {
 	compiled := make([]compiledSuppression, 0, len(rules))
 	for _, rule := range rules {
@@ -436,6 +437,9 @@ func NewSuppressor(rules []Suppression) (*Suppressor, error) {
 		}
 		if len(c.src) == 0 && len(c.dst) == 0 && len(c.any) == 0 {
 			return nil, fmt.Errorf("suppression %q must include at least one CIDR", rule.ID)
+		}
+		if len(rule.RuleIDs) > 0 && len(c.ruleIDs) == 0 {
+			return nil, fmt.Errorf("suppression %q rule_ids must include at least one nonempty rule ID", rule.ID)
 		}
 		compiled = append(compiled, c)
 	}

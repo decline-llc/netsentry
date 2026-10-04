@@ -358,6 +358,15 @@ construction/mutations/reload enforce the compiled-prefix requirement.
 Direct constructor and file-backed manager preservation regressions are authored
 for departmental execution; static/compile-only review is no runtime or SLO pass.
 
+R90-175 also requires a nonempty `rule_ids` list on an enabled suppression to
+compile at least one nonempty ID. Empty-string-only lists fail after the prefix
+checks, before publication or manager persistence, so an explicit scope cannot
+silently become an all-rule filter. Nil/empty lists still mean all rules; mixed
+empty/valid entries, duplicates, exact whitespace-bearing IDs and disabled skip
+remain compatible. Structural file helpers remain unchanged. Direct constructor,
+file-backed rejection/retry and real-manager HTTP regressions are authored and
+compiled only; execution remains **not run; delegated by user**.
+
 ---
 
 ## 8. Storage

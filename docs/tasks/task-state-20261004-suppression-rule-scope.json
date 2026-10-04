@@ -1,0 +1,63 @@
+{
+  "task": "r90-175-suppression-rule-scope",
+  "timestamp": "2026-10-04",
+  "branch": "main",
+  "starting_remote_baseline": "e4cf2c78a316b22f9439604f88d52d7a26c0c911",
+  "remote_baseline": "e4cf2c78a316b22f9439604f88d52d7a26c0c911",
+  "risk_level": "Low",
+  "current_checkpoint": "compile_static_passed_feature_delivery_pending",
+  "completed": [
+    "Fresh clean fetched Git/prior exact Vault/129-commit phase audit",
+    "178 unique roadmap row/Definition pairs and complete unfinished contract reviewed",
+    "429 Vault hashes, 382 immutable iteration hashes and stable backups captured",
+    "One bounded source-supported empty-queue repair selected; plan/state persisted",
+    "Exact three-line compiled-scope guard and clarified constructor comment",
+    "Five direct constructor/compatibility/precedence/file-backed/HTTP regression declarations authored; execution delegated",
+    "Pinned alert/API/pipeline/cmd compile-only passed, binaries unexecuted",
+    "Static exact transform/docs/193 JSON/179 unique pairs/178 prior Definitions/history/authority/handoff/links/fences/nine-path/sensitive/diff passed",
+    "429 baseline Vault hashes unchanged"
+  ],
+  "in_progress": [
+    "Final isolated staging, feature commit/push/fresh fetch and exact Vault"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "passed_alert_api_pipeline_cmd_go1.26.8_binaries_unexecuted",
+    "static_review": "passed_exact_transform_format_json_multisets_history_authority_handoff_links_fences_scope_sensitive_diff",
+    "docs_check": "passed"
+  },
+  "authority_boundaries": [
+    "Exactly one increment; persistent departmental test delegation",
+    "No private input/external coordination/publication; independent R90-75 contract unchanged"
+  ],
+  "remaining_risks": [
+    "Authored regressions need departmental execution; intentional nil/empty scope remains unrestricted"
+  ],
+  "deviations": [
+    "Empty local ready queue restored from source-supported explicit scope broadening",
+    "Initial local static helper stripped porcelain leading spaces; parser corrected and entire static chain rerun successfully; no repository path drift"
+  ],
+  "resume_instructions": "Finish only R90-175 against persisted plan; compile/static review, feature commit/push/fetch/exact Vault then single docs-only closure. Do not execute delegated suites or start next increment.",
+  "todo": [
+    "Verified feature push/fetch/Vault/stable replay",
+    "Single docs-only closure push/fetch/Vault"
+  ],
+  "audit": {
+    "baseline": "e4cf2c78a316b22f9439604f88d52d7a26c0c911",
+    "phase_commits": 129,
+    "prior_pairs": 178,
+    "vault_files": 429,
+    "immutable_notes": 382
+  },
+  "next_increment": {
+    "id": null,
+    "status": "no_other_defined_local_ready_increment",
+    "started": false,
+    "departmental_acceptance": "R90-75 outstanding"
+  }
+}

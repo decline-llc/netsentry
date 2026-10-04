@@ -486,3 +486,33 @@ The package commands above already include stats and API. Execution remains
 HTTP, race or SLO acceptance. Verify the actual returned lines and health JSON
 against the plan before departmental execution; invalid UTF-8 policy is outside
 scope. Independent R90-75 requirements remain unchanged.
+
+## Follow-up: R90-175 explicit suppression rule scope
+
+This follow-up preserves the original R90-144..172 inventory and R90-174 record.
+Five new declarations in two files require departmental execution:
+
+- [Suppressor and manager regressions](../engine/internal/alert/suppression_rule_scope_test.go):
+  `TestSuppressionConstructorsRejectExplicitEmptyRuleScope`,
+  `TestSuppressionRuleScopePreservesAcceptedSemantics`,
+  `TestSuppressionEmptyRuleScopePreservesPrefixDiagnosticPrecedence`, and
+  `TestFileBackedSuppressionRuleScopeRejectionPreservesStateAndPermitsRetry`.
+  Check one/multiple empty IDs, source/destination/any ranges, no partial result,
+  nil/empty all-rule scopes, mixed/duplicate/exact whitespace IDs and disabled
+  skip. Real Add/Update/Reload must preserve file bytes/mode/directory membership,
+  published List/Filter and caller inputs, then accept a valid same-operation
+  retry. Raw structural load acceptance differs from compilation acceptance.
+- [HTTP regression](../engine/internal/api/suppression_rule_scope_test.go):
+  `TestSuppressionHTTPRejectsExplicitEmptyRuleScopeAndPermitsRetry` reaches
+  Handler with a real file-backed manager. POST/PUT must return 400
+  VALIDATION_ERROR; reload retains 500 INTERNAL_ERROR. Exact details/request ID,
+  file/list/filter preservation and valid retry responses/persistence are asserted.
+- [Plan](plans/task-20261004-suppression-rule-scope.md) and
+  [state](tasks/task-state-20261004-suppression-rule-scope.json) retain scope,
+  authority, validation and exact delivery evidence. Resolve the delivered SHA
+  through those records and Git.
+
+Existing owning-package commands above include alert/API. Execution remains
+**not run; delegated by user**; compilation is no runtime, HTTP, race or SLO
+acceptance result. Prefix diagnostics retain precedence; whitespace IDs are
+literal and are not newly rejected or normalized. R90-75 remains independent.
