@@ -145,3 +145,66 @@ reconciliation. Corrective commit contains six changed paths within the original
 seven-path scope. No behavioral/race/full/scanner/knowledge/traffic/acceptance
 execution; delegated by user. This direct-boundary deviation requires corrective
 delivery before completion. No next increment started.
+
+
+## Completion and Forward Queue Refresh (2026-10-04)
+
+Initial seven-path feature `7678017be9328396d274db5e854a43c9cc7938d4` and corrective six-path commit
+`eeae5a2c8d70d0df4603361ec87d730a38de11a4` are non-force pushed and freshly fetched. The current corrected
+boundary has clean HEAD/origin/main/FETCH_HEAD equality. Exact full-SHA ranges
+`398f91bf8d387bfc84a2c92af7c0cec76edf1c49..7678017be9328396d274db5e854a43c9cc7938d4` and `7678017be9328396d274db5e854a43c9cc7938d4..eeae5a2c8d70d0df4603361ec87d730a38de11a4` have directly verified iteration notes, path
+lists, Git-resolved endpoints, full index and bounded versioned generated MOC.
+Notes: `04-开发迭代记录/2026-10-04-7678017be9-CI知识同步.md` and
+`04-开发迭代记录/2026-10-04-eeae5a2c8d-CI知识同步.md`. Initial replay preserved
+all 436 Markdown hashes; corrected replay preserved all 437. Corrected snapshot
+JSON SHA-256: `14b965d731dc5e3abfd30cace0d21f3c01b212bd87430bc811a425bf5bfb4edd`. Fourteen current stable notes reconcile actual daily
+Dir/clock/ignored-Path semantics and the corrective deviation; all prior
+substantive body prose and 388 baseline immutable iteration hashes are preserved,
+excluding only the actual versioned generated MOC region from prose comparison.
+Unique existing sibling local Vault explicitly supplied. No transport/sync failure.
+
+Acceptance comparison confirms the thirteen-line runtime addition is confined
+to file retention: resolve active/cleanup paths after successful discovery,
+skip lexical equality after valid-calendar/cutoff checks, retain removeShardSet
+and original Path. Row TTL, write/routing, recovery, schema and query code remain
+source-identical. Three public declarations reach the planned boundaries after
+correction: twenty primary/daily WAL/DELETE fixtures with five spelling forms;
+actual primary Path versus daily Dir/first-clock resource resolution; subsequent
+clock advancement for startup retention; independent direct cleanup directory
+aliases; startup base identity/mode/all durable columns and control retention;
+actual WAL sidecars, direct bytes/modes/artifact identities/tree membership,
+full public rows/counts, complete independent alerts/events, exact three-file
+ordinary removal then repeated zero; original input/Path/health, continued
+writes/routing, close/reopen/fresh observer; generated long-lived active date
+then separate row TTL, and canceled/disabled/missing/other-directory controls.
+Startup writable initialization has no byte-preservation promise. All declarations
+remain unexecuted. No symlink/hardlink or independent-store ownership promise.
+
+Pinned Go 1.26.8 complete alert/API/pipeline/cmd compile-only rerun and full static
+exact source/pinned format/docs/196 JSON/183 unique roadmap pairs/preserved prior
+history/full R90-75 contract/frozen inventory/links/fences/cumulative seven-path/
+sensitive/diff passed after correction. Initial temporary harness syntax failure
+performed no validation and was fully rerun after correction. The discovered
+daily-fixture assumption required this corrective commit within the same
+increment; no behavior pass was falsely claimed. Separate local netsentry-next
+skill refinement now requires tracing public fixture options through mode,
+defaults and resource resolution before commit; Markdown structure checked.
+It contains generic guidance only and is outside the repository feature commits.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. Compile/static evidence is no deletion, preservation, durability, HTTP,
+race, release or SLO pass. R90-75 independent full departmental acceptance remains
+outstanding. R90-177's source-proven unavailable Options.Path-based daily alias
+fixtures/evidence are queued as R90-179 with a complete bounded contract. No
+prior test files were edited and no next increment started.
+
+This single three-path docs-only delivery record closes R90-178 including its
+corrective commit. Resolve its full SHA from Git; verify non-force push/fresh
+clean HEAD/origin/main/FETCH_HEAD and exact corrected-boundary..closure Vault
+note/index/MOC before reporting. Do not add a self-reference closure or repeat
+verified feature/corrective delivery. R90-178 is complete implementation with
+execution delegated; R90-179 is next ready and unstarted. Its scope is the
+actual public daily path fixture/evidence contract, with runtime unchanged.
+Next trigger audits fresh Git/Vault/history/source/queue before a separate plan.
+Oct 4–Jan 1 horizon and standing departmental split retained. Repair missing
+delivery evidence only.
