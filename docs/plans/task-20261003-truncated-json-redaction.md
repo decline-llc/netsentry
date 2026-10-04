@@ -98,3 +98,46 @@ skill guidance already covers actual truncation count/content; no skill change.
 Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution
 **not run; delegated by user**. Feature and one docs-only closure remain; no next
 increment started.
+
+
+## R90-164 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `e4563171ae8795a226f202c0187d49ddd69d06a6` contains exactly the seven planned paths. The
+isolated implementation branch fast-forwarded freshly checked main; non-force
+push and fresh fetch verified clean HEAD/origin/main/FETCH_HEAD equality.
+Exact full range `18aa324a89c211a9f95d37655541ea17b4fd8a96..e4563171ae8795a226f202c0187d49ddd69d06a6` synchronized to
+`04-开发迭代记录/2026-10-03-e4563171ae-CI知识同步.md`; note scope, short identifiers
+resolved through Git, full index/MOC verified. Fourteen current stable notes
+reconciled. Entire prior current prose archived and original topic/historical
+tails preserved exactly, excluding only documented bounded generated MOC regions.
+All 360 baseline immutable iteration notes preserved. Identical feature replay
+preserves 408 Markdown hashes; snapshot JSON SHA-256
+`5f56c27c29e3bf34ef601ead3e87ac52bf07e0df9e81fa9025798dde1e8026d5`.
+Existing unique sibling local Vault supplied explicitly; no second/remote Vault.
+
+Acceptance matches plan: only JSON terminator plus comment; 68 other tracked
+engine paths unchanged. Two prior truncated-value non-goal controls move to new
+redaction assertions. 32 scalar cases and batch metadata/nil/order/idempotence;
+30 real Engine-to-Worker cases span two keys/five cuts/three write-redaction modes.
+Complete valid sources exceed 200 bytes; actual Match count/exact 200-byte content
+and writer-entry count/full-alert content prove the promised boundary in authored
+source, including dangling backslash/escaped quote/partial Unicode cuts. Existing
+complete-value, unrelated-key/nonstring/raw-linebreak controls remain. No runtime
+execution/pass inferred. No fake matcher/private seam/sleeps/skips/panic swallowing.
+
+Pinned Go 1.26.8 alert/pipeline/API compile-only chain and complete static review
+passed: exact source/68 other paths/format/docs/182 JSON/168 unique roadmap pairs/
+167 prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/sensitive.
+Binaries unexecuted. Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/
+acceptance execution **not run; delegated by user**. No validation deviations or
+unresolved ambiguity. Existing skill rules cover truncation count/content and
+historical boundaries; no redundant skill update.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git; push/fresh-fetch/exact feature..closure Vault verification
+before reporting, without another self-reference closure. After verification,
+do not repeat feature/closure commit/push/sync. Queue refresh: no other defined
+local ready increment. R90-75 remains independent asynchronous departmental
+acceptance with its full contract and Oct 3–Dec 31 horizon unchanged. Next trigger
+verifies fetched closure/Vault, audits fresh code/queue and persists a separate
+eligible plan before edits. No next increment started.
