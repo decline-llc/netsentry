@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-10-03 through 2026-12-31. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-10-04 through 2027-01-01. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -152,7 +152,7 @@ formal SLO and evidence contract is unchanged.
 | R90-72 | Oct 3–31 | Complete early | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
 | R90-73 | Aug 5–Sep 4 | Complete early | Add versioned local benchmark evidence capture. | R90-72 | One directly tested command captures every established C/Go benchmark with exact Git/tree state, environment/toolchain fingerprint, parameters, raw output, parsed metrics, path redaction, and local-synthetic classification without applying a threshold. |
 | R90-74 | Sep 5–Oct 2 | Complete early | Record a repeated single-host benchmark baseline. | R90-73 | At least five uncached complete-surface samples from one clean pinned commit and unchanged environment retain every raw result plus median/IQR/variation summaries as observation-only local evidence. |
-| R90-75 | Oct 3–31 | Acceptance delegated; development unblocked | Validate proposed staging/production SLO acceptance profiles. | R90-74; R90-113 contract; departmental execution and evidence | Departmental tests must establish end-to-end latency, offered-versus-completed loss, missing-alert failures and extended-tail evidence with full artifacts; agent development proceeds without test execution or a local hardware prerequisite. |
+| R90-75 | Oct 4–Jan 1 | Acceptance delegated; development unblocked | Validate proposed staging/production SLO acceptance profiles. | R90-74; R90-113 contract; departmental execution and evidence | Departmental tests must establish end-to-end latency, offered-versus-completed loss, missing-alert failures and extended-tail evidence with full artifacts; agent development proceeds without test execution or a local hardware prerequisite. |
 | R90-76 | Aug 9 | Complete | Audit post-tag delivery and restore the forward queue. | R90-59a; R90-74 | A dated audit reconciles the local-tag feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current code/tests, and blocked authorities, then restores only evidence-grounded local work without runtime or publication changes. |
 | R90-77 | Aug 10–Sep 4 | Complete early | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
 | R90-78 | Sep 5–25 | Complete early | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
@@ -256,6 +256,8 @@ formal SLO and evidence contract is unchanged.
 | R90-171 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject unrepresentable SQLite busy timeouts before startup. | R90-170 verified feature/closure; pinned signed-32-bit pragma parser | Config and direct Open reject larger positive ints before side effects; nonpositive defaults and diagnostic precedence retained; direct config/preservation/effective-pragma assertions authored, execution delegated. |
 | R90-172 | Oct 3–Dec 31 | Complete implementation; tests delegated | Validate journal modes before startup side effects. | R90-171 verified feature/closure; existing journal allowlist | Existing unsupported-mode diagnostic precedes filesystem/recovery/DB inspection; supported modes/defaults and earlier validation precedence retained; direct regressions authored, execution delegated. |
 
+
+| R90-173 | Oct 4–Jan 1 | In progress; execution delegated | Consolidate the departmental native correctness regression handoff. | R90-172 verified feature/closure; R90-144..172 source plans and tests | Exact source-linked inventory of 29 repairs, 38 changed test files and 106 current declarations; execution/evidence instructions distinguish authored debt from passes; active forecast and stable handoffs reconciled without runtime changes. |
 
 ## R90-01 Definition
 
@@ -3987,6 +3989,22 @@ formal SLO and evidence contract is unchanged.
 - **Resolution:** Twenty uncached focused receiver race executions and the
   complete uncached native rerun pass. The timing event did not reproduce, so
   R90-24 validation may continue.
+
+## R90-173 Definition
+
+- **Goal:** publish the [departmental correctness handoff](../correctness-validation-handoff.md)
+  for the bounded R90-144..172 native Go repairs, making their authored execution
+  debt and acceptance-boundary review actionable without executing tests.
+- **Risk:** file-level declarations can be mistaken for newly authored or executed
+  cases; compile/static evidence can be incorrectly promoted to behavioral or SLO
+  acceptance. Commands must resolve owning modules and retain uncached evidence.
+- **Required validation:** exact feature/state/plan/test-declaration inventory,
+  package-command/source/link consistency, Markdown/JSON/docs checks, unique
+  roadmap row/Definition multisets, historical/contract preservation, intended
+  five-path diff and sensitive review; exact fetched delivery/Vault provenance.
+  Behavioral/race/full/scanner/knowledge/traffic/acceptance not run; delegated by user.
+- **Stop condition:** source/commit/inventory mismatch, ambiguous static/Git/Vault
+  result, competing edits or new execution/private/publication authority required.
 
 ## Global Schedule-Window Waiver
 
@@ -10958,3 +10976,47 @@ queue refreshed: no other defined local ready increment. R90-75 independent
 full departmental asynchronous contract and Oct 3–Dec 31 horizon retained. Next
 trigger verifies closure/Vault, audits fresh source/history/queue and persists a
 separate eligible plan before editing. No next increment started.
+
+
+## R90-173 Selection and Departmental Regression Handoff (2026-10-04)
+
+Clean fetched main `cb49e6ebf56c2eb8895be4e4016a76e9a2d411ee`; R90-172 feature
+and closure exact ranges/note/index/MOC and fourteen stable current notes verified.
+Four-week phase audit: 125 commits have historical note/index coverage; patched
+release/toolchain, SLO adapter work and native correctness history retained.
+No missing delivery or new qualifying R90-75 outcome. All 176 prior unique
+row/Definition pairs agree. Captured 425 Vault Markdown hashes, 378 immutable
+iteration notes and fourteen full stable-prose backups.
+
+Empty local ready queue restored with one bounded documentation handoff for
+R90-144..172. Source inventory: 29 feature/state/plan records, 38 distinct changed
+Go test files and 106 current top-level Test declarations. Existing companion
+functions in changed files are included; declarations are neither new-test
+counts nor executed cases. Plan/state persisted before handoff/development/
+roadmap edits. Five documentation paths only. Active forecast rolls one day to
+Oct 4–Jan 1; the unfinished R90-75 window is refreshed while its full independent
+contract, dependencies, risk and stop condition remain unchanged. Persistent
+test-department split retained. No suites, department messages, publication,
+private inputs or next increment started.
+
+
+## R90-173 Static Validation Checkpoint (2026-10-04)
+
+Handoff links all 29 feature SHAs and their original plan/state, 38 distinct
+changed Go test files, 106 distinct current top-level declarations (39 file/112
+function references across increment entries), and eight owning module-relative
+packages. Commands use pinned Go and uncached runs; acceptance-boundary review,
+full failure/skip/deviation evidence, serial correctness/race/knowledge sequencing
+and independent R90-75 requirements are explicit. Development guide links the
+handoff. Runtime/test/config/build source unchanged; no compiler invocation needed.
+
+Static review and docs-check passed: exact inventory/source/commit paths,
+191 task JSON, 177 unique row/Definition pairs, all 176 prior Definitions and
+prior roadmap history preserved outside the declared active forecast updates;
+R90-75 full contract and persistent test split unchanged; Markdown links/fences,
+five-path scope, sensitive review and git diff --check passed. All 425 baseline
+Vault Markdown hashes remain unchanged. No behavioral/race/full/scanner/knowledge/
+traffic/acceptance execution; **not run; delegated by user**. The initial count
+was refined for a shared source file: 112 references correspond to 106 unique
+declarations. No test failure or new runtime claim. Existing skill rules suffice.
+No following increment started; delivery pending.

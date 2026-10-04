@@ -34,6 +34,11 @@ it with `GOCACHE=/path/to/cache` when you want to use a different cache.
 
 ## 2. Current Build Targets
 
+The [departmental correctness validation handoff](correctness-validation-handoff.md)
+indexes the authored Go regressions for R90-144 through R90-172, with their
+source plans, execution debt and module-relative uncached commands. Test
+execution remains assigned to the specialist department under the roadmap policy.
+
 These targets exist today:
 
 ```bash
