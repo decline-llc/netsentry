@@ -135,6 +135,9 @@ func defaults() *Config {
 
 const maxDurationSeconds = int64((1<<63 - 1) / time.Second)
 
+// SQLite's busy timeout API and pragma parser use signed 32-bit milliseconds.
+const maxSQLiteBusyTimeoutMS = 1<<31 - 1
+
 func validate(cfg *Config) error {
 	var errs []string
 	if mode, err := strconv.ParseUint(cfg.Engine.UDSSocketMode, 8, 32); err != nil || mode == 0 || mode > 0o777 {
@@ -145,6 +148,9 @@ func validate(cfg *Config) error {
 	}
 	if cfg.Engine.UDSReadTimeoutSeconds < 1 || cfg.Engine.UDSReadTimeoutSeconds > 3600 {
 		errs = append(errs, "engine.uds_read_timeout_seconds must be between 1 and 3600")
+	}
+	if cfg.Engine.DBBusyTimeout > maxSQLiteBusyTimeoutMS {
+		errs = append(errs, fmt.Sprintf("engine.db_busy_timeout must not exceed %d milliseconds", maxSQLiteBusyTimeoutMS))
 	}
 	if seconds := int64(cfg.Engine.AlertAggregationWindow); seconds < -maxDurationSeconds || seconds > maxDurationSeconds {
 		errs = append(errs, fmt.Sprintf("engine.alert_aggregation_window must be between %d and %d seconds", -maxDurationSeconds, maxDurationSeconds))

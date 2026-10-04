@@ -1,0 +1,54 @@
+{
+  "task": "r90-171-busy-timeout-bounds",
+  "timestamp": "2026-10-03",
+  "branch": "main",
+  "remote_baseline": "5fb9da8806f787501421846413b06f6438dddf7a",
+  "starting_remote_baseline": "5fb9da8806f787501421846413b06f6438dddf7a",
+  "risk_level": "Low",
+  "current_checkpoint": "compile_static_complete_before_feature_delivery",
+  "completed": [
+    "Clean fetched baseline and R90-170 exact feature/closure Git/Vault verified",
+    "121 phase commit note/index coverage; latest MOC and 174 unique prior roadmap pairs verified",
+    "Independent R90-75 full contract/testing split/horizon retained",
+    "421 Vault hashes, 374 immutable notes and fourteen stable prose backups captured",
+    "Pinned SQLite signed-32-bit pragma parser and official timeout semantics reviewed",
+    "Exact config/Open upper-bound guards and six direct regression functions authored",
+    "Go 1.26.8 preflighted five-package fail-fast compile-only passed; binaries unexecuted",
+    "Static source/format/docs/189 JSON/175 unique pairs/174 prior Definitions/R90-75/split/history/horizon/links/fences/eight paths/diff/sensitive passed",
+    "All 421 baseline Vault hashes unchanged"
+  ],
+  "in_progress": [
+    "Feature commit/push/fetch/Vault delivery"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "passed_go1.26.8_config_alert_api_cmd_pipeline_binaries_unexecuted",
+    "static_review": "passed_exact_source_complete_scope_authority_sensitive_review"
+  },
+  "authority_boundaries": [
+    "SQLite representability only; existing nonpositive defaults and diagnostic precedence retained",
+    "All execution delegated; compile/static only; no publication"
+  ],
+  "remaining_risks": [
+    "Direct behavioral assertions remain unexecuted"
+  ],
+  "deviations": [
+    "Empty ready queue restored from pinned SQLite positive overflow disabling busy handler"
+  ],
+  "resume_instructions": "Compile/static complete; deliver only eight intended R90-171 paths, verify fetched refs and exact Vault range, reconcile stable prose and one docs closure. All execution delegated; no next increment.",
+  "todo": [
+    "commit/push/fetch/Vault",
+    "one docs-only closure"
+  ],
+  "next_increment": {
+    "id": null,
+    "status": "no_other_defined_local_ready_increment",
+    "started": false
+  }
+}

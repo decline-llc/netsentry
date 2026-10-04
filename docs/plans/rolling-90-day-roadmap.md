@@ -253,6 +253,8 @@ formal SLO and evidence contract is unchanged.
 
 | R90-170 | Oct 3–Dec 31 | Complete implementation; tests delegated | Match equivalent exact IP blacklist addresses. | R90-169 verified feature/closure; existing parsed IP acceptance | Exact addresses compare parsed identities; canonical fast path, original alert/config text, CIDR/filter/publication semantics retained; direct regressions authored, execution delegated. |
 
+| R90-171 | Oct 3–Dec 31 | In progress; tests delegated | Reject unrepresentable SQLite busy timeouts before startup. | R90-170 verified feature/closure; pinned signed-32-bit pragma parser | Config and direct Open reject larger positive ints before side effects; nonpositive defaults and diagnostic precedence retained; direct config/preservation/effective-pragma assertions authored, execution delegated. |
+
 
 ## R90-01 Definition
 
@@ -3888,6 +3890,26 @@ formal SLO and evidence contract is unchanged.
   source/format/docs/JSON/roadmap/authority/scope/sensitive, exact Git/Vault
   delivery and stable prose preservation. Suites and knowledge gate not run;
   delegated by user; no runtime/race/SLO assertion.
+- **Stop condition:** competing edits, ambiguous compile/static/Git/Vault
+  evidence, new authority or unrelated increment.
+
+## R90-171 Definition
+
+- **Goal:** reject positive busy timeout values above SQLite's signed-32-bit
+  millisecond maximum in config loading and direct Store.Open.
+- **Dependencies:** verified R90-170 feature/closure and pinned SQLite parser;
+  no new authority or external input.
+- **Window:** Oct 3–Dec 31 forecast only.
+- **Risk:** low; only previously unrepresentable positive settings reject;
+  preserve nonpositive defaulting and context/durable-journal precedence.
+- **Acceptance:** named config/store rejection before persistent side effects;
+  direct config/env/native-domain, primary/daily ordinary/durable tree-preservation,
+  precedence and effective live-PRAGMA/write/query/reopen regressions authored,
+  compiled and explicitly unexecuted. No contention/timing or SLO claim.
+- **Required validation:** exact Go 1.26.8 config/alert/API/cmd/pipeline compile-only;
+  static source/format/docs/JSON/roadmap/prior Definitions/R90-75/split/horizon/
+  scope/sensitive; exact Git/Vault delivery, stable prose and immutable-note
+  preservation, identical replay. Behavioral/knowledge execution delegated.
 - **Stop condition:** competing edits, ambiguous compile/static/Git/Vault
   evidence, new authority or unrelated increment.
 
@@ -10726,3 +10748,58 @@ no other defined local ready increment. R90-75 independent asynchronous full
 contract and Oct 3–Dec 31 horizon retained. Next trigger verifies completed
 closure/Vault, audits fresh history/code/queue and persists a separate eligible
 plan before editing. No next implementation started.
+
+
+## R90-171 Selection and Busy Timeout Representability (2026-10-03)
+
+Clean fresh-fetched main `5fb9da8806f787501421846413b06f6438dddf7a`;
+R90-170 exact feature/closure Git/Vault notes/index/MOC and fourteen current
+stable references verified. Sep 12–Oct 3 phase audit covers SLO adapters and
+inventory admission, patched release/toolchain and bounded core correctness.
+All 121 baseline commits have note/index coverage, latest exact ranges have
+MOC links. No missing delivery or qualifying R90-75 outcome. All 174 prior
+unique row/Definition pairs agree. R90-75 independent full asynchronous contract,
+testing split and Oct 3–Dec 31 horizon retained. Captured 421 Vault hashes,
+374 immutable notes and fourteen stable prose backups.
+
+Empty ready queue restored from pinned modernc.org/sqlite v1.34.5 busy_timeout
+parser: positive values above 2147483647 fail signed-32-bit parse and become
+zero, disabling the handler. Current unbounded Go int interpolation can reach
+that branch. Source inference, not an observed runtime failure; official SQLite
+API/PRAGMA semantics and pinned source reviewed. Eight-path plan/state persisted
+before behavior/docs/queue edits. One representability repair only; nonpositive
+defaults and existing diagnostic precedence retained. All execution delegated;
+no next increment or publication started.
+
+
+## R90-171 Compile and Static Checkpoint (2026-10-03)
+
+Runtime diff exactly matches plan: matching signed-32-bit maximum constants and
+one positive upper-bound guard each in configuration validation and Store.Open.
+Existing nonpositive values/default 5000 and context/durable-journal precedence
+retained; all other runtime unchanged. Six direct regression functions authored:
+config boundary/default/whole-config/YAML-preservation, environment expansion,
+combined diagnostics/native-domain parsing; sixty Linux-amd64 rejection cases
+(three overflows, both store modes/both journal modes/five filesystem fixtures),
+three precedence cases, twenty-four accepted-value/mode cases with two actual
+opens each. Native 32-bit direct positive overflows are unrepresentable; those
+branches explicitly omitted, with config decoder assertions retained.
+
+Rejections reach public Open and assert exact error/nil Store before clock/path
+resolution, complete bytes/modes/membership preservation and compatible-row
+retention through an independent encoded mode=ro observer opened/query-warmed
+before rejection and reused afterward. Corrupt DB/WAL/SHM, malformed recovery,
+absent directory and regular-file parent controls included. Positive controls
+inspect actual live-connection PRAGMA and stored effective value, then public
+write/query/caller preservation and close/reopen. No driver injection, private
+synchronization seam, sleeps or contention/timing claims. Assertions unexecuted.
+
+Preflighted Go 1.26.8 and five owning packages; complete fail-fast config/alert/
+API/cmd/netsentry/pipeline compile-only chain passed, binaries unexecuted. Static
+exact source/format/docs/189 JSON/175 unique roadmap pairs/174 prior Definitions/
+R90-75/testing split/history/horizon/links/fences/eight-path scope/diff/sensitive
+review passed. All 421 baseline Vault Markdown hashes unchanged. Behavioral/
+race/CLI/full-suite/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. Authored regression debt remains departmental; no runtime, pragma,
+persistence, contention, race or SLO pass inferred. No validation failure or
+scope deviation; generic skill rules suffice. No next increment started.

@@ -41,6 +41,9 @@ var (
 
 const maxRecoveryRecordBytes = 4 << 20
 
+// SQLite's busy timeout API and pragma parser use signed 32-bit milliseconds.
+const maxSQLiteBusyTimeoutMS = 1<<31 - 1
+
 // ErrRecoveryRecordTooLarge reports that a writer-generated record exceeded
 // the durable JSONL size contract before the recovery log was opened.
 var ErrRecoveryRecordTooLarge = errors.New("alert recovery record exceeds 4 MiB durable limit; recovery log was not modified")
@@ -240,6 +243,9 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 	}
 	if opts.RequireDurableWrites && !strings.EqualFold(strings.TrimSpace(opts.JournalMode), "WAL") {
 		return nil, fmt.Errorf("measurement durable writes require WAL journal mode")
+	}
+	if opts.BusyTimeoutMS > maxSQLiteBusyTimeoutMS {
+		return nil, fmt.Errorf("sqlite busy timeout must not exceed %d milliseconds", maxSQLiteBusyTimeoutMS)
 	}
 	if opts.BusyTimeoutMS <= 0 {
 		opts.BusyTimeoutMS = 5000

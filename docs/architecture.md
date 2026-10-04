@@ -524,6 +524,15 @@ Current build:
   compatible existing-file and rejected-input preservation regressions are
   authored and compiled only; execution remains delegated and no runtime or
   durability pass is inferred.
+- R90-171 rejects positive `engine.db_busy_timeout` and direct
+  `Options.BusyTimeoutMS` values above `2147483647` milliseconds, the pinned
+  SQLite pragma parser's signed 32-bit maximum. Larger values previously became
+  zero in that parser, disabling the busy handler. Configuration preserves
+  nonpositive values; `Open` still defaults those to 5000 milliseconds. Store
+  rejection precedes recovery/filesystem/database work, while already-done
+  contexts and durable-journal validation retain precedence. Direct config,
+  preservation and live-connection PRAGMA regressions are authored and compiled
+  only; execution is delegated, with no contention or timing pass inferred.
 - Before journal or schema initialization, an existing non-empty primary
   database must pass read-only SQLite `quick_check` plus required `alerts` and
   `alert_events` table/column definitions and the binary-collated aggregation
