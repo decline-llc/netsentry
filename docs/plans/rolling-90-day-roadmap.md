@@ -241,6 +241,7 @@ formal SLO and evidence contract is unchanged.
 | R90-161 | Oct 3–Dec 31 | Complete implementation; tests delegated | Make zero-value Stats alert observation safe. | R90-160; existing Stats/Worker metric gates | First non-nil observation lazily initializes severity map under existing lock; exact counts/input/snapshot/constructor/Worker write-completion gates retained; direct regressions authored, execution delegated. |
 | R90-162 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject IP blacklists with no compiled addresses. | R90-161; existing rule validation/snapshot contract | Blank-only address lists reject before publication; valid mixed entries and filters retain behavior; direct public regressions authored, execution delegated. |
 | R90-163 | Oct 3–Dec 31 | Complete implementation; tests delegated | Reject enabled suppressions with no compiled prefixes. | R90-162 verified feature/closure; existing suppression manager contract | Empty-only prefix lists reject before filter publication/persistence; disabled and mixed empty/valid behavior retained; public constructor and file-backed mutation/reload regressions authored, execution delegated. |
+| R90-164 | Oct 3–Dec 31 | Ready | Redact JSON credential values cut at preview end. | R90-163 verified feature/closure; existing 200-byte preview/redaction boundary | Open quoted password/token values redact visible suffix through preview end; complete-value behavior retained; direct scalar/batch and real Engine/Worker regressions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -3791,6 +3792,17 @@ formal SLO and evidence contract is unchanged.
 - **Required validation:** pinned Go 1.26.8 alert/API/pipeline compile-only; static source/direct boundaries/format/docs/JSON/complete roadmap multisets/prior Definitions/R90-75/history/horizon/links/fences/paths/diff/sensitive. All execution **not run; delegated by user**.
 - **Non-goals:** whitespace trimming, per-element empty rejection within valid lists, disabled validation changes, rule-ID or IP-family policy, parser/save/API runtime/persistence algorithm/dependency/toolchain changes, runtime/race/performance/SLO or publication claims.
 - **Stop condition:** competing edits, ambiguous static/compile/Git/Vault or new product/private/external authority; following increment requires another trigger.
+
+## R90-164 Definition
+
+- **Goal/status:** ready; redact quoted password/token values cut at preview end.
+- **Dependencies/window:** verified R90-163 feature/closure; existing Engine 200-byte preview and optional Worker redaction; Oct 3–Dec 31 forecast, no date gate.
+- **Risk:** low; previously visible secret prefixes in open-ended quoted fragments now redact; no complete-value formatting change.
+- **Acceptance:** JSON terminator-only change; scalar empty/plain/escape/dangling/partial-Unicode/multibyte/idempotence and batch metadata controls; actual complete payloads above 200 bytes through Engine.Match/Worker.Run reach exact preview and writer-entry content/count, enabled/disabled/write-failure gates; seven-path feature/one closure exact Git/Vault.
+- **Required validation:** pinned Go 1.26.8 alert/pipeline/API compile-only; static source/direct boundaries/format/docs/JSON/complete unique roadmap/prior Definitions/R90-75/history/horizon/links/fences/paths/diff/sensitive. All execution **not run; delegated by user**.
+- **Non-goals:** key decoding/new sensitive fields/whole JSON/multiline malformed policy/RawPayload/cap change/matching/storage/API/pipeline runtime/dependencies/toolchain/suites/private inputs/IPv6/publication; no runtime/privacy/SLO pass.
+- **Stop condition:** competing edits, ambiguous static/compile/Git/Vault or new product/private/external authority; next increment needs another trigger.
+
 
 ### R90-71 Validation Deviation
 
@@ -9875,3 +9887,53 @@ no defined local ready increment; R90-75 remains independent asynchronous
 departmental acceptance with its full contract and Oct 3–Dec 31 horizon unchanged.
 The next trigger verifies fetched closure/Vault, audits fresh code/queue and
 persists a separate eligible plan. No following increment started.
+
+
+## R90-164 Selection and Preview-End Credential Redaction (2026-10-03)
+
+Fresh fetched clean main `18aa324a89c211a9f95d37655541ea17b4fd8a96`; prior
+R90-163 feature/closure exact Git paths/Vault note/index/MOC verified. 107-commit
+Sep 5–Oct 3 phase audit spans SLO tooling, patched release/toolchain and core
+correctness; no qualifying R90-75 outcome or missing delivery found. 167 original
+unique roadmap pairs; sole unfinished R90-75 independent contract and Oct 3–Dec 31
+horizon unchanged. 407 Vault Markdown hashes and fourteen complete stable notes
+captured. No AGENTS or pre-existing edits; owning engine Go 1.26.8 available.
+
+Empty local queue restored from directly evidenced privacy gap: Engine caps
+previews at 200 bytes, but quoted JSON credential replacement requires a closing
+quote outside some valid payload previews. Persisted seven-path plan/state before
+runtime/other docs. Extend only value termination to preview end, including one
+dangling backslash; preserve complete values and existing pipeline placement.
+Direct public scalar/batch and real Engine/Worker boundaries will be authored/
+compiled, all execution user-delegated. No next increment started.
+
+
+## R90-164 Implementation and Static/Compile Checkpoint (2026-10-03)
+
+Only the JSON value terminator changes, with one explanatory comment: accept an
+actual closing quote or preview end with an optional dangling escape backslash.
+Replacement keeps an actual quote and adds none for a truncated value. Earlier
+escape pairs/header/pair/marker/key formatting and optional Worker placement
+remain. All other tracked engine paths except the existing redactor regression
+file are unchanged. Two prior truncated-value non-goal controls move into direct
+redaction cases; encoded-key/nonstring/raw-linebreak controls remain.
+
+Two direct scalar/batch regression functions are authored: 32 key/value cases
+cover empty/plain/escaped quote/backslash/dangling/partial Unicode/multibyte/space-
+containing preview-end values, prior complete token, exact surrounding text and
+idempotence; batch checks preserve four entries/order/nil/metadata across repeats.
+One real Engine-to-Worker regression has 30 cases: two keys, five cuts, three
+redaction/write modes. Complete valid source payloads exceed 200 bytes, actual
+Engine.Match yields exactly one exact 200-byte preview, and writer-entry snapshots
+check full metadata/content/count and accounting. Boundary cuts include a dangling
+backslash, escaped quote and partial Unicode escape. No fake matcher/private seam,
+sleeps, skips or panic swallowing; all assertions authored/compiled only.
+
+Pinned Go 1.26.8 alert/pipeline/API complete compile-only chain passed; binaries
+unexecuted. Static source/68 other tracked engine paths/format/docs/182 task JSON/168 complete
+unique roadmap pairs/167 prior Definitions/R90-75/chronology/horizon/links/fences/
+seven paths/diff/sensitive review passed. Existing
+skill guidance already covers actual truncation count/content; no skill change.
+Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution
+**not run; delegated by user**. Feature and one docs-only closure remain; no next
+increment started.

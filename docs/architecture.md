@@ -648,15 +648,19 @@ and point NetSentry at a new or operator-recovered path only after review.
 
 Current build: zap startup and match logs, verbose health with storage status and available bytes, Prometheus metrics for process/current and high-water queue depth/process-lifetime packet and alert rates/rule latency/alert write latency/alert/storage/worker/capture heartbeat state, structured audit logs for non-GET API requests, optional localhost-only pprof, SQLite JSONL recovery-log replay, and configurable payload preview redaction before alert writes.
 
-Payload redaction recognizes complete quoted JSON password/token values using
-escape pairs, so an escaped quote cannot end replacement early and leave a
-sensitive suffix. Existing key case-insensitivity, formatting, `[REDACTED]`
-marker, header/pair stages and optional pre-write pipeline placement remain.
-This is best-effort lexical handling of bounded previews, without key decoding,
-whole-JSON validation, extra sensitive fields or a new guarantee for malformed
-and truncated values. R90-148 direct scalar/batch and real Worker pre-write
-regression source is compile-reviewed; execution remains **not run; delegated
-by user**.
+Payload redaction recognizes quoted JSON password/token values using escape
+pairs, so an escaped quote cannot end replacement early and leave a sensitive
+suffix. R90-164 also redacts the visible value when the preview ends before the
+closing quote, including a dangling escape backslash or partial Unicode escape.
+The engine's 200-byte preview cap can produce these fragments from valid JSON.
+Actual closing quotes and key formatting are preserved; no quote is fabricated
+at preview end. Existing key case-insensitivity, `[REDACTED]` marker, header/pair
+stages and optional pre-write pipeline placement remain. This is best-effort
+lexical handling of bounded previews, without key decoding, whole-JSON validation,
+extra sensitive fields, RawPayload redaction or a multiline malformed-value
+guarantee. R90-148's truncated-value non-goal describes its historical scope;
+R90-164 scalar/batch and real Engine-to-Worker writer-entry regression source
+covers the new boundary. Execution remains **not run; delegated by user**.
 
 R90-145 adds a separate atomic `PacketsCompleted` Stats snapshot field and
 `netsentry_packets_completed_total` Prometheus counter at Worker.processed().

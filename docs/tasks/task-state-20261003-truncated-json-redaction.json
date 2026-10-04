@@ -1,0 +1,58 @@
+{
+  "task": "r90-164-truncated-json-redaction",
+  "timestamp": "2026-10-03",
+  "branch": "main",
+  "implementation_branch": "fix/r90-164-truncated-json-redaction",
+  "remote_baseline": "18aa324a89c211a9f95d37655541ea17b4fd8a96",
+  "starting_remote_baseline": "18aa324a89c211a9f95d37655541ea17b4fd8a96",
+  "risk_level": "Low",
+  "current_checkpoint": "implementation_static_and_compile_reviewed_ready_for_feature_delivery",
+  "completed": [
+    "Fetched clean main; prior exact feature/closure Git/Vault verified",
+    "107-commit phase audit; 167 unique roadmap pairs; independent R90-75 unchanged",
+    "407 Vault Markdown hashes and fourteen stable full-content backups",
+    "Selected source-grounded preview-end JSON redaction repair; plan persisted",
+    "Regex terminator plus comment only; prior two truncated controls moved to redaction cases",
+    "32 scalar cases plus batch metadata and 30 real Engine/Worker cases authored",
+    "Pinned Go 1.26.8 alert/pipeline/API compile-only chain passed; binaries unexecuted",
+    "Complete static review passed: docs/182 task JSON/168 unique roadmap pairs/167 prior Definitions/R90-75/history/horizon/links/fences/seven paths/sensitive/diff",
+    "Exact terminator-only source change; 68 other tracked engine paths preserved"
+  ],
+  "in_progress": [
+    "Feature push/fetch verification and exact Vault sync"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "pass: Go 1.26.8 alert/pipeline/API go test -c; binaries unexecuted",
+    "static_review": "pass: exact source/68 other engine paths/format/docs/182 JSON/168 unique roadmap pairs/167 prior Definitions/R90-75/history/horizon/links/fences/seven paths/diff/sensitive"
+  },
+  "authority_boundaries": [
+    "Only preview-end quoted password/token values; no multiline/key decoding/RawPayload policy",
+    "Standing user delegation forbids execution; compile/static only",
+    "One feature and one docs-only closure; no publication or next implementation"
+  ],
+  "remaining_risks": [
+    "Open-ended quoted credential fragments now redact visible suffix",
+    "Authored regressions remain unexecuted"
+  ],
+  "deviations": [
+    "Empty local ready queue restored from real 200-byte preview/redactor contract gap"
+  ],
+  "resume_instructions": "Complete only R90-164; do not repeat verified R90-163 delivery. Preserve delegated execution and R90-75 independent authority. Verify feature and single closure Git/Vault before selecting later work.",
+  "todo": [
+    "Feature delivery/Vault reconciliation",
+    "Single docs-only closure"
+  ],
+  "next_increment": {
+    "id": null,
+    "status": "no_other_defined_local_ready_increment",
+    "started": false,
+    "departmental_acceptance": "R90-75 independent asynchronous contract unchanged"
+  }
+}

@@ -105,12 +105,45 @@ func TestJSONRedactionPreservesExistingHeaderPairAndUnrelatedValues(t *testing.T
 	for _, unchanged := range []string{
 		`{"public":"keep\"suffix","password":123,"token":null,"auth":"keep"}`,
 		`{"pass\u0077ord":"a\"suffix-canary"}`,
-		`{"password":"open-canary`,
-		`{"password":"a\"suffix-canary`,
 		"{\"token\":\"line\r\nsuffix-canary\"}",
 	} {
 		if got := RedactSensitivePayload(unchanged); got != unchanged {
 			t.Fatalf("out-of-scope fixture changed: %q to %q", unchanged, got)
+		}
+	}
+}
+
+func TestRedactJSONCredentialValuesAtPreviewEnd(t *testing.T) {
+	values := []string{"", "open-canary", `a\"suffix-canary`, `a\\suffix-canary`, "canary\\", `canary\u00`, "π-canary", "spaced canary ; & = :"}
+	for _, key := range []string{"password", "token", "PaSsWoRd", "TOKEN"} {
+		for i, value := range values {
+			t.Run(fmt.Sprintf("%s/%d", key, i), func(t *testing.T) {
+				prefix := "POST / HTTP/1.1\r\n\r\n" + `{"public":"keep","token":"earlier","` + key + `" : "`
+				input := prefix + value
+				want := "POST / HTTP/1.1\r\n\r\n" + `{"public":"keep","token":"[REDACTED]","` + key + `" : "[REDACTED]`
+				got := RedactSensitivePayload(input)
+				if got != want || strings.Contains(got, "canary") {
+					t.Fatalf("preview-end redaction = %q, want %q", got, want)
+				}
+				if twice := RedactSensitivePayload(got); twice != got {
+					t.Fatalf("preview-end redaction not idempotent: %q then %q", got, twice)
+				}
+			})
+		}
+	}
+}
+
+func TestRedactTruncatedJSONBatchPreservesMetadata(t *testing.T) {
+	first := &model.Alert{ID: "first", EventID: "event", RuleID: "rule", Timestamp: time.Unix(1719300000, 0).UTC(), Severity: model.SeverityHigh, PayloadPreview: `{"password":"canary\`, RawPayload: "raw-marker", MatchedKeyword: "keep"}
+	second := &model.Alert{ID: "second", PayloadPreview: `{"token":"canary\u00`}
+	empty := &model.Alert{ID: "empty"}
+	wantFirst, wantSecond := *first, *second
+	wantFirst.PayloadPreview, wantSecond.PayloadPreview = `{"password":"[REDACTED]`, `{"token":"[REDACTED]`
+	alerts := []*model.Alert{nil, empty, first, second}
+	for i := 0; i < 2; i++ {
+		RedactSensitivePayloads(alerts)
+		if len(alerts) != 4 || alerts[0] != nil || alerts[1] != empty || alerts[2] != first || alerts[3] != second || *empty != (model.Alert{ID: "empty"}) || *first != wantFirst || *second != wantSecond {
+			t.Fatalf("batch metadata/order/content changed: %+v %+v", first, second)
 		}
 	}
 }
