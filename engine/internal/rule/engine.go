@@ -274,15 +274,8 @@ func compilePayloadRule(cfg model.PayloadMatchConfig) (compiledPayloadRule, erro
 	if compiled.depth < 0 || compiled.offset < 0 {
 		return compiledPayloadRule{}, fmt.Errorf("payload depth and offset must be non-negative")
 	}
-	for _, proto := range cfg.Protocols {
-		p, ok := parseProtocol(proto)
-		if !ok {
-			return compiledPayloadRule{}, fmt.Errorf("unsupported protocol %q", proto)
-		}
-		if p == 0 {
-			continue
-		}
-		compiled.protocols[p] = struct{}{}
+	if err := addProtocols(compiled.protocols, cfg.Protocols); err != nil {
+		return compiledPayloadRule{}, err
 	}
 	for _, port := range cfg.Ports {
 		if port < 0 || port > 65535 {
@@ -365,15 +358,23 @@ func validateDirection(kind, direction string) error {
 }
 
 func addProtocols(dst map[uint8]struct{}, protocols []string) error {
+	anyProtocol := false
 	for _, proto := range protocols {
 		p, ok := parseProtocol(proto)
 		if !ok {
 			return fmt.Errorf("unsupported protocol %q", proto)
 		}
 		if p == 0 {
+			if strings.EqualFold(strings.TrimSpace(proto), "any") {
+				anyProtocol = true
+			}
 			continue
 		}
 		dst[p] = struct{}{}
+	}
+	// Validate every entry before allowing an explicit wildcard to dominate.
+	if anyProtocol {
+		clear(dst)
 	}
 	return nil
 }

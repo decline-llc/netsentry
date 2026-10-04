@@ -263,6 +263,8 @@ formal SLO and evidence contract is unchanged.
 
 | R90-175 | Oct 4–Jan 1 | Complete implementation; tests delegated | Reject an explicit suppression scope with no compiled rule IDs. | R90-174 verified feature/closure; existing exact rule-ID suppression | Enabled nonempty empty-string-only scopes reject before publication/persistence; nil/empty all-rule and mixed/exact/disabled semantics retained; direct constructor/file-backed/HTTP regressions authored, execution delegated. |
 
+| R90-176 | Oct 4–Jan 1 | In progress; tests delegated | Retain explicit any protocol wildcard semantics. | R90-175 verified feature/closure; existing protocol compiler | Any dominates named entries in all three types after complete validation; blank/named-only and other gates retained; direct engine/file-backed HTTP regressions authored, execution delegated. |
+
 ## R90-01 Definition
 
 - **Goal:** establish one versioned 90-day delivery authority and a
@@ -11285,3 +11287,81 @@ retains its full independent departmental contract; no qualifying outcome was
 supplied. Oct 4–Jan 1 horizon unchanged. Next trigger verifies closure/Vault,
 audits fresh source/history/queue and persists a separate eligible plan before
 editing. Repair only missing delivery evidence.
+
+
+## R90-176 Definition
+
+- **Goal:** retain explicit any wildcard meaning when mixed with named protocols.
+- **Dependency:** R90-175 verified feature/closure; existing protocol compiler.
+- **Window:** Oct 4–Jan 1; forecast only.
+- **Risk:** low; mixed wildcard lists intentionally detect additional protocols.
+- **Acceptance:** all three types accept every protocol under an explicit any;
+  every malformed entry still rejects before publication/persistence. Blank
+  entries remain ignored; named-only unions and other rule gates remain intact.
+  Direct public Engine and real file-backed HTTP assertions authored, execution
+  delegated. Preserve input/config, failed snapshot, file bytes/mode/membership
+  and status/diagnostics; valid retry reaches matching and canonical persistence.
+- **Required validation:** pinned Go 1.26.8 rule/API/pipeline/cmd compile-only;
+  exact source/format/docs/JSON/roadmap multisets/prior history/authority/links/
+  fences/scope/sensitive/diff; exact non-force push/fetch/Vault replay.
+  Behavioral/race/full/scanner/knowledge/traffic/acceptance not run; delegated by user.
+- **Stop condition:** ambiguous validation or Git/Vault evidence, competing edits,
+  private input, new external authority or a second increment.
+
+## R90-176 Selection and Source Audit (2026-10-04)
+
+Fresh clean fetched baseline `d89966e53ed45903f6b101cfebea19aea25a3984`.
+R90-175 feature and single closure exact range/note/index/MOC verified; 131
+four-week phase commits have iteration and full-index coverage. The 179 prior
+row/Definition multisets agree with no duplicates. Captured 431 Vault Markdown
+hashes and fourteen stable-note backups. No missing delivery or supplied
+independent R90-75 outcome. Recent SLO adapters, candidate/toolchain work and
+native repairs retain departmental execution debt; compile volume is no pass.
+
+Empty local ready queue restored with one source-grounded compiler repair:
+explicit any alone leaves an unrestricted map, but named entries narrow a
+mixed list. Persisted plan/state before implementation or documentation.
+All entries will validate before wildcard publication; blanks retain prior
+ignored semantics. Nine-path scope, original filter/config/file/HTTP contracts
+and persistent delegation retained. Horizon unchanged; no next increment started.
+
+
+## R90-176 Compile and Static Checkpoint (2026-10-04)
+
+Runtime change is limited to payload compilation reusing addProtocols and the
+shared helper retaining an explicit any marker until all entries validate,
+then clearing its owned map. No match, ordering, publication, loader/saver,
+API or schema code changed. Blanks retain ignored behavior; named unions and
+all earlier direction/window/protocol/port diagnostics retain their source
+order. The repository seed has no explicit any protocol marker.
+
+Four direct declarations in two files are authored. Public Engine cases cover
+all three types, wildcard orders/case/spaces/duplicates, five representative
+protocols including unnamed values, complete alert contents, original config
+and packet/snapshot preservation. Compatibility includes nil/empty/blank-only,
+blank-plus-TCP, named unions, destination/port/IP gates, payload case/window/
+keyword rejection and disabled rules. Invalid entries before/after/between
+wildcards reject enabled and disabled candidates with exact error, retaining
+rules/count/matching/config, followed by valid retry; direction and negative
+window diagnostics retain precedence. Real file-backed HTTP create/update/
+reload reaches every type, invalid-before/after ordering, existing 400
+VALIDATION_ERROR and exact operation message/details/request ID, file bytes/
+mode/membership and published matching/count/rules, valid retry status/response,
+loaded canonical original protocol list and every protocol/alert content.
+Reload leaves the supplied file intact. All declarations remain unexecuted.
+
+Pinned Go 1.26.8 preflight and complete fail-fast rule/API/pipeline/cmd
+compile-only passed after the final test edit; binaries remain outside the
+repository and unexecuted. Static exact runtime transform/Go format/docs-check/
+194 task JSON/180 unique roadmap pairs/all 179 prior Definitions and complete
+roadmap history/authority/handoff/local links/fences/nine-path/sensitive/diff
+review passed. All 431 baseline Vault Markdown hashes remain unchanged.
+An initial temporary static-harness generation quoting error was corrected;
+the complete static chain was rerun successfully. Static source review also
+corrected the authored reload assertion to its existing 400 VALIDATION_ERROR
+boundary before final compilation. No code/compile or unresolved static failure.
+Existing skill instructions suffice; no redundant skill update is warranted.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance checks are **not run;
+delegated by user**. No runtime, HTTP, race, release or SLO pass is inferred.
+R90-75 remains independent; no next increment started. Feature delivery pending.

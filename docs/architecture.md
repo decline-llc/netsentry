@@ -163,6 +163,16 @@ Current rule semantics:
 - `ip_blacklist` enforces `ips`, `direction`, and optional `protocols` per rule. Exact IPs and CIDRs stay scoped to the owning rule.
 - `port_blacklist` enforces `ports`, `direction`, and optional `protocols` per rule.
 
+For all three types, explicit `any` in `protocols` permits every protocol even
+when mixed with `TCP`, `UDP` or `ICMP`. Names ignore case and surrounding spaces.
+Every entry is validated before applying the wildcard, so an unsupported name
+still rejects the complete candidate snapshot. Blank entries remain ignored;
+nil/empty/blank-only lists are unrestricted, and blanks mixed with named entries
+retain that named union. Wildcards affect only the protocol gate; IP, port,
+direction, payload window, case and enabled checks still apply. Original config
+text is retained. Direct engine and file-backed HTTP regressions are authored
+and compiled only; execution remains delegated.
+
 R90-170 compares exact parsed address identities, so IPv4-mapped and equivalent
 IPv6 spellings match the same address. Compiled keys use `net.IP.String`;
 canonical packet text keeps its direct lookup, with a parsed fallback before CIDR

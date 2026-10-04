@@ -137,6 +137,16 @@ behavioral/race/CLI/full-suite/knowledge and acceptance execution remains
 
 ### `GET /api/rules`
 
+For `payload_match`, `ip_blacklist` and `port_blacklist` configuration, an
+explicit `any` member of `protocols` allows every protocol, including when
+combined with `TCP`, `UDP` or `ICMP`. Protocol names ignore case and surrounding
+spaces. Unsupported members still reject the rule even beside `any`. Blank
+members are ignored; omitted/empty/blank-only lists are unrestricted, while a
+blank mixed with named members does not broaden that named union. Other rule
+gates remain active. Create/update/reload preserve the original protocol list
+in canonical persisted configuration. Direct engine and file-backed HTTP
+assertions are authored and compiled; behavioral execution remains delegated.
+
 Returns the currently loaded rule snapshot in priority order.
 
 ```json

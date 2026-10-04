@@ -516,3 +516,36 @@ Existing owning-package commands above include alert/API. Execution remains
 **not run; delegated by user**; compilation is no runtime, HTTP, race or SLO
 acceptance result. Prefix diagnostics retain precedence; whitespace IDs are
 literal and are not newly rejected or normalized. R90-75 remains independent.
+
+## Follow-up: R90-176 explicit protocol wildcard
+
+The historical inventory and previous follow-ups remain unchanged. Four new
+declarations in two files require departmental execution:
+
+- [Engine regressions](../engine/internal/rule/protocol_wildcard_test.go):
+  `TestExplicitAnyProtocolPreservesWildcardAcrossRuleTypes`,
+  `TestAnyProtocolPreservesOtherRuleGates`, and
+  `TestAnyProtocolRejectsInvalidEntriesAndPreservesSnapshot`. Review payload,
+  IP and port rules; wildcard order/case/space/duplicates; protocols 0/1/6/17/255;
+  complete alerts and input/config preservation. Check nil/empty/blank/named
+  compatibility, other filter gates and disabled rules. Invalid entries before,
+  after and between wildcards must retain exact errors and prior snapshots,
+  including disabled candidates, followed by valid retry. Earlier direction
+  and payload-window diagnostics retain precedence.
+- [HTTP regression](../engine/internal/api/protocol_wildcard_test.go):
+  `TestRuleHTTPProtocolWildcardPersistsRejectsAndPermitsRetry` uses a real
+  Engine and seed file for POST/PUT/reload across all three types. Invalid
+  entries on either side of `any` retain 400 VALIDATION_ERROR, operation-specific
+  message/details/request ID and file bytes/mode/membership plus matching/count/
+  rules. Valid same-operation retry checks status/response, canonical loaded
+  persistence and original protocol list, every protocol and alert contents.
+  Reload preserves the operator-supplied file.
+- [Plan](plans/task-20261004-protocol-wildcard.md) and
+  [state](tasks/task-state-20261004-protocol-wildcard.json) retain scope, authority,
+  compile/static evidence and exact delivery history. Resolve the feature SHA
+  through those records and Git.
+
+The existing owning-package commands include rule/API. Execution is **not run;
+delegated by user**. Compile-only success does not establish runtime, HTTP,
+race or SLO acceptance. Explicit `any` broadens mixed lists as requested by the
+wildcard; blank entries continue to be ignored. R90-75 remains independent.
