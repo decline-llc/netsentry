@@ -457,3 +457,32 @@ completed loss, missing expected alerts retained as failures, extended-tail
 coverage, full raw artifacts and reviewed results. These native correctness
 regressions cannot establish that outcome. No qualifying profile measurements
 are supplied with this handoff.
+
+
+## Follow-up: R90-174 severity label encoding
+
+The original R90-144..172 inventory and its counts above remain historical.
+This separate follow-up adds two source files and three declarations:
+
+- [Renderer regressions](../engine/internal/stats/label_encoding_test.go):
+  `TestPrometheusSeverityLabelEncoding` and
+  `TestPrometheusSeverityLabelsPreserveSortAndCounts`. Review twelve exact-byte
+  cases (canonical, escape, control, Unicode and mixed-injection forms), a reader
+  accepting only the three legal Prometheus escapes, raw identity/counts/input/
+  snapshot preservation, and sorting across colliding-looking escaped values.
+- [HTTP regression](../engine/internal/api/metrics_label_encoding_test.go):
+  `TestMetricsSeverityLabelEncodingPreservesHealthIdentity`. Real Stats and
+  HTTP Handler with existing store/queue/rule fixtures; exact mixed label bytes,
+  canonical lines, total, 200/content type, repeated label lines and raw label
+  identity plus existing health JSON field set. This is not a socket/network or
+  production Prometheus scraper test.
+- [Plan](plans/task-20261004-prometheus-labels.md) and
+  [state](tasks/task-state-20261004-prometheus-labels.json) preserve R90-174 scope,
+  authority, validation and exact delivery evidence. Resolve its feature SHA
+  from those records and Git after delivery.
+
+The package commands above already include stats and API. Execution remains
+**not run; delegated by user**. Compile-only success does not establish parser,
+HTTP, race or SLO acceptance. Verify the actual returned lines and health JSON
+against the plan before departmental execution; invalid UTF-8 policy is outside
+scope. Independent R90-75 requirements remain unchanged.

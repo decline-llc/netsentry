@@ -766,6 +766,16 @@ failure/export regressions are authored and compiled only; execution remains
 **not run; delegated by user**. Cross-counter comparisons use quiescent writers;
 this adds no general transactional snapshot or SLO measurement guarantee.
 
+R90-174 encodes severity labels using the
+[Prometheus text format](https://prometheus.io/docs/instrumenting/exposition_formats/):
+backslash, double quote and line feed become `\\`, `\"` and `\n`. Other
+UTF-8 bytes, including tabs, carriage returns and nonbreaking spaces, stay
+literal rather than using unsupported Go string escapes. Severity identity,
+raw label sorting, counts, canonical label lines and health JSON remain unchanged.
+This is an exposition repair for the existing dynamic-label Stats contract;
+invalid UTF-8 input policy is outside scope. Direct renderer and HTTP metrics/
+health regressions are authored and compiled only; execution is delegated.
+
 R90-161 makes `Stats.ObserveAlerts` safe for a non-nil zero-value Stats by lazily
 allocating its severity map at the first non-nil entry under the existing mutex.
 Nil, empty and all-nil batches retain no-op behavior. Zero Stats retains zero

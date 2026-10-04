@@ -259,6 +259,8 @@ formal SLO and evidence contract is unchanged.
 
 | R90-173 | Oct 4–Jan 1 | Complete documentation; execution delegated | Consolidate the departmental native correctness regression handoff. | R90-172 verified feature/closure; R90-144..172 source plans and tests | Exact source-linked inventory of 29 repairs, 38 changed test files and 106 current declarations; execution/evidence instructions distinguish authored debt from passes; active forecast and stable handoffs reconciled without runtime changes. |
 
+| R90-174 | Oct 4–Jan 1 | In progress; delivery pending | Encode severity labels using the Prometheus text format. | R90-173 verified feature/closure; existing dynamic Stats labels | Only backslash/quote/newline escaped; raw severity identity/sort/counts and other metrics/health unchanged; renderer and HTTP regressions authored, execution delegated. |
+
 ## R90-01 Definition
 
 - **Goal:** establish one versioned 90-day delivery authority and a
@@ -11061,3 +11063,59 @@ ready increment; R90-75 full independent departmental contract remains outstandi
 within the Oct 4–Jan 1 forecast. Next trigger verifies this completed closure
 and audits fresh history/source/queue before selecting and persisting a separate
 eligible increment. Repair missing evidence only; do not repeat verified delivery.
+
+
+## R90-174 Definition
+
+- **Goal:** replace Go string quoting with Prometheus severity label escaping.
+- **Dependency:** R90-173 verified feature/closure; existing dynamic Stats labels.
+- **Window:** Oct 4–Jan 1; forecast only.
+- **Risk:** low; encoding only, preserving raw label identity and canonical lines.
+- **Acceptance:** exact three legal escapes; preserve UTF-8/control bytes, counts,
+  raw sort order, other exposition and health JSON. Direct public renderer/HTTP
+  assertions compiled, execution delegated. Invalid UTF-8 policy outside scope.
+- **Required validation:** pinned owning-module stats/API/cmd/pipeline compile-only;
+  exact source/format, docs-check, JSON, roadmap multisets/prior Definitions,
+  history/authority/links/fences/scope/sensitive/diff; exact push/fetch/Vault replay.
+  Behavioral/race/full/scanner/knowledge/traffic/acceptance not run; delegated by user.
+- **Stop condition:** ambiguous validation or Git/Vault evidence, competing edits,
+  private input, new external authority or a second increment.
+
+## R90-174 Selection and Source Audit (2026-10-04)
+
+Fresh fetched clean baseline `2488c394a394c363a8f19578543cec6983a69014`. R90-173 feature/closure exact
+Git/Vault range, note/index/MOC verified; all 127 four-week phase commits have
+historical note/index coverage. Captured 427 Markdown hashes, 380 immutable
+iteration notes and fourteen stable note backups. 177 unique prior roadmap pairs
+agree. No missing delivery or supplied independent R90-75 outcome.
+
+Empty local ready queue restored with one source-grounded metrics repair.
+RenderPrometheus uses Go %q for accepted dynamic severity values; unsupported
+Go escapes can invalidate text exposition. Official Prometheus format requires
+only backslash/quote/newline escaping. Persisted plan/state before implementation
+and documentation. Eight intended paths; no dependency or API schema change.
+Persistent departmental test delegation and R90-75 full contract retained.
+Horizon stays Oct 4–Jan 1; no next increment started.
+
+
+## R90-174 Compile and Static Checkpoint (2026-10-04)
+
+Runtime diff is exactly the shared three-pair immutable strings.Replacer and
+severity formatting call; counters, raw keys/order and every other runtime line
+remain unchanged. Two renderer declarations cover twelve literal-byte cases,
+returned-line decoding through only legal escapes, input/snapshot preservation,
+repeatability, total/counts, raw sort order and distinct newline/literal-escape
+identities. One HTTP declaration reaches real Stats/Handler with existing
+store/queue/rule fixtures, asserts exact mixed control/escape/Unicode bytes,
+canonical labels, total, status/content type, repeated label lines and original
+health JSON keys/raw identity. No new parser dependency, network/scraper test,
+private seam, sleep or invalid-UTF-8 claim. All assertions unexecuted.
+
+Preflighted exact Go 1.26.8/module roots; complete fail-fast stats/API/cmd/pipeline
+compile-only chain passed; binaries unexecuted. Static exact source/format/docs/
+192 JSON/178 unique roadmap pairs/all 177 prior Definitions and roadmap history/
+R90-75/split/horizon/historical handoff/links/fences/eight-path scope/sensitive/
+diff passed. All 427 baseline Vault Markdown hashes unchanged. Behavioral/race/
+full/scanner/knowledge/traffic/acceptance **not run; delegated by user**. No
+runtime/HTTP/parser/race/SLO pass inferred. No scope or validation deviation;
+existing skill rules suffice. No next increment started; delivery pending.
