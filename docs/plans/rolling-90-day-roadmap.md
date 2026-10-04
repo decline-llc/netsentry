@@ -259,7 +259,7 @@ formal SLO and evidence contract is unchanged.
 
 | R90-173 | Oct 4–Jan 1 | Complete documentation; execution delegated | Consolidate the departmental native correctness regression handoff. | R90-172 verified feature/closure; R90-144..172 source plans and tests | Exact source-linked inventory of 29 repairs, 38 changed test files and 106 current declarations; execution/evidence instructions distinguish authored debt from passes; active forecast and stable handoffs reconciled without runtime changes. |
 
-| R90-174 | Oct 4–Jan 1 | In progress; delivery pending | Encode severity labels using the Prometheus text format. | R90-173 verified feature/closure; existing dynamic Stats labels | Only backslash/quote/newline escaped; raw severity identity/sort/counts and other metrics/health unchanged; renderer and HTTP regressions authored, execution delegated. |
+| R90-174 | Oct 4–Jan 1 | Complete implementation; tests delegated | Encode severity labels using the Prometheus text format. | R90-173 verified feature/closure; existing dynamic Stats labels | Only backslash/quote/newline escaped; raw severity identity/sort/counts and other metrics/health unchanged; renderer and HTTP regressions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -11119,3 +11119,43 @@ diff passed. All 427 baseline Vault Markdown hashes unchanged. Behavioral/race/
 full/scanner/knowledge/traffic/acceptance **not run; delegated by user**. No
 runtime/HTTP/parser/race/SLO pass inferred. No scope or validation deviation;
 existing skill rules suffice. No next increment started; delivery pending.
+
+
+## R90-174 Completion and Forward Queue Refresh (2026-10-04)
+
+Feature `47ab1ea637c575fab13e3f7b9b3f5b6f74d3dbb2` contains exactly the eight planned paths. Non-force push
+and immediate fresh fetch verify clean HEAD/origin/main/FETCH_HEAD equality.
+Exact full-SHA range `2488c394a394c363a8f19578543cec6983a69014..47ab1ea637c575fab13e3f7b9b3f5b6f74d3dbb2` synchronized to
+`04-开发迭代记录/2026-10-04-47ab1ea637-CI知识同步.md`; Git-resolved note/index/MOC and intended scope verified. Fourteen
+current stable notes reconciled; prior substantive prose archived exactly under
+an explicit history section, excluding only the versioned generated CI MOC block
+from old-prose comparisons. All 380 baseline immutable iteration notes preserved.
+Identical feature replay preserves all 428 Markdown hashes. Existing unique
+sibling local Vault explicitly supplied; no second or remote Vault created.
+
+Acceptance matches plan: source changes only the immutable three-pair label
+escaper and severity line call. Twelve literal-byte renderer cases decode actual
+returned label bytes through an independent three-escape reader; sorting test
+checks distinct newline/literal-escape keys, raw order and counts. HTTP test
+reaches real Stats/Handler with existing fixtures; exact mixed escaped/control/
+Unicode output, canonical labels, totals, status/content type, repeated label
+lines and original health keys/raw identity asserted. Input/snapshot unchanged.
+No network/scraper test, invalid-UTF-8 policy, normalization or dependency claim.
+All three declarations compiled and unexecuted. Architecture plus departmental
+follow-up preserve the original R90-144..172 inventory byte-for-byte.
+
+Pinned Go 1.26.8 four-package compile-only and static exact source/format/docs/
+192 JSON/178 unique pairs/177 prior Definitions and complete roadmap history/
+R90-75/split/horizon/handoff/links/fences/eight paths/sensitive/diff passed.
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated
+by user**. No runtime/HTTP/parser/race/SLO pass inferred. No scope or validation
+deviation; empty-queue repair selection recorded. Existing skill rules suffice.
+
+This single three-path docs-only delivery record closes the same increment.
+Resolve its full SHA from Git and verify non-force push/fresh fetched equality
+and exact feature..closure Vault note/index/MOC before reporting; do not create
+a self-reference closure. Future queue refreshed without starting another item:
+no other defined local ready increment. R90-75 independent full departmental
+contract remains outstanding; Oct 4–Jan 1 horizon unchanged. Next trigger verifies
+closure/Vault and audits fresh Git/source/history/queue before a separate eligible
+plan. Repair only missing evidence; do not repeat verified delivery.
