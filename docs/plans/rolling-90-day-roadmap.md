@@ -247,7 +247,7 @@ formal SLO and evidence contract is unchanged.
 
 | R90-167 | Oct 3–Dec 31 | Complete implementation; tests delegated | Preserve question marks in writable SQLite filenames. | R90-166 verified feature/closure; pinned driver path semantics | Ordinary question-mark paths use encoded file URIs without driver options; primary/daily/preservation regressions authored, execution delegated. |
 
-| R90-168 | Oct 3–Dec 31 | Ready | Preserve relative file-prefixed SQLite filenames. | R90-167 verified feature/closure; pinned SQLite URI prefix semantics | Ordinary file-prefixed writes and resolved relative read-only paths use absolute file URIs; primary/decoy/daily/rejection regressions authored, execution delegated. |
+| R90-168 | Oct 3–Dec 31 | Complete implementation; tests delegated | Preserve relative file-prefixed SQLite filenames. | R90-167 verified feature/closure; pinned SQLite URI prefix semantics | Ordinary file-prefixed writes and resolved relative read-only paths use absolute file URIs; primary/decoy/daily/rejection regressions authored, execution delegated. |
 
 
 ## R90-01 Definition
@@ -3846,7 +3846,7 @@ formal SLO and evidence contract is unchanged.
 
 ## R90-168 Definition
 
-- **Goal/status:** ready; preserve literal relative file-prefixed writable filenames.
+- **Goal/status:** implementation delivered; preserve literal relative file-prefixed writable filenames and read-only relative path reopening.
 - **Dependencies/window:** verified R90-167 feature/closure; pinned SQLite exact file: URI-prefix semantics; Oct 3–Dec 31 forecast, dates not gates.
 - **Risk:** low; relative file: names now target literal files rather than URI aliases.
 - **Acceptance:** writable guard/comment and read-only absolute-path normalization only; question-mark repair/durable FULL/other ordinary writes and mode=ro/readonly_shm unchanged; public relative primary/reopen/alternate-target preservation, current/historical daily writes/reads, independent absolute read-only observation, exact non-sidecar files and rejected persistent-input tree preservation with actual corrupt SQLite diagnostic; six-path feature/one closure exact Git/Vault.
@@ -10461,3 +10461,60 @@ traffic/acceptance execution **not run; delegated by user**. No runtime/SQLite/
 durability/race/SLO pass inferred. Only deviation is the source-evidenced necessary
 read-only prerequisite within the same six paths, plus repaired temporary tooling.
 Local skill instruction 11 fixture refinement is separate; no next increment.
+
+
+## R90-168 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `35ff8c067acfd58be17697952ab3e11c3bc4dfa7` contains exactly the six intended paths. Recorded old remote tip,
+non-force push and immediate fresh fetch verified clean main HEAD/origin/main/
+FETCH_HEAD equality. Full-SHA range `4cf106a67ac142d478f6f7a0294872c26c6ce2f6..35ff8c067acfd58be17697952ab3e11c3bc4dfa7` synchronized to
+`04-开发迭代记录/2026-10-03-35ff8c067a-CI知识同步.md`; exact six-path scope,
+Git-resolved short identifiers, full index and MOC links verified. Fourteen stable
+current notes reconciled; all prior substantive current/topic/history prose
+archived exactly outside documented bounded generated MOC regions. All 368
+baseline immutable iteration notes unchanged. Identical feature replay preserves
+416 Markdown hashes; snapshot JSON SHA-256 `4bbf186e6973c5c42614fc25656803bb4fb269739a36e6c2f8d1f70c739f38dd`. Existing unique sibling
+local Vault supplied explicitly; no second/remote Vault.
+
+Acceptance matches amended plan: writable exact file: guard/comment and read-only
+absolute normalization only; 74 other tracked engine paths unchanged. Ordinary
+question-mark handling, durable FULL query, other ordinary writes and mode=ro/
+readonly_shm/symlink/sidecar/error classification retained. Pinned Go URL serializer
+and SQLite parser showed the read-only relative authority prerequisite; same
+six-path plan was amended before editing. This necessary helper normalization
+completes promised relative reopen/historical reads; no new URI/in-memory API.
+
+Fourteen primary cases span seven relative path shapes/both modes; exact file:
+filename, uppercase FILE:, ordinary and prefixed encoded forms. Eight primary
+cases preseed stripped alternate target and preopen/query-warm an independent
+encoded absolute mode=ro observer reused after writes/reopen, assert one-row
+aggregate and whole decoy DB/recovery bytes/modes unchanged. Six daily cases span
+three relative directories/two modes; actual current/historical writable opens,
+existing historical preflight/retry, cross-shard Query/List/Count and reopen.
+Positive controls assert exact Store.Path, totals/content/timestamps/aggregates,
+unchanged inputs, per-file independent reads and exact expected non-sidecar files/
+cleared recovery logs. Only legitimate sidecars beside expected DBs allowed.
+Four malformed-recovery/corrupt-DB rejections prove sentinel/nil Store/complete
+tree bytes/modes/membership; corrupt cases require actual SQLite diagnostic to
+exclude weaker URI-authority rejection. Public boundaries directly reached by
+authored assertions; no fake/private seams/sleeps/skips/panic swallowing or
+writable reopen of rejected artifacts. All unexecuted, no runtime pass inferred.
+
+Final complete preflighted Go 1.26.8 alert/API/cmd/netsentry/pipeline compile-only
+chain and static exact two-helper transform/pinned parser/74 other paths/format/
+docs/186 JSON/172 unique roadmap pairs/171 prior Definitions/R90-75/history/horizon/
+links/fences/six paths/diff/sensitive passed. Binaries unexecuted. Temporary
+static-review quoting syntax repaired; complete review rerun successfully.
+Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution
+**not run; delegated by user**. No SQLite/runtime/durability/race/SLO pass inferred.
+Local skill instruction 11 refined for relative/reserved-prefix public fixtures
+and independent encoded absolute observations; Markdown checked, separate from
+repository commit. No unresolved compile/static ambiguity or next implementation.
+
+This single three-path docs-only record closes the same increment. Resolve full
+SHA from Git; push/fresh-fetch/exact feature..closure Vault verification before
+reporting. Do not repeat verified feature/closure delivery or add self-reference
+closure. Forward queue refreshed: no other defined local ready increment. R90-75
+full independent asynchronous departmental contract and Oct 3–Dec 31 horizon
+unchanged. Next trigger verifies fetched closure/Vault, audits fresh code/queue
+and persists a separate eligible plan before edits. No next increment started.
