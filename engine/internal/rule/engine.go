@@ -321,10 +321,11 @@ func compileIPRule(cfg model.IPBlacklistConfig) (compiledIPRule, error) {
 			compiled.nets = append(compiled.nets, ipNet)
 			continue
 		}
-		if net.ParseIP(ipStr) == nil {
+		ip := net.ParseIP(ipStr)
+		if ip == nil {
 			return compiledIPRule{}, fmt.Errorf("invalid IP %q", ipStr)
 		}
-		compiled.ips[ipStr] = struct{}{}
+		compiled.ips[ip.String()] = struct{}{}
 	}
 	if len(compiled.ips) == 0 && len(compiled.nets) == 0 {
 		return compiledIPRule{}, fmt.Errorf("ip blacklist requires at least one IP or CIDR")
@@ -484,6 +485,9 @@ func ipValueMatches(cfg compiledIPRule, value string) (string, bool) {
 	ip := net.ParseIP(value)
 	if ip == nil {
 		return "", false
+	}
+	if _, ok := cfg.ips[ip.String()]; ok {
+		return value, true
 	}
 	for _, ipNet := range cfg.nets {
 		if ipNet.Contains(ip) {

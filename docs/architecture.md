@@ -163,6 +163,14 @@ Current rule semantics:
 - `ip_blacklist` enforces `ips`, `direction`, and optional `protocols` per rule. Exact IPs and CIDRs stay scoped to the owning rule.
 - `port_blacklist` enforces `ports`, `direction`, and optional `protocols` per rule.
 
+R90-170 compares exact parsed address identities, so IPv4-mapped and equivalent
+IPv6 spellings match the same address. Compiled keys use `net.IP.String`;
+canonical packet text keeps its direct lookup, with a parsed fallback before CIDR
+traversal. Alert addresses/reasons and published rule configuration retain their
+original text. This Engine behavior adds no native capture/receiver/storage IPv6
+support. Direct regressions are authored and compiled only; execution remains
+delegated.
+
 R90-162 rejects IP blacklists whose trimmed entries produce neither an exact IP
 nor a CIDR, using the existing at-least-one-IP-or-CIDR diagnostic. Validation
 applies to enabled and disabled rules; a rejected reload retains the previous

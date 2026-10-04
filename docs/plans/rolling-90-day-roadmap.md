@@ -251,6 +251,8 @@ formal SLO and evidence contract is unchanged.
 
 | R90-169 | Oct 3–Dec 31 | Complete implementation; tests delegated | Preserve the literal SQLite :memory: filename. | R90-168 verified feature/closure; pinned SQLite exact sentinel semantics | Ordinary exact sentinel uses existing absolute file URI; persistence/reopen/compatible-existing/rejection regressions authored, execution delegated. |
 
+| R90-170 | Oct 3–Dec 31 | In progress; tests delegated | Match equivalent exact IP blacklist addresses. | R90-169 verified feature/closure; existing parsed IP acceptance | Exact addresses compare parsed identities; canonical fast path, original alert/config text, CIDR/filter/publication semantics retained; direct regressions authored, execution delegated. |
+
 
 ## R90-01 Definition
 
@@ -3869,6 +3871,25 @@ formal SLO and evidence contract is unchanged.
 
 
 
+
+## R90-170 Definition
+
+- **Goal:** compare exact blacklist address identities across accepted mapped,
+  compressed, expanded and case-variant IP spellings, retaining original text.
+- **Dependencies:** verified R90-169 feature/closure and existing parsed-IP rule
+  acceptance; no new external input.
+- **Window:** Oct 3–Dec 31; dates forecast only.
+- **Risk:** low; equivalent addresses now trigger existing rules; preserve raw
+  canonical fast path and CIDR/filter/priority/early-exit/publication semantics.
+- **Acceptance:** parsed keys/fallback with unchanged caller config and alert
+  addresses/reason; direct public identity/filter/file/rejection regressions
+  authored and compiled, with execution delegated. No native IPv6 expansion.
+- **Required validation:** Go 1.26.8 compile-only rule/API/cmd/pipeline, static
+  source/format/docs/JSON/roadmap/authority/scope/sensitive, exact Git/Vault
+  delivery and stable prose preservation. Suites and knowledge gate not run;
+  delegated by user; no runtime/race/SLO assertion.
+- **Stop condition:** competing edits, ambiguous compile/static/Git/Vault
+  evidence, new authority or unrelated increment.
 
 ### R90-71 Validation Deviation
 
@@ -10615,3 +10636,50 @@ self-reference closure. Forward queue refreshed: no other defined local ready
 increment. R90-75 independent asynchronous full contract and Oct 3–Dec 31 horizon
 retained. Next trigger verifies completed closure, audits fresh history/code/
 queue and persists a separate eligible plan. No next implementation started.
+
+
+## R90-170 Selection and Exact Address Identity (2026-10-03)
+
+Clean fresh-fetched main `6bcbdcee40dd0a8b2c9077be7361e7127a64a663`;
+R90-169 exact feature/closure Git/Vault notes/index/MOC and stable current
+references verified. Sep 12–Oct 3 audit covers SLO adapters/inventory admission,
+patched release/toolchain and bounded core correctness; all 119 baseline commits
+have note/index coverage, latest exact ranges have generated MOC links. No new
+qualifying R90-75 outcome. All 173 prior unique pairs agree; R90-75 independent
+full departmental contract, testing split and Oct 3–Dec 31 horizon retained.
+Captured 419 Vault hashes and fourteen stable prose backups.
+
+Empty local ready queue restored from accepted net.ParseIP literals versus raw
+exact matching: mapped IPv4 rule text can miss native canonical packet text;
+equivalent IPv6 spellings have the same public Engine mismatch. Source inference,
+not an observed behavioral failure. Official Go ParseIP/IP.String and pinned
+Go 1.26.8 source reviewed. Six-path plan/state persisted before behavior edits.
+One exact identity repair only; no native IPv6 expansion or publication.
+
+Initial temporary audit expected unbounded generated MOC history; corrected to
+versioned twenty-entry policy and complete audit rerun before selection. No
+missing delivery or artifact mutation. All execution delegated; no next increment.
+
+
+## R90-170 Compile and Static Checkpoint (2026-10-03)
+
+Runtime diff exactly matches two-function plan: store validated parsed IP.String
+keys and look up parsed packet identity after the retained canonical raw lookup,
+before unchanged CIDR traversal. Original rule config and packet/alert text
+retained; no native IPv6 support expansion. Four direct public regression
+functions authored: sixteen address spelling/equality/malformed packet cases,
+nine direction/protocol/disabled/CIDR-precedence cases, per-rule priority and
+critical early-exit checks, three invalid reload preservation cases and valid
+retry, plus file SaveToFile/LoadFromFile/Reload spelling preservation. Complete
+alert values, one-per-rule results and caller/snapshot preservation asserted.
+No private seams, mocks, sleeps, skips or hidden runtime execution.
+
+Preflighted exact Go 1.26.8 and owning packages; complete fail-fast rule/API/
+cmd/netsentry/pipeline compile-only chain passed. Binaries unexecuted. Static
+exact transform/format/docs/188 JSON/174 unique pairs/173 prior Definitions/
+R90-75/testing split/history/horizon/links/fences/six paths/diff/sensitive review
+passed. All 419 baseline Vault Markdown hashes unchanged. Behavioral/race/CLI/
+full-suite/scanner/knowledge/traffic/acceptance **not run; delegated by user**.
+Authored regression debt remains departmental; no runtime/race/SLO pass or
+performance result inferred. No unresolved validation ambiguity. Existing skill
+rules suffice; no separate skill update or next increment.

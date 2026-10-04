@@ -1,0 +1,54 @@
+{
+  "task": "r90-170-ip-identity",
+  "timestamp": "2026-10-03",
+  "branch": "main",
+  "remote_baseline": "6bcbdcee40dd0a8b2c9077be7361e7127a64a663",
+  "starting_remote_baseline": "6bcbdcee40dd0a8b2c9077be7361e7127a64a663",
+  "risk_level": "Low",
+  "current_checkpoint": "compile_static_complete_before_feature_delivery",
+  "completed": [
+    "Clean fetched baseline and R90-169 exact Git/Vault verified",
+    "119 phase commit note/index coverage and latest MOC verified",
+    "173 prior unique roadmap pairs; R90-75/split/horizon retained",
+    "419 Vault hashes and fourteen stable prose backups captured",
+    "Exact two-function source repair and four public regression functions authored",
+    "Preflighted Go 1.26.8 four-package compile-only chain passed; binaries unexecuted",
+    "Static source/format/docs/188 JSON/174 unique pairs/173 prior Definitions/R90-75/split/history/horizon/links/fences/scope/diff/sensitive passed",
+    "All 419 baseline Vault Markdown hashes unchanged"
+  ],
+  "in_progress": [
+    "Feature commit/push/fetch/Vault delivery"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "passed_go1.26.8_rule_api_cmd_pipeline_binaries_unexecuted",
+    "static_review": "passed_exact_source_and_complete_authority_scope_sensitive_review"
+  },
+  "authority_boundaries": [
+    "Exact parsed address identity only; no native IPv6 expansion",
+    "All test execution delegated; compile/static only; no publication"
+  ],
+  "remaining_risks": [
+    "Direct behavioral assertions remain unexecuted"
+  ],
+  "deviations": [
+    "Empty ready queue restored from accepted literal/raw matching source mismatch",
+    "Temporary audit corrected for versioned bounded MOC links and fully rerun"
+  ],
+  "resume_instructions": "Compile/static complete; deliver only six intended R90-170 paths, verify fresh refs and exact Vault range, reconcile stable prose and one docs closure. All behavioral and knowledge suites delegated; no next increment.",
+  "todo": [
+    "commit/push/fetch/Vault",
+    "one docs-only closure"
+  ],
+  "next_increment": {
+    "id": null,
+    "status": "no_other_defined_local_ready_increment",
+    "started": false
+  }
+}
