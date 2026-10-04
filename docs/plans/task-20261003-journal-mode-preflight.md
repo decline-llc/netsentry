@@ -93,3 +93,46 @@ durability/race/SLO pass inferred; regression debt remains departmental.
 No failure or scope deviation; existing skill instructions suffice. Initial
 audit count refined to include every historical iteration note, not only CI
 notes: 376 immutable notes captured/preserved. No next increment started.
+
+
+## R90-172 Completion and Forward Queue Refresh (2026-10-03)
+
+Feature `a217c1d1db05b573cdc7656bf3f6a016f5b8e46b` contains exactly the six planned paths. Non-force push
+and immediate fresh fetch verified clean main HEAD/origin/main/FETCH_HEAD
+equality. Exact full-SHA range `65dda10dbea44262ce21509281f186fb261be0a8..a217c1d1db05b573cdc7656bf3f6a016f5b8e46b` synchronized to
+`04-开发迭代记录/2026-10-03-a217c1d1db-CI知识同步.md`; Git-resolved identifiers, note/index/MOC and six-path scope verified.
+Fourteen stable current notes reconciled; all prior substantive prose archived
+exactly outside only the actual generated CI MOC region. Legacy MOC prose
+retained. All 376 baseline immutable iteration notes preserved. Identical feature
+replay preserves all 424 Markdown hashes; snapshot JSON SHA-256 `d9855a2ed9d23bc7d0fa9d395bf37edd872c336c0bede6a83151e39410830878`.
+Existing unique sibling local Vault explicitly supplied; no second/remote Vault.
+
+Acceptance matches persisted plan: existing allowlist moved before side effects;
+all other runtime unchanged, supported defaults/normalization/raw diagnostic and
+earlier context/durable-WAL/busy-bound precedence retained. Three functions
+reach forty rejection cases, six native64 precedence controls, thirty-two
+accepted modes/store cases with two opens each. Rejections assert complete tree
+bytes/modes/membership, nil Store, exact diagnostic, no clock, caller options,
+and retained rows via preopened/warmed/reused independent encoded mode=ro
+observer. Positive controls inspect actual live PRAGMA and public write/query/
+close/reopen/caller input. No weaker external-connection PRAGMA observation,
+injection/private synchronization seam/sleep/timing or durability claim. Native32
+unrepresentable busy overflow explicitly omitted. All assertions unexecuted.
+
+Exact Go 1.26.8 four-package fail-fast compile-only and static exact source/
+format/docs/190 JSON/176 unique pairs/175 prior Definitions/R90-75/split/horizon/
+history/links/fences/six paths/diff/sensitive review passed. Behavioral/race/CLI/
+full/scanner/knowledge/traffic/acceptance **not run; delegated by user**. No
+runtime/persistence/durability/race/SLO pass inferred; authored regression debt
+remains departmental. No failure or scope deviation. Initial audit refined to
+include every immutable historical note (376), not CI notes alone. Generic
+skill rules sufficient; no redundant update.
+
+This single three-path docs-only delivery record closes the same increment.
+Derive its full SHA from Git and verify non-force push/fresh fetched equality
+and exact feature..closure Vault note/index/MOC before reporting. Do not repeat
+completed feature/closure delivery or create a self-reference closure. Forward
+queue refreshed: no other defined local ready increment. R90-75 independent
+full departmental asynchronous contract and Oct 3–Dec 31 horizon retained. Next
+trigger verifies closure/Vault, audits fresh source/history/queue and persists a
+separate eligible plan before editing. No next increment started.

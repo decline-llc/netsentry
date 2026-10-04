@@ -2,10 +2,10 @@
   "task": "r90-172-journal-mode-preflight",
   "timestamp": "2026-10-03",
   "branch": "main",
-  "remote_baseline": "65dda10dbea44262ce21509281f186fb261be0a8",
+  "remote_baseline": "a217c1d1db05b573cdc7656bf3f6a016f5b8e46b",
   "starting_remote_baseline": "65dda10dbea44262ce21509281f186fb261be0a8",
   "risk_level": "Low",
-  "current_checkpoint": "implementation_authored_compile_static_passed_before_feature_delivery",
+  "current_checkpoint": "feature_push_fetch_vault_verified_single_docs_closure_record",
   "completed": [
     "Clean fetched R90-171 feature/closure Git/Vault audit",
     "123 phase commit notes/index and 175 unique pairs verified",
@@ -14,11 +14,14 @@
     "Three direct regression functions authored: 40 rejection/6 native64 precedence/32 accepted with two opens each",
     "Pinned Go1.26.8 four-package fail-fast compile-only passed; binaries unexecuted",
     "Static exact source/format/docs/190 JSON/176 unique pairs/175 prior Definitions/authority/sensitive/scope passed",
-    "All 423 baseline Vault hashes unchanged"
+    "All 423 baseline Vault hashes unchanged",
+    "Six-path feature non-force push/immediate fetch verified clean exact refs",
+    "Exact full-SHA feature Vault note/index/MOC and fourteen stable notes reconciled",
+    "Prior substantive stable prose and 376 immutable iteration notes preserved",
+    "Identical feature replay preserves all 424 Markdown hashes",
+    "Forward queue refreshed; no next increment started"
   ],
-  "in_progress": [
-    "Feature commit/non-force push/fresh fetch/exact Vault reconciliation"
-  ],
+  "in_progress": [],
   "validation": {
     "behavioral_tests": "not_run_user_delegated",
     "race_tests": "not_run_user_delegated",
@@ -28,7 +31,9 @@
     "knowledge_check": "not_run_user_delegated",
     "traffic_and_acceptance": "not_run_user_delegated",
     "compile_only": "passed_go1.26.8_alert_api_cmd_pipeline_unexecuted",
-    "static_review": "passed_exact_source_scope_authority_sensitive"
+    "static_review": "passed_exact_source_scope_authority_sensitive",
+    "feature_delivery": "verified_nonforce_push_fresh_fetch_clean_exact_six_paths",
+    "vault_feature": "verified_exact_note_index_moc_14_stable_376_immutable_424_replay_hashes"
   },
   "authority_boundaries": [
     "One existing journal option boundary only; no publication",
@@ -40,14 +45,24 @@
   "deviations": [
     "Empty ready queue restored from late journal validation in existing source"
   ],
-  "resume_instructions": "Finish exactly R90-172; compile/static only; verify exact non-force push/fetch/Vault and preserve history; no next increment.",
-  "todo": [
-    "Feature delivery/Vault",
-    "Single docs-only closure"
-  ],
+  "resume_instructions": "R90-172 feature already pushed/fetched/Vault reconciled and identical replay verified. This is the single docs-only closure; derive full closure SHA from Git and verify fresh origin/main/FETCH_HEAD and exact feature..closure Vault note/index/MOC. Repair missing evidence only; no duplicate feature/closure or self-reference closure. Next trigger audits fresh history/code/queue and persists a separate eligible plan. All execution delegated; independent R90-75 full contract and Oct 3\u2013Dec 31 horizon retained. No next increment started.",
+  "todo": [],
   "next_increment": {
     "id": null,
     "status": "no_other_defined_local_ready_increment",
     "started": false
+  },
+  "feature_commit": "a217c1d1db05b573cdc7656bf3f6a016f5b8e46b",
+  "delivery": {
+    "feature_range": "65dda10dbea44262ce21509281f186fb261be0a8..a217c1d1db05b573cdc7656bf3f6a016f5b8e46b",
+    "feature_paths": 6,
+    "verified_remote": "a217c1d1db05b573cdc7656bf3f6a016f5b8e46b",
+    "vault_note": "04-\u5f00\u53d1\u8fed\u4ee3\u8bb0\u5f55/2026-10-03-a217c1d1db-CI\u77e5\u8bc6\u540c\u6b65.md",
+    "stable_notes": 14,
+    "baseline_immutable_notes": 376,
+    "feature_snapshot_files": 424,
+    "feature_snapshot_json_sha256": "d9855a2ed9d23bc7d0fa9d395bf37edd872c336c0bede6a83151e39410830878",
+    "identical_feature_replay": "all Markdown hashes unchanged",
+    "closure": "Single docs-only delivery record; derive full SHA from Git and verify exact feature..closure push/fetch/Vault before reporting; no self-reference closure"
   }
 }
