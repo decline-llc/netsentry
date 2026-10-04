@@ -507,6 +507,15 @@ Current build:
   delegated; this is no observed filesystem or SQLite pass. At R90-158 delivery,
   discovery was unchanged; R90-159 now excludes impossible-calendar names from
   read discovery as documented above.
+- R90-169 treats the exact `Options.Path` filename `:memory:` as a literal
+  persistent file in ordinary mode, using the existing absolute encoded URI
+  builder as durable mode already does. This aligns writable opening with
+  filesystem preflight, recovery naming and `Store.Path`. No in-memory input
+  API is added. Other ordinary paths and durable FULL pragma remain unchanged.
+  Direct relative-name create/write/query/list/count/close/reopen/aggregation,
+  compatible existing-file and rejected-input preservation regressions are
+  authored and compiled only; execution remains delegated and no runtime or
+  durability pass is inferred.
 - Before journal or schema initialization, an existing non-empty primary
   database must pass read-only SQLite `quick_check` plus required `alerts` and
   `alert_events` table/column definitions and the binary-collated aggregation

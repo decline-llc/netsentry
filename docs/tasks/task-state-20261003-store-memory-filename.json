@@ -1,0 +1,54 @@
+{
+  "task": "r90-169-store-memory-filename",
+  "timestamp": "2026-10-03",
+  "branch": "main",
+  "remote_baseline": "fa299d7493486b0c660b652c2973069e801c249a",
+  "starting_remote_baseline": "fa299d7493486b0c660b652c2973069e801c249a",
+  "risk_level": "Low",
+  "current_checkpoint": "feature_ready_after_compile_static",
+  "completed": [
+    "Fresh clean fetched baseline and exact R90-168 delivery/Vault verified",
+    "Phase audit; 172 unique roadmap pairs; independent R90-75 retained",
+    "Vault baseline and fourteen stable prose backups captured",
+    "Exact guard/comment-only repair; fourteen public regression cases authored",
+    "Pinned Go 1.26.8 full alert/API/cmd/netsentry/pipeline compile-only chain passed; binaries unexecuted",
+    "Static source/format/docs/187 JSON/173 unique pairs/172 prior Definitions/R90-75/split/history/horizon/links/fences/scope/diff/sensitive passed",
+    "All 417 Vault baseline hashes unchanged"
+  ],
+  "in_progress": [
+    "Exact SQLite sentinel filename repair"
+  ],
+  "validation": {
+    "behavioral_tests": "not_run_user_delegated",
+    "race_tests": "not_run_user_delegated",
+    "cli_smoke": "not_run_user_delegated",
+    "full_suite": "not_run_user_delegated",
+    "scanner": "not_run_user_delegated",
+    "knowledge_check": "not_run_user_delegated",
+    "traffic_and_acceptance": "not_run_user_delegated",
+    "compile_only": "passed_go1.26.8_four_package_chain_binaries_unexecuted",
+    "static_review": "passed_exact_guard_comment_format_docs_json_roadmap_prior_definitions_scope_sensitive"
+  },
+  "authority_boundaries": [
+    "Exact literal filesystem filename only; no in-memory API",
+    "All test execution delegated; compile/static only; no publication"
+  ],
+  "remaining_risks": [
+    "Regression assertions unexecuted",
+    "Exact :memory: now persistent in ordinary mode"
+  ],
+  "deviations": [
+    "Empty local ready queue restored from pinned SQLite exact sentinel source evidence"
+  ],
+  "resume_instructions": "Finish only R90-169 against persisted plan; compile/static only; verify Git/Vault delivery before closeout.",
+  "todo": [
+    "Feature commit/push/fetch verification",
+    "Exact Vault sync/stable reconciliation/replay",
+    "Single docs-only delivery record"
+  ],
+  "next_increment": {
+    "id": null,
+    "status": "no_other_defined_local_ready_increment",
+    "started": false
+  }
+}

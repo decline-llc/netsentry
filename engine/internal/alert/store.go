@@ -950,10 +950,10 @@ func readOnlyDatabaseDSN(path string) (string, error) {
 }
 
 // The driver applies _pragma to every new connection, including replacements.
-// Encode question marks and file: prefixes so filenames cannot become DSN options or URIs.
+// Encode question marks, file: prefixes and :memory: so filenames stay on disk.
 // Preserve other ordinary DSN paths when measurement is disabled.
 func writableDatabaseDSN(path string, durable bool) (string, error) {
-	if !durable && !strings.Contains(path, "?") && !strings.HasPrefix(path, "file:") {
+	if !durable && path != ":memory:" && !strings.Contains(path, "?") && !strings.HasPrefix(path, "file:") {
 		return path, nil
 	}
 	abs, err := filepath.Abs(path)

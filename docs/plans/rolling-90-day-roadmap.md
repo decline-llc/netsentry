@@ -249,6 +249,8 @@ formal SLO and evidence contract is unchanged.
 
 | R90-168 | Oct 3–Dec 31 | Complete implementation; tests delegated | Preserve relative file-prefixed SQLite filenames. | R90-167 verified feature/closure; pinned SQLite URI prefix semantics | Ordinary file-prefixed writes and resolved relative read-only paths use absolute file URIs; primary/decoy/daily/rejection regressions authored, execution delegated. |
 
+| R90-169 | Oct 3–Dec 31 | In progress; tests delegated | Preserve the literal SQLite :memory: filename. | R90-168 verified feature/closure; pinned SQLite exact sentinel semantics | Ordinary exact sentinel uses existing absolute file URI; persistence/reopen/compatible-existing/rejection regressions authored, execution delegated. |
+
 
 ## R90-01 Definition
 
@@ -3853,6 +3855,17 @@ formal SLO and evidence contract is unchanged.
 - **Required validation:** owning Go 1.26.8 alert/API/cmd/netsentry/pipeline directory preflight/compile-only, binaries unexecuted; static source/format/docs/JSON/unique roadmap multisets/prior Definitions/R90-75/history/horizon/links/fences/scope/diff/sensitive. Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance execution **not run; delegated by user**.
 - **Non-goals:** URI/in-memory/symlink/path/API policy beyond necessary read-only absolute-path normalization, schema/recovery/lifecycle/retention/cancellation/journal/durability/CLI/API algorithms, suites/private inputs/toolchain/dependencies/publication/SLO pass.
 - **Stop condition:** competing edits, ambiguous compile/static/Git/Vault or new authority; no next increment this trigger.
+
+
+## R90-169 Definition
+
+- **Goal/status:** in progress; persist exact :memory: as a literal filesystem filename in ordinary mode, consistent with durable mode.
+- **Dependencies/window:** verified R90-168 feature/closure; pinned SQLite exact sentinel recognition; Oct 3–Dec 31 forecast, dates not gates.
+- **Risk:** low; formerly ephemeral exact ordinary input now targets its named persistent file.
+- **Acceptance:** writable guard/comment only; unchanged other runtime paths; public exact relative sentinel and prefixed/uppercase/spaced controls in both modes; create/write/query/list/count/close/reopen/aggregation and independent absolute read-only observation; compatible existing file with preopened reused observer; recovery/database rejection preserves entire tree with established diagnostics; six-path feature/one closure exact Git/Vault.
+- **Required validation:** pinned Go 1.26.8 owning alert/API/cmd/netsentry/pipeline preflight and compile-only; format/docs/JSON/complete roadmap multisets/prior Definitions/R90-75/history/horizon/links/fences/scope/diff/sensitive review. Behavioral/race/CLI/full-suite/scanner/knowledge/traffic/acceptance **not run; delegated by user**.
+- **Non-goals:** in-memory or URI-input API, daily algorithm/read-only helper/schema/recovery/lifecycle/retention/journal/durable pragma/CLI/API/toolchain/dependencies/publication/SLO pass.
+- **Stop condition:** competing edits, ambiguous compile/static/Git/Vault evidence or new authority; no next increment this trigger.
 
 
 
@@ -10518,3 +10531,43 @@ closure. Forward queue refreshed: no other defined local ready increment. R90-75
 full independent asynchronous departmental contract and Oct 3–Dec 31 horizon
 unchanged. Next trigger verifies fetched closure/Vault, audits fresh code/queue
 and persists a separate eligible plan before edits. No next increment started.
+
+
+## R90-169 Selection and Literal Memory Filename (2026-10-03)
+
+Clean fresh fetched main `fa299d7493486b0c660b652c2973069e801c249a`;
+R90-168 feature/closure exact Git/Vault notes/index/MOC and fourteen current
+stable references verified. Sep 12–Oct 3 phase audit covers SLO adapters and
+inventory admission, patched release/toolchain and bounded core correctness.
+No new qualifying R90-75 outcome or missing delivery. All 172 prior unique
+row/Definition pairs agree; independent asynchronous R90-75 full contract and
+Oct 3–Dec 31 horizon unchanged. Captured 417 Vault Markdown hashes and fourteen
+stable prose backups. Empty local queue restored from pinned SQLite exact
+:memory: recognition: ordinary helper forwards sentinel as ephemeral database,
+while preflight/recovery/Store.Path and durable mode use filesystem semantics.
+This is source inference, not an observed runtime failure. Authoritative SQLite
+filename documentation confirms exact sentinel and ./ prefixed disk behavior.
+Six-path plan/state persisted before runtime/architecture edits; scope is one
+raw-path guard condition/comment. All execution delegated; no next increment.
+
+
+## R90-169 Compile and Static Checkpoint (2026-10-03)
+
+Exact writable guard/comment-only transform; other engine runtime unchanged.
+Fourteen authored cases in three public functions cover eight fresh relative
+path controls/four forms/two modes, two compatible-existing literal-file cases
+with preopened/query-warmed reused independent absolute read-only observer, and
+four recovery/database rejections preserving entire tree with exact diagnostics.
+Inputs preserve the sentinel form; space/percent/hash base forces URI encoding.
+Path/Query totals/content/timestamps/aggregate/List/Count/input preservation/
+close/reopen/per-file rows/exact files/cleared logs asserted. No fake/private seam,
+sleeps/skips or writable rejection reopen. No daily boundary claim.
+
+Preflighted Go 1.26.8 alert/API/cmd/netsentry/pipeline full compile-only chain
+passed; binaries unexecuted. Static source/format/docs/187 JSON/173 unique pairs/
+172 prior Definitions/R90-75/testing split/history/horizon/links/fences/six paths/
+diff/sensitive and all 417 unchanged Vault hashes passed. All behavioral/race/CLI/
+full-suite/scanner/knowledge/traffic/acceptance **not run; delegated by user**.
+Growing authored regression debt remains departmental; no runtime/SQLite/
+durability/race/SLO pass inferred. No validation failure or plan deviation;
+existing generic skill rules suffice. No next increment started.
