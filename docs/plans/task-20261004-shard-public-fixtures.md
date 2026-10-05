@@ -115,3 +115,62 @@ user**. Compilation/static review establishes no read-only, preservation, HTTP,
 durability, reproduction, race, release or SLO pass. No runtime/scope deviation;
 R90-75 full independent departmental acceptance remains outstanding. Feature
 commit/push/Vault and one docs-only closure remain; no next increment started.
+
+
+## Completion and Forward Queue Refresh (2026-10-04)
+
+Feature `deeea1f82e619a0a3045e7d91c326d5a62033423` contains exactly the eight planned paths, is non-force pushed
+and freshly fetched, with clean HEAD/origin/main/FETCH_HEAD equality. Exact
+full-SHA range `f4619816ecba0f5e5234b500438631635c25a3b1..deeea1f82e619a0a3045e7d91c326d5a62033423` synchronized to
+`04-开发迭代记录/2026-10-04-deeea1f82e-CI知识同步.md`; Git-resolved metadata endpoints, exact eight-path list,
+full index and versioned bounded generated MOC verified. Fourteen current stable
+notes reconcile actual public Dir/Now/ignored-Path semantics and unavailable
+Path-versus-Dir reproduction. Prior substantive topic/status prose is preserved
+under explicit historical headings; only the actual versioned generated MOC
+region is excluded from body comparisons. All 391 baseline immutable iteration
+records retain their hashes. Identical feature replay preserves all 439 Markdown
+hashes; snapshot JSON SHA-256: `354ac39e3dd21c5bd8fcf35f0c2b02086d9a522c7b298ec0d3c86fc690a1b60e`.
+Unique existing sibling local Vault explicitly supplied. No push/fetch/sync
+failure, second Vault or external publication.
+
+Acceptance comparison traces public options through actual mode/default/clock/
+resource resolution before considering assertions. All three retained names
+cover the intended current boundary: ten WAL/DELETE storage fixtures over five
+Dir forms with spaces, explicit Now, derived Path matching the independent
+absolute seed and ignored explicit Path absence; two active/one historical
+complete rows and observer counts; full public Count/List/Query totals/contents,
+inclusive time/rule filters, default/negative limits, global offsets and at/past
+end; unchanged caller inputs/Path/health and artifact bytes/modes/membership.
+Missing-directory fallback opens and observes the actual seeded database, moves
+its directory, asserts ENOENT, reads both live handles, compares moved artifacts
+and restores before close. Invalid-calendar and real corrupt-history controls
+remain direct and assert no partial success. Five real-store DELETE HTTP
+fixtures independently seed active/history, set Now and actual Dir form, assert
+derived/ignored Path, seven complete page/filter cases and repeated health/
+verbose/gauge totals, full artifacts and caller inputs. The prior Path-driven
+alias reproduction is unavailable publicly and is explicitly unclaimed;
+corrected assertions establish compatibility coverage only when executed.
+
+Runtime source is byte-identical. Architecture/API/current handoff/roadmap
+claims are corrected; the frozen R90-144..172 inventory and prior completed
+history remain intact apart from current queue and R90-179 selection metadata.
+Pinned Go 1.26.8 complete four-package compile-only and full static runtime/
+format/docs/197 JSON/183 unique roadmap multisets/prior history/R90-75/frozen
+handoff/links/fences/eight-path/sensitive/diff passed. Initial overbroad temporary
+historical-path scan was corrected to added diff text and the entire static
+chain reran successfully. No unresolved compile/static failure or runtime/scope
+deviation. Existing generic skill already covers the lesson; no skill edit.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. Compilation/static review is no runtime, preservation, HTTP, durability,
+reproduction, race, release or SLO pass. R90-179 fixture/evidence correction is
+complete; departmental execution debt remains. R90-75's full independent
+acceptance contract and Oct 4–Jan 1 forecast are unchanged.
+
+This single three-path docs-only delivery record closes the same increment.
+Resolve its full SHA from Git and verify non-force push/fresh clean exact refs
+and exact feature..closure Vault note/index/MOC before reporting. Do not repeat
+verified feature delivery or create a self-reference closure. Forward queue
+refreshed without starting another increment: no other defined local ready
+item. Next trigger audits fresh Git/Vault/history/source/queue and persists a
+separate eligible plan before editing. Repair missing delivery evidence only.
