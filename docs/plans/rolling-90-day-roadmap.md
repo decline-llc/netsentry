@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-10-04 through 2027-01-01. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-10-05 through 2027-01-02. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -152,7 +152,7 @@ formal SLO and evidence contract is unchanged.
 | R90-72 | Oct 3–31 | Complete early | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
 | R90-73 | Aug 5–Sep 4 | Complete early | Add versioned local benchmark evidence capture. | R90-72 | One directly tested command captures every established C/Go benchmark with exact Git/tree state, environment/toolchain fingerprint, parameters, raw output, parsed metrics, path redaction, and local-synthetic classification without applying a threshold. |
 | R90-74 | Sep 5–Oct 2 | Complete early | Record a repeated single-host benchmark baseline. | R90-73 | At least five uncached complete-surface samples from one clean pinned commit and unchanged environment retain every raw result plus median/IQR/variation summaries as observation-only local evidence. |
-| R90-75 | Oct 4–Jan 1 | Acceptance delegated; development unblocked | Validate proposed staging/production SLO acceptance profiles. | R90-74; R90-113 contract; departmental execution and evidence | Departmental tests must establish end-to-end latency, offered-versus-completed loss, missing-alert failures and extended-tail evidence with full artifacts; agent development proceeds without test execution or a local hardware prerequisite. |
+| R90-75 | Oct 5–Jan 2 | Acceptance delegated; development unblocked | Validate proposed staging/production SLO acceptance profiles. | R90-74; R90-113 contract; departmental execution and evidence | Departmental tests must establish end-to-end latency, offered-versus-completed loss, missing-alert failures and extended-tail evidence with full artifacts; agent development proceeds without test execution or a local hardware prerequisite. |
 | R90-76 | Aug 9 | Complete | Audit post-tag delivery and restore the forward queue. | R90-59a; R90-74 | A dated audit reconciles the local-tag feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current code/tests, and blocked authorities, then restores only evidence-grounded local work without runtime or publication changes. |
 | R90-77 | Aug 10–Sep 4 | Complete early | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
 | R90-78 | Sep 5–25 | Complete early | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
@@ -268,6 +268,7 @@ formal SLO and evidence contract is unchanged.
 | R90-177 | Oct 4–Jan 1 | Complete implementation; tests delegated | Deduplicate lexical aliases of the active daily shard. | R90-176 verified feature/closure; existing daily discovery | Lexical guard delivered; R90-179 supersedes unsupported public Path-versus-Dir reproduction claims with actual Dir/Now compatibility fixtures; runtime unchanged, execution delegated. |
 | R90-178 | Oct 4–Jan 1 | Complete implementation; tests delegated | Preserve the active database during expired daily-file cleanup. | R90-177 verified feature/closure; existing retention cleanup | Startup and direct cleanup retain the active lexical pathname and WAL/SHM; other expired sets and row TTL preserve their contracts; direct public declarations authored, execution delegated. |
 | R90-179 | Oct 4–Jan 1 | Complete fixture correction; tests delegated | Correct active-shard alias fixtures to the public daily path contract. | R90-178 verified delivery; source-proven R90-177 fixture deviation | Daily Dir/clock-derived Path and ignored Options.Path are represented honestly; public storage/HTTP declarations cover reachable paths/counts, and unsupported alias reproduction claims are reconciled; execution delegated. |
+| R90-180 | Oct 5–Jan 2 | In progress | Reject positive subsecond aggregation windows before startup side effects. | R90-179 verified feature/closure; existing durable ID/aggregation contract | Public Open rejects windows below one second before clock/path/filesystem work; preserves earlier diagnostics, inputs, nonpositive defaults and all larger windows including fractional durations; direct preservation/write/read/reopen declarations authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -11875,3 +11876,72 @@ verified feature delivery or create a self-reference closure. Forward queue
 refreshed without starting another increment: no other defined local ready
 item. Next trigger audits fresh Git/Vault/history/source/queue and persists a
 separate eligible plan before editing. Repair missing delivery evidence only.
+
+## R90-180 Definition
+
+- **Goal:** reject positive subsecond aggregation windows before startup effects.
+- **Dependency:** R90-179 verified feature/closure; durable ID/aggregation contract.
+- **Window:** Oct 5–Jan 2; forecast only.
+- **Risk:** low; formerly collision-prone input rejected, durable format unchanged.
+- **Acceptance:** direct public Open rejects five positive subsecond durations in
+  primary/daily DELETE/durable WAL before clock/path/filesystem effects; artifacts,
+  retained rows/all durable columns and caller inputs preserved; earlier context/
+  durable-WAL/busy/journal errors retain precedence; nonpositive defaults and one-
+  second-or-larger fractional controls retain full write/read/count/identity/reopen.
+- **Required validation:** pinned Go 1.26.8 alert/API/pipeline/cmd compile-only;
+  exact three-line source/format/docs/JSON/complete roadmap multisets/history/full
+  R90-75/frozen handoff/links/fences/seven-path/sensitive/diff; non-force exact
+  push/fetch/Vault stable reconciliation/replay. Behavioral/race/full/scanner/
+  knowledge/traffic/acceptance not run; delegated by user.
+- **Stop condition:** ambiguous compile/static/Git/Vault, competing edits, private
+  input, new compatibility/product/format authority or another increment.
+
+## R90-180 Selection and Source Audit (2026-10-05)
+
+Fresh fetched clean baseline `ab06fe32219e4abb69a4474c43f4ad33bb593c7d` and
+R90-179 feature/closure exact Git/Vault notes/index/versioned bounded MOC verified.
+Four-week phase audit covers 140 commits with delivery records, 183 unique
+roadmap pairs, 440 Vault Markdown hashes, 393 immutable records and fourteen
+current stable backups. Prior unsupported daily alias claims are corrected by
+R90-179; recent SLO/candidate/toolchain/correctness execution debt remains
+explicitly delegated. No missing delivery or qualifying R90-75 outcome found.
+Sole unfinished R90-75 retains its full independent contract; no ready item.
+
+Empty queue restored from source-supported subsecond-window/whole-second-ID
+collision: normalizeAlert truncates to a positive duration that may be below
+one second, while alertAggregationID discards the fractional window start;
+distinct aggregation tuples can share the primary key despite the UPSERT's
+separate window_start conflict target. This is inference from source, not an
+executed failure. Select exactly the bounded early lower-bound guard, keeping
+all durable IDs/formats and windows at least one second including fractional
+values. Seven-path plan/state persisted before implementation/docs edits.
+
+The supplied current date advanced to Oct 5. Unfinished forecast refreshed to
+Oct 5–Jan 2; all completed dates, history and R90-75 acceptance terms retained.
+Standing department split remains active. Every unfinished increment has status,
+dependency, window, risk, acceptance, required validation and stop condition.
+No next increment started.
+
+## R90-180 Compile and Static Checkpoint (2026-10-05)
+
+Exactly three runtime lines reject positive subsecond aggregation windows after
+earlier validation and before startup effects. Direct declarations author 100
+rejection cases, five precedence causes (busy overflow skips native 32-bit) and
+28 accepted/default-window controls. Every daily fixture follows Dir/initial
+Now resolution; independent encoded read-only observers and expected full raw
+columns preserve the intended rejection and accepted/reopen evidence boundary.
+
+Pinned Go 1.26.8 alert/API/pipeline/cmd compile-only passed after final edits.
+First fail-fast compile stopped in alert on an unused test import; removed it
+and reran all four packages successfully, then reran the full chain after
+strengthening independent durable-column expectations. No later package in
+the failed chain is counted. Full static source/precedence/format/docs/198 JSON/
+184 unique complete roadmap multisets/all prior Definitions/history/full R90-75/
+frozen handoff/horizon/links/fences/seven-path/sensitive/diff passed; all 440
+Vault Markdown hashes unchanged. No unresolved failure or scope expansion.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**; compilation is no runtime, preservation, durability, race, release or
+SLO pass. Empty queue/horizon deviation was recorded at selection; the import
+fix is one-off and existing generic skill covers the workflow, so no skill edit.
+Exact feature and single docs-only closure delivery remain pending.

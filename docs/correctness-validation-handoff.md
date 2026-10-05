@@ -656,3 +656,48 @@ assumption; the R90-179 correction above supersedes their current coverage
 claims and retains the declaration names. They cover actual public Dir/Now
 compatibility and do not establish the original Path-driven reproduction.
 No executed test result was changed.
+
+## R90-180: aggregation-window startup preflight
+
+This supplement preserves the frozen R90-144..172 inventory and prior follow-ups.
+[Plan](plans/task-20261005-aggregation-window-preflight.md) ·
+[state](tasks/task-state-20261005-aggregation-window-preflight.json).
+
+[engine/internal/alert/store_aggregation_window_preflight_test.go](../engine/internal/alert/store_aggregation_window_preflight_test.go):
+
+- `TestOpenSubsecondAggregationWindowPreservesPersistentInputs`
+- `TestOpenAggregationWindowPreflightPreservesEarlierDiagnostics`
+- `TestOpenAcceptedAggregationWindowsRetainRowsIdentityAndReopen`
+
+Review the positive-subsecond lower bound against the unchanged row-ID format:
+window starts are truncated at full duration precision, while IDs contain whole
+Unix seconds. The source-supported collision is prevented by public Open
+preflight; this is no executed collision or preservation result.
+
+One hundred rejection fixtures span five positive durations (1 ns, 1 ms, 250 ms,
+500 ms and one second minus 1 ns), primary/daily and DELETE/durable WAL, with
+absent, healthy, corrupt-sidecars, malformed-recovery and occupied-parent inputs.
+Check nil Store/exact error, zero clock calls, unchanged caller options and full
+tree bytes/modes/membership. Healthy fixtures establish a separately encoded
+absolute read-only observer before rejection and compare retained rows and every
+durable alerts/events column before/after. Daily startup uses Dir/initial Now
+and ignores Options.Path; assertions observe the actual resolved resource.
+
+Earlier-error cases retain original context sentinels and durable-WAL, busy-
+overflow and invalid-journal diagnostics when the window is also subsecond;
+the busy-overflow case explicitly skips on 32-bit native ints. Twenty-eight
+accepted/default fixtures span primary/daily and DELETE/durable WAL across
+minimum/negative/zero defaults, exactly one second, one second plus 1 ns,
+1.5 seconds and one minute. Two same-tuple alerts one effective window apart
+must keep distinct established IDs, complete normalized List/Query contents,
+exact Count/totals, independently observed rows/events, all durable columns
+through close/reopen, caller inputs, resolved Path and healthy status. These
+controls preserve fractional durations at least one second.
+
+All three declarations are authored and compile-reviewed; behavioral/race/full/
+scanner/knowledge/traffic/acceptance **not run; delegated by user**. Use the
+existing alert/API/pipeline/cmd and serial full/knowledge departmental commands,
+retain exact SHA/commands/logs/skips/failures, and compare direct boundaries to
+the plan. Compilation establishes no rejection, artifact preservation, identity,
+durability, race or SLO pass. IDs/schema/recovery format and the full independent
+R90-75 acceptance contract are unchanged; no publication authority is implied.

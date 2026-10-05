@@ -414,6 +414,16 @@ Current build:
   delegated. No active-startup cancellation or nil-context guarantee is added.
 - UPSERT aggregation by `(rule_id, src_ip, dst_ip, dst_port, window_start)`.
 - Fixed aggregation window from `engine.alert_aggregation_window`.
+- R90-180 rejects positive `Options.AggregationWindow` values below one second
+  at `Store.Open`, after existing cancellation/durable-WAL/busy/journal checks
+  and before clock/path/recovery/filesystem work. Window-start nanoseconds can
+  distinguish subsecond aggregation tuples whose established whole-Unix-second
+  row IDs collide. Early rejection preserves that durable identity format and
+  persistent inputs. Nonpositive values still select the one-minute default;
+  durations at least one second retain their semantics, including fractional
+  windows such as 1.5 seconds. Configuration already supplies whole seconds.
+  Direct preservation/diagnostic/default/identity/write/read/reopen declarations
+  are authored; execution is delegated, with no runtime or durability pass.
 - R90-160 validates `engine.alert_aggregation_window` and
   `engine.health_freshness_limit_seconds` as representable whole-second durations
   during configuration loading: -9223372036 through 9223372036 seconds, inclusive.

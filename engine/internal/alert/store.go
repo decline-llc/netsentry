@@ -256,6 +256,9 @@ func Open(ctx context.Context, opts Options) (*Store, error) {
 	default:
 		return nil, fmt.Errorf("unsupported sqlite journal mode %q", opts.JournalMode)
 	}
+	if opts.AggregationWindow > 0 && opts.AggregationWindow < time.Second {
+		return nil, fmt.Errorf("positive alert aggregation window must be at least one second")
+	}
 	if opts.BusyTimeoutMS <= 0 {
 		opts.BusyTimeoutMS = 5000
 	}
