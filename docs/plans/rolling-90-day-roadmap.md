@@ -270,7 +270,7 @@ formal SLO and evidence contract is unchanged.
 | R90-179 | Oct 4–Jan 1 | Complete fixture correction; tests delegated | Correct active-shard alias fixtures to the public daily path contract. | R90-178 verified delivery; source-proven R90-177 fixture deviation | Daily Dir/clock-derived Path and ignored Options.Path are represented honestly; public storage/HTTP declarations cover reachable paths/counts, and unsupported alias reproduction claims are reconciled; execution delegated. |
 | R90-180 | Oct 5–Jan 2 | Complete implementation; tests delegated | Reject positive subsecond aggregation windows before startup side effects. | R90-179 verified feature/closure; existing durable ID/aggregation contract | Public Open rejects positive windows below one second before clock/path/filesystem work; preserves earlier diagnostics, inputs, nonpositive defaults and all larger windows including fractional durations; direct preservation/write/read/reopen declarations authored, execution delegated. |
 
-| R90-181 | Oct 5–Jan 2 | In progress; execution delegated | Pin alert-ID tie ordering to binary collation. | R90-180 verified feature/closure; existing timestamp/daily merge contracts | Public List/Query use byte-order ID ties regardless of accepted column collation; new index term aligned, legacy indexes retained; direct mode/page/reopen/historical/index declarations authored, execution delegated. |
+| R90-181 | Oct 5–Jan 2 | Complete implementation; tests delegated | Pin alert-ID tie ordering to binary collation. | R90-180 verified feature/closure; existing timestamp/daily merge contracts | Public List/Query use byte-order ID ties regardless of accepted column collation; new index term aligned, legacy indexes retained; direct mode/page/reopen/historical/index declarations authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -12069,3 +12069,56 @@ persistence, performance, race, release or SLO outcomes. Behavioral/race/full/
 scanner/knowledge/traffic/acceptance **not run; delegated by user**. Feature and
 single docs-only closure push/fetch/Vault delivery remain pending. No next
 increment started.
+
+## R90-181 Completion and Forward Queue Refresh (2026-10-05)
+
+Feature `de31df3ef40c834b7db62295c5d8fdcf650d14b1` contains exactly seven intended paths. Non-force push succeeded;
+a fresh fetch verified clean HEAD/origin/main/FETCH_HEAD at that full SHA.
+Local Vault synchronized full-SHA range `568cdd9b93aa0dc519e45449d436559c61eba98d..de31df3ef40c834b7db62295c5d8fdcf650d14b1`.
+Iteration `04-开发迭代记录/2026-10-05-de31df3ef4-CI知识同步.md`, full commit index and versioned bounded MOC links verified;
+abbreviated metadata resolves to the recorded full Git endpoints. Fourteen
+current stable notes reconcile actual ordering/delivery/queue authority while
+preserving all prior non-generated substantive body prose under explicit
+historical headings. All 395 prior immutable iteration records are unchanged.
+Identical exact-range replay preserved all 443 Markdown hashes; snapshot JSON
+SHA-256 `a07d247dccaa132092850edc663d9d673aba52238f42f2ac3ea6932e3c178a2d`.
+
+Plan comparison confirms every direct authored boundary: 24 public primary/daily
+BINARY/NOCASE/RTRIM fresh/legacy-index DELETE/WAL fixtures separate column default
+from binary table PK. Fixed expected B/a/c tie order, nanosecond-newer/older and
+historical companion rows use independent complete Alert values and event/row
+identities. List, seven Query pages/exact totals, inclusive filtered tie page,
+Count/health, caller inputs, actual daily Dir/Now/ignored Path and reopen are
+asserted. Historical base/WAL/SHM byte/mode/membership snapshots and retained
+existing index SQL reach their stated preservation boundaries. Three tables-only
+fresh-index cases require actual ascending BINARY metadata and expression-index
+EXPLAIN coverage for the public List/filtered Query SQL without a temporary
+sort. No helper-generated expected sort or rejected nonbinary PK substitutes
+for the promised public boundary.
+
+The only runtime changes are explicit binary terms in shared order and new
+index creation. Legacy indexes are retained, with no migration or performance
+promise. Pinned four-package compile-only and complete static checks passed;
+initial verifier-boundary failure/correction/full rerun is recorded above. The
+empty-queue deviation was documented at selection. No unresolved result, scope
+expansion or new generic lesson remains; existing skill guidance applies and
+no skill edit is warranted. Behavioral/race/full/scanner/knowledge/traffic/
+acceptance **not run; delegated by user**. Implementation and evidence authorship
+are delivered; departmental execution remains outstanding. Full independent
+R90-75 terms, completed history and current Oct 5–Jan 2 horizon remain intact.
+
+### R90-181 Single Closure and Resume Authority
+
+This three-path docs-only delivery record closes the same R90-181 increment.
+Resolve its full SHA from Git after commit and verify non-force push/fresh clean
+exact refs and full-SHA feature..closure Vault note/index/bounded MOC, fourteen
+current stable notes, prior body prose/iterations and identical replay. The
+feature SHA above is a completed historical boundary. Do not repeat verified
+feature/closure commit, push or sync, or create a self-reference closure.
+
+Forward queue refreshed without starting another increment: no other defined
+local ready item. R90-75 remains the sole unfinished row with its complete
+independent departmental acceptance and Oct 5–Jan 2 forecast. Next trigger
+audits fresh Git/Vault/history/source/queue and persists a separate eligible
+plan before editing. Repair only missing delivery evidence; no delegated test
+execution, publication or SLO acceptance claim is authorized by this record.
