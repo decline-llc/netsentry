@@ -108,9 +108,51 @@ func shardAliasObservedCount(t *testing.T, db *sql.DB, want int) {
 	}
 }
 
+func shardAliasDirectory(t *testing.T, dir, spelling string) string {
+	t.Helper()
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	rel, err := filepath.Rel(cwd, dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	switch spelling {
+	case "relative":
+		return rel
+	case "relative_dot":
+		return "./" + rel + "/."
+	case "absolute_dot":
+		return dir + "/."
+	case "absolute_parent":
+		return dir + "/../" + filepath.Base(dir)
+	default:
+		return dir
+	}
+}
+
+func shardAliasResolvedPath(t *testing.T, store *alert.Store, opts alert.Options, now time.Time, active string) {
+	t.Helper()
+	want := filepath.Join(opts.Dir, "netsentry-"+now.UTC().Format("2006-01-02")+".db")
+	if store.Path() != want || store.Path() == opts.Path {
+		t.Fatalf("daily Path=%q, want derived %q; ignored explicit Path=%q", store.Path(), want, opts.Path)
+	}
+	absolute, err := filepath.Abs(store.Path())
+	if err != nil || absolute != active {
+		t.Fatalf("resolved active=%q error=%v, want seeded %q", absolute, err, active)
+	}
+	if _, err := os.Stat(opts.Path); !os.IsNotExist(err) {
+		t.Fatalf("ignored explicit Path acquired an artifact: %v", err)
+	}
+}
+
+// The retained name is used by the departmental handoff. These public fixtures
+// cover Dir spelling compatibility, not independently configured Path aliases:
+// daily startup derives Path from Dir/Now and ignores Options.Path.
 func TestDailyShardLexicalActivePathAliasesCountRowsOnce(t *testing.T) {
 	for _, mode := range []string{"WAL", "DELETE"} {
-		for _, spelling := range []string{"identical", "relative_dir", "relative_path", "both_relative_dot", "absolute_dot"} {
+		for _, spelling := range []string{"absolute", "relative", "relative_dot", "absolute_dot", "absolute_parent"} {
 			t.Run(mode+"/"+spelling, func(t *testing.T) {
 				ctx := context.Background()
 				now := time.Date(2026, 10, 4, 12, 0, 0, 0, time.UTC)
@@ -121,25 +163,8 @@ func TestDailyShardLexicalActivePathAliasesCountRowsOnce(t *testing.T) {
 				original := []model.Alert{*input[0], *input[1], *input[2]}
 				want := seedShardAlias(t, active, mode, now, input[:2])
 				want = append(want, seedShardAlias(t, history, "DELETE", now, input[2:])...)
-				cwd, err := os.Getwd()
-				if err != nil {
-					t.Fatal(err)
-				}
-				relDir, err := filepath.Rel(cwd, dir)
-				if err != nil {
-					t.Fatal(err)
-				}
-				opts := alert.Options{Path: active, Dir: dir, DailyShard: true, JournalMode: mode, Now: func() time.Time { return now }}
-				switch spelling {
-				case "relative_dir":
-					opts.Dir = relDir
-				case "relative_path":
-					opts.Path = filepath.Join(relDir, filepath.Base(active))
-				case "both_relative_dot":
-					opts.Dir, opts.Path = relDir, "./"+relDir+"/./"+filepath.Base(active)
-				case "absolute_dot":
-					opts.Path = dir + "/./" + filepath.Base(active)
-				}
+				opts := alert.Options{Path: filepath.Join(filepath.Dir(dir), "ignored explicit Path", "operator.db"),
+					Dir: shardAliasDirectory(t, dir, spelling), DailyShard: true, JournalMode: mode, Now: func() time.Time { return now }}
 				store, err := alert.Open(ctx, opts)
 				if err != nil {
 					t.Fatal(err)
@@ -149,9 +174,7 @@ func TestDailyShardLexicalActivePathAliasesCountRowsOnce(t *testing.T) {
 						t.Errorf("close store: %v", err)
 					}
 				})
-				if store.Path() != opts.Path {
-					t.Fatalf("Path=%q, want original %q", store.Path(), opts.Path)
-				}
+				shardAliasResolvedPath(t, store, opts, now, active)
 				activeObserver, historyObserver := shardAliasObserver(t, active), shardAliasObserver(t, history)
 				shardAliasObservedCount(t, activeObserver, 2)
 				shardAliasObservedCount(t, historyObserver, 1)
@@ -207,6 +230,7 @@ func TestDailyShardLexicalActivePathAliasesCountRowsOnce(t *testing.T) {
 				if !reflect.DeepEqual(shardAliasTree(t, dir), before) || store.Health().Status != "ok" {
 					t.Fatal("read calls changed persistent bytes/modes/membership or health")
 				}
+				shardAliasResolvedPath(t, store, opts, now, active)
 			})
 		}
 	}
@@ -220,18 +244,8 @@ func TestDailyShardAliasPreservesMissingDirectoryAndHistoricalErrors(t *testing.
 			dir := filepath.Join(t.TempDir(), "daily errors with spaces")
 			active := filepath.Join(dir, "netsentry-2026-10-04.db")
 			want := seedShardAlias(t, active, "DELETE", now, []*model.Alert{shardAliasAlert(now, "active")})
-			cwd, err := os.Getwd()
-			if err != nil {
-				t.Fatal(err)
-			}
-			rel, err := filepath.Rel(cwd, dir)
-			if err != nil {
-				t.Fatal(err)
-			}
-			opts := alert.Options{Path: active, Dir: rel, DailyShard: true, JournalMode: "DELETE", Now: func() time.Time { return now }}
-			if fixture == "missing_directory" {
-				opts.Dir = filepath.Join(dir, "absent")
-			}
+			opts := alert.Options{Path: filepath.Join(filepath.Dir(dir), "ignored explicit Path", "operator.db"),
+				Dir: shardAliasDirectory(t, dir, "relative_dot"), DailyShard: true, JournalMode: "DELETE", Now: func() time.Time { return now }}
 			store, err := alert.Open(ctx, opts)
 			if err != nil {
 				t.Fatal(err)
@@ -241,6 +255,7 @@ func TestDailyShardAliasPreservesMissingDirectoryAndHistoricalErrors(t *testing.
 					t.Errorf("close: %v", err)
 				}
 			})
+			shardAliasResolvedPath(t, store, opts, now, active)
 			date := "2026-02-30"
 			if fixture == "corrupt_history" {
 				date = "2026-10-03"
@@ -252,7 +267,24 @@ func TestDailyShardAliasPreservesMissingDirectoryAndHistoricalErrors(t *testing.
 			}
 			observer := shardAliasObserver(t, active)
 			shardAliasObservedCount(t, observer, 1)
-			before := shardAliasTree(t, dir)
+			if fixture == "missing_directory" {
+				// Open creates its active directory. Move it only after opening and
+				// observing the seeded database, so ReadDir really sees ENOENT while
+				// the live store and independent observer retain the same database.
+				moved := dir + " moved"
+				if err := os.Rename(dir, moved); err != nil {
+					t.Fatal(err)
+				}
+				t.Cleanup(func() {
+					if err := os.Rename(moved, dir); err != nil {
+						t.Errorf("restore opened directory: %v", err)
+					}
+				})
+				if _, err := os.Stat(opts.Dir); !os.IsNotExist(err) {
+					t.Fatalf("discovery directory still exists: %v", err)
+				}
+			}
+			before := shardAliasTree(t, filepath.Dir(dir))
 			count, countErr := store.Count(ctx)
 			listed, listErr := store.List(ctx)
 			queried, total, queryErr := store.Query(ctx, alert.Query{})
@@ -269,8 +301,14 @@ func TestDailyShardAliasPreservesMissingDirectoryAndHistoricalErrors(t *testing.
 				t.Fatalf("fallback/control: Count=%d Query total=%d errors=%v/%v/%v", count, total, countErr, listErr, queryErr)
 			}
 			shardAliasObservedCount(t, observer, 1)
-			if !reflect.DeepEqual(shardAliasTree(t, dir), before) {
+			if !reflect.DeepEqual(shardAliasTree(t, filepath.Dir(dir)), before) {
 				t.Fatal("reads changed active/history artifacts")
+			}
+			if store.Path() != filepath.Join(opts.Dir, "netsentry-2026-10-04.db") {
+				t.Fatal("reads changed derived daily Path")
+			}
+			if _, err := os.Stat(opts.Path); !os.IsNotExist(err) {
+				t.Fatalf("reads created ignored explicit Path: %v", err)
 			}
 		})
 	}

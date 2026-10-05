@@ -265,9 +265,9 @@ formal SLO and evidence contract is unchanged.
 
 | R90-176 | Oct 4–Jan 1 | Complete implementation; tests delegated | Retain explicit any protocol wildcard semantics. | R90-175 verified feature/closure; existing protocol compiler | Any dominates named entries in all three types after complete validation; blank/named-only and other gates retained; direct engine/file-backed HTTP regressions authored, execution delegated. |
 
-| R90-177 | Oct 4–Jan 1 | Complete implementation; tests delegated | Deduplicate lexical aliases of the active daily shard. | R90-176 verified feature/closure; existing daily discovery | Relative/absolute/dot path aliases count active rows once; preserve current live handle, historical reads, filtering/pagination and original Path; public storage/HTTP regressions authored, execution delegated. |
+| R90-177 | Oct 4–Jan 1 | Complete implementation; tests delegated | Deduplicate lexical aliases of the active daily shard. | R90-176 verified feature/closure; existing daily discovery | Lexical guard delivered; R90-179 supersedes unsupported public Path-versus-Dir reproduction claims with actual Dir/Now compatibility fixtures; runtime unchanged, execution delegated. |
 | R90-178 | Oct 4–Jan 1 | Complete implementation; tests delegated | Preserve the active database during expired daily-file cleanup. | R90-177 verified feature/closure; existing retention cleanup | Startup and direct cleanup retain the active lexical pathname and WAL/SHM; other expired sets and row TTL preserve their contracts; direct public declarations authored, execution delegated. |
-| R90-179 | Oct 4–Jan 1 | Ready | Correct active-shard alias fixtures to the public daily path contract. | R90-178 verified delivery; source-proven R90-177 fixture deviation | Daily Dir/clock-derived Path and ignored Options.Path are represented honestly; public storage/HTTP declarations cover reachable paths/counts, and unsupported alias reproduction claims are reconciled; execution delegated. |
+| R90-179 | Oct 4–Jan 1 | In progress | Correct active-shard alias fixtures to the public daily path contract. | R90-178 verified delivery; source-proven R90-177 fixture deviation | Daily Dir/clock-derived Path and ignored Options.Path are represented honestly; public storage/HTTP declarations cover reachable paths/counts, and unsupported alias reproduction claims are reconciled; execution delegated. |
 
 ## R90-01 Definition
 
@@ -11661,8 +11661,8 @@ fetched boundary. R90-75 remains unchanged; no next increment started.
   Behavioral/race/full/scanner/knowledge/traffic/acceptance not run; delegated by user.
 - **Stop condition:** new runtime/product/compatibility authority, ambiguous static/
   compile/Git/Vault evidence, competing edits, private input or another increment.
-- **Selection:** ready after R90-178 verified implementation/corrective delivery;
-  its single closure is being recorded. No work started.
+- **Selection:** selected after verified R90-178 implementation/correction/closure
+  delivery; current selection and evidence are recorded after R90-178 completion.
 
 
 ## R90-178 Corrected Compile and Static Checkpoint (2026-10-04)
@@ -11751,3 +11751,68 @@ actual public daily path fixture/evidence contract, with runtime unchanged.
 Next trigger audits fresh Git/Vault/history/source/queue before a separate plan.
 Oct 4–Jan 1 horizon and standing departmental split retained. Repair missing
 delivery evidence only.
+
+## R90-179 Selection and Source Audit (2026-10-04)
+
+Fresh fetched clean baseline `f4619816ecba0f5e5234b500438631635c25a3b1` and
+R90-178 initial/corrective/closure exact Git/Vault ranges, notes/index/versioned
+bounded MOC directly verified. Four-week phase audit covers 138 commits with
+iteration/index evidence, 183 unique roadmap pairs, 438 Vault Markdown hashes
+and fourteen current stable backups. Recent SLO/candidate/toolchain/correctness
+execution debt remains delegated; no missing delivery or qualifying R90-75
+outcome found. Only ready R90-179 has a full bounded contract; sole other
+unfinished R90-75 retains its complete independent departmental acceptance.
+Oct 4–Jan 1 forecast and standing test-department split remain unchanged.
+
+Source audit traces public startup to resolveDBPath, defaultDBDir and the clock:
+daily mode ignores Options.Path and joins Dir/date, as does discovery. Public
+startup cannot independently configure the originally inferred Path-versus-Dir
+alias. Prior fixtures' Path assertions are invalid; their missing-directory
+setup creates/opens another empty active database, and HTTP omitted Now.
+These are source findings, not executed failures. Select exactly the queued
+fixture/evidence correction; eight-path plan/state persisted before edits.
+Runtime source and prior completed historical records remain unchanged.
+Current R90-177 claims are superseded by actual public Dir/Now compatibility
+coverage; no independent alias reproduction or behavioral pass is claimed.
+No following increment started.
+
+
+## R90-179 Compile and Static Checkpoint (2026-10-04)
+
+Three existing public declaration names are retained for departmental commands;
+corrected bodies trace the actual resource through resolveDBPath/defaultDBDir/
+Now. Ten WAL/DELETE storage fixtures cover five Dir forms with spaces, fixed
+clock, derived Path/independently seeded absolute resource and ignored explicit
+Path absence. Separate primary seeds and encoded read-only observers establish
+two active/one historical row; full Count/List/Query contents/totals, filters/
+limits/pages, caller inputs and complete artifacts remain asserted. The actual
+missing-directory control moves the opened DELETE directory after independent
+observation, asserts ENOENT, reuses both live handles and compares moved artifacts,
+then restores it before closing. Calendar/corrupt controls remain direct.
+
+Five DELETE HTTP fixtures use the same Dir forms and fixed clock, independently
+seed active/history resources, assert derived/ignored Path, seven complete list/
+filtered-page cases, repeated ordinary/verbose health and gauge counts, caller
+inputs and full artifact tree. They cover reachable public compatibility;
+independent Options.Path-versus-Dir alias reproduction remains unavailable and
+is explicitly unclaimed. Runtime source is byte-identical. Current architecture,
+API, handoff and roadmap supersede the unsupported claim; frozen R90-144..172
+inventory, full historical roadmap except current queue/selection metadata and
+all prior Definitions other than R90-179 selection metadata are preserved.
+
+Pinned Go 1.26.8 preflight and complete alert/API/pipeline/cmd compile-only passed;
+binaries are outside the repository and unexecuted. Full static runtime/pinned
+format/docs/197 JSON/183 unique roadmap pairs/history/full R90-75 contract/frozen
+handoff/links/fences/eight-path/sensitive/diff passed. All 438 Vault Markdown
+hashes are unchanged. Initial temporary static harness scanned full historical
+prose for workspace paths and flagged a pre-existing baseline path; narrowed
+to added diff text, then the entire static chain reran successfully. No new
+sensitive path, repository compile failure or unresolved static result.
+Existing skill guidance already covers public option tracing and diff review;
+no reusable skill edit warranted.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. Compilation/static review establishes no read-only, preservation, HTTP,
+durability, reproduction, race, release or SLO pass. No runtime/scope deviation;
+R90-75 full independent departmental acceptance remains outstanding. Feature
+commit/push/Vault and one docs-only closure remain; no next increment started.

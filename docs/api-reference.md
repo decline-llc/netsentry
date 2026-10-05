@@ -54,13 +54,17 @@ With `verbose=true`, returns capture heartbeat status, engine queue/rule counts,
 
 Returns SQLite-backed aggregated alerts ordered by most recent activity.
 
-In daily-shard mode, relative/absolute and dot-component spellings of the
-active database pathname contribute rows and counts once. This also applies
-to health alert totals and the `netsentry_alerts_current` metrics gauge.
-Historical files, filtering and pagination retain their existing semantics;
-symlink/hardlink aliases are outside this lexical comparison. R90-177 direct
-storage and real-store HTTP assertions are authored and compiled only, with
-behavioral execution delegated to the test department.
+Daily-shard startup selects its active pathname from the configured directory
+and initial clock date, ignoring an explicit storage `Path`. Relative, absolute,
+dot and parent-component directory spellings retain the same rows and counts
+in list pages, health totals and the `netsentry_alerts_current` gauge. Historical
+files and filters retain their existing semantics. R90-179 corrects R90-177's
+public storage/HTTP fixtures to these actual inputs, with an explicit clock;
+public startup cannot independently configure a Path-versus-Dir alias to
+reproduce the earlier inferred duplication. The existing lexical comparison
+and runtime behavior are unchanged, with symlink/hardlink aliases outside that
+comparison. Assertions are authored and compiled only; behavioral execution
+remains delegated to the test department.
 
 Query parameters:
 

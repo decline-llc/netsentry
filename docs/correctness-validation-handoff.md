@@ -565,18 +565,37 @@ This supplement leaves the frozen R90-144..172 inventory unchanged.
 
 - `TestDailyShardAliasHTTPListHealthAndMetricsUseActualCounts`
 
-Review the actual public Options.Path/Dir spellings: relative directory with
-absolute active file, absolute directory with relative active file, two relative
-spellings with dot components, absolute dot spelling and identical control.
-Each main active-store fixture uses WAL and DELETE and seeds two current rows
-plus one DELETE historical row through separate non-daily stores. Read-only observers use
-independently encoded absolute paths and open before query/count/list calls;
-reuse them to assert real row counts. Compare complete rows, totals, filters,
-ordering, page offsets, original Path, caller inputs and full persistent
-bytes/modes/membership. Preserve missing-directory fallback, invalid-calendar
-skip and actual corrupt historical errors. The HTTP test uses the real daily
-store and checks list pages, ordinary/verbose health totals and the current
-alert gauge across repeated exports, retaining file bytes/mode/membership.
+**Current fixture authority: R90-179**, superseding the earlier Path-driven
+coverage claim. [Correction plan](plans/task-20261004-shard-public-fixtures.md) ·
+[state](tasks/task-state-20261004-shard-public-fixtures.json). Declaration names
+are retained for existing departmental commands, but the corrected bodies cover
+reachable Dir spelling compatibility. Daily startup ignores Options.Path and
+derives its active pathname from Dir/Now; discovery joins the same directory and
+filename. A separately configured Path-versus-Dir alias reproduction is
+unavailable through public startup. No direct reproduction regression is claimed
+for R90-177's lexical guard, whose implementation remains unchanged.
+
+Review absolute, relative, relative-dot, absolute-dot and absolute-parent Dir
+forms with spaces. Each of ten WAL/DELETE storage fixtures sets a fixed Now,
+supplies a distinct nonexistent ignored Path, and checks the derived Store.Path
+against the independently seeded absolute resource. Separate primary stores seed
+two active and one DELETE historical row. Independently encoded absolute
+read-only observers open before read calls and are reused. Compare complete
+Count/List/Query rows/totals, inclusive time/rule filters, negative/default limits,
+global pages and at/past-end emptiness, caller inputs, health and all artifact
+bytes/modes/membership. The actual missing-directory fallback moves the opened
+DELETE directory after establishing its observer, then checks live-handle rows
+and moved-artifact preservation before restoring it for cleanup. Invalid-calendar
+skip and real corrupt historical errors retain their direct controls.
+
+Five real-store DELETE HTTP fixtures use the same directory forms, explicit Now
+and ignored Path checks. Separate primary active/history seeds establish three
+complete rows. Check each page including at/past-end, historical rule-filtered
+pages/totals, ordinary/verbose health and the current gauge across repeated
+exports. Compare all active/history bytes/modes/tree membership, derived Path
+and caller inputs. These declarations are compatibility coverage, not a public
+Path-versus-Dir alias reproduction. The earlier HTTP declaration's omitted
+clock and missing-directory setup did not reach their claimed resources.
 
 Three declarations in two files are authored and compile-reviewed; behavioral,
 race, full-suite, scanner, knowledge, traffic and acceptance checks are
@@ -632,6 +651,8 @@ full acceptance and publication boundaries are unchanged.
 
 Closeout source review caught the original daily Options.Path assumption after
 its first feature push; corrected declarations must be reviewed at the final
-checkout. R90-177's earlier daily alias fixtures share that source-proven
-assumption and remain separate R90-179 repair debt. They do not establish the
-original claimed direct boundary. No executed test result was changed.
+checkout. R90-177's earlier daily alias fixtures shared that source-proven
+assumption; the R90-179 correction above supersedes their current coverage
+claims and retains the declaration names. They cover actual public Dir/Now
+compatibility and do not establish the original Path-driven reproduction.
+No executed test result was changed.

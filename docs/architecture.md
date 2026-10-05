@@ -442,14 +442,18 @@ Current build:
   database and both sidecars.
 - Cross-shard alert querying and alert counting in daily-shard mode; time range filters narrow the shard files scanned before applying the regular SQL filters and API pagination across the merged result.
 - R90-177 compares the active database and discovery directory as cleaned
-  absolute pathnames. A relative/absolute or dot-component alias of the active
-  daily filename is excluded from historical discovery; the original active
-  path remains included once and selects the live database handle. This avoids
-  duplicate rows and inflated counts without changing `Store.Path`, historical
-  read-only behavior, filtering, sorting or pagination. The comparison is
-  lexical and does not resolve symlink or hardlink aliases. Public WAL/DELETE
-  storage and real-store HTTP regression assertions are authored and compiled
-  only; execution remains delegated, with no SQLite or HTTP pass inferred.
+  absolute pathnames, excluding lexical equality from historical discovery and
+  keeping the original active path once for the live handle. Daily startup
+  derives `Store.Path` from `Dir` and the initial `Now` date; it ignores
+  `Options.Path`. Discovery uses the same directory. Public startup therefore
+  cannot independently configure a Path-versus-Dir alias to reproduce the
+  originally inferred duplication. R90-179 supersedes that fixture/evidence
+  claim: corrected public WAL/DELETE storage and DELETE HTTP declarations cover
+  five actual directory spellings, fixed clocks, ignored explicit Path, complete
+  rows/counts, filters/pages and artifact preservation. The lexical guard and
+  all runtime behavior remain unchanged; symlink/hardlink aliases remain outside
+  its comparison. Declarations are compiled only, with execution delegated and
+  no SQLite, HTTP or reproduction pass inferred.
 - R90-159 requires a valid calendar date before discovering daily shard files.
   Impossible-calendar filenames and their sidecars remain untouched and are
   ignored by `Store.List`, `Query` and `Count`; unrelated bytes under those names
