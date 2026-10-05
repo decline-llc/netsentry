@@ -268,7 +268,7 @@ formal SLO and evidence contract is unchanged.
 | R90-177 | Oct 4–Jan 1 | Complete implementation; tests delegated | Deduplicate lexical aliases of the active daily shard. | R90-176 verified feature/closure; existing daily discovery | Lexical guard delivered; R90-179 supersedes unsupported public Path-versus-Dir reproduction claims with actual Dir/Now compatibility fixtures; runtime unchanged, execution delegated. |
 | R90-178 | Oct 4–Jan 1 | Complete implementation; tests delegated | Preserve the active database during expired daily-file cleanup. | R90-177 verified feature/closure; existing retention cleanup | Startup and direct cleanup retain the active lexical pathname and WAL/SHM; other expired sets and row TTL preserve their contracts; direct public declarations authored, execution delegated. |
 | R90-179 | Oct 4–Jan 1 | Complete fixture correction; tests delegated | Correct active-shard alias fixtures to the public daily path contract. | R90-178 verified delivery; source-proven R90-177 fixture deviation | Daily Dir/clock-derived Path and ignored Options.Path are represented honestly; public storage/HTTP declarations cover reachable paths/counts, and unsupported alias reproduction claims are reconciled; execution delegated. |
-| R90-180 | Oct 5–Jan 2 | In progress | Reject positive subsecond aggregation windows before startup side effects. | R90-179 verified feature/closure; existing durable ID/aggregation contract | Public Open rejects windows below one second before clock/path/filesystem work; preserves earlier diagnostics, inputs, nonpositive defaults and all larger windows including fractional durations; direct preservation/write/read/reopen declarations authored, execution delegated. |
+| R90-180 | Oct 5–Jan 2 | Complete implementation; tests delegated | Reject positive subsecond aggregation windows before startup side effects. | R90-179 verified feature/closure; existing durable ID/aggregation contract | Public Open rejects positive windows below one second before clock/path/filesystem work; preserves earlier diagnostics, inputs, nonpositive defaults and all larger windows including fractional durations; direct preservation/write/read/reopen declarations authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -11945,3 +11945,47 @@ user**; compilation is no runtime, preservation, durability, race, release or
 SLO pass. Empty queue/horizon deviation was recorded at selection; the import
 fix is one-off and existing generic skill covers the workflow, so no skill edit.
 Exact feature and single docs-only closure delivery remain pending.
+
+## R90-180 Completion and Forward Queue Refresh (2026-10-05)
+
+Feature `d7af8e3e20a7f71f16852b48a83c6412dfbaf2dd` contains exactly seven intended paths; non-force push and
+fresh clean HEAD/origin/main/FETCH_HEAD verified. Local Vault exact full-SHA
+range `ab06fe32219e4abb69a4474c43f4ad33bb593c7d..d7af8e3e20a7f71f16852b48a83c6412dfbaf2dd` verified iteration `04-开发迭代记录/2026-10-05-d7af8e3e20-CI知识同步.md`, full index and bounded versioned
+generated MOC, resolving abbreviated metadata through Git. Fourteen current
+stable notes reconcile feature authority/date/references while preserving all
+prior non-generated topic/status prose under explicit historical headings.
+All 393 prior immutable iteration records remain unchanged. Identical replay
+preserved all 441 Markdown hashes; snapshot JSON SHA-256 `67cb8d1ded648cd6dd5d27aae1b6687d2e41c6cbbefa5f41ea04f65db035b295`.
+
+Plan comparison confirms the exact three-line lower-bound guard and every
+authored direct boundary: 100 rejection combinations across five positive
+subsecond durations, primary/daily DELETE/durable WAL and five persistent-input
+states; exact error/nil Store/zero clock/caller options/tree bytes/modes/membership,
+with a previously opened independent encoded read-only healthy-row/all-column
+observer. Five precedence causes retain existing diagnostics (native 32-bit busy
+overflow skips); 28 accepted/default controls establish distinct window/ID/event
+expectations, complete List/Query/Count and independent expected all durable
+columns through close/reopen, caller inputs/health/actual Dir-Now daily paths.
+Fractional windows at least one second, nonpositive defaults and durable
+ID/schema/recovery format retain their contracts. No executed outcome inferred.
+
+Pinned Go 1.26.8 complete four-package compile-only and complete static exact
+guard/precedence/format/docs/198 JSON/184 unique complete roadmap multisets/all
+prior Definitions/history/full R90-75/frozen handoff/horizon/links/fences/seven-
+path/sensitive/diff passed. The initial unused-import failure and complete
+fail-fast reruns are recorded above; no unresolved failure or scope expansion.
+Empty queue/source selection and Oct 5 horizon correction were recorded before
+implementation. Existing generic skill covers lessons; no skill edit warranted.
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. R90-180 implementation/evidence authorship is complete; departmental
+execution debt remains. R90-75 full independent acceptance terms are unchanged.
+
+This single three-path docs-only record closes the same increment. Resolve its
+full SHA from Git and verify non-force push/fresh clean exact refs and exact
+feature..closure Vault note/index/bounded MOC/stable preservation/replay before
+reporting. Do not repeat verified feature delivery or create a self-reference
+closure. Forward queue refreshed without starting another increment: no other
+defined local ready item. R90-75 is the sole unfinished row, with Oct 5–Jan 2
+forecast and its full independent departmental acceptance. Next trigger audits
+fresh Git/Vault/history/source/queue and persists a separate eligible plan
+before editing. Repair missing delivery evidence only.

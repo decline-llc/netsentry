@@ -107,3 +107,51 @@ the unused import was a corrected one-off compile error. Existing generic skill
 instructions cover public option/resource tracing and fail-fast reruns; no
 reusable skill change is warranted. Feature push/fetch/Vault and its one
 docs-only closure remain pending.
+
+## Verified feature delivery and acceptance comparison (2026-10-05)
+
+Feature `d7af8e3e20a7f71f16852b48a83c6412dfbaf2dd` contains exactly the seven intended paths. Non-force push
+succeeded; a fresh fetch verified clean HEAD/origin/main/FETCH_HEAD at that
+exact full SHA. Local Vault sync used full range `ab06fe32219e4abb69a4474c43f4ad33bb593c7d..d7af8e3e20a7f71f16852b48a83c6412dfbaf2dd`.
+Iteration `04-开发迭代记录/2026-10-05-d7af8e3e20-CI知识同步.md`, full commit index and versioned bounded MOC links verified,
+with abbreviated generated identifiers resolved through Git. Fourteen current
+stable notes reconcile actual feature authority/date/references; all prior
+non-generated topic/status prose is retained byte-for-byte under explicit
+historical headings. All 393 prior immutable iteration records are unchanged.
+Identical exact-range replay preserved all 441 Markdown hashes; snapshot JSON
+SHA-256: `67cb8d1ded648cd6dd5d27aae1b6687d2e41c6cbbefa5f41ea04f65db035b295`.
+
+Acceptance comparison reaches every planned direct boundary in the authored
+declarations: five positive subsecond durations and all 100 resource/state
+combinations; nil Store/exact error/zero clock/unchanged caller options/tree
+bytes/modes/membership; healthy retained-row/all-column read-only observation
+established before rejection; five earlier-error causes with precise native
+32-bit overflow skip; and 28 accepted/default controls, including 1 s plus 1 ns
+and 1.5 s. Two same-tuple alerts establish distinct expected windows/IDs/events;
+full List/Query/Count/totals, independent expected every alerts/events column,
+close/reopen, health and caller inputs are asserted. Actual daily resources
+follow Dir/initial Now, never an ignored Options.Path. Compile/static review
+passed; these are authored assertions, not runtime or persistence results.
+
+Exactly the planned bounded input rejection is implemented. Nonpositive
+defaults, accepted durations and durable IDs/schema/recovery format remain
+unchanged. Architecture/handoff/current forecast are reconciled; all completed
+history and full independent R90-75 acceptance terms are retained. The first
+compile failure/import fix and complete reruns are recorded above; no unresolved
+failure or scope expansion. Existing generic skill covers the workflow; no edit.
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. Implementation/evidence authorship is complete; execution debt remains.
+
+## Single closure and resume authority
+
+This three-path documentation delivery record closes R90-180. Resolve its full
+SHA from Git after commit, verify non-force push/fresh clean exact refs, and sync
+the exact feature..closure range; check its three-path iteration/index/bounded
+MOC, fourteen stable reconciliations, prior prose/iterations and identical replay.
+The verified feature SHA above is a historical boundary, not an instruction to
+repeat delivery. Do not create a self-reference closure or another increment.
+Future sessions resolve this sole closure through fresh Git refs and repair
+only missing evidence. No other defined local ready increment; next trigger
+audits fresh source/history/queue before a separate eligible persisted plan.
+R90-75 full independent acceptance remains outstanding; unfinished forecast
+Oct 5–Jan 2. No next increment started.
