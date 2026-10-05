@@ -701,3 +701,41 @@ retain exact SHA/commands/logs/skips/failures, and compare direct boundaries to
 the plan. Compilation establishes no rejection, artifact preservation, identity,
 durability, race or SLO pass. IDs/schema/recovery format and the full independent
 R90-75 acceptance contract are unchanged; no publication authority is implied.
+
+## R90-181: binary alert-ID tie ordering
+
+This supplement preserves the frozen R90-144..172 inventory and all prior
+follow-ups. [Plan](plans/task-20261005-alert-id-order-collation.md) ·
+[state](tasks/task-state-20261005-alert-id-order-collation.json).
+
+[engine/internal/alert/store_id_order_collation_test.go](../engine/internal/alert/store_id_order_collation_test.go):
+
+- `TestStoreIDTieOrderingIgnoresColumnCollation`
+- `TestStoreNewIDOrderIndexUsesBinaryCollation`
+
+The first declaration has 24 combinations: BINARY/NOCASE/RTRIM ID column defaults,
+new/legacy index definitions, primary/daily mode and DELETE/WAL. The fixture
+separates the column default from table PRIMARY KEY(id COLLATE BINARY); otherwise
+schema preflight would reject a nonbinary unique index before exercising order.
+Public List/Query assert independent full Alert contents for B/a/c equal-time
+ties plus a nanosecond-newer and older row, seven page boundaries/limits, exact
+totals and inclusive exact-time filtered tie pagination. Daily fixtures derive
+the opened file through Dir/Now and add a historical shard via non-daily public
+seed/write. Reopen repeats the assertions; existing index SQL, caller inputs,
+Count/health and historical base/WAL/SHM bytes/modes/membership remain checked.
+No writable open of the historical shard occurs during observation.
+
+The second declaration starts with tables only for each of the three column
+defaults, so Open creates the actual expression index. Inspect index_xinfo for
+the ascending BINARY id term, then EXPLAIN the public List and filtered Query SQL
+including LIMIT/OFFSET; require the expression index without a temporary order
+sort. Existing legacy indexes retain their metadata and correctness coverage;
+no migration or performance promise for them is made.
+
+Both declarations are authored and compile-reviewed. Behavioral/race/full/
+scanner/knowledge/traffic/acceptance **not run; delegated by user**. Use the
+existing departmental alert/API/pipeline/cmd and serial full/knowledge commands,
+retaining exact SHA, commands, full logs, skips and failures. Compilation is
+not sorting, persistence, performance, race or SLO evidence. Durable identities,
+schema compatibility, timestamp/filter semantics and independent R90-75 terms
+remain unchanged; no publication authority is added.

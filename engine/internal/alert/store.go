@@ -1336,7 +1336,7 @@ CREATE INDEX IF NOT EXISTS idx_alerts_dst_last_seen ON alerts(dst_ip, last_seen 
 CREATE INDEX IF NOT EXISTS idx_alerts_protocol_port_last_seen ON alerts(protocol, dst_port, last_seen DESC);
 CREATE INDEX IF NOT EXISTS idx_alerts_mitre_technique_last_seen ON alerts(mitre_technique_id, last_seen DESC);
 CREATE INDEX IF NOT EXISTS idx_alerts_count_last_seen ON alerts(aggregated_count, last_seen DESC);
-CREATE INDEX IF NOT EXISTS idx_alerts_last_seen_time_id ON alerts(%s DESC, id ASC);
+CREATE INDEX IF NOT EXISTS idx_alerts_last_seen_time_id ON alerts(%s DESC, id COLLATE BINARY ASC);
 `, sqliteTimestampKeySQL("last_seen"))
 
 var upsertAlertSQL = fmt.Sprintf(`
@@ -2482,7 +2482,7 @@ SELECT id, event_id, rule_id, rule_name, severity, protocol, src_ip, dst_ip, dst
        aggregated_count, first_seen, last_seen, window_start
 FROM alerts`
 
-var alertOrderSQL = "\nORDER BY " + sqliteTimestampKeySQL("last_seen") + " DESC, id ASC"
+var alertOrderSQL = "\nORDER BY " + sqliteTimestampKeySQL("last_seen") + " DESC, id COLLATE BINARY ASC"
 
 // Query returns filtered and paginated alerts plus the total filtered row count.
 func (s *Store) Query(ctx context.Context, query Query) ([]*model.Alert, int, error) {

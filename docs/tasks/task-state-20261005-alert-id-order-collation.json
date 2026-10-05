@@ -1,0 +1,60 @@
+{
+  "task": "r90-181-alert-id-order-collation",
+  "timestamp": "2026-10-05",
+  "branch": "main",
+  "starting_remote_baseline": "568cdd9b93aa0dc519e45449d436559c61eba98d",
+  "remote_baseline": "568cdd9b93aa0dc519e45449d436559c61eba98d",
+  "risk_level": "Low",
+  "current_checkpoint": "implementation_compile_static_complete_delivery_pending",
+  "audit": {
+    "baseline": "568cdd9b93aa0dc519e45449d436559c61eba98d",
+    "phase_commits": 142,
+    "roadmap_pairs": 184,
+    "vault_files": 442,
+    "immutable_records": 395,
+    "stable_notes": 14
+  },
+  "completed": [
+    "Fresh exact clean refs and R90-180 feature/closure Git/Vault evidence verified",
+    "Phase history, complete roadmap multiset and forward queue reviewed",
+    "Vault hashes and fourteen stable prose backups captured",
+    "Bounded source-supported sorting inconsistency selected and acceptance evidence mapped",
+    "Exactly two SQL tie/index terms pinned to BINARY; legacy index retention preserved",
+    "Two declarations authored: 24 public mode/collation/index/journal combinations plus three fresh-index metadata/access plans",
+    "Pinned Go 1.26.8 alert/API/pipeline/cmd complete compile-only chain passed",
+    "Complete static source/docs/format/199 JSON/185 unique roadmap multisets/history/full R90-75/frozen handoff/scope/sensitive/diff passed",
+    "All 442 selection Vault hashes unchanged; acceptance assertions reviewed against actual public boundaries"
+  ],
+  "in_progress": [
+    "Feature commit/non-force push/fresh exact refs/Vault",
+    "Single docs-only closure of this increment"
+  ],
+  "validation": {
+    "behavioral_race_full_scanner_knowledge_traffic_acceptance": "not run; delegated by user",
+    "compile_only": "passed pinned Go 1.26.8 alert/API/pipeline/cmd; binaries not executed",
+    "static": "passed docs-check/pinned format/199 JSON/185 complete unique roadmap multisets/all prior history/full R90-75/frozen handoff/horizon/links/fences/seven-path/exact two SQL terms/sensitive/diff"
+  },
+  "authority_boundaries": [
+    "Exactly one increment; standing departmental execution delegation",
+    "Only explicit binary tie ordering and new-index term; no migration or schema tightening",
+    "No private input, department messages, publication or R90-75 acceptance claim"
+  ],
+  "remaining_risks": [
+    "Authored regressions require departmental execution",
+    "Legacy nonbinary expression indexes may require an extra tie sort; no rebuild"
+  ],
+  "deviations": [
+    "Empty local ready queue restored from source-supported order-collation inconsistency; current horizon retained",
+    "Initial history comparison verifier omitted the row insertion boundary; corrected verifier and reran complete static chain; repository history unchanged, no unresolved failure"
+  ],
+  "resume_instructions": "Finish only R90-181 against this persisted plan; preserve user work; compile/static review before feature delivery; exact push/fetch/Vault and one docs-only closure; do not execute delegated tests or start another increment.",
+  "todo": [
+    "Feature commit/push/fetch/Vault",
+    "Single docs-only closure push/fetch/Vault"
+  ],
+  "next_increment": {
+    "id": null,
+    "started": false,
+    "departmental_acceptance": "R90-75 outstanding"
+  }
+}

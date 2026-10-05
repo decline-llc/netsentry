@@ -526,7 +526,14 @@ Current build:
   nanosecond key before comparison. The primary database has an optional
   expression index for global `last_seen` order/range scans; legacy historical
   shards remain correct through the same expression without writable index
-  creation. The reader validates ordering without assuming that historical
+  creation. R90-181 pins the SQL alert-ID tie term to `COLLATE BINARY ASC`,
+  matching daily merge byte order even when an accepted column uses NOCASE or
+  RTRIM with a separate binary primary-key constraint. New expression indexes
+  use the same explicit term. Existing same-named indexes are retained without
+  migration; inherited nonbinary terms may require an extra tie sort. Direct
+  mode/pagination/reopen/historical/index assertions are authored and compile-
+  reviewed, with execution delegated and no runtime or performance pass.
+  The reader validates ordering without assuming that historical
   rows used the current aggregation-window duration.
 - Persisted alert IDs must equal the canonical identity derived from
   `(rule_id, src_ip, dst_ip, dst_port, window_start)`. Writer normalization and

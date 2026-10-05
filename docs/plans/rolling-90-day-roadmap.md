@@ -270,6 +270,8 @@ formal SLO and evidence contract is unchanged.
 | R90-179 | Oct 4–Jan 1 | Complete fixture correction; tests delegated | Correct active-shard alias fixtures to the public daily path contract. | R90-178 verified delivery; source-proven R90-177 fixture deviation | Daily Dir/clock-derived Path and ignored Options.Path are represented honestly; public storage/HTTP declarations cover reachable paths/counts, and unsupported alias reproduction claims are reconciled; execution delegated. |
 | R90-180 | Oct 5–Jan 2 | Complete implementation; tests delegated | Reject positive subsecond aggregation windows before startup side effects. | R90-179 verified feature/closure; existing durable ID/aggregation contract | Public Open rejects positive windows below one second before clock/path/filesystem work; preserves earlier diagnostics, inputs, nonpositive defaults and all larger windows including fractional durations; direct preservation/write/read/reopen declarations authored, execution delegated. |
 
+| R90-181 | Oct 5–Jan 2 | In progress; execution delegated | Pin alert-ID tie ordering to binary collation. | R90-180 verified feature/closure; existing timestamp/daily merge contracts | Public List/Query use byte-order ID ties regardless of accepted column collation; new index term aligned, legacy indexes retained; direct mode/page/reopen/historical/index declarations authored, execution delegated. |
+
 ## R90-01 Definition
 
 - **Goal:** establish one versioned 90-day delivery authority and a
@@ -11989,3 +11991,81 @@ defined local ready item. R90-75 is the sole unfinished row, with Oct 5–Jan 2
 forecast and its full independent departmental acceptance. Next trigger audits
 fresh Git/Vault/history/source/queue and persists a separate eligible plan
 before editing. Repair missing delivery evidence only.
+
+## R90-181 Definition
+
+- **Goal:** align SQL alert-ID tie ordering with the byte order used by daily
+  shard merging, independent of compatible column defaults.
+- **Risk:** NOCASE column defaults can reverse equal-timestamp B/a page order;
+  a nonbinary primary-key fixture would reject before reaching this boundary.
+  Legacy inherited indexes may need an extra tie sort; no rebuild promised.
+- **Acceptance:** explicit binary ID tie term in shared List/Query SQL and new
+  expression index; direct primary/daily BINARY/NOCASE/RTRIM DELETE/WAL,
+  fresh/legacy index fixtures, nanosecond and tied rows, full contents/page totals,
+  inclusive filtered ties, close/reopen, actual daily Dir/Now paths, caller/health,
+  retained historical bytes/modes/membership and fresh index metadata/access plan.
+- **Required validation:** pinned Go 1.26.8 alert/API/pipeline/cmd compile-only;
+  exact two-line source/format/docs/JSON/complete roadmap multisets/history/full
+  R90-75/frozen handoff/seven-path/sensitive/diff; exact non-force push/fresh refs/
+  full-SHA Vault ranges/stable preservation/replay and one docs-only closure.
+  Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated
+  by user**.
+- **Stop condition:** ambiguous compile/static/Git/Vault, competing edits,
+  unexpected fixture incompatibility, private input, new compatibility/product
+  authority or another increment.
+
+## R90-181 Selection and Source Audit (2026-10-05)
+
+Fresh clean HEAD/origin/main/FETCH_HEAD baseline
+`568cdd9b93aa0dc519e45449d436559c61eba98d`; R90-180 feature/sole closure exact
+Git scope/Vault notes/index/versioned bounded MOC verified. Four-week phase
+review covers 142 commits, 184 unique roadmap pairs, 442 Vault Markdown hashes,
+395 immutable iteration records and fourteen stable current notes with exact
+baseline authority. No missing delivery or qualifying R90-75 result found.
+Recent execution debt remains delegated; R90-179's public daily fixture
+correction supersedes unsupported Path-versus-Dir claims. Completed records and
+full independent R90-75 terms are preserved.
+
+No local ready item; restore the queue with one bounded source-supported repair.
+Shared SQL orders equal last_seen by bare id (column default), whereas daily
+sortAlerts compares Go strings by bytes. NOCASE columns with separate binary
+primary-key constraints meet current preflight, and B/a ties reverse ordering.
+SQLite's official CREATE TABLE/SELECT/CREATE INDEX references support this
+inference; no executed failure claimed. Seven-path plan/state and acceptance
+map persisted before implementation/docs edits. Only shared SQL order and new
+expression-index ID terms change; no compatibility tightening, migration or
+legacy index rebuild. Current Oct 5–Jan 2 forecast retained. Every unfinished
+row has status/dependency/window/risk/acceptance/validation/stop condition. No
+next increment started.
+
+## R90-181 Compile and Static Checkpoint (2026-10-05)
+
+The runtime delta is exactly two SQL id terms: shared alertOrderSQL and the
+new expression-index definition use COLLATE BINARY ASC. Existing same-named
+indexes retain their SQL through IF NOT EXISTS; no migration or performance
+claim is added. Direct public declarations cover 24 column/index/mode/journal
+combinations, full independently expected Alert values, B/a/c tie ordering,
+nanosecond priority, seven query pages, inclusive filtered ties, reopen, real
+daily Dir/Now resources, caller/count/health and historical base/WAL/SHM
+bytes/modes/membership. Three fresh-index cases assert actual ascending BINARY
+metadata and EXPLAIN the public List and filtered Query access paths.
+
+Pinned Go 1.26.8 compile-only passed all four packages (alert/API/pipeline/cmd),
+without executing binaries. Static checks passed docs-check, pinned formatting,
+199 task JSON, 185 unique complete roadmap multisets, all prior history and full
+R90-75 terms, frozen handoff prefix, current horizon, local Markdown links/fences,
+seven-path scope, exact source delta, sensitive diff and git diff --check.
+All 442 selection Vault Markdown hashes remain unchanged. An initial static
+history verifier excluded the new row without its insertion boundary and
+reported a comparison failure; correcting that verifier boundary and rerunning
+the complete static chain established exact prior-history preservation. No
+repository behavior changed to satisfy the verifier, and no unresolved result
+remains. Existing skill guidance already covers comparison boundaries and
+fixture resource tracing; no repeatable new rule or skill edit is warranted.
+
+Every planned direct assertion reaches the actual public resource and order
+boundary on source review. Compilation does not establish sorting, preservation,
+persistence, performance, race, release or SLO outcomes. Behavioral/race/full/
+scanner/knowledge/traffic/acceptance **not run; delegated by user**. Feature and
+single docs-only closure push/fetch/Vault delivery remain pending. No next
+increment started.
