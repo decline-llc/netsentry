@@ -78,3 +78,56 @@ knowledge/traffic/acceptance execution. These checks are **not run; delegated by
 user**. Counts establish authored source inventory, not runtime assertions or
 passes. Exactly one increment; feature delivery/Vault and a single closure remain
 pending, and no following increment started.
+
+## R90-182 Completion and Forward Queue Refresh (2026-10-05)
+
+Feature `fd9e0170c857c6be503229d983099a9e6ca524c9` contains exactly five intended documentation paths.
+Non-force push succeeded through authenticated transient SSH-over-443; immediate
+fresh fetch verified clean HEAD/origin/main/FETCH_HEAD at that full SHA. Initial
+port-22 connection closed; before retry, fetched remote was confirmed still at
+`b0030c9913ce4f42a0b63dc817c16c9f72cee289`. Configured remote unchanged; no ambiguous delivery outcome.
+Local Vault exact full-SHA range `b0030c9913ce4f42a0b63dc817c16c9f72cee289..fd9e0170c857c6be503229d983099a9e6ca524c9` verified iteration
+`04-开发迭代记录/2026-10-05-fd9e0170c8-CI知识同步.md`, complete commit index and versioned bounded MOC links,
+resolving abbreviated metadata through Git. Fourteen stable current notes
+reconcile handoff/queue/delivery authority, preserving all prior non-generated
+body prose under explicit historical headings. All 397 prior immutable iteration
+records remain unchanged. Identical exact-range replay preserved all 445 Markdown
+hashes; snapshot JSON SHA-256 `1b44cf21ae4517f32aa3b41ad72c8735a34b0ef604f37f61b0a282c213442526`.
+
+Plan comparison confirms eight entries and nine exact source/correction commits,
+current declarations and changed-file membership, original/follow-up disjoint
+sets and complete distinct/reference totals. Follow-ups: 11 distinct files/23
+declarations, 13 file/26 declaration references. Combined: 37 increments,
+49 distinct files/129 declarations and 52/138 references. R90-178 records both
+feature/corrective commits; R90-179 reuses three declarations in two R90-177 files,
+adds no new declaration, and supersedes unsupported Path-driven reproduction.
+Public Dir/Now fixture authority and actual-checkout acceptance-body review are
+explicit. Every prior handoff byte and roadmap record/full independent R90-75
+contract remains preserved. Development links the appended summary and existing
+departmental pinned/module-relative/uncached commands retain evidence ownership.
+
+Static inventory/source/commit/counts/200 JSON/186 complete unique roadmap
+multisets/history/full R90-75/horizon/links/fences/five-path/sensitive/diff and
+docs-check passed, including after fresh feature delivery. The local verifier
+parsing correction/full rerun and SSH fallback are recorded; no unresolved
+result, source change or scope expansion remains. Existing skills cover the
+workflow; no new repeatable lesson or skill edit warranted. Documentation only,
+no compiler invocation. Behavioral/race/full/scanner/knowledge/traffic/acceptance
+**not run; delegated by user**. No executed coverage, correctness, preservation,
+durability, performance, race, release or SLO pass is inferred.
+
+### R90-182 Single Closure and Resume Authority
+
+This three-path docs-only delivery record closes the same increment. Resolve
+its full SHA through Git after commit, then verify non-force push/immediate fresh
+clean exact refs and exact feature..closure Vault note/index/versioned bounded
+MOC, fourteen stable current notes, prior topic/immutable preservation and
+identical replay. The feature SHA above is historical delivered evidence; do not
+repeat verified feature/closure delivery or create a self-reference closure.
+
+Forward queue refreshed without starting another increment: no other defined
+local ready item. R90-75 remains the sole unfinished row with its full independent
+departmental acceptance and Oct 5–Jan 2 forecast. Next trigger audits fresh
+Git/Vault/history/source/queue and persists a separate eligible plan before
+editing; repair only missing delivery evidence. No delegated test execution,
+department contact, private input, publication or SLO acceptance is authorized.
