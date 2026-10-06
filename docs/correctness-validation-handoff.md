@@ -739,3 +739,168 @@ retaining exact SHA, commands, full logs, skips and failures. Compilation is
 not sorting, persistence, performance, race or SLO evidence. Durable identities,
 schema compatibility, timestamp/filter semantics and independent R90-75 terms
 remain unchanged; no publication authority is added.
+
+## Current follow-up inventory: R90-174 through R90-181
+
+This appended inventory reconciles eight delivered follow-ups against the
+reviewed clean fetched baseline `b0030c9913ce4f42a0b63dc817c16c9f72cee289`.
+[R90-182 plan](plans/task-20261005-validation-followup-inventory.md) ·
+[state](tasks/task-state-20261005-validation-followup-inventory.json).
+The complete original R90-144..172 inventory and all detailed supplements above
+remain preserved. Later checkout changes require a fresh source review.
+
+The follow-ups contain **11 distinct changed Go test files and 23 distinct
+current top-level Test declarations**, with **13 file references and 26
+declaration references** across eight entries. R90-179 corrects two files and
+three declarations already listed under R90-177; it adds no new declaration.
+R90-178 includes its initial feature and subsequent corrective source commit
+in one entry. Counts describe file-level authored inventory, including existing
+companions; they do not count new tests, subtests, executed cases or passes.
+
+The original and follow-up file sets are disjoint. The combined bounded handoff
+therefore covers **37 increments, 49 distinct files and 129 distinct declarations**,
+with **52 file references and 138 declaration references**. These totals do not
+extend the inventory to all repository tests or the earlier SLO/Python work.
+Every function below must be reviewed in the actual checkout, using the exact
+scope and acceptance criteria in its linked plan and the detailed supplements.
+
+| Increment | Distinct files in entry | Declarations in entry | Current review boundary |
+|---|---|---|---|
+| R90-174 | 2 | 3 | Prometheus label bytes and HTTP health identity; no production scraper claim. |
+| R90-175 | 2 | 5 | Explicit empty suppression scope, preserved file/published state and same-operation retry. |
+| R90-176 | 2 | 4 | Protocol wildcard across rule types, other gates, invalid-entry rejection and HTTP persistence/retry. |
+| R90-177 | 2 | 3 | Current bodies are corrected by R90-179; public Dir/Now compatibility only. |
+| R90-178 | 1 | 3 | Use both source commits; actual daily initial-clock paths, active artifacts and separate row TTL. |
+| R90-179 | 2 reused | 3 reused | Supersedes Path-driven coverage claims; preserved declaration names refer to corrected public resources. |
+| R90-180 | 1 | 3 | Subsecond rejection before startup effects, earlier diagnostics and accepted/default identity/reopen controls. |
+| R90-181 | 1 | 2 | Binary ID ties, full pages/reopen/historical preservation and actual fresh-index metadata/access plans. |
+
+### Current commit and declaration mapping
+
+Feature/correction SHAs below are immutable source-history boundaries, not
+execution evidence. Record the reviewed checkout's full SHA separately. R90-178's
+correction and R90-179's replacement fixtures must be included in that checkout;
+executing an earlier feature revision does not establish their current claims.
+
+#### R90-174
+
+`47ab1ea637c575fab13e3f7b9b3f5b6f74d3dbb2` · [plan](plans/task-20261004-prometheus-labels.md) · [state](tasks/task-state-20261004-prometheus-labels.json).
+
+[engine/internal/api/metrics_label_encoding_test.go](../engine/internal/api/metrics_label_encoding_test.go):
+
+- `TestMetricsSeverityLabelEncodingPreservesHealthIdentity`
+
+[engine/internal/stats/label_encoding_test.go](../engine/internal/stats/label_encoding_test.go):
+
+- `TestPrometheusSeverityLabelEncoding`
+- `TestPrometheusSeverityLabelsPreserveSortAndCounts`
+
+#### R90-175
+
+`1378776219ee97a1f6074c0d12b0b016d6d1eb81` · [plan](plans/task-20261004-suppression-rule-scope.md) · [state](tasks/task-state-20261004-suppression-rule-scope.json).
+
+[engine/internal/alert/suppression_rule_scope_test.go](../engine/internal/alert/suppression_rule_scope_test.go):
+
+- `TestSuppressionConstructorsRejectExplicitEmptyRuleScope`
+- `TestSuppressionRuleScopePreservesAcceptedSemantics`
+- `TestSuppressionEmptyRuleScopePreservesPrefixDiagnosticPrecedence`
+- `TestFileBackedSuppressionRuleScopeRejectionPreservesStateAndPermitsRetry`
+
+[engine/internal/api/suppression_rule_scope_test.go](../engine/internal/api/suppression_rule_scope_test.go):
+
+- `TestSuppressionHTTPRejectsExplicitEmptyRuleScopeAndPermitsRetry`
+
+#### R90-176
+
+`e5cc1f8ee9a1e85c7b6610ddcc6fbc378b76cd78` · [plan](plans/task-20261004-protocol-wildcard.md) · [state](tasks/task-state-20261004-protocol-wildcard.json).
+
+[engine/internal/api/protocol_wildcard_test.go](../engine/internal/api/protocol_wildcard_test.go):
+
+- `TestRuleHTTPProtocolWildcardPersistsRejectsAndPermitsRetry`
+
+[engine/internal/rule/protocol_wildcard_test.go](../engine/internal/rule/protocol_wildcard_test.go):
+
+- `TestExplicitAnyProtocolPreservesWildcardAcrossRuleTypes`
+- `TestAnyProtocolPreservesOtherRuleGates`
+- `TestAnyProtocolRejectsInvalidEntriesAndPreservesSnapshot`
+
+#### R90-177
+
+`83a0bc74051f71016e9428d3a6fd904cc0b9abca` · [plan](plans/task-20261004-shard-path-alias.md) · [state](tasks/task-state-20261004-shard-path-alias.json).
+
+[engine/internal/alert/shard_path_alias_test.go](../engine/internal/alert/shard_path_alias_test.go):
+
+- `TestDailyShardLexicalActivePathAliasesCountRowsOnce`
+- `TestDailyShardAliasPreservesMissingDirectoryAndHistoricalErrors`
+
+[engine/internal/api/shard_path_alias_test.go](../engine/internal/api/shard_path_alias_test.go):
+
+- `TestDailyShardAliasHTTPListHealthAndMetricsUseActualCounts`
+
+#### R90-178
+
+`7678017be9328396d274db5e854a43c9cc7938d4` · `eeae5a2c8d70d0df4603361ec87d730a38de11a4` · [plan](plans/task-20261004-shard-active-retention.md) · [state](tasks/task-state-20261004-shard-active-retention.json).
+
+[engine/internal/alert/shard_active_retention_test.go](../engine/internal/alert/shard_active_retention_test.go):
+
+- `TestExpiredActiveShardSurvivesStartupAndLexicalCleanup`
+- `TestLongLivedActiveShardCleanupPreservesFileAndSeparateRowTTL`
+- `TestActiveShardCleanupGuardsAndOtherDirectory`
+
+#### R90-179 (corrected public fixture bodies)
+
+`deeea1f82e619a0a3045e7d91c326d5a62033423` · [plan](plans/task-20261004-shard-public-fixtures.md) · [state](tasks/task-state-20261004-shard-public-fixtures.json).
+
+[engine/internal/alert/shard_path_alias_test.go](../engine/internal/alert/shard_path_alias_test.go):
+
+- `TestDailyShardLexicalActivePathAliasesCountRowsOnce`
+- `TestDailyShardAliasPreservesMissingDirectoryAndHistoricalErrors`
+
+[engine/internal/api/shard_path_alias_test.go](../engine/internal/api/shard_path_alias_test.go):
+
+- `TestDailyShardAliasHTTPListHealthAndMetricsUseActualCounts`
+
+#### R90-180
+
+`d7af8e3e20a7f71f16852b48a83c6412dfbaf2dd` · [plan](plans/task-20261005-aggregation-window-preflight.md) · [state](tasks/task-state-20261005-aggregation-window-preflight.json).
+
+[engine/internal/alert/store_aggregation_window_preflight_test.go](../engine/internal/alert/store_aggregation_window_preflight_test.go):
+
+- `TestOpenSubsecondAggregationWindowPreservesPersistentInputs`
+- `TestOpenAggregationWindowPreflightPreservesEarlierDiagnostics`
+- `TestOpenAcceptedAggregationWindowsRetainRowsIdentityAndReopen`
+
+#### R90-181
+
+`de31df3ef40c834b7db62295c5d8fdcf650d14b1` · [plan](plans/task-20261005-alert-id-order-collation.md) · [state](tasks/task-state-20261005-alert-id-order-collation.json).
+
+[engine/internal/alert/store_id_order_collation_test.go](../engine/internal/alert/store_id_order_collation_test.go):
+
+- `TestStoreIDTieOrderingIgnoresColumnCollation`
+- `TestStoreNewIDOrderIndexUsesBinaryCollation`
+
+### Execution and unresolved evidence
+
+The existing commands above cover all four follow-up owning packages:
+`./internal/alert`, `./internal/api`, `./internal/rule` and `./internal/stats`,
+relative to `engine`. Preserve pinned Go preflight, `-count=1`, serial focused
+then full/race/knowledge sequencing, reviewed SHA/tool versions/complete logs,
+and every skip, failure, fixture gap and unmet acceptance criterion. Those
+commands remain departmental instructions; no additional execution is recorded.
+
+For the daily fixtures, trace Options through public Open: DailyShard ignores
+Path and resolves its resource from Dir and the first Now call. R90-177/179
+provide no independent Path-versus-Dir alias reproduction. R90-178 advances its
+clock only after selecting the active path; compare observations with that
+actual resource. For R90-180, earlier diagnostic precedence and each rejected
+persistent-input boundary require direct assertions. For R90-181, independently
+verify complete tie/page contents and metadata; a retained legacy index is not
+promised to avoid an extra sort. Nearby tests or declaration counts do not clear
+these boundaries.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated
+by user**. All implementations and authored assertions remain distinct from
+executed evidence. The independent full R90-75 contract and publication/private-
+input/department-contact boundaries remain unchanged. This documentation update
+does not establish runtime correctness, preservation, durability, race freedom,
+performance, release readiness or SLO acceptance.

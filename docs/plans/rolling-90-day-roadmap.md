@@ -272,6 +272,8 @@ formal SLO and evidence contract is unchanged.
 
 | R90-181 | Oct 5–Jan 2 | Complete implementation; tests delegated | Pin alert-ID tie ordering to binary collation. | R90-180 verified feature/closure; existing timestamp/daily merge contracts | Public List/Query use byte-order ID ties regardless of accepted column collation; new index term aligned, legacy indexes retained; direct mode/page/reopen/historical/index declarations authored, execution delegated. |
 
+| R90-182 | Oct 5–Jan 2 | Documentation complete; delivery pending | Consolidate the current correctness follow-up inventory. | R90-181 verified feature/closure; R90-173/179 handoff authority | Eight follow-ups map exact source/correction commits to 11 distinct files/23 declarations (13/26 references); combined bounded totals and current daily fixture authority are explicit; prior handoff/history/full R90-75 preserved, no test execution. |
+
 ## R90-01 Definition
 
 - **Goal:** establish one versioned 90-day delivery authority and a
@@ -12122,3 +12124,70 @@ independent departmental acceptance and Oct 5–Jan 2 forecast. Next trigger
 audits fresh Git/Vault/history/source/queue and persists a separate eligible
 plan before editing. Repair only missing delivery evidence; no delegated test
 execution, publication or SLO acceptance claim is authorized by this record.
+
+## R90-182 Definition
+
+- **Goal:** consolidate R90-174..181 authored-regression follow-ups for review.
+- **Dependency:** R90-181 verified feature/closure; R90-173/179 handoff authority.
+- **Window:** Oct 5–Jan 2; forecast only.
+- **Risk:** low, documentation only; reused/corrected declarations can be
+  miscounted or mistaken for historical execution or unsupported reproduction.
+- **Acceptance:** eight source-linked entries with nine exact source commits,
+  11 distinct files/23 declarations versus 13/26 references; combined disjoint
+  original/follow-up totals, current R90-178 correction and R90-179 supersession,
+  development entrypoint, all prior handoff/history/full R90-75 preserved.
+- **Required validation:** static source/commit inventory, JSON/complete roadmap
+  multisets/history/handoff/R90-75/horizon/links/fences/five-path/sensitive/diff,
+  docs-check; exact non-force push/fresh refs/full-SHA Vault stable reconciliation/
+  preservation/replay and one docs-only closure. Behavioral/race/full/scanner/
+  knowledge/traffic/acceptance **not run; delegated by user**; no compiler needed.
+- **Stop condition:** discrepant source/inventory, competing edits, ambiguous
+  static/Git/Vault, private input/new authority or another increment.
+
+## R90-182 Selection and Source Audit (2026-10-05)
+
+Fresh fetched clean HEAD/origin/main/FETCH_HEAD baseline
+`b0030c9913ce4f42a0b63dc817c16c9f72cee289`. R90-181 exact feature/sole closure
+Git scope and Vault note/index/versioned bounded MOC verified. Four-week phase
+review covers 144 commits, 185 unique complete roadmap pairs, 444 Markdown
+Vault files, 397 immutable iteration records and fourteen stable current notes
+with exact fetched authority. No missing delivery or qualifying R90-75 outcome;
+recent SLO/toolchain/correctness execution debt remains delegated.
+
+Only unfinished R90-75 retains its complete independent departmental contract;
+no local ready item. Restore the queue with this bounded documentation unblocker:
+eight later correctness supplements need consolidated exact commit/declaration
+counts and current fixture authority. R90-178 has a corrective source commit;
+R90-179 reuses the R90-177 declarations and supersedes unsupported Path-driven
+claims. Selection plan/state/acceptance map persisted before documentation edits.
+Current Oct 5–Jan 2 horizon, standing testing split and every prior completed
+record preserved. No runtime changes or following increment started.
+
+## R90-182 Static Checkpoint (2026-10-05)
+
+Appended eight exact source-linked entries from nine feature/correction commits.
+The follow-up inventory contains 11 distinct files/23 current declarations,
+13 file/26 declaration references; original/follow-up sets are disjoint, yielding
+37 increments, 49 distinct files/129 declarations and 52/138 references combined.
+R90-178 lists both source commits; R90-179 reuses R90-177 names and explicitly
+supersedes unsupported public Path-driven alias reproduction. Existing detailed
+supplements and the entire prior handoff remain byte-for-byte preserved.
+Development points to the appended summary; departmental module-relative pinned
+uncached commands and exact evidence ownership remain unchanged.
+
+Full static source/commit/declaration/multiset review, 200 task JSON, 186 unique
+complete roadmap row/Definition pairs, complete prior roadmap history and R90-75
+contract/testing split/horizon, local links/fences, five-path scope, sensitive
+review, docs-check and git diff --check passed. All 444 baseline Vault Markdown
+hashes remain unchanged. The first local static verifier trimmed leading Git
+status whitespace and misparsed one path; corrected its parsing and reran the
+entire fail-fast chain successfully. No repository content changed for that
+verifier failure, no unresolved result or scope expansion remains. Existing
+skill guidance covers direct source/multiset/fixture/delivery review; no skill
+edit warranted.
+
+Documentation only: no compiler invocation or behavioral/race/full/scanner/
+knowledge/traffic/acceptance execution. These checks are **not run; delegated by
+user**. Counts establish authored source inventory, not runtime assertions or
+passes. Exactly one increment; feature delivery/Vault and a single closure remain
+pending, and no following increment started.

@@ -35,9 +35,14 @@ it with `GOCACHE=/path/to/cache` when you want to use a different cache.
 ## 2. Current Build Targets
 
 The [departmental correctness validation handoff](correctness-validation-handoff.md)
-indexes the authored Go regressions for R90-144 through R90-172, with their
-source plans, execution debt and module-relative uncached commands. Test
-execution remains assigned to the specialist department under the roadmap policy.
+retains the frozen R90-144..172 inventory and adds a
+[current R90-174..181 summary](correctness-validation-handoff.md#current-follow-up-inventory-r90-174-through-r90-181),
+with exact feature/correction SHAs, source declarations and corrected daily
+fixture authority. Its combined bounded inventory covers 37 increments,
+49 distinct test files and 129 distinct declarations; these are authored
+inventory counts, with execution debt and module-relative uncached departmental
+commands. Test execution remains assigned to the specialist department under
+the roadmap policy.
 
 These targets exist today:
 
