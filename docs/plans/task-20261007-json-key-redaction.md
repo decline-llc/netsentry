@@ -99,3 +99,64 @@ Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated b
 user**. Compilation/source review does not establish executed redaction,
 preservation, persistence, race, performance, release or SLO outcomes. Feature
 delivery/Vault and one docs-only closure remain pending; no next increment started.
+
+
+## R90-183 Completion and Forward Queue Refresh (2026-10-07)
+
+Feature `64d2495ef01684cc8abe9b76fb0e5a4c00ba2737` contains exactly nine intended
+paths. Non-force push succeeded and immediate fresh fetch verified clean
+HEAD/origin/main/FETCH_HEAD at that full SHA. Local Vault exact full-SHA range
+`4291faa24f816f51787a9c70fc757c3f29ad8843..64d2495ef01684cc8abe9b76fb0e5a4c00ba2737`
+verified iteration `04-开发迭代记录/2026-10-07-64d2495ef0-CI知识同步.md`, exact changed
+paths, full commit index and versioned bounded MOC links, resolving abbreviated
+metadata through Git. Fourteen current stable notes reconcile escaped-name and
+delivery/queue authority; all previous non-generated body prose is preserved
+under explicit historical headings, and 398 prior immutable iterations remain
+unchanged. Identical range replay preserved all 447 Markdown hashes; snapshot
+JSON SHA-256 `39f98f660ab46fbe15b529b401d0fec55fdf32fe5e88775a33f655941aeefb34`.
+
+The initial local preservation verifier wrongly required the original title and
+old status body to remain contiguous across the newly inserted current section.
+An exact reconstructed-body comparison proved no prose loss; corrected only the
+local verifier, then reran the complete exact-range/scope/index/MOC/stable/
+immutable/hash review and identical replay successfully. No repository or Vault
+prose was changed to satisfy that failed assertion. Existing skill instructions
+cover comparison boundaries; no new generic lesson or skill edit warranted.
+
+Acceptance comparison confirms same-field decoded identity, independently
+expected scalar bytes/decoded values, complete JSON validity, nested/repeated/
+whitespace/case/escape/cut boundaries, idempotence and noncredential/undecodable/
+non-string controls. Batch assertions compare order/pointers/nil/full Alert
+metadata and RawPayload. Actual Engine base64 matching and 200-byte truncation
+feed Worker writer-entry snapshots; valid larger inputs, count and complete
+content, enabled/disabled/write-failure modes, packet preservation and terminal
+accounting reach the planned boundary on source review. The one obsolete
+escaped-key exclusion is replaced by explicit positives; every other existing
+redaction assertion and all prior handoff bytes are preserved. No new fields,
+whole-document parser, dependencies or performance promise.
+
+Pinned four-package Go 1.26.8 compile-only and complete formatting/docs/201 JSON/
+187 unique complete roadmap multisets/history/full R90-75/split/handoff/horizon/
+links/fences/nine-path/sensitive/diff checks passed. Only the recorded local
+verifier deviation occurred; no unresolved compile/static/Git/Vault result or
+scope expansion remains. Behavioral/race/full/scanner/knowledge/traffic/
+acceptance **not run; delegated by user**. Delivered implementation and authored
+regressions do not establish executed correctness, preservation, persistence,
+race, performance, release or SLO passes.
+
+### R90-183 Single Closure and Resume Authority
+
+This three-path docs-only delivery record closes the same increment. Resolve
+its full SHA from fresh Git refs after commit, then verify non-force push/fresh
+clean HEAD/origin/main/FETCH_HEAD, exact feature..closure three-path Vault note/
+index/versioned bounded MOC, fourteen current stable notes, prior topic/immutable
+preservation and identical replay. Feature SHA above is immutable historical
+evidence. Do not repeat verified feature/closure delivery or create a
+self-reference closure.
+
+Forward queue refreshed without starting another increment: no other defined
+local ready item. R90-75 remains the sole unfinished row with its full independent
+outstanding departmental contract and Oct 7–Jan 4 forecast. Next trigger audits
+fresh Git/Vault/history/source/queue and persists a separate eligible plan before
+editing; repair missing delivery evidence only. No delegated test execution,
+private input, department contact, publication or SLO acceptance is authorized.
