@@ -1,7 +1,9 @@
 package alert
 
 import (
+	"encoding/json"
 	"regexp"
+	"strings"
 
 	"github.com/decline-llc/netsentry/pkg/model"
 )
@@ -13,7 +15,7 @@ var (
 	sensitiveHeaderPrefixRe = regexp.MustCompile(`(?i)^\s*(authorization|cookie|set-cookie)\s*:`)
 	sensitivePairRe         = regexp.MustCompile(`(?i)\b(password|token)\b\s*([=:])\s*[^&\s;\r\n]+`)
 	// A bounded preview can end within a value, including after an escape backslash.
-	sensitiveJSONRe = regexp.MustCompile(`(?i)("(?:password|token)"\s*:\s*")(?:\\[^\r\n]|[^"\\\r\n])*(?:(")|\\?$)`)
+	sensitiveJSONRe = regexp.MustCompile(`(("(?:\\[^\r\n]|[^"\\\r\n])*")\s*:\s*")(?:\\[^\r\n]|[^"\\\r\n])*(?:(")|\\?$)`)
 )
 
 // RedactSensitivePayloads removes common credentials from alert payload previews.
@@ -35,7 +37,16 @@ func RedactSensitivePayload(payload string) string {
 		}
 		return prefix + " " + redactedValue
 	})
-	payload = sensitiveJSONRe.ReplaceAllString(payload, `${1}`+redactedValue+`${2}`)
+	payload = sensitiveJSONRe.ReplaceAllStringFunc(payload, func(match string) string {
+		parts := sensitiveJSONRe.FindStringSubmatch(match)
+		// Decode only the complete key; bounded previews need not be valid JSON.
+		var key string
+		if err := json.Unmarshal([]byte(parts[2]), &key); err != nil ||
+			(!strings.EqualFold(key, "password") && !strings.EqualFold(key, "token")) {
+			return match
+		}
+		return parts[1] + redactedValue + parts[3]
+	})
 	payload = sensitivePairRe.ReplaceAllString(payload, `${1}${2}`+redactedValue)
 	return payload
 }

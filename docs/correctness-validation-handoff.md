@@ -904,3 +904,42 @@ executed evidence. The independent full R90-75 contract and publication/private-
 input/department-contact boundaries remain unchanged. This documentation update
 does not establish runtime correctness, preservation, durability, race freedom,
 performance, release readiness or SLO acceptance.
+
+## R90-183 follow-up: escaped JSON credential names (2026-10-07)
+
+[Plan](plans/task-20261007-json-key-redaction.md) ·
+[state](tasks/task-state-20261007-json-key-redaction.json).
+
+Complete string keys are decoded before matching the existing case-insensitive
+password/token names. Equivalent Unicode escapes now redact complete and
+preview-end string values, preserving raw key spelling and surrounding bytes.
+This supersedes the escaped-key exclusion in the earlier R90-148/164 scope and
+removes its single unchanged-input assertion from redactor_json_test.go.
+Original inventories and counts above remain historical snapshots.
+
+[engine/internal/alert/redactor_json_keys_test.go](../engine/internal/alert/redactor_json_keys_test.go):
+
+- `TestRedactJSONDecodedCredentialNames`
+- `TestRedactJSONEscapedNamesAtPreviewEndAndRepeatedFields`
+- `TestRedactJSONKeyControlsAndBatchMetadata`
+
+[engine/internal/pipeline/redaction_json_keys_test.go](../engine/internal/pipeline/redaction_json_keys_test.go):
+
+- `TestWorkerRedactsRealEngineEscapedJSONNamesBeforeWriter`
+
+Departmental review must check exact expected bytes and decoded field identities,
+valid complete JSON, nested/repeated/whitespace cases, idempotence, unrelated or
+undecodable keys, literal backslash-u identity, non-string values and full batch
+metadata. Trace real Engine base64 decoding, keyword matching and the 200-byte
+preview into Worker writer-entry copies in enabled, disabled and write-failure
+modes; require packet preservation and terminal accounting. Truncated fixtures
+must come from valid inputs longer than the preview cap, with count and content
+assertions at both Engine and writer. Existing header/pair, escaped-value and
+preview-end regressions remain part of review. Whole-document parsing, new field
+names, truncated keys, RawPayload and malformed multiline guarantees remain
+outside scope. Use the pinned module-relative uncached commands and retain exact
+checkout SHA/logs/deviations under the existing departmental evidence instructions.
+
+These four new declarations are authored source, not executed coverage.
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. Full independent R90-75 acceptance remains outstanding.

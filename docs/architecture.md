@@ -790,11 +790,18 @@ The engine's 200-byte preview cap can produce these fragments from valid JSON.
 Actual closing quotes and key formatting are preserved; no quote is fabricated
 at preview end. Existing key case-insensitivity, `[REDACTED]` marker, header/pair
 stages and optional pre-write pipeline placement remain. This is best-effort
-lexical handling of bounded previews, without key decoding, whole-JSON validation,
-extra sensitive fields, RawPayload redaction or a multiline malformed-value
-guarantee. R90-148's truncated-value non-goal describes its historical scope;
+lexical handling of bounded previews. R90-183 decodes complete JSON string keys
+before comparing password/token identities, so Unicode-escaped names such as
+`pass\u0077ord` receive the same replacement. Raw key spelling, whitespace and
+value quote boundaries survive; undecodable and unrelated keys are retained.
+This does not provide whole-JSON validation, extra sensitive fields, non-string
+value or RawPayload redaction, truncated-key or multiline malformed-value
+guarantees. Earlier escaped-key exclusions describe historical scope.
+R90-148's truncated-value non-goal describes its historical scope;
 R90-164 scalar/batch and real Engine-to-Worker writer-entry regression source
-covers the new boundary. Execution remains **not run; delegated by user**.
+covers the truncated boundary. R90-183 adds scalar/batch and real Engine-to-Worker
+writer-entry source for decoded keys and actual 200-byte cuts. Execution remains
+**not run; delegated by user**.
 
 R90-145 adds a separate atomic `PacketsCompleted` Stats snapshot field and
 `netsentry_packets_completed_total` Prometheus counter at Worker.processed().

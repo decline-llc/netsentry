@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-10-05 through 2027-01-02. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-10-07 through 2027-01-04. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -152,7 +152,7 @@ formal SLO and evidence contract is unchanged.
 | R90-72 | Oct 3–31 | Complete early | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
 | R90-73 | Aug 5–Sep 4 | Complete early | Add versioned local benchmark evidence capture. | R90-72 | One directly tested command captures every established C/Go benchmark with exact Git/tree state, environment/toolchain fingerprint, parameters, raw output, parsed metrics, path redaction, and local-synthetic classification without applying a threshold. |
 | R90-74 | Sep 5–Oct 2 | Complete early | Record a repeated single-host benchmark baseline. | R90-73 | At least five uncached complete-surface samples from one clean pinned commit and unchanged environment retain every raw result plus median/IQR/variation summaries as observation-only local evidence. |
-| R90-75 | Oct 5–Jan 2 | Acceptance delegated; development unblocked | Validate proposed staging/production SLO acceptance profiles. | R90-74; R90-113 contract; departmental execution and evidence | Departmental tests must establish end-to-end latency, offered-versus-completed loss, missing-alert failures and extended-tail evidence with full artifacts; agent development proceeds without test execution or a local hardware prerequisite. |
+| R90-75 | Oct 7–Jan 4 | Acceptance delegated; development unblocked | Validate proposed staging/production SLO acceptance profiles. | R90-74; R90-113 contract; departmental execution and evidence | Departmental tests must establish end-to-end latency, offered-versus-completed loss, missing-alert failures and extended-tail evidence with full artifacts; agent development proceeds without test execution or a local hardware prerequisite. |
 | R90-76 | Aug 9 | Complete | Audit post-tag delivery and restore the forward queue. | R90-59a; R90-74 | A dated audit reconciles the local-tag feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current code/tests, and blocked authorities, then restores only evidence-grounded local work without runtime or publication changes. |
 | R90-77 | Aug 10–Sep 4 | Complete early | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
 | R90-78 | Sep 5–25 | Complete early | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
@@ -273,6 +273,7 @@ formal SLO and evidence contract is unchanged.
 | R90-181 | Oct 5–Jan 2 | Complete implementation; tests delegated | Pin alert-ID tie ordering to binary collation. | R90-180 verified feature/closure; existing timestamp/daily merge contracts | Public List/Query use byte-order ID ties regardless of accepted column collation; new index term aligned, legacy indexes retained; direct mode/page/reopen/historical/index declarations authored, execution delegated. |
 
 | R90-182 | Oct 5–Jan 2 | Complete documentation; tests delegated | Consolidate the current correctness follow-up inventory. | R90-181 verified feature/closure; R90-173/179 handoff authority | Eight follow-ups map exact source/correction commits to 11 distinct files/23 declarations (13/26 references); combined bounded totals and current daily fixture authority are explicit; prior handoff/history/full R90-75 preserved, no test execution. |
+| R90-183 | Oct 7–Jan 4 | In progress; tests delegated | Redact escaped JSON credential names. | R90-182 verified feature/closure; R90-148/164 redaction boundary | Decoded password/token identities redact complete and preview-end string values, preserving raw spelling/metadata; scalar/batch and real Engine/Worker assertions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -12244,3 +12245,75 @@ departmental acceptance and Oct 5–Jan 2 forecast. Next trigger audits fresh
 Git/Vault/history/source/queue and persists a separate eligible plan before
 editing; repair only missing delivery evidence. No delegated test execution,
 department contact, private input, publication or SLO acceptance is authorized.
+
+
+## R90-183 Definition
+
+- **Goal:** recognize escaped JSON spellings of existing credential names.
+- **Dependency:** R90-182 verified feature/closure; R90-148/164 redaction boundary.
+- **Window:** Oct 7–Jan 4; forecast only.
+- **Risk:** low; lexical matching must preserve raw keys and value boundaries
+  without confusing malformed or unrelated keys with credential identities.
+- **Acceptance:** decode complete string keys, recognize case-insensitive
+  password/token identity, preserve raw formatting and closing/cut quotes;
+  direct scalar/batch/real Engine-to-Worker writer assertions cover complete
+  values, actual 200-byte cuts, controls, metadata and accounting.
+- **Required validation:** pinned Go 1.26.8 alert/pipeline/API/cmd compile-only;
+  formatting/docs/JSON/complete roadmap multisets/history/full R90-75/frozen
+  handoff/links/fences/nine-path/sensitive/diff; exact non-force push/fresh refs/
+  full-SHA Vault stable reconciliation/immutable preservation/replay and one
+  docs-only closure. Behavioral/race/full/scanner/knowledge/traffic/acceptance
+  **not run; delegated by user**.
+- **Stop condition:** ambiguous compile/static/Git/Vault, unintended compatibility,
+  competing edits, private input/new authority or another increment.
+
+## R90-183 Selection and Source Audit (2026-10-07)
+
+Fresh clean fetched baseline `4291faa24f816f51787a9c70fc757c3f29ad8843`.
+R90-182 feature/sole closure Git scopes and exact Vault note/index/versioned
+bounded MOC verified. Four-week audit: 146 commits, 186 unique complete roadmap
+pairs, 446 Markdown files, 398 immutable iteration records and fourteen current
+stable notes agreeing with fetched authority. No missing delivery or qualifying
+R90-75 outcome; recent execution debt remains delegated.
+
+No local ready item; sole unfinished R90-75 retains its full independent
+contract. Source matcher and explicit unchanged-input test demonstrate the
+escaped-name gap: pass\u0077ord decodes to password but remains visible.
+Restore the queue with this bounded same-field recognition repair; prior
+escaped-key non-goal is superseded under the existing safest-default policy.
+Plan/state/non-goals/evidence map and local Vault backup persisted before edits.
+Unfinished forecasts refreshed to Oct 7–Jan 4; every prior completed record,
+Definition, handoff and full R90-75/testing split preserved. Exactly one increment.
+
+
+## R90-183 Compile and Static Checkpoint (2026-10-07)
+
+Complete lexical string-key capture now decodes only the key before comparing
+case-insensitive password/token identity. Raw key/separator bytes and existing
+complete/cut value boundaries survive. The prior escaped-key unchanged assertion
+is removed and replaced by explicit positive coverage; all other existing
+redaction source is preserved. No dependencies or whole-document parser added.
+
+Four direct authored declarations: per-character/full escapes and encoded case
+variants with independent scalar bytes/decoded identities/valid complete JSON;
+nested/repeated/whitespace/escaped values/cut tails/idempotence; unsupported and
+unrelated key/non-string controls plus nil/order/pointer/full metadata/RawPayload;
+real Engine/base64/Worker writer-entry complete and valid larger-than-200-byte
+cut fixtures across enabled/disabled/write-failure modes, full independent Alert
+expectations, packet preservation and terminal accounting. Source tracing confirms
+those constructors and assertions reach their promised resources and boundaries.
+The original handoff is preserved byte-for-byte with an appended supplement.
+
+Pinned Go 1.26.8 compile-only passed alert/pipeline/API/cmd; binaries are local
+outside the repository and were not executed. Static review passed formatting,
+docs-check, 201 task JSON, 187 complete unique roadmap multisets, all prior
+history/Definitions/full R90-75/testing split, Oct 7–Jan 4 unfinished forecasts,
+links/fences/nine-path scope/sensitive review and git diff --check. All 446
+selection Vault Markdown hashes remain unchanged. No unresolved failure or scope
+expansion; earlier escaped-key exclusion is explicitly superseded. Existing
+skills cover this workflow, so no new repeatable lesson or skill edit warranted.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. Compilation/source review does not establish executed redaction,
+preservation, persistence, race, performance, release or SLO outcomes. Feature
+delivery/Vault and one docs-only closure remain pending; no next increment started.

@@ -104,7 +104,6 @@ func TestJSONRedactionPreservesExistingHeaderPairAndUnrelatedValues(t *testing.T
 	}
 	for _, unchanged := range []string{
 		`{"public":"keep\"suffix","password":123,"token":null,"auth":"keep"}`,
-		`{"pass\u0077ord":"a\"suffix-canary"}`,
 		"{\"token\":\"line\r\nsuffix-canary\"}",
 	} {
 		if got := RedactSensitivePayload(unchanged); got != unchanged {
