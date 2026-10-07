@@ -808,6 +808,9 @@ func validateRuleBasics(r *model.Rule) error {
 	if strings.ContainsAny(r.ID, "/?#") {
 		return fmt.Errorf("id cannot contain /, ?, or #")
 	}
+	if r.ID == "reload" {
+		return fmt.Errorf("id %q is reserved for the rules reload endpoint", r.ID)
+	}
 	if strings.TrimSpace(r.Name) == "" {
 		return fmt.Errorf("name is required")
 	}

@@ -943,3 +943,40 @@ checkout SHA/logs/deviations under the existing departmental evidence instructio
 These four new declarations are authored source, not executed coverage.
 Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
 user**. Full independent R90-75 acceptance remains outstanding.
+
+
+## R90-184 follow-up: reserved rule reload ID (2026-10-07)
+
+[Plan](plans/task-20261007-rule-reload-id.md) ·
+[state](tasks/task-state-20261007-rule-reload-id.json).
+
+HTTP creation rejects the exact ID reload before persistence/publication because
+its management URL belongs to the POST-only reload handler. Case variants and
+file-loader/core compatibility remain unchanged. Original inventories and all
+prior handoff prose remain historical source snapshots.
+
+[engine/internal/api/rule_reload_id_test.go](../engine/internal/api/rule_reload_id_test.go):
+
+- `TestHTTPRuleCreateRejectsReservedReloadIDWithoutMutation`
+- `TestHTTPRuleReloadIDDiagnosticPrecedence`
+- `TestHTTPRuleReloadCaseVariantIDsRemainManageable`
+- `TestHTTPFileLoadedReloadIDRetainsCompatibility`
+
+Review the actual public Server.Handler registrations and real Engine rather
+than substituting a validator-only call. Rejected-create fixtures cover absent,
+healthy, pre-existing reserved and file-parent paths with spaces, auth modes,
+exact envelope/request ID and complete tree bytes/modes/membership, snapshot,
+count, matching and caller observations. Existing-reserved duplicates and invalid
+engine config must reach the new diagnostic; auth/file/decode/required-ID/
+forbidden-character precedence remains explicit. Accepted neighboring IDs require
+complete create/list/update/delete/reload responses and rule snapshots, persisted
+loader/rebuilt Engine and independently expected matching. File-loaded reload IDs
+retain POST reload and their 405/Allow POST PUT/DELETE response on literal and
+percent-encoded endpoint paths, with complete seed preservation. An accepted
+create response alone does not establish addressable management.
+
+Pinned module-relative uncached commands and exact checkout/log/deviation/evidence
+ownership above remain departmental instructions. These four declarations are
+new authored source, not executed coverage. Behavioral/race/full/scanner/
+knowledge/traffic/acceptance **not run; delegated by user**. Full independent
+R90-75 acceptance remains outstanding; no department contact or publication.

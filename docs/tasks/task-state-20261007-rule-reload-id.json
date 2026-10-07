@@ -1,0 +1,57 @@
+{
+  "task": "r90-184-rule-reload-id",
+  "timestamp": "2026-10-07",
+  "branch": "main",
+  "starting_remote_baseline": "9ee44097bb33547964b682626fa553793c66b7b4",
+  "remote_baseline": "9ee44097bb33547964b682626fa553793c66b7b4",
+  "risk_level": "Low",
+  "current_checkpoint": "compile_static_review_passed_feature_delivery_pending",
+  "audit": {
+    "phase_commits": 148,
+    "roadmap_pairs": 187,
+    "vault_files": 448,
+    "immutable_records": 400,
+    "stable_notes": 14
+  },
+  "completed": [
+    "Fresh clean fetched baseline and prior feature/closure Git/Vault verified",
+    "Phase history and complete unfinished R90-75 contract audited",
+    "Plan and acceptance map persisted; local Vault/history/handoff snapshots captured",
+    "Exact three-line reserved-ID validation branch implemented; four direct public handler/Engine/file declarations authored",
+    "Pinned Go 1.26.8 API/rule/cmd compile-only passed; no binaries executed",
+    "Complete formatting/docs/202 JSON/188 unique roadmap pairs/history/R90-75/split/handoff/horizon/links/fences/seven-path/sensitive/diff review passed",
+    "All 448 baseline Vault Markdown hashes unchanged; direct source boundaries compared to plan",
+    "Separate local skill refined for actual-router identifier creation/management/reserved/encoded-path review; Markdown validated"
+  ],
+  "in_progress": [
+    "Feature delivery and exact Vault reconciliation/replay"
+  ],
+  "validation": {
+    "behavioral_race_full_scanner_knowledge_traffic_acceptance": "not run; delegated by user",
+    "compile_static": "passed pinned Go 1.26.8 API/rule/cmd compile-only and complete format/docs/202 JSON/188 complete unique roadmap multisets/history/R90-75/split/handoff/horizon/links/fences/seven-path/sensitive/diff; no binaries executed"
+  },
+  "authority_boundaries": [
+    "Exactly one increment; standing departmental test execution delegation",
+    "No route/loader/core-ID policy migration, private input, department contact, publication or SLO acceptance"
+  ],
+  "remaining_risks": [
+    "Authored regressions require departmental execution",
+    "Existing file-loaded reload identities retain the old PUT/DELETE route collision"
+  ],
+  "deviations": [
+    "Empty ready queue restored from source-proven exact reload rule-ID route collision; current forecast retained"
+  ],
+  "resume_instructions": "Complete only R90-184 against the persisted plan. Preserve delegated execution and existing file-loaded identity compatibility. Compile/static review before intended-path commit/non-force push/fresh exact refs/full-SHA Vault review/replay and one docs-only closure; do not start another increment. Full independent R90-75 remains outstanding.",
+  "todo": [
+    "Feature commit/non-force push/fresh exact refs",
+    "Exact full-SHA Vault stable reconciliation/preservation/replay",
+    "Single docs-only closure and exact delivery/Vault verification"
+  ],
+  "next_increment": {
+    "id": null,
+    "started": false,
+    "departmental_acceptance": "R90-75 outstanding",
+    "status": "no_other_defined_local_ready_increment"
+  },
+  "skill_improvement": "Separate local netsentry-next instruction verifies routed identifier creation and subsequent management with reserved/encoded paths; Markdown structure validated, outside repository commit"
+}

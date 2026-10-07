@@ -255,7 +255,19 @@ canonical file and active filter, but crash durability was not confirmed.
 
 ### `POST /api/rules`
 
-Creates a rule, writes the canonical wrapped rules file, reloads the saved file, and atomically swaps the active rule snapshot. The request body is a single rule object using the schema below. Duplicate IDs return `RULE_ALREADY_EXISTS`.
+The exact rule ID `reload` is reserved by `/api/rules/reload`. Creation rejects
+it with HTTP 400 `VALIDATION_ERROR`, message `Invalid rule request`, and detail
+`id "reload" is reserved for the rules reload endpoint`, before any seed-file
+write or active snapshot change. Authentication, configured-file availability
+and body decoding retain their earlier diagnostic precedence. Case-sensitive
+neighboring IDs such as `Reload`, `RELOAD` and `reload-extra` remain valid for
+create/update/delete. File-loaded rules with the reserved ID still load, match
+and reload; their existing PUT/DELETE URL remains the POST-only reload endpoint
+and returns 405. No file migration or core rule-ID restriction is introduced.
+R90-184 direct public handler/Engine/file regressions are authored and compiled;
+behavioral execution remains **not run; delegated by user**.
+
+Creates a rule, writes the canonical wrapped rules file, reloads the saved file, and atomically swaps the active rule snapshot. The request body is a single rule object using the schema below. Other duplicate IDs return `RULE_ALREADY_EXISTS`.
 
 Rule and suppression mutation bodies are limited to 1 MiB, reject unknown fields, and must contain exactly one JSON document.
 

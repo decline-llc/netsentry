@@ -274,6 +274,7 @@ formal SLO and evidence contract is unchanged.
 
 | R90-182 | Oct 5–Jan 2 | Complete documentation; tests delegated | Consolidate the current correctness follow-up inventory. | R90-181 verified feature/closure; R90-173/179 handoff authority | Eight follow-ups map exact source/correction commits to 11 distinct files/23 declarations (13/26 references); combined bounded totals and current daily fixture authority are explicit; prior handoff/history/full R90-75 preserved, no test execution. |
 | R90-183 | Oct 7–Jan 4 | Complete implementation; tests delegated | Redact escaped JSON credential names. | R90-182 verified feature/closure; R90-148/164 redaction boundary | Decoded password/token identities redact complete and preview-end string values, preserving raw spelling/metadata; scalar/batch and real Engine/Worker assertions authored, execution delegated. |
+| R90-184 | Oct 7–Jan 4 | In progress; tests delegated | Reject the reserved rule reload ID on HTTP creation. | R90-183 verified feature/closure; existing rule CRUD/reload routing | Exact reload identity rejects before persistence/publication; case variants remain manageable and file-loaded legacy IDs retain compatibility; direct handler/Engine/file assertions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -12378,3 +12379,81 @@ outstanding departmental contract and Oct 7–Jan 4 forecast. Next trigger audit
 fresh Git/Vault/history/source/queue and persists a separate eligible plan before
 editing; repair missing delivery evidence only. No delegated test execution,
 private input, department contact, publication or SLO acceptance is authorized.
+
+
+## R90-184 Definition
+
+- **Goal:** prevent HTTP creation of the exact rule ID reserved by reload routing.
+- **Dependency:** R90-183 verified feature/closure; existing rule CRUD/reload.
+- **Window:** Oct 7–Jan 4; forecast only.
+- **Risk:** low; a new identity diagnostic must preserve preceding checks and
+  case-sensitive/file-loaded compatibility without changing router authority.
+- **Acceptance:** POST /api/rules with exact ID reload returns 400
+  VALIDATION_ERROR before persistence/publication; exact envelope, input/tree/
+  snapshot/matching preservation and earlier/later diagnostic boundaries;
+  case variants remain manageable and file-loaded IDs/POST reload/405 routes
+  retain compatibility, with direct public handler/Engine/file assertions.
+- **Required validation:** pinned Go 1.26.8 API/rule/cmd compile-only;
+  format/docs/202 JSON/188 complete unique roadmap pairs/history/full R90-75/
+  split/handoff/links/fences/seven-path/sensitive/diff; non-force push/fresh
+  exact refs/full-SHA Vault stable reconciliation/preservation/replay and one
+  docs-only closure. Behavioral/race/full/scanner/knowledge/traffic/acceptance
+  **not run; delegated by user**.
+- **Stop condition:** ambiguous compile/static/Git/Vault, competing edits,
+  unexpected compatibility/diagnostic, private input/new authority or next work.
+
+## R90-184 Selection and Source Audit (2026-10-07)
+
+Fresh clean fetched baseline `9ee44097bb33547964b682626fa553793c66b7b4`.
+R90-183 feature/sole closure exact Git scopes, Vault notes/index/versioned bounded
+MOC verified. Four-week audit: 148 commits, 187 complete unique roadmap pairs,
+448 Markdown files, 400 immutable iterations, fourteen current stable notes
+agreeing with Git. Recent execution debt remains delegated; no missing delivery
+or qualifying R90-75 result found. Only unfinished R90-75 has its full contract.
+
+No local ready item. Restore the queue from source-proven exact-name collision:
+rule creation currently accepts reload, whose PUT/DELETE URL resolves to the
+POST-only reload handler. Choose this bounded validation repair under existing
+safest-default authority, preserving loader/core policy and route registrations.
+Plan/state/evidence map and local Vault/history/handoff snapshots persisted before
+edits. Current horizon and every prior completed history/Definition/handoff/full
+R90-75/testing-split boundary retained. Exactly one increment selected.
+
+
+## R90-184 Compile and Static Checkpoint (2026-10-07)
+
+Runtime delta is exactly the three-line exact reload-ID branch after existing
+required/forbidden-character checks. Auth/configured-file/decode ordering,
+route registrations, persistence and file-loader/core policy are unchanged.
+The API reference distinguishes reserved rejection from other duplicate IDs;
+the entire prior handoff is retained with an appended four-declaration supplement.
+
+Direct source covers eight rejected-create fixture/auth combinations for absent,
+healthy, existing-reserved and file-parent paths with spaces. Complete envelope,
+request ID/tree bytes/modes/membership/Rules/count/matching/input assertions reach
+the real public handler and Engine before persistence. Seven diagnostic controls
+cover auth/file/decode/required-ID/forbidden-character precedence and reserved
+identity before name/config validation. Case-sensitive Reload/RELOAD/reload-extra
+controls reach create/list/ID-omitted update/delete/POST reload, full rule values,
+persisted loader/rebuilt Engine and independently expected alerts. Existing
+file-loaded reload identities exercise POST reload and unchanged 405/Allow POST
+PUT/DELETE on literal and percent-encoded route paths, with complete seed
+preservation. Source review traces constructors, routing and actual files;
+these are authored boundaries, not executed coverage.
+
+Pinned Go 1.26.8 API/rule/cmd compile-only passed; no binaries executed. Complete
+static formatting/docs/202 JSON/188 unique complete roadmap multisets/prior
+history/full R90-75/testing split/horizon/handoff/links/fences/seven-path/sensitive/
+diff checks passed. All 448 baseline Vault Markdown hashes remain unchanged.
+No unresolved compile/static result or scope expansion.
+
+A separate local netsentry-next skill refinement adds actual-router creation and
+subsequent management review for route identifiers, including reserved and
+encoded names. This reusable lesson prevents accepted-but-unaddressable resources
+from being mistaken for a valid identifier contract. Skill Markdown structure
+validated; the local skill is outside the repository commit.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. Compilation/static source review does not establish executed rejection,
+persistence/preservation, CRUD, routing, race, release or SLO outcomes. Feature
+and one docs-only closure delivery/Vault remain pending; no next increment started.
