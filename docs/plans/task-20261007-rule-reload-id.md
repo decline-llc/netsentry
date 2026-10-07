@@ -103,3 +103,64 @@ Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated b
 user**. Compilation/static source review does not establish executed rejection,
 persistence/preservation, CRUD, routing, race, release or SLO outcomes. Feature
 and one docs-only closure delivery/Vault remain pending; no next increment started.
+
+
+## R90-184 Completion and Forward Queue Refresh (2026-10-07)
+
+Feature `8864cbf7812f890bdd777f311ae27c8597cae424` contains exactly seven intended
+paths. Non-force push succeeded and immediate fresh fetch verified clean
+HEAD/origin/main/FETCH_HEAD at that full SHA. Local Vault exact full-SHA range
+`9ee44097bb33547964b682626fa553793c66b7b4..8864cbf7812f890bdd777f311ae27c8597cae424`
+verified iteration `04-开发迭代记录/2026-10-07-8864cbf781-CI知识同步.md`, exact changed
+paths, full commit index and versioned bounded MOC links, resolving abbreviated
+metadata through Git. Fourteen current stable notes reconcile reserved-ID and
+delivery/queue authority; their complete prior non-generated body prose remains
+under explicit history headings. All 400 prior immutable records are unchanged.
+Identical range replay preserved all 449 Markdown hashes; snapshot JSON SHA-256
+`f87cb49890cf49d63e424e46fe7d5f2ec3183daac7bf449ae7a649edc7f285da`.
+
+Acceptance comparison confirms the exact three-line rejection reaches public
+creation before duplicate/config/persistence/publication, after established
+required/forbidden-character diagnostics and auth/configured-file/decode gates.
+Eight rejected-create fixture/auth combinations compare full envelope/request ID,
+complete tree bytes/modes/membership, rule snapshots/counts/matches and caller data.
+Seven diagnostic controls distinguish earlier checks and reserved-ID priority.
+Case-sensitive Reload/RELOAD/reload-extra reach actual create/list/ID-omitted
+update/delete/POST reload, complete response/rule comparisons and independent
+persisted loader/rebuilt Engine/expected alerts. Existing file-loaded reload
+identities reach loader/Engine and literal/percent-encoded POST reload plus
+unchanged PUT/DELETE 405/Allow POST responses and full seed preservation. These
+are direct authored boundaries traced through the actual constructor, router,
+Engine and file resources; compilation does not establish executed outcomes.
+
+Pinned Go 1.26.8 API/rule/cmd compile-only and complete formatting/docs/202 JSON/
+188 unique complete roadmap multisets/history/full R90-75/split/handoff/horizon/
+links/fences/seven-path/sensitive/diff checks passed, including fresh fetched
+feature review. No binaries executed. The only plan deviation is the recorded
+source-grounded restoration of the empty ready queue; no scope expansion or
+unresolved compile/static/Git/Vault result. The exact-name routing risk for
+existing file-loaded reload rules remains explicit; no route/loader/core migration.
+
+The separate local netsentry-next refinement requires actual-router creation
+and subsequent management checks for reserved/encoded identifiers; Markdown
+structure validated. It remains outside repository delivery. Behavioral/race/
+full/scanner/knowledge/traffic/acceptance **not run; delegated by user**. Delivered
+implementation and authored declarations do not establish executed rejection,
+preservation, persistence, CRUD, routing, race, release or SLO passes.
+
+### R90-184 Single Closure and Resume Authority
+
+This three-path docs-only delivery record closes the same increment. Resolve
+its full SHA from fresh Git refs after commit; verify non-force push/fresh clean
+HEAD/origin/main/FETCH_HEAD, exact feature..closure three-path Vault note/index/
+versioned bounded MOC, fourteen current stable notes, complete prior topic and
+immutable preservation and identical replay. Feature SHA above is immutable
+historical evidence. Do not repeat verified delivery or create a self-reference
+closure.
+
+Forward queue refreshed without starting another increment: no other defined
+local ready item. R90-75 remains the sole unfinished row with its full independent
+outstanding departmental contract and Oct 7–Jan 4 forecast. Next trigger audits
+fresh Git/Vault/history/source/queue and persists a separate eligible plan before
+editing; repair missing evidence only. No delegated execution, private input,
+department contact, publication or SLO acceptance authority is added.
