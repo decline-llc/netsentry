@@ -476,6 +476,10 @@ func (s *Server) handleSuppressions(w http.ResponseWriter, r *http.Request) {
 			writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid suppression request", `id "reload" is reserved for the suppressions reload endpoint`)
 			return
 		}
+		if strings.Contains(suppression.ID, "/") {
+			writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid suppression request", "id cannot contain /")
+			return
+		}
 		if err := s.opts.Suppressions.Add(*suppression); err != nil {
 			if strings.Contains(err.Error(), "already exists") {
 				writeError(w, r, http.StatusConflict, "SUPPRESSION_ALREADY_EXISTS", "Suppression already exists")
@@ -492,7 +496,6 @@ func (s *Server) handleSuppressions(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleSuppressionByID(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimPrefix(r.URL.Path, "/api/suppressions/")
-	id = strings.Trim(id, "/")
 	if id == "" || strings.Contains(id, "/") || id == "reload" {
 		writeError(w, r, http.StatusNotFound, "NOT_FOUND", "Suppression not found")
 		return

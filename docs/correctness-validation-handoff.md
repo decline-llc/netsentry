@@ -1019,3 +1019,57 @@ retain exact checkout/logs/deviations/evidence. These four declarations are
 authored source, not executed coverage. Behavioral/race/full/scanner/knowledge/
 traffic/acceptance **not run; delegated by user**. Full independent R90-75
 acceptance remains outstanding; no department contact or publication authority.
+
+## R90-186 follow-up: suppression slash identity (2026-10-08)
+
+[Plan](plans/task-20261008-suppression-slash-id.md) ·
+[state](tasks/task-state-20261008-suppression-slash-id.json).
+
+HTTP creation rejects IDs containing literal slash before Add. The by-ID handler
+checks the exact decoded ID with its existing rejection policy; it no longer
+trims slash characters into another identity. Core manager/file policy remains
+usable for legacy slash-bearing entries. Raw-path ServeMux redirects precede
+the handler and retain their separate boundary. All earlier handoff prose and
+inventories remain historical source snapshots.
+
+[engine/internal/api/suppression_slash_id_test.go](../engine/internal/api/suppression_slash_id_test.go):
+
+- `TestHTTPSuppressionCreateRejectsSlashIDsWithoutMutation`
+- `TestHTTPSuppressionSlashIDDiagnosticPrecedence`
+- `TestHTTPSuppressionSlashManagementPathsDoNotAlias`
+- `TestHTTPSuppressionEncodedSlashFreeIDsRemainManageable`
+- `TestHTTPFileLoadedSlashSuppressionIDsRetainManagerCompatibility`
+
+Seven slash forms across four fixture kinds, two auth modes and enabled/disabled
+inputs give 112 authored rejected-create combinations. Helpers in
+[suppression_reload_id_test.go](../engine/internal/api/suppression_reload_id_test.go)
+select the real configured manager file, including absent/healthy/pre-existing
+slash/file-parent paths with spaces. Nine diagnostic controls distinguish auth,
+availability, malformed/unknown JSON, required/reserved ID and duplicate/CIDR/
+compiler ordering. Full tree bytes/modes/membership, List, independently expected
+Filter results and serialized caller-alert values guard rejected paths.
+
+Decoded management cases reach literal trailing or encoded leading/trailing/
+internal/all-slash PUT/DELETE with prior and /prior/ coexisting. Thirty-two
+handler cases cover auth modes and eight paths, exact 404/request ID, absent
+body ID and complete preservation. Two raw doubled-slash redirect controls
+retain pinned-Go 307/Location without claiming handler rejection. Slash-free ordinary,
+literal percent-escape, question/hash and case neighbors reach actual encoded
+create/list/update/delete/reload with exact responses, unchanged neighboring
+rules, persisted loader and rebuilt-manager filters. Legacy load/save/constructor/
+filter/reload and direct Update/Delete/Add retain exact identity and persistence.
+
+Current source-boundary clarification: R90-184/185 descriptions of ID-omitted
+updates refer to tests setting ID to an empty string; their model JSON tags
+still emit the id member. Treat those as ID-empty cases when executing/reviewing
+the earlier declarations. This increment removes the id member from a decoded
+raw-member map before re-encoding the body and establishes truly absent-ID
+fixtures. Prior source and historical prose remain preserved; no executed
+missing-field coverage is inferred from the older wording.
+
+Review each boundary through the actual router, decoder and constructor resource.
+Use the owning engine module and uncached departmental commands above; retain
+exact checkout/logs/deviations/evidence. These five declarations are authored,
+not executed coverage. Behavioral/race/full/scanner/knowledge/traffic/acceptance
+**not run; delegated by user**. Full independent R90-75 acceptance remains
+outstanding; no department contact/private input/publication authority added.

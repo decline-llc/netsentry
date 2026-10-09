@@ -276,6 +276,7 @@ formal SLO and evidence contract is unchanged.
 | R90-183 | Oct 7–Jan 4 | Complete implementation; tests delegated | Redact escaped JSON credential names. | R90-182 verified feature/closure; R90-148/164 redaction boundary | Decoded password/token identities redact complete and preview-end string values, preserving raw spelling/metadata; scalar/batch and real Engine/Worker assertions authored, execution delegated. |
 | R90-184 | Oct 7–Jan 4 | Complete implementation; tests delegated | Reject the reserved rule reload ID on HTTP creation. | R90-183 verified feature/closure; existing rule CRUD/reload routing | Exact reload identity rejects before persistence/publication; case variants remain manageable and file-loaded legacy IDs retain compatibility; direct handler/Engine/file assertions authored, execution delegated. |
 | R90-185 | Oct 8–Jan 5 | Complete implementation; tests delegated | Reject the reserved suppression reload ID on HTTP creation. | R90-184 verified feature/closure; existing suppression manager and routes | Exact reload rejects before Add/persistence/publication; enabled/disabled and auth diagnostics covered; case variants and legacy/direct-manager compatibility retained; direct handler/manager/file assertions authored, execution delegated. |
+| R90-186 | Oct 8–Jan 5 | In progress | Preserve suppression identity across slash-bearing HTTP paths. | R90-185 verified feature/closure; existing suppression manager/routes | Creation rejects literal slash IDs before Add; decoded management IDs are not trimmed into neighbors; encoded slash-free CRUD and legacy/direct-manager compatibility retain their contracts; direct authored execution delegated. |
 
 ## R90-01 Definition
 
@@ -12664,3 +12665,98 @@ departmental acceptance outstanding; Oct 8–Jan 5 forecast. The next trigger au
 fresh Git/Vault/history/source/queue and persists a separate eligible plan before
 editing. Repair missing evidence only; no delegated execution/private input/
 department contact/publication/SLO acceptance authority is added.
+
+
+## R90-186 Definition
+
+- **Goal/status:** selected slash-bearing suppression HTTP identity repair;
+  implementation in progress.
+- **Dependencies/window:** verified R90-185 feature/sole closure and existing
+  suppression manager/routes; Oct 8–Jan 5 forecast.
+- **Risk:** low; distinguish decoded handler identity from pre-handler ServeMux
+  redirects and preserve ordinary, encoded and manager/file compatibility.
+- **Acceptance:** slash creation rejects before Add with exact 400 detail and
+  state preservation; by-ID rejects exact decoded slash paths before mutation;
+  neighboring slash-free encoded IDs retain exact CRUD; legacy file/core methods
+  remain usable. Earlier auth/availability/decode/reserved diagnostics retained.
+- **Required validation:** five direct public handler/real manager/file
+  declarations, pinned Go API/alert/cmd compile-only, formatting/docs/JSON/
+  complete unique roadmap multisets/history/full R90-75/split/handoff/horizon/
+  links/fences/seven-path/sensitive/diff; exact Git/Vault stable preservation/
+  replay and sole docs-only closure. Execution not run; delegated by user.
+- **Stop condition:** ambiguous compile/static/Git/Vault, broader normalization
+  or core migration, competing edits or new authority.
+- **Plan/state:** [plan](task-20261008-suppression-slash-id.md) and
+  [state](../tasks/task-state-20261008-suppression-slash-id.json).
+
+## R90-186 Selection and Source Audit (2026-10-08)
+
+Fresh clean fetched HEAD/origin/main/FETCH_HEAD at
+`5ebf12e2ed5a39b1938219ebd07ae0ea9941d364`; prior R90-185 feature/sole
+closure exact scopes/Vault ranges/index/versioned bounded MOC and fourteen
+stable notes with prior-prose reconstruction verified. Four-week audit covers
+152 commits, 189 complete unique roadmap pairs, 452 Vault Markdown files and
+405 immutable historical records excluding the generated index. No missing
+latest delivery or qualifying R90-75 acceptance found; departmental execution
+debt and full independent R90-75 acceptance contract remain explicit.
+
+The local ready queue was empty. Creation accepts slash-bearing suppression
+IDs; management trims decoded leading/trailing slash characters before lookup,
+so an encoded /prior/ management path can select prior. Select only R90-186
+as the smallest coherent creation/management identity repair under the existing
+safest-default policy. Persist plan/state/acceptance before runtime/public docs.
+Core file/manager compatibility stays usable; decoded handler 404 is separated
+from ServeMux raw-path redirects. Preserve completed history and Oct 8–Jan 5
+forecast, and do not add execution/private/publication authority.
+
+
+## R90-186 Compile and Static Checkpoint (2026-10-08)
+
+Runtime delta is the four-line slash creation guard after the reserved-ID check,
+plus removal of the one by-ID trim line. Authentication/availability/decode and
+reserved creation diagnostics retain priority; management applies its existing
+404 check to the exact decoded ID before auth or mutation. Registrations, raw
+ServeMux normalization, core manager/file policy and filter semantics are intact.
+
+Five authored declarations reach actual public handlers and real file-backed
+managers. Seven slash forms across four fixture/auth/enabled variants total
+112 rejected creates; nine diagnostic controls distinguish earlier checks and
+slash priority over duplicate/CIDR/compiler failures. Prior and /prior/ coexist
+for 32 literal/encoded management rejection cases across eight paths, methods
+and auth modes, with truly absent body ID, exact 404/request ID and complete
+tree/List/serialized caller/Filter preservation. Two doubled-slash raw controls
+verify the pinned source's 307/Location boundary separately. Ordinary, literal
+percent-escape, question/hash and case neighbors reach exact encoded CRUD and
+reload with full response/state plus persisted loader/rebuilt-manager filters.
+Legacy slash identities retain load/save/constructor/filter/reload and direct
+Update/Delete/Add. Shared fixtures' actual path/default/manager resolution and
+Add/replaceLocked order were traced; no ignored option or weaker resource stands
+in for a planned boundary.
+
+The current handoff clarifies prior R90-184/185 ID-omitted wording as serialized
+ID-empty fixtures, preserving their source/history. New source explicitly
+deletes the member and checks the encoded body for absence. Initial formatting
+rejected an extra closing brace before compilation; it was corrected. Pinned
+Go 1.26.8 ServeMux source corrected a historical 301 expectation to 307 before
+delivery. A temporary verifier miscounted helper calls, was corrected without
+source changes, and the complete fail-fast formatting/compile/static sequence
+was rerun successfully. No unresolved result or scope expansion remains.
+
+Pinned Go 1.26.8 API/alert/cmd compile-only passed; no binaries executed. Complete
+format/docs/217 documentation JSON files (204 states)/190 complete unique roadmap
+multisets/history/full R90-75/testing split/handoff/horizon/links/fences/seven-path/
+sensitive/diff review passed. All 452 baseline Vault Markdown hashes remain
+unchanged. Source counts and every acceptance boundary were compared to the plan.
+
+Separate local netsentry-next guidance now checks actual serialized member
+presence for omitted/null/empty fixtures, exact requested and neighboring
+resource identity after router decoding/normalization, and pinned-runtime source
+for redirect/handler-entry assertions. Markdown structure validated; this small
+generic refinement remains outside repository feature delivery.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. Compilation/static review and authored declarations establish no executed
+rejection, preservation, exact CRUD, routing, race, release or SLO pass. Feature
+and sole docs-only closure delivery/Vault remain pending; no next increment
+started. Legacy slash entries require file/direct-manager management; standard
+raw-path redirects remain outside the decoded-handler rejection boundary.
