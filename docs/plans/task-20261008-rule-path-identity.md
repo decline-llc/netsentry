@@ -103,3 +103,53 @@ preservation, CRUD, routing, race, release or SLO pass. Legacy slash identities
 require seed-file editing/reload; raw redirects precede the repaired handler.
 Feature delivery/Vault and the sole docs-only closure remain pending. No next
 increment started; full independent R90-75 acceptance remains outstanding.
+
+
+## R90-187 Completion and Forward Queue Refresh (2026-10-08)
+
+Feature `0abe531590a48768a87a2b45b5ef35794d415118` contains exactly seven intended paths. Non-force push
+and immediate fresh fetch verified clean HEAD/origin/main/FETCH_HEAD at that
+full SHA. Exact local Vault full-SHA range `e05a812dc955b7975c9b0ba2e9ce77504c4ad53d..0abe531590a48768a87a2b45b5ef35794d415118` verified iteration
+`04-开发迭代记录/2026-10-08-0abe531590-CI知识同步.md`, seven-path scope,
+all 618 full-index commits and versioned bounded MOC, resolving abbreviated
+metadata through Git. Fourteen stable current notes reconcile exact decoded
+rule identity and delivery/queue authority. Complete prior non-generated topic
+prose is preserved under explicit historical headings; all 407 baseline
+historical records excluding generated index remain unchanged. Identical range
+replay preserved all 455 Markdown hashes; snapshot JSON SHA-256 `fbd35bf6b7ca86e4179300bf16e5f908d9108d38b7afa7fafe19dc2b51cd22aa`.
+
+Acceptance comparison confirms exactly one removed trim line and the existing
+empty/slash guard before auth, decoding, lookup or mutation. Four direct authored
+router/real Engine/file declarations reach 128 decoded path cases with complete
+preservation, ten diagnostic controls, two pinned raw 307/Location controls,
+five exact encoded CRUD/list/reload identities and legacy seed-edit/reload.
+Truly absent-ID fixtures check wire absence. Actual configured seed artifacts,
+constructor/helper defaults, loader/Reload, independent matching and router
+normalization were traced. Existing creation/suppression/core/file and raw
+redirect contracts retain their scope. No unresolved result or scope expansion.
+
+Pinned Go 1.26.8 API/rule/cmd compile-only and full fail-fast format/compile/static
+review passed; no binaries executed. Docs/218 JSON (205 states)/191 complete
+unique roadmap multisets/history/full R90-75/testing split/handoff/horizon/links/
+fences/seven-path/sensitive/diff passed. Existing local skill guidance applied
+and Markdown checked without redundant changes. Behavioral/race/full/scanner/
+knowledge/traffic/acceptance **not run; delegated by user**. No executed
+rejection/preservation/CRUD/routing/race/release/SLO result is inferred. Legacy
+slash IDs require file editing/reload; raw redirects precede the handler.
+
+### R90-187 Single Closure and Resume Authority
+
+This three-path docs-only delivery record is the sole closure of the increment.
+Resolve its full SHA through fresh Git after commit; verify non-force push/fresh
+clean HEAD/origin/main/FETCH_HEAD, exact feature..closure three-path Vault note/
+index/versioned bounded MOC, fourteen stable current notes, complete prior topic
+and immutable/feature-iteration preservation, and identical hash replay. The
+feature SHA above is historical evidence. Do not repeat verified delivery or
+create a self-reference closure.
+
+Forward queue refreshed without starting another increment: no other defined
+local ready item. R90-75 remains the sole unfinished row with its full independent
+departmental acceptance outstanding; Oct 8–Jan 5 forecast. The next trigger
+audits fresh Git/Vault/history/source/queue and persists a separate eligible
+plan before edits. Repair missing evidence only; no delegated execution/private
+input/department contact/publication/SLO acceptance authority added.
