@@ -139,3 +139,72 @@ rejection, preservation, exact CRUD, routing, race, release or SLO pass. Feature
 and sole docs-only closure delivery/Vault remain pending; no next increment
 started. Legacy slash entries require file/direct-manager management; standard
 raw-path redirects remain outside the decoded-handler rejection boundary.
+
+
+## R90-186 Completion and Forward Queue Refresh (2026-10-08)
+
+Feature `5baa56dcaba65debe2fea0258614bf73f612508f` contains exactly seven intended paths. Non-force push
+and immediate fresh fetch verified clean HEAD/origin/main/FETCH_HEAD at that
+full SHA. Exact local Vault full-SHA range
+`5ebf12e2ed5a39b1938219ebd07ae0ea9941d364..5baa56dcaba65debe2fea0258614bf73f612508f` verified iteration
+`04-开发迭代记录/2026-10-08-5baa56dcab-CI知识同步.md`, exact changed scope,
+all 616 full-index commits and versioned bounded MOC links, resolving abbreviated
+metadata through Git. Fourteen stable current notes reconcile exact suppression
+identity and delivery/queue authority. Complete prior non-generated body prose
+is retained under explicit historical headings; all 405 prior historical records
+excluding the generated index remain unchanged. Identical range replay preserved
+all 453 Markdown hashes; snapshot JSON SHA-256
+`62b6f7b82d4a6c3ffcc7d08155f5620f1212247b0a021b96b95c25eba682a974`.
+
+Acceptance comparison confirms the four-line creation guard after reserved ID
+and before Add, plus removal of one by-ID trim line. Earlier auth/availability/
+decode/reserved creation diagnostics remain, and the existing by-ID rejection
+now applies to the exact decoded ID before auth/mutation. Five authored public
+handler/real manager/file declarations target actual constructor paths and
+Add/replaceLocked transaction boundaries. Seven slash forms, four fixture kinds,
+two auth modes and enabled/disabled inputs produce 112 create assertions; nine
+diagnostic controls cover earlier errors and slash priority. Thirty-two decoded
+management cases use eight literal/encoded paths and two methods/auth modes,
+coexisting prior and /prior/, a truly absent body ID and complete tree/List/
+serialized caller/Filter preservation. Two raw cleanup controls separate pinned
+307/Location from handler 404. Ordinary/percent-escape/question/hash/case IDs
+reach exact encoded CRUD/reload, full response/state, neighboring preservation
+and persisted loader/rebuilt-manager filters. Legacy slash IDs retain file
+helpers/constructor/filter/reload and direct Update/Delete/Add. These are direct
+authored boundaries, not executed results.
+
+The current handoff distinguishes older ID-empty serialization from the new
+absent-ID fixtures without rewriting prior source/history. The initial brace
+formatting failure stopped before compilation; corrected source, pinned-source
+307 expectation and temporary verifier count were followed by a clean complete
+fail-fast formatting/compile/static rerun. Source-grounded queue restoration,
+bounded evidence clarification and these corrected setup/static deviations are
+recorded; no unresolved result, competing edit or scope expansion remains.
+
+Pinned Go 1.26.8 API/alert/cmd compile-only and complete formatting/docs/217
+documentation JSON files (204 states)/190 complete unique roadmap multisets/
+history/full R90-75/testing split/handoff/horizon/links/fences/seven-path/
+sensitive/diff checks passed. No binaries executed. Separate local skill
+refines actual wire-member fixtures, exact routed/neighbor identity preservation
+and pinned-runtime redirect/entry review; Markdown validated outside repository
+delivery. Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run;
+delegated by user**. No executed rejection/preservation/CRUD/routing/race/release/
+SLO result is inferred. Legacy slash IDs need file/direct-manager management;
+raw-path ServeMux redirects remain outside the decoded handler's rejection.
+
+### R90-186 Single Closure and Resume Authority
+
+This three-path docs-only delivery record is the sole closure of this increment.
+Resolve its full SHA through fresh Git after commit; verify non-force push/
+fresh clean HEAD/origin/main/FETCH_HEAD, exact feature..closure three-path Vault
+note/index/versioned bounded MOC, fourteen current stable notes, complete prior
+topic/immutable preservation and identical replay. Feature SHA above is
+historical evidence. Do not repeat verified delivery or create a self-reference
+closure.
+
+Forward queue refreshed without starting another increment: no other defined
+local ready item. R90-75 remains the sole unfinished row with its full independent
+departmental acceptance outstanding; Oct 8–Jan 5 forecast. The next trigger
+audits fresh Git/Vault/history/source/queue and persists a separate eligible
+plan before editing. Repair missing evidence only; no delegated execution,
+private input, department contact, publication or SLO acceptance authority added.
