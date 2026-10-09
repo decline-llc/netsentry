@@ -275,7 +275,7 @@ formal SLO and evidence contract is unchanged.
 | R90-182 | Oct 5–Jan 2 | Complete documentation; tests delegated | Consolidate the current correctness follow-up inventory. | R90-181 verified feature/closure; R90-173/179 handoff authority | Eight follow-ups map exact source/correction commits to 11 distinct files/23 declarations (13/26 references); combined bounded totals and current daily fixture authority are explicit; prior handoff/history/full R90-75 preserved, no test execution. |
 | R90-183 | Oct 7–Jan 4 | Complete implementation; tests delegated | Redact escaped JSON credential names. | R90-182 verified feature/closure; R90-148/164 redaction boundary | Decoded password/token identities redact complete and preview-end string values, preserving raw spelling/metadata; scalar/batch and real Engine/Worker assertions authored, execution delegated. |
 | R90-184 | Oct 7–Jan 4 | Complete implementation; tests delegated | Reject the reserved rule reload ID on HTTP creation. | R90-183 verified feature/closure; existing rule CRUD/reload routing | Exact reload identity rejects before persistence/publication; case variants remain manageable and file-loaded legacy IDs retain compatibility; direct handler/Engine/file assertions authored, execution delegated. |
-| R90-185 | Oct 8–Jan 5 | In progress | Reject the reserved suppression reload ID on HTTP creation. | R90-184 verified feature/closure; existing suppression manager and routes | Exact reload rejects before Add/persistence/publication; enabled/disabled and auth diagnostics covered; case variants and legacy/direct-manager compatibility retained; direct handler/manager/file assertions authored, execution delegated. |
+| R90-185 | Oct 8–Jan 5 | Complete implementation; tests delegated | Reject the reserved suppression reload ID on HTTP creation. | R90-184 verified feature/closure; existing suppression manager and routes | Exact reload rejects before Add/persistence/publication; enabled/disabled and auth diagnostics covered; case variants and legacy/direct-manager compatibility retained; direct handler/manager/file assertions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -12523,8 +12523,8 @@ department contact, publication or SLO acceptance authority is added.
 
 ## R90-185 Definition
 
-- **Goal/status:** selected exact suppression reload-ID HTTP creation repair;
-  implementation in progress.
+- **Goal/status:** exact suppression reload-ID HTTP creation repair delivered
+  at verified `7f1ff9bbde65474f7f5ae8b205315fb7a6dd4b5a`; execution delegated.
 - **Dependencies/window:** verified R90-184 feature/sole closure; existing
   suppression manager and routes; Oct 8–Jan 5 forecast.
 - **Risk:** low; auth/availability/decode ordering and direct-manager/file
@@ -12603,3 +12603,64 @@ user**. Compilation/static review does not establish executed rejection,
 persistence/preservation, CRUD, routing, race, release or SLO outcomes. Feature
 and sole docs-only closure delivery/Vault remain pending; no next increment
 started.
+
+
+## R90-185 Completion and Forward Queue Refresh (2026-10-08)
+
+Feature `7f1ff9bbde65474f7f5ae8b205315fb7a6dd4b5a` contains exactly seven intended paths. Non-force push
+succeeded and immediate fresh fetch verified clean HEAD/origin/main/FETCH_HEAD
+at that full SHA. Local Vault exact full-SHA range
+`19f09d64db9748bd9a460e495dc1c43bf54c1e5f..7f1ff9bbde65474f7f5ae8b205315fb7a6dd4b5a` verified iteration
+`04-开发迭代记录/2026-10-08-7f1ff9bbde-CI知识同步.md`, exact changed paths,
+all 614 full-index commits and versioned bounded MOC links, resolving abbreviated
+metadata through Git. Fourteen current stable notes reconcile the suppression
+HTTP identity contract and delivery/queue authority. Their complete prior
+non-generated body prose remains under explicit historical headings; all 403
+prior historical records excluding the generated full index are unchanged.
+Identical range replay preserved all 451 Markdown hashes; snapshot JSON SHA-256
+`99eb37844e94811b7d397451b596f2bd66ebb82bd61ca2db811bb41df3aa13a6`.
+
+Acceptance comparison confirms only the four-line HTTP creation guard changed
+runtime behavior. It runs after auth/manager/decode and before Add. Sixteen
+auth/enabled/fixture combinations cover absent/healthy/existing-reserved/file-
+parent paths with spaces; full error/request ID/tree bytes/modes/membership/
+List/independent Filter/caller observations target the actual resources. Seven
+controls distinguish earlier diagnostics and reserved-ID priority over duplicate/
+CIDR/compiler validation. Neighboring exact case variants reach the real public
+create/list/ID-omitted literal and encoded updates/reload/encoded delete, full
+response/state and independently loaded/rebuilt filters. Legacy reserved IDs
+reach file helpers, constructor, literal/encoded POST reload and unchanged
+PUT/DELETE 405/Allow POST with tree preservation; direct Delete/Add/Update retains
+manager policy. These boundaries were traced through the actual constructor,
+router, file path and Add/replaceLocked transaction. They are direct authored
+assertions, not executed outcomes.
+
+Pinned Go 1.26.8 API/alert/cmd compile-only and complete formatting/docs/216 docs
+JSON (203 states)/189 complete unique roadmap multisets/history/full R90-75/
+testing split/handoff/horizon/links/fences/seven-path/sensitive/diff passed.
+No binaries executed. Only plan deviation is the source-grounded empty-queue
+restoration and refreshed unfinished forecast; the server restart was recovered
+from verified saved state before further action. No scope expansion, competing
+edit or unresolved compile/static/Git/Vault result. Existing generic skill
+instructions already cover this routed-identifier repair; no skill change.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. Compilation and authored assertions establish no executed rejection,
+persistence/preservation, CRUD, routing, race, release or SLO pass. Legacy
+file-loaded reload IDs retain their current HTTP PUT/DELETE route limitation.
+
+### R90-185 Single Closure and Resume Authority
+
+This three-path docs-only delivery record closes the same increment. Resolve
+its full SHA through fresh Git after commit; verify non-force push/fresh clean
+HEAD/origin/main/FETCH_HEAD, exact feature..closure three-path Vault note/index/
+versioned bounded MOC, fourteen stable current notes, complete prior topic and
+immutable preservation and identical replay. Feature SHA is historical evidence;
+do not repeat verified delivery or create a self-reference closure.
+
+Forward queue refreshed without starting another increment: no other defined
+local ready item. R90-75 remains the sole unfinished row with its full independent
+departmental acceptance outstanding; Oct 8–Jan 5 forecast. The next trigger audits
+fresh Git/Vault/history/source/queue and persists a separate eligible plan before
+editing. Repair missing evidence only; no delegated execution/private input/
+department contact/publication/SLO acceptance authority is added.
