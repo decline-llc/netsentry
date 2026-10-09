@@ -301,6 +301,19 @@ Rule and suppression mutation bodies are limited to 1 MiB, reject unknown fields
 
 Replaces an existing rule, persists the full rules file, reloads it, and atomically swaps the active snapshot. If the body includes `id`, it must match the path ID.
 
+Rule management uses the exact decoded path ID. An empty ID or any decoded
+slash returns HTTP 404 `NOT_FOUND`, message `Rule not found`, before auth, body
+decoding or mutation. For example, `/api/rules/prior/` and
+`/api/rules/%2Fprior%2F` cannot update or delete `prior`. An omitted body `id`
+uses the exact path ID. Encode literal percent signs in IDs: `prior%2F` is
+managed at `/api/rules/prior%252F`; it is distinct from a decoded slash.
+
+Raw-path ServeMux cleanup can redirect before this handler (307 in pinned Go
+1.26.8). Rule creation already rejects `/`, `?` and `#` in IDs. File-loaded
+slash IDs still load, match and reload; edit their seed file and reload to
+manage them. R90-187 direct router/Engine/file regressions are authored and
+compiled; behavioral execution remains **not run; delegated by user**.
+
 ### `DELETE /api/rules/{id}`
 
 Deletes an existing rule, persists the full rules file, reloads it, and returns `204 No Content`.

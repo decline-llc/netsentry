@@ -1073,3 +1073,45 @@ exact checkout/logs/deviations/evidence. These five declarations are authored,
 not executed coverage. Behavioral/race/full/scanner/knowledge/traffic/acceptance
 **not run; delegated by user**. Full independent R90-75 acceptance remains
 outstanding; no department contact/private input/publication authority added.
+
+## R90-187 follow-up: exact decoded rule path identity (2026-10-08)
+
+[Plan](plans/task-20261008-rule-path-identity.md) ·
+[state](tasks/task-state-20261008-rule-path-identity.json).
+
+Rule management no longer trims decoded slash characters into another identity.
+Its existing empty/slash guard returns 404 before auth, decoding, lookup or
+mutation. Creation syntax, raw ServeMux cleanup and core/file policy retain their
+contracts. Prior handoff inventories and prose remain historical snapshots.
+
+[engine/internal/api/rule_path_identity_test.go](../engine/internal/api/rule_path_identity_test.go):
+
+- `TestHTTPRuleSlashManagementPathsDoNotAlias`
+- `TestHTTPRulePathIdentityDiagnosticsAndRawRedirects`
+- `TestHTTPRuleEncodedSlashFreeIDsRemainManageable`
+- `TestHTTPFileLoadedSlashRuleIDsRetainEngineCompatibility`
+
+Eight literal/encoded slash paths, two methods/auth modes and four fixture kinds
+give 128 authored rejection cases. Actual configured artifacts include absent,
+healthy, coexisting prior and /prior/, and file-parent paths with spaces. Full
+tree membership/modes/bytes, Rules/count, independently expected matching and
+packet/request callers are preserved. New update bodies remove the id member
+and assert its encoded absence. The public router and real engine are used;
+the fixture wrapper traces seed save/load/Reload rather than an ignored option.
+
+Ten controls distinguish empty-ID/slash-before-auth, ordinary auth/file/malformed/
+unknown-field/body-ID mismatch/unknown-ID/method errors with exact envelopes
+and Allow. Two raw doubled-slash controls assert the pinned Go 1.26.8 source's
+307/Location before handler entry. Five ordinary/percent-escape/case identities
+reach exact create/list/encoded absent-ID update/delete/reload, with full
+responses, neighboring prior preservation, independent file load/rebuilt engine
+and independently expected matching. Legacy slash identities retain save/load/
+Engine.Reload/matching and collection POST reload before and after seed-file
+editing, with read-only reload preservation and unchanged caller data.
+
+Review each promised boundary against the actual constructor, decoder and pinned
+router. Use the owning engine module and uncached departmental commands above;
+retain checkout/logs/deviations/evidence. Four declarations are authored source,
+not executed coverage. Behavioral/race/full/scanner/knowledge/traffic/acceptance
+**not run; delegated by user**. Full independent R90-75 acceptance remains
+outstanding; no department contact/private input/publication authority added.

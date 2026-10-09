@@ -277,6 +277,7 @@ formal SLO and evidence contract is unchanged.
 | R90-184 | Oct 7–Jan 4 | Complete implementation; tests delegated | Reject the reserved rule reload ID on HTTP creation. | R90-183 verified feature/closure; existing rule CRUD/reload routing | Exact reload identity rejects before persistence/publication; case variants remain manageable and file-loaded legacy IDs retain compatibility; direct handler/Engine/file assertions authored, execution delegated. |
 | R90-185 | Oct 8–Jan 5 | Complete implementation; tests delegated | Reject the reserved suppression reload ID on HTTP creation. | R90-184 verified feature/closure; existing suppression manager and routes | Exact reload rejects before Add/persistence/publication; enabled/disabled and auth diagnostics covered; case variants and legacy/direct-manager compatibility retained; direct handler/manager/file assertions authored, execution delegated. |
 | R90-186 | Oct 8–Jan 5 | Complete implementation; tests delegated | Preserve suppression identity across slash-bearing HTTP paths. | R90-185 verified feature/closure; existing suppression manager/routes | Creation rejects literal slash IDs before Add; decoded management IDs are not trimmed into neighbors; encoded slash-free CRUD and legacy/direct-manager compatibility retain their contracts; direct authored execution delegated. |
+| R90-187 | Oct 8–Jan 5 | Ready; selected | Preserve exact decoded rule identity during HTTP management. | R90-186 verified feature/closure; existing rule engine/routes | Decoded slash paths reject before mutation without selecting neighbors; encoded slash-free CRUD and legacy file/engine/reload retain their contracts; direct authored execution delegated. |
 
 ## R90-01 Definition
 
@@ -12829,3 +12830,71 @@ departmental acceptance outstanding; Oct 8–Jan 5 forecast. The next trigger
 audits fresh Git/Vault/history/source/queue and persists a separate eligible
 plan before editing. Repair missing evidence only; no delegated execution,
 private input, department contact, publication or SLO acceptance authority added.
+
+
+## R90-187 Definition
+
+- Status: Ready; selected. Dependency: verified R90-186 feature/sole closure and existing rule engine/routes.
+- Window: Oct 8–Jan 5; forecasts never gate eligibility. Risk: low, one-line rule handler repair.
+- Acceptance and planned evidence: exact decoded slash rejection before auth/lookup/mutation, neighbor/tree/state/caller preservation, pinned raw redirects, diagnostic controls, encoded CRUD and legacy file/engine/reload through four direct declarations; see [persisted plan](task-20261008-rule-path-identity.md).
+- Validation: pinned Go 1.26.8 API/rule/cmd compile-only; formatting/docs/JSON/complete unique roadmap multisets/history/full R90-75/testing split/handoff/horizon/links/fences/intended scope/sensitive/diff; exact push/fetch/Vault/stable/topic/immutable/hash replay and one docs-only closure. Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by user**.
+- Stop: ambiguous compile/static/Git/Vault, competing edits, broader router policy or authority beyond this increment. No raw ServeMux/core/suppression policy changes, migration, private input, department contact, publication or SLO acceptance.
+
+## R90-187 Selection and Trigger Audit (2026-10-08)
+
+Clean freshly fetched refs at `e05a812dc955b7975c9b0ba2e9ce77504c4ad53d`;
+R90-186 feature/sole closure Git/Vault scopes, full index, bounded MOC and fourteen
+current stable notes verified, with exact prior topic reconstruction. Four-week
+phase: 154 commits, 190 complete unique roadmap pairs, 454 Vault Markdown and
+407 immutable historical records excluding generated index. Correctness
+execution and independent departmental R90-75 acceptance remain outstanding.
+No missing latest delivery or new acceptance evidence.
+
+Forward audit found no other defined ready item. Source proves rule by-ID trim
+can alias decoded /prior/ into prior even though creation rejects slashes;
+core/file loading permits legacy slash IDs. Restore only R90-187 as the safest
+bounded ready repair, dependent on verified R90-186. Plan/state/acceptance map
+and baseline Vault/history/handoff snapshots persisted before behavioral edits.
+One-line trim removal, four direct declarations and unchanged Oct 8–Jan 5
+forecast; preserve all completed history and full R90-75 contract. No next work
+started; delegated execution remains **not run; delegated by user**.
+
+
+## R90-187 Compile and Static Checkpoint (2026-10-08)
+
+Runtime delta is exactly one removed rule by-ID slash-trim line. The existing
+empty/slash guard now checks the exact decoded ID before authentication,
+decoding, lookup or mutation. Creation syntax, route registration, raw redirects,
+suppression behavior and core/file validation retain their contracts.
+
+Four authored direct declarations reach the actual public router, configured
+seed artifacts and real Engine. Eight literal/encoded paths, two methods/auth
+modes and four fixture kinds give 128 rejection cases, including coexisting
+prior and /prior/. Truly absent-ID bodies remove the member and assert encoded
+absence. Complete tree membership/modes/bytes, Rules/count, independently
+expected matching and packet/request callers are preserved. Ten controls cover
+empty-ID/slash-before-auth, ordinary auth/file/malformed/unknown-field/mismatch/
+unknown-ID/method diagnostics; two raw doubled-slash controls separate pinned
+307/Location from handler 404. Five ordinary/percent-escape/case identities
+exercise exact encoded create/list/update/delete/reload with full responses,
+neighboring prior preservation, persisted load/rebuilt engine/matching. Legacy
+save/load/Engine.Reload/matching and file-edit/collection-reload remain usable,
+with read-only reload and caller preservation. Fixture wrapper and reused
+helpers were traced through actual save/load/Reload and configured file paths.
+Every acceptance maps to a direct authored boundary, not executed evidence.
+
+Pinned Go 1.26.8 API/rule/cmd compile-only passed; no binaries executed. Complete
+fail-fast formatting/compile/static review passed. Formatting/docs/218 docs
+JSON (205 states)/191 complete unique roadmap multisets/history/full R90-75/
+testing split/handoff/horizon/links/fences/seven-path/sensitive/diff checks passed.
+All 454 baseline Vault Markdown hashes remain unchanged. Source-proven empty
+queue restoration is recorded; no unresolved result, competing edit or scope
+expansion. Existing local skill serialized-member/exact-route/neighbor/pinned
+runtime guidance applied and Markdown checked; no redundant update required.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. Compilation and static review establish no executed rejection,
+preservation, CRUD, routing, race, release or SLO pass. Legacy slash identities
+require seed-file editing/reload; raw redirects precede the repaired handler.
+Feature delivery/Vault and the sole docs-only closure remain pending. No next
+increment started; full independent R90-75 acceptance remains outstanding.

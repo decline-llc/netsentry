@@ -1,0 +1,60 @@
+{
+  "task": "r90-187-rule-path-identity",
+  "timestamp": "2026-10-08",
+  "branch": "main",
+  "starting_remote_baseline": "e05a812dc955b7975c9b0ba2e9ce77504c4ad53d",
+  "remote_baseline": "e05a812dc955b7975c9b0ba2e9ce77504c4ad53d",
+  "risk_level": "Low",
+  "current_checkpoint": "compile_static_passed_feature_delivery_pending",
+  "audit": {
+    "phase_commits": 154,
+    "roadmap_pairs": 190,
+    "vault_files": 454,
+    "immutable_records_excluding_generated_index": 407,
+    "stable_notes": 14
+  },
+  "completed": [
+    "Fresh clean fetched refs and prior exact feature/closure Git/Vault/stable authority verified",
+    "Four-week history and sole unfinished R90-75 audited; empty ready queue restored with source-proven rule path repair",
+    "Core/file slash compatibility and pinned runtime redirect source traced",
+    "Plan/state/acceptance map and Vault/history/handoff backups persisted before implementation",
+    "One rule by-ID slash-trim line removed; four direct public router/real Engine/file declarations authored",
+    "128 decoded slash rejection cases, ten diagnostic/two raw redirect controls, five exact encoded CRUD identities and legacy file/engine/reload boundaries reviewed against plan",
+    "Truly absent ID serialization asserted; actual fixture paths/constructors/save/load/Reload and pinned router normalization traced",
+    "Pinned Go 1.26.8 API/rule/cmd compile-only passed; no binaries executed",
+    "Complete fail-fast format/compile/static passed; docs/218 JSON (205 states)/191 complete unique roadmap multisets/history/full R90-75/split/handoff/horizon/links/fences/seven-path/sensitive/diff passed",
+    "All 454 baseline Vault hashes unchanged; existing local skill guidance applied and Markdown checked without redundant edits"
+  ],
+  "in_progress": [
+    "Feature commit/push/fetch/Vault and sole docs-only closure"
+  ],
+  "validation": {
+    "behavioral_race_full_scanner_knowledge_traffic_acceptance": "not run; delegated by user",
+    "compile_static": "passed pinned Go 1.26.8 API/rule/cmd compile-only and format/docs/218 JSON (205 states)/191 complete unique roadmap multisets/history/full R90-75/split/handoff/horizon/links/fences/seven-path/sensitive/diff; no binaries executed",
+    "delivery": "pending"
+  },
+  "authority_boundaries": [
+    "Exactly one increment; standing departmental execution delegation",
+    "No ServeMux policy/core migration/suppression changes/private input/department contact/publication/SLO acceptance"
+  ],
+  "remaining_risks": [
+    "Authored regressions require departmental execution",
+    "Legacy slash IDs require file edits and engine or collection reload",
+    "Raw ServeMux cleanup can redirect before handler entry"
+  ],
+  "deviations": [
+    "Empty ready queue restored with source-proven rule identity repair; current forecast retained"
+  ],
+  "resume_instructions": "Finish only R90-187 from its plan. Compile without executing tests; complete static review, exact commit/push/fetch/Vault reconciliation and replay, then one docs-only closure. Preserve history and R90-75 acceptance. No next increment until another trigger.",
+  "todo": [
+    "Feature delivery/Vault",
+    "Sole docs-only closure"
+  ],
+  "next_increment": {
+    "id": null,
+    "started": false,
+    "departmental_acceptance": "R90-75 outstanding",
+    "status": "refresh_after_this_increment"
+  },
+  "skill_improvement": "Existing serialized-member/exact-route/neighbor/pinned-runtime guidance applied; Markdown validated, no redundant update"
+}

@@ -666,7 +666,6 @@ func (s *Server) handleRules(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleRuleByID(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimPrefix(r.URL.Path, "/api/rules/")
-	id = strings.Trim(id, "/")
 	if id == "" || strings.Contains(id, "/") {
 		writeError(w, r, http.StatusNotFound, "NOT_FOUND", "Rule not found")
 		return
