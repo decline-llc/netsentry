@@ -472,6 +472,10 @@ func (s *Server) handleSuppressions(w http.ResponseWriter, r *http.Request) {
 			writeDecodeError(w, r, "Invalid suppression request", err)
 			return
 		}
+		if suppression.ID == "reload" {
+			writeError(w, r, http.StatusBadRequest, "VALIDATION_ERROR", "Invalid suppression request", `id "reload" is reserved for the suppressions reload endpoint`)
+			return
+		}
 		if err := s.opts.Suppressions.Add(*suppression); err != nil {
 			if strings.Contains(err.Error(), "already exists") {
 				writeError(w, r, http.StatusConflict, "SUPPRESSION_ALREADY_EXISTS", "Suppression already exists")

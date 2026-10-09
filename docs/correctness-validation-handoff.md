@@ -980,3 +980,42 @@ ownership above remain departmental instructions. These four declarations are
 new authored source, not executed coverage. Behavioral/race/full/scanner/
 knowledge/traffic/acceptance **not run; delegated by user**. Full independent
 R90-75 acceptance remains outstanding; no department contact or publication.
+
+## R90-185 follow-up: reserved suppression reload ID (2026-10-08)
+
+[Plan](plans/task-20261008-suppression-reload-id.md) ·
+[state](tasks/task-state-20261008-suppression-reload-id.json).
+
+HTTP creation rejects the exact suppression ID reload before Add, persistence
+or filter publication. The reservation includes disabled suppressions. Earlier
+auth/manager-availability/decode diagnostics, case-sensitive neighboring IDs,
+structural file helpers, manager methods and legacy reload behavior retain their
+contracts. Existing file-loaded reload IDs retain their HTTP management route
+limitation. All prior handoff prose and inventories remain historical snapshots.
+
+[engine/internal/api/suppression_reload_id_test.go](../engine/internal/api/suppression_reload_id_test.go):
+
+- `TestHTTPSuppressionCreateRejectsReservedReloadIDWithoutMutation`
+- `TestHTTPSuppressionReloadIDDiagnosticPrecedence`
+- `TestHTTPSuppressionReloadCaseVariantIDsRemainManageable`
+- `TestHTTPFileLoadedSuppressionReloadIDRetainsCompatibility`
+
+Review the public Server.Handler and real SuppressionManager, including its
+constructor's actual file path and Add/replaceLocked validation/persistence order.
+Sixteen rejected-create fixture/auth/enabled combinations cover absent, healthy,
+existing-reserved and file-parent paths with spaces. Assertions compare exact
+error/request ID, full tree bytes/modes/membership, List, independently expected
+Filter results, caller alerts and request candidate. Seven controls distinguish
+auth/manager/malformed/unknown-field ordering and duplicate/CIDR/compiler priority.
+Neighboring Reload/RELOAD/reload-extra exercise authenticated create/list,
+ID-omitted updates on literal and encoded paths, reload and encoded deletion;
+full response/List/Filter comparisons include persisted load and rebuilt-manager
+observations. Legacy file-loaded reload entries exercise literal/encoded POST
+reload, unchanged PUT/DELETE 405 and Allow POST with full tree preservation;
+direct manager Delete/Add/Update proves the reservation stays at HTTP creation.
+
+Use the owning engine module and uncached departmental commands described above;
+retain exact checkout/logs/deviations/evidence. These four declarations are
+authored source, not executed coverage. Behavioral/race/full/scanner/knowledge/
+traffic/acceptance **not run; delegated by user**. Full independent R90-75
+acceptance remains outstanding; no department contact or publication authority.

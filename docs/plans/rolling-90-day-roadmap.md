@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-10-07 through 2027-01-04. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-10-08 through 2027-01-05. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -152,7 +152,7 @@ formal SLO and evidence contract is unchanged.
 | R90-72 | Oct 3–31 | Complete early | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
 | R90-73 | Aug 5–Sep 4 | Complete early | Add versioned local benchmark evidence capture. | R90-72 | One directly tested command captures every established C/Go benchmark with exact Git/tree state, environment/toolchain fingerprint, parameters, raw output, parsed metrics, path redaction, and local-synthetic classification without applying a threshold. |
 | R90-74 | Sep 5–Oct 2 | Complete early | Record a repeated single-host benchmark baseline. | R90-73 | At least five uncached complete-surface samples from one clean pinned commit and unchanged environment retain every raw result plus median/IQR/variation summaries as observation-only local evidence. |
-| R90-75 | Oct 7–Jan 4 | Acceptance delegated; development unblocked | Validate proposed staging/production SLO acceptance profiles. | R90-74; R90-113 contract; departmental execution and evidence | Departmental tests must establish end-to-end latency, offered-versus-completed loss, missing-alert failures and extended-tail evidence with full artifacts; agent development proceeds without test execution or a local hardware prerequisite. |
+| R90-75 | Oct 8–Jan 5 | Acceptance delegated; development unblocked | Validate proposed staging/production SLO acceptance profiles. | R90-74; R90-113 contract; departmental execution and evidence | Departmental tests must establish end-to-end latency, offered-versus-completed loss, missing-alert failures and extended-tail evidence with full artifacts; agent development proceeds without test execution or a local hardware prerequisite. |
 | R90-76 | Aug 9 | Complete | Audit post-tag delivery and restore the forward queue. | R90-59a; R90-74 | A dated audit reconciles the local-tag feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current code/tests, and blocked authorities, then restores only evidence-grounded local work without runtime or publication changes. |
 | R90-77 | Aug 10–Sep 4 | Complete early | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
 | R90-78 | Sep 5–25 | Complete early | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
@@ -275,6 +275,7 @@ formal SLO and evidence contract is unchanged.
 | R90-182 | Oct 5–Jan 2 | Complete documentation; tests delegated | Consolidate the current correctness follow-up inventory. | R90-181 verified feature/closure; R90-173/179 handoff authority | Eight follow-ups map exact source/correction commits to 11 distinct files/23 declarations (13/26 references); combined bounded totals and current daily fixture authority are explicit; prior handoff/history/full R90-75 preserved, no test execution. |
 | R90-183 | Oct 7–Jan 4 | Complete implementation; tests delegated | Redact escaped JSON credential names. | R90-182 verified feature/closure; R90-148/164 redaction boundary | Decoded password/token identities redact complete and preview-end string values, preserving raw spelling/metadata; scalar/batch and real Engine/Worker assertions authored, execution delegated. |
 | R90-184 | Oct 7–Jan 4 | Complete implementation; tests delegated | Reject the reserved rule reload ID on HTTP creation. | R90-183 verified feature/closure; existing rule CRUD/reload routing | Exact reload identity rejects before persistence/publication; case variants remain manageable and file-loaded legacy IDs retain compatibility; direct handler/Engine/file assertions authored, execution delegated. |
+| R90-185 | Oct 8–Jan 5 | In progress | Reject the reserved suppression reload ID on HTTP creation. | R90-184 verified feature/closure; existing suppression manager and routes | Exact reload rejects before Add/persistence/publication; enabled/disabled and auth diagnostics covered; case variants and legacy/direct-manager compatibility retained; direct handler/manager/file assertions authored, execution delegated. |
 
 ## R90-01 Definition
 
@@ -12518,3 +12519,87 @@ outstanding departmental contract and Oct 7–Jan 4 forecast. Next trigger audit
 fresh Git/Vault/history/source/queue and persists a separate eligible plan before
 editing; repair missing evidence only. No delegated execution, private input,
 department contact, publication or SLO acceptance authority is added.
+
+
+## R90-185 Definition
+
+- **Goal/status:** selected exact suppression reload-ID HTTP creation repair;
+  implementation in progress.
+- **Dependencies/window:** verified R90-184 feature/sole closure; existing
+  suppression manager and routes; Oct 8–Jan 5 forecast.
+- **Risk:** low; auth/availability/decode ordering and direct-manager/file
+  compatibility must remain intact.
+- **Acceptance:** exact reload rejects with 400 VALIDATION_ERROR before Add,
+  preserving file/tree/List/Filter/input; enabled/disabled and earlier diagnostic
+  controls; neighboring case-sensitive IDs remain manageable; legacy/direct
+  manager behavior and reload routes remain compatible.
+- **Required validation:** direct public handler/real manager/file declarations;
+  pinned Go API/alert/cmd compile-only, formatting/docs/JSON/complete unique
+  roadmap multisets/history/full R90-75/split/handoff/horizon/links/fences/
+  seven-path/sensitive/diff; fresh exact refs/full-SHA Vault reconciliation/
+  preservation/replay. Execution suites not run; delegated by user.
+- **Stop condition:** ambiguous compile/static/Git/Vault, competing edits, broader
+  ID or route migration, new authority or another increment.
+- **Plan/state:** [plan](task-20261008-suppression-reload-id.md) and
+  [state](../tasks/task-state-20261008-suppression-reload-id.json).
+
+## R90-185 Selection and Source Audit (2026-10-08)
+
+Fresh clean fetched HEAD/origin/main/FETCH_HEAD at
+`19f09d64db9748bd9a460e495dc1c43bf54c1e5f`; R90-184 feature/sole closure
+exact scopes and Vault range/note/index/versioned bounded MOC verified. The
+four-week phase audit covers 150 commits, 188 complete unique roadmap pairs,
+450 Vault Markdown files, 403 immutable historical records excluding the full
+index, and fourteen stable current notes agreeing with fetched authority.
+SLO/toolchain/native correctness work retains delegated execution debt; no
+missing latest delivery or qualifying R90-75 acceptance found.
+
+No local ready increment was defined. Source establishes suppression creation
+accepts reload while its PUT/DELETE URL reaches the POST-only reload handler,
+and the generic by-ID handler also reserves reload. Restore only R90-185 as
+the smallest exact-name HTTP repair under the existing safest-default policy.
+Persist the plan/state/acceptance map before runtime/public-doc edits. Earlier
+auth/manager/decode boundaries and core manager/file/legacy policy stay intact.
+All prior history, the testing split and full R90-75 independent contract are
+preserved. Refresh unfinished forecasts to Oct 8–Jan 5; no other increment
+started and no delegated execution/private/publication authority added.
+
+
+## R90-185 Compile and Static Checkpoint (2026-10-08)
+
+Runtime delta is exactly the four-line HTTP creation guard after authentication,
+manager availability and JSON decoding, before Add. No route, core manager,
+structural file policy, suppression matching or legacy migration changed.
+The API reference records both the exact-name contract and legacy limitation;
+the entire prior handoff remains with a four-declaration supplement.
+
+Direct authored source covers sixteen fixture/auth/enabled combinations for
+absent/healthy/existing-reserved/file-parent paths with spaces. Exact envelopes,
+request IDs, complete tree bytes/modes/membership, List, independently expected
+Filter results and caller data are compared. Seven diagnostic controls establish
+earlier auth/manager/malformed/unknown-field and reserved-ID priority over
+duplicate/CIDR/compiler errors. Reload/RELOAD/reload-extra controls reach actual
+public create/list/ID-omitted update on literal/encoded paths, POST reload and
+encoded deletion, with full response/state and independent persisted loader/
+rebuilt-manager observations. Legacy reload identities retain literal/encoded
+POST reload and PUT/DELETE 405/Allow POST with complete tree preservation; direct
+Delete/Add/Update controls retain public manager/file compatibility. Fixture
+constructors, selected paths, actual router and manager transaction boundaries
+were traced against every planned acceptance criterion. These are authored
+boundaries, not executed coverage.
+
+Pinned Go 1.26.8 API/alert/cmd compile-only passed; no binaries executed. Complete
+format/docs/216 documentation JSON files (203 task states)/189 complete unique
+roadmap multisets/prior history/full R90-75/testing split/horizon/handoff/links/
+fences/seven-path/sensitive/diff review passed. All 450 baseline Vault Markdown
+hashes remain unchanged. No unresolved compile/static result or scope expansion.
+The server restart preserved source, temporary compiled binaries and baseline
+backups; clean expected Git scopes and saved state were rechecked before resume.
+No repeated delivery action occurred. Existing skill guidance covers the repair
+without a new reusable refinement.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. Compilation/static review does not establish executed rejection,
+persistence/preservation, CRUD, routing, race, release or SLO outcomes. Feature
+and sole docs-only closure delivery/Vault remain pending; no next increment
+started.

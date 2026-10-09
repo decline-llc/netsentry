@@ -210,6 +210,17 @@ Returns the active suppression rules in insertion order. At startup, suppression
 
 Adds a suppression rule and immediately applies it to newly generated alerts. Enabled suppressions require at least one `src_cidrs`, `dst_cidrs`, or `any_cidrs` entry. When `engine.suppressions_file` is configured, successful creates are persisted to that JSON file before the in-memory snapshot is updated.
 
+HTTP creation reserves the exact ID `reload` for `/api/suppressions/reload`.
+Enabled and disabled requests with that ID return `400 VALIDATION_ERROR`, message
+`Invalid suppression request`, detail
+`id "reload" is reserved for the suppressions reload endpoint`, before manager
+validation, persistence or filter publication. Authentication, manager
+availability and JSON decoding retain their earlier diagnostics. Case-sensitive
+neighbors such as `Reload`, `RELOAD` and `reload-extra` remain manageable.
+File load/save, direct manager methods and reload retain their identity policy;
+existing file-loaded `reload` entries still have the current HTTP PUT/DELETE
+route collision and require file editing or direct manager methods to manage.
+
 For enabled suppressions, omitted/null/empty `rule_ids` means all rules. A
 nonempty list must contain at least one nonempty ID; `[""]` and `["", ""]`
 are rejected rather than widening the scope. Empty entries mixed with valid IDs
