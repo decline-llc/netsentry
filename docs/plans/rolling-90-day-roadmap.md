@@ -279,7 +279,7 @@ formal SLO and evidence contract is unchanged.
 | R90-186 | Oct 8–Jan 5 | Complete implementation; tests delegated | Preserve suppression identity across slash-bearing HTTP paths. | R90-185 verified feature/closure; existing suppression manager/routes | Creation rejects literal slash IDs before Add; decoded management IDs are not trimmed into neighbors; encoded slash-free CRUD and legacy/direct-manager compatibility retain their contracts; direct authored execution delegated. |
 | R90-187 | Oct 8–Jan 5 | Complete implementation; tests delegated | Preserve exact decoded rule identity during HTTP management. | R90-186 verified feature/closure; existing rule engine/routes | Decoded slash paths reject before mutation without selecting neighbors; encoded slash-free CRUD and legacy file/engine/reload retain their contracts; direct authored execution delegated. |
 
-| R90-188 | Oct 10–Jan 7 | In progress; tests delegated | Reject dot-segment rule IDs at the HTTP boundary. | R90-187 verified feature/closure; existing rule engine/routes | Exact . and .. reject creation and decoded management without state changes; other dot/percent identities and legacy file/core/reload remain compatible; direct authored execution delegated. |
+| R90-188 | Oct 10–Jan 7 | Complete implementation; tests delegated | Reject dot-segment rule IDs at the HTTP boundary. | R90-187 verified feature/closure; existing rule engine/routes | Exact . and .. reject creation and decoded management without state changes; other dot/percent identities and legacy file/core/reload remain compatible; direct authored execution delegated. |
 
 ## R90-01 Definition
 
@@ -13026,3 +13026,58 @@ by user**. Compilation/static review proves no executed rejection, preservation,
 CRUD, routing, race, release or SLO pass. Legacy dots require seed edits/reload;
 raw redirects precede the guard. Feature delivery/Vault and the sole docs-only
 closure remain pending. No next increment started.
+
+
+## R90-188 Completion and Forward Queue Refresh (2026-10-10)
+
+Feature `ed41d90f0f4dc5b27633ff8dcd446b0c4877e7ca` contains exactly seven intended paths. Fresh fetch after
+an interruption during push verified clean HEAD/origin/main/FETCH_HEAD at that
+full SHA: the push had already completed, so it was not repeated. Exact local
+Vault range `728375b4ec4b7b234cb7edf90597716835e2c50d..ed41d90f0f4dc5b27633ff8dcd446b0c4877e7ca` verified the iteration
+`04-开发迭代记录/2026-10-10-ed41d90f0f-CI知识同步.md`, seven-path scope,
+all 620 full-index commits and versioned bounded MOC, resolving abbreviated
+metadata through Git. Fourteen stable current notes reconcile the exact dot-ID
+HTTP boundary and current delivery/queue authority. Complete prior topic prose
+is preserved under explicit historical headings, excluding only the verified
+versioned generated MOC region. All 409 baseline immutable iteration records
+and other non-generated non-stable notes remain unchanged. Identical range
+replay preserved all 457 Markdown hashes; snapshot JSON SHA-256
+`97f33773a9ac781c4e41ba629823537bace17a9ef3404fb0d4e73e4cde4bbd5d`.
+
+Acceptance comparison confirms only the exact dot checks at rule creation and
+decoded management. Both rejection conditions have direct authored public
+router/real Engine/file boundaries: 32 creation cases, 24 encoded management
+cases and four pinned raw 307/Location controls. Six ordinary diagnostic controls,
+six exact other-dot/percent CRUD identities and legacy . / .. file-edit/reload
+compatibility preserve their named state/neighbor/caller boundaries. Actual
+configured seed path, constructor/defaults, save/load/Engine.Reload, serialized
+omission, independent matching and pinned ServeMux normalization traced.
+Suppression/core/file/route-registration contracts retain their scope. No
+unresolved result or scope expansion; authored coverage is not execution.
+
+Pinned Go 1.26.8 API/rule/cmd compile-only and full fail-fast formatting/compile/
+static review passed; no test binary executed. Docs/219 JSON (206 states)/192
+complete unique roadmap multisets/history/full R90-75/testing split/prior
+handoff/90-day horizon/links/fences/seven-path/sensitive/diff checks passed.
+Existing skill guidance applied and Markdown checked without redundant edits.
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated
+by user**. No executed rejection/preservation/CRUD/routing/race/release/SLO
+result is inferred. Legacy dots require seed edits/reload; raw redirects precede
+the HTTP guard.
+
+### R90-188 Single Closure and Resume Authority
+
+This three-path docs-only delivery record is the sole closure of R90-188.
+Resolve its full SHA through fresh Git after commit; verify non-force push/fresh
+clean HEAD/origin/main/FETCH_HEAD, exact feature..closure three-path Vault note/
+index/versioned bounded MOC, fourteen stable current notes, complete prior topic
+and baseline immutable/feature-iteration preservation, and identical hash replay.
+Feature SHA above is historical evidence. Do not repeat verified delivery or
+create a self-reference closure.
+
+Forward queue refreshed without starting another increment: no other defined
+local ready item. R90-75 remains the sole unfinished row with its full independent
+departmental acceptance outstanding, Oct 10–Jan 7 forecast. The next trigger
+audits fresh Git/Vault/history/source/queue and persists a separate eligible
+plan before editing. Repair missing evidence only; no delegated execution,
+private input, department contact, publication or SLO acceptance authority added.
