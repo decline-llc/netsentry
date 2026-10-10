@@ -1115,3 +1115,46 @@ retain checkout/logs/deviations/evidence. Four declarations are authored source,
 not executed coverage. Behavioral/race/full/scanner/knowledge/traffic/acceptance
 **not run; delegated by user**. Full independent R90-75 acceptance remains
 outstanding; no department contact/private input/publication authority added.
+
+
+## R90-188 follow-up: dot-segment rule IDs (2026-10-10)
+
+HTTP rule creation rejects exact `.` and `..` before persistence/publication,
+including disabled rules. The decoded by-ID guard rejects both before auth,
+body decoding, lookup or mutation. Pinned Go 1.26.8 ServeMux cleans literal dot
+segments before handler entry: raw `/api/rules/.` and `/api/rules/..` retain
+307/Location `/api/rules` and `/api`; percent-encoded dots reach the guard.
+Other dot text and literal percent-escape identities are exact, and legacy dots
+retain file/core/collection-reload/matching compatibility without migration.
+
+Source: `engine/internal/api/router.go`. Five direct declarations in
+`engine/internal/api/rule_dot_id_test.go`:
+
+- `TestHTTPRuleCreateRejectsDotIDsWithoutMutation`: 32 combinations of two
+  IDs, four artifacts (absent, healthy, legacy dots, file-parent, with spaces),
+  enabled/disabled and auth on/off; complete tree modes/bytes/membership,
+  Rules/count/independent matching and caller preservation.
+- `TestHTTPRuleDotManagementAndRawRedirectBoundaries`: four encoded paths,
+  PUT/DELETE and no-auth/authorized/missing-auth (24 handler rejections), plus
+  four raw pinned 307/Location controls; actual coexisting . / .. / prior
+  rules, genuinely absent-ID update serialization or malformed body before
+  missing auth, full persisted/published/independent matching preservation.
+- `TestHTTPRuleDotCreationDiagnosticPrecedence`: six exact auth/file/decode/
+  unknown-field/slash/reload diagnostic and state-preservation controls.
+- `TestHTTPRuleOtherDotAndPercentIDsRetainExactCRUD`: six ..., .prior, prior.,
+  prior..id, %2e and %2E identities through actual create/list/encoded absent-ID
+  update/reload/delete, complete responses and independent saved-load/rebuilt
+  Engine matching with prior preserved. Omission checks serialized wire data.
+- `TestHTTPFileLoadedDotRuleIDsRetainCompatibility`: actual save/load/rebuilt
+  Engine and collection reload before/after file edits of both dot identities,
+  exact IDs/count/matching/neighbor preservation and unchanged caller data.
+
+Fixture wrappers resolve the actual configured seed path, save/load/Engine
+reload and prior helper defaults; production mode is the real rule Engine.
+Prior helpers use independent expected port alerts, full tree snapshots and
+read-only persisted load/rebuild observations. No package test binary is run.
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated
+by user**. The department must execute these declarations and appropriate
+regressions; source review or compilation establishes no runtime pass.
+This follow-up adds no full-suite, release or SLO acceptance. The independent
+R90-75 contract above and all earlier handoff prose remain unchanged.

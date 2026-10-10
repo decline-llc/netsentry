@@ -295,6 +295,14 @@ behavioral execution remains **not run; delegated by user**.
 
 Creates a rule, writes the canonical wrapped rules file, reloads the saved file, and atomically swaps the active rule snapshot. The request body is a single rule object using the schema below. Other duplicate IDs return `RULE_ALREADY_EXISTS`.
 
+Exact IDs `.` and `..` are also rejected with HTTP 400 `VALIDATION_ERROR`,
+message `Invalid rule request`, and detail `id cannot be . or ..`, before any
+seed-file write or active snapshot change, including disabled rules. These
+IDs form dot segments that ServeMux cleans out of literal management paths.
+Authentication, configured-file availability and body decoding keep their
+existing precedence. Other dot text (`...`, `.prior`, `prior.`, `prior..id`)
+and literal percent text (`%2e`, `%2E`) remain valid exact identities.
+
 Rule and suppression mutation bodies are limited to 1 MiB, reject unknown fields, and must contain exactly one JSON document.
 
 ### `PUT /api/rules/{id}`
@@ -302,7 +310,7 @@ Rule and suppression mutation bodies are limited to 1 MiB, reject unknown fields
 Replaces an existing rule, persists the full rules file, reloads it, and atomically swaps the active snapshot. If the body includes `id`, it must match the path ID.
 
 Rule management uses the exact decoded path ID. An empty ID or any decoded
-slash returns HTTP 404 `NOT_FOUND`, message `Rule not found`, before auth, body
+slash, or exact `.` or `..`, returns HTTP 404 `NOT_FOUND`, message `Rule not found`, before auth, body
 decoding or mutation. For example, `/api/rules/prior/` and
 `/api/rules/%2Fprior%2F` cannot update or delete `prior`. An omitted body `id`
 uses the exact path ID. Encode literal percent signs in IDs: `prior%2F` is
@@ -313,6 +321,14 @@ Raw-path ServeMux cleanup can redirect before this handler (307 in pinned Go
 slash IDs still load, match and reload; edit their seed file and reload to
 manage them. R90-187 direct router/Engine/file regressions are authored and
 compiled; behavioral execution remains **not run; delegated by user**.
+
+Encoded dot paths such as `/api/rules/%2e` and `/api/rules/%2E%2E` reach this
+guard and return 404. Literal `/api/rules/.` and `/api/rules/..` instead retain
+the pinned router's 307 redirects to `/api/rules` and `/api` before handler
+entry. Legacy dot IDs still save, load, match and reload; manage them by editing
+the seed file and posting to the collection reload endpoint. No core/file
+migration is required. R90-188 direct router/Engine/file regressions are
+authored; behavioral execution remains **not run; delegated by user**.
 
 ### `DELETE /api/rules/{id}`
 

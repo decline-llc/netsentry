@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-10-08 through 2027-01-05. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-10-10 through 2027-01-07. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -152,7 +152,7 @@ formal SLO and evidence contract is unchanged.
 | R90-72 | Oct 3–31 | Complete early | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
 | R90-73 | Aug 5–Sep 4 | Complete early | Add versioned local benchmark evidence capture. | R90-72 | One directly tested command captures every established C/Go benchmark with exact Git/tree state, environment/toolchain fingerprint, parameters, raw output, parsed metrics, path redaction, and local-synthetic classification without applying a threshold. |
 | R90-74 | Sep 5–Oct 2 | Complete early | Record a repeated single-host benchmark baseline. | R90-73 | At least five uncached complete-surface samples from one clean pinned commit and unchanged environment retain every raw result plus median/IQR/variation summaries as observation-only local evidence. |
-| R90-75 | Oct 8–Jan 5 | Acceptance delegated; development unblocked | Validate proposed staging/production SLO acceptance profiles. | R90-74; R90-113 contract; departmental execution and evidence | Departmental tests must establish end-to-end latency, offered-versus-completed loss, missing-alert failures and extended-tail evidence with full artifacts; agent development proceeds without test execution or a local hardware prerequisite. |
+| R90-75 | Oct 10–Jan 7 | Acceptance delegated; development unblocked | Validate proposed staging/production SLO acceptance profiles. | R90-74; R90-113 contract; departmental execution and evidence | Departmental tests must establish end-to-end latency, offered-versus-completed loss, missing-alert failures and extended-tail evidence with full artifacts; agent development proceeds without test execution or a local hardware prerequisite. |
 | R90-76 | Aug 9 | Complete | Audit post-tag delivery and restore the forward queue. | R90-59a; R90-74 | A dated audit reconciles the local-tag feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current code/tests, and blocked authorities, then restores only evidence-grounded local work without runtime or publication changes. |
 | R90-77 | Aug 10–Sep 4 | Complete early | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
 | R90-78 | Sep 5–25 | Complete early | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
@@ -278,6 +278,8 @@ formal SLO and evidence contract is unchanged.
 | R90-185 | Oct 8–Jan 5 | Complete implementation; tests delegated | Reject the reserved suppression reload ID on HTTP creation. | R90-184 verified feature/closure; existing suppression manager and routes | Exact reload rejects before Add/persistence/publication; enabled/disabled and auth diagnostics covered; case variants and legacy/direct-manager compatibility retained; direct handler/manager/file assertions authored, execution delegated. |
 | R90-186 | Oct 8–Jan 5 | Complete implementation; tests delegated | Preserve suppression identity across slash-bearing HTTP paths. | R90-185 verified feature/closure; existing suppression manager/routes | Creation rejects literal slash IDs before Add; decoded management IDs are not trimmed into neighbors; encoded slash-free CRUD and legacy/direct-manager compatibility retain their contracts; direct authored execution delegated. |
 | R90-187 | Oct 8–Jan 5 | Complete implementation; tests delegated | Preserve exact decoded rule identity during HTTP management. | R90-186 verified feature/closure; existing rule engine/routes | Decoded slash paths reject before mutation without selecting neighbors; encoded slash-free CRUD and legacy file/engine/reload retain their contracts; direct authored execution delegated. |
+
+| R90-188 | Oct 10–Jan 7 | In progress; tests delegated | Reject dot-segment rule IDs at the HTTP boundary. | R90-187 verified feature/closure; existing rule engine/routes | Exact . and .. reject creation and decoded management without state changes; other dot/percent identities and legacy file/core/reload remain compatible; direct authored execution delegated. |
 
 ## R90-01 Definition
 
@@ -12948,3 +12950,79 @@ departmental acceptance outstanding; Oct 8–Jan 5 forecast. The next trigger
 audits fresh Git/Vault/history/source/queue and persists a separate eligible
 plan before edits. Repair missing evidence only; no delegated execution/private
 input/department contact/publication/SLO acceptance authority added.
+
+
+## R90-188 Definition
+
+- **Goal:** reject exact dot-segment IDs before HTTP rule persistence/publication
+  and prevent encoded management of those IDs from mutating state.
+- **Risk:** broader dot normalization could alter valid identities or legacy
+  file compatibility; raw paths redirect before the guard.
+- **Required validation:** direct public router/real Engine/file creation and
+  management declarations for both IDs, raw redirect and diagnostic controls,
+  exact other-dot/percent CRUD and legacy compatibility; pinned compile-only,
+  docs/JSON/unique complete roadmap multisets/history/full R90-75/split/handoff/
+  horizon/links/fences/sensitive/diff and exact Git/Vault verification.
+  Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated
+  by user**; no executed acceptance is claimed.
+- **Stop condition:** ambiguous compile/static/Git/Vault, competing edits,
+  suppression or broader router/core policy, migration or new authority.
+
+## R90-188 Selection and Trigger Audit (2026-10-10)
+
+Clean fresh HEAD/origin/main/FETCH_HEAD baseline
+`728375b4ec4b7b234cb7edf90597716835e2c50d`; R90-187 feature/sole closure
+notes and exact seven/three-path scopes, full 619-commit index, bounded MOC and
+fourteen stable current notes verified. Four-week audit: 156 commits; SLO
+retained-input tooling then bounded correctness fixes with authored/compiled
+regressions. No missing latest delivery or new independent R90-75 acceptance.
+456 Vault Markdown baseline files and 409 immutable iteration records excluding
+the generated index are snapshotted. Execution remains delegated by the standing
+user instruction; no knowledge/behavioral suite is run.
+
+The sole unfinished row was R90-75; all 191 prior row/Definition identifiers
+are complete and unique. Restore the empty ready queue with source-proven
+R90-188: HTTP creation accepts exact . and .., but literal management paths
+are cleaned away by pinned ServeMux. Encoded dot paths reach by-ID handling.
+Pinned Go 1.26.8 cleanPath/findHandler and unchanged core/file ID validation
+traced. Safest bounded default: reject exact dots at HTTP creation and decoded
+management, retain legacy file/core/reload compatibility and other identities.
+Forecast advanced from Oct 8–Jan 5 to Oct 10–Jan 7; completed history preserved.
+Plan/state/acceptance map/non-goals/stop boundaries persisted before runtime or
+public documentation edits. Exactly this increment; no next work started.
+
+
+## R90-188 Compile and Static Checkpoint (2026-10-10)
+
+Runtime delta: the rule by-ID guard rejects exact decoded . and .., and
+validateRuleBasics rejects both with detail `id cannot be . or ..` before
+transaction/persistence/publication. Existing creation auth/file/decode
+precedence and other diagnostics retain their contracts. No normalization,
+registration, suppression, core/file restriction or migration change.
+
+Five direct declarations reach the actual router/Engine/configured seed file.
+32 creation cases cover both IDs, enabled/disabled, auth on/off and four
+artifacts with spaces. 24 encoded management cases include missing auth and
+malformed bodies, plus four pinned raw 307/Location controls. Six ordinary
+diagnostic controls preserve full state. Six other-dot/percent IDs exercise
+exact create/list/absent-ID update/reload/delete with full responses, neighboring
+prior, independent persisted load/rebuilt engine/count/matching. Legacy . and
+.. retain identity through save/load/Engine.Reload and collection reload before
+and after file edits. Reused fixture constructors, selected modes, actual seed
+paths, serialized omission and helper matching defaults traced. Full tree
+membership/modes/bytes, Rules/count and callers are checked where promised.
+Every acceptance maps to authored direct boundaries, not executed outcomes.
+
+Pinned Go 1.26.8 API/rule/cmd compile-only passed; no test binary executed.
+Formatting/docs/219 JSON (206 states)/192 complete unique roadmap multisets/
+complete history/full R90-75/testing split/prior handoff/90-day horizon/links/
+fences/seven intended paths/sensitive/diff checks passed. All 456 baseline Vault
+Markdown files remain unchanged. No unresolved result or scope expansion.
+Existing skill exact-route/neighbor/serialized-omission/pinned-runtime guidance
+applied and Markdown checked; no redundant skill edit.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated
+by user**. Compilation/static review proves no executed rejection, preservation,
+CRUD, routing, race, release or SLO pass. Legacy dots require seed edits/reload;
+raw redirects precede the guard. Feature delivery/Vault and the sole docs-only
+closure remain pending. No next increment started.

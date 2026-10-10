@@ -666,7 +666,7 @@ func (s *Server) handleRules(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleRuleByID(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimPrefix(r.URL.Path, "/api/rules/")
-	if id == "" || strings.Contains(id, "/") {
+	if id == "" || strings.Contains(id, "/") || id == "." || id == ".." {
 		writeError(w, r, http.StatusNotFound, "NOT_FOUND", "Rule not found")
 		return
 	}
@@ -813,6 +813,9 @@ func validateRuleBasics(r *model.Rule) error {
 	}
 	if strings.ContainsAny(r.ID, "/?#") {
 		return fmt.Errorf("id cannot contain /, ?, or #")
+	}
+	if r.ID == "." || r.ID == ".." {
+		return fmt.Errorf("id cannot be . or ..")
 	}
 	if r.ID == "reload" {
 		return fmt.Errorf("id %q is reserved for the rules reload endpoint", r.ID)

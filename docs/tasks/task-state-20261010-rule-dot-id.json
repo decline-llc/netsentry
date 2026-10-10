@@ -1,0 +1,50 @@
+{
+  "task": "r90-188-rule-dot-id",
+  "timestamp": "2026-10-10",
+  "branch": "main",
+  "starting_remote_baseline": "728375b4ec4b7b234cb7edf90597716835e2c50d",
+  "remote_baseline": "728375b4ec4b7b234cb7edf90597716835e2c50d",
+  "risk_level": "Low",
+  "current_checkpoint": "compile_static_passed_feature_delivery_pending",
+  "completed": [
+    "Fresh clean Git/previous exact feature and closure Vault/index/MOC/stable authority verified",
+    "Four-week history and sole unfinished R90-75 audited; source-proven empty queue restoration selected",
+    "Pinned ServeMux source and file/core validation traced",
+    "Plan/state/acceptance map and 456-file Vault/repository baseline snapshots persisted",
+    "Bounded creation/by-ID guards and five direct actual router/Engine/file declarations authored",
+    "All planned rejection, preservation, diagnostic, raw redirect, exact CRUD and legacy boundaries source-reviewed",
+    "Pinned Go 1.26.8 API/rule/cmd compile-only passed; no binaries executed",
+    "Formatting/docs/219 JSON (206 states)/192 complete unique roadmap multisets/history/full R90-75/testing split/handoff/horizon/links/fences/seven paths/sensitive/diff passed",
+    "All 456 baseline Vault files unchanged; existing skill guidance applied and Markdown validated"
+  ],
+  "in_progress": [
+    "Feature commit/push/fetch/Vault and sole docs-only closure"
+  ],
+  "validation": {
+    "behavioral_race_full_scanner_knowledge_traffic_acceptance": "not run; delegated by user",
+    "compile_static": "passed pinned Go 1.26.8 API/rule/cmd compile-only and format/docs/219 JSON (206 states)/192 unique complete roadmap multisets/history/full R90-75/split/handoff/horizon/links/fences/seven-path/sensitive/diff; no binaries executed"
+  },
+  "authority_boundaries": [
+    "Exactly one increment; standing departmental execution delegation",
+    "No suppression/core/file migration/router policy/private input/department contact/publication/SLO acceptance"
+  ],
+  "remaining_risks": [
+    "Authored regressions require departmental execution",
+    "Legacy dot IDs require file edits and reload",
+    "Raw router paths redirect before handler entry"
+  ],
+  "deviations": [
+    "Empty ready queue restored with source-proven rule dot identity repair",
+    "Unfinished forecast advanced to Oct 10-Jan 7; completed history unchanged"
+  ],
+  "resume_instructions": "Continue only R90-188 from persisted plan; compile/static review without executing delegated tests, then exact commit/push/fetch/Vault and one docs-only closure. Do not start subsequent work.",
+  "todo": [
+    "Commit/push/fetch/Vault; sole docs-only closure"
+  ],
+  "next_increment": {
+    "id": null,
+    "started": false,
+    "departmental_acceptance": "R90-75 outstanding"
+  },
+  "skill_improvement": "Existing exact-route/serialized-omission/neighbor/pinned-runtime guidance sufficient; Markdown checked without redundant update"
+}
