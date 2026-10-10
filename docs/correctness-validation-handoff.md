@@ -1158,3 +1158,48 @@ by user**. The department must execute these declarations and appropriate
 regressions; source review or compilation establishes no runtime pass.
 This follow-up adds no full-suite, release or SLO acceptance. The independent
 R90-75 contract above and all earlier handoff prose remain unchanged.
+
+
+## R90-189 follow-up: dot-segment suppression IDs (2026-10-10)
+
+Suppression creation rejects exact . and .. before Add/manager validation/
+persistence/filter publication, including disabled entries. Decoded management
+rejects both with 404 NOT_FOUND / Suppression not found before auth, decoding,
+lookup or mutation. Pinned Go 1.26.8 raw dot paths retain 307/Location redirects
+to /api/suppressions and /api. Encoded dots reach the handler guard. Other dot/
+percent identities remain exact; legacy dots retain file/direct-manager/filter/
+collection-reload compatibility without migration.
+
+Source: `engine/internal/api/router.go`. Five authored direct declarations in
+`engine/internal/api/suppression_dot_id_test.go`:
+
+- `TestHTTPSuppressionCreateRejectsDotIDsWithoutMutation`: 32 two-ID/four-
+  artifact/enabled/disabled/auth-on/off cases, using absent/healthy/coexisting
+  legacy dots/file-parent resources with spaces; full tree membership/modes/
+  bytes, List/filter, independently specified probe survivors and callers.
+- `TestHTTPSuppressionDotManagementAndRawRedirectBoundaries`: four encoded
+  paths, PUT/DELETE, no-auth/authorized/missing-auth (24 cases), truly absent-ID
+  serialization or malformed body, plus four literal pinned 307/Location
+  controls; full . / .. / prior resources and caller/probe preservation.
+- `TestHTTPSuppressionDotCreationDiagnosticPrecedence`: nine auth/manager/
+  malformed/unknown/required/slash/reload/dot-before-CIDR/compiler controls;
+  exact error/request-ID envelopes and complete state preservation.
+- `TestHTTPSuppressionOtherDotAndPercentIDsRetainExactCRUD`: six ..., .prior,
+  prior., prior..id, %2e and %2E IDs through actual create/list/encoded absent-ID
+  update/reload/delete; full identity responses, neighbor, independent loaded/
+  rebuilt manager/filter and caller preservation. Omission asserts wire data.
+- `TestHTTPFileLoadedDotSuppressionIDsRetainManagerCompatibility`: exact both
+  dots through save/load/rebuilt manager/filter and collection reload before/
+  after file edit, followed by direct Delete/Add/Update/Delete for each dot;
+  independent expected filtering and neighbor/caller preservation.
+
+Reused helpers traced through NewSuppressionManagerWithFile, actual configured
+seed path, save/load/direct Add and ReloadFromFile. New observation wrapper
+also compares full artifacts and serialized probes before/after persisted
+load/rebuilt manager/filter. Constructor options reach the intended artifact;
+no ignored option establishes coverage. Pinned router source determines raw
+redirect expectations. Only direct declaration/source evidence is available.
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated
+by user**. The department must execute these declarations and appropriate
+regressions; compilation/static review proves no runtime acceptance. Full
+R90-75 contract and all prior handoff prose remain unchanged.

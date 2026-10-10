@@ -227,6 +227,13 @@ with `400 VALIDATION_ERROR`, message `Invalid suppression request`, detail
 containing literal percent sequences, `?` or `#` remain valid; percent-encode
 the complete ID when building its management URL.
 
+Exact dot-segment IDs `.` and `..` are also rejected at creation, including
+disabled entries, with `400 VALIDATION_ERROR`, message `Invalid suppression
+request`, detail `id cannot be . or ..`, before manager validation or mutation.
+Authentication, manager availability and body decoding retain their earlier
+diagnostics. Other dot text (`...`, `.prior`, `prior.`, `prior..id`) and literal
+percent text (`%2e`, `%2E`) remain valid exact identities.
+
 For enabled suppressions, omitted/null/empty `rule_ids` means all rules. A
 nonempty list must contain at least one nonempty ID; `[""]` and `["", ""]`
 are rejected rather than widening the scope. Empty entries mixed with valid IDs
@@ -242,13 +249,23 @@ not enforce this compiler requirement.
 Replaces an existing suppression, persists the full suppressions file when configured, and atomically swaps the active in-memory filter. If the request body includes `id`, it must match the path ID.
 
 The by-ID handler preserves the exact decoded path ID. An empty ID, an ID
-containing `/`, or the reserved `reload` ID returns `404 NOT_FOUND` when this
+containing `/`, exact `.` or `..`, or the reserved `reload` ID returns `404 NOT_FOUND` when this
 handler receives it, before authentication or mutation. Leading and trailing
 slashes are part of the rejected ID. ServeMux can redirect raw paths during
 cleanup before this handler runs. Legacy slash-bearing file entries still
 load, filter and reload; use file editing or direct manager methods to manage
 them. Literal percent-escape text in an ID is decoded only through the URL's
 encoded percent sign and keeps its stored spelling.
+
+Encoded dot paths such as `/api/suppressions/%2e` and
+`/api/suppressions/%2E%2E` return 404 `NOT_FOUND`, message `Suppression not
+found`, before auth, decoding or mutation. Literal `/api/suppressions/.` and
+`/api/suppressions/..` retain pinned Go 1.26.8 ServeMux's 307 redirects to
+`/api/suppressions` and `/api` before handler entry. Legacy dot IDs still save,
+load, filter and reload; use file editing or direct manager methods to manage
+them. No core/file migration is required. R90-189 direct router/manager/file
+regressions are authored; behavioral execution remains **not run; delegated
+by user**.
 
 ### `DELETE /api/suppressions/{id}`
 

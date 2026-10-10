@@ -281,6 +281,8 @@ formal SLO and evidence contract is unchanged.
 
 | R90-188 | Oct 10–Jan 7 | Complete implementation; tests delegated | Reject dot-segment rule IDs at the HTTP boundary. | R90-187 verified feature/closure; existing rule engine/routes | Exact . and .. reject creation and decoded management without state changes; other dot/percent identities and legacy file/core/reload remain compatible; direct authored execution delegated. |
 
+| R90-189 | Oct 10–Jan 7 | In progress; tests delegated | Reject dot-segment suppression IDs at the HTTP boundary. | R90-188 verified feature/closure; existing suppression manager/routes | Exact . and .. reject creation and decoded management without mutation; other dot/percent identities and legacy file/direct-manager/reload remain compatible; direct authored execution delegated. |
+
 ## R90-01 Definition
 
 - **Goal:** establish one versioned 90-day delivery authority and a
@@ -13081,3 +13083,83 @@ departmental acceptance outstanding, Oct 10–Jan 7 forecast. The next trigger
 audits fresh Git/Vault/history/source/queue and persists a separate eligible
 plan before editing. Repair missing evidence only; no delegated execution,
 private input, department contact, publication or SLO acceptance authority added.
+
+
+## R90-189 Definition
+
+- **Goal:** reject exact dot-segment suppression IDs before HTTP mutation and
+  preserve exact decoded identity at management without changing core policy.
+- **Risk:** broader normalization could alter valid identities or legacy
+  file/direct-manager compatibility; raw-path redirects precede the handler.
+- **Required validation:** direct actual router/manager/file declarations for
+  both creation/management rejection conditions, raw redirect/diagnostic controls,
+  exact other-dot/percent CRUD and legacy file/direct-manager/reload filtering;
+  pinned Go 1.26.8 compile-only and format/docs/JSON/complete unique roadmap
+  multisets/history/full R90-75/split/handoff/horizon/links/fences/sensitive/diff;
+  exact Git/Vault delivery, stable/topic/immutable preservation and replay.
+  Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated
+  by user**; no executed acceptance inferred.
+- **Stop condition:** ambiguous compile/static/Git/Vault, competing edits,
+  broader rule/router/core policy, migration or new authority.
+
+## R90-189 Selection and Trigger Audit (2026-10-10)
+
+Clean freshly fetched HEAD/origin/main/FETCH_HEAD baseline
+`8cf6775e01ca2ed4d93d4ee9634dadff4a95fb53`. R90-188 exact feature/sole
+closure scopes/notes, full 621-commit index, versioned bounded MOC, fourteen
+stable current notes, complete topic/immutable preservation and identical
+458-file replay verified. Four-week phase audit: 158 commits; SLO retained-input
+tooling followed by bounded correctness deliveries. No missing latest delivery
+or new independent R90-75 acceptance. Snapshot: 458 Vault Markdown files and
+411 immutable iteration records excluding generated full index. All 192 prior
+row/Definition pairs are complete and unique; sole unfinished item is R90-75.
+
+Restore the empty ready queue with source-proven R90-189 after R90-188:
+suppression creation accepts exact . and ..; literal paths are cleaned away
+by pinned ServeMux while encoded paths reach by-ID handling. Manager/file
+validation allows legacy dots. Trace actual configured manager artifact,
+constructor/resource resolution, file load/save/reload/filter and pinned Go
+1.26.8 cleanPath/findHandler. Safest default: exact HTTP rejection with other
+identities and core/file/direct-manager compatibility preserved. Oct 10–Jan 7
+forecast and completed history retained. Plan/state/acceptance map/non-goals/
+stop boundary and baseline snapshots persisted before implementation. Exactly
+this increment; no next work begun or delegated test execution.
+
+
+## R90-189 Compile and Static Checkpoint (2026-10-10)
+
+Runtime delta is four creation guard lines and two exact dot checks in the
+existing suppression by-ID guard. Both dot identities reject creation before
+Add/manager validation/persistence/publication and decoded management before
+auth/decoding/lookup/mutation. Other dot/percent identities, earlier creation
+auth/manager/decode diagnostics and raw routing retain their contracts.
+No rule, registration/normalization, core/file/direct-manager policy or migration
+change.
+
+Five authored declarations reach the actual router/manager/configured file:
+32 creation cases, 24 encoded management cases, four pinned raw 307/Location
+controls and nine exact diagnostic controls. Six other-dot/percent identities
+exercise actual create/list/encoded absent-ID update/reload/delete, full exact
+responses and neighboring prior. Legacy . and .. retain file save/load/rebuilt
+manager/filter/collection reload before and after edits, plus direct Delete/
+Add/Update/Delete for both. Configured resource, constructor/defaults, helper
+modes, serialized ID omission, independent surviving probes and pinned router
+normalization traced. Full tree modes/bytes/membership, List/filter and callers
+are preserved at promised rejection/read-only boundaries. Persisted load and
+rebuilt-manager/filter observations compare artifacts/probes before and after.
+Every acceptance maps to a direct authored boundary, not executed outcomes.
+
+Pinned Go 1.26.8 API/alert/cmd compile-only passed; no test binary executed.
+Formatting/docs/220 JSON (207 states)/193 complete unique roadmap multisets/
+complete history/full R90-75/testing split/prior handoff/90-day horizon/links/
+fences/seven-path/sensitive/diff checks passed. All 458 baseline Vault Markdown
+files remain unchanged. No ambiguous result, competing edits or scope expansion.
+Existing skill exact-route/serialized-omission/constructor/resource/neighbor/
+pinned-runtime guidance applied; Markdown checked without redundant skill edits.
+
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated
+by user**. Source/compilation/static review establishes no executed rejection,
+preservation, CRUD, routing, race, release or SLO pass. Legacy dot IDs require
+file edits/reload or direct manager methods; raw redirects precede the guard.
+Feature delivery/Vault and sole docs-only closure remain pending. No next
+increment begun; full R90-75 acceptance remains outstanding.
