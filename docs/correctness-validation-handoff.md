@@ -1203,3 +1203,177 @@ Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated
 by user**. The department must execute these declarations and appropriate
 regressions; compilation/static review proves no runtime acceptance. Full
 R90-75 contract and all prior handoff prose remain unchanged.
+
+## Current redaction and identity inventory: R90-183 through R90-189
+
+This consolidated inventory reviews seven delivered repairs against clean
+fetched baseline `0c2c0d006375b4bda5bfb99ee13bbb5fdfeb2aef`.
+[R90-190 plan](plans/task-20261015-validation-identity-inventory.md) ·
+[state](tasks/task-state-20261015-validation-identity-inventory.json).
+All original inventories and detailed supplements above remain historical
+snapshots. Record the actual reviewed checkout SHA; later edits require a fresh
+source review. The feature SHAs below establish source ancestry, not execution.
+
+Across the seven entries, **nine distinct changed Go test files contain 37
+distinct current top-level Test declarations**, with **nine file references
+and 37 declaration references**. R90-183 includes six existing declarations in
+redactor_json_test.go as file-level companions: its source change removes one
+superseded escaped-key unchanged-input assertion from one function. Those six
+declarations already occur in the original inventory. The other eight files
+introduce 31 declarations. Counts exclude helpers, subtests and benchmarks;
+they do not count executed cases or successful assertions.
+
+Combined with the preserved R90-144..172 and R90-174..181 inventories, the bounded
+handoff covers **44 repair increments, 57 distinct test files and 160 distinct
+declarations**, with **61 file references and 175 declaration references**.
+The overlap is exactly redactor_json_test.go and its six declarations, not a
+second set of tests. Documentation increments R90-173/182/190, earlier SLO/Python
+work and other repository tests are outside these totals.
+
+| Increment | Files | Declarations | Current review boundary |
+|---|---|---|---|
+| R90-183 | 3 | 10 (6 reused) | Decoded credential names at complete/preview-end values; real Engine/Worker writer boundary and existing redactor companions. |
+| R90-184 | 1 | 4 | Exact reserved rule reload identity; case neighbors and legacy file/Engine compatibility. |
+| R90-185 | 1 | 4 | Exact reserved suppression reload identity including disabled entries; case neighbors and file/direct-manager compatibility. |
+| R90-186 | 1 | 5 | Slash creation rejection, exact decoded suppression management, encoded CRUD and legacy direct-manager scope. |
+| R90-187 | 1 | 4 | Exact decoded rule management with neighbors preserved; encoded CRUD and file/core reload compatibility. |
+| R90-188 | 1 | 5 | Exact rule dot rejection, raw redirects, other-dot/percent CRUD and legacy file/core compatibility. |
+| R90-189 | 1 | 5 | Exact suppression dot rejection including disabled entries, raw redirects and legacy file/direct-manager compatibility. |
+
+### Source commit and declaration mapping
+
+#### R90-183
+
+`64d2495ef01684cc8abe9b76fb0e5a4c00ba2737` ·
+[plan](plans/task-20261007-json-key-redaction.md) ·
+[state](tasks/task-state-20261007-json-key-redaction.json).
+
+[engine/internal/alert/redactor_json_keys_test.go](../engine/internal/alert/redactor_json_keys_test.go):
+
+- `TestRedactJSONDecodedCredentialNames`
+- `TestRedactJSONEscapedNamesAtPreviewEndAndRepeatedFields`
+- `TestRedactJSONKeyControlsAndBatchMetadata`
+
+[engine/internal/pipeline/redaction_json_keys_test.go](../engine/internal/pipeline/redaction_json_keys_test.go):
+
+- `TestWorkerRedactsRealEngineEscapedJSONNamesBeforeWriter`
+
+[engine/internal/alert/redactor_json_test.go](../engine/internal/alert/redactor_json_test.go)
+(six reused file companions, not six added declarations):
+
+- `TestRedactJSONCredentialValuesWithEscapes`
+- `TestRedactJSONValueQuoteParityFormattingAndMultipleFields`
+- `TestRedactEscapedJSONBatchPreservesAlertMetadataAndNilEntries`
+- `TestJSONRedactionPreservesExistingHeaderPairAndUnrelatedValues`
+- `TestRedactJSONCredentialValuesAtPreviewEnd`
+- `TestRedactTruncatedJSONBatchPreservesMetadata`
+
+#### R90-184
+
+`8864cbf7812f890bdd777f311ae27c8597cae424` ·
+[plan](plans/task-20261007-rule-reload-id.md) ·
+[state](tasks/task-state-20261007-rule-reload-id.json).
+
+[engine/internal/api/rule_reload_id_test.go](../engine/internal/api/rule_reload_id_test.go):
+
+- `TestHTTPRuleCreateRejectsReservedReloadIDWithoutMutation`
+- `TestHTTPRuleReloadIDDiagnosticPrecedence`
+- `TestHTTPRuleReloadCaseVariantIDsRemainManageable`
+- `TestHTTPFileLoadedReloadIDRetainsCompatibility`
+
+#### R90-185
+
+`7f1ff9bbde65474f7f5ae8b205315fb7a6dd4b5a` ·
+[plan](plans/task-20261008-suppression-reload-id.md) ·
+[state](tasks/task-state-20261008-suppression-reload-id.json).
+
+[engine/internal/api/suppression_reload_id_test.go](../engine/internal/api/suppression_reload_id_test.go):
+
+- `TestHTTPSuppressionCreateRejectsReservedReloadIDWithoutMutation`
+- `TestHTTPSuppressionReloadIDDiagnosticPrecedence`
+- `TestHTTPSuppressionReloadCaseVariantIDsRemainManageable`
+- `TestHTTPFileLoadedSuppressionReloadIDRetainsCompatibility`
+
+#### R90-186
+
+`5baa56dcaba65debe2fea0258614bf73f612508f` ·
+[plan](plans/task-20261008-suppression-slash-id.md) ·
+[state](tasks/task-state-20261008-suppression-slash-id.json).
+
+[engine/internal/api/suppression_slash_id_test.go](../engine/internal/api/suppression_slash_id_test.go):
+
+- `TestHTTPSuppressionCreateRejectsSlashIDsWithoutMutation`
+- `TestHTTPSuppressionSlashIDDiagnosticPrecedence`
+- `TestHTTPSuppressionSlashManagementPathsDoNotAlias`
+- `TestHTTPSuppressionEncodedSlashFreeIDsRemainManageable`
+- `TestHTTPFileLoadedSlashSuppressionIDsRetainManagerCompatibility`
+
+#### R90-187
+
+`0abe531590a48768a87a2b45b5ef35794d415118` ·
+[plan](plans/task-20261008-rule-path-identity.md) ·
+[state](tasks/task-state-20261008-rule-path-identity.json).
+
+[engine/internal/api/rule_path_identity_test.go](../engine/internal/api/rule_path_identity_test.go):
+
+- `TestHTTPRuleSlashManagementPathsDoNotAlias`
+- `TestHTTPRulePathIdentityDiagnosticsAndRawRedirects`
+- `TestHTTPRuleEncodedSlashFreeIDsRemainManageable`
+- `TestHTTPFileLoadedSlashRuleIDsRetainEngineCompatibility`
+
+#### R90-188
+
+`ed41d90f0f4dc5b27633ff8dcd446b0c4877e7ca` ·
+[plan](plans/task-20261010-rule-dot-id.md) ·
+[state](tasks/task-state-20261010-rule-dot-id.json).
+
+[engine/internal/api/rule_dot_id_test.go](../engine/internal/api/rule_dot_id_test.go):
+
+- `TestHTTPRuleCreateRejectsDotIDsWithoutMutation`
+- `TestHTTPRuleDotManagementAndRawRedirectBoundaries`
+- `TestHTTPRuleDotCreationDiagnosticPrecedence`
+- `TestHTTPRuleOtherDotAndPercentIDsRetainExactCRUD`
+- `TestHTTPFileLoadedDotRuleIDsRetainCompatibility`
+
+#### R90-189
+
+`37d74ec347b25e65a4bf9044cbf7c6f7af239a42` ·
+[plan](plans/task-20261010-suppression-dot-id.md) ·
+[state](tasks/task-state-20261010-suppression-dot-id.json).
+
+[engine/internal/api/suppression_dot_id_test.go](../engine/internal/api/suppression_dot_id_test.go):
+
+- `TestHTTPSuppressionCreateRejectsDotIDsWithoutMutation`
+- `TestHTTPSuppressionDotManagementAndRawRedirectBoundaries`
+- `TestHTTPSuppressionDotCreationDiagnosticPrecedence`
+- `TestHTTPSuppressionOtherDotAndPercentIDsRetainExactCRUD`
+- `TestHTTPFileLoadedDotSuppressionIDsRetainManagerCompatibility`
+
+### Fixture authority and departmental execution
+
+The existing commands cover these owning packages relative to engine:
+`./internal/alert`, `./internal/pipeline` and `./internal/api`. Keep pinned
+toolchain preflight, uncached `-count=1`, serial focused/full/race/knowledge
+sequencing, reviewed checkout SHA and complete logs/deviations. This inventory
+adds no execution command or execution authority.
+
+R90-183 supersedes the earlier escaped-key exclusion; the retained historical
+inventory is not current authority for that removed assertion. Review complete
+and preview-truncated values through the redactor and the real Engine/Worker
+writer-entry copy, including exact bytes, metadata, caller preservation and
+terminal accounting. Keep malformed multiline, truncated-key and whole-document
+parsing guarantees outside the stated scope.
+
+For R90-184/185, the earlier ID-omitted wording describes a serialized empty
+string member. R90-186..189 remove the id member and assert its wire absence.
+Do not infer absent-member coverage from an empty Go field. Trace actual
+Server.Handler routing, configured seed path and real Engine/manager modes.
+Pinned Go 1.26.8 normalization establishes raw 307/Location controls separately
+from encoded handler rejections; require exact identity and neighboring-resource
+preservation. Creation, management and legacy file/core/direct-manager contracts
+have different boundaries; consult each detailed supplement and linked plan.
+
+Every file/declaration above is authored inventory, not an executed outcome.
+Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
+user**. The full independent R90-75 contract, release/private-input/department-
+contact boundaries and all prior handoff prose remain unchanged.

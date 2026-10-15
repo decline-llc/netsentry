@@ -37,9 +37,11 @@ it with `GOCACHE=/path/to/cache` when you want to use a different cache.
 The [departmental correctness validation handoff](correctness-validation-handoff.md)
 retains the frozen R90-144..172 inventory and adds a
 [current R90-174..181 summary](correctness-validation-handoff.md#current-follow-up-inventory-r90-174-through-r90-181),
-with exact feature/correction SHAs, source declarations and corrected daily
-fixture authority. Its combined bounded inventory covers 37 increments,
-49 distinct test files and 129 distinct declarations; these are authored
+plus the [R90-183..189 redaction and identity summary](correctness-validation-handoff.md#current-redaction-and-identity-inventory-r90-183-through-r90-189).
+These map exact feature/correction SHAs, source declarations, corrected daily
+fixtures and empty-versus-absent ID authority. The combined bounded inventory
+covers 44 repair increments, 57 distinct test files and 160 distinct declarations;
+six redactor companions are reused and counted once. These are authored
 inventory counts, with execution debt and module-relative uncached departmental
 commands. Test execution remains assigned to the specialist department under
 the roadmap policy.
