@@ -283,7 +283,7 @@ formal SLO and evidence contract is unchanged.
 
 | R90-189 | Oct 10–Jan 7 | Complete implementation; tests delegated | Reject dot-segment suppression IDs at the HTTP boundary. | R90-188 verified feature/closure; existing suppression manager/routes | Exact . and .. reject creation and decoded management without mutation; other dot/percent identities and legacy file/direct-manager/reload remain compatible; direct authored execution delegated. |
 
-| R90-190 | Oct 15–Jan 12 | Documentation ready; delivery pending | Consolidate the redaction and HTTP identity validation inventory. | R90-189 verified feature/closure; R90-182 inventory | Seven repairs map full feature SHAs to every changed Go test file/current declaration, including reused redactor companions; combined distinct/reference counts and fixture authority are explicit; prior handoff/full R90-75 preserved, no test execution. |
+| R90-190 | Oct 15–Jan 12 | Complete documentation; tests delegated | Consolidate the redaction and HTTP identity validation inventory. | R90-189 verified feature/closure; R90-182 inventory | Seven repairs map full feature SHAs to every changed Go test file/current declaration, including reused redactor companions; combined distinct/reference counts and fixture authority are explicit; prior handoff/full R90-75 preserved, no test execution. |
 
 ## R90-01 Definition
 
@@ -13282,3 +13282,48 @@ no new reusable lesson required a skill edit. No compiler or test was invoked.
 Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated
 by user**. Exact Git/Vault delivery and the sole docs-only closure remain.
 No next increment started or independent R90-75 acceptance claimed.
+
+## R90-190 Completion and Forward Queue Refresh (2026-10-15)
+
+Feature `a86524450c8719b8004011e1c406a4162273d313` contains exactly five intended
+documentation paths. Non-force push and immediate fresh fetch verified clean
+HEAD/origin/main/FETCH_HEAD at that full SHA. Exact local Vault range
+`0c2c0d006375b4bda5bfb99ee13bbb5fdfeb2aef..a86524450c8719b8004011e1c406a4162273d313`
+verified note `04-开发迭代记录/2026-10-15-a86524450c-CI知识同步.md`, five-path scope,
+all 624 index commits and versioned bounded MOC links. Abbreviated generated
+range endpoints resolve through Git to the full recorded endpoints.
+
+Fourteen stable current notes reconcile current inventory/delivery/queue
+authority. Their complete prior topic prose remains under explicit historical
+headings; only the versioned bounded generated MOC region is excluded from
+topic comparison. All 445 baseline non-stable/non-generated notes, including
+413 immutable iteration records, remain unchanged. Identical feature-range
+replay preserved all 461 Markdown hashes. Sorted sha256sum-manifest SHA-256:
+`c80d080dfaaec756395981d8682148e2c69d0489cfed578ed1c98f936fd0c178`.
+
+Acceptance comparison confirms seven exact feature/changed-file/declaration
+mappings, complete overlap/reference counts, current escaped-key/serialized-ID
+fixture authority, actionable development entrypoint and preserved prior
+handoff/roadmap/R90-75/testing authority. Static source/221 JSON (208 states)/
+194 complete unique roadmap pairs/ordered history/horizon/links/fences/five-path/
+sensitive review, docs-check and diff-check passed. No compiler or test executed;
+behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated
+by user**. Documentation delivery establishes no runtime or SLO pass. The only
+deviation is the recorded empty-queue consolidation and forecast refresh; no
+scope expansion or unresolved static result. Existing skills sufficed unchanged.
+
+### R90-190 Single Closure and Resume Authority
+
+This three-path docs-only delivery record is the sole closure of R90-190.
+Resolve its full SHA through fresh Git after commit; verify non-force push,
+fresh clean HEAD/origin/main/FETCH_HEAD, exact feature..closure note/index/
+bounded MOC, fourteen current stable notes, prior topic/immutable/feature-note
+preservation and identical hash replay. Feature SHA above is historical evidence.
+Do not repeat verified delivery or create a self-reference closure.
+
+Forward queue refreshed without starting another increment. R90-75 remains the
+sole unfinished row with its full independent departmental acceptance outstanding,
+Oct 15–Jan 12 forecast. No other defined local ready item. The next trigger audits
+fresh Git/Vault/history/source/queue and persists a separate eligible plan before
+editing. Repair missing evidence only; no delegated test execution, private input,
+department contact, publication or SLO acceptance authority is added.

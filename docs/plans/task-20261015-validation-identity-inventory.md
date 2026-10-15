@@ -65,3 +65,37 @@ diff-check passed; all baseline Vault hashes remain unchanged. No compiler or
 test executed. Behavioral/race/full/scanner/knowledge/traffic/acceptance
 **not run; delegated by user**. Existing skill instructions suffice without a
 redundant edit. Feature delivery/Vault and one docs-only closure remain pending.
+
+## Completion and forward queue refresh (2026-10-15)
+
+Feature `a86524450c8719b8004011e1c406a4162273d313` contains exactly the five
+intended documentation paths; non-force push and immediate fresh fetch verified
+clean HEAD/origin/main/FETCH_HEAD. Exact local Vault range
+`0c2c0d006375b4bda5bfb99ee13bbb5fdfeb2aef..a86524450c8719b8004011e1c406a4162273d313`
+verified `04-开发迭代记录/2026-10-15-a86524450c-CI知识同步.md`, five-path scope,
+all 624 index commits and versioned bounded MOC links with full endpoint
+resolution. Fourteen current stable notes reconciled; complete prior topic prose
+preserved under explicit historical headings, excluding only the verified
+generated MOC region. All 445 baseline non-stable/non-generated notes, including
+413 immutable iterations, preserved. Identical range replay preserved all 461
+Markdown hashes; sorted sha256sum-manifest SHA-256
+`c80d080dfaaec756395981d8682148e2c69d0489cfed578ed1c98f936fd0c178`.
+
+All four acceptance rows map to reviewed source/ancestry/full declaration
+multisets, overlap counts, fixture distinctions, unchanged prior authority and
+exact delivery evidence. Source/static/JSON/roadmap/horizon/link/fence/scope/
+sensitive/docs/diff review passed. Behavioral/race/full/scanner/knowledge/traffic/
+acceptance **not run; delegated by user**; no compiler invoked. No runtime or SLO
+pass inferred. Only the planned empty-queue consolidation/forecast refresh
+deviates from the prior queue. Existing skills suffice without redundant edits.
+
+### Single closure and resume authority
+
+This three-path docs-only record is the sole R90-190 closure. Resolve its SHA
+through freshly fetched HEAD/origin/main/FETCH_HEAD; verify clean exact refs and
+feature..closure note/index/bounded MOC, fourteen current notes, complete prior
+topic/immutable/feature-note preservation and identical replay. Do not repeat
+verified commit/push/sync or create a self-reference closure. No next increment
+started: R90-75 independent acceptance remains the sole unfinished item, Oct 15–
+Jan 12 forecast. No other defined ready item. Next trigger audits fresh source,
+history, queue, Git and Vault before persisting a separately eligible plan.
