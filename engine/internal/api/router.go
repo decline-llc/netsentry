@@ -591,11 +591,14 @@ func (s *Server) writeSuppressionMutationError(w http.ResponseWriter, r *http.Re
 }
 
 func decodeSuppression(w http.ResponseWriter, r *http.Request) (*alert.Suppression, error) {
-	var suppression alert.Suppression
+	var suppression *alert.Suppression
 	if err := decodeJSONDocument(w, r, &suppression); err != nil {
 		return nil, err
 	}
-	return &suppression, nil
+	if suppression == nil {
+		return nil, fmt.Errorf("suppression request body must be a JSON object")
+	}
+	return suppression, nil
 }
 
 type alertListResponse struct {

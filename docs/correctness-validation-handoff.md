@@ -1377,3 +1377,44 @@ Every file/declaration above is authored inventory, not an executed outcome.
 Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated by
 user**. The full independent R90-75 contract, release/private-input/department-
 contact boundaries and all prior handoff prose remain unchanged.
+
+
+## R90-191 supplement: null suppression mutation bodies (2026-10-16)
+
+[Plan](plans/task-20261016-suppression-null-body.md) ·
+[state](tasks/task-state-20261016-suppression-null-body.json) ·
+[source](../engine/internal/api/router.go) ·
+[authored regressions](../engine/internal/api/suppression_null_body_test.go).
+
+Source previously decoded top-level null into a zero Suppression, filled the
+PUT path ID and persisted/published a disabled replacement. The suppression
+decoder now uses a nullable pointer and rejects nil only after the existing
+complete-document check. POST/PUT return 400 VALIDATION_ERROR / Invalid
+suppression request / `suppression request body must be a JSON object`. Rule and
+shared decoders, manager/file schema and valid object semantics are unchanged.
+
+Three authored declarations reach the actual Handler and manager:
+
+- `TestHTTPSuppressionNullBodiesPreservePersistentAndActiveState`: 48 null
+  POST/PUT cases across three whitespace spellings, auth on/off and healthy,
+  missing-parent, file-parent and in-memory resources; full tree/modes/bytes,
+  list/filter and caller-probe preservation, plus healthy-file independent
+  load/rebuilt-manager observation.
+- `TestHTTPSuppressionNullBodyDiagnosticPrecedence`: 20 create/update controls
+  for auth, unavailable manager, incomplete/empty input, second object/null,
+  malformed tail, unknown member, oversized tail and null before missing-target
+  lookup; two encoded invalid-ID routing controls precede auth/body checks.
+- `TestHTTPSuppressionObjectBodiesAndRetryRetainSemantics`: healthy-file and
+  in-memory explicit disabled create/update, empty object update and enabled
+  optional-null update; actual null rejection followed by successful object
+  retry, serialized absent-ID/null-member assertions, exact response/list/
+  independent persisted filter and neighboring prior-rule preservation.
+
+Execute focused regressions from engine using the pinned Go toolchain and
+`go test -count=1 ./internal/api -run '^TestHTTPSuppression(NullBod|ObjectBodies)'`,
+then the established uncached API/full/race/knowledge sequence. These commands
+are for the test department; execution remains **not run; delegated by user**.
+This supplement is outside the historical R90-190 bounded inventory; it adds
+one authored file/three declarations without changing the prior counts. No
+runtime/SLO pass, independent R90-75 acceptance or new external authority is
+claimed.

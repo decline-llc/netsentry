@@ -1,0 +1,48 @@
+{
+  "task": "r90-191-suppression-null-body",
+  "timestamp": "2026-10-16",
+  "branch": "main",
+  "starting_remote_baseline": "b51b0f72932b4927a8e02e2c39f60af55eb34ff4",
+  "remote_baseline": "b51b0f72932b4927a8e02e2c39f60af55eb34ff4",
+  "risk_level": "Low",
+  "current_checkpoint": "implementation_compile_static_complete_delivery_pending",
+  "completed": [
+    "Fresh clean refs and recent phase history reviewed",
+    "R90-190 closure/index/bounded MOC and fourteen stable notes checked",
+    "Source traced null PUT through zero struct, path ID and manager persistence/publication",
+    "Seven-path plan and acceptance evidence map persisted",
+    "R90-190 closure replay identical across 462 Markdown files",
+    "Suppression-only nullable decoder implemented after complete-document validation",
+    "Three actual-router regression declarations authored: 48 rejection cases, 22 diagnostic/path controls, two object/retry resource modes",
+    "Pinned Go 1.26.8 API/cmd compile-only passed; no test binary executed",
+    "Static formatting/docs/222 JSON (209 states)/195 complete unique roadmap pairs/history/R90-75/split/handoff/horizon/links/fences/seven-path/sensitive/diff passed",
+    "All 462 baseline Vault Markdown hashes preserved"
+  ],
+  "in_progress": [
+    "Feature commit/push/fetch verification and local Vault synchronization",
+    "Single docs-only closure after verified feature delivery"
+  ],
+  "validation": {
+    "behavioral_race_full_scanner_knowledge_traffic_acceptance": "not run; delegated by user",
+    "compile_static": "passed Go 1.26.8 API/cmd compile-only and complete static review; no test binary executed"
+  },
+  "authority_boundaries": [
+    "Exactly one increment",
+    "No test binary execution",
+    "No rule/shared decoder or manager/file policy change",
+    "No private input, department contact, publication or SLO acceptance"
+  ],
+  "remaining_risks": [
+    "Authored regressions require departmental execution"
+  ],
+  "deviations": [
+    "Empty ready queue restored with source-proven null mutation repair; horizon refreshed Oct 16-Jan 13"
+  ],
+  "resume_instructions": "R90-191 implementation and compile/static review complete. Verify current worktree/refs before feature commit/push/fetch and exact local Vault range; then one docs-only closure. Do not execute delegated tests or start another increment.",
+  "next_increment": {
+    "id": null,
+    "started": false,
+    "departmental_acceptance": "R90-75 outstanding"
+  },
+  "skill_improvement": "Existing null/omitted fixture, decoder-order and actual-resource guidance sufficient; no redundant edit"
+}

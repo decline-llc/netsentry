@@ -210,6 +210,15 @@ Returns the active suppression rules in insertion order. At startup, suppression
 
 Adds a suppression rule and immediately applies it to newly generated alerts. Enabled suppressions require at least one `src_cidrs`, `dst_cidrs`, or `any_cidrs` entry. When `engine.suppressions_file` is configured, successful creates are persisted to that JSON file before the in-memory snapshot is updated.
 
+Suppression POST and PUT bodies must be JSON objects. A top-level `null`
+(including surrounding whitespace) returns `400 VALIDATION_ERROR`, message
+`Invalid suppression request`, detail
+`suppression request body must be a JSON object`, before any file or active
+filter mutation. Authentication, manager availability, route validation and
+malformed/trailing/unknown-field/body-size diagnostics retain precedence.
+Explicit disabled objects, an empty PUT object and optional members containing
+`null` retain their existing semantics; use an object to disable a suppression.
+
 HTTP creation reserves the exact ID `reload` for `/api/suppressions/reload`.
 Enabled and disabled requests with that ID return `400 VALIDATION_ERROR`, message
 `Invalid suppression request`, detail
