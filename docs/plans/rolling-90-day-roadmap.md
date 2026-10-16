@@ -285,6 +285,7 @@ formal SLO and evidence contract is unchanged.
 
 | R90-190 | Oct 15–Jan 12 | Complete documentation; tests delegated | Consolidate the redaction and HTTP identity validation inventory. | R90-189 verified feature/closure; R90-182 inventory | Seven repairs map full feature SHAs to every changed Go test file/current declaration, including reused redactor companions; combined distinct/reference counts and fixture authority are explicit; prior handoff/full R90-75 preserved, no test execution. |
 | R90-191 | Oct 16–Jan 13 | Complete implementation; tests delegated | Reject null suppression mutation bodies before persistence or filter replacement. | R90-190 verified feature/closure; existing suppression API | Null POST/PUT reject with explicit object diagnostic, preserve files/list/filter and earlier diagnostics; valid disabled/empty/optional-null objects retain semantics, authored regressions and compile/static evidence, tests delegated. |
+| R90-192 | Oct 16–Jan 13 | Implemented; delivery pending; tests delegated | Classify suppression mutation and reload errors by cause. | R90-191 verified feature/closure; existing suppression manager/API | Sentinel identity preserves exact diagnostics and true duplicate/missing/unconfigured statuses; incidental ID/path/error text cannot misclassify validation, persistence, uncertainty or reload failures; direct authored regressions and compile/static evidence, tests delegated. |
 
 ## R90-01 Definition
 
@@ -13441,3 +13442,73 @@ No other defined local ready increment. Next trigger audits fresh Git/Vault/
 history/source/queue and persists a separate eligible plan before editing; repair
 missing evidence only. No delegated test execution, private input, department
 contact, publication or acceptance authority is added.
+
+
+## R90-192 Definition
+
+- **Goal:** classify suppression duplicate/missing/unconfigured-file errors by
+  cause rather than incidental ID/path/diagnostic substrings.
+- **Risk:** changing Error() text or sentinel propagation could disturb existing
+  callers, HTTP precedence or post-rename uncertainty reporting.
+- **Required validation:** direct public manager/constructor/save cause and exact
+  message regressions, actual-router/file misleading-ID and persistence/retry
+  regressions, explicitly synthetic internal classification seam; pinned Go
+  1.26.8 alert/API/cmd compile-only; format/docs/JSON/complete unique roadmap
+  pairs/history/R90-75/testing split/prior handoff/horizon/links/fences/ten-path/
+  sensitive/diff; verified exact Git/Vault and stable/topic/immutable/hash replay.
+  Behavioral/race/full/scanner/knowledge/traffic/acceptance **not run; delegated
+  by user**. No test binary execution.
+- **Stop condition:** competing edits, ambiguous compile/static/Git/Vault, broader
+  policy, new authority or another increment.
+
+## R90-192 Selection and Trigger Audit (2026-10-16)
+
+Fresh clean HEAD/origin/main/FETCH_HEAD:
+`585b1048ed764b464f2f3d4c9c76f2c45bcb3049`. R90-191 feature/sole three-path
+closure note/scope, all 627 index commits, versioned bounded MOC, fourteen
+current stable notes and identical 464-file closure replay verified. Four-week
+164-commit phase history retains SLO input tools then bounded repairs/inventories
+with delegated behavioral execution. No missing latest delivery or new qualifying
+R90-75 acceptance evidence found. All 195 prior row/Definition pairs unique;
+R90-75 is the sole unfinished item and retains its complete contract.
+
+Restore ready R90-192 after R90-191: source proves duplicate/missing/reload
+classifiers inspect Error() substrings that IDs, file paths and compiler/driver
+diagnostics can also contain. Select sentinel causes with unchanged messages,
+existing HTTP categories and accepted identities. Ten-path plan/state and
+acceptance map persisted before behavior/public-document edits. Oct 16–Jan 13
+forecast, completed history, full R90-75 and standing testing split preserved.
+Exactly one increment selected; no next increment started.
+
+
+## R90-192 Compile and Static Checkpoint (2026-10-16)
+
+Three documented sentinels identify missing, duplicate and unconfigured-file
+causes. Four manager/validation returns retain exact diagnostic strings; three
+API substitutions use errors.Is instead of substring matching. Auth/routing/
+null/decoding order, ID acceptance, manager locks, persistence and file schema
+are unchanged. Existing committed marker and persistence-prefix handling remain.
+
+Five authored declarations in three files map to every planned boundary:
+public manager/constructor/save exact messages and raw/wrapped/joined causes,
+negative same-text errors and immutable caller snapshots; eighteen actual-router
+ID/error cases plus unconfigured reload; nine real non-directory-parent failures
+and repaired-path retries; three phrase IDs through exact public CRUD/list/
+encoded absent-ID update/reload with independent file/rebuilt-manager/filter
+and neighboring-state observations; five explicitly synthetic response-writer
+cases for wrapped/joined missing, committed, persistence and plain-text causes.
+Full artifact membership/modes/bytes, active list/filter and caller probes are
+observed at preservation boundaries. Synthetic classification is not filesystem
+durability evidence. Constructor/path resolution and pinned ENOTDIR versus
+ErrNotExist behavior were traced; every actual request targets its promised
+resource. No runtime outcome is inferred from declarations.
+
+Pinned Go 1.26.8 alert/API/cmd compile-only passed; no test binary executed.
+Format/docs/223 JSON (210 states)/196 complete unique roadmap pairs/prior
+completed history/full R90-75/testing split/prior handoff bytes/90-day horizon/
+links/fences/ten-path/sensitive/diff review passed. All 464 baseline Vault
+Markdown hashes remain unchanged. Behavioral/race/full/scanner/knowledge/
+traffic/acceptance **not run; delegated by user**. No ambiguous result or scope
+expansion remains. Existing error-cause, fixture-resource and serialized-omission
+guidance suffices without a redundant skill edit. Feature delivery/Vault and
+sole docs-only closure remain pending; no next increment started.

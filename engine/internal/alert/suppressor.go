@@ -24,6 +24,15 @@ type Suppression struct {
 	AnyCIDRs []string `json:"any_cidrs"`
 }
 
+var (
+	// ErrSuppressionNotFound identifies a missing suppression mutation target.
+	ErrSuppressionNotFound = errors.New("not found")
+	// ErrSuppressionAlreadyExists identifies a duplicate suppression identity.
+	ErrSuppressionAlreadyExists = errors.New("already exists")
+	// ErrSuppressionsFileNotConfigured identifies reload without a backing file.
+	ErrSuppressionsFileNotConfigured = errors.New("suppressions file is not configured")
+)
+
 // SuppressionManager owns the active in-memory suppression rules and compiled filter.
 type SuppressionManager struct {
 	mu             sync.RWMutex
@@ -273,7 +282,7 @@ func (m *SuppressionManager) Update(id string, rule Suppression) error {
 	candidate := cloneSuppressions(m.rules)
 	idx := findSuppression(candidate, id)
 	if idx < 0 {
-		return fmt.Errorf("suppression %q not found", id)
+		return fmt.Errorf("suppression %q %w", id, ErrSuppressionNotFound)
 	}
 	rule.ID = id
 	candidate[idx] = cloneSuppression(rule)
@@ -290,7 +299,7 @@ func (m *SuppressionManager) Delete(id string) error {
 	candidate := cloneSuppressions(m.rules)
 	idx := findSuppression(candidate, id)
 	if idx < 0 {
-		return fmt.Errorf("suppression %q not found", id)
+		return fmt.Errorf("suppression %q %w", id, ErrSuppressionNotFound)
 	}
 	candidate = append(candidate[:idx], candidate[idx+1:]...)
 	return m.replaceLocked(candidate, true)
@@ -302,7 +311,7 @@ func (m *SuppressionManager) ReloadFromFile() error {
 		return fmt.Errorf("suppression manager is not configured")
 	}
 	if m.filePath == "" {
-		return fmt.Errorf("suppressions file is not configured")
+		return ErrSuppressionsFileNotConfigured
 	}
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -357,7 +366,7 @@ func validateSuppressionSet(rules []Suppression) error {
 			return fmt.Errorf("id is required")
 		}
 		if _, ok := seen[rule.ID]; ok {
-			return fmt.Errorf("suppression %q already exists", rule.ID)
+			return fmt.Errorf("suppression %q %w", rule.ID, ErrSuppressionAlreadyExists)
 		}
 		seen[rule.ID] = struct{}{}
 		if rule.Enabled && len(rule.SrcCIDRs) == 0 && len(rule.DstCIDRs) == 0 && len(rule.AnyCIDRs) == 0 {

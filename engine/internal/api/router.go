@@ -485,7 +485,7 @@ func (s *Server) handleSuppressions(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if err := s.opts.Suppressions.Add(*suppression); err != nil {
-			if strings.Contains(err.Error(), "already exists") {
+			if errors.Is(err, alert.ErrSuppressionAlreadyExists) {
 				writeError(w, r, http.StatusConflict, "SUPPRESSION_ALREADY_EXISTS", "Suppression already exists")
 				return
 			}
@@ -567,7 +567,7 @@ func (s *Server) handleSuppressionsReload(w http.ResponseWriter, r *http.Request
 		return
 	}
 	if err := s.opts.Suppressions.ReloadFromFile(); err != nil {
-		if strings.Contains(err.Error(), "not configured") {
+		if errors.Is(err, alert.ErrSuppressionsFileNotConfigured) {
 			writeError(w, r, http.StatusConflict, "SUPPRESSIONS_RELOAD_UNAVAILABLE", "Suppressions file is not configured")
 			return
 		}
@@ -579,7 +579,7 @@ func (s *Server) handleSuppressionsReload(w http.ResponseWriter, r *http.Request
 
 func (s *Server) writeSuppressionMutationError(w http.ResponseWriter, r *http.Request, err error) {
 	switch {
-	case strings.Contains(err.Error(), "not found"):
+	case errors.Is(err, alert.ErrSuppressionNotFound):
 		writeError(w, r, http.StatusNotFound, "SUPPRESSION_NOT_FOUND", "Suppression not found")
 	case alert.SuppressionReplacementCommitted(err):
 		writeError(w, r, http.StatusInternalServerError, "SUPPRESSIONS_DURABILITY_UNCERTAIN", "Suppression mutation was applied but durability could not be confirmed", err.Error())

@@ -305,6 +305,16 @@ and active filter. A parent-directory durability failure after rename returns
 `SUPPRESSIONS_DURABILITY_UNCERTAIN`; the mutation is already applied to the
 canonical file and active filter, but crash durability was not confirmed.
 
+Suppression error categories follow their underlying causes. Incidental phrases
+such as `not found`, `already exists` or `not configured` in IDs, file paths or
+validation diagnostics do not turn a validation or I/O failure into a missing,
+duplicate or unavailable-file result. Actual duplicate creation returns
+`409 SUPPRESSION_ALREADY_EXISTS`; missing update/delete returns
+`404 SUPPRESSION_NOT_FOUND`; reload without a configured file returns
+`409 SUPPRESSIONS_RELOAD_UNAVAILABLE`. Other configured reload failures remain
+`500 INTERNAL_ERROR`. Existing error messages, accepted IDs, validation
+precedence and persistence/durability outcomes remain unchanged.
+
 ### `POST /api/rules`
 
 The exact rule ID `reload` is reserved by `/api/rules/reload`. Creation rejects

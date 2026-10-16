@@ -1418,3 +1418,48 @@ This supplement is outside the historical R90-190 bounded inventory; it adds
 one authored file/three declarations without changing the prior counts. No
 runtime/SLO pass, independent R90-75 acceptance or new external authority is
 claimed.
+
+
+## R90-192 supplement: suppression error causes (2026-10-16)
+
+[Plan](plans/task-20261016-suppression-error-kinds.md) ·
+[state](tasks/task-state-20261016-suppression-error-kinds.json).
+
+Suppression API duplicate/missing/unconfigured-file classifiers previously used
+diagnostic substrings. IDs, configured paths and validation/I/O errors can
+contain those same phrases. Manager/constructor/save now preserve the existing
+messages while exposing sentinel causes for errors.Is; the three API classifiers
+use those causes. True duplicate 409, missing 404, unconfigured reload 409,
+validation 400, persistence 500, committed uncertainty 500 and configured reload
+500 retain their intended categories independent of incidental text. No identity,
+file schema, rule, locking or durability lifecycle policy changes.
+
+Five authored declarations in three files:
+
+- [alert/suppression_error_kind_test.go](../engine/internal/alert/suppression_error_kind_test.go):
+  `TestSuppressionErrorCausesPreserveMessagesAndState` checks public manager,
+  constructors and save errors for three misleading IDs, exact messages,
+  raw/wrapped/joined causes, negative same-text impostors and preserved state.
+- [api/suppression_error_kind_test.go](../engine/internal/api/suppression_error_kind_test.go):
+  `TestHTTPSuppressionErrorPhrasesRetainActualErrorCategories` exercises eighteen
+  actual-router invalid-create/update, duplicate, missing-update/delete and
+  configured invalid-file reload cases, plus unconfigured reload.
+  `TestHTTPSuppressionMisleadingPersistencePathsPreserveStateAndPermitRetry`
+  covers nine actual file-parent failures through POST/PUT/DELETE, exact 500
+  envelopes, complete tree/list/filter/caller preservation and repaired-path retry.
+  `TestHTTPSuppressionErrorPhraseIDsRetainExactCRUDAndReload` covers three exact
+  phrase IDs through public create/list/encoded absent-ID update/reload/delete,
+  independent file/rebuilt-manager/filter and neighboring-resource observations.
+- [api/suppression_error_kind_internal_test.go](../engine/internal/api/suppression_error_kind_internal_test.go):
+  `TestSuppressionMutationClassificationUsesCausesThroughWrappers` checks five
+  internal response-writer cases for wrapped/joined missing causes, committed
+  marker, persistence prefix and plain-text impostor. This synthetic seam proves
+  classification only; it does not establish real post-rename durability.
+
+Departmental focused command from engine:
+`go test -count=1 ./internal/alert ./internal/api -run '^Test(SuppressionError|SuppressionMutationClassification|HTTPSuppression(ErrorPhrase|MisleadingPersistence))'`.
+Use the pinned toolchain and established uncached full/race/knowledge sequence,
+retaining reviewed SHA and logs. Behavioral/race/full/scanner/knowledge/traffic/
+acceptance **not run; delegated by user**. This separate supplement leaves the
+historical bounded inventories unchanged; authored coverage is not execution
+evidence or R90-75 acceptance.
