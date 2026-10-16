@@ -284,7 +284,7 @@ formal SLO and evidence contract is unchanged.
 | R90-189 | Oct 10–Jan 7 | Complete implementation; tests delegated | Reject dot-segment suppression IDs at the HTTP boundary. | R90-188 verified feature/closure; existing suppression manager/routes | Exact . and .. reject creation and decoded management without mutation; other dot/percent identities and legacy file/direct-manager/reload remain compatible; direct authored execution delegated. |
 
 | R90-190 | Oct 15–Jan 12 | Complete documentation; tests delegated | Consolidate the redaction and HTTP identity validation inventory. | R90-189 verified feature/closure; R90-182 inventory | Seven repairs map full feature SHAs to every changed Go test file/current declaration, including reused redactor companions; combined distinct/reference counts and fixture authority are explicit; prior handoff/full R90-75 preserved, no test execution. |
-| R90-191 | Oct 16–Jan 13 | Implemented; delivery pending; tests delegated | Reject null suppression mutation bodies before persistence or filter replacement. | R90-190 verified feature/closure; existing suppression API | Null POST/PUT reject with explicit object diagnostic, preserve files/list/filter and earlier diagnostics; valid disabled/empty/optional-null objects retain semantics, authored regressions and compile/static evidence, tests delegated. |
+| R90-191 | Oct 16–Jan 13 | Complete implementation; tests delegated | Reject null suppression mutation bodies before persistence or filter replacement. | R90-190 verified feature/closure; existing suppression API | Null POST/PUT reject with explicit object diagnostic, preserve files/list/filter and earlier diagnostics; valid disabled/empty/optional-null objects retain semantics, authored regressions and compile/static evidence, tests delegated. |
 
 ## R90-01 Definition
 
@@ -13393,3 +13393,51 @@ by user**. No runtime/SLO pass or new authority claimed. Existing skill guidance
 on null/omitted serialization, decoder diagnostics and actual resources suffices;
 no redundant skill edit. Exact feature delivery/Vault and sole docs-only closure
 remain; no next increment started.
+
+
+## R90-191 Completion and Forward Queue Refresh (2026-10-16)
+
+Feature `cdc53201ce9309811f0ba68dd785e6f969bd8b89` contains exactly seven intended paths.
+Non-force push and immediate fresh fetch verified clean HEAD/origin/main/
+FETCH_HEAD at that full SHA. Exact local Vault range
+`b51b0f72932b4927a8e02e2c39f60af55eb34ff4..cdc53201ce9309811f0ba68dd785e6f969bd8b89`
+verified note `04-开发迭代记录/2026-10-16-cdc53201ce-CI知识同步.md`,
+seven-path scope, all 626 index commits and versioned bounded MOC links,
+resolving abbreviated metadata endpoints through Git.
+
+Fourteen current stable notes reconcile null suppression requests, object and
+diagnostic boundaries, delegated execution and current delivery/queue authority.
+Complete prior topic bodies are preserved beneath historical headings, excluding
+only the versioned generated MOC region. All 447 prior non-stable/non-generated
+notes, including 415 immutable iteration records, are unchanged. Identical exact
+feature-range replay preserved all 463 Markdown hashes; sorted sha256sum-manifest
+SHA-256: `39fd5fa17f1df614eba65e1819c098aa63945ba5ed153033b821caa841672da9`.
+
+Acceptance review confirms the suppression-only nullable decode/complete-document
+order and all three direct authored declarations: 48 null rejection cases,
+22 diagnostic/path controls and two object/retry resource modes. Full artifacts,
+active/list/filter/caller, independent file/rebuilt-manager and neighbor
+observations reach the promised boundaries. Pinned Go 1.26.8 API/cmd compile-only
+and complete formatting/docs/222 JSON (209 states)/195 unique complete roadmap
+pairs/history/R90-75/testing split/prior handoff/horizon/links/fences/seven-path/
+sensitive/diff review passed. No test binary executed; behavioral/race/full/
+scanner/knowledge/traffic/acceptance **not run; delegated by user**. No runtime
+or SLO pass inferred. Deviation: empty ready queue restored with the source-proven
+null replacement repair and forecast refreshed; no scope expansion or ambiguous
+result remains. Existing skill guidance sufficed without redundant edits.
+
+### R90-191 Single Closure and Resume Authority
+
+This three-path docs-only delivery record is the sole closure. Resolve its full
+SHA through freshly fetched HEAD/origin/main/FETCH_HEAD, verify clean exact refs
+and feature..closure note/index/bounded MOC, fourteen current notes, complete
+prior topic/immutable/feature-note preservation and identical replay. The feature
+SHA above is historical evidence. Do not repeat verified commit/push/sync or
+create a self-reference closure.
+
+Forward queue refreshed without starting another increment. R90-75 independent
+departmental acceptance remains the sole unfinished row, Oct 16–Jan 13 forecast.
+No other defined local ready increment. Next trigger audits fresh Git/Vault/
+history/source/queue and persists a separate eligible plan before editing; repair
+missing evidence only. No delegated test execution, private input, department
+contact, publication or acceptance authority is added.
