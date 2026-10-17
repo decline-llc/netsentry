@@ -4,6 +4,13 @@
 
 ## Current Gate State
 
+Current-main CI repair (2026-10-17): the exact execution pin is now Go 1.26.9;
+Go 1.26.8 failed the reachable-vulnerability gate. `make ci-check` is the shared
+local/CI entry point and must pass with full Docker checks before upload.
+See [repair evidence](evidence/ci-repair-20261017.md) for the failure reproduction,
+archive verification and validation outcome. Older dated entries below describe
+their historical checkpoints and published artifacts.
+
 Ready:
 
 - Native Makefile release-candidate bundle is wired through `make rc-check`.

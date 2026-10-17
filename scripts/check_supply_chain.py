@@ -95,8 +95,11 @@ def validate_actions(lock: dict) -> tuple[int, int]:
             require(ref == expected["commit"], f"{workflow}:{line_number}: {name} commit differs from lock")
             require(comment == expected["version"], f"{workflow}:{line_number}: {name} version comment differs from lock")
             seen.add(name)
-        if "make rc-check" in text:
-            require("make supply-chain-check" in text, f"{workflow}: rc-check lacks supply-chain-check")
+        if "make rc-check" in text or "make ci-check" in text:
+            require(
+                "make supply-chain-check" in text or "make ci-check" in text,
+                f"{workflow}: rc-check lacks supply-chain-check",
+            )
             for install in install_lines:
                 require(install in text, f"{workflow}: missing pinned tool install {install}")
 

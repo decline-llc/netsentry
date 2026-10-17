@@ -43,8 +43,9 @@ fixtures and empty-versus-absent ID authority. The combined bounded inventory
 covers 44 repair increments, 57 distinct test files and 160 distinct declarations;
 six redactor companions are reused and counted once. These are authored
 inventory counts, with execution debt and module-relative uncached departmental
-commands. Test execution remains assigned to the specialist department under
-the roadmap policy.
+commands. The historical inventory delegated execution to the specialist department.
+The 2026-10-17 user instruction now requires local CI checks before uploads;
+independent departmental acceptance remains separate.
 
 These targets exist today:
 
@@ -73,6 +74,7 @@ make e2e-corpus-pressure # local sanitized pcap corpus pressure evidence
 make sanitize-pcap # sanitize an Ethernet pcap before sharing it
 make dist          # build a local release archive under dist/
 make docker-build  # build a local Docker image
+make ci-check      # complete GitHub CI gate; run before pushing
 make rc-check      # release-candidate verification bundle
 make release-gate  # reviewed non-PCAP release evidence gate
 make lint          # go vet + optional staticcheck
@@ -83,7 +85,23 @@ make clean
 
 Local Docker image builds are available through `make docker-build` and are covered by `make rc-check`. GitHub Actions workflows are present for release-candidate checks, tag-driven GitHub Release publication, and GHCR image publishing; both publication workflows rerun `make rc-check` and `make release-gate` before publishing named assets.
 
-CI runs `SUPPLY_CHAIN_FETCH_ASSETS=1 make supply-chain-check` before `make rc-check`. The supply-chain gate verifies full Action SHAs, the exact Go patch toolchain, pinned tool install commands, `actionlint`, `govulncheck`, and all nine external fixture/license hashes without retaining fixture bytes in Git or the runner workspace.
+CI and local delivery use `make ci-check`, which runs
+`SUPPLY_CHAIN_FETCH_ASSETS=1 make supply-chain-check` followed by the complete
+`make rc-check`, including Docker. The supply-chain gate verifies full Action SHAs, the exact Go patch toolchain, pinned tool install commands, `actionlint`, `govulncheck`, and all nine external fixture/license hashes without retaining fixture bytes in Git or the runner workspace.
+
+Before pushing, install the pinned tools above and run `make ci-check` on the
+complete change. A compile-only check or a Docker-skipped RC run does not satisfy
+this gate. Resolve every failed required check locally, include implementation
+and delivery records in one completed push, and verify the GitHub CI conclusion
+for the exact pushed SHA before reporting delivery complete. Do not push another
+docs-only closure just to record the push. CI cancels superseded runs on the same
+ref; the latest revision still runs the full gate.
+
+The 2026-10-17 CI repair pins Go 1.26.9, the latest patch in the selected 1.26
+line per the [official Go release feed](https://go.dev/dl/?mode=json). The prior
+1.26.8 pin fails `govulncheck` with seven reachable standard-library advisories.
+The toolchain directive and supply-chain lock must move together; retain the
+scanner and verify the replacement before uploading.
 
 ---
 

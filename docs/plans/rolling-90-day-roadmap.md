@@ -41,6 +41,17 @@ validation as **not run; delegated by user**. Local hardware shortfalls and
 unavailable R90-75 acceptance artifacts do not block implementation work; its
 formal SLO and evidence contract is unchanged.
 
+## CI Repair Delivery Authority (2026-10-17)
+
+The user requests repair of recurring GitHub CI failures and complete local
+validation before uploading. This supersedes the earlier delegated-test delivery
+policy for uploads: required scanner, runtime, knowledge and full Docker RC
+checks must pass before pushing completed work. Historical delegated-test records
+remain historical; R90-75 independent acceptance is unchanged.
+Use `make ci-check` before upload, batch repair/evidence into one completed push,
+and verify the exact SHA's hosted CI result. Do not send separate closure pushes
+that trigger another run. See [repair plan](task-20261017-ci-repair.md).
+
 ## Per-Trigger Plan Audit
 
 1. **Baseline audit:** work from the repository root; fetch the active remote;

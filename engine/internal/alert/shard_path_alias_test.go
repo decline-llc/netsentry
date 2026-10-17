@@ -85,7 +85,15 @@ func shardAliasObserver(t *testing.T, absolutePath string) *sql.DB {
 	u := url.URL{Scheme: "file", Path: absolutePath}
 	q := u.Query()
 	q.Set("mode", "ro")
-	q.Set("readonly_shm", "1")
+	// A clean, closed WAL database has no sidecars. Requiring an existing SHM
+	// then prevents SQLite from opening it. Protect sidecars only when present.
+	for _, suffix := range []string{"-wal", "-shm"} {
+		if _, err := os.Lstat(absolutePath + suffix); err == nil {
+			q.Set("readonly_shm", "1")
+		} else if !os.IsNotExist(err) {
+			t.Fatal(err)
+		}
+	}
 	u.RawQuery = q.Encode()
 	db, err := sql.Open("sqlite", u.String())
 	if err != nil {

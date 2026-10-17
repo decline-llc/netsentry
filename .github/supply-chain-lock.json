@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
-  "reviewed_at": "2026-10-01",
+  "reviewed_at": "2026-10-17",
   "go": {
     "language_version": "1.22.2",
-    "ci_toolchain": "1.26.8",
+    "ci_toolchain": "1.26.9",
     "supported_release_lines_at_review": [
-      "1.27.1",
-      "1.26.8"
+      "1.27.2",
+      "1.26.9"
     ],
     "source": "https://go.dev/dl/?mode=json",
     "linux_amd64_archive": {
-      "filename": "go1.26.8.linux-amd64.tar.gz",
-      "url": "https://go.dev/dl/go1.26.8.linux-amd64.tar.gz",
-      "bytes": 66897291,
-      "sha256": "d0f743b33e8d8945e6b1f432edd15785c70507121d6e2a723b21285eddf8b57b"
+      "filename": "go1.26.9.linux-amd64.tar.gz",
+      "url": "https://go.dev/dl/go1.26.9.linux-amd64.tar.gz",
+      "bytes": 66935201,
+      "sha256": "42d158b4d8f7b61ac0a830567c940a86098fb7aac52e467a5ebec03ef5cc2f8d"
     }
   },
   "tools": [

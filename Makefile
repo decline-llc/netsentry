@@ -14,7 +14,7 @@ VERSION    ?= 0.1.0-dev
 IMAGE      ?= netsentry:$(VERSION)
 DOCKER     ?= docker
 
-.PHONY: all build-c build-go build build-asan test test-unit test-integration test-e2e test-stress test-coverage deps-check supply-chain-check workflow-check docs-check shell-check python-check evidence-check benchmark-baseline-check knowledge-check config-check asan-test bench benchmark-evidence fuzz-parser fuzz-parser-long fuzz-uds-formatter fuzz-sustained gen-sanitized-corpus e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap pcap-evidence pcap-evidence-check dist release-artifacts docker-build release-gate rc-check lint clean quickstart help
+.PHONY: all build-c build-go build build-asan test test-unit test-integration test-e2e test-stress test-coverage deps-check supply-chain-check workflow-check docs-check shell-check python-check evidence-check benchmark-baseline-check knowledge-check config-check asan-test bench benchmark-evidence fuzz-parser fuzz-parser-long fuzz-uds-formatter fuzz-sustained gen-sanitized-corpus e2e-smoke e2e-pressure e2e-corpus-pressure sanitize-pcap pcap-evidence pcap-evidence-check dist release-artifacts docker-build release-gate rc-check ci-check lint clean quickstart help
 
 all: build
 
@@ -216,6 +216,11 @@ docker-build:
 ## rc-check   — run local release-candidate checks, including Docker unless SKIP_DOCKER=1
 rc-check:
 	@bash scripts/rc_check.sh
+
+## ci-check — run the complete GitHub CI gate locally before pushing
+ci-check:
+	$(MAKE) supply-chain-check SUPPLY_CHAIN_FETCH_ASSETS=1
+	$(MAKE) rc-check SKIP_DOCKER=0
 
 ## lint      — run go vet and staticcheck (if installed)
 lint:

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"os"
 	"path/filepath"
 	"reflect"
 	"sort"
@@ -39,7 +40,17 @@ func aggregationPreflightObserver(t *testing.T, path string) *sql.DB {
 	if err != nil {
 		t.Fatal(err)
 	}
-	u := url.URL{Scheme: "file", Path: absolute, RawQuery: url.Values{"mode": {"ro"}, "readonly_shm": {"1"}}.Encode()}
+	query := url.Values{"mode": {"ro"}}
+	// Clean WAL databases lose their sidecars on writer close. Only require
+	// read-only shared memory when an existing sidecar needs preservation.
+	for _, suffix := range []string{"-wal", "-shm"} {
+		if _, err := os.Lstat(absolute + suffix); err == nil {
+			query.Set("readonly_shm", "1")
+		} else if !os.IsNotExist(err) {
+			t.Fatal(err)
+		}
+	}
+	u := url.URL{Scheme: "file", Path: absolute, RawQuery: query.Encode()}
 	db, err := sql.Open("sqlite", u.String())
 	if err != nil {
 		t.Fatal(err)

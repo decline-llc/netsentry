@@ -1,0 +1,49 @@
+{
+  "task": "ci-repair-20261017",
+  "branch": "main",
+  "baseline": "01a5e447aa5a26b436f868b448c1e31e4d4181fa",
+  "status": "local_validation_complete",
+  "authority": "User requires complete local CI validation before uploads, superseding prior delegated-test delivery policy; independent R90-75 acceptance remains separate.",
+  "plan": "docs/plans/task-20261017-ci-repair.md",
+  "validation": {
+    "preflight": "Pinned tools installed; Go official archive length/SHA verified; Docker daemon, frontend and base metadata resolved.",
+    "supply_chain": "passed: 9/9 remote fixtures, actionlint, Go 1.26.9 policy, zero reachable vulnerabilities",
+    "full_ci": "passed: complete make ci-check with Go 1.26.9, fetched supply-chain verification and full Docker RC; exit 0",
+    "first_full_ci": "failed: nine alert declarations in three fixture-defect families; later RC stages not executed",
+    "fixture_reproduction": "four representative declarations reproduced twice uncached under race",
+    "fixture_repair": "passed: complete affected alert families twice uncached under race (43.045s); four test files changed, no production validator weakened",
+    "race": "passed: all Go packages uncached, alert package 106.774 seconds",
+    "coverage": "passed: uncached full suite, 82.3% statements",
+    "python": "42 evidence tests and 33 knowledge tests passed",
+    "c_sanitizers": "parser and UDS formatter ASan fuzz passed, 5000 iterations each; JSON formatter validation passed",
+    "e2e": "passed: 6 packets, 5 alerts, 8 rules",
+    "archive": "archive contents, checksum and release notes passed",
+    "docker": "unmodified Dockerfile build, image contents and runtime /api/health passed",
+    "log_sha256": "38ea389ef0cda98a1b120a092b55cd53be7aff966a68e6bd29f4a59cbdfe05dc"
+  },
+  "delivery": {
+    "policy": "One completed commit/push; post-push facts recorded in local Vault and .git, no extra remote closure.",
+    "baseline": "01a5e447aa5a26b436f868b448c1e31e4d4181fa",
+    "exact_commit": "Resolve the commit containing this record through Git; do not infer its SHA.",
+    "hosted_ci": "Verify the CI run whose headSha equals that commit.",
+    "vault": "After verified push, sync exact baseline..commit range to existing local Vault."
+  },
+  "resume_instructions": "Fetch main and resolve this record’s commit. If the remote already contains it, do not repeat commit/push: inspect its exact-SHA CI run and local delivery/Vault record first. If not yet pushed, require recorded local gate success and clean intended scope before one non-force push. Verify hosted success, synchronize exact full-SHA range and record post-push facts locally only. Do not create a remote closure solely for those facts; do not start roadmap work.",
+  "diagnosis": {
+    "latest_failed_run": "https://github.com/decline-llc/netsentry/actions/runs/38876302871",
+    "remote_log": "Direct log download unavailable due blob TLS timeout; step and reachable-call annotations verified via GitHub API.",
+    "local_baseline": "Go 1.26.8 supply-chain gate failed with 7 reachable standard-library vulnerabilities.",
+    "advisories": [
+      "GO-2026-6617",
+      "GO-2026-6613",
+      "GO-2026-6612",
+      "GO-2026-6611",
+      "GO-2026-6608",
+      "GO-2026-6607",
+      "GO-2026-6603"
+    ],
+    "fixed_in": "go1.26.9",
+    "official_source": "https://go.dev/dl/?mode=json",
+    "archive_sha256": "42d158b4d8f7b61ac0a830567c940a86098fb7aac52e467a5ebec03ef5cc2f8d"
+  }
+}

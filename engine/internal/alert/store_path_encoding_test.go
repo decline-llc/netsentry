@@ -127,8 +127,9 @@ func pathEncodingMode(durable bool) string {
 
 func pathEncodingAlert(timestamp time.Time) *model.Alert {
 	return &model.Alert{
-		EventID: "path-encoding-" + timestamp.Format(time.RFC3339Nano),
-		RuleID:  "path-encoding", RuleName: "Path encoding fixture",
+		// Leave the optional EventID empty so WriteBatch generates its canonical
+		// deterministic identity while preserving the caller's input.
+		RuleID: "path-encoding", RuleName: "Path encoding fixture",
 		Timestamp: timestamp, SrcIP: "192.0.2.1", DstIP: "198.51.100.1", DstPort: 80,
 		Protocol: "TCP", Severity: model.SeverityHigh,
 		MatchedKeyword: "needle", PayloadPreview: "path encoding payload",

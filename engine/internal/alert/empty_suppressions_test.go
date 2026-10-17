@@ -240,9 +240,11 @@ func TestSuppressionMixedEmptyAndValidPrefixesRetainMatchingAndScoping(t *testin
 			})
 		}
 	}
-	// Empty rule IDs still mean every detection rule, and valid prefixes in one
-	// direction remain useful when other directions contain only empty entries.
-	rules := []alert.Suppression{{ID: "all-rules", Enabled: true, RuleIDs: []string{""}, SrcCIDRs: []string{""}, DstCIDRs: []string{""}, AnyCIDRs: []string{"", "203.0.113.0/24"}}}
+	// An empty rule-ID list means every detection rule; a nonempty list whose
+	// members are all empty is rejected by the rule-scope validation contract.
+	// Valid prefixes in one direction remain useful when other directions
+	// contain only empty entries.
+	rules := []alert.Suppression{{ID: "all-rules", Enabled: true, RuleIDs: []string{}, SrcCIDRs: []string{""}, DstCIDRs: []string{""}, AnyCIDRs: []string{"", "203.0.113.0/24"}}}
 	before := copyEmptySuppressionRules(rules)
 	suppressor, err := alert.NewSuppressor(rules)
 	if err != nil {
