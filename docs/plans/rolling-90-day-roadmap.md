@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-10-16 through 2027-01-13. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-10-17 through 2027-01-14. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -9,6 +9,7 @@
 - **Planned**: at least one internal dependency is unfinished; no external
   authority or input currently blocks the item.
 - **Blocked**: requires an explicitly recorded external input, authority, or unresolved validation result.
+- **Deferred**: explicitly removed from the current scope by user direction; preserve targets/evidence and require a new scope decision before reactivation.
 - **Complete**: acceptance criteria and required evidence are verified, including commit/push/Vault evidence when a repository increment was delivered.
 - Complete only one ready increment per `$netsentry-next` trigger. Record deviations before reordering unfinished work.
 
@@ -26,7 +27,11 @@
   publication, workflow dispatch, or any other external mutation that needs
   explicit action authority.
 
-## User-Directed Development and Test Department Split (Sep 25)
+## Historical Development and Test Department Split (Sep 25)
+
+This section records historical authority. The Oct 17 delivery rule in
+[AGENTS.md](../../AGENTS.md) supersedes delegated testing for uploads; independent
+SLO acceptance remains separate.
 
 The user explicitly instructed the agent to skip tests and continue development;
 a specialist department will complete testing. This supersedes agent-run
@@ -52,6 +57,40 @@ Use `make ci-check` before upload, batch repair/evidence into one completed push
 and verify the exact SHA's hosted CI result. Do not send separate closure pushes
 that trigger another run. See [repair plan](task-20261017-ci-repair.md).
 
+## Current Acceptance Scope and Forward Queue (2026-10-17)
+
+The user explicitly reduces acceptance scope to the existing single Ubuntu VM.
+[local-v1](../acceptance-local-v1.md) is the active experimental-build contract;
+prior staging/prod hardware/scale targets are deferred and no longer block local
+readiness. The user authorizes agent-run local validation; no external department,
+new machine, SR-IOV or production-capacity proof is a development prerequisite.
+Full `make ci-check` before each completed upload and exact-SHA hosted CI remain
+mandatory. This is a scope revision, never evidence of a passed live run.
+
+Deviation: R90-75 was the sole unfinished row and demanded resources beyond the
+available ~7.7 GiB VM. Reclassify it as deferred, preserving its historical targets
+and unvalidated status. The Oct17 CI repair supplies quality evidence only; it
+does not satisfy L1/L2. Existing reporter schema v1 still encodes staging/prod,
+180ms and original resource/bandwidth checks; do not lower those constants or
+claim local-v1 is runnable until R90-194. Prior completed history remains intact.
+
+This is the sole current implementation queue. Dates are forecasts, not waiting
+periods. Definitions below give risk, required validation and stop conditions.
+
+| ID | Window | Status | Increment | Dependencies | Acceptance criteria |
+|---|---|---|---|---|---|
+| R90-193 | Oct 17–18 | Policy implemented and locally validated; exact delivery recorded locally | Adopt current-resource local-v1 and reconcile rules/queue. | User scope-reduction authority; verified Oct17 CI baseline | Explicit L0/L1/L2 gates, historical profile deferral, no runtime threshold change, complete local/hosted delivery validation. |
+| R90-194 | Oct 18–21 | Ready after verified R90-193 delivery | Implement versioned local-v1 profile/report evaluation. | R90-193 exact-SHA delivery | Separate local scope, 100-rule/pps/500ms policy, missing/extra/late accounting, immutable legacy outputs and direct fail/inconclusive regressions. |
+| R90-195 | Oct 22–26 | Planned | Build bounded single-VM namespace/veth fixture and runner. | R90-194 | Independent oracle, readiness, 108000 scheduled packets per 10-minute run, fixed rule/traffic hashes, 4 GiB cumulative artifacts, owned cleanup; no public-interface traffic. |
+| R90-196 | Oct 27–Nov 2 | Planned | Execute and review two local-v1 L1 runs. | R90-195 validated runner; local resource preflight | Each run independently meets frozen loss/alert/latency/clock/workload criteria with complete retained evidence; failures remain failures. |
+| R90-197 | Nov 3–Jan 14 | Planned | Complete L2 stability/recovery and experimental-build readiness review. | R90-196 accepted local evidence | 1800 seconds offered workload, one quiesced graceful restart and UDS reconnect, bounded RSS, exact durable/API/oracle accounting, local-only conclusions and reproducible instructions. |
+
+No IPv6/TCP-reassembly/cluster/UI expansion starts while this queue has unresolved
+acceptance failures. Reserve the remaining horizon for source-proven failures
+from these runs and bounded usability repairs; define a separate increment from
+actual evidence before implementation, not speculative new feature rows.
+Tag, GitHub Release and registry publication still require separate authority.
+
 ## Per-Trigger Plan Audit
 
 1. **Baseline audit:** work from the repository root; fetch the active remote;
@@ -76,10 +115,11 @@ that trigger another run. See [repair plan](task-20261017-ci-repair.md).
 7. **Delivery audit:** record full old/new SHAs; push without force; fetch and
    require `HEAD == origin/main == new`; rerun the knowledge gate; synchronize
    and verify the exact Vault range.
-8. **Closeout audit:** persist verified delivery facts in one docs-only closure
-   commit when needed, deliver and synchronize that second exact range as part
-   of the same increment, refresh but do not start the next item, and leave
-   accurate resume instructions.
+8. **Closeout audit:** include implementation and evidence in one completed
+   upload after `make ci-check` passes; verify the exact pushed SHA's hosted CI
+   conclusion. Record post-push facts locally and synchronize the exact range
+   without an extra remote closure solely for those facts. Refresh but do not
+   start the next item, and leave accurate resume instructions.
 
 ## Phased Delivery Queue
 
@@ -163,7 +203,7 @@ that trigger another run. See [repair plan](task-20261017-ci-repair.md).
 | R90-72 | Oct 3–31 | Complete early | Audit local performance evidence and scope a portable budget. | R90-71 | A dated audit reconciles the complete C/Go benchmark surface, local pressure tooling, public performance claims, and exact delivery/Vault evidence, then defines only a supportable baseline or budget queue without inventing cross-host or production thresholds. |
 | R90-73 | Aug 5–Sep 4 | Complete early | Add versioned local benchmark evidence capture. | R90-72 | One directly tested command captures every established C/Go benchmark with exact Git/tree state, environment/toolchain fingerprint, parameters, raw output, parsed metrics, path redaction, and local-synthetic classification without applying a threshold. |
 | R90-74 | Sep 5–Oct 2 | Complete early | Record a repeated single-host benchmark baseline. | R90-73 | At least five uncached complete-surface samples from one clean pinned commit and unchanged environment retain every raw result plus median/IQR/variation summaries as observation-only local evidence. |
-| R90-75 | Oct 16–Jan 13 | Acceptance delegated; development unblocked | Validate proposed staging/production SLO acceptance profiles. | R90-74; R90-113 contract; departmental execution and evidence | Departmental tests must establish end-to-end latency, offered-versus-completed loss, missing-alert failures and extended-tail evidence with full artifacts; agent development proceeds without test execution or a local hardware prerequisite. |
+| R90-75 | Deferred beyond current horizon; revisit only by explicit scope decision | Deferred; old profiles unvalidated | Historical staging/production SLO profiles. | Reactivation requires matching hardware/workload and explicit future authority; not a local-v1 dependency | Preserve old targets/evidence; do not infer a pass from local-v1 or block current development on these resources. |
 | R90-76 | Aug 9 | Complete | Audit post-tag delivery and restore the forward queue. | R90-59a; R90-74 | A dated audit reconciles the local-tag feature/closure, recent delivery phases, fetched remote, exact Vault evidence, current code/tests, and blocked authorities, then restores only evidence-grounded local work without runtime or publication changes. |
 | R90-77 | Aug 10–Sep 4 | Complete early | Serialize rule-management transactions. | R90-76 | Concurrent rule create/update/delete/reload operations cannot lose a successful mutation or leave canonical disk and active memory disagreeing; direct synchronized race regressions reach each promised interleaving. |
 | R90-78 | Sep 5–25 | Complete early | Harden rule-file replacement durability. | R90-77 | Rule seed replacement explicitly handles short write, file sync, close, rename, and parent-directory sync with preservation-safe pre-rename failures and a defined post-rename memory/disk outcome. |
@@ -1707,6 +1747,14 @@ that trigger another run. See [repair plan](task-20261017-ci-repair.md).
   corpus substitution, threshold activation, or publication authority.
 
 ## R90-75 Definition
+
+**Current status (2026-10-17): deferred, neither old profile accepted.** The
+[local-v1 contract](../acceptance-local-v1.md) and R90-193..197 replace this item's
+role in current readiness. It is not a dependency of local experimental delivery.
+Reactivate only through a future explicit scope decision, suitable resources and
+a new execution/evidence plan; no completion claim is made.
+
+### Historical R90-75 requirements retained below
 
 - **Goal:** validate proposed staging and production SLO profiles against the
   [formal acceptance contract](../performance-slo.md) in the agreed isolated
@@ -13573,3 +13621,133 @@ No other defined local ready increment. Next trigger audits fresh Git/Vault/
 history/source/queue and persists a separate eligible plan before editing; repair
 missing evidence only. No delegated test execution, private input, department
 contact, publication or acceptance authority is added.
+
+## R90-193 Definition
+
+- **Goal:** complete the user's current-resource acceptance rescope and reconcile
+  all active repository rules, status, runbook and the single forward queue.
+- **Window:** Oct 17–18; dates do not block earlier execution.
+- **Dependencies/status:** explicit user authority and verified Oct17 CI baseline;
+  policy implemented and locally validated; exact delivery evidence required
+  before completion.
+- **Risk:** confusing a reduced contract with a passed run or executable profile.
+- **Acceptance:** AGENTS and local-v1 specify L0/L1/L2; R90-75 is deferred without
+  modifying old numerical evaluator behavior; README/status/runbook/current state
+  no longer require unavailable production resources or external test staff.
+- **Required validation:** docs/links/JSON/complete row-Definition multiset,
+  unchanged runtime/profile-script hashes, knowledge-check, complete ci-check,
+  sensitive/diff review; one completed push, fresh exact refs, hosted success,
+  exact-range Vault note/index/MOC and current stable knowledge reconciliation.
+- **Stop condition:** required validation failure, ambiguous scope/refs, accidental
+  runtime change or a false live-acceptance claim. No L1/L2 execution in this item.
+
+## R90-194 Definition
+
+- **Goal:** support local-v1 with an explicit versioned contract/profile in report,
+  collection, context, bundle and comparison paths that currently depend on v1.
+- **Window:** Oct 18–21; may start immediately once dependency delivery is verified.
+- **Dependencies/status:** R90-193; first ready implementation after its delivery.
+- **Risk:** silently reinterpreting legacy artifacts or excluding failed events.
+- **Acceptance:** evaluate 100 rules, actual pps schedules, segmented <=1% packet
+  loss, zero missing/extra expected alerts and host-timestamp p99 plus uncertainty
+  <=500ms. Preserve all offered identities; validate 600 expected events/run,
+  600-second workload, 30-second observation and each isolated 60-second burst.
+  Missing completions remain positive infinity; capture/submission errors and
+  unmet +/-5% minute load or <=10ms uncertainty never produce a passing verdict.
+  Explicitly distinguish fail, inconclusive, review-required and reviewed local
+  acceptance. Preserve schema-v1 staging/prod output/diagnostic/threshold behavior,
+  and reject mismatched contract IDs or cross-profile comparisons.
+- **Required validation:** direct Python/API/CLI regressions for pass/review,
+  fail, missing/extra/duplicate/late, bad load/clock, incomplete evidence, frozen
+  legacy compatibility and reconstruction/comparison; full ci-check and exact
+  hosted/Vault delivery. Synthetic evaluator tests are not measured acceptance.
+- **Stop condition:** unclear version/identity, omitted failure accounting, legacy
+  semantic drift, unavailable clock evidence, or unreviewed validation failures.
+
+## R90-195 Definition
+
+- **Goal:** create a repeatable same-VM Ethernet/veth fixture and bounded runner,
+  independent of Mininet/GNS3, with explicit capture/generator resource controls.
+- **Window:** Oct 22–26, forecasting only.
+- **Dependencies/status:** R90-194; planned until its verified completion.
+- **Risk:** capturing outbound/duplicate traffic, affecting existing interfaces,
+  generator contention, unbounded snapshots or cleanup touching other services.
+- **Acceptance:** own namespace/veth/processes/new paths/ports/UDS; freeze 100
+  rules and 512-byte-target marked UDP/oracle with actual mean. Predeclare exact
+  100/500 pps schedule and 108000 offered packets; one oracle positive/second.
+  Confirm real inbound Ethernet/readiness before offering, isolate SUT/generator,
+  enforce cumulative 4 GiB including evidence copies/scratch and >=8 GiB disk
+  preflight; bound SUT/generator at 4/2 logical CPUs and 3/1 GiB memory. Record
+  clock method/headroom and actual submission outcomes; retain all partial errors.
+- **Required validation:** fixture oracle/rule/packet/hash checks, no-send dry run,
+  early startup failure/readiness/cancellation, cleanup ownership/preservation and
+  budget regressions, low-volume live smoke on owned veth; full ci-check and
+  exact hosted/Vault delivery. A smoke run does not complete R90-196.
+- **Stop condition:** unsafe ownership, insufficient privilege/resource/clock
+  proof, public/production interface choice or ambiguous capture/generator outcome.
+
+## R90-196 Definition
+
+- **Goal:** collect and review two independent L1 local-v1 runs on current hardware.
+- **Window:** Oct 27–Nov 2, forecasting only.
+- **Dependencies/status:** R90-195 verified tooling, local allocation/preflight;
+  planned, not awaiting an external department or new hardware purchase.
+- **Risk:** treating generator limits as SUT capacity or selecting only a good run.
+- **Acceptance:** both 600-second runs plus 30-second observations use separate
+  state/run identities and the frozen schedule; each sustains offered load and
+  meets every L1 criterion. Retain oracle/offer/arrival/durable/terminal and raw
+  resource/clock evidence with checksums; review per-burst and steady denominators,
+  missing/extra/late/duplicate event outcomes and uncertainty-adjusted p99.
+- **Required validation:** verify retained raw bytes and recompute both results,
+  independent read-only persistence/API checks and matched configuration; full
+  ci-check for delivered code/docs and exact hosted/Vault verification. Raw
+  local artifacts stay outside Git/Vault; commit sanitized evidence summaries.
+- **Stop condition:** any actual numerical failure, inconclusive clocks/load,
+  missing retained artifact, budget overrun or configuration drift; retain result
+  and define a bounded evidence-backed repair instead of lowering it afterward.
+
+## R90-197 Definition
+
+- **Goal:** establish the local experimental build's L2 stability/recovery evidence
+  and deliver a reproducible operator handoff, without production-capacity claims.
+- **Window:** Nov 3–Jan 14; finish earlier when dependencies/evidence allow.
+- **Dependencies/status:** R90-196 accepted local results; planned.
+- **Risk:** hiding maintenance losses, state reuse or falsely advertising a release.
+- **Acceptance:** 1800 seconds offered at 100 pps and one oracle event/second;
+  pauses for drain/readiness are separately timed. One graceful restart and one
+  UDS reconnect preserve acknowledged durable events and identity. No panic,
+  corrupt store or unexpected recovery loss/duplication; normal segments meet L1,
+  peak RSS <=3 GiB SUT / <=1 GiB generator with meaningful periodic samples.
+  Publish reproducible local run steps and explicit unsupported-capability limits.
+- **Required validation:** raw evidence/reconstruction, separate SQLite read-only
+  observers, API/oracle identity and pre/post-restart comparison; full ci-check,
+  exact hosted SHA and Vault delivery. Tag/registry publication is separate.
+- **Stop condition:** unresolved L1/L2 failure, unaccounted maintenance gap,
+  incomplete peak/state evidence or pressure to relabel local results production.
+
+## R90-193 Planning Checkpoint and Current Resume Authority (2026-10-17)
+
+This section supersedes the historical R90-192 empty-queue and R90-75-only resume
+paragraphs above. Current selection is R90-193 only; no R90-194 code or live
+traffic has started. Complete policy validation and one batch delivery including
+the prior-turn local instruction/status edits. Record final exact-SHA hosted and
+Vault facts locally without an extra closure push. Resolve this task's commit
+through Git and the current task state before repeating delivery. After verified
+completion, R90-194 is the next implementation; never treat policy changes or
+L0 CI success as L1/L2 acceptance. The current horizon is Oct 17–Jan 14.
+
+### R90-193 Local Validation Checkpoint
+
+The complete local ci-check passed with Go 1.26.9: fetched supply-chain verification,
+all-package uncached race/coverage, C parser/sender tests and both ASan fuzz gates,
+42 evidence/33 knowledge tests, E2E, archive and unmodified Docker build/content/
+health. This run reports 82.2% coverage. Static checks verified all 201 unique complete
+row/Definition pairs, historical completed content, dependency/validation/stop
+fields, JSON/links/fences, workload arithmetic and unchanged runtime/profile-script
+hashes. Final validation/delivery prose receives affected static/knowledge review.
+
+This establishes L0 for the policy change only; L1/L2 remain unexecuted. The
+planned old/new scope and workload reduction is the explicit user-directed
+deviation. Upload once, verify the exact hosted SHA and synchronize the existing
+local Vault; post-push facts remain in the local delivery record and stable note.
+No extra closure or next-increment implementation is required in this task.

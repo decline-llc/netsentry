@@ -1,5 +1,11 @@
 # Departmental SLO execution and artifact-review runbook
 
+> **当前执行权威（2026-10-17）：** [local-v1 契约](acceptance-local-v1.md)已取代
+> staging/prod 作为近期验收范围。本手册下方保留的是旧 profile 命令/证据链，
+> 不能直接用于 local-v1 数值判定。先完成 R90-194 报告支持和 R90-195 隔离夹具，
+> 再执行本地两轮实时与稳定性验收；本次未运行这些测试。
+
+
 R90-124 consolidates the implemented measurement and review chain. **All commands
 below are unexecuted handoff templates.** Behavioral testing and acceptance belong
 to the specialist department under the Sep 25 user instruction. Neither staging

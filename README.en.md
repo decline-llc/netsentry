@@ -2,7 +2,11 @@
 
 [中文](README.md)
 
-> Status: v0.1.0 is released; the current review branch contains post-release security hardening and test expansion.
+> Status: v0.1.1 is released; current main passed the complete local gate and GitHub CI. Current acceptance targets a single-VM experimental build; live/stability runs remain pending.
+
+See the [dated capability and test-environment assessment](docs/project-status-20261017.md)
+and the [repository delivery policy](AGENTS.md): complete local validation, upload
+completed work together, then verify CI for the exact remote commit.
 
 NetSentry is a lightweight C/Go network intrusion detection and pcap forensics engine. The C process performs libpcap offline/live capture, Ethernet/VLAN/IPv4/TCP/UDP parsing, and bounded JSONL serialization. The Go process receives frames over a Unix socket, matches rules, suppresses and redacts alerts, persists aggregated alerts in SQLite, and exposes an HTTP API with Prometheus metrics.
 
@@ -121,9 +125,17 @@ PCAP_CORPUS=/path/to/reviewed-corpus make e2e-corpus-pressure
 make rc-check
 ```
 
-Every third-party Action in the CI, Release, and Docker workflows is pinned to a reviewed full commit SHA in `.github/supply-chain-lock.json`. `engine/go.mod` retains the `go 1.22.2` language baseline and pins the CI toolchain to `go1.26.8`. See [docs/supply-chain.md](docs/supply-chain.md) for the update procedure.
+Every third-party Action in the CI, Release, and Docker workflows is pinned to a reviewed full commit SHA in `.github/supply-chain-lock.json`. `engine/go.mod` retains the `go 1.22.2` language baseline and pins the CI toolchain to `go1.26.9`. See [docs/supply-chain.md](docs/supply-chain.md) for the update procedure.
 
 External and production pcaps may contain sensitive data. Never commit raw corpora, private paths, or `docs/evidence/local/`. Before sharing, run `make sanitize-pcap INPUT=in.pcap OUTPUT=out.pcap` and manually review the result.
+
+Current readiness follows [local-v1](docs/acceptance-local-v1.md) on existing
+hardware: 100 rules, 100/500 pps steady/burst traffic, two ten-minute runs and a
+thirty-minute stability run. These are frozen targets, not completed measurements.
+Historical staging/production-scale targets are deferred and no longer block
+local experimental readiness. The current reporter does not implement local-v1;
+R90-194 profile/report support must precede the isolated fixture and live runs.
+The historical SLO runbook is not an executable verdict for this new contract.
 
 ## Build and release
 

@@ -11,6 +11,14 @@ See [repair evidence](evidence/ci-repair-20261017.md) for the failure reproducti
 archive verification and validation outcome. Older dated entries below describe
 their historical checkpoints and published artifacts.
 
+Current acceptance scope (2026-10-17): [local-v1](acceptance-local-v1.md) is the
+single-VM experimental-build target. The old staging/prod resource/scale profiles
+are deferred and no longer block local readiness. L0 still requires the complete
+CI gate; L1/L2 require their own measured evidence and remain unexecuted. Reporter
+support (R90-194) and isolated runner (R90-195) must precede those runs. This scope
+change does not waive the existing reviewed release-evidence gate, change a
+published artifact, or authorize a tag, GitHub Release or registry push.
+
 Ready:
 
 - Native Makefile release-candidate bundle is wired through `make rc-check`.

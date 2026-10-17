@@ -1,6 +1,13 @@
-# R90-75 Production SLO Acceptance Contract
+# R90-75 Historical Production SLO Acceptance Contract
 
-Status: **proposed acceptance targets; validation outstanding for both profiles**.
+> **2026-10-17 权限更新：本文件中的 staging/prod 大规模配置已延期。**
+> 当前开发与实验版验收采用 [local-v1 单机契约](acceptance-local-v1.md)，不再要求
+> 新硬件、专用 10 Gbps/SR-IOV、生产规则规模或外部测试部门作为前置。
+> 旧目标与证据保留，未通过且不自动转化为 local-v1 通过；下文是历史要求。
+> 现有脚本仍按下文旧 profile 运算，新 profile 的工具支持安排在 R90-194。
+
+
+Status: **deferred targets; neither historical profile has qualifying validation**.
 The user selected production SLO evaluation on 2026-09-23 and formally adopted
 the three measurement requirements below. Neither profile represents
 demonstrated capacity. No qualifying measurement evidence currently exists.

@@ -4,7 +4,7 @@
   "branch": "main",
   "remote_baseline": "b3bd6b12784151b91228269c58ed56c8c4a0836e",
   "risk_level": "High",
-  "current_checkpoint": "acceptance-delegated-development-unblocked",
+  "current_checkpoint": "historical_profiles_deferred_local_v1_active",
   "contract": "docs/performance-slo.md",
   "scope_decision": "Production SLO evaluation selected; staging and production values are proposed acceptance targets, not demonstrated capacity",
   "completed": [
@@ -34,14 +34,8 @@
   ],
   "in_progress": [],
   "todo": [
-    "Define isolated local SUT/generator working directories, process groups, resource allocations, service endpoints and chosen ingress",
-    "Freeze exact workload, configuration, rule set, commits, durability settings and timestamp boundary",
-    "Specify extended duration, minimum sample criterion, estimator and missing-latency representation",
-    "Use R90-124 departmental runbook; department validates R90-118/R90-119/R90-120/R90-121/R90-122/R90-123 behavior, actual environment/comparability, clocks, durability, cohort identity, raw-ledger reconstruction and reporter truth",
-    "R90-126 is queued for standalone retained sender-fixture/oracle/submission derivation; preserve the independent oracle, no-live-execution and no-physical-authentication boundaries",
-    "Perform the comparison in the approved isolated same-host context with matched commit/toolchain/resources or explicitly plan a matched rebaseline",
-    "Execute both profiles locally only after resource/profile agreement and retain full recomputable artifacts",
-    "Verify all acceptance results before any profile-specific SLO compliance claim"
+    "Deferred: reactivate historical profiles only with a future explicit scope decision and matched resources/workload.",
+    "Current local-v1 work is tracked by R90-193..197 in the rolling roadmap; do not repeat the historical R90-126 queue."
   ],
   "runner": {
     "mode": "isolated-local-vm",
@@ -67,7 +61,7 @@
     },
     "superseded_preflight": "SSH name-resolution failure preceded user clarification that bench01 is not an external host"
   },
-  "artifact_template": "~/benchmarks/r90\u201175/acceptance_{staging|prod}_{YYYYMMDD_HHMMSS}.json",
+  "artifact_template": "~/benchmarks/r90‑75/acceptance_{staging|prod}_{YYYYMMDD_HHMMSS}.json",
   "qualifying_evidence": {
     "staging": false,
     "prod": false,
@@ -75,25 +69,54 @@
     "slo_compliance_asserted": false
   },
   "remaining_risks": [
+    "Historical staging/prod capacity remains unmeasured and deferred, not a current hardware blocker.",
+    "local-v1 profile/report support and bounded runner are not yet implemented.",
+    "local L1/L2 live/stability evidence remains absent.",
+    "Shared VM, generator headroom, host timestamp uncertainty and durable accounting must be observed before a local pass."
+  ],
+  "authority_boundaries": [
+    "Current development/local acceptance uses local-v1 on existing hardware.",
+    "Historical staging/prod acceptance remains deferred and unvalidated.",
+    "Required local CI and evidence truthfulness remain mandatory.",
+    "No tag, release or registry publication authority."
+  ],
+  "resume_instructions": "Do not execute old staging/prod profiles or wait for an external department/new hardware as a current development prerequisite. Follow docs/acceptance-local-v1.md and the sole rolling roadmap R90-193..197. First finish verified R90-193 policy delivery, then implement R90-194 local-v1 report/profile support. Legacy reporter still encodes old thresholds. Neither historical profile nor local L1/L2 is accepted; retain all historical evidence. No tag/publication or production compliance claim.",
+  "testing_ownership": {
+    "owner": "agent_for_current_local_v1",
+    "agent_runs_tests": true,
+    "historical_profile_acceptance_deferred": true,
+    "development_blocked_by_acceptance_hardware": false,
+    "compliance_evidence_still_required": true
+  },
+  "runbook": "docs/slo-runbook.md",
+  "scope_revision_20261017": {
+    "authority": "User explicitly requests reducing acceptance scope to existing hardware and replanning.",
+    "active_contract": "docs/acceptance-local-v1.md",
+    "historical_profiles": "staging/prod deferred; still unvalidated; not blockers for local experimental delivery",
+    "implementation_support": "local-v1 profile/report support planned in R90-194; legacy evaluator unchanged"
+  },
+  "historical_todo_before_20261017": [
+    "Define isolated local SUT/generator working directories, process groups, resource allocations, service endpoints and chosen ingress",
+    "Freeze exact workload, configuration, rule set, commits, durability settings and timestamp boundary",
+    "Specify extended duration, minimum sample criterion, estimator and missing-latency representation",
+    "Use R90-124 departmental runbook; department validates R90-118/R90-119/R90-120/R90-121/R90-122/R90-123 behavior, actual environment/comparability, clocks, durability, cohort identity, raw-ledger reconstruction and reporter truth",
+    "R90-126 is queued for standalone retained sender-fixture/oracle/submission derivation; preserve the independent oracle, no-live-execution and no-physical-authentication boundaries",
+    "Perform the comparison in the approved isolated same-host context with matched commit/toolchain/resources or explicitly plan a matched rebaseline",
+    "Execute both profiles locally only after resource/profile agreement and retain full recomputable artifacts",
+    "Verify all acceptance results before any profile-specific SLO compliance claim"
+  ],
+  "historical_authority_boundaries_before_20261017": [
+    "Accepted production SLO direction, formal measurement contract and isolated local execution scope; remote-host prerequisite superseded",
+    "Targets do not establish capacity or authorize a passing gate without evidence",
+    "No release, tag or registry action",
+    "User explicitly defers agent-run unit/integration/benchmark/acceptance/knowledge tests; retain untested status and continue development"
+  ],
+  "historical_remaining_risks_before_20261017": [
     "No qualifying measurement evidence for either proposed profile",
     "Current guest RAM is approximately 7.70 GiB; production target requires 16 GiB",
     "Higher risk for production baseline with 20000 active rules",
     "Current histograms and pre-processing counter do not satisfy formal measurement boundaries",
     "SUT and generator share hardware; isolated processes do not prove hardware independence",
     "Local allocation, fixture/ingress selection, clocks and extended-run policy remain unresolved"
-  ],
-  "authority_boundaries": [
-    "Accepted production SLO direction, formal measurement contract and isolated local execution scope; remote-host prerequisite superseded",
-    "Targets do not establish capacity or authorize a passing gate without evidence",
-    "No release, tag or registry action",
-    "User explicitly defers agent-run unit/integration/benchmark/acceptance/knowledge tests; retain untested status and continue development"
-  ],
-  "resume_instructions": "Production scope and isolated local execution are supplied. Testing is delegated by the user to the specialist department; do not run test suites or block agent development on hardware/profile matching. Continue implementing the measurement/reporting tooling with static source/syntax/diff review. The department owns real execution, behavioral verification, resource agreement and qualifying evidence. Do not claim either profile compliant without that evidence; no external bench01 or SSH prerequisite exists. The consolidated handoff is docs/slo-runbook.md; R90-124 is delivered. R90-125 documentation-only queue repair is delivered. R90-126 standalone offline sender-source reconstruction is ready and remains unstarted until its own trigger and persisted implementation plan.",
-  "testing_ownership": {
-    "owner": "specialist_test_department",
-    "agent_runs_tests": false,
-    "development_blocked_by_acceptance_hardware": false,
-    "compliance_evidence_still_required": true
-  },
-  "runbook": "docs/slo-runbook.md"
+  ]
 }

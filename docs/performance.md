@@ -6,6 +6,14 @@
 
 ---
 
+## Current acceptance scope (2026-10-17)
+
+The user reduced current readiness to [local-v1](acceptance-local-v1.md) on the
+existing single VM. Prior large staging/prod profiles are deferred, not passed;
+this historical microbenchmark inventory does not establish local L1/L2 either.
+Local profile/report support and the isolated runner are the next implementation
+steps; no live acceptance has run in the policy-adjustment task.
+
 ## Scope
 
 The current benchmark target measures the parts that already have stable standalone harnesses:

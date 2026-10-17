@@ -1,0 +1,45 @@
+{
+  "task": "r90-193-local-acceptance-rescope",
+  "timestamp": "2026-10-17",
+  "branch": "main",
+  "baseline": "28c23b54abde8194ed899734518ba03c4079cafe",
+  "status": "policy_implemented_and_local_validation_complete",
+  "plan": "docs/plans/task-20261017-local-acceptance.md",
+  "authority": "User explicitly reduces acceptance scope to existing hardware and requests subsequent planning. Required CI quality and evidence honesty remain.",
+  "completed": [
+    "Fresh baseline verified",
+    "Prior-turn local documentation saved before integration",
+    "Local resources and legacy reporter profile constraints inspected",
+    "Active local-v1 contract and three acceptance levels written",
+    "R90-75 deferred with old targets and records preserved",
+    "201 unique complete roadmap row/Definition pairs verified; R90-194..197 dependency queue restored",
+    "Current entry-point docs and prior-turn memory/status integrated; runtime and legacy profile script hashes unchanged",
+    "Complete ci-check passed with no source/legacy profile changes; local live/stability acceptance remains not run"
+  ],
+  "validation": {
+    "static": "passed docs-check, links/fences, JSON, complete roadmap multisets/history/dependency fields, workload arithmetic, runtime hash and sensitive/diff review",
+    "full_ci": "passed exit 0: fetched supply-chain, all-package uncached race and coverage, C tests/ASan fuzz, Python evidence/knowledge, E2E, archive, unmodified Docker build/content/health",
+    "coverage": "82.2%",
+    "race_alert_package_seconds": 112.201,
+    "raw_log_sha256": "b23a5c07f8de558e7bb196eb0bdc69f2addfb8b776e39cbeb8cada8c43d903aa",
+    "new_acceptance_runs": "L1/L2 not run; this task adjusts policy and planning only"
+  },
+  "runtime_script_hashes": {
+    "scripts/slo_report.py": "cdda4f4de078e84be4959cb0f82cb2b647ca9e440bcb8b8996a9d62c9a11c5da",
+    "scripts/slo_collect.py": "fc8129c56579b066ac8b3770672d1da246b0c263e7c6f0c411b9cfbf24b5705e",
+    "scripts/slo_context.py": "ba556de7b3f5288fb0a03492fa00034205a1b93a8563759d4541601794a01ae7",
+    "scripts/slo_compare.py": "65d909445658eb8feb43a6f773aa7cba071aed8b45b19182085620c0a1154d0e",
+    "Makefile": "6473f7b213a133966e82ad5a75244a9366d9003163584f2612eb13068330464b"
+  },
+  "delivery": {
+    "policy": "Single completed batch including prior-turn instruction/status documentation; post-push facts local only.",
+    "old": "28c23b54abde8194ed899734518ba03c4079cafe",
+    "new": "Resolve commit containing this task state through Git.",
+    "hosted_ci": "Require completed/success for that exact headSha.",
+    "vault": "Verify exact old..new range, note/index/bounded MOC/current stable sections and replay.",
+    "local_record": ".git/netsentry-local-acceptance-delivery.json"
+  },
+  "next_increment": "R90-194 local-v1 reporting/profile support; not started",
+  "resume_instructions": "Resolve this policy commit, fetch main and inspect its exact-SHA CI plus the local delivery record/Vault before repeating any delivery. If already verified, do not commit/push/sync again solely to record facts. R90-194 is next only after this delivery is verified; implement versioned local-v1 report/profile support with legacy behavior preserved. R90-75 historical profiles are deferred. L1/L2 have not executed; no live acceptance or production claim follows from these policy/CI changes.",
+  "skill_improvement": "Planning workflow now requires checking evaluator/profile consumers before claiming a revised acceptance contract executable; preserve legacy evidence and explicit tooling dependencies."
+}

@@ -2,7 +2,10 @@
 
 [English](README.en.md)
 
-> 状态：v0.1.0 已发布；当前审查分支包含发布后的安全加固与测试扩展。
+> 状态：v0.1.1 已发布；当前 main 已通过完整本地检查与 GitHub CI，当前验收范围已调整为单 VM 实验版，实时/稳定性验收待执行。
+
+项目能力与测试环境见 [当前状态评估](docs/project-status-20261017.md)。
+长期交付规则见 [AGENTS.md](AGENTS.md)：先完整验证通过，再整批上传，并核验远端 CI 结果。
 
 NetSentry 是一个轻量级 C/Go 网络入侵检测与 pcap 取证引擎。C 进程负责 libpcap 离线读取或实时抓包、Ethernet/VLAN/IPv4/TCP/UDP 解析和有界 JSONL 序列化；Go 进程通过 Unix Socket 接收数据，执行规则匹配、告警抑制与脱敏，将聚合告警写入 SQLite，并提供 HTTP API 与 Prometheus 指标。
 
@@ -121,12 +124,15 @@ PCAP_CORPUS=/path/to/reviewed-corpus make e2e-corpus-pressure
 make rc-check
 ```
 
-CI/Release/Docker workflow 的第三方 Action 均固定到 `.github/supply-chain-lock.json` 中审核过的完整 commit SHA；`engine/go.mod` 保留 `go 1.22.2` 语言基线并固定 CI toolchain `go1.26.8`。更新流程见 [docs/supply-chain.md](docs/supply-chain.md)。
+CI/Release/Docker workflow 的第三方 Action 均固定到 `.github/supply-chain-lock.json` 中审核过的完整 commit SHA；`engine/go.mod` 保留 `go 1.22.2` 语言基线并固定 CI toolchain `go1.26.9`。更新流程见 [docs/supply-chain.md](docs/supply-chain.md)。
 
 外部/生产 pcap 可能包含敏感内容。不得提交原始 corpus、私有路径或 `docs/evidence/local/`；分享前先运行 `make sanitize-pcap INPUT=in.pcap OUTPUT=out.pcap`，再人工复核。
 
-生产 SLO 的部门执行与产物审查流程见 [SLO runbook](docs/slo-runbook.md)。
-命令模板未经执行；staging/prod 均无合格验收证据，测试由专门部门负责。
+当前采用 [local-v1 单机验收标准](docs/acceptance-local-v1.md)：现有 VM、100 条规则、
+100/500 pps 常态/突发，10 分钟两轮和 30 分钟稳定性；本次仅调整规则与规划，
+L1/L2 未执行。旧 staging/prod 大规模目标延期，不阻塞当前实验版推进。
+现有报告器尚不支持 local-v1；先完成路线图 R90-194，再建立隔离夹具并测量。
+[SLO runbook](docs/slo-runbook.md)保留旧工具链说明，不能直接判定新标准。
 
 ## 构建与发布
 

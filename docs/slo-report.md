@@ -1,5 +1,10 @@
 # SLO measurement report tool and test-department handoff
 
+> 2026-10-17：当前验收范围调整为 [local-v1](acceptance-local-v1.md)。
+> 本工具当前仍只实现 staging/prod 和 180ms 旧阈值；本文件描述现有代码，
+> local-v1 支持是 R90-194 的未完成工作。不得静默降低旧 profile 或混用结果。
+
+
 `python3 scripts/slo_report.py --input observations.json` summarizes a completed
 run supplied by the test department. It executes no traffic and collects no
 runtime data. Implementation is delivered with **tests deferred by the user's

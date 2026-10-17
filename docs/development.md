@@ -1,6 +1,6 @@
 # NetSentry Development Guide
 
-> **Status**: v0.1.0 development snapshot.
+> **Status**: v0.1.1 released; current local experimental acceptance follows local-v1.
 
 ---
 
@@ -45,7 +45,13 @@ six redactor companions are reused and counted once. These are authored
 inventory counts, with execution debt and module-relative uncached departmental
 commands. The historical inventory delegated execution to the specialist department.
 The 2026-10-17 user instruction now requires local CI checks before uploads;
-independent departmental acceptance remains separate.
+current-resource local validation is agent-owned; historical production targets are deferred.
+
+Current acceptance uses [local-v1](acceptance-local-v1.md). Full `make ci-check`
+remains the pre-upload gate; resource-heavy staging/prod acceptance is deferred.
+R90-194 must add explicit local-profile support before live acceptance runs:
+existing SLO scripts still encode the historical profiles and 180ms threshold.
+No new hardware, external department or network emulator is a prerequisite.
 
 These targets exist today:
 
