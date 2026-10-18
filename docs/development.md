@@ -49,7 +49,8 @@ current-resource local validation is agent-owned; historical production targets 
 
 Current acceptance uses [local-v1](acceptance-local-v1.md). Full `make ci-check`
 remains the pre-upload gate; resource-heavy staging/prod acceptance is deferred.
-R90-194 must add explicit local-profile support before live acceptance runs:
+R90-194 adds explicit schema-2 local-profile support; see [local tools](slo-local-v1.md).
+R90-195 must provide the isolated runner before live acceptance runs:
 existing SLO scripts still encode the historical profiles and 180ms threshold.
 No new hardware, external department or network emulator is a prerequisite.
 

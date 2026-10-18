@@ -26,7 +26,7 @@ FIELD_TYPES = {section + "." + key: kind for section, fields in context.FIELDS.i
 
 def _manifest(document: Any) -> None:
     report._object(document, MANIFEST_FIELDS, "context receipt")
-    bundle._require(type(document["schema_version"]) is int and document["schema_version"] == 1,
+    bundle._require(type(document["schema_version"]) is int and document["schema_version"] in (1, 2),
                     "unsupported context receipt schema")
     bundle._require(document["artifact_kind"] == "netsentry_slo_retained_context", "wrong context receipt kind")
     for key in ("context_complete", "declaration_schema_valid", "observation_binding_complete"):
@@ -44,15 +44,15 @@ def _manifest(document: Any) -> None:
     bundle._hash(document["context_source_sha256"])
     identity = document["run_identity"]
     if document["declaration_schema_valid"]:
-        report._object(identity, {"run_id", "profile", "started_at", "observations_sha256"}, "run identity")
+        report._object(identity, set(context.identity_fields(document)), "run identity")
         report._identifier(identity["run_id"], "run_id")
-        bundle._require(isinstance(identity["profile"], str) and identity["profile"] in report.PROFILES,
-                        "invalid profile")
+        context._identity(dict(identity, schema_version=document["schema_version"]))
         report._timestamp(identity["started_at"])
         bundle._hash(identity["observations_sha256"])
     else:
         bundle._require(identity is None and document["observation_binding_complete"] is False,
                         "identity without valid declaration")
+    field_types = {section + "." + key: kind for section, fields in context.fields_for(document).items() for key, kind in fields.items()}
     rows = document["declared_fields"]
     bundle._require(isinstance(rows, list) and len(rows) <= len(FIELD_TYPES), "invalid fields")
     seen = set()
@@ -65,7 +65,7 @@ def _manifest(document: Any) -> None:
         bundle._require(isinstance(refs, list) and len(refs) <= context.MAX_REFERENCES, "invalid references")
         checked = [context._evidence_id(item) for item in refs]
         bundle._require(len(set(checked)) == len(checked), "duplicate field reference")
-        value, kind = row["value"], FIELD_TYPES[name]
+        value, kind = row["value"], field_types[name]
         if value is not None:
             if kind == "text":
                 context._text(value)

@@ -56,14 +56,40 @@ def _evidence_id(value: Any) -> str:
     return value
 
 
+def _identity(document: Any) -> None:
+    if document.get("schema_version") == 2:
+        report.local_module().identity(document)
+        report._identifier(document.get("run_id"), "run_id")
+    else:
+        bundle._version(document)
+        bundle._require(isinstance(document["profile"], str) and document["profile"] in report.PROFILES,
+                        "invalid profile")
+
+
+def identity_fields(document: Any) -> tuple[str, ...]:
+    return ("run_id", "profile", "started_at", "observations_sha256") + (("contract_id",) if document.get("schema_version") == 2 else ())
+
+
+def fields_for(document: Any) -> dict[str, Any]:
+    if document.get("schema_version") != 2:
+        return FIELDS
+    return {**FIELDS, "hardware": {**FIELDS["hardware"], "deployment_type": ("vm", "kvm_vm", "physical")}}
+
+
 def validate(document: Any) -> list[str]:
     """Validate declaration v1; return coverage gaps for unknown/unreferenced values."""
+    local = isinstance(document, dict) and document.get("schema_version") == 2
     report._object(document, {"schema_version", "artifact_kind", "run_id", "profile", "started_at",
-                             "observations_sha256", "hardware", "toolchain", "isolation", "evidence"}, "context")
-    bundle._version(document)
+                             "observations_sha256", "hardware", "toolchain", "isolation", "evidence"}
+                   | ({"contract_id"} if local else set()), "context")
+    if local:
+        _identity(document)
+    else:
+        bundle._version(document)
     bundle._require(document["artifact_kind"] == "netsentry_slo_run_context", "wrong context kind")
-    bundle._require(isinstance(document["profile"], str) and document["profile"] in report.PROFILES,
-                    "invalid profile")
+    if not local:
+        bundle._require(isinstance(document["profile"], str) and document["profile"] in report.PROFILES,
+                        "invalid profile")
     report._timestamp(document["started_at"])
     bundle._hash(document["observations_sha256"])
     catalog = document["evidence"]
@@ -79,7 +105,7 @@ def validate(document: Any) -> list[str]:
         bundle._hash(item["sha256"])
     used = set()
     gaps = []
-    for section, fields in FIELDS.items():
+    for section, fields in fields_for(document).items():
         report._object(document[section], set(fields), section)
         for key, kind in fields.items():
             field = section + "." + key
@@ -187,7 +213,8 @@ class _Retention:
 def _bind(document: dict[str, Any], observations: Any, receipt: dict[str, Any]) -> None:
     report._validate(observations)
     bundle._same(document["observations_sha256"], receipt["sha256"], "observation digest differs")
-    for key in ("run_id", "profile", "started_at"):
+    bundle._same(document["schema_version"], observations["schema_version"], "context contract version differs")
+    for key in ("run_id", "profile", "started_at") + (("contract_id",) if document["schema_version"] == 2 else ()):
         bundle._same(document[key], observations[key], "observation identity differs")
     for key in ("sut_vcpus", "sut_memory_bytes"):
         value = document["hardware"][key]["value"]
@@ -222,7 +249,7 @@ def retain(output: Path, *, declaration: Path | None = None, observations: Path 
     if "declaration" in documents:
         schema_valid = retained.check("declaration schema", lambda: retained.gaps.extend(validate(document)))
     if schema_valid:
-        for section, names in FIELDS.items():
+        for section, names in fields_for(document).items():
             fields.extend({"field": section + "." + key, **document[section][key]} for key in names)
         if "observations" in documents:
             bound = retained.check("observation identity/digest/allocation binding", lambda: _bind(
@@ -244,10 +271,10 @@ def retain(output: Path, *, declaration: Path | None = None, observations: Path 
         retained.gaps.append("Observation binding is incomplete; this context is not tied to a valid observation snapshot.")
     status = "mismatch" if retained.mismatches else "incomplete" if retained.gaps else "review_required"
     result = {
-        "schema_version": 1, "artifact_kind": "netsentry_slo_retained_context", "status": status,
+        "schema_version": 2 if schema_valid and document["schema_version"] == 2 else 1, "artifact_kind": "netsentry_slo_retained_context", "status": status,
         "context_complete": status == "review_required", "declaration_schema_valid": schema_valid,
         "observation_binding_complete": bound,
-        "run_identity": {key: document[key] for key in ("run_id", "profile", "started_at", "observations_sha256")}
+        "run_identity": {key: document[key] for key in identity_fields(document)}
                         if schema_valid else None,
         "declared_fields": fields, "inventory": list(retained.inventory.values()),
         "gaps": retained.gaps, "mismatches": retained.mismatches, "checks_completed": retained.checked,

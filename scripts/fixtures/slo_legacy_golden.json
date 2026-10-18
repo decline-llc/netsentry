@@ -1,0 +1,4317 @@
+{
+  "source_commit": "9d95c1b2f232ceaa14af0afd0abf36382cc0e4ac",
+  "cases": [
+    {
+      "label": "staging-review",
+      "input": {
+        "schema_version": 1,
+        "profile": "staging",
+        "run_id": "legacy-fixture",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "execution_complete": true,
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "measurement": {
+          "live_arrival": true,
+          "durable_completion": true,
+          "clock_method": "synthetic",
+          "clock_uncertainty_ns": 1000
+        },
+        "resources": {
+          "sut_vcpus": 2,
+          "sut_memory_bytes": 4294967296,
+          "active_rules": 2000
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "packet_windows": [
+          {
+            "start_second": 0,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 60,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 120,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 180,
+            "phase": "burst",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 1875000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 240,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 300,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          }
+        ],
+        "expected_alerts": [
+          {
+            "event_id": "e0",
+            "packet_id": "p0",
+            "rule_id": "r",
+            "offered_ns": 0,
+            "arrival_ns": 100,
+            "durable_ns": 100000100
+          },
+          {
+            "event_id": "e1",
+            "packet_id": "p1",
+            "rule_id": "r",
+            "offered_ns": 60000000000,
+            "arrival_ns": 60000000100,
+            "durable_ns": 60100000100
+          },
+          {
+            "event_id": "e2",
+            "packet_id": "p2",
+            "rule_id": "r",
+            "offered_ns": 120000000000,
+            "arrival_ns": 120000000100,
+            "durable_ns": 120100000100
+          },
+          {
+            "event_id": "e3",
+            "packet_id": "p3",
+            "rule_id": "r",
+            "offered_ns": 180000000000,
+            "arrival_ns": 180000000100,
+            "durable_ns": 180100000100
+          },
+          {
+            "event_id": "e4",
+            "packet_id": "p4",
+            "rule_id": "r",
+            "offered_ns": 240000000000,
+            "arrival_ns": 240000000100,
+            "durable_ns": 240100000100
+          },
+          {
+            "event_id": "e5",
+            "packet_id": "p5",
+            "rule_id": "r",
+            "offered_ns": 300000000000,
+            "arrival_ns": 300000000100,
+            "durable_ns": 300100000100
+          }
+        ]
+      },
+      "expected": {
+        "schema_version": 1,
+        "artifact_kind": "netsentry_slo_measurement_summary",
+        "run_id": "legacy-fixture",
+        "profile": "staging",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "window_basis": "offer_time_cohorts_finalized_at_run_drain",
+        "status": "review_required",
+        "slo_compliance_asserted": false,
+        "departmental_review_required": true,
+        "evidence_class": "single_vm_supplied_observations",
+        "coverage_gaps": [],
+        "measurement_failures": [],
+        "deadline_ns": 180000000,
+        "clock_uncertainty_ns": 1000,
+        "percentile_method": "nearest_rank_over_all_expected_alerts_missing_as_positive_infinity",
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "resources": {
+          "sut_vcpus": 2,
+          "sut_memory_bytes": 4294967296,
+          "active_rules": 2000
+        },
+        "proposed_profile": {
+          "vcpus": 2,
+          "memory_bytes": 4294967296,
+          "rules": 2000,
+          "sustained_bps": 100000000,
+          "burst_bps": 250000000
+        },
+        "full_run": {
+          "packets_by_phase": {
+            "sustained": {
+              "minutes": 5,
+              "offered_eligible": 5000,
+              "fully_processed": 5000,
+              "unprocessed": 0,
+              "loss_fraction": 0.0,
+              "loss_limit_ppm": 500,
+              "loss_limit_exceeded": false,
+              "offered_bytes": 3750000000
+            },
+            "burst": {
+              "minutes": 1,
+              "offered_eligible": 1000,
+              "fully_processed": 1000,
+              "unprocessed": 0,
+              "loss_fraction": 0.0,
+              "loss_limit_ppm": 2000,
+              "loss_limit_exceeded": false,
+              "offered_bytes": 1875000000
+            }
+          },
+          "alerts": {
+            "expected": 6,
+            "durably_completed": 6,
+            "missing": 0,
+            "late": 0,
+            "deadline_violations": 0,
+            "p99_upper_bound_ns": 100001000,
+            "p99_kind": "finite",
+            "p99_rank": 6,
+            "p99_sample_count": 6
+          }
+        },
+        "minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 0,
+            "end_second": 60,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 60,
+            "end_second": 120,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 120,
+            "end_second": 180,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 1875000000
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 180,
+            "end_second": 240,
+            "phase": "burst",
+            "offered_bps": 250000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 240,
+            "end_second": 300,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 300,
+            "end_second": 360,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          }
+        ],
+        "rolling_five_minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 3000000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 1875000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 5,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 0,
+            "end_second": 300
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 3000000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 1875000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 5,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 60,
+            "end_second": 360
+          }
+        ],
+        "limitations": [
+          "This tool summarizes supplied observations; it does not collect or independently verify them.",
+          "Cohort counters must represent unique eligible packets offered and completed by the drain boundary.",
+          "The expected-alert oracle, clock error bound and durable completion require external review.",
+          "Hardware, isolation, generator headroom, traffic/rule mix and raw traces require departmental review.",
+          "Resource/rate checks are partial; meeting them does not certify the proposed hardware or workload.",
+          "Reports retain source observations, not all external collector logs; retain those separately."
+        ]
+      }
+    },
+    {
+      "label": "staging-fail",
+      "input": {
+        "schema_version": 1,
+        "profile": "staging",
+        "run_id": "legacy-fixture",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "execution_complete": true,
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "measurement": {
+          "live_arrival": true,
+          "durable_completion": true,
+          "clock_method": "synthetic",
+          "clock_uncertainty_ns": 1000
+        },
+        "resources": {
+          "sut_vcpus": 2,
+          "sut_memory_bytes": 4294967296,
+          "active_rules": 2000
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "packet_windows": [
+          {
+            "start_second": 0,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 60,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 120,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 180,
+            "phase": "burst",
+            "offered_eligible": 1000,
+            "fully_processed": 0,
+            "offered_bytes": 1875000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 240,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 300,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          }
+        ],
+        "expected_alerts": [
+          {
+            "event_id": "e0",
+            "packet_id": "p0",
+            "rule_id": "r",
+            "offered_ns": 0,
+            "arrival_ns": 100,
+            "durable_ns": 100000100
+          },
+          {
+            "event_id": "e1",
+            "packet_id": "p1",
+            "rule_id": "r",
+            "offered_ns": 60000000000,
+            "arrival_ns": 60000000100,
+            "durable_ns": 60100000100
+          },
+          {
+            "event_id": "e2",
+            "packet_id": "p2",
+            "rule_id": "r",
+            "offered_ns": 120000000000,
+            "arrival_ns": 120000000100,
+            "durable_ns": 120100000100
+          },
+          {
+            "event_id": "e3",
+            "packet_id": "p3",
+            "rule_id": "r",
+            "offered_ns": 180000000000,
+            "arrival_ns": 180000000100,
+            "durable_ns": 180100000100
+          },
+          {
+            "event_id": "e4",
+            "packet_id": "p4",
+            "rule_id": "r",
+            "offered_ns": 240000000000,
+            "arrival_ns": 240000000100,
+            "durable_ns": 240100000100
+          },
+          {
+            "event_id": "e5",
+            "packet_id": "p5",
+            "rule_id": "r",
+            "offered_ns": 300000000000,
+            "arrival_ns": 300000000100,
+            "durable_ns": null
+          }
+        ]
+      },
+      "expected": {
+        "schema_version": 1,
+        "artifact_kind": "netsentry_slo_measurement_summary",
+        "run_id": "legacy-fixture",
+        "profile": "staging",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "window_basis": "offer_time_cohorts_finalized_at_run_drain",
+        "status": "measurement_failed",
+        "slo_compliance_asserted": false,
+        "departmental_review_required": true,
+        "evidence_class": "single_vm_supplied_observations",
+        "coverage_gaps": [],
+        "measurement_failures": [
+          "minute 3: burst packet loss exceeds 0.2%",
+          "full_run: expected security alerts are missing",
+          "full_run: end-to-end p99 exceeds 180 ms",
+          "full_run: burst packet loss exceeds its limit",
+          "window_ending_300: burst packet loss exceeds its limit",
+          "window_ending_360: expected security alerts are missing",
+          "window_ending_360: end-to-end p99 exceeds 180 ms",
+          "window_ending_360: burst packet loss exceeds its limit"
+        ],
+        "deadline_ns": 180000000,
+        "clock_uncertainty_ns": 1000,
+        "percentile_method": "nearest_rank_over_all_expected_alerts_missing_as_positive_infinity",
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "resources": {
+          "sut_vcpus": 2,
+          "sut_memory_bytes": 4294967296,
+          "active_rules": 2000
+        },
+        "proposed_profile": {
+          "vcpus": 2,
+          "memory_bytes": 4294967296,
+          "rules": 2000,
+          "sustained_bps": 100000000,
+          "burst_bps": 250000000
+        },
+        "full_run": {
+          "packets_by_phase": {
+            "sustained": {
+              "minutes": 5,
+              "offered_eligible": 5000,
+              "fully_processed": 5000,
+              "unprocessed": 0,
+              "loss_fraction": 0.0,
+              "loss_limit_ppm": 500,
+              "loss_limit_exceeded": false,
+              "offered_bytes": 3750000000
+            },
+            "burst": {
+              "minutes": 1,
+              "offered_eligible": 1000,
+              "fully_processed": 0,
+              "unprocessed": 1000,
+              "loss_fraction": 1.0,
+              "loss_limit_ppm": 2000,
+              "loss_limit_exceeded": true,
+              "offered_bytes": 1875000000
+            }
+          },
+          "alerts": {
+            "expected": 6,
+            "durably_completed": 5,
+            "missing": 1,
+            "late": 0,
+            "deadline_violations": 1,
+            "p99_upper_bound_ns": null,
+            "p99_kind": "unbounded_missing",
+            "p99_rank": 6,
+            "p99_sample_count": 6
+          }
+        },
+        "minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 0,
+            "end_second": 60,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 60,
+            "end_second": 120,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 120,
+            "end_second": 180,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 0,
+                "unprocessed": 1000,
+                "loss_fraction": 1.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": true,
+                "offered_bytes": 1875000000
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 180,
+            "end_second": 240,
+            "phase": "burst",
+            "offered_bps": 250000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 240,
+            "end_second": 300,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 0,
+              "missing": 1,
+              "late": 0,
+              "deadline_violations": 1,
+              "p99_upper_bound_ns": null,
+              "p99_kind": "unbounded_missing",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 300,
+            "end_second": 360,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          }
+        ],
+        "rolling_five_minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 3000000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 0,
+                "unprocessed": 1000,
+                "loss_fraction": 1.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": true,
+                "offered_bytes": 1875000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 5,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 0,
+            "end_second": 300
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 3000000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 0,
+                "unprocessed": 1000,
+                "loss_fraction": 1.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": true,
+                "offered_bytes": 1875000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 4,
+              "missing": 1,
+              "late": 0,
+              "deadline_violations": 1,
+              "p99_upper_bound_ns": null,
+              "p99_kind": "unbounded_missing",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 60,
+            "end_second": 360
+          }
+        ],
+        "limitations": [
+          "This tool summarizes supplied observations; it does not collect or independently verify them.",
+          "Cohort counters must represent unique eligible packets offered and completed by the drain boundary.",
+          "The expected-alert oracle, clock error bound and durable completion require external review.",
+          "Hardware, isolation, generator headroom, traffic/rule mix and raw traces require departmental review.",
+          "Resource/rate checks are partial; meeting them does not certify the proposed hardware or workload.",
+          "Reports retain source observations, not all external collector logs; retain those separately."
+        ]
+      }
+    },
+    {
+      "label": "staging-invalid",
+      "input": {
+        "schema_version": 1,
+        "profile": "staging",
+        "run_id": "legacy-fixture",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "execution_complete": true,
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "measurement": {
+          "live_arrival": false,
+          "durable_completion": true,
+          "clock_method": "synthetic",
+          "clock_uncertainty_ns": 1000
+        },
+        "resources": {
+          "sut_vcpus": 2,
+          "sut_memory_bytes": 4294967296,
+          "active_rules": 2000
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "packet_windows": [
+          {
+            "start_second": 0,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 1000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 60,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 120,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 180,
+            "phase": "burst",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 1875000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 240,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 300,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          }
+        ],
+        "expected_alerts": [
+          {
+            "event_id": "e0",
+            "packet_id": "p0",
+            "rule_id": "r",
+            "offered_ns": 0,
+            "arrival_ns": 100,
+            "durable_ns": 100000100
+          },
+          {
+            "event_id": "e1",
+            "packet_id": "p1",
+            "rule_id": "r",
+            "offered_ns": 60000000000,
+            "arrival_ns": 60000000100,
+            "durable_ns": 60100000100
+          },
+          {
+            "event_id": "e2",
+            "packet_id": "p2",
+            "rule_id": "r",
+            "offered_ns": 120000000000,
+            "arrival_ns": 120000000100,
+            "durable_ns": 120100000100
+          },
+          {
+            "event_id": "e3",
+            "packet_id": "p3",
+            "rule_id": "r",
+            "offered_ns": 180000000000,
+            "arrival_ns": 180000000100,
+            "durable_ns": 180100000100
+          },
+          {
+            "event_id": "e4",
+            "packet_id": "p4",
+            "rule_id": "r",
+            "offered_ns": 240000000000,
+            "arrival_ns": 240000000100,
+            "durable_ns": 240100000100
+          },
+          {
+            "event_id": "e5",
+            "packet_id": "p5",
+            "rule_id": "r",
+            "offered_ns": 300000000000,
+            "arrival_ns": 300000000100,
+            "durable_ns": 300100000100
+          }
+        ]
+      },
+      "expected": {
+        "schema_version": 1,
+        "artifact_kind": "netsentry_slo_measurement_summary",
+        "run_id": "legacy-fixture",
+        "profile": "staging",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "window_basis": "offer_time_cohorts_finalized_at_run_drain",
+        "status": "inconclusive",
+        "slo_compliance_asserted": false,
+        "departmental_review_required": true,
+        "evidence_class": "single_vm_supplied_observations",
+        "coverage_gaps": [
+          "live arrival boundary has not been established",
+          "minute 0: offered load is below the proposed target"
+        ],
+        "measurement_failures": [],
+        "deadline_ns": 180000000,
+        "clock_uncertainty_ns": 1000,
+        "percentile_method": "nearest_rank_over_all_expected_alerts_missing_as_positive_infinity",
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "resources": {
+          "sut_vcpus": 2,
+          "sut_memory_bytes": 4294967296,
+          "active_rules": 2000
+        },
+        "proposed_profile": {
+          "vcpus": 2,
+          "memory_bytes": 4294967296,
+          "rules": 2000,
+          "sustained_bps": 100000000,
+          "burst_bps": 250000000
+        },
+        "full_run": {
+          "packets_by_phase": {
+            "sustained": {
+              "minutes": 5,
+              "offered_eligible": 5000,
+              "fully_processed": 5000,
+              "unprocessed": 0,
+              "loss_fraction": 0.0,
+              "loss_limit_ppm": 500,
+              "loss_limit_exceeded": false,
+              "offered_bytes": 3001000000
+            },
+            "burst": {
+              "minutes": 1,
+              "offered_eligible": 1000,
+              "fully_processed": 1000,
+              "unprocessed": 0,
+              "loss_fraction": 0.0,
+              "loss_limit_ppm": 2000,
+              "loss_limit_exceeded": false,
+              "offered_bytes": 1875000000
+            }
+          },
+          "alerts": {
+            "expected": 6,
+            "durably_completed": 6,
+            "missing": 0,
+            "late": 0,
+            "deadline_violations": 0,
+            "p99_upper_bound_ns": 100001000,
+            "p99_kind": "finite",
+            "p99_rank": 6,
+            "p99_sample_count": 6
+          }
+        },
+        "minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 1000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 0,
+            "end_second": 60,
+            "phase": "sustained",
+            "offered_bps": 133333.33333333334
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 60,
+            "end_second": 120,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 120,
+            "end_second": 180,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 1875000000
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 180,
+            "end_second": 240,
+            "phase": "burst",
+            "offered_bps": 250000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 240,
+            "end_second": 300,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 300,
+            "end_second": 360,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          }
+        ],
+        "rolling_five_minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 2251000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 1875000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 5,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 0,
+            "end_second": 300
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 3000000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 1875000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 5,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 60,
+            "end_second": 360
+          }
+        ],
+        "limitations": [
+          "This tool summarizes supplied observations; it does not collect or independently verify them.",
+          "Cohort counters must represent unique eligible packets offered and completed by the drain boundary.",
+          "The expected-alert oracle, clock error bound and durable completion require external review.",
+          "Hardware, isolation, generator headroom, traffic/rule mix and raw traces require departmental review.",
+          "Resource/rate checks are partial; meeting them does not certify the proposed hardware or workload.",
+          "Reports retain source observations, not all external collector logs; retain those separately."
+        ]
+      }
+    },
+    {
+      "label": "staging-both",
+      "input": {
+        "schema_version": 1,
+        "profile": "staging",
+        "run_id": "legacy-fixture",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "execution_complete": true,
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "measurement": {
+          "live_arrival": false,
+          "durable_completion": true,
+          "clock_method": "synthetic",
+          "clock_uncertainty_ns": 1000
+        },
+        "resources": {
+          "sut_vcpus": 2,
+          "sut_memory_bytes": 4294967296,
+          "active_rules": 2000
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "packet_windows": [
+          {
+            "start_second": 0,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 1000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 60,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 120,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 180,
+            "phase": "burst",
+            "offered_eligible": 1000,
+            "fully_processed": 0,
+            "offered_bytes": 1875000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 240,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 300,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 750000000,
+            "observation_complete": true
+          }
+        ],
+        "expected_alerts": [
+          {
+            "event_id": "e0",
+            "packet_id": "p0",
+            "rule_id": "r",
+            "offered_ns": 0,
+            "arrival_ns": 100,
+            "durable_ns": 100000100
+          },
+          {
+            "event_id": "e1",
+            "packet_id": "p1",
+            "rule_id": "r",
+            "offered_ns": 60000000000,
+            "arrival_ns": 60000000100,
+            "durable_ns": 60100000100
+          },
+          {
+            "event_id": "e2",
+            "packet_id": "p2",
+            "rule_id": "r",
+            "offered_ns": 120000000000,
+            "arrival_ns": 120000000100,
+            "durable_ns": 120100000100
+          },
+          {
+            "event_id": "e3",
+            "packet_id": "p3",
+            "rule_id": "r",
+            "offered_ns": 180000000000,
+            "arrival_ns": 180000000100,
+            "durable_ns": 180100000100
+          },
+          {
+            "event_id": "e4",
+            "packet_id": "p4",
+            "rule_id": "r",
+            "offered_ns": 240000000000,
+            "arrival_ns": 240000000100,
+            "durable_ns": 240100000100
+          },
+          {
+            "event_id": "e5",
+            "packet_id": "p5",
+            "rule_id": "r",
+            "offered_ns": 300000000000,
+            "arrival_ns": 300000000100,
+            "durable_ns": null
+          }
+        ]
+      },
+      "expected": {
+        "schema_version": 1,
+        "artifact_kind": "netsentry_slo_measurement_summary",
+        "run_id": "legacy-fixture",
+        "profile": "staging",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "window_basis": "offer_time_cohorts_finalized_at_run_drain",
+        "status": "inconclusive",
+        "slo_compliance_asserted": false,
+        "departmental_review_required": true,
+        "evidence_class": "single_vm_supplied_observations",
+        "coverage_gaps": [
+          "live arrival boundary has not been established",
+          "minute 0: offered load is below the proposed target"
+        ],
+        "measurement_failures": [
+          "minute 3: burst packet loss exceeds 0.2%",
+          "full_run: expected security alerts are missing",
+          "full_run: end-to-end p99 exceeds 180 ms",
+          "full_run: burst packet loss exceeds its limit",
+          "window_ending_300: burst packet loss exceeds its limit",
+          "window_ending_360: expected security alerts are missing",
+          "window_ending_360: end-to-end p99 exceeds 180 ms",
+          "window_ending_360: burst packet loss exceeds its limit"
+        ],
+        "deadline_ns": 180000000,
+        "clock_uncertainty_ns": 1000,
+        "percentile_method": "nearest_rank_over_all_expected_alerts_missing_as_positive_infinity",
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "resources": {
+          "sut_vcpus": 2,
+          "sut_memory_bytes": 4294967296,
+          "active_rules": 2000
+        },
+        "proposed_profile": {
+          "vcpus": 2,
+          "memory_bytes": 4294967296,
+          "rules": 2000,
+          "sustained_bps": 100000000,
+          "burst_bps": 250000000
+        },
+        "full_run": {
+          "packets_by_phase": {
+            "sustained": {
+              "minutes": 5,
+              "offered_eligible": 5000,
+              "fully_processed": 5000,
+              "unprocessed": 0,
+              "loss_fraction": 0.0,
+              "loss_limit_ppm": 500,
+              "loss_limit_exceeded": false,
+              "offered_bytes": 3001000000
+            },
+            "burst": {
+              "minutes": 1,
+              "offered_eligible": 1000,
+              "fully_processed": 0,
+              "unprocessed": 1000,
+              "loss_fraction": 1.0,
+              "loss_limit_ppm": 2000,
+              "loss_limit_exceeded": true,
+              "offered_bytes": 1875000000
+            }
+          },
+          "alerts": {
+            "expected": 6,
+            "durably_completed": 5,
+            "missing": 1,
+            "late": 0,
+            "deadline_violations": 1,
+            "p99_upper_bound_ns": null,
+            "p99_kind": "unbounded_missing",
+            "p99_rank": 6,
+            "p99_sample_count": 6
+          }
+        },
+        "minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 1000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 0,
+            "end_second": 60,
+            "phase": "sustained",
+            "offered_bps": 133333.33333333334
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 60,
+            "end_second": 120,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 120,
+            "end_second": 180,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 0,
+                "unprocessed": 1000,
+                "loss_fraction": 1.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": true,
+                "offered_bytes": 1875000000
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 180,
+            "end_second": 240,
+            "phase": "burst",
+            "offered_bps": 250000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 240,
+            "end_second": 300,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 750000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 0,
+              "missing": 1,
+              "late": 0,
+              "deadline_violations": 1,
+              "p99_upper_bound_ns": null,
+              "p99_kind": "unbounded_missing",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 300,
+            "end_second": 360,
+            "phase": "sustained",
+            "offered_bps": 100000000.0
+          }
+        ],
+        "rolling_five_minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 2251000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 0,
+                "unprocessed": 1000,
+                "loss_fraction": 1.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": true,
+                "offered_bytes": 1875000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 5,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 0,
+            "end_second": 300
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 3000000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 0,
+                "unprocessed": 1000,
+                "loss_fraction": 1.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": true,
+                "offered_bytes": 1875000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 4,
+              "missing": 1,
+              "late": 0,
+              "deadline_violations": 1,
+              "p99_upper_bound_ns": null,
+              "p99_kind": "unbounded_missing",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 60,
+            "end_second": 360
+          }
+        ],
+        "limitations": [
+          "This tool summarizes supplied observations; it does not collect or independently verify them.",
+          "Cohort counters must represent unique eligible packets offered and completed by the drain boundary.",
+          "The expected-alert oracle, clock error bound and durable completion require external review.",
+          "Hardware, isolation, generator headroom, traffic/rule mix and raw traces require departmental review.",
+          "Resource/rate checks are partial; meeting them does not certify the proposed hardware or workload.",
+          "Reports retain source observations, not all external collector logs; retain those separately."
+        ]
+      }
+    },
+    {
+      "label": "prod-review",
+      "input": {
+        "schema_version": 1,
+        "profile": "prod",
+        "run_id": "legacy-fixture",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "execution_complete": true,
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "measurement": {
+          "live_arrival": true,
+          "durable_completion": true,
+          "clock_method": "synthetic",
+          "clock_uncertainty_ns": 1000
+        },
+        "resources": {
+          "sut_vcpus": 8,
+          "sut_memory_bytes": 17179869184,
+          "active_rules": 20000
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "packet_windows": [
+          {
+            "start_second": 0,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 60,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 120,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 180,
+            "phase": "burst",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 52500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 240,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 300,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          }
+        ],
+        "expected_alerts": [
+          {
+            "event_id": "e0",
+            "packet_id": "p0",
+            "rule_id": "r",
+            "offered_ns": 0,
+            "arrival_ns": 100,
+            "durable_ns": 100000100
+          },
+          {
+            "event_id": "e1",
+            "packet_id": "p1",
+            "rule_id": "r",
+            "offered_ns": 60000000000,
+            "arrival_ns": 60000000100,
+            "durable_ns": 60100000100
+          },
+          {
+            "event_id": "e2",
+            "packet_id": "p2",
+            "rule_id": "r",
+            "offered_ns": 120000000000,
+            "arrival_ns": 120000000100,
+            "durable_ns": 120100000100
+          },
+          {
+            "event_id": "e3",
+            "packet_id": "p3",
+            "rule_id": "r",
+            "offered_ns": 180000000000,
+            "arrival_ns": 180000000100,
+            "durable_ns": 180100000100
+          },
+          {
+            "event_id": "e4",
+            "packet_id": "p4",
+            "rule_id": "r",
+            "offered_ns": 240000000000,
+            "arrival_ns": 240000000100,
+            "durable_ns": 240100000100
+          },
+          {
+            "event_id": "e5",
+            "packet_id": "p5",
+            "rule_id": "r",
+            "offered_ns": 300000000000,
+            "arrival_ns": 300000000100,
+            "durable_ns": 300100000100
+          }
+        ]
+      },
+      "expected": {
+        "schema_version": 1,
+        "artifact_kind": "netsentry_slo_measurement_summary",
+        "run_id": "legacy-fixture",
+        "profile": "prod",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "window_basis": "offer_time_cohorts_finalized_at_run_drain",
+        "status": "review_required",
+        "slo_compliance_asserted": false,
+        "departmental_review_required": true,
+        "evidence_class": "single_vm_supplied_observations",
+        "coverage_gaps": [],
+        "measurement_failures": [],
+        "deadline_ns": 180000000,
+        "clock_uncertainty_ns": 1000,
+        "percentile_method": "nearest_rank_over_all_expected_alerts_missing_as_positive_infinity",
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "resources": {
+          "sut_vcpus": 8,
+          "sut_memory_bytes": 17179869184,
+          "active_rules": 20000
+        },
+        "proposed_profile": {
+          "vcpus": 8,
+          "memory_bytes": 17179869184,
+          "rules": 20000,
+          "sustained_bps": 3000000000,
+          "burst_bps": 7000000000
+        },
+        "full_run": {
+          "packets_by_phase": {
+            "sustained": {
+              "minutes": 5,
+              "offered_eligible": 5000,
+              "fully_processed": 5000,
+              "unprocessed": 0,
+              "loss_fraction": 0.0,
+              "loss_limit_ppm": 500,
+              "loss_limit_exceeded": false,
+              "offered_bytes": 112500000000
+            },
+            "burst": {
+              "minutes": 1,
+              "offered_eligible": 1000,
+              "fully_processed": 1000,
+              "unprocessed": 0,
+              "loss_fraction": 0.0,
+              "loss_limit_ppm": 2000,
+              "loss_limit_exceeded": false,
+              "offered_bytes": 52500000000
+            }
+          },
+          "alerts": {
+            "expected": 6,
+            "durably_completed": 6,
+            "missing": 0,
+            "late": 0,
+            "deadline_violations": 0,
+            "p99_upper_bound_ns": 100001000,
+            "p99_kind": "finite",
+            "p99_rank": 6,
+            "p99_sample_count": 6
+          }
+        },
+        "minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 0,
+            "end_second": 60,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 60,
+            "end_second": 120,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 120,
+            "end_second": 180,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 52500000000
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 180,
+            "end_second": 240,
+            "phase": "burst",
+            "offered_bps": 7000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 240,
+            "end_second": 300,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 300,
+            "end_second": 360,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          }
+        ],
+        "rolling_five_minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 90000000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 52500000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 5,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 0,
+            "end_second": 300
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 90000000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 52500000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 5,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 60,
+            "end_second": 360
+          }
+        ],
+        "limitations": [
+          "This tool summarizes supplied observations; it does not collect or independently verify them.",
+          "Cohort counters must represent unique eligible packets offered and completed by the drain boundary.",
+          "The expected-alert oracle, clock error bound and durable completion require external review.",
+          "Hardware, isolation, generator headroom, traffic/rule mix and raw traces require departmental review.",
+          "Resource/rate checks are partial; meeting them does not certify the proposed hardware or workload.",
+          "Reports retain source observations, not all external collector logs; retain those separately."
+        ]
+      }
+    },
+    {
+      "label": "prod-fail",
+      "input": {
+        "schema_version": 1,
+        "profile": "prod",
+        "run_id": "legacy-fixture",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "execution_complete": true,
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "measurement": {
+          "live_arrival": true,
+          "durable_completion": true,
+          "clock_method": "synthetic",
+          "clock_uncertainty_ns": 1000
+        },
+        "resources": {
+          "sut_vcpus": 8,
+          "sut_memory_bytes": 17179869184,
+          "active_rules": 20000
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "packet_windows": [
+          {
+            "start_second": 0,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 60,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 120,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 180,
+            "phase": "burst",
+            "offered_eligible": 1000,
+            "fully_processed": 0,
+            "offered_bytes": 52500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 240,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 300,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          }
+        ],
+        "expected_alerts": [
+          {
+            "event_id": "e0",
+            "packet_id": "p0",
+            "rule_id": "r",
+            "offered_ns": 0,
+            "arrival_ns": 100,
+            "durable_ns": 100000100
+          },
+          {
+            "event_id": "e1",
+            "packet_id": "p1",
+            "rule_id": "r",
+            "offered_ns": 60000000000,
+            "arrival_ns": 60000000100,
+            "durable_ns": 60100000100
+          },
+          {
+            "event_id": "e2",
+            "packet_id": "p2",
+            "rule_id": "r",
+            "offered_ns": 120000000000,
+            "arrival_ns": 120000000100,
+            "durable_ns": 120100000100
+          },
+          {
+            "event_id": "e3",
+            "packet_id": "p3",
+            "rule_id": "r",
+            "offered_ns": 180000000000,
+            "arrival_ns": 180000000100,
+            "durable_ns": 180100000100
+          },
+          {
+            "event_id": "e4",
+            "packet_id": "p4",
+            "rule_id": "r",
+            "offered_ns": 240000000000,
+            "arrival_ns": 240000000100,
+            "durable_ns": 240100000100
+          },
+          {
+            "event_id": "e5",
+            "packet_id": "p5",
+            "rule_id": "r",
+            "offered_ns": 300000000000,
+            "arrival_ns": 300000000100,
+            "durable_ns": null
+          }
+        ]
+      },
+      "expected": {
+        "schema_version": 1,
+        "artifact_kind": "netsentry_slo_measurement_summary",
+        "run_id": "legacy-fixture",
+        "profile": "prod",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "window_basis": "offer_time_cohorts_finalized_at_run_drain",
+        "status": "measurement_failed",
+        "slo_compliance_asserted": false,
+        "departmental_review_required": true,
+        "evidence_class": "single_vm_supplied_observations",
+        "coverage_gaps": [],
+        "measurement_failures": [
+          "minute 3: burst packet loss exceeds 0.2%",
+          "full_run: expected security alerts are missing",
+          "full_run: end-to-end p99 exceeds 180 ms",
+          "full_run: burst packet loss exceeds its limit",
+          "window_ending_300: burst packet loss exceeds its limit",
+          "window_ending_360: expected security alerts are missing",
+          "window_ending_360: end-to-end p99 exceeds 180 ms",
+          "window_ending_360: burst packet loss exceeds its limit"
+        ],
+        "deadline_ns": 180000000,
+        "clock_uncertainty_ns": 1000,
+        "percentile_method": "nearest_rank_over_all_expected_alerts_missing_as_positive_infinity",
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "resources": {
+          "sut_vcpus": 8,
+          "sut_memory_bytes": 17179869184,
+          "active_rules": 20000
+        },
+        "proposed_profile": {
+          "vcpus": 8,
+          "memory_bytes": 17179869184,
+          "rules": 20000,
+          "sustained_bps": 3000000000,
+          "burst_bps": 7000000000
+        },
+        "full_run": {
+          "packets_by_phase": {
+            "sustained": {
+              "minutes": 5,
+              "offered_eligible": 5000,
+              "fully_processed": 5000,
+              "unprocessed": 0,
+              "loss_fraction": 0.0,
+              "loss_limit_ppm": 500,
+              "loss_limit_exceeded": false,
+              "offered_bytes": 112500000000
+            },
+            "burst": {
+              "minutes": 1,
+              "offered_eligible": 1000,
+              "fully_processed": 0,
+              "unprocessed": 1000,
+              "loss_fraction": 1.0,
+              "loss_limit_ppm": 2000,
+              "loss_limit_exceeded": true,
+              "offered_bytes": 52500000000
+            }
+          },
+          "alerts": {
+            "expected": 6,
+            "durably_completed": 5,
+            "missing": 1,
+            "late": 0,
+            "deadline_violations": 1,
+            "p99_upper_bound_ns": null,
+            "p99_kind": "unbounded_missing",
+            "p99_rank": 6,
+            "p99_sample_count": 6
+          }
+        },
+        "minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 0,
+            "end_second": 60,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 60,
+            "end_second": 120,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 120,
+            "end_second": 180,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 0,
+                "unprocessed": 1000,
+                "loss_fraction": 1.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": true,
+                "offered_bytes": 52500000000
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 180,
+            "end_second": 240,
+            "phase": "burst",
+            "offered_bps": 7000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 240,
+            "end_second": 300,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 0,
+              "missing": 1,
+              "late": 0,
+              "deadline_violations": 1,
+              "p99_upper_bound_ns": null,
+              "p99_kind": "unbounded_missing",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 300,
+            "end_second": 360,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          }
+        ],
+        "rolling_five_minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 90000000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 0,
+                "unprocessed": 1000,
+                "loss_fraction": 1.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": true,
+                "offered_bytes": 52500000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 5,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 0,
+            "end_second": 300
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 90000000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 0,
+                "unprocessed": 1000,
+                "loss_fraction": 1.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": true,
+                "offered_bytes": 52500000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 4,
+              "missing": 1,
+              "late": 0,
+              "deadline_violations": 1,
+              "p99_upper_bound_ns": null,
+              "p99_kind": "unbounded_missing",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 60,
+            "end_second": 360
+          }
+        ],
+        "limitations": [
+          "This tool summarizes supplied observations; it does not collect or independently verify them.",
+          "Cohort counters must represent unique eligible packets offered and completed by the drain boundary.",
+          "The expected-alert oracle, clock error bound and durable completion require external review.",
+          "Hardware, isolation, generator headroom, traffic/rule mix and raw traces require departmental review.",
+          "Resource/rate checks are partial; meeting them does not certify the proposed hardware or workload.",
+          "Reports retain source observations, not all external collector logs; retain those separately."
+        ]
+      }
+    },
+    {
+      "label": "prod-invalid",
+      "input": {
+        "schema_version": 1,
+        "profile": "prod",
+        "run_id": "legacy-fixture",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "execution_complete": true,
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "measurement": {
+          "live_arrival": false,
+          "durable_completion": true,
+          "clock_method": "synthetic",
+          "clock_uncertainty_ns": 1000
+        },
+        "resources": {
+          "sut_vcpus": 8,
+          "sut_memory_bytes": 17179869184,
+          "active_rules": 20000
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "packet_windows": [
+          {
+            "start_second": 0,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 1000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 60,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 120,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 180,
+            "phase": "burst",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 52500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 240,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 300,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          }
+        ],
+        "expected_alerts": [
+          {
+            "event_id": "e0",
+            "packet_id": "p0",
+            "rule_id": "r",
+            "offered_ns": 0,
+            "arrival_ns": 100,
+            "durable_ns": 100000100
+          },
+          {
+            "event_id": "e1",
+            "packet_id": "p1",
+            "rule_id": "r",
+            "offered_ns": 60000000000,
+            "arrival_ns": 60000000100,
+            "durable_ns": 60100000100
+          },
+          {
+            "event_id": "e2",
+            "packet_id": "p2",
+            "rule_id": "r",
+            "offered_ns": 120000000000,
+            "arrival_ns": 120000000100,
+            "durable_ns": 120100000100
+          },
+          {
+            "event_id": "e3",
+            "packet_id": "p3",
+            "rule_id": "r",
+            "offered_ns": 180000000000,
+            "arrival_ns": 180000000100,
+            "durable_ns": 180100000100
+          },
+          {
+            "event_id": "e4",
+            "packet_id": "p4",
+            "rule_id": "r",
+            "offered_ns": 240000000000,
+            "arrival_ns": 240000000100,
+            "durable_ns": 240100000100
+          },
+          {
+            "event_id": "e5",
+            "packet_id": "p5",
+            "rule_id": "r",
+            "offered_ns": 300000000000,
+            "arrival_ns": 300000000100,
+            "durable_ns": 300100000100
+          }
+        ]
+      },
+      "expected": {
+        "schema_version": 1,
+        "artifact_kind": "netsentry_slo_measurement_summary",
+        "run_id": "legacy-fixture",
+        "profile": "prod",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "window_basis": "offer_time_cohorts_finalized_at_run_drain",
+        "status": "inconclusive",
+        "slo_compliance_asserted": false,
+        "departmental_review_required": true,
+        "evidence_class": "single_vm_supplied_observations",
+        "coverage_gaps": [
+          "live arrival boundary has not been established",
+          "minute 0: offered load is below the proposed target"
+        ],
+        "measurement_failures": [],
+        "deadline_ns": 180000000,
+        "clock_uncertainty_ns": 1000,
+        "percentile_method": "nearest_rank_over_all_expected_alerts_missing_as_positive_infinity",
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "resources": {
+          "sut_vcpus": 8,
+          "sut_memory_bytes": 17179869184,
+          "active_rules": 20000
+        },
+        "proposed_profile": {
+          "vcpus": 8,
+          "memory_bytes": 17179869184,
+          "rules": 20000,
+          "sustained_bps": 3000000000,
+          "burst_bps": 7000000000
+        },
+        "full_run": {
+          "packets_by_phase": {
+            "sustained": {
+              "minutes": 5,
+              "offered_eligible": 5000,
+              "fully_processed": 5000,
+              "unprocessed": 0,
+              "loss_fraction": 0.0,
+              "loss_limit_ppm": 500,
+              "loss_limit_exceeded": false,
+              "offered_bytes": 90001000000
+            },
+            "burst": {
+              "minutes": 1,
+              "offered_eligible": 1000,
+              "fully_processed": 1000,
+              "unprocessed": 0,
+              "loss_fraction": 0.0,
+              "loss_limit_ppm": 2000,
+              "loss_limit_exceeded": false,
+              "offered_bytes": 52500000000
+            }
+          },
+          "alerts": {
+            "expected": 6,
+            "durably_completed": 6,
+            "missing": 0,
+            "late": 0,
+            "deadline_violations": 0,
+            "p99_upper_bound_ns": 100001000,
+            "p99_kind": "finite",
+            "p99_rank": 6,
+            "p99_sample_count": 6
+          }
+        },
+        "minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 1000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 0,
+            "end_second": 60,
+            "phase": "sustained",
+            "offered_bps": 133333.33333333334
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 60,
+            "end_second": 120,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 120,
+            "end_second": 180,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 52500000000
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 180,
+            "end_second": 240,
+            "phase": "burst",
+            "offered_bps": 7000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 240,
+            "end_second": 300,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 300,
+            "end_second": 360,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          }
+        ],
+        "rolling_five_minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 67501000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 52500000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 5,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 0,
+            "end_second": 300
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 90000000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 52500000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 5,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 60,
+            "end_second": 360
+          }
+        ],
+        "limitations": [
+          "This tool summarizes supplied observations; it does not collect or independently verify them.",
+          "Cohort counters must represent unique eligible packets offered and completed by the drain boundary.",
+          "The expected-alert oracle, clock error bound and durable completion require external review.",
+          "Hardware, isolation, generator headroom, traffic/rule mix and raw traces require departmental review.",
+          "Resource/rate checks are partial; meeting them does not certify the proposed hardware or workload.",
+          "Reports retain source observations, not all external collector logs; retain those separately."
+        ]
+      }
+    },
+    {
+      "label": "prod-both",
+      "input": {
+        "schema_version": 1,
+        "profile": "prod",
+        "run_id": "legacy-fixture",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "execution_complete": true,
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "measurement": {
+          "live_arrival": false,
+          "durable_completion": true,
+          "clock_method": "synthetic",
+          "clock_uncertainty_ns": 1000
+        },
+        "resources": {
+          "sut_vcpus": 8,
+          "sut_memory_bytes": 17179869184,
+          "active_rules": 20000
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "packet_windows": [
+          {
+            "start_second": 0,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 1000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 60,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 120,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 180,
+            "phase": "burst",
+            "offered_eligible": 1000,
+            "fully_processed": 0,
+            "offered_bytes": 52500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 240,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          },
+          {
+            "start_second": 300,
+            "phase": "sustained",
+            "offered_eligible": 1000,
+            "fully_processed": 1000,
+            "offered_bytes": 22500000000,
+            "observation_complete": true
+          }
+        ],
+        "expected_alerts": [
+          {
+            "event_id": "e0",
+            "packet_id": "p0",
+            "rule_id": "r",
+            "offered_ns": 0,
+            "arrival_ns": 100,
+            "durable_ns": 100000100
+          },
+          {
+            "event_id": "e1",
+            "packet_id": "p1",
+            "rule_id": "r",
+            "offered_ns": 60000000000,
+            "arrival_ns": 60000000100,
+            "durable_ns": 60100000100
+          },
+          {
+            "event_id": "e2",
+            "packet_id": "p2",
+            "rule_id": "r",
+            "offered_ns": 120000000000,
+            "arrival_ns": 120000000100,
+            "durable_ns": 120100000100
+          },
+          {
+            "event_id": "e3",
+            "packet_id": "p3",
+            "rule_id": "r",
+            "offered_ns": 180000000000,
+            "arrival_ns": 180000000100,
+            "durable_ns": 180100000100
+          },
+          {
+            "event_id": "e4",
+            "packet_id": "p4",
+            "rule_id": "r",
+            "offered_ns": 240000000000,
+            "arrival_ns": 240000000100,
+            "durable_ns": 240100000100
+          },
+          {
+            "event_id": "e5",
+            "packet_id": "p5",
+            "rule_id": "r",
+            "offered_ns": 300000000000,
+            "arrival_ns": 300000000100,
+            "durable_ns": null
+          }
+        ]
+      },
+      "expected": {
+        "schema_version": 1,
+        "artifact_kind": "netsentry_slo_measurement_summary",
+        "run_id": "legacy-fixture",
+        "profile": "prod",
+        "started_at": "2026-10-17T00:00:00Z",
+        "duration_seconds": 360,
+        "drain_seconds": 30,
+        "observed_through_ns": 390000000000,
+        "window_basis": "offer_time_cohorts_finalized_at_run_drain",
+        "status": "inconclusive",
+        "slo_compliance_asserted": false,
+        "departmental_review_required": true,
+        "evidence_class": "single_vm_supplied_observations",
+        "coverage_gaps": [
+          "live arrival boundary has not been established",
+          "minute 0: offered load is below the proposed target"
+        ],
+        "measurement_failures": [
+          "minute 3: burst packet loss exceeds 0.2%",
+          "full_run: expected security alerts are missing",
+          "full_run: end-to-end p99 exceeds 180 ms",
+          "full_run: burst packet loss exceeds its limit",
+          "window_ending_300: burst packet loss exceeds its limit",
+          "window_ending_360: expected security alerts are missing",
+          "window_ending_360: end-to-end p99 exceeds 180 ms",
+          "window_ending_360: burst packet loss exceeds its limit"
+        ],
+        "deadline_ns": 180000000,
+        "clock_uncertainty_ns": 1000,
+        "percentile_method": "nearest_rank_over_all_expected_alerts_missing_as_positive_infinity",
+        "policy": {
+          "minimum_duration_seconds": 301,
+          "minimum_expected_alerts": 6
+        },
+        "provenance": {
+          "sut_commit": "1111111111111111111111111111111111111111",
+          "harness_commit": "2222222222222222222222222222222222222222",
+          "config_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+          "rules_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+          "fixture_sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+        },
+        "resources": {
+          "sut_vcpus": 8,
+          "sut_memory_bytes": 17179869184,
+          "active_rules": 20000
+        },
+        "proposed_profile": {
+          "vcpus": 8,
+          "memory_bytes": 17179869184,
+          "rules": 20000,
+          "sustained_bps": 3000000000,
+          "burst_bps": 7000000000
+        },
+        "full_run": {
+          "packets_by_phase": {
+            "sustained": {
+              "minutes": 5,
+              "offered_eligible": 5000,
+              "fully_processed": 5000,
+              "unprocessed": 0,
+              "loss_fraction": 0.0,
+              "loss_limit_ppm": 500,
+              "loss_limit_exceeded": false,
+              "offered_bytes": 90001000000
+            },
+            "burst": {
+              "minutes": 1,
+              "offered_eligible": 1000,
+              "fully_processed": 0,
+              "unprocessed": 1000,
+              "loss_fraction": 1.0,
+              "loss_limit_ppm": 2000,
+              "loss_limit_exceeded": true,
+              "offered_bytes": 52500000000
+            }
+          },
+          "alerts": {
+            "expected": 6,
+            "durably_completed": 5,
+            "missing": 1,
+            "late": 0,
+            "deadline_violations": 1,
+            "p99_upper_bound_ns": null,
+            "p99_kind": "unbounded_missing",
+            "p99_rank": 6,
+            "p99_sample_count": 6
+          }
+        },
+        "minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 1000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 0,
+            "end_second": 60,
+            "phase": "sustained",
+            "offered_bps": 133333.33333333334
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 60,
+            "end_second": 120,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 120,
+            "end_second": 180,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 0,
+                "unprocessed": 1000,
+                "loss_fraction": 1.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": true,
+                "offered_bytes": 52500000000
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 180,
+            "end_second": 240,
+            "phase": "burst",
+            "offered_bps": 7000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 1,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 240,
+            "end_second": 300,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 1000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 22500000000
+              },
+              "burst": {
+                "minutes": 0,
+                "offered_eligible": 0,
+                "fully_processed": 0,
+                "unprocessed": 0,
+                "loss_fraction": null,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": null,
+                "offered_bytes": 0
+              }
+            },
+            "alerts": {
+              "expected": 1,
+              "durably_completed": 0,
+              "missing": 1,
+              "late": 0,
+              "deadline_violations": 1,
+              "p99_upper_bound_ns": null,
+              "p99_kind": "unbounded_missing",
+              "p99_rank": 1,
+              "p99_sample_count": 1
+            },
+            "start_second": 300,
+            "end_second": 360,
+            "phase": "sustained",
+            "offered_bps": 3000000000.0
+          }
+        ],
+        "rolling_five_minute_cohorts": [
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 67501000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 0,
+                "unprocessed": 1000,
+                "loss_fraction": 1.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": true,
+                "offered_bytes": 52500000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 5,
+              "missing": 0,
+              "late": 0,
+              "deadline_violations": 0,
+              "p99_upper_bound_ns": 100001000,
+              "p99_kind": "finite",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 0,
+            "end_second": 300
+          },
+          {
+            "packets_by_phase": {
+              "sustained": {
+                "minutes": 4,
+                "offered_eligible": 4000,
+                "fully_processed": 4000,
+                "unprocessed": 0,
+                "loss_fraction": 0.0,
+                "loss_limit_ppm": 500,
+                "loss_limit_exceeded": false,
+                "offered_bytes": 90000000000
+              },
+              "burst": {
+                "minutes": 1,
+                "offered_eligible": 1000,
+                "fully_processed": 0,
+                "unprocessed": 1000,
+                "loss_fraction": 1.0,
+                "loss_limit_ppm": 2000,
+                "loss_limit_exceeded": true,
+                "offered_bytes": 52500000000
+              }
+            },
+            "alerts": {
+              "expected": 5,
+              "durably_completed": 4,
+              "missing": 1,
+              "late": 0,
+              "deadline_violations": 1,
+              "p99_upper_bound_ns": null,
+              "p99_kind": "unbounded_missing",
+              "p99_rank": 5,
+              "p99_sample_count": 5
+            },
+            "start_second": 60,
+            "end_second": 360
+          }
+        ],
+        "limitations": [
+          "This tool summarizes supplied observations; it does not collect or independently verify them.",
+          "Cohort counters must represent unique eligible packets offered and completed by the drain boundary.",
+          "The expected-alert oracle, clock error bound and durable completion require external review.",
+          "Hardware, isolation, generator headroom, traffic/rule mix and raw traces require departmental review.",
+          "Resource/rate checks are partial; meeting them does not certify the proposed hardware or workload.",
+          "Reports retain source observations, not all external collector logs; retain those separately."
+        ]
+      }
+    }
+  ]
+}

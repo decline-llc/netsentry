@@ -117,7 +117,22 @@ def read_observations(path: Path) -> tuple[dict[str, Any], bytes]:
     return document, raw
 
 
+def local_module():
+    if __package__:
+        from . import slo_local
+    else:
+        import slo_local
+    return slo_local
+
+
 def _validate(document: Any) -> None:
+    if isinstance(document, dict) and type(document.get("schema_version")) is int and document["schema_version"] == 2:
+        local_module().validate(document)
+        return
+    _validate_v1(document)
+
+
+def _validate_v1(document: Any) -> None:
     _object(document, {
         "schema_version", "run_id", "profile", "started_at", "duration_seconds",
         "drain_seconds", "observed_through_ns", "execution_complete", "policy",
@@ -260,6 +275,8 @@ def summarize(document: Any) -> dict[str, Any]:
     Counters, expected events, clock method and durability observations are supplied
     by the collector. Their physical truth requires departmental evidence review.
     """
+    if isinstance(document, dict) and type(document.get("schema_version")) is int and document["schema_version"] == 2:
+        return local_module().summarize(document)
     _validate(document)
     windows = document["packet_windows"]
     duration = document["duration_seconds"]
@@ -381,22 +398,31 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, required=True, help="completed-run observation JSON")
     parser.add_argument("--output", type=Path, help="new output file; existing files are never overwritten")
+    parser.add_argument("--review", type=Path, help="explicit hash-bound local-v1 reviewer declaration")
     args = parser.parse_args(argv)
     try:
         document, raw = read_observations(args.input.expanduser())
         report = summarize(document)
+        if args.review is not None:
+            if document["schema_version"] != 2:
+                raise EvidenceError("review is supported only for local-v1 schema 2")
+            declaration, _ = read_observations(args.review.expanduser())
+            report = local_module().reviewed(report, raw, declaration)
         report["source"] = {"sha256": hashlib.sha256(raw).hexdigest(), "raw_json": raw.decode("utf-8")}
         stamp = _timestamp(document["started_at"]).strftime("%Y%m%d_%H%M%S")
         output = args.output or (
             Path.home() / "benchmarks" / "r90\u201175"
             / f"acceptance_{document['profile']}_{stamp}.json"
         )
+        if args.output is None and document["schema_version"] == 2:
+            output = Path.home() / "benchmarks" / "local-v1" / document["run_id"] / "report.json"
         write_report(output, report)
     except (EvidenceError, OSError, ValueError, RecursionError) as error:
         print(f"[slo-report] {error}", file=sys.stderr)
         return 2
-    print(f"[slo-report] {report['status']}; departmental review required: {output}")
-    return {"review_required": 0, "measurement_failed": 1, "inconclusive": 3}[report["status"]]
+    review_label = "local review declaration" if document["schema_version"] == 2 else "departmental review required"
+    print(f"[slo-report] {report['status']}; {review_label}: {output}")
+    return {"review_required": 0, "reviewed_local_acceptance": 0, "measurement_failed": 1, "inconclusive": 3}[report["status"]]
 
 
 if __name__ == "__main__":

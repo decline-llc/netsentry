@@ -1,5 +1,9 @@
 # Packet ledger adapter and departmental collection handoff
 
+Schema-2 `local-v1` support and its explicit local review/legacy compatibility
+boundaries are documented in [local-v1 tools](slo-local-v1.md). The schema-1
+examples below retain their historical meanings.
+
 `scripts/slo_collect.py` converts finalized external packet/oracle and lifecycle
 ledgers into the [reporter's observation schema](slo-report.md). This adapter
 implements correlation and retention, **not live instrumentation**. Tests are

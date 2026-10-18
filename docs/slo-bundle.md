@@ -1,5 +1,9 @@
 # Supplied SLO evidence bundle
 
+Schema-2 `local-v1` support and its explicit local review/legacy compatibility
+boundaries are documented in [local-v1 tools](slo-local-v1.md). The schema-1
+examples below retain their historical meanings.
+
 R90-118 adds `scripts/slo_bundle.py`, a standard-library API/CLI for the
 [native UDP measurement lane](slo-ingress.md), [engine export](slo-runtime.md),
 [ledger adapter](slo-collect.md) and [reporter](slo-report.md). It snapshots

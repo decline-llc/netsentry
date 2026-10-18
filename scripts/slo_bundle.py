@@ -332,15 +332,22 @@ def _adapter(bundle: _Bundle, document: dict[str, Any]) -> None:
 
 
 def _manifest_observations(manifest: dict[str, Any], observations: dict[str, Any]) -> None:
-    _version(manifest)
-    _version(observations)
     collect._manifest(manifest)
     report._validate(observations)
     projection = copy.deepcopy(observations)
     del projection["expected_alerts"]
+    if observations["schema_version"] == 2:
+        del projection["anomalies"]
     for window in projection["packet_windows"]:
         for key in ("offered_eligible", "fully_processed", "offered_bytes"):
             del window[key]
+        if observations["schema_version"] == 2:
+            del window["submitted_eligible"]
+    # Collector-derived submission failures may increase, never erase, the declaration.
+    if observations["schema_version"] == 2:
+        declared = manifest["integrity"]["submission_errors"]
+        _require(projection["integrity"]["submission_errors"] >= declared, "submission errors were discarded")
+        projection["integrity"]["submission_errors"] = declared
     _same(manifest, projection, "manifest metadata differs from observations")
 
 
@@ -386,6 +393,8 @@ def _summary(bundle: _Bundle, summary: dict[str, Any], observations: dict[str, A
     _require(source["raw_json"].encode("utf-8") == raw, "embedded observations differ")
     _require(source["sha256"] == hashlib.sha256(raw).hexdigest(), "report source digest differs")
     expected = report.summarize(observations)
+    if observations["schema_version"] == 2 and "review" in summary:
+        expected = report.local_module().reviewed(expected, raw, summary["review"])
     expected["source"] = source
     _same(summary, expected, "report differs from recomputed supplied-observation summary")
 

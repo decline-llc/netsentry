@@ -96,15 +96,16 @@ SQLite/recovery 输入；持久化观察、API 查询与 oracle 一致。正常�
 
 ## 工具支持状态和后续入口
 
-**本次修改的是验收契约与规划，没有激活新的数值自动门禁，也没有执行 L1/L2。**
-当前 `scripts/slo_report.py` 仍只支持 schema v1 的 `staging`/`prod`，将 180ms、
-原规则数、原资源和带宽作为常量；`slo_context`/bundle/compare 也依赖它。
-不能给旧字段塞入 local-v1，不能把旧命令返回 0 当作本地新标准通过。
+**R90-194 已实现 schema 2 的 local-v1 报告、采集和证据处理；L1/L2 尚未执行。**
+新输入要求显式 `schema_version: 2`、`profile: local-v1` 和
+`contract_id: local-v1`，详见 [工具与审核契约](slo-local-v1.md)。旧 schema 1
+staging/prod 数值、诊断和算法保持原义，不能给旧字段塞入 local-v1。
 
-下一步 R90-194 需要实现独立、可版本化的 local-v1 规则和报告支持，保留旧
-staging/prod 算法、证据与诊断，不静默改写历史报告。R90-195 再提供低依赖的
-namespace/veth 一键夹具、独立 oracle、资源/证据预算与仅针对自有对象的清理。
-在这些前置通过之前，L1/L2 不能生成“验收通过”报告。
+reporter 的 `review_required` 或返回 0 不代表验收通过。只有有效测量加上精确
+输入哈希绑定的本地证据审核声明，才生成单轮 `reviewed_local_acceptance`；
+它仍不能替代两轮 L1 与 L2。合成回归测试不属于现场验收证据。
+R90-195 接着提供 namespace/veth 一键夹具、独立 oracle、资源/证据预算和
+仅针对自有对象的清理；现有旧 sender 不生成新的 submitted 行契约。
 
 所有待办只维护于 [滚动路线图](plans/rolling-90-day-roadmap.md)的当前队列。
 验收输出使用全新的本地 `local-v1/<run_id>/` 目录，保留证据并注明 profile；

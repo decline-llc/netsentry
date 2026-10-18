@@ -1,0 +1,69 @@
+{
+  "task": "r90-194-local-profile",
+  "timestamp": "2026-10-18",
+  "branch": "main",
+  "baseline": "9d95c1b2f232ceaa14af0afd0abf36382cc0e4ac",
+  "status": "implementation_and_local_validation_complete",
+  "plan": "docs/plans/task-20261017-local-profile.md",
+  "acceptance": [
+    "versioned local-v1, frozen legacy semantics",
+    "local numeric, validity and identity boundaries",
+    "collector/replay/context/bundle/comparison contract binding",
+    "hash-bound explicit single-run local review",
+    "full local/hosted CI and exact Vault delivery"
+  ],
+  "non_goals": [
+    "runtime changes",
+    "live L1/L2",
+    "R90-195 fixture",
+    "production acceptance or publication"
+  ],
+  "validation": {
+    "focused": "12 methods passed, including frozen legacy, retained ledger replay/context/bundle/pair and real reporter CLI",
+    "knowledge": "33 passed",
+    "preflight": "Go 1.26.9 archive checksum matches lock; actionlint v1.7.12, govulncheck v1.6.0; engine module; Docker daemon/frontend ubuntu:24.04 metadata resolved",
+    "full_ci": "passed exit 0: full fetched supply-chain/scanner, uncached race/coverage, C/ASan fuzz, 12 SLO/42 evidence/33 knowledge, E2E/archive and unmodified Docker content/health",
+    "L1_L2": "not run; synthetic evaluator regressions only",
+    "deviations": [
+      {
+        "gate": "first ci-check supply-chain fetch",
+        "cause": "TLS handshake timeout before third asset completion",
+        "failed_log_sha256": "4e2f3ae7d966037b30a03d24b557e1718f0a52db6b6601daeb360d405e5d6222",
+        "followup": "exact URL verified locked bytes/hash, unchanged full gate restarted"
+      },
+      {
+        "gate": "compatibility review after successful complete retry",
+        "cause": "Legacy context kind/profile diagnostic precedence changed by shared identity helper",
+        "followup": "Restored legacy order; added direct two-invalid-field control; 12 focused methods and 33 knowledge tests pass; final complete ci-check rerun required",
+        "superseded_success_log_sha256": "cb5f2342150d3a08beba3f5d50f3bade1b28fd87b19727c6724bf1c366126e10"
+      }
+    ],
+    "coverage": "82.3%",
+    "full_ci_log_sha256": "392e73212b7dc3a88cc5e9d77d6306af166bd8d71ea8f0890fd7c6582748ef69",
+    "source_sha256": {
+      "Makefile": "5f240bf1a30de6611e2dadda6b4a128668512aa67042af191a94d47d4d0ea792",
+      "scripts/fixtures/slo_legacy_golden.json": "b647ac48fd8754db2f83dd8575fe8a63ac89c80740b7ef0c85e2eddde90dd791",
+      "scripts/slo_bundle.py": "9902edd2623e544edd3cb7008d95e4036b74526901d7fdc22fa0a288443749da",
+      "scripts/slo_collect.py": "cd426c318132631b0d1ad45e141c6d33b72644f183fa401c3673f00ecbb34d90",
+      "scripts/slo_compare.py": "abdc415c6086fdea670af59cc5bdfb34beb625d66e501fe50cc4d0808cdef040",
+      "scripts/slo_context.py": "5f8a99fbe027ab2b1a6f8c7bcdbef65da50033863414e699a96834a8905d8ae2",
+      "scripts/slo_context_compare.py": "3348f9460f178b393aadb74f0bd840c4b8c12d754373589e8a7e8c516202a8fc",
+      "scripts/slo_local.py": "03368a109a2603684e057e3534f03b2953fc148bf5c2db3b6da8b6776dbace95",
+      "scripts/slo_report.py": "dfaf8c940aa87b6324c63101e95a976dba7b029bfb7bb7382d06cf0f3ed04a20",
+      "scripts/test_slo_local.py": "e09206765a138f8fea4f81db2048c71a80ff7cb7c213b2ddfbecd40079e32572"
+    },
+    "evidence": "docs/evidence/r90-194-local-profile.md",
+    "static": "201 complete unique roadmap multiset pairs; original legacy validator/summary AST; JSON/links/fences/history/sensitive/diff; final closeout prose rechecked before commit"
+  },
+  "delivery": {
+    "local_record": ".git/netsentry-r90-194-delivery.json",
+    "policy": "single completed batch; post-push facts local only",
+    "old": "9d95c1b2f232ceaa14af0afd0abf36382cc0e4ac",
+    "new": "Resolve full commit containing this task state; verify against local delivery record and freshly fetched origin/main.",
+    "hosted_ci": "Require completed/success on the exact pushed headSha; final facts in local record only.",
+    "vault": "Exact full-SHA range, note/index/MOC, current stable knowledge, prior topic/immutable preservation and replay required."
+  },
+  "resume_instructions": "Resolve this feature commit through Git, fetch main and verify the local delivery record exact SHA/hosted completed-success/Vault evidence. If already verified, do not repeat commit/push/sync solely to record facts. Audit fresh state and select R90-195 on the next trigger; no next increment in this trigger. L1/L2 are unexecuted. Post-push facts remain local with no closure push.",
+  "skill_improvement": "Evidence tools must bind delegated evaluator-module source digests, not only wrapper hashes; local skill Markdown validated separately.",
+  "next_increment": "R90-195, only after verified R90-194 delivery; not started"
+}

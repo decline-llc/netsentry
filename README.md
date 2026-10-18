@@ -131,7 +131,8 @@ CI/Release/Docker workflow 的第三方 Action 均固定到 `.github/supply-chai
 当前采用 [local-v1 单机验收标准](docs/acceptance-local-v1.md)：现有 VM、100 条规则、
 100/500 pps 常态/突发，10 分钟两轮和 30 分钟稳定性；本次仅调整规则与规划，
 L1/L2 未执行。旧 staging/prod 大规模目标延期，不阻塞当前实验版推进。
-现有报告器尚不支持 local-v1；先完成路线图 R90-194，再建立隔离夹具并测量。
+报告器现支持显式 schema 2 的 local-v1；[工具契约](docs/slo-local-v1.md)区分数值、有效性与本地审核。
+下一步 R90-195 建立隔离夹具；L1/L2 尚未测量。
 [SLO runbook](docs/slo-runbook.md)保留旧工具链说明，不能直接判定新标准。
 
 ## 构建与发布

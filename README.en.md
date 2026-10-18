@@ -133,8 +133,9 @@ Current readiness follows [local-v1](docs/acceptance-local-v1.md) on existing
 hardware: 100 rules, 100/500 pps steady/burst traffic, two ten-minute runs and a
 thirty-minute stability run. These are frozen targets, not completed measurements.
 Historical staging/production-scale targets are deferred and no longer block
-local experimental readiness. The current reporter does not implement local-v1;
-R90-194 profile/report support must precede the isolated fixture and live runs.
+local experimental readiness. The reporter now supports explicit schema-2 local-v1 observations;
+[tool documentation](docs/slo-local-v1.md) separates numerical results, validity and local review.
+R90-195 supplies the isolated fixture next; L1/L2 have not been measured.
 The historical SLO runbook is not an executable verdict for this new contract.
 
 ## Build and release

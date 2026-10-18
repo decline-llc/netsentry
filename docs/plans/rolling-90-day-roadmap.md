@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-10-17 through 2027-01-14. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-10-18 through 2027-01-15. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -70,20 +70,20 @@ mandatory. This is a scope revision, never evidence of a passed live run.
 Deviation: R90-75 was the sole unfinished row and demanded resources beyond the
 available ~7.7 GiB VM. Reclassify it as deferred, preserving its historical targets
 and unvalidated status. The Oct17 CI repair supplies quality evidence only; it
-does not satisfy L1/L2. Existing reporter schema v1 still encodes staging/prod,
-180ms and original resource/bandwidth checks; do not lower those constants or
-claim local-v1 is runnable until R90-194. Prior completed history remains intact.
+does not satisfy L1/L2. Reporter schema v1 retains staging/prod,
+180ms and original resource/bandwidth checks. R90-194 adds independent schema-2
+local-v1 evidence evaluation; live fixture and L1/L2 remain unexecuted. Prior completed history remains intact.
 
 This is the sole current implementation queue. Dates are forecasts, not waiting
 periods. Definitions below give risk, required validation and stop conditions.
 
 | ID | Window | Status | Increment | Dependencies | Acceptance criteria |
 |---|---|---|---|---|---|
-| R90-193 | Oct 17–18 | Policy implemented and locally validated; exact delivery recorded locally | Adopt current-resource local-v1 and reconcile rules/queue. | User scope-reduction authority; verified Oct17 CI baseline | Explicit L0/L1/L2 gates, historical profile deferral, no runtime threshold change, complete local/hosted delivery validation. |
-| R90-194 | Oct 18–21 | Ready after verified R90-193 delivery | Implement versioned local-v1 profile/report evaluation. | R90-193 exact-SHA delivery | Separate local scope, 100-rule/pps/500ms policy, missing/extra/late accounting, immutable legacy outputs and direct fail/inconclusive regressions. |
-| R90-195 | Oct 22–26 | Planned | Build bounded single-VM namespace/veth fixture and runner. | R90-194 | Independent oracle, readiness, 108000 scheduled packets per 10-minute run, fixed rule/traffic hashes, 4 GiB cumulative artifacts, owned cleanup; no public-interface traffic. |
+| R90-193 | Oct 17–18 | Complete; exact hosted/Vault delivery verified | Adopt current-resource local-v1 and reconcile rules/queue. | User scope-reduction authority; verified Oct17 CI baseline | Explicit L0/L1/L2 gates, historical profile deferral, no runtime threshold change, complete local/hosted delivery validation. |
+| R90-194 | Oct 18–21 | Implemented and full local validation passed; exact delivery tracked locally | Implement versioned local-v1 profile/report evaluation. | R90-193 exact-SHA delivery | Separate local scope, 100-rule/pps/500ms policy, missing/extra/late accounting, immutable legacy outputs and direct fail/inconclusive regressions. |
+| R90-195 | Oct 22–26 | Ready after verified R90-194 delivery | Build bounded single-VM namespace/veth fixture and runner. | R90-194 | Independent oracle, readiness, 108000 scheduled packets per 10-minute run, fixed rule/traffic hashes, 4 GiB cumulative artifacts, owned cleanup; no public-interface traffic. |
 | R90-196 | Oct 27–Nov 2 | Planned | Execute and review two local-v1 L1 runs. | R90-195 validated runner; local resource preflight | Each run independently meets frozen loss/alert/latency/clock/workload criteria with complete retained evidence; failures remain failures. |
-| R90-197 | Nov 3–Jan 14 | Planned | Complete L2 stability/recovery and experimental-build readiness review. | R90-196 accepted local evidence | 1800 seconds offered workload, one quiesced graceful restart and UDS reconnect, bounded RSS, exact durable/API/oracle accounting, local-only conclusions and reproducible instructions. |
+| R90-197 | Nov 3–Jan 15 | Planned | Complete L2 stability/recovery and experimental-build readiness review. | R90-196 accepted local evidence | 1800 seconds offered workload, one quiesced graceful restart and UDS reconnect, bounded RSS, exact durable/API/oracle accounting, local-only conclusions and reproducible instructions. |
 
 No IPv6/TCP-reassembly/cluster/UI expansion starts while this queue has unresolved
 acceptance failures. Reserve the remaining horizon for source-proven failures
@@ -13628,8 +13628,8 @@ contact, publication or acceptance authority is added.
   all active repository rules, status, runbook and the single forward queue.
 - **Window:** Oct 17–18; dates do not block earlier execution.
 - **Dependencies/status:** explicit user authority and verified Oct17 CI baseline;
-  policy implemented and locally validated; exact delivery evidence required
-  before completion.
+  complete at `9d95c1b2f232ceaa14af0afd0abf36382cc0e4ac`, with exact hosted
+  success and Vault delivery verified in the R90-194 selection audit.
 - **Risk:** confusing a reduced contract with a passed run or executable profile.
 - **Acceptance:** AGENTS and local-v1 specify L0/L1/L2; R90-75 is deferred without
   modifying old numerical evaluator behavior; README/status/runbook/current state
@@ -13646,7 +13646,8 @@ contact, publication or acceptance authority is added.
 - **Goal:** support local-v1 with an explicit versioned contract/profile in report,
   collection, context, bundle and comparison paths that currently depend on v1.
 - **Window:** Oct 18–21; may start immediately once dependency delivery is verified.
-- **Dependencies/status:** R90-193; first ready implementation after its delivery.
+- **Dependencies/status:** R90-193 verified; implementation and full local gate complete,
+  exact hosted/Vault delivery resolved through the local delivery record.
 - **Risk:** silently reinterpreting legacy artifacts or excluding failed events.
 - **Acceptance:** evaluate 100 rules, actual pps schedules, segmented <=1% packet
   loss, zero missing/extra expected alerts and host-timestamp p99 plus uncertainty
@@ -13656,7 +13657,8 @@ contact, publication or acceptance authority is added.
   unmet +/-5% minute load or <=10ms uncertainty never produce a passing verdict.
   Explicitly distinguish fail, inconclusive, review-required and reviewed local
   acceptance. Preserve schema-v1 staging/prod output/diagnostic/threshold behavior,
-  and reject mismatched contract IDs or cross-profile comparisons.
+  and reject mismatched contract IDs or pairs crossing local/legacy profiles;
+  historical v1 profile pairing keeps its established conditions-differ result.
 - **Required validation:** direct Python/API/CLI regressions for pass/review,
   fail, missing/extra/duplicate/late, bad load/clock, incomplete evidence, frozen
   legacy compatibility and reconstruction/comparison; full ci-check and exact
@@ -13710,7 +13712,7 @@ contact, publication or acceptance authority is added.
 
 - **Goal:** establish the local experimental build's L2 stability/recovery evidence
   and deliver a reproducible operator handoff, without production-capacity claims.
-- **Window:** Nov 3–Jan 14; finish earlier when dependencies/evidence allow.
+- **Window:** Nov 3–Jan 15; finish earlier when dependencies/evidence allow.
 - **Dependencies/status:** R90-196 accepted local results; planned.
 - **Risk:** hiding maintenance losses, state reuse or falsely advertising a release.
 - **Acceptance:** 1800 seconds offered at 100 pps and one oracle event/second;
@@ -13751,3 +13753,75 @@ planned old/new scope and workload reduction is the explicit user-directed
 deviation. Upload once, verify the exact hosted SHA and synchronize the existing
 local Vault; post-push facts remain in the local delivery record and stable note.
 No extra closure or next-increment implementation is required in this task.
+
+
+## R90-194 Selection and Implementation Checkpoint (2026-10-18)
+
+Clean freshly fetched HEAD/origin/main/FETCH_HEAD at
+`9d95c1b2f232ceaa14af0afd0abf36382cc0e4ac`; R90-193 hosted run
+[39016262049](https://github.com/decline-llc/netsentry/actions/runs/39016262049)
+completed/success. Local delivery record, exact Vault iteration/index/MOC and
+current local-v1 notes agree. Four-week phase history moved from delegated
+bounded repairs to complete quality gates and current-resource acceptance.
+Historical testing waivers are superseded by AGENTS. All 201 row/Definition
+pairs are unique and complete; R90-194 is the only selected increment. Prior
+R90-193 policy-commit resume prose above is historical; do not redeliver it.
+
+Plan/state persisted before implementation. Independent schema 2 explicitly
+binds local-v1; schema-1 reporter code/constants remain unchanged. Local reports
+retain oracle denominators, missing infinity, segmented loss/latency, actual
+minute pps, submission outcomes, clock validity and raw anomaly identities.
+Numerical failure is retained alongside validity gaps. Collection/replay,
+context, bundle and comparison bind version/profile/contract and exact bytes.
+Explicit local review is hash-bound to a valid single-run measurement, cannot
+accept failed/inconclusive evidence and does not complete L1/L2. Existing
+artifact-envelope versions remain independent of observation versions.
+
+Direct regressions include eight frozen legacy golden outputs, version/member
+rejection, local numeric/clock/load/resource boundaries, all lifecycle anomaly
+reasons, failed submissions, exact retained-ledger replay, context identity and
+unknowns, bundle recomputation, same-local pairing and legacy/local rejection,
+preserved historical staging/prod pairing, and actual CLI review/exit/preservation.
+Initial test deviations corrected the synthetic submission fixture and retained
+both numeric failure and clock invalidity rather than weakening their checks.
+Pinned Go/tools/module and Docker frontend/base preflight succeeded; focused,
+syntax/docs and knowledge checks passed. Full ci-check and delivery remain.
+No live measurements or R90-195 implementation started. The generic skill was refined to bind delegated evaluator-module source hashes
+in evidence provenance and comparison conditions. Its Markdown was validated;
+this local skill edit remains separate from the repository feature.
+
+
+Validation deviation: the first complete ci-check stopped while downloading the
+third pinned raw-GitHub asset with a TLS handshake timeout. A direct retry of
+that exact URL verified its locked bytes/hash, then the unchanged complete gate
+was restarted. No later stage from the failed chain is counted. Current horizon
+refreshes to Oct 18–Jan 15 after the environment date change; only unfinished
+forecast dates move, without an eligibility gate or new scope.
+
+The complete retry passed (82.3% coverage, including Docker content/health), but
+final compatibility review then restored legacy context kind/profile diagnostic
+precedence and added its direct regression. That success predates the repair;
+only the subsequent complete clean rerun can establish the final source gate.
+Focused/knowledge checks passed again. No partial or superseded result is used
+for upload authorization.
+
+
+## R90-194 Final Local Gate and Delivery Resume Authority (2026-10-18)
+
+Final source passed complete ci-check after the diagnostic-order repair: fetched
+nine locked assets, no reachable vulnerabilities, 12 SLO/42 evidence/33 knowledge
+methods, all-package uncached race/coverage (82.3%), ordinary C and ASan fuzz,
+E2E, archive and full Docker build/content/health. Exact raw log SHA and all
+direct acceptance mappings are in [tooling evidence](../evidence/r90-194-local-profile.md).
+Final source/test/fixture/Makefile hashes were frozen; only closeout prose changed
+afterward and receives affected static/knowledge checks before the one batch push.
+
+This section supersedes prior pending-gate/selection resume instructions.
+Resolve the commit containing the current task state through Git and verify
+`.git/netsentry-r90-194-delivery.json`, fresh origin/main, exact hosted
+completed/success and Vault note/index/MOC/stable/replay. Post-push facts stay
+local; do not repeat verified commit/push/sync or send a closure push just to
+record them. Only after that verification is R90-194 complete and R90-195 the
+next ready increment. Its defined fixture/low-rate live smoke has not started.
+The Oct18–Jan15 queue is dependency-complete and otherwise unchanged. No L1/L2
+measurement or production acceptance follows from these synthetic tool tests.

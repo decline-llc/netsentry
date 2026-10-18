@@ -219,7 +219,7 @@ def _manifest(document: dict[str, Any], allow_reconstruction: bool = False,
     for value in document["supplied_origins"]:
         report._timestamp(value)
     bundle._require(document["reported_measurement_status"] in
-                    (None, "inconclusive", "measurement_failed", "review_required"), "invalid report status")
+                    (None, "inconclusive", "measurement_failed", "review_required", "reviewed_local_acceptance"), "invalid report status")
 
 
 def _bind(original: dict[str, Any], current: dict[str, Any]) -> None:
@@ -245,6 +245,8 @@ def _conditions(root: Path, original: dict[str, Any]) -> tuple[dict[str, Any], d
     engine = _read(root / "engine/close.json", "engine/close.json",
                    inventory.get("engine/close.json"))
     conditions = {key: observations[key] for key in ("profile", "duration_seconds", "drain_seconds")}
+    if observations["schema_version"] == 2:
+        conditions["contract_id"] = observations["contract_id"]
     for section in ("policy", "resources", "measurement", "provenance"):
         for key, value in observations[section].items():
             conditions[section + "." + key] = value
@@ -272,6 +274,8 @@ def _conditions(root: Path, original: dict[str, Any]) -> tuple[dict[str, Any], d
                        ("reporter", original["reporter_source_sha256"])):
         conditions["tools." + key + "_source_sha256"] = value
     summary = report.summarize(observations)
+    if observations["schema_version"] == 2:
+        conditions["tools.local_evaluator_source_sha256"] = summary["evaluator_source_sha256"]
     evidence = {
         "run_id": observations["run_id"], "started_at": observations["started_at"],
         "duration_seconds": observations["duration_seconds"], "drain_seconds": observations["drain_seconds"],
@@ -374,6 +378,8 @@ def compare(output: Path, *, baseline: Path | None = None, candidate: Path | Non
         observed = next(item for item in current["inventory"] if item["file"] == "adapter/observations.json")
         bundle_identities[side] = {"run_id": metrics["run_id"], "profile": conditions["profile"],
                                    "started_at": metrics["started_at"], "observations_sha256": observed["sha256"]}
+        if "contract_id" in conditions:
+            bundle_identities[side]["contract_id"] = conditions["contract_id"]
         observation_sizes[side] = observed["bytes"]
     context_rows = []
     if context_enabled:
@@ -400,8 +406,13 @@ def compare(output: Path, *, baseline: Path | None = None, candidate: Path | Non
         end = [start[index] + item["observed_through_ns"] for index, item in enumerate((left, right))]
         if max(start) < min(end):
             pair_gaps.append("Observation intervals overlap; shared-VM resource independence is not established.")
-        for key in sorted(projections["baseline"]):
-            a, b = projections["baseline"][key], projections["candidate"][key]
+        if ("contract_id" in projections["baseline"] or "contract_id" in projections["candidate"]) and (
+            projections["baseline"]["profile"] != projections["candidate"]["profile"]
+            or projections["baseline"].get("contract_id") != projections["candidate"].get("contract_id")
+        ):
+            invalid.append("Cross-profile or mismatched-contract comparison is forbidden.")
+        for key in sorted(projections["baseline"].keys() | projections["candidate"].keys()):
+            a, b = projections["baseline"].get(key), projections["candidate"].get(key)
             rows.append({"field": key, "baseline": a, "candidate": b, "equal": _encoded(a) == _encoded(b)})
     else:
         evidence_gaps.append("Two complete, bound and currently reconciled bundles are required for field comparison.")

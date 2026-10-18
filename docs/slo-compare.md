@@ -1,5 +1,9 @@
 # Declared comparability of SLO bundles
 
+Schema-2 `local-v1` support and its explicit local review/legacy compatibility
+boundaries are documented in [local-v1 tools](slo-local-v1.md). The schema-1
+examples below retain their historical meanings.
+
 R90-119 adds `scripts/slo_compare.py`, a standard-library API/CLI comparing two
 supplied [R90-118 evidence bundles](slo-bundle.md). It retains both inputs,
 reconciles their companion files again, and diagnoses differences in declared

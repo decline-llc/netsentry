@@ -1,5 +1,9 @@
 # Offline raw-ledger reconstruction
 
+Schema-2 `local-v1` support and its explicit local review/legacy compatibility
+boundaries are documented in [local-v1 tools](slo-local-v1.md). The schema-1
+examples below retain their historical meanings.
+
 R90-122 adds `scripts/slo_reconstruct.py`, a standard-library API/CLI that checks
 whether supplied adapter observations can be derived from their retained raw
 packet/oracle and lifecycle ledgers. Implementation review is **static only**;

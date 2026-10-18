@@ -1,5 +1,9 @@
 # SLO measurement report tool and test-department handoff
 
+Schema-2 `local-v1` support and its explicit local review/legacy compatibility
+boundaries are documented in [local-v1 tools](slo-local-v1.md). The schema-1
+examples below retain their historical meanings.
+
 > 2026-10-17：当前验收范围调整为 [local-v1](acceptance-local-v1.md)。
 > 本工具当前仍只实现 staging/prod 和 180ms 旧阈值；本文件描述现有代码，
 > local-v1 支持是 R90-194 的未完成工作。不得静默降低旧 profile 或混用结果。

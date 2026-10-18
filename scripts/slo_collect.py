@@ -151,13 +151,20 @@ def _adapter_rows(stream: Any, before: os.stat_result, retained: Path,
 def _manifest(document: Any) -> dict[str, Any]:
     if not isinstance(document, dict) or "expected_alerts" in document:
         raise report.EvidenceError("manifest must be an object without expected_alerts")
+    local = document.get("schema_version") == 2
+    if local and "anomalies" in document:
+        raise report.EvidenceError("manifest must not contain anomalies")
     result = copy.deepcopy(document)
+    if local:
+        result["anomalies"] = []
     windows = result.get("packet_windows")
     if not isinstance(windows, list):
         raise report.EvidenceError("manifest packet_windows must be an array")
     for window in windows:
         report._object(window, {"start_second", "phase", "observation_complete"}, "manifest window")
         window.update(offered_eligible=0, fully_processed=0, offered_bytes=0)
+        if local:
+            window["submitted_eligible"] = 0
     result["expected_alerts"] = []
     report._validate(result)
     return result
@@ -259,6 +266,8 @@ def _observations(db: sqlite3.Connection, document: dict[str, Any]) -> None:
         if budget > report.MAX_INPUT_BYTES:
             raise report.EvidenceError("alert observation output exceeds reporter 64 MiB budget")
         document["expected_alerts"].append(alert)
+    if document["schema_version"] == 2:
+        report.local_module().finalize(db, document, _encoded)
     report._validate(document)
 
 
@@ -286,15 +295,24 @@ def collect(manifest: Path, offered: Path, events: Path, output: Path,
             db = sqlite3.connect(str(Path(temporary) / "identities.sqlite"))
             try:
                 _schema(db)
+                local = document["schema_version"] == 2
+                if local:
+                    report.local_module().ledger_schema(db)
                 for number, row in enumerate(_adapter_rows(admitted[1][0], admitted[1][1],
                                                            output / "offered.jsonl", receipts, remaining), 1):
-                    _offer(db, row, document)
+                    if local:
+                        report.local_module().offer(db, row, document, _offer)
+                    else:
+                        _offer(db, row, document)
                     if number % COMMIT_INTERVAL == 0:
                         db.commit()
                 db.commit()
                 for number, row in enumerate(_adapter_rows(admitted[2][0], admitted[2][1],
                                                            output / "events.jsonl", receipts, remaining), 1):
-                    _event(db, row, document["observed_through_ns"])
+                    if local:
+                        report.local_module().event(db, row, document["observed_through_ns"])
+                    else:
+                        _event(db, row, document["observed_through_ns"])
                     if number % COMMIT_INTERVAL == 0:
                         db.commit()
                 db.commit()

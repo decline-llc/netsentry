@@ -1,5 +1,9 @@
 # Supplied SLO run context
 
+Schema-2 `local-v1` support and its explicit local review/legacy compatibility
+boundaries are documented in [local-v1 tools](slo-local-v1.md). The schema-1
+examples below retain their historical meanings.
+
 R90-120 adds `scripts/slo_context.py`: a versioned declaration validator and
 retention API/CLI for hardware, toolchain and isolation information. It binds
 supplied declarations and opaque supporting files to exact observation bytes.
