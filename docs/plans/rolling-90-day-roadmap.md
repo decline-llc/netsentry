@@ -13921,3 +13921,48 @@ or send an extra closure push. Only then is R90-195 complete and R90-198 the nex
 ready increment. No R90-198 implementation, two-run L1 or L2 started here.
 The Oct18–Jan15 queue is complete and unique; R90-196 now explicitly depends on
 R90-198. All delayed/failed smoke samples remain; no fast sample clears that risk.
+
+## R90-195 Hosted Failure Recovery Authority (2026-10-18)
+
+Initial ba2e886d7f3e380cfa9cbfd24e73c15f99d273a9 hosted run 39191263374 failed:
+two new cancellation tests hashed absent unbuilt SUT binaries before they could
+reach cancellation. Existing ignored local binaries hid the dependency. Both
+failures reproduced in a detached checkout without bin. Bind their substituted
+children's provenance to the actual Python executable; all cancellation, exact
+child-count and preservation assertions remain. The 28-method suite then passed
+in that same checkout before build. Runner/runtime and smoke-08 hashes are unchanged.
+
+This supersedes any earlier assumption of completed hosted delivery. R90-195 is
+still incomplete pending the full clean-checkout workflow gate, one focused repair
+push, fresh exact refs, hosted success and both Vault ranges/stable reconciliation.
+Keep the initial failed hosted log and generated iteration note immutable. This
+is recovery of the same increment; R90-198 and L1/L2 have not started. No closure-only
+push is authorized or needed. Generic skill now requires clean-before-build
+lifecycle tests with provenance tied to the executable actually launched.
+
+The native inode-reuse setup failure then repeated in that clean workflow's
+coverage stage. It now has two exact full-suite occurrences, so a bounded test-only
+unblocker is justified. The existing regression now controls stale non-following
+metadata to model inode reuse while checking a real replacement listener's
+identity and successful round trip. Twenty uncached coverage and twenty race
+executions plus full receiver race/coverage pass. Removing only cleanup's ctime
+guard in the isolated checkout deletes that actual socket and fails the test;
+production source was restored byte-for-byte. No skip or behavior assertion was
+removed. Both fixture repairs require a new complete clean gate before upload.
+
+## R90-195 Clean Repair Gate and Final Resume Authority (2026-10-18)
+
+Both fixture corrections passed complete ci-check from the isolated checkout
+after removing its bin/dist outputs. Nine locked assets/scanner, 28 SLO/fixture,
+42 evidence, 33 knowledge, uncached all-package race/coverage (82.3%), C/ASan,
+E2E/archive and full Docker content/health passed. Source/test hashes are frozen;
+only closeout prose follows with affected static/knowledge rechecks. Failed
+hosted/allocator setup runs and the deliberate old-guard mutation remain retained.
+
+This supersedes earlier pending/failed repair instructions. Resolve the latest
+commit containing this task state through Git; fresh origin/main must equal that
+repair SHA, its hosted CI must be completed/success, and the local delivery record
+must verify both exact Vault ranges, stable prose and replay. If already verified,
+do not repeat commit/push/sync or send a closure-only push. R90-195 is complete only
+after those facts. The next trigger then selects R90-198; no R90-198 or L1/L2 has
+started. The original ba2e886 hosted failure remains immutable history.

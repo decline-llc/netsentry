@@ -121,3 +121,51 @@ intentionally terminated and failed gate logs and the three exact reruns remain.
 Only closeout prose changed afterward; affected static/knowledge review is rerun
 before the single batch commit/push. Exact hosted/Vault delivery facts remain
 local; resolve the feature SHA and local delivery record before any repeat action.
+
+## Hosted clean-checkout fixture repair
+
+Initial feature ba2e886d7f3e380cfa9cbfd24e73c15f99d273a9 passed the complete local
+gate, then [hosted run 39191263374](https://github.com/decline-llc/netsentry/actions/runs/39191263374)
+completed/failure before build. Two new lifecycle fixtures attempted to hash
+unbuilt bin/netsentry-* even though they actually launched Python sleeper children.
+The clean checkout lacked those files, so neither reached its asserted boundary.
+A detached checkout without bin reproduced both exact failures. Bind only those
+substituted executable digests to the actual Python executable; other source/
+oracle digests and all child count/cancellation/reap/preservation assertions remain.
+All 28 methods now pass in that same clean checkout, still without bin. The
+production runner and retained smoke-08 source/binary hashes are unchanged.
+A full clean-checkout workflow gate and exact hosted repair delivery are required;
+this correction is part of R90-195, not a closure-only upload or a new increment.
+
+## Deterministic receiver fixture after reproduced full-suite failure
+
+The same exact native coverage setup failure repeated in the clean-checkout
+repair gate, establishing reproduction despite the earlier three focused passes.
+Only that existing regression fixture changes: it uses real old/replacement Unix
+listeners and non-following os.FileInfo values, then controls the stale snapshot's
+device/inode and prior ctime. It does not claim the filesystem actually recycled
+the inode. The production cleanup must preserve the real replacement's identity
+and successful Unix listener round trip, with the original assertions retained.
+No test is skipped and no production receiver code changes.
+
+The deterministic test passed 20 uncached coverage executions and 20 uncached
+race executions; the full receiver package also passed uncached race/coverage.
+A temporary two-field-only cleanup mutation, applied solely in the isolated
+checkout and byte-for-byte restored, made this test fail because the real
+replacement pathname was deleted. The mutation thus reaches the promised cleanup
+boundary, rather than only the helper precondition. Both full-suite failures,
+the focused passes and the deliberate mutation failure remain local. A new full
+clean gate is required with both fixture repairs before any repair push.
+
+## Final clean repair gate
+
+After deleting only the isolated checkout's build products, complete ci-check
+passed exit 0 with both fixture corrections: 28 SLO/fixture + 42 evidence + 33
+knowledge, nine fetched locked assets/no reachable vulnerabilities, uncached full
+race/coverage (82.3%), ordinary C/ASan fuzz, E2E/archive and unmodified full Docker
+build/content/health. Final repair log SHA-256: `2963a300ade963f76e5a83f6062fddc43c6f9e197a49928d3a67d53e1d10d5fe`.
+Runner and production detector/receiver bytes remain unchanged; only test fixtures
+and this increment's delivery evidence changed. Source hashes match the checked
+checkout. Final closeout prose receives affected static/knowledge review before
+one focused repair push. Exact repair-hosted/Vault outcomes remain local; the first
+failed hosted run and both inode-setup failures are not erased or relabeled.

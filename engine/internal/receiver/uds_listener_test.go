@@ -1458,39 +1458,43 @@ func TestRemoveOwnedSocketPreservesImmediateReplacementUnixListenerWithReusedIno
 		t.Fatalf("remove owned Unix socket pathname: %v", err)
 	}
 
-	var replacement net.Listener
-	var replacementInfo os.FileInfo
-	for attempt := 0; attempt < 10_000; attempt++ {
-		replacement, err = net.Listen("unix", path)
-		if err != nil {
-			t.Fatalf("create replacement Unix listener: %v", err)
-		}
-		replacement.(*net.UnixListener).SetUnlinkOnClose(false)
-		replacementInfo, err = os.Lstat(path)
-		if err != nil {
-			_ = replacement.Close()
-			t.Fatalf("stat replacement Unix listener: %v", err)
-		}
-		if os.SameFile(owned, replacementInfo) && !sameUnixSocketIdentity(owned, replacementInfo) {
-			break
-		}
-		if err := replacement.Close(); err != nil {
-			t.Fatalf("close non-reusing replacement Unix listener: %v", err)
-		}
-		replacement = nil
-		if err := os.Remove(path); err != nil {
-			t.Fatalf("remove non-reusing replacement Unix socket: %v", err)
-		}
+	replacement, err := net.Listen("unix", path)
+	if err != nil {
+		t.Fatalf("create replacement Unix listener: %v", err)
 	}
-	if replacement == nil || replacementInfo == nil {
-		t.Fatal("filesystem did not immediately reuse the owned Unix socket device/inode")
+	replacement.(*net.UnixListener).SetUnlinkOnClose(false)
+	replacementInfo, err := os.Lstat(path)
+	if err != nil {
+		_ = replacement.Close()
+		t.Fatalf("stat replacement Unix listener: %v", err)
 	}
+
+	// The filesystem need not recycle a particular inode within any retry budget.
+	// Model that stale snapshot deterministically while preserving a real
+	// replacement listener and the production os.FileInfo/Stat_t representation.
+	// Only the captured metadata changes; neither filesystem object is modified.
+	ownedStat, ownedOK := owned.Sys().(*syscall.Stat_t)
+	replacementStat, replacementOK := replacementInfo.Sys().(*syscall.Stat_t)
+	if !ownedOK || !replacementOK {
+		_ = replacement.Close()
+		t.Fatal("Unix socket generation metadata is unavailable")
+	}
+	ownedStat.Dev = replacementStat.Dev
+	ownedStat.Ino = replacementStat.Ino
+	ownedStat.Ctim = replacementStat.Ctim
+	if ownedStat.Ctim.Nsec > 0 {
+		ownedStat.Ctim.Nsec--
+	} else {
+		ownedStat.Ctim.Sec--
+		ownedStat.Ctim.Nsec = 999999999
+	}
+
 	t.Cleanup(func() {
 		_ = replacement.Close()
 		_ = os.Remove(path)
 	})
 	if !os.SameFile(owned, replacementInfo) {
-		t.Fatal("replacement did not reuse the owned Unix socket device/inode")
+		t.Fatal("stale metadata fixture does not model the same socket device/inode")
 	}
 	if sameUnixSocketIdentity(owned, replacementInfo) {
 		t.Fatal("replacement unexpectedly retained the owned Unix socket change-time generation")

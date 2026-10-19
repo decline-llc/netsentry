@@ -94,3 +94,40 @@ Final source/Makefile/test hashes match the retained smoke-08. No L1/L2 was run.
 Only delivery prose is added after the full gate and receives affected static
 and knowledge review; one completed batch upload follows. Exact hosted/Vault
 facts and resume reconciliation stay local without another closure push.
+
+## Hosted failure repair plan (same increment)
+
+Initial ba2e886d7f3e380cfa9cbfd24e73c15f99d273a9 hosted run 39191263374 failed
+before build: two cancellation tests hashed local bin/netsentry-* while their
+actual child was a mocked Python sleeper. Existing local binaries hid this
+unneeded prerequisite. Reproduce in a clean checkout without bin, bind provenance
+for those two mocked children to the actual Python executable, preserve all
+readiness/cancellation/child-reap/preservation assertions, and rerun focused tests
+in that clean checkout plus the complete local ci-check before a repair push.
+No runtime change or gate weakening. This is recovery of the same R90-195 delivery,
+not R90-198 or a closure-only upload; retain the first failed hosted log/note.
+
+## Reproduced native fixture unblocker (same delivery)
+
+The exact existing inode-reuse coverage setup failure repeated in the full clean
+checkout gate, after passing focused reruns. This is now reproduced evidence;
+change only its test fixture. Filesystem allocation does not promise a historical
+inode within 10000 attempts. Replace that allocator prerequisite with a controlled
+non-following metadata snapshot representing same device/inode and distinct ctime,
+while retaining the real newly substituted Unix listener. Require identity and
+actual connectivity after cleanup, and mutation-check that the old device/inode-
+only guard fails. Keep ordinary real-stat replacement/ownership tests unchanged.
+No production receiver change, skip or assertion removal. Rerun the focused test
+uncached repeatedly, full receiver normal/race/coverage, then full clean ci-check
+before the repair upload. Raw second setup failure remains retained.
+
+## Final repair acceptance comparison
+
+Both hidden prerequisites are eliminated without dropping the promised boundary:
+Python lifecycle tests use actual substituted-child provenance and pass before
+build in a clean checkout; the existing native inode regression deterministically
+models stale identity and preserves the real replacement/round-trip assertions.
+The old cleanup guard is caught at the real pathname-preservation boundary.
+The full clean workflow, including Docker and 82.3% coverage, now passes with
+both fixes. Production source is unchanged. A focused repair push, exact-SHA
+hosted success and both Vault ranges are still required; no closure-only upload.

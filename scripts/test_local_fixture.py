@@ -20,6 +20,17 @@ from unittest import mock
 from . import local_fixture as fixture
 
 
+_REAL_DIGEST = fixture.digest
+
+
+def python_child_digest(path):
+    # These lifecycle tests launch Python sleepers instead of either SUT binary.
+    # Bind their provenance to that real executable; a clean checkout has no bin.
+    if path in (fixture.REPO/'bin/netsentry-engine',fixture.REPO/'bin/netsentry-capture'):
+        return _REAL_DIGEST(Path(sys.executable))
+    return _REAL_DIGEST(path)
+
+
 class FixtureTests(unittest.TestCase):
     def test_frozen_schedule_and_independent_packet_oracle(self):
         rows = list(fixture.schedule())
@@ -196,6 +207,7 @@ class FixtureTests(unittest.TestCase):
             with mock.patch.object(fixture,'require_private_net'), \
                  mock.patch.object(fixture,'Groups'),mock.patch.object(fixture,'ethernet_ready',return_value={'inbound':True}), \
                  mock.patch.object(fixture.subprocess,'Popen',side_effect=spawn), \
+                 mock.patch.object(fixture,'digest',side_effect=python_child_digest), \
                  mock.patch.object(fixture.subprocess,'check_output',return_value='a'*40), \
                  mock.patch.object(fixture,'wait_ready',side_effect=InterruptedError('cancel before readiness')), \
                  mock.patch('tempfile.mkdtemp',return_value=sockets), \
@@ -226,6 +238,7 @@ class FixtureTests(unittest.TestCase):
             with mock.patch.object(fixture,'require_private_net'), \
                  mock.patch.object(fixture,'Groups'),mock.patch.object(fixture,'ethernet_ready',return_value={'inbound':True}), \
                  mock.patch.object(fixture.subprocess,'Popen',side_effect=spawn), \
+                 mock.patch.object(fixture,'digest',side_effect=python_child_digest), \
                  mock.patch.object(fixture.subprocess,'check_output',return_value='a'*40), \
                  mock.patch.object(fixture,'wait_ready'), \
                  mock.patch.object(fixture.socket,'socket',return_value=fake_socket), \
