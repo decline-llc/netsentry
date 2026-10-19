@@ -132,7 +132,8 @@ CI/Release/Docker workflow 的第三方 Action 均固定到 `.github/supply-chai
 100/500 pps 常态/突发，10 分钟两轮和 30 分钟稳定性；本次仅调整规则与规划，
 L1/L2 未执行。旧 staging/prod 大规模目标延期，不阻塞当前实验版推进。
 报告器现支持显式 schema 2 的 local-v1；[工具契约](docs/slo-local-v1.md)区分数值、有效性与本地审核。
-下一步 R90-195 建立隔离夹具；L1/L2 尚未测量。
+R90-195 已提供[隔离夹具](docs/local-fixture.md)及低流量 smoke；下一步 R90-198
+处理缓冲延迟风险，然后执行 L1/L2。L1/L2 尚未测量。
 [SLO runbook](docs/slo-runbook.md)保留旧工具链说明，不能直接判定新标准。
 
 ## 构建与发布

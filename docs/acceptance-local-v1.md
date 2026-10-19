@@ -104,8 +104,10 @@ staging/prod 数值、诊断和算法保持原义，不能给旧字段塞入 loc
 reporter 的 `review_required` 或返回 0 不代表验收通过。只有有效测量加上精确
 输入哈希绑定的本地证据审核声明，才生成单轮 `reviewed_local_acceptance`；
 它仍不能替代两轮 L1 与 L2。合成回归测试不属于现场验收证据。
-R90-195 接着提供 namespace/veth 一键夹具、独立 oracle、资源/证据预算和
-仅针对自有对象的清理；现有旧 sender 不生成新的 submitted 行契约。
+R90-195 已提供 [rootless namespace/veth 夹具](local-fixture.md)、冻结 oracle、
+资源/累计证据预算、自有对象清理与真实 submitted 行。低流量 smoke 仅证明工具链，
+其约 692/694ms 告警暴露缓冲风险；先完成 R90-198，再按 R90-196 执行 L1。
+现有旧 sender 保持旧契约。
 
 所有待办只维护于 [滚动路线图](plans/rolling-90-day-roadmap.md)的当前队列。
 验收输出使用全新的本地 `local-v1/<run_id>/` 目录，保留证据并注明 profile；

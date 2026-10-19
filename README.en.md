@@ -135,7 +135,8 @@ thirty-minute stability run. These are frozen targets, not completed measurement
 Historical staging/production-scale targets are deferred and no longer block
 local experimental readiness. The reporter now supports explicit schema-2 local-v1 observations;
 [tool documentation](docs/slo-local-v1.md) separates numerical results, validity and local review.
-R90-195 supplies the isolated fixture next; L1/L2 have not been measured.
+R90-195 supplies the [isolated fixture](docs/local-fixture.md) and low-rate smoke.
+R90-198 addresses the observed buffering-latency risk before L1/L2; neither has been measured.
 The historical SLO runbook is not an executable verdict for this new contract.
 
 ## Build and release

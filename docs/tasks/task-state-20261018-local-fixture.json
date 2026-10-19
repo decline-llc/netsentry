@@ -1,0 +1,60 @@
+{
+  "task": "r90-195-local-fixture",
+  "timestamp": "2026-10-18",
+  "branch": "main",
+  "baseline": "fe4d2dbb22368325a6c636c8026e9c984a5e442f",
+  "status": "implementation_and_local_validation_complete",
+  "plan": "docs/plans/task-20261018-local-fixture.md",
+  "acceptance": [
+    "frozen rules/frame/schedule/oracle",
+    "owned rootless namespace/readiness/resources",
+    "cumulative budget/partial outcomes/cleanup",
+    "raw clock/resource/persistence evidence",
+    "full local and hosted CI/Vault"
+  ],
+  "validation": {
+    "focused": "28 passed: 16 fixture, 12 local-profile",
+    "knowledge": "33 passed; final closeout prose receives static/knowledge rerun",
+    "static": "202 unique complete row/Definition multisets; prior history/runtime/legacy preserved; links/JSON/fences/sensitive review passed",
+    "full_ci": "passed exit 0: fetched nine locked assets/scanner, 28 SLO/fixture, 42 evidence, 33 knowledge, uncached full race/coverage, C/ASan fuzz, E2E/archive and full Docker content/health",
+    "live_smoke": "smoke-08 exact 20 offered/submitted, 40 arrival/processed, 2 oracle/durable/SQLite; zero missing/extra/duplicate; true inbound peer/cgroup readback",
+    "latency_risk": "Retain ~616\u2013781ms earlier smoke delays despite later faster samples; R90-198 before L1",
+    "L1_L2": "not run",
+    "preflight": "Go 1.26.9 archive hash locked; actionlint v1.7.12; govulncheck v1.6.0; engine module; Docker daemon/frontend/ubuntu:24.04 resolved",
+    "source_sha256": {
+      "scripts/local_fixture.py": "8766fd7290c8efe9973d9eb208765788e08df51cad7a901a827412794cd904d4",
+      "scripts/test_local_fixture.py": "dd028d1c493135a759ec882b87526f0f7cc119a9831f4048caa906566d69d2eb",
+      "Makefile": "55bbe825ac4044beff664ecabc58b80c170102058ec98077aaca603e89d727e0"
+    },
+    "deviations": [
+      "Rootless namespace inventory corrected from proc/sysfs to namespace-aware socket query",
+      "Idle capture first smoke stop timeout retained; different-run control wake retained separately",
+      "Startup cancellation fixture corrected to avoid intercepting Git provenance",
+      "Clock guard and wake-error cleanup repairs invalidated earlier gates",
+      "Measured smoke buffering risk inserts bounded R90-198 before R90-196",
+      {
+        "gate": "final-source ci-check coverage",
+        "test": "TestRemoveOwnedSocketPreservesImmediateReplacementUnixListenerWithReusedInode",
+        "diagnostic": "filesystem did not immediately reuse the owned Unix socket device/inode after 10000 attempts",
+        "reproduction": "three exact uncached coverage-mode reruns passed; unchanged receiver",
+        "failed_log_sha256": "ee7f3f6e094c745fde5df99b1c588109ac906130d2cdb54c4f27cb17a432a8b9",
+        "required": "complete clean ci-check rerun; upload blocked"
+      }
+    ],
+    "full_ci_log_sha256": "ead6a419231c2a379004cfd7f8156d02d30fc24abb36ca4c444b7362de91ebce",
+    "coverage": "82.3%",
+    "deviation_resolution": "Existing inode-reuse setup failure not reproduced in three uncached exact coverage reruns; final complete suite clean; receiver unchanged"
+  },
+  "delivery": {
+    "local_record": ".git/netsentry-r90-195-delivery.json",
+    "policy": "one completed batch; post-push facts local only",
+    "old": "fe4d2dbb22368325a6c636c8026e9c984a5e442f",
+    "new": "Resolve full commit containing this task state and compare with fresh origin/main/local delivery record.",
+    "hosted_ci": "Require completed/success on that exact SHA; post-push facts local only.",
+    "vault": "Exact full-SHA range note/index/MOC, stable knowledge and idempotent replay required."
+  },
+  "resume_instructions": "Resolve this feature commit through Git, fetch origin/main and verify .git/netsentry-r90-195-delivery.json exact hosted completed-success and Vault evidence. Do not repeat completed commit/push/sync or send a closure push. R90-198 is next after verified R90-195 delivery, before R90-196; no next implementation in this trigger. L1/L2 remain unexecuted.",
+  "evidence": "docs/evidence/r90-195-local-fixture.md",
+  "next_increment": "R90-198 buffering/idle shutdown repair; not started",
+  "skill_improvement": "Use namespace-aware sockets/netlink and pre-isolation identity for rootless network inventory; local skill validated separately"
+}

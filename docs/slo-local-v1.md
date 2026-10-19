@@ -2,8 +2,9 @@
 
 R90-194 supports **supplied** local-v1 L1 observations. The evaluator does not
 send traffic, establish clock accuracy, prove durable storage, or complete L1/L2.
-Use the frozen [acceptance contract](acceptance-local-v1.md); the isolated runner
-is R90-195, two measured runs R90-196, stability/recovery R90-197.
+Use the frozen [acceptance contract](acceptance-local-v1.md) and R90-195
+[isolated runner](local-fixture.md). R90-198 addresses the smoke buffering-latency
+risk before two measured runs R90-196, then stability/recovery R90-197.
 
 ## Versions and identity
 
@@ -82,7 +83,7 @@ Local offered rows contain `packet_id`, `offered_ns`, `offered_bytes`,
 failed submission, stays in this ledger. Materialize submitted outcomes from the
 actual sender ledger; never presume success from a planned schedule. The current
 v1 reference sender does not generate this new row contract; the bounded local
-runner is implemented separately in R90-195.
+runner in R90-195 now supplies actual local submitted outcomes.
 
 Events retain the existing arrival/processed/durable encoding and nanosecond run
 origin. An unknown ID, duplicate record or timestamp past the observation boundary

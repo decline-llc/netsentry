@@ -80,9 +80,10 @@ periods. Definitions below give risk, required validation and stop conditions.
 | ID | Window | Status | Increment | Dependencies | Acceptance criteria |
 |---|---|---|---|---|---|
 | R90-193 | Oct 17–18 | Complete; exact hosted/Vault delivery verified | Adopt current-resource local-v1 and reconcile rules/queue. | User scope-reduction authority; verified Oct17 CI baseline | Explicit L0/L1/L2 gates, historical profile deferral, no runtime threshold change, complete local/hosted delivery validation. |
-| R90-194 | Oct 18–21 | Implemented and full local validation passed; exact delivery tracked locally | Implement versioned local-v1 profile/report evaluation. | R90-193 exact-SHA delivery | Separate local scope, 100-rule/pps/500ms policy, missing/extra/late accounting, immutable legacy outputs and direct fail/inconclusive regressions. |
-| R90-195 | Oct 22–26 | Ready after verified R90-194 delivery | Build bounded single-VM namespace/veth fixture and runner. | R90-194 | Independent oracle, readiness, 108000 scheduled packets per 10-minute run, fixed rule/traffic hashes, 4 GiB cumulative artifacts, owned cleanup; no public-interface traffic. |
-| R90-196 | Oct 27–Nov 2 | Planned | Execute and review two local-v1 L1 runs. | R90-195 validated runner; local resource preflight | Each run independently meets frozen loss/alert/latency/clock/workload criteria with complete retained evidence; failures remain failures. |
+| R90-194 | Oct 18–21 | Complete; exact hosted/Vault delivery verified | Implement versioned local-v1 profile/report evaluation. | R90-193 exact-SHA delivery | Separate local scope, 100-rule/pps/500ms policy, missing/extra/late accounting, immutable legacy outputs and direct fail/inconclusive regressions. |
+| R90-195 | Oct 22–26 | Implemented and full local validation passed; exact delivery tracked locally | Build bounded single-VM namespace/veth fixture and runner. | R90-194 | Independent oracle, readiness, 108000 scheduled packets per 10-minute run, fixed rule/traffic hashes, 4 GiB cumulative artifacts, owned cleanup; no public-interface traffic. |
+| R90-198 | Oct 19–26 | Ready after verified R90-195 delivery | Bound live-capture buffering and idle shutdown before L1. | R90-195 | Preserve the 10pps smoke latency/idle-stop failures, repair the measured boundary with direct regressions and full CI; no threshold relaxation or L1 claim. |
+| R90-196 | Oct 27–Nov 2 | Planned | Execute and review two local-v1 L1 runs. | R90-195 validated runner; R90-198 buffering repair; local resource preflight | Each run independently meets frozen loss/alert/latency/clock/workload criteria with complete retained evidence; failures remain failures. |
 | R90-197 | Nov 3–Jan 15 | Planned | Complete L2 stability/recovery and experimental-build readiness review. | R90-196 accepted local evidence | 1800 seconds offered workload, one quiesced graceful restart and UDS reconnect, bounded RSS, exact durable/API/oracle accounting, local-only conclusions and reproducible instructions. |
 
 No IPv6/TCP-reassembly/cluster/UI expansion starts while this queue has unresolved
@@ -13671,7 +13672,8 @@ contact, publication or acceptance authority is added.
 - **Goal:** create a repeatable same-VM Ethernet/veth fixture and bounded runner,
   independent of Mininet/GNS3, with explicit capture/generator resource controls.
 - **Window:** Oct 22–26, forecasting only.
-- **Dependencies/status:** R90-194; planned until its verified completion.
+- **Dependencies/status:** R90-194 verified at fe4d2dbb22368325a6c636c8026e9c984a5e442f;
+  R90-195 implemented and full local gate passed; exact delivery tracked locally.
 - **Risk:** capturing outbound/duplicate traffic, affecting existing interfaces,
   generator contention, unbounded snapshots or cleanup touching other services.
 - **Acceptance:** own namespace/veth/processes/new paths/ports/UDS; freeze 100
@@ -13692,7 +13694,7 @@ contact, publication or acceptance authority is added.
 
 - **Goal:** collect and review two independent L1 local-v1 runs on current hardware.
 - **Window:** Oct 27–Nov 2, forecasting only.
-- **Dependencies/status:** R90-195 verified tooling, local allocation/preflight;
+- **Dependencies/status:** R90-195 verified tooling, R90-198 buffering repair, local allocation/preflight;
   planned, not awaiting an external department or new hardware purchase.
 - **Risk:** treating generator limits as SUT capacity or selecting only a good run.
 - **Acceptance:** both 600-second runs plus 30-second observations use separate
@@ -13825,3 +13827,97 @@ record them. Only after that verification is R90-194 complete and R90-195 the
 next ready increment. Its defined fixture/low-rate live smoke has not started.
 The Oct18–Jan15 queue is dependency-complete and otherwise unchanged. No L1/L2
 measurement or production acceptance follows from these synthetic tool tests.
+
+## R90-198 Definition
+
+- **Goal:** resolve observed live-capture buffering latency and idle shutdown
+  before attempting frozen local-v1 L1, preserving failed smoke evidence.
+- **Window:** Oct 19–26; forecast only, eligible as soon as dependency is complete.
+- **Dependencies/status:** R90-195 exact hosted/Vault delivery; planned until then.
+- **Risk:** changing capture buffering affects CPU/throughput and shutdown; a
+  faster smoke alone cannot prove L1 or justify threshold relaxation.
+- **Acceptance:** explain retained ~692/694ms host-arrival-to-WAL-return samples
+  and first idle-stop timeout. Bound measurement-mode buffering and ensure idle
+  signal shutdown without relying on eligible measurement traffic. Preserve
+  inbound Ethernet/filter/host-timestamp guarantees and ordinary/offline capture.
+  Directly test new setup/failure/cancellation boundaries and repeat an owned-veth
+  low-rate smoke with retained raw latency/accounting; no L1/L2 claim.
+- **Required validation:** focused C/runtime regression and retained low-volume
+  smoke, unchanged oracle and frozen contract, full ci-check, exact hosted SHA
+  and Vault delivery. Final L1 verdict still belongs to two independent runs.
+- **Stop condition:** unproven timestamp/direction, packet/accounting drift,
+  unresolved idle exit, unavailable measurement proof or failed required gate.
+
+## R90-195 Selection and Tooling Checkpoint (2026-10-18)
+
+R90-194 is complete: fresh HEAD/origin/main fe4d2dbb22368325a6c636c8026e9c984a5e442f,
+[hosted run 39107211112](https://github.com/decline-llc/netsentry/actions/runs/39107211112)
+completed/success, exact local delivery record, Vault note/index/MOC and stable
+local-v1 topic agree. Do not repeat its upload or closure. Four-week phase audit
+shows bounded API/storage repairs followed by the superseding full quality gate
+and reduced current-resource contract. Historical delegated testing is inactive.
+The unfinished R90-75/195/196/197 queue had complete Definitions; select only
+R90-195 and persist [plan](task-20261018-local-fixture.md)/state before implementation.
+
+Rootless user/network namespaces and delegated user-systemd cpu/memory groups
+were proven locally, so sudo is unnecessary. The fixed veth runner freezes rules,
+512-byte checksummed frames, schedule/oracle, separate budgets and submissions.
+It retains resources/clock/raw errors, independent SQLite/API/lifecycle accounting
+and safe cancellation; the budgeted adapter retains copies/scratch under one root.
+No detector/runtime or legacy evaluator change is included.
+
+Deviations retained: initial namespace inspection used inaccessible proc/1 and an
+inherited sysfs view; replace it with pre-isolation identity plus namespace-aware
+socket enumeration. The first live smoke timed out stopping idle libpcap; retain
+partial evidence and add a separately accounted different-run control wake frame.
+A startup-cancellation test initially intercepted its own Git provenance child;
+correct that fixture and rerun, without counting the weaker failure as coverage.
+The generic local skill now records namespace-aware inventory verification.
+
+Later exact-accounting smoke completed with 20 offered/submitted/processed frames
+and two durable/SQLite events, but measured ~692/694ms delays at 10pps exceed the
+L1 500ms target. This is a real tooling-smoke risk, not a completed frozen L1 run.
+Preserve it and add bounded R90-198 as the next prerequisite before R90-196.
+This queue change is evidence-driven; do not tune the workload or relax thresholds
+in R90-195. R90-196/197 remain planned; L1/L2 are unexecuted. No next implementation
+starts in this trigger. The Oct18–Jan15 horizon remains current.
+
+Final R90-195 review also added pre-offer/continuous clock checks, a monotonic
+workload deadline and retained hardware/disk headroom. Final-source smoke-07 has
+exact 20/40/2 accounting with ~74ms samples; prior ~616–781ms outcomes and idle
+failure remain visible. No favorable-run selection clears R90-198. The first
+complete local gate passed but predates final guards, so it is superseded and a
+complete clean rerun is required before delivery.
+
+Wake-failure cleanup was subsequently tightened to reap the owned child even
+when its control send/ledger fails, with direct fault injection and smoke-08.
+The superseded second gate was intentionally terminated during native tests;
+this is validation invalidation, not a reproduced storage failure. Final-source
+28 focused methods pass; the next complete clean gate alone authorizes upload.
+
+The final-source gate then failed coverage in existing exact receiver test
+`TestRemoveOwnedSocketPreservesImmediateReplacementUnixListenerWithReusedInode`:
+its filesystem setup did not reuse the target inode in 10000 attempts. Three
+exact uncached coverage-mode reruns passed. Preserve that specificity and logs;
+receiver bytes are unchanged and no unrelated fix is justified by reproduction.
+Delivery stays blocked pending a complete clean ci-check rerun.
+
+## R90-195 Final Local Gate and Delivery Resume Authority (2026-10-18)
+
+Final-source complete ci-check passed after the existing receiver setup deviation:
+28 SLO/fixture, 42 evidence and 33 knowledge methods, fetched supply-chain/scanner,
+uncached full race/coverage (82.3%), C/ASan fuzz, E2E, archive and full Docker
+build/content/health. Three exact uncached receiver reruns and the clean full
+retry resolved the upload blocker without changing unrelated code. Raw failed,
+superseded and successful logs remain, with final hash in the evidence/state.
+Frozen source/test/Makefile hashes match final smoke-08; only closeout prose is
+added afterward and receives affected static/knowledge review before upload.
+
+This section supersedes earlier selected/pending/blocked resume paragraphs.
+Resolve the commit containing this state through Git, fetch origin/main and verify
+`.git/netsentry-r90-195-delivery.json`, exact hosted completed/success and Vault
+note/index/MOC/stable/replay. If already verified, do not repeat commit/push/sync
+or send an extra closure push. Only then is R90-195 complete and R90-198 the next
+ready increment. No R90-198 implementation, two-run L1 or L2 started here.
+The Oct18–Jan15 queue is complete and unique; R90-196 now explicitly depends on
+R90-198. All delayed/failed smoke samples remain; no fast sample clears that risk.
