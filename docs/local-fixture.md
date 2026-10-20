@@ -1,9 +1,11 @@
 # Bounded rootless local-v1 Ethernet fixture
 
 R90-195 provides a no-send frozen fixture, an isolated runner and a budgeted
-adapter. It does not certify L1/L2. The 10pps tooling smoke completed with exact
-packet/event accounting; its ~692/694ms alert delays expose a buffering risk.
-R90-198 must resolve that risk before R90-196 runs the frozen L1 workload.
+adapter. R90-198 enables immediate/nonblocking measurement capture and bounded
+idle polling. Its low-rate smoke and zero-packet signal checks are tooling
+evidence, not L1/L2 acceptance. Historical ~692/694ms delays and the first idle
+stop failure remain retained; see [repair evidence](evidence/r90-198-capture-buffering.md).
+R90-196 still requires two independent frozen L1 runs.
 
 ## Run modes
 
@@ -57,10 +59,15 @@ and a four-CPU quota. Generator has 1GiB/no swap, two disjoint CPUs and a two-CP
 quota. Readback, aggregate cgroup peaks/events and actual process affinities are
 sampled every 100ms. This is a shared VM allocation, not exclusive hardware.
 
-After observation, SIGTERM is followed by one separately retained control frame
-with `fixture-control` run identity to wake idle libpcap. That noneligible control
-packet is excluded by run-marker filtering and never enters measurement offered
-counts. Failure to stop within 5s kills only the owned process session and leaves
+After observation, SIGTERM stops capture without sending any control/wake frame.
+Measurement capture requires immediate mode, nonblocking dispatch and a selectable
+pcap descriptor; unsupported setup fails closed. A 50ms poll interval bounds the
+idle cancellation check and avoids a busy loop. Host microsecond timestamps,
+inbound direction, Ethernet and the mandatory filter are retained. This interval
+is not an end-to-end latency guarantee or a bound on downstream UDS backpressure.
+Ordinary live and offline capture retain their existing setup/read paths.
+The result retains separate capture/engine graceful-stop elapsed times.
+Failure to stop within 5s kills only the owned process session and leaves
 an incomplete result. Namespace interfaces disappear on namespace exit. Socket
 cleanup uses empty-directory removal only; replacement files/symlinks/targets
 are preserved. No recursive deletion of evidence or neighboring services occurs.

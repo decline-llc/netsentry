@@ -241,24 +241,14 @@ def clock_verdict(samples):
 
 
 def stopped(process, timeout=5):
-    wake_error = None
     if process.poll() is None:
         os.killpg(process.pid, signal.SIGTERM)
-        wake = getattr(process,'fixture_wake',None)
-        if wake is not None:
-            process.fixture_wake = None
-            try:
-                wake()
-            except Exception as exc:
-                wake_error = exc
     try:
         code = process.wait(timeout=timeout)
     except subprocess.TimeoutExpired:
         os.killpg(process.pid,signal.SIGKILL)
         process.wait()
-        raise RuntimeError('owned process exceeded graceful stop deadline; killed, evidence incomplete') from wake_error
-    if wake_error is not None:
-        raise RuntimeError('control wake failed; owned child still reaped') from wake_error
+        raise RuntimeError('owned process exceeded graceful stop deadline; killed, evidence incomplete')
     return code
 
 
@@ -521,17 +511,6 @@ def execute(root, run_id, smoke, parent_inode):
             wait_ready([engine],engine_ready)
             capture = spawn('capture',[str(REPO/'bin/netsentry-capture'),'-i','nssut','-s',str(uds),'-c','1',
                 '--slo-run-id',run_id,'--slo-port',str(LINK['dst_port']),'--slo-output',str(run/'capture.json')],'sut')
-            def wake_capture():
-                # libpcap's read timeout need not wake a completely idle veth.
-                # Separate control traffic carries a different run marker and
-                # never enters the offered/eligible measurement denominator.
-                raw = frame('fixture-control','wake',b'teardown',LINK,1)
-                with socket.socket(socket.AF_PACKET,socket.SOCK_RAW) as sock:
-                    sock.bind(('nsgen',0))
-                    sent = sock.send(raw)
-                save(run/'teardown.json',dict(run_id='fixture-control',bytes=sent,
-                    frame_sha256=hashlib.sha256(raw).hexdigest(),purpose='wake idle pcap after SIGTERM'))
-            capture.fixture_wake = wake_capture
             wait_ready([engine,capture],lambda:b'[capture] starting capture' in (run/'capture.log').read_bytes())
             if time.time_ns() >= origin_ns:
                 raise RuntimeError('readiness missed frozen origin; no measurement offered')
@@ -565,7 +544,12 @@ def execute(root, run_id, smoke, parent_inode):
             if generator.wait(timeout=1) != 0:
                 raise RuntimeError('generator did not complete')
             save(run/'api.json',health(port))
-            result['returncodes'] = dict(capture=stopped(capture),engine=stopped(engine))
+            result['stop_elapsed_seconds'] = {}
+            result['returncodes'] = {}
+            for name, process in [('capture', capture), ('engine', engine)]:
+                stop_started = time.monotonic()
+                result['returncodes'][name] = stopped(process)
+                result['stop_elapsed_seconds'][name] = time.monotonic()-stop_started
             if any(result['returncodes'].values()):
                 raise RuntimeError('SUT did not close successfully')
             result['persistence'] = inspect_persistence(run)

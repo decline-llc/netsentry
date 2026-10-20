@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <getopt.h>
 #include <pcap.h>
+#include <poll.h>
 #include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -31,6 +32,7 @@
 #define NS_HEARTBEAT_SEC    5
 #define NS_DEFAULT_UDS      "/tmp/netsentry.sock"
 #define NS_MAX_CONNECT_RETRIES 1000
+#define NS_MEASUREMENT_POLL_MS 50
 
 /* ---- globals ---------------------------------------------------------- */
 static volatile sig_atomic_t g_running = 1;
@@ -242,6 +244,7 @@ int main(int argc, char *argv[]) {
         if (handle && (pcap_set_snaplen(handle, 65535) != 0 ||
                        pcap_set_promisc(handle, 1) != 0 ||
                        pcap_set_timeout(handle, 1000) != 0 ||
+                       pcap_set_immediate_mode(handle, 1) != 0 ||
                        pcap_set_tstamp_type(handle, PCAP_TSTAMP_HOST) != 0 ||
                        pcap_set_tstamp_precision(handle, PCAP_TSTAMP_PRECISION_MICRO) != 0 ||
                        pcap_activate(handle) != 0 ||
@@ -259,6 +262,19 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "[capture] pcap open failed: %s\n", errbuf);
         uds_close();
         return 1;
+    }
+
+    int capture_fd = -1;
+    if (g_slo_run_id) {
+        /* A packet buffer timeout is not an idle-read deadline. Never block
+         * dispatch in measurement mode; poll has a bounded cancellation seam. */
+        if (pcap_setnonblock(handle, 1, errbuf) != 0 ||
+            (capture_fd = pcap_get_selectable_fd(handle)) < 0) {
+            fprintf(stderr, "[capture] measurement requires nonblocking selectable capture\n");
+            pcap_close(handle);
+            uds_close();
+            return 2;
+        }
     }
 
     int datalink = pcap_datalink(handle);
@@ -301,7 +317,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    fprintf(stderr, "[capture] starting capture (source=%s)\n",
+    if (g_running) fprintf(stderr, "[capture] starting capture (source=%s)\n",
             pcap_file ? pcap_file : iface);
 
     time_t last_hb = time(NULL);
@@ -316,6 +332,17 @@ int main(int argc, char *argv[]) {
         if (rc == PCAP_ERROR_BREAK || (pcap_file && rc == 0)) {
             /* EOF for offline mode */
             break;
+        }
+
+        if (g_slo_run_id && rc == 0 && g_running) {
+            struct pollfd ready = {.fd = capture_fd, .events = POLLIN};
+            int polled = poll(&ready, 1, NS_MEASUREMENT_POLL_MS);
+            if ((polled < 0 && errno != EINTR) ||
+                (polled > 0 && (ready.revents & (POLLERR | POLLHUP | POLLNVAL)))) {
+                fprintf(stderr, "[capture] measurement poll failed\n");
+                g_slo_failed = 1;
+                break;
+            }
         }
 
         time_t now = time(NULL);
@@ -365,10 +392,11 @@ int main(int argc, char *argv[]) {
             "{\"schema_version\":1,\"run_id\":\"%s\",\"capture_closed\":%s,"
             "\"execution_complete\":false,\"slo_compliance_asserted\":false,"
             "\"timestamp_type\":\"host\",\"timestamp_precision\":\"microseconds\","
+            "\"immediate_mode\":true,\"nonblocking\":true,\"poll_interval_ms\":%d,"
             "\"direction\":\"inbound\",\"udp_port\":%u,\"sent\":%llu,\"dropped\":%llu,"
             "\"parse_errors\":%llu,\"ignored\":%llu,\"invalid_markers\":%llu,"
             "\"pcap_stats_valid\":%s,\"pcap_received\":%u,\"pcap_dropped\":%u,\"pcap_interface_dropped\":%u}\n",
-            g_slo_run_id, g_slo_failed ? "false" : "true", g_slo_port,
+            g_slo_run_id, g_slo_failed ? "false" : "true", NS_MEASUREMENT_POLL_MS, g_slo_port,
             (unsigned long long)g_sent, (unsigned long long)g_dropped,
             (unsigned long long)g_parse_errors, (unsigned long long)g_slo_ignored,
             (unsigned long long)g_slo_invalid, stats_ok ? "true" : "false",

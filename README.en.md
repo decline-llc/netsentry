@@ -136,7 +136,8 @@ Historical staging/production-scale targets are deferred and no longer block
 local experimental readiness. The reporter now supports explicit schema-2 local-v1 observations;
 [tool documentation](docs/slo-local-v1.md) separates numerical results, validity and local review.
 R90-195 supplies the [isolated fixture](docs/local-fixture.md) and low-rate smoke.
-R90-198 addresses the observed buffering-latency risk before L1/L2; neither has been measured.
+R90-198 adds immediate/nonblocking measurement capture and idle signal shutdown.
+R90-196/197 still require L1/L2 measurements; neither has been completed.
 The historical SLO runbook is not an executable verdict for this new contract.
 
 ## Build and release

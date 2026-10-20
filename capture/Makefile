@@ -34,7 +34,9 @@ TEST_UDS_TARGET := ../bin/test-uds-sender
 TEST_UDS_SRCS   := tests/test_uds_sender.c \
                    src/uds_sender.c
 
-TEST_TARGETS := $(TEST_PARSER_TARGET) $(TEST_UDS_TARGET)
+TEST_CAPTURE_TARGET := ../bin/test-capture
+TEST_CAPTURE_SRCS := tests/test_capture.c src/eth_parser.c src/parser_registry.c src/passthrough_parser.c
+TEST_TARGETS := $(TEST_PARSER_TARGET) $(TEST_UDS_TARGET) $(TEST_CAPTURE_TARGET)
 
 BENCH_PARSER_TARGET := ../bin/bench-parser
 BENCH_PARSER_SRCS   := tests/bench_parser.c \
@@ -86,6 +88,10 @@ $(TEST_UDS_TARGET): $(TEST_UDS_SRCS)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $^
 
+$(TEST_CAPTURE_TARGET): $(TEST_CAPTURE_SRCS) src/main.c $(HEADERS)
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -o $@ $(TEST_CAPTURE_SRCS)
+
 $(BENCH_PARSER_TARGET): $(BENCH_PARSER_SRCS)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -o $@ $^
@@ -105,11 +111,13 @@ $(FUZZ_UDS_FORMATTER_TARGET): $(FUZZ_UDS_FORMATTER_SRCS)
 test: $(TEST_TARGETS)
 	$(TEST_PARSER_TARGET)
 	$(TEST_UDS_TARGET)
+	$(TEST_CAPTURE_TARGET)
 
 asan-test: CFLAGS += -fsanitize=address -fno-omit-frame-pointer -g
 asan-test: clean $(TEST_TARGETS)
 	$(TEST_PARSER_TARGET)
 	$(TEST_UDS_TARGET)
+	$(TEST_CAPTURE_TARGET)
 
 bench: $(BENCH_TARGETS)
 	$(BENCH_PARSER_TARGET) $(BENCH_ITERATIONS)

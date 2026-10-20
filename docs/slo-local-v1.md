@@ -3,8 +3,8 @@
 R90-194 supports **supplied** local-v1 L1 observations. The evaluator does not
 send traffic, establish clock accuracy, prove durable storage, or complete L1/L2.
 Use the frozen [acceptance contract](acceptance-local-v1.md) and R90-195
-[isolated runner](local-fixture.md). R90-198 addresses the smoke buffering-latency
-risk before two measured runs R90-196, then stability/recovery R90-197.
+[isolated runner](local-fixture.md). R90-198 repairs measurement buffering and idle
+shutdown before two measured runs R90-196, then stability/recovery R90-197.
 
 ## Versions and identity
 

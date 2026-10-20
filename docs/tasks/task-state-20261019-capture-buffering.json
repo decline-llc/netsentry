@@ -1,0 +1,44 @@
+{
+  "task": "r90-198-capture-buffering",
+  "timestamp": "2026-10-19",
+  "branch": "main",
+  "baseline": "7d01b1abed5f0b02b2acd97b50adfb147ed68473",
+  "status": "implementation_and_full_local_validation_complete_exact_delivery_pending",
+  "plan": "docs/plans/task-20261019-capture-buffering.md",
+  "acceptance": [
+    "retained failure explanation",
+    "measurement buffering/idle repair and direct native regressions",
+    "owned low-rate smoke and idle-before-traffic stop",
+    "full ci-check/exact hosted/Vault"
+  ],
+  "validation": {
+    "native": "15 direct entrypoint scenarios passed ordinary/ASan; clean ordinary rebuild afterward",
+    "python": "28 passed",
+    "smoke": "two independent 20/20 offered/submitted, 2/2 durable/SQLite; no wake traffic; 4.747\u20136.768ms samples",
+    "idle": "real SIGINT/SIGTERM zero packets passed before first packet",
+    "history": "226 historical raw files rehashed unchanged",
+    "preflight": "Go 1.26.9/actionlint1.7.12/govulncheck1.6.0/engine module/Docker daemon frontend base resolved",
+    "source_sha256": {
+      "capture/src/main.c": "4b658ee430ecf3bd27b7a1a0090fe96509426fcc6a6f689ec54677f244e8c56d",
+      "capture/Makefile": "3d53186dd1d03d93b229b6fcbb381fd586824a618ed26f6aa87ee89e58bc0a17",
+      "capture/tests/test_capture.c": "5b58512733a9aeebdb4c5029d198f3354a36bf4e5f59136f062add60ffb0daa9",
+      "scripts/local_fixture.py": "4c4d9b12919a621e773a23f3e514992fbb8e7d7e1510c07d14db900c6c7ab165",
+      "scripts/test_local_fixture.py": "e4a58a80e11e1c8ec87127b52310dec036d643ab74aa0626a131fdb94b9b6ddc"
+    },
+    "raw_inventory_sha256": "d544b1f1b7e44f57ee686723e6e07b262e310c5b74cc9d301964f60d0bca5553",
+    "full_ci": "passed exit0: fetched supply-chain/scanner, uncached race/coverage 82.3%, C/ASan fuzz, 28/42/33 methods, E2E/archive/full Docker content and health",
+    "full_ci_log_sha256": "291d2c5e19ab1e0dc8ea354c33051fb4314bf9f768b6e25d82b34ccdb6c995f1",
+    "static": "17 paths, 202 unique complete multiset pairs, historical Definitions/workload/legacy/runtime/source seals/JSON/links/fences/sensitive/diff verified"
+  },
+  "delivery": {
+    "local_record": ".git/netsentry-r90-198-delivery.json",
+    "policy": "one batch; post-push facts local only",
+    "old": "7d01b1abed5f0b02b2acd97b50adfb147ed68473",
+    "new": "Resolve the full feature commit containing this state and verify fresh origin/main/local record.",
+    "hosted_ci": "Require completed/success for that exact SHA.",
+    "vault": "Require exact full-SHA range, note/index/MOC, stable topic/prose preservation and identical replay."
+  },
+  "resume_instructions": "Resolve this feature commit through Git, fetch main and verify local .git/netsentry-r90-198-delivery.json exact SHA/hosted completed-success/Vault stable and replay. Once complete do not repeat push/sync or send closure-only upload. Next trigger selects R90-196; no L1/L2 started.",
+  "next_increment": "R90-196 after verified R90-198 delivery",
+  "evidence": "docs/evidence/r90-198-capture-buffering.md"
+}

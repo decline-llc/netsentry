@@ -175,17 +175,15 @@ class FixtureTests(unittest.TestCase):
             fixture.stopped(process)
         self.assertIsNotNone(process.returncode)
 
-    def test_wake_failure_still_reaps_owned_child(self):
+    def test_stop_deadline_still_reaps_owned_child(self):
         with tempfile.TemporaryDirectory() as directory:
             ready=Path(directory)/'ready'
             code="import signal,time,pathlib,sys; signal.signal(signal.SIGTERM,signal.SIG_IGN); pathlib.Path(sys.argv[1]).write_text('ready'); time.sleep(30)"
             child=subprocess.Popen([sys.executable,'-c',code,str(ready)],start_new_session=True)
             try:
                 fixture.wait_ready([child],ready.exists)
-                child.fixture_wake=mock.Mock(side_effect=OSError('injected control ledger failure'))
-                with self.assertRaisesRegex(RuntimeError,'killed') as caught:
+                with self.assertRaisesRegex(RuntimeError,'killed'):
                     fixture.stopped(child,timeout=.05)
-                self.assertIn('injected control ledger failure',str(caught.exception.__cause__))
                 self.assertIsNotNone(child.poll())
             finally:
                 if child.poll() is None:

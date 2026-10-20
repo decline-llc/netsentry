@@ -106,7 +106,8 @@ reporter 的 `review_required` 或返回 0 不代表验收通过。只有有效�
 它仍不能替代两轮 L1 与 L2。合成回归测试不属于现场验收证据。
 R90-195 已提供 [rootless namespace/veth 夹具](local-fixture.md)、冻结 oracle、
 资源/累计证据预算、自有对象清理与真实 submitted 行。低流量 smoke 仅证明工具链，
-其约 692/694ms 告警暴露缓冲风险；先完成 R90-198，再按 R90-196 执行 L1。
+历史约 692/694ms 告警和空闲退出失败保留；R90-198 已加入即时/非阻塞捕获与
+空闲退出修复，后续按 R90-196 执行 L1；低流量 smoke 不等于 L1 通过。
 现有旧 sender 保持旧契约。
 
 所有待办只维护于 [滚动路线图](plans/rolling-90-day-roadmap.md)的当前队列。
