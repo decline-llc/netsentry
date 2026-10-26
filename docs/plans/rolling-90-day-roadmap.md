@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-10-19 through 2027-01-16. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-10-25 through 2027-01-22. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -82,9 +82,10 @@ periods. Definitions below give risk, required validation and stop conditions.
 | R90-193 | Oct 17–18 | Complete; exact hosted/Vault delivery verified | Adopt current-resource local-v1 and reconcile rules/queue. | User scope-reduction authority; verified Oct17 CI baseline | Explicit L0/L1/L2 gates, historical profile deferral, no runtime threshold change, complete local/hosted delivery validation. |
 | R90-194 | Oct 18–21 | Complete; exact hosted/Vault delivery verified | Implement versioned local-v1 profile/report evaluation. | R90-193 exact-SHA delivery | Separate local scope, 100-rule/pps/500ms policy, missing/extra/late accounting, immutable legacy outputs and direct fail/inconclusive regressions. |
 | R90-195 | Oct 22–26 | Complete; repair exact hosted/Vault verified | Build bounded single-VM namespace/veth fixture and runner. | R90-194 | Independent oracle, readiness, 108000 scheduled packets per 10-minute run, fixed rule/traffic hashes, 4 GiB cumulative artifacts, owned cleanup; no public-interface traffic. |
-| R90-198 | Oct 19–26 | Implemented/full local gate passed; exact delivery tracked locally | Bound live-capture buffering and idle shutdown before L1. | R90-195 | Preserve the 10pps smoke latency/idle-stop failures, repair the measured boundary with direct regressions and full CI; no threshold relaxation or L1 claim. |
-| R90-196 | Oct 27–Nov 2 | Planned | Execute and review two local-v1 L1 runs. | R90-195 validated runner; R90-198 buffering repair; local resource preflight | Each run independently meets frozen loss/alert/latency/clock/workload criteria with complete retained evidence; failures remain failures. |
-| R90-197 | Nov 3–Jan 16 | Planned | Complete L2 stability/recovery and experimental-build readiness review. | R90-196 accepted local evidence | 1800 seconds offered workload, one quiesced graceful restart and UDS reconnect, bounded RSS, exact durable/API/oracle accounting, local-only conclusions and reproducible instructions. |
+| R90-198 | Oct 19–26 | Complete; exact hosted/Vault verified | Bound live-capture buffering and idle shutdown before L1. | R90-195 | Preserve the 10pps smoke latency/idle-stop failures, repair the measured boundary with direct regressions and full CI; no threshold relaxation or L1 claim. |
+| R90-199 | Oct 25–27 | Full local gate passed; exact delivery tracked locally | Retain pre-offer and rejected raw supervisor probes. | Verified R90-198; stopped R90-196 source/evidence | Exact raw probes survive clock/resource rejection; persistence errors fail closed; full CI and exact hosted/Vault delivery. |
+| R90-196 | Oct 25–Nov 2 | Blocked; first attempt inconclusive | Execute and review two local-v1 L1 runs. | R90-195 validated runner; R90-198 buffering repair; R90-199 retention repair; stable-clock/resource preflight | Each run independently meets frozen loss/alert/latency/clock/workload criteria with complete retained evidence; failures remain failures. |
+| R90-197 | Nov 3–Jan 22 | Planned | Complete L2 stability/recovery and experimental-build readiness review. | R90-196 accepted local evidence | 1800 seconds offered workload, one quiesced graceful restart and UDS reconnect, bounded RSS, exact durable/API/oracle accounting, local-only conclusions and reproducible instructions. |
 
 No IPv6/TCP-reassembly/cluster/UI expansion starts while this queue has unresolved
 acceptance failures. Reserve the remaining horizon for source-proven failures
@@ -13673,7 +13674,7 @@ contact, publication or acceptance authority is added.
   independent of Mininet/GNS3, with explicit capture/generator resource controls.
 - **Window:** Oct 22–26, forecasting only.
 - **Dependencies/status:** R90-194 verified at fe4d2dbb22368325a6c636c8026e9c984a5e442f;
-  R90-195 implemented and full local gate passed; exact delivery tracked locally.
+  R90-195 exact repaired delivery verified at 7d01b1abed5f0b02b2acd97b50adfb147ed68473.
 - **Risk:** capturing outbound/duplicate traffic, affecting existing interfaces,
   generator contention, unbounded snapshots or cleanup touching other services.
 - **Acceptance:** own namespace/veth/processes/new paths/ports/UDS; freeze 100
@@ -13693,9 +13694,11 @@ contact, publication or acceptance authority is added.
 ## R90-196 Definition
 
 - **Goal:** collect and review two independent L1 local-v1 runs on current hardware.
-- **Window:** Oct 27–Nov 2, forecasting only.
-- **Dependencies/status:** R90-195 verified tooling, R90-198 buffering repair, local allocation/preflight;
-  planned, not awaiting an external department or new hardware purchase.
+- **Window:** Oct 25–Nov 2, forecasting only.
+- **Dependencies/status:** R90-195 verified tooling, R90-198 buffering repair,
+  R90-199 retention repair and stable-clock/resource preflight. First Oct21 run
+  stopped inconclusive; needs two fresh independent runs after prerequisites.
+  Local execution does not await an external department or new hardware purchase.
 - **Risk:** treating generator limits as SUT capacity or selecting only a good run.
 - **Acceptance:** both 600-second runs plus 30-second observations use separate
   state/run identities and the frozen schedule; each sustains offered load and
@@ -13714,7 +13717,7 @@ contact, publication or acceptance authority is added.
 
 - **Goal:** establish the local experimental build's L2 stability/recovery evidence
   and deliver a reproducible operator handoff, without production-capacity claims.
-- **Window:** Nov 3–Jan 16; finish earlier when dependencies/evidence allow.
+- **Window:** Nov 3–Jan 22; finish earlier when dependencies/evidence allow.
 - **Dependencies/status:** R90-196 accepted local results; planned.
 - **Risk:** hiding maintenance losses, state reuse or falsely advertising a release.
 - **Acceptance:** 1800 seconds offered at 100 pps and one oracle event/second;
@@ -13833,8 +13836,8 @@ measurement or production acceptance follows from these synthetic tool tests.
 - **Goal:** resolve observed live-capture buffering latency and idle shutdown
   before attempting frozen local-v1 L1, preserving failed smoke evidence.
 - **Window:** Oct 19–26; forecast only, eligible as soon as dependency is complete.
-- **Dependencies/status:** R90-195 exact hosted/Vault verified; implementation and
-  full local gate complete; R90-198 completion requires exact delivery verification.
+- **Dependencies/status:** R90-195 exact hosted/Vault verified; R90-198 complete
+  at b33c6211cffcfaf1c6b05fbbd60b92b10878788b with exact hosted/Vault proof.
 - **Risk:** changing capture buffering affects CPU/throughput and shutdown; a
   faster smoke alone cannot prove L1 or justify threshold relaxation.
 - **Acceptance:** explain retained ~692/694ms host-arrival-to-WAL-return samples
@@ -14014,3 +14017,82 @@ facts complete R90-198. If already complete, do not repeat commit/push/sync or
 send a closure-only push. R90-196 then becomes the next ready increment; neither
 it nor R90-197 starts here. Oct19–Jan16 horizon/unfinished Definitions are complete;
 R90-75 remains deferred and all historical failed measurement outcomes retained.
+
+
+## R90-199 Definition
+
+- **Goal:** retain initial and rejected clock/resource probes before verdicts stop
+  the fixture, preserving the invalid R90-196 attempt and measurement contract.
+- **Window:** Oct 25–27, forecasting only.
+- **Dependencies/status:** R90-198 delivered at
+  b33c6211cffcfaf1c6b05fbbd60b92b10878788b with exact hosted/Vault proof;
+  stopped R90-196 raw evidence and source prove this repair. Full local gate
+  passed; exact hosted/Vault completion is tracked in the local delivery record.
+- **Risk:** excluding bad probes, accepting a short write/fsync failure, unsafe
+  child cleanup or confusing synthetic repair tests with measurement acceptance.
+- **Acceptance:** checked complete writes and fsync precede clock/resource
+  verdicts; no generator admission before initial persistence/admission. Exact
+  rejected values survive pre-offer/active stops; owned children are reaped,
+  partial results remain inconclusive with matching seals. Write/short-write/
+  fsync failure stops without using an unretained sample. Preserve 10ms algorithm.
+- **Required validation:** direct execute regressions, focused fixture/local-SLO
+  checks, historical raw preservation, pinned-tool/module/Docker preflight,
+  complete ci-check, knowledge/diff/sensitive checks and exact hosted/Vault proof.
+- **Stop condition:** lost probe, unsafe cleanup, weakened threshold or check,
+  required gate failure or need for host/VM clock service authority.
+
+## R90-199 Selection and Current Resume Authority (2026-10-25)
+
+Fresh fetched origin/main is b33c6211cffcfaf1c6b05fbbd60b92b10878788b;
+[39355782002](https://github.com/decline-llc/netsentry/actions/runs/39355782002)
+is completed/success. Local R90-198 delivery record and Vault note/index/MOC
+agree. Prior pending-delivery paragraphs are historical; do not redeliver them.
+Four-week audit shows bounded correctness repairs, full gates and current-VM
+fixture/capture work. Earlier delegated-test policy is superseded; prior failed
+hosted/smoke/allocator evidence remains historical. No missing delivery found.
+
+The original worktree contains agent-authored but uncommitted R90-196 attempt
+records. They remain untouched and excluded from this change. The first run
+stopped after 68,212 packets: candidate clock bound 2,807,315,018ns exceeds
+10,000,000ns. The 443 offered-prefix events were durable, but this does not
+complete L1. The triggering rejected probe is absent because the old supervisor
+checked its verdict before writing it; no later code repair restores that sample.
+Do not infer a specific clock-service cause, change host settings or reuse its ID.
+
+Only R90-199 is selected in an isolated worktree, with
+[plan](task-20261025-clock-retention.md) and task state persisted before edits.
+All unfinished rows retain complete Definitions and dependencies; horizon now
+Oct25–Jan22. R90-196 remains blocked until retention repair and stable-clock
+preflight, then needs two fresh frozen runs; R90-197 stays planned and R90-75
+stays deferred. No new L1/L2 measurement starts in this repair increment.
+
+### R90-199 Required Gate Deviation
+
+32 focused methods and 33 knowledge methods passed. First complete gate stopped
+at reachable GO-2026-6809 on Go1.26.9; no subsequent stage counts. Official release
+metadata retained before pin changes identifies 1.26.10 as the latest patch in
+the current line. Module/lock/current prose and exact archive verification are
+a required delivery prerequisite, with no scanner waiver. Complete gate rerun
+remains pending. The evidence-retention repair and old L1 failure are unchanged.
+
+### R90-199 Final Local Gate and Delivery Resume Authority
+
+Patched Go1.26.10 complete ci-check passed: zero reachable vulnerabilities, nine
+verified fetched assets, 32 fixture/local-SLO/42 evidence/33 knowledge methods,
+uncached full race/coverage (82.2%), C entrypoint/parser/sender, ASan fuzz,
+E2E/archive and full Docker build/content/health. All 370 historical raw files
+and nine original pending files remain unchanged; the repair cannot replace the
+old L1's missing trigger sample. Every acceptance boundary maps to the direct
+tests described in the evidence; no L1/L2 measurement was started. Final prose
+only is followed by affected docs/static/knowledge checks.
+
+This section supersedes prior selection and pending-gate instructions. Resolve
+the commit containing the R90-199 state, fetch main and inspect the local common
+Git-directory R90-199 delivery record. Complete this increment only after exact
+HEAD/origin/main, hosted completed/success and Vault iteration/index/MOC/stable
+prose-preservation/replay verification. If these are verified, do not repeat
+commit/push/sync or send a closure-only upload. The isolated delivery worktree is
+authoritative; the original worktree still contains the preserved uncommitted
+R90-196 attempt and its old local main baseline. Do not mix or upload that state.
+R90-196 is next after stable-clock/resource preflight and needs two fresh frozen
+runs. R90-197 stays planned, R90-75 deferred; no next increment starts here.

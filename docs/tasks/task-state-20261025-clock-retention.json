@@ -1,0 +1,30 @@
+{
+  "task": "r90-199-clock-retention",
+  "timestamp": "2026-10-25",
+  "baseline": "b33c6211cffcfaf1c6b05fbbd60b92b10878788b",
+  "status": "full_local_ci_passed_exact_delivery_pending",
+  "plan": "docs/plans/task-20261025-clock-retention.md",
+  "scope": "retain initial/rejected raw probes before verdict; preserve original pending L1 files",
+  "validation": {
+    "focused": "32 fixture/local-SLO methods passed; ten direct supervisor cases across four methods",
+    "knowledge": "33 passed",
+    "preflight": "Go1.26.10 exact official archive size/hash; actionlint1.7.12/govulncheck1.6.0 rebuilt with selected toolchain; engine module; Docker29.9/frontend/base resolution",
+    "full_ci": "patched Go1.26.10 complete make ci-check exit0; scanner zero reachable, 32/42/33 methods, uncached full race/82.2% coverage, C/ASan fuzz, E2E/archive/full Docker content-health",
+    "preservation": "370 retained raw files and 9 original pending paths rehashed unchanged",
+    "roadmap": "199 equal raw row/Definition counts, no duplicates or asymmetric IDs",
+    "full_ci_log_sha256": "a45618950e9d4f85ffa32d03f58a53d57b85a9ee4ddb816cd2e7808756691d19"
+  },
+  "delivery": {
+    "local_record": ".git/netsentry-r90-199-delivery.json",
+    "policy": "one completed non-force batch to main; facts local only",
+    "worktree": "isolated r90-199-clock-retention; original worktree and pending attempt preserved"
+  },
+  "resume_instructions": "Resolve the commit containing this state and consult the local common Git-directory R90-199 delivery record. Fresh fetch must match isolated delivery HEAD and origin/main; require hosted completed/success plus Vault note/index/MOC/stable prose/replay. If verified, do not repeat commit/push/sync or closure upload. Original worktree retains old main baseline and nine pending R90-196 paths unchanged; continue from isolated delivery checkout and preserve them. Next trigger selects only R90-196 after stable-clock/resource preflight; two new runs required. No L2 starts here.",
+  "evidence": "docs/evidence/r90-199-clock-retention.md",
+  "deviations": [
+    "First test run exposed mock resource serialization and final-verdict spy assumptions; corrected test fixtures, then complete focused chain passed.",
+    "A setup edit used engine cwd for a repository-relative script; edit did not run. Corrected cwd before focused validation; no failed setup counts.",
+    "Full CI blocked by newly published reachable GO-2026-6809. Official latest patch in existing 1.26 line is 1.26.10; exact archive metadata recorded before updating module and lock. Scanner remains mandatory."
+  ],
+  "next_increment": "R90-196 after stable-clock/resource preflight; two fresh frozen L1 runs"
+}

@@ -106,7 +106,13 @@ read-only Linux adjtimex metadata. The candidate interval uncertainty sums sampl
 realtime/monotonic drift, syscall brackets, clock resolution and libpcap's 1us
 quantization. Absolute NTP UTC error is common to both endpoints and retained
 separately; it is not added to same-clock intervals. Bounds above 10ms or failed
-probes stop execution as inconclusive. Sampling cannot exclude a step and inverse
+probes stop execution as inconclusive. R90-199 retains each initial and active
+clock/resource row in `samples.jsonl` with a checked complete write and fsync
+before its clock or resource verdict. The generator starts only after the initial
+row is persisted and admitted. Write, short-write or fsync failure also leaves
+an incomplete, inconclusive result; a possibly visible but unsynced/partial row
+is not admitted clock evidence. Result file seals describe the retained bytes,
+including failed output, and do not establish acceptance. Sampling cannot exclude a step and inverse
 step entirely between probes: review raw samples and operating conditions before
 acceptance. Neither this bound nor an exit-zero smoke is a physical NIC claim.
 

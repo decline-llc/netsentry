@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import collections
+from contextlib import ExitStack
 import hashlib
 import json
 import os
@@ -203,7 +204,7 @@ class FixtureTests(unittest.TestCase):
                 children.append(child)
                 return child
             with mock.patch.object(fixture,'require_private_net'), \
-                 mock.patch.object(fixture,'Groups'),mock.patch.object(fixture,'ethernet_ready',return_value={'inbound':True}), \
+                 mock.patch.object(fixture,'Groups',**{'return_value.sample.return_value':{}}),mock.patch.object(fixture,'ethernet_ready',return_value={'inbound':True}), \
                  mock.patch.object(fixture.subprocess,'Popen',side_effect=spawn), \
                  mock.patch.object(fixture,'digest',side_effect=python_child_digest), \
                  mock.patch.object(fixture.subprocess,'check_output',return_value='a'*40), \
@@ -234,7 +235,7 @@ class FixtureTests(unittest.TestCase):
             fake_socket.__enter__.return_value.getsockname.return_value=('127.0.0.1',12345)
             fake_socket.__enter__.return_value.send.return_value=60
             with mock.patch.object(fixture,'require_private_net'), \
-                 mock.patch.object(fixture,'Groups'),mock.patch.object(fixture,'ethernet_ready',return_value={'inbound':True}), \
+                 mock.patch.object(fixture,'Groups',**{'return_value.sample.return_value':{}}),mock.patch.object(fixture,'ethernet_ready',return_value={'inbound':True}), \
                  mock.patch.object(fixture.subprocess,'Popen',side_effect=spawn), \
                  mock.patch.object(fixture,'digest',side_effect=python_child_digest), \
                  mock.patch.object(fixture.subprocess,'check_output',return_value='a'*40), \
@@ -250,6 +251,134 @@ class FixtureTests(unittest.TestCase):
             self.assertIn('active cancellation',result['error'])
             self.assertTrue(replacement.is_symlink())
             self.assertEqual(target.read_text(),'preserve target')
+
+    def supervisor_rejection(self, mode, active):
+        # Run the public supervisor lifecycle with real owned child sessions;
+        # synthetic probes/limits reach the actual persistence/verdict boundary.
+        initial = dict(realtime_ns=20000000,monotonic_before_ns=10000000,
+                       monotonic_after_ns=10001000,kernel_clock_state=0,
+                       kernel_status=8193,maxerror_us=1234,resolution_ns=1)
+        rejected = dict(initial,realtime_ns=40000000) if active else dict(initial,kernel_clock_state=-1)
+        probes = [initial,rejected] if active else [rejected]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            children, commands, checked, synced = [], [], [], []
+            real_popen, real_open = subprocess.Popen, Path.open
+            real_fsync, real_verdict, real_inventory = os.fsync, fixture.clock_verdict, fixture.inventory
+            issued = []
+            def spawn(command, **kwargs):
+                commands.append(command)
+                kwargs.pop('preexec_fn')
+                child = real_popen([sys.executable,'-c','import time;time.sleep(30)'],**kwargs)
+                children.append(child)
+                return child
+            def probe():
+                value = probes[len(issued)]
+                issued.append(value)
+                return value
+            def fsync(fd):
+                if os.readlink(f'/proc/self/fd/{fd}').endswith('/samples.jsonl'):
+                    if mode == 'fsync' and len(issued) == len(probes):
+                        raise OSError('injected sample fsync failure')
+                    real_fsync(fd)
+                    synced.append(len(issued))
+                else:
+                    real_fsync(fd)
+            def verdict(values):
+                rows = [json.loads(row) for row in (root/'reject/samples.jsonl').read_bytes().splitlines()[:len(values)]]
+                self.assertEqual([row['clock'] for row in rows],values)
+                self.assertIn(len(values),synced)
+                checked.append(list(values))
+                return real_verdict(values)
+            def inventory(path):
+                used,count = real_inventory(path)
+                if mode == 'resource' and len(issued) == len(probes) and path == root:
+                    return fixture.BUDGET+1,count
+                return used,count
+            class Writer:
+                def __init__(self, stream): self.stream = stream
+                def __enter__(self): return self
+                def __exit__(self, *args): self.stream.close()
+                def fileno(self): return self.stream.fileno()
+                def write(self, raw):
+                    if len(issued) == len(probes):
+                        if mode == 'write': raise OSError('injected sample write failure')
+                        if mode == 'short': return self.stream.write(raw[:-1])
+                    return self.stream.write(raw)
+            def opened(path, *args, **kwargs):
+                stream = real_open(path,*args,**kwargs)
+                return Writer(stream) if path.name == 'samples.jsonl' and args == ('xb',) else stream
+            fake_socket = mock.MagicMock()
+            fake_socket.__enter__.return_value.getsockname.return_value = ('127.0.0.1',12345)
+            with ExitStack() as stack:
+                patches = [mock.patch.object(fixture,'require_private_net'),
+                    mock.patch.object(fixture,'Groups',**{'return_value.sample.return_value':{}}),
+                    mock.patch.object(fixture,'ethernet_ready',return_value={'inbound':True}),
+                    mock.patch.object(fixture.subprocess,'Popen',side_effect=spawn),
+                    mock.patch.object(fixture,'digest',side_effect=python_child_digest),
+                    mock.patch.object(fixture.subprocess,'check_output',return_value='a'*40),
+                    mock.patch.object(fixture,'wait_ready'),
+                    mock.patch.object(fixture.socket,'socket',return_value=fake_socket),
+                    mock.patch.object(fixture,'clock_sample',side_effect=probe),
+                    mock.patch.object(fixture,'clock_verdict',side_effect=verdict),
+                    mock.patch.object(fixture,'inventory',side_effect=inventory),
+                    mock.patch.object(fixture.resource,'setrlimit'),
+                    mock.patch.object(fixture.os,'fsync',side_effect=fsync),
+                    mock.patch.object(Path,'open',opened)]
+                for patch in patches: stack.enter_context(patch)
+                fixture.Groups.return_value.sample.return_value = {'sut':{'memory.current':12345}}
+                try:
+                    result = fixture.execute(root,'reject',True,1)
+                    self.assertTrue(all(child.poll() is not None for child in children))
+                finally:
+                    for child in children:
+                        if child.poll() is None: fixture.stopped(child)
+            self.assertEqual(len(children),3 if active else 2)
+            self.assertTrue(all(child.poll() is not None for child in children))
+            self.assertEqual(sum('_send' in command for command in commands),int(active))
+            self.assertEqual(result['status'],'inconclusive')
+            self.assertFalse(result['execution_complete'])
+            self.assertFalse(result['slo_compliance_asserted'])
+            self.assertFalse((root/'reject/manifest.json').exists())
+            self.assertFalse((root/'reject/offered.jsonl').exists())
+            for name, seal in result['files'].items():
+                raw = (root/'reject'/name).read_bytes()
+                self.assertEqual(seal,dict(bytes=len(raw),sha256=hashlib.sha256(raw).hexdigest()))
+            self.assertEqual(json.loads((root/'reject/result.json').read_text()),result)
+            if mode in ('write','short','fsync'):
+                self.assertIn({'write':'sample write failure','short':'short supervisor sample write',
+                               'fsync':'sample fsync failure'}[mode],result['error'])
+                self.assertEqual(synced,[1] if active else [])
+                self.assertTrue(all(len(values) < len(probes) for values in checked))
+                self.assertEqual(result.get('clock'),real_verdict([initial]) if active else None)
+            else:
+                rows = [json.loads(row) for row in (root/'reject/samples.jsonl').read_bytes().splitlines()]
+                self.assertEqual([row['clock'] for row in rows],probes)
+                self.assertEqual(rows[-1]['groups'],{'sut':{'memory.current':12345}})
+                self.assertEqual(synced,list(range(1,len(probes)+1)))
+                self.assertEqual(result['clock'],real_verdict(probes))
+                if mode == 'clock':
+                    self.assertIn('clock',result['error'])
+                    self.assertFalse(result['clock']['clock_checked'])
+                    self.assertIsNone(result['clock']['clock_uncertainty_ns'])
+                else:
+                    self.assertIn('budget/file envelope',result['error'])
+                    self.assertEqual(rows[-1]['evidence_bytes'],fixture.BUDGET+1)
+
+    def test_supervisor_retains_initial_rejected_clock_before_offer(self):
+        self.supervisor_rejection('clock',False)
+
+    def test_supervisor_retains_active_rejected_clock_step(self):
+        self.supervisor_rejection('clock',True)
+
+    def test_supervisor_retains_resource_rejection_before_verdict(self):
+        for active in (False,True):
+            with self.subTest(active=active): self.supervisor_rejection('resource',active)
+
+    def test_supervisor_sample_persistence_errors_fail_closed(self):
+        for mode in ('write','short','fsync'):
+            for active in (False,True):
+                with self.subTest(mode=mode,active=active): self.supervisor_rejection(mode,active)
 
     def test_accounting_retains_missing_extra_and_duplicate_identities(self):
         with tempfile.TemporaryDirectory() as directory:

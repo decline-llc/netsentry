@@ -125,7 +125,7 @@ PCAP_CORPUS=/path/to/reviewed-corpus make e2e-corpus-pressure
 make rc-check
 ```
 
-Every third-party Action in the CI, Release, and Docker workflows is pinned to a reviewed full commit SHA in `.github/supply-chain-lock.json`. `engine/go.mod` retains the `go 1.22.2` language baseline and pins the CI toolchain to `go1.26.9`. See [docs/supply-chain.md](docs/supply-chain.md) for the update procedure.
+Every third-party Action in the CI, Release, and Docker workflows is pinned to a reviewed full commit SHA in `.github/supply-chain-lock.json`. `engine/go.mod` retains the `go 1.22.2` language baseline and pins the CI toolchain to `go1.26.10`. See [docs/supply-chain.md](docs/supply-chain.md) for the update procedure.
 
 External and production pcaps may contain sensitive data. Never commit raw corpora, private paths, or `docs/evidence/local/`. Before sharing, run `make sanitize-pcap INPUT=in.pcap OUTPUT=out.pcap` and manually review the result.
 
@@ -137,7 +137,7 @@ local experimental readiness. The reporter now supports explicit schema-2 local-
 [tool documentation](docs/slo-local-v1.md) separates numerical results, validity and local review.
 R90-195 supplies the [isolated fixture](docs/local-fixture.md) and low-rate smoke.
 R90-198 adds immediate/nonblocking measurement capture and idle signal shutdown.
-R90-196/197 still require L1/L2 measurements; neither has been completed.
+The first R90-196 L1 attempt stopped inconclusive after a clock discontinuity; L1 has not passed and L2 has not run. R90-199 retains initial/rejected probes; stable-clock preflight and two fresh L1 runs remain before R90-197.
 The historical SLO runbook is not an executable verdict for this new contract.
 
 ## Build and release

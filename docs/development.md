@@ -106,11 +106,12 @@ for the exact pushed SHA before reporting delivery complete. Do not push another
 docs-only closure just to record the push. CI cancels superseded runs on the same
 ref; the latest revision still runs the full gate.
 
-The 2026-10-17 CI repair pins Go 1.26.9, the latest patch in the selected 1.26
-line per the [official Go release feed](https://go.dev/dl/?mode=json). The prior
-1.26.8 pin fails `govulncheck` with seven reachable standard-library advisories.
+The 2026-10-25 gate repair pins Go 1.26.10, the latest patch in the selected
+1.26 line per the [official Go release feed](https://go.dev/dl/?mode=json).
+The prior 1.26.9 pin fails `govulncheck` with reachable
+[GO-2026-6809](https://pkg.go.dev/vuln/GO-2026-6809) in `crypto/x509`.
 The toolchain directive and supply-chain lock must move together; retain the
-scanner and verify the replacement before uploading.
+scanner and verify the replacement with the complete gate before uploading.
 
 ---
 

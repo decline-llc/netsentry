@@ -515,14 +515,30 @@ def execute(root, run_id, smoke, parent_inode):
             if time.time_ns() >= origin_ns:
                 raise RuntimeError('readiness missed frozen origin; no measurement offered')
             result['ready_before_origin'] = True
-            clocks.append(clock_sample())
-            if not clock_verdict(clocks)['clock_checked']:
-                raise RuntimeError('clock probe unavailable before offering')
-            generator = spawn('generator',[sys.executable,str(Path(__file__).resolve()),'_send',
-                '--root',str(root),'--run-id',run_id,'--origin-ns',str(origin_ns)]+(['--smoke'] if smoke else []),'generator')
-            finish = origin_ns+(5 if smoke else 630)*NS
-            monotonic_stop = time.monotonic()+max(0,(finish-time.time_ns())/NS)+1
+            # Persist even the pre-offer/rejected probe before a verdict can
+            # abort. A short write or fsync failure is an evidence failure and
+            # must not admit the generator or add an unretained clock sample.
             with (run/'samples.jsonl').open('xb',buffering=0) as samples:
+                def retain_probe(before_offer=False):
+                    probe = clock_sample()
+                    used,_ = inventory(root); run_bytes,count = inventory(run)
+                    affinity = {str(p.pid):sorted(os.sched_getaffinity(p.pid)) for p in processes if p.poll() is None}
+                    sample = dict(clock=probe,groups=groups.sample(),process_affinity=affinity,evidence_bytes=used,run_bytes=run_bytes)
+                    raw = encode(sample)
+                    if samples.write(raw) != len(raw):
+                        raise OSError('short supervisor sample write')
+                    os.fsync(samples.fileno())
+                    clocks.append(probe)
+                    if used > BUDGET or run_bytes > RUN_RESERVE or count > MAX_FILES:
+                        raise RuntimeError('cumulative evidence budget/file envelope exceeded')
+                    if not clock_verdict(clocks)['clock_checked']:
+                        raise RuntimeError('clock probe unavailable before offering' if before_offer else
+                                           'clock interval bound invalidated during workload')
+                retain_probe(before_offer=True)
+                generator = spawn('generator',[sys.executable,str(Path(__file__).resolve()),'_send',
+                    '--root',str(root),'--run-id',run_id,'--origin-ns',str(origin_ns)]+(['--smoke'] if smoke else []),'generator')
+                finish = origin_ns+(5 if smoke else 630)*NS
+                monotonic_stop = time.monotonic()+max(0,(finish-time.time_ns())/NS)+1
                 while time.time_ns() < finish:
                     if time.monotonic() >= monotonic_stop:
                         raise RuntimeError('monotonic workload deadline exceeded')
@@ -530,17 +546,8 @@ def execute(root, run_id, smoke, parent_inode):
                         raise RuntimeError('SUT exited during workload/observation')
                     if generator.poll() not in (None,0):
                         raise RuntimeError('generator failed; retain intent and submission ledgers')
-                    used,_ = inventory(root); run_bytes,count = inventory(run)
-                    if used > BUDGET or run_bytes > RUN_RESERVE or count > MAX_FILES:
-                        raise RuntimeError('cumulative evidence budget/file envelope exceeded')
-                    probe = clock_sample(); clocks.append(probe)
-                    if not clock_verdict(clocks)['clock_checked']:
-                        raise RuntimeError('clock interval bound invalidated during workload')
-                    affinity = {str(p.pid):sorted(os.sched_getaffinity(p.pid)) for p in processes if p.poll() is None}
-                    sample = dict(clock=probe,groups=groups.sample(),process_affinity=affinity,evidence_bytes=used,run_bytes=run_bytes)
-                    samples.write(encode(sample))
+                    retain_probe()
                     time.sleep(.1)
-                os.fsync(samples.fileno())
             if generator.wait(timeout=1) != 0:
                 raise RuntimeError('generator did not complete')
             save(run/'api.json',health(port))

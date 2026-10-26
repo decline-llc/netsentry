@@ -124,16 +124,16 @@ PCAP_CORPUS=/path/to/reviewed-corpus make e2e-corpus-pressure
 make rc-check
 ```
 
-CI/Release/Docker workflow 的第三方 Action 均固定到 `.github/supply-chain-lock.json` 中审核过的完整 commit SHA；`engine/go.mod` 保留 `go 1.22.2` 语言基线并固定 CI toolchain `go1.26.9`。更新流程见 [docs/supply-chain.md](docs/supply-chain.md)。
+CI/Release/Docker workflow 的第三方 Action 均固定到 `.github/supply-chain-lock.json` 中审核过的完整 commit SHA；`engine/go.mod` 保留 `go 1.22.2` 语言基线并固定 CI toolchain `go1.26.10`。更新流程见 [docs/supply-chain.md](docs/supply-chain.md)。
 
 外部/生产 pcap 可能包含敏感内容。不得提交原始 corpus、私有路径或 `docs/evidence/local/`；分享前先运行 `make sanitize-pcap INPUT=in.pcap OUTPUT=out.pcap`，再人工复核。
 
 当前采用 [local-v1 单机验收标准](docs/acceptance-local-v1.md)：现有 VM、100 条规则、
-100/500 pps 常态/突发，10 分钟两轮和 30 分钟稳定性；本次仅调整规则与规划，
-L1/L2 未执行。旧 staging/prod 大规模目标延期，不阻塞当前实验版推进。
+100/500 pps 常态/突发，10 分钟两轮和 30 分钟稳定性；
+首轮 L1 因时钟异常无效中止；L1 未通过、L2 未执行。旧 staging/prod 大规模目标延期，不阻塞当前实验版推进。
 报告器现支持显式 schema 2 的 local-v1；[工具契约](docs/slo-local-v1.md)区分数值、有效性与本地审核。
 R90-195 已提供[隔离夹具](docs/local-fixture.md)，R90-198 已加入即时/非阻塞捕获与
-空闲退出修复；下一步执行 R90-196/197。L1/L2 尚未测量。
+空闲退出修复。R90-199 补齐初始/拒绝探针留存；旧 L1 无效证据保留，稳定时钟预检后按 R90-196 重做两轮，再推进 R90-197。
 [SLO runbook](docs/slo-runbook.md)保留旧工具链说明，不能直接判定新标准。
 
 ## 构建与发布
