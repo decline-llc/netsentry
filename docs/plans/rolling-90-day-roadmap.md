@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-10-25 through 2027-01-22. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-10-26 through 2027-01-23. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -85,7 +85,7 @@ periods. Definitions below give risk, required validation and stop conditions.
 | R90-198 | Oct 19–26 | Complete; exact hosted/Vault verified | Bound live-capture buffering and idle shutdown before L1. | R90-195 | Preserve the 10pps smoke latency/idle-stop failures, repair the measured boundary with direct regressions and full CI; no threshold relaxation or L1 claim. |
 | R90-199 | Oct 25–27 | Full local gate passed; exact delivery tracked locally | Retain pre-offer and rejected raw supervisor probes. | Verified R90-198; stopped R90-196 source/evidence | Exact raw probes survive clock/resource rejection; persistence errors fail closed; full CI and exact hosted/Vault delivery. |
 | R90-196 | Oct 25–Nov 2 | Blocked; first attempt inconclusive | Execute and review two local-v1 L1 runs. | R90-195 validated runner; R90-198 buffering repair; R90-199 retention repair; stable-clock/resource preflight | Each run independently meets frozen loss/alert/latency/clock/workload criteria with complete retained evidence; failures remain failures. |
-| R90-197 | Nov 3–Jan 22 | Planned | Complete L2 stability/recovery and experimental-build readiness review. | R90-196 accepted local evidence | 1800 seconds offered workload, one quiesced graceful restart and UDS reconnect, bounded RSS, exact durable/API/oracle accounting, local-only conclusions and reproducible instructions. |
+| R90-197 | Nov 3–Jan 23 | Planned | Complete L2 stability/recovery and experimental-build readiness review. | R90-196 accepted local evidence | 1800 seconds offered workload, one quiesced graceful restart and UDS reconnect, bounded RSS, exact durable/API/oracle accounting, local-only conclusions and reproducible instructions. |
 
 No IPv6/TCP-reassembly/cluster/UI expansion starts while this queue has unresolved
 acceptance failures. Reserve the remaining horizon for source-proven failures
@@ -13717,7 +13717,7 @@ contact, publication or acceptance authority is added.
 
 - **Goal:** establish the local experimental build's L2 stability/recovery evidence
   and deliver a reproducible operator handoff, without production-capacity claims.
-- **Window:** Nov 3–Jan 22; finish earlier when dependencies/evidence allow.
+- **Window:** Nov 3–Jan 23; finish earlier when dependencies/evidence allow.
 - **Dependencies/status:** R90-196 accepted local results; planned.
 - **Risk:** hiding maintenance losses, state reuse or falsely advertising a release.
 - **Acceptance:** 1800 seconds offered at 100 pps and one oracle event/second;
@@ -14096,3 +14096,23 @@ authoritative; the original worktree still contains the preserved uncommitted
 R90-196 attempt and its old local main baseline. Do not mix or upload that state.
 R90-196 is next after stable-clock/resource preflight and needs two fresh frozen
 runs. R90-197 stays planned, R90-75 deferred; no next increment starts here.
+
+### R90-199 Complete Identifier Audit Correction
+
+The first uploaded count of 199 used numeric-only IDs. Post-upload review
+included the four historical suffix IDs and verified 203 complete raw row and
+Definition multisets, without duplicates or asymmetry. Correct only this
+validation record, rerun the full gate, then upload the correction as the same
+increment. Preserve the first exact upload/hosted facts locally; no runtime,
+workload, acceptance threshold or next increment changes.
+
+The complete correction ci-check passed, including scanner, uncached race,
+82.2% coverage, C/ASan fuzz, E2E/archive and Docker content/health. External TLS
+failure logs remain; a task-only CONNECT route preserved origin TLS and every
+locked hash, without a repository or system-setting change. Final affected
+docs/static/knowledge checks precede the three-document correction upload.
+Current horizon rolls to Oct26–Jan23 at closeout; the Oct25 selection remains
+historical. After exact fetched/hosted success and second-range Vault/stable
+replay, R90-199 is complete. Do not repeat either upload or create a fact-only
+closure. R90-196 remains next after stable-clock/resource preflight; no new
+measurement or L2 starts during this correction.
