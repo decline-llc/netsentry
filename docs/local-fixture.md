@@ -5,7 +5,8 @@ adapter. R90-198 enables immediate/nonblocking measurement capture and bounded
 idle polling. Its low-rate smoke and zero-packet signal checks are tooling
 evidence, not L1/L2 acceptance. Historical ~692/694ms delays and the first idle
 stop failure remain retained; see [repair evidence](evidence/r90-198-capture-buffering.md).
-R90-196 still requires two independent frozen L1 runs.
+R90-196 l1-05/l1-06 completed two independently reviewed frozen L1 runs;
+see [evidence](evidence/r90-196-local-l1-final.md). L2 remains pending.
 
 ## Run modes
 

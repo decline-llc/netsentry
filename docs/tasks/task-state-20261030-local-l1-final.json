@@ -1,0 +1,61 @@
+{
+  "task": "r90-196-local-l1-final",
+  "timestamp": "2026-10-30",
+  "baseline": "2bdff2d3bf2d6da80eca3bafc0ed9e9f910d5399",
+  "status": "local_L1_accepted_full_gate_passed_exact_delivery_tracked_locally",
+  "plan": "docs/plans/task-20261030-local-l1-final.md",
+  "evidence": "docs/evidence/r90-196-local-l1-final.md",
+  "runs": [
+    "r90-196-l1-05",
+    "r90-196-l1-06"
+  ],
+  "validation": {
+    "tools": "pinned tools/module/Docker frontend and base passed;ordinary clean build",
+    "focused": "34 passed",
+    "knowledge": "33 passed",
+    "no_send": "actual frozen declaration/clock -> derive -> compatibility envelopes -> bundle/adapter replay;no review certificate",
+    "preservation": "443 originals and479 Vault files unchanged",
+    "clock_preflight": {
+      "candidate_bound_ns": 113860,
+      "clock_checked": true,
+      "clock_uncertainty_ns": 113860,
+      "limitation": "Sampling cannot exclude a step and inverse step entirely between probes; retain samples for review.",
+      "method": "host-realtime-monotonic-brackets-v1",
+      "method_description": "shared host realtime interval; sampled monotonic brackets + resolution + pcap 1us; NTP absolute error retained separately",
+      "samples": 587
+    },
+    "no_send_budget_bytes": 445261559,
+    "two_runs": {
+      "r90-196-l1-05": {
+        "status": "reviewed_local_acceptance",
+        "offered": 108000,
+        "processed": 108000,
+        "durable": 600,
+        "worst_p99_upper_ns": 9095959,
+        "clock_uncertainty_ns": 7072,
+        "reviewed_report_sha256": "4c8d675f70ae503f028294f32c5d822a02bfb9c6f91aa4c6495c22dd9c828fb5"
+      },
+      "r90-196-l1-06": {
+        "status": "reviewed_local_acceptance",
+        "offered": 108000,
+        "processed": 108000,
+        "durable": 600,
+        "worst_p99_upper_ns": 8987318,
+        "clock_uncertainty_ns": 16962,
+        "reviewed_report_sha256": "900d27a48320f6bf98994a4123758273b7e674cb35e986390c9aca38c95b8acf"
+      }
+    },
+    "full_ci": "Complete make ci-check passed exit0: nine freshly fetched locked assets, zero reachable vulnerabilities,34 fixture/local-SLO/42 evidence/33 knowledge methods, uncached race/coverage 82.3%, C/ASan fuzz, E2E/archive and full Docker build/content/runtime health.",
+    "full_ci_log_sha256": "37f5cf2e8cc3c438b80c6dba23251736c3091fb0ed62fa843e5c3d471c555f9a",
+    "static": "443 originals/both raw manifests/review bindings preserved;204 complete unique roadmap pairs;docs-only/JSON/links/fences/sensitive passed"
+  },
+  "delivery": {
+    "local_record": ".git/netsentry-r90-196-final-delivery.json",
+    "policy": "one completed batch; post-push facts local only"
+  },
+  "resume_instructions": "Resolve this task commit and common-Git R90-196-final delivery record. If exact fetched HEAD/origin/main,hosted completed/success and Vault note/index/MOC/stable/prose/replay verified,this increment is complete:never repeat05/06,commit,push or sync,or upload closure facts. Otherwise finish only missing delivery steps after checking remote. Preserve both older dirty worktrees and all raw/failed attempts. Next trigger selects R90-197 bounded1800s stability/recovery driver and evidence;L2 not yet run.",
+  "next_increment": "R90-197 stability/recovery after exact L1 delivery",
+  "deviations": [
+    "Private final record generator assumed unique inode numbers across sequential closed network namespaces; kernel recycled the number. Corrected reviewer assumption using fresh unshare/caller-isolation source plus separate PIDs/config/port/UDS/state; failed script/diagnostic retained. No metric/source/threshold changed."
+  ]
+}

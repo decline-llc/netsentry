@@ -72,7 +72,8 @@ available ~7.7 GiB VM. Reclassify it as deferred, preserving its historical targ
 and unvalidated status. The Oct17 CI repair supplies quality evidence only; it
 does not satisfy L1/L2. Reporter schema v1 retains staging/prod,
 180ms and original resource/bandwidth checks. R90-194 adds independent schema-2
-local-v1 evidence evaluation; live fixture and L1/L2 remain unexecuted. Prior completed history remains intact.
+local-v1 evidence evaluation; the fixture and two reviewed L1 runs now have local
+evidence. L2 remains pending. Prior completed history remains intact.
 
 This is the sole current implementation queue. Dates are forecasts, not waiting
 periods. Definitions below give risk, required validation and stop conditions.
@@ -84,8 +85,8 @@ periods. Definitions below give risk, required validation and stop conditions.
 | R90-195 | Oct 22–26 | Complete; repair exact hosted/Vault verified | Build bounded single-VM namespace/veth fixture and runner. | R90-194 | Independent oracle, readiness, 108000 scheduled packets per 10-minute run, fixed rule/traffic hashes, 4 GiB cumulative artifacts, owned cleanup; no public-interface traffic. |
 | R90-198 | Oct 19–26 | Complete; exact hosted/Vault verified | Bound live-capture buffering and idle shutdown before L1. | R90-195 | Preserve the 10pps smoke latency/idle-stop failures, repair the measured boundary with direct regressions and full CI; no threshold relaxation or L1 claim. |
 | R90-199 | Oct 25–27 | Complete; exact hosted/Vault delivery verified | Retain pre-offer and rejected raw supervisor probes. | Verified R90-198; stopped R90-196 source/evidence | Exact raw probes survive clock/resource rejection; persistence errors fail closed; full CI and exact hosted/Vault delivery. |
-| R90-200 | Oct 30–Nov 1 | Full local gate passed; exact delivery tracked locally | Repair fixture clock-method metadata handoff. | R90-199 verified delivery; retained R90-196 retry rejection | Actual producer declaration and clock output reach public derive, exact method/uncertainty preserved, legacy/rejected evidence unchanged, full CI and exact hosted/Vault delivery. |
-| R90-196 | Oct 30–Nov 7 | Blocked; retry manifest handoff rejected | Execute and review two local-v1 L1 runs. | R90-195 validated runner; R90-198 buffering repair; R90-199 retention repair; R90-200 metadata repair; stable-clock/resource preflight | Each run independently meets frozen loss/alert/latency/clock/workload criteria with complete retained evidence; failures remain failures. |
+| R90-200 | Oct 30–Nov 1 | Complete; exact hosted/Vault delivery verified | Repair fixture clock-method metadata handoff. | R90-199 verified delivery; retained R90-196 retry rejection | Actual producer declaration and clock output reach public derive, exact method/uncertainty preserved, legacy/rejected evidence unchanged, full CI and exact hosted/Vault delivery. |
+| R90-196 | Oct 30–Nov 7 | Two L1 runs and full local gate passed; exact delivery tracked locally | Execute and review two local-v1 L1 runs. | R90-195 validated runner; R90-198 buffering repair; R90-199 retention repair; R90-200 metadata repair; stable-clock/resource preflight | Each run independently meets frozen loss/alert/latency/clock/workload criteria with complete retained evidence; failures remain failures. |
 | R90-197 | Nov 8–Jan 27 | Planned | Complete L2 stability/recovery and experimental-build readiness review. | R90-196 accepted local evidence | 1800 seconds offered workload, one quiesced graceful restart and UDS reconnect, bounded RSS, exact durable/API/oracle accounting, local-only conclusions and reproducible instructions. |
 
 No IPv6/TCP-reassembly/cluster/UI expansion starts while this queue has unresolved
@@ -13696,11 +13697,9 @@ contact, publication or acceptance authority is added.
 
 - **Goal:** collect and review two independent L1 local-v1 runs on current hardware.
 - **Window:** Oct 30–Nov 7, forecasting only.
-- **Dependencies/status:** R90-195 verified tooling, R90-198 buffering repair,
-  R90-199 retention repair delivered, R90-200 metadata repair and stable-clock/
-  resource preflight. First Oct21 run stopped inconclusive; Oct26 complete first
-  retry acquisition failed manifest handoff. Needs two fresh independent runs
-  after prerequisites; neither prior attempt is accepted L1.
+- **Dependencies/status:** R90-195/198/199/200 delivered; two fresh l1-05/l1-06
+  runs and complete local gate passed. Exact hosted/Vault delivery is tracked in
+  the common-Git R90-196-final record. Earlier failed attempts remain failed.
   Local execution does not await an external department or new hardware purchase.
 - **Risk:** treating generator limits as SUT capacity or selecting only a good run.
 - **Acceptance:** both 600-second runs plus 30-second observations use separate
@@ -14202,3 +14201,58 @@ older dirty worktrees remain preserved; this isolated checkout is authoritative.
 Next trigger selects R90-196 for two new frozen independent runs after stable
 clock/resource preflight and the exact no-send metadata handoff. R90-197 remains
 planned after accepted L1; R90-75 deferred. No next measurement starts here.
+
+
+## R90-196 Final Retry Selection and Current Resume Authority (2026-10-30)
+
+R90-200 is complete at fetched HEAD/origin/main
+2bdff2d3bf2d6da80eca3bafc0ed9e9f910d5399; exact hosted run 41172644641 is
+completed/success, common-Git local delivery record and 479-file Vault snapshot
+verify note/index/MOC, 18 stable notes and preserved historical/topic prose.
+Do not repeat that delivery. Both earlier dirty worktrees and 443 original raw/
+pending files remain hashed and isolated. Four-week audit shows bounded
+correctness and evidence repairs with full gates, retaining all failed attempts.
+All 204 complete roadmap row/Definition IDs pair uniquely, including suffixes;
+all unfinished Definitions retain dependency/window/risk/acceptance/validation/
+stop fields. Oct30–Jan27 horizon remains current. No new implementation queue.
+
+Select only R90-196 under [plan](task-20261030-local-l1-final.md), with state
+persisted before documentation or measurement changes. New runs l1-05/l1-06
+use the unchanged frozen 100-rule/100–500pps/600+30s contract. First exercise
+actual frozen clock/manifest output through derive and bundle/reconstruction
+without transmission; synthetic preflight emits no reviewed acceptance. Then
+stable-clock/resource and tool/module/Docker preflight, one full run and complete
+independent review before the second. Do not retune a failure or reuse earlier
+run IDs/evidence. R90-197 stays planned after accepted L1, R90-75 deferred; real
+traffic/production conclusions remain unverified and no L2 starts here.
+
+
+### R90-196 Two-Run Local Acceptance Checkpoint
+
+Both new runs l1-05/l1-06 independently complete the unchanged 600+30s workload,
+raw/SQLite/API review, versioned adapter/bundle reconstruction and explicit
+hash-bound reviewed_local_acceptance. See [sanitized evidence](../evidence/r90-196-local-l1-final.md).
+Earlier failed attempts remain failed. Synthetic no-send preflight is separate
+and emits no reviewed certificate. Resource/clock/sample-gap limitations remain
+explicit. No runtime/evaluator/oracle/threshold/host-clock change or L2 occurred.
+Full make ci-check, final preservation/static review and exact delivery remain;
+do not commit/upload until the complete gate passes. R90-197 is next only after
+verified L1 delivery, and starts in a later increment.
+
+
+### R90-196 Final Local Gate and Delivery Resume Authority
+
+Complete make ci-check passed exit0: nine freshly fetched locked assets, zero reachable vulnerabilities,34 fixture/local-SLO/42 evidence/33 knowledge methods, uncached race/coverage 82.3%, C/ASan fuzz, E2E/archive and full Docker build/content/runtime health.
+Original443 files and both raw manifests/review bindings remain unchanged;204
+complete identifiers pair uniquely. Only final prose follows, with affected
+checks before one batch. Namespace-inode reviewer correction is documented;
+raw measurements, SUT, workload and thresholds are unchanged.
+
+Resolve this task commit and common-Git local R90-196-final delivery record.
+Complete only after exact fetched HEAD/origin/main,hosted completed/success and
+Vault note/index/MOC/stable/prose/replay verification. Once verified, never
+repeat05/06,commit,push or sync,or upload closure facts. Preserve both older dirty
+worktrees; this isolated checkout is authoritative. Next trigger selects R90-197
+following exact L1 delivery: freeze a bounded1800s L2 driver with quiesced graceful
+restart and UDS reconnect, then collect/review recovery evidence. L2 not yet run.
+No real-data/production,tag/Release/registry conclusion is added.
