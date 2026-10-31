@@ -1,0 +1,37 @@
+{
+  "task": "r90-200-clock-metadata",
+  "timestamp": "2026-10-30",
+  "baseline": "7de6fdf534834f8629cda06bf42755da96001297",
+  "status": "local_complete_exact_delivery_tracked_locally",
+  "plan": "docs/plans/task-20261030-clock-metadata.md",
+  "evidence": "docs/evidence/r90-200-clock-metadata.md",
+  "scope": "producer clock-method representation and direct no-send public derive regression",
+  "non_goals": [
+    "L1/L2",
+    "real-data acceptance",
+    "clock algorithm or thresholds",
+    "legacy schema changes",
+    "host clock settings",
+    "pending worktree records"
+  ],
+  "validation": {
+    "regression_before": "actual producer-to-public-derive reproduced exact clock_method identifier rejection",
+    "focused": "34 methods passed",
+    "knowledge": "33 methods passed",
+    "preflight": "official pinned archive size/SHA; Go1.26.10/actionlint1.7.12/govulncheck1.6.0/engine module/Docker daemon/frontend/base passed",
+    "preservation": "443 original historical/pending files unchanged",
+    "full_ci": "passed: 9 fetched locks, zero reachable vulnerabilities, 34/42/33 methods, uncached race/82.2% coverage, C/ASan fuzz, E2E/archive/full Docker content and health",
+    "full_ci_log_sha256": "01f28dabdab4f127fdeda9e86399de822a34d9b219a28258bdeb0e2aacf2ccfa",
+    "static": "204 equal unique complete roadmap pairs; clock AST/JSON/links/fences/sensitive/diff passed"
+  },
+  "delivery": {
+    "local_record": ".git/netsentry-r90-200-delivery.json",
+    "policy": "one validated batch; post-push facts local only"
+  },
+  "resume_instructions": "Resolve the commit containing this state and inspect the common-Git R90-200 local delivery record. If exact fetched HEAD/origin/main, hosted completed/success and Vault note/index/MOC/stable/replay are verified, this increment is complete: do not repeat commit/push/sync or send a closure-only upload. Otherwise finish only the missing delivery step after verifying the current remote. Preserve both older pending worktrees and all raw evidence. Next trigger selects R90-196 for two new frozen runs after stable-clock/resource preflight; no live L1/L2 belongs to this repair.",
+  "deviations": [
+    "Archive check initially used module cwd for root-relative lock; corrected and reran full fail-fast preflight before gate.",
+    "Daemon restart lost command session; original full gate continued to terminal Docker/RC success and normal make completion, source seals verified."
+  ],
+  "next_increment": "R90-196 two fresh independent frozen L1 runs after exact R90-200 delivery and stable-clock/resource preflight"
+}

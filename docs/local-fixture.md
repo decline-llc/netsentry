@@ -118,6 +118,13 @@ acceptance. Neither this bound nor an exit-zero smoke is a physical NIC claim.
 
 A finalized full fixture writes the schema-2 collection manifest. `derive` uses
 R90-194's collector and evaluator; no reviewed acceptance is issued automatically.
+R90-200 names the unchanged clock algorithm `host-realtime-monotonic-brackets-v1`
+in the result's `clock.method` and manifest's `measurement.clock_method`.
+The raw result retains its full explanation in `clock.method_description` and
+the sampling limitation separately. This bounded identifier describes the
+shared-host realtime/monotonic interval, resolution and 1us pcap quantization
+calculation above; it does not attest clock validity. Older descriptive method
+strings remain rejected by the collector and historical manifests stay unchanged.
 Review full raw ledgers, submitted outcomes, clocks, resource peaks, API/SQLite
 and exact raw hashes under [local-v1](acceptance-local-v1.md). Numerical failure
 and inconclusive evidence remain visible. L1 requires two separately reviewed

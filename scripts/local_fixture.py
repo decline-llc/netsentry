@@ -236,7 +236,8 @@ def clock_verdict(samples):
     bound = max(highs)-min(lows)+1000+max(s['resolution_ns'] for s in samples)
     checked = all(s['kernel_clock_state'] >= 0 for s in samples) and bound <= 10_000_000
     return dict(clock_checked=checked, clock_uncertainty_ns=bound if checked else None,
-                candidate_bound_ns=bound, method='shared host realtime interval; sampled monotonic brackets + resolution + pcap 1us; NTP absolute error retained separately',
+                candidate_bound_ns=bound, method='host-realtime-monotonic-brackets-v1',
+                method_description='shared host realtime interval; sampled monotonic brackets + resolution + pcap 1us; NTP absolute error retained separately',
                 limitation='Sampling cannot exclude a step and inverse step entirely between probes; retain samples for review.')
 
 

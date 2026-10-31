@@ -1,6 +1,6 @@
 # NetSentry Rolling 90-Day Roadmap
 
-> Window: 2026-10-26 through 2027-01-23. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
+> Window: 2026-10-30 through 2027-01-27. This is the active delivery queue for `$netsentry-next`; refresh unfinished work at each completed increment using Git, task-state, and evidence as authority. Completed history from prior horizons is preserved below.
 
 ## Status Rules
 
@@ -83,9 +83,10 @@ periods. Definitions below give risk, required validation and stop conditions.
 | R90-194 | Oct 18–21 | Complete; exact hosted/Vault delivery verified | Implement versioned local-v1 profile/report evaluation. | R90-193 exact-SHA delivery | Separate local scope, 100-rule/pps/500ms policy, missing/extra/late accounting, immutable legacy outputs and direct fail/inconclusive regressions. |
 | R90-195 | Oct 22–26 | Complete; repair exact hosted/Vault verified | Build bounded single-VM namespace/veth fixture and runner. | R90-194 | Independent oracle, readiness, 108000 scheduled packets per 10-minute run, fixed rule/traffic hashes, 4 GiB cumulative artifacts, owned cleanup; no public-interface traffic. |
 | R90-198 | Oct 19–26 | Complete; exact hosted/Vault verified | Bound live-capture buffering and idle shutdown before L1. | R90-195 | Preserve the 10pps smoke latency/idle-stop failures, repair the measured boundary with direct regressions and full CI; no threshold relaxation or L1 claim. |
-| R90-199 | Oct 25–27 | Full local gate passed; exact delivery tracked locally | Retain pre-offer and rejected raw supervisor probes. | Verified R90-198; stopped R90-196 source/evidence | Exact raw probes survive clock/resource rejection; persistence errors fail closed; full CI and exact hosted/Vault delivery. |
-| R90-196 | Oct 25–Nov 2 | Blocked; first attempt inconclusive | Execute and review two local-v1 L1 runs. | R90-195 validated runner; R90-198 buffering repair; R90-199 retention repair; stable-clock/resource preflight | Each run independently meets frozen loss/alert/latency/clock/workload criteria with complete retained evidence; failures remain failures. |
-| R90-197 | Nov 3–Jan 23 | Planned | Complete L2 stability/recovery and experimental-build readiness review. | R90-196 accepted local evidence | 1800 seconds offered workload, one quiesced graceful restart and UDS reconnect, bounded RSS, exact durable/API/oracle accounting, local-only conclusions and reproducible instructions. |
+| R90-199 | Oct 25–27 | Complete; exact hosted/Vault delivery verified | Retain pre-offer and rejected raw supervisor probes. | Verified R90-198; stopped R90-196 source/evidence | Exact raw probes survive clock/resource rejection; persistence errors fail closed; full CI and exact hosted/Vault delivery. |
+| R90-200 | Oct 30–Nov 1 | Full local gate passed; exact delivery tracked locally | Repair fixture clock-method metadata handoff. | R90-199 verified delivery; retained R90-196 retry rejection | Actual producer declaration and clock output reach public derive, exact method/uncertainty preserved, legacy/rejected evidence unchanged, full CI and exact hosted/Vault delivery. |
+| R90-196 | Oct 30–Nov 7 | Blocked; retry manifest handoff rejected | Execute and review two local-v1 L1 runs. | R90-195 validated runner; R90-198 buffering repair; R90-199 retention repair; R90-200 metadata repair; stable-clock/resource preflight | Each run independently meets frozen loss/alert/latency/clock/workload criteria with complete retained evidence; failures remain failures. |
+| R90-197 | Nov 8–Jan 27 | Planned | Complete L2 stability/recovery and experimental-build readiness review. | R90-196 accepted local evidence | 1800 seconds offered workload, one quiesced graceful restart and UDS reconnect, bounded RSS, exact durable/API/oracle accounting, local-only conclusions and reproducible instructions. |
 
 No IPv6/TCP-reassembly/cluster/UI expansion starts while this queue has unresolved
 acceptance failures. Reserve the remaining horizon for source-proven failures
@@ -13694,10 +13695,12 @@ contact, publication or acceptance authority is added.
 ## R90-196 Definition
 
 - **Goal:** collect and review two independent L1 local-v1 runs on current hardware.
-- **Window:** Oct 25–Nov 2, forecasting only.
+- **Window:** Oct 30–Nov 7, forecasting only.
 - **Dependencies/status:** R90-195 verified tooling, R90-198 buffering repair,
-  R90-199 retention repair and stable-clock/resource preflight. First Oct21 run
-  stopped inconclusive; needs two fresh independent runs after prerequisites.
+  R90-199 retention repair delivered, R90-200 metadata repair and stable-clock/
+  resource preflight. First Oct21 run stopped inconclusive; Oct26 complete first
+  retry acquisition failed manifest handoff. Needs two fresh independent runs
+  after prerequisites; neither prior attempt is accepted L1.
   Local execution does not await an external department or new hardware purchase.
 - **Risk:** treating generator limits as SUT capacity or selecting only a good run.
 - **Acceptance:** both 600-second runs plus 30-second observations use separate
@@ -13717,7 +13720,7 @@ contact, publication or acceptance authority is added.
 
 - **Goal:** establish the local experimental build's L2 stability/recovery evidence
   and deliver a reproducible operator handoff, without production-capacity claims.
-- **Window:** Nov 3–Jan 23; finish earlier when dependencies/evidence allow.
+- **Window:** Nov 8–Jan 27; finish earlier when dependencies/evidence allow.
 - **Dependencies/status:** R90-196 accepted local results; planned.
 - **Risk:** hiding maintenance losses, state reuse or falsely advertising a release.
 - **Acceptance:** 1800 seconds offered at 100 pps and one oracle event/second;
@@ -14027,7 +14030,8 @@ R90-75 remains deferred and all historical failed measurement outcomes retained.
 - **Dependencies/status:** R90-198 delivered at
   b33c6211cffcfaf1c6b05fbbd60b92b10878788b with exact hosted/Vault proof;
   stopped R90-196 raw evidence and source prove this repair. Full local gate
-  passed; exact hosted/Vault completion is tracked in the local delivery record.
+  passed; exact hosted/Vault completion verified at
+  7de6fdf534834f8629cda06bf42755da96001297, with local delivery record.
 - **Risk:** excluding bad probes, accepting a short write/fsync failure, unsafe
   child cleanup or confusing synthetic repair tests with measurement acceptance.
 - **Acceptance:** checked complete writes and fsync precede clock/resource
@@ -14116,3 +14120,85 @@ historical. After exact fetched/hosted success and second-range Vault/stable
 replay, R90-199 is complete. Do not repeat either upload or create a fact-only
 closure. R90-196 remains next after stable-clock/resource preflight; no new
 measurement or L2 starts during this correction.
+
+
+## R90-200 Definition
+
+- **Goal:** make actual fixture-generated clock-method metadata admissible to the
+  exact versioned collector, retaining the failed handoff and all raw evidence.
+- **Window:** Oct30–Nov1; forecast only.
+- **Dependencies/status:** R90-199 exact fetched/hosted/Vault delivery and retained
+  R90-196 l1-03 manifest rejection/source proof; selected in an isolated worktree. Accepted L1 is not required.
+- **Risk:** silently rewriting historical raw metadata, weakening legacy validation,
+  changing clock meaning/thresholds or using a diagnostic projection as acceptance.
+- **Acceptance:** identify the producer/consumer encoding mismatch and choose a
+  bounded compatible representation with its clock algorithm meaning documented.
+  Direct no-send regression must use actual fixture-generated declaration and
+  clock output through the public collection/derive boundary, then verify the
+  expected evaluation identity and uncertainty. Preserve all prior rejected
+  originals and packet-loss diagnostics; no live acceptance claim or altered
+  clock algorithm, workload, oracle, contract threshold or host time services.
+- **Required validation:** direct producer-to-consumer regression, focused fixture/
+  local-SLO and immutable legacy regression, historical hash preservation,
+  pinned-tool/module/Docker preflight, complete ci-check, static/knowledge review
+  and exact hosted/Vault delivery. A smoke or metadata test is not L1/L2.
+- **Stop condition:** original evidence mutation, unsupported clock semantics,
+  weakened legacy or numeric gates, required gate failure, another ambiguous
+  contract error or need for host/VM clock-service authority.
+
+## R90-200 Selection and Current Resume Authority (2026-10-30)
+
+R90-199 is complete at fetched origin/main
+7de6fdf534834f8629cda06bf42755da96001297; exact hosted
+[40283970774](https://github.com/decline-llc/netsentry/actions/runs/40283970774)
+is completed/success, and its local delivery record verifies Vault notes, full
+index, MOC, 18 stable notes and identical replay. Earlier pending instructions
+are historical. Both older worktrees and their pending records remain untouched.
+
+The Oct26 R90-196 retry completed 600+30s acquisition: 108000 offered/submitted,
+107937 processed, 600 durable/independently mapped SQLite alerts, no missing,
+extra or duplicate alerts. Worst segment loss 0.21%, p99 upper223.271077ms and
+clock bound956055ns are raw diagnostics only. Public derive rejected the exact
+sealed manifest: clock_method must be a bounded ASCII identifier, but the
+producer emitted explanatory prose. No adapter/reviewed acceptance exists; the
+second run and L2 were not started. Prior failed-clock evidence remains invalid.
+The retry summary and original raw bytes remain in its separate local worktree;
+this increment does not commit or rewrite that pending record.
+
+Select only R90-200 under [plan](task-20261030-clock-metadata.md), with task state
+persisted before implementation. Four-week audit confirms correctness repairs,
+full gates, fixture/capture/probe work and this actual metadata mismatch; no
+missing delivered increment was found. All unfinished rows retain complete
+Definitions, dependencies, risk, acceptance, validation and stop conditions.
+Window rolls to Oct30–Jan27; dates do not gate work. R90-196 needs this repair
+and two new independent frozen runs, then R90-197 stability/recovery. R90-75
+remains deferred. User has no real traffic corpus; use existing synthetic
+fixtures and leave real-data/production conclusions unverified. Required
+software gates remain; no live measurement or next increment starts here.
+
+
+### R90-200 Final Local Gate and Delivery Resume Authority
+
+Actual frozen fixture/clock output now passes public derive with bounded method
+identity and exact 2001ns uncertainty; sparse synthetic load stays inconclusive.
+Old descriptive metadata still fails with source bytes unchanged. The full clock
+calculation/threshold AST, inclusive 10ms rejection boundary and legacy golden
+remain unchanged. No historical manifest or workload is repaired. All 443 prior
+raw/pending files retain their hashes and 204 complete row/Definition identifiers
+pair uniquely, including historical suffixes.
+
+Complete make ci-check passed: nine fetched locks, zero reachable vulnerabilities,
+34 fixture/local-SLO/42 evidence/33 knowledge methods, uncached race/82.2% coverage,
+C/ASan fuzz, E2E/archive and full Docker image/content/runtime health. A daemon
+restart lost the tool session while the original process continued; final RC
+success and normal make completion are retained. Only final prose follows, with
+applicable docs/static/knowledge checks before commit. Source seals still match.
+
+Resolve the commit containing this state and the common-Git R90-200 local delivery
+record. Delivery is complete only after exact fetched HEAD/origin/main equality,
+hosted completed/success and Vault note/index/MOC/stable prose/replay verification.
+When already verified, do not repeat delivery or upload closure-only facts. Both
+older dirty worktrees remain preserved; this isolated checkout is authoritative.
+Next trigger selects R90-196 for two new frozen independent runs after stable
+clock/resource preflight and the exact no-send metadata handoff. R90-197 remains
+planned after accepted L1; R90-75 deferred. No next measurement starts here.

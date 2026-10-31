@@ -2,7 +2,7 @@
 
 [中文](README.md)
 
-> Status: v0.1.1 is released; current main passed the complete local gate and GitHub CI. Current acceptance targets a single-VM experimental build; live/stability runs remain pending.
+> Status: v0.1.1 is released; current main passed the complete local gate and GitHub CI. Current acceptance targets a single-VM experimental build; live acceptance has been attempted; evidence handoff is being repaired. L1 is not accepted and L2 has not run.
 
 See the [dated capability and test-environment assessment](docs/project-status-20261017.md)
 and the [repository delivery policy](AGENTS.md): complete local validation, upload

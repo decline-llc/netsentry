@@ -144,6 +144,16 @@ class FixtureTests(unittest.TestCase):
         self.assertLess(result['clock_uncertainty_ns'],10000)
         self.assertFalse(fixture.clock_verdict([sample,dict(sample,realtime_ns=40000000)])['clock_checked'])
         self.assertFalse(fixture.clock_verdict([dict(sample,kernel_clock_state=-1)])['clock_checked'])
+        self.assertEqual(result['candidate_bound_ns'],2001)
+        self.assertEqual(result['method'],'host-realtime-monotonic-brackets-v1')
+        self.assertEqual(result['method_description'],
+                         'shared host realtime interval; sampled monotonic brackets + resolution + pcap 1us; NTP absolute error retained separately')
+        for bound in (10_000_000,10_000_001):
+            with self.subTest(candidate_bound_ns=bound):
+                edge=fixture.clock_verdict([dict(sample,monotonic_after_ns=sample['monotonic_before_ns']+bound-1001)])
+                self.assertEqual(edge['candidate_bound_ns'],bound)
+                self.assertEqual(edge['clock_checked'],bound==10_000_000)
+                self.assertEqual(edge['clock_uncertainty_ns'],bound if bound==10_000_000 else None)
 
     def test_submission_failure_retains_intent_offer_and_outcome(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -417,6 +427,74 @@ class FixtureTests(unittest.TestCase):
             decoded=slo_collect._manifest(manifest)
             self.assertEqual(decoded['contract_id'],'local-v1')
             self.assertEqual(len(decoded['packet_windows']),10)
+
+    def test_actual_fixture_clock_metadata_through_public_derive(self):
+        from . import slo_report
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); run=root/'metadata'; run.mkdir(); (run/'engine').mkdir()
+            fixture.freeze_files(run,'metadata')
+            fixture.save(run/'provenance.json',dict(commit='1'*40,config_sha256='2'*64,
+                                                   rules_sha256=fixture.digest(run/'rules.json')))
+            fixture.save(run/'capture.json',dict(dropped=0,parse_errors=0,invalid_markers=0))
+            sample=dict(realtime_ns=20000000,monotonic_before_ns=10000000,
+                        monotonic_after_ns=10001000,kernel_clock_state=5,resolution_ns=1)
+            clock=fixture.clock_verdict([sample,dict(sample,realtime_ns=21000000,
+                monotonic_before_ns=11000000,monotonic_after_ns=11001000)])
+            result=dict(run_id='metadata',origin='2026-10-30T00:00:00Z',clock=clock,
+                        execution_complete=True,mode='L1-fixture')
+            fixture.save(run/'manifest.json',fixture.collection_manifest(run,result))
+            # Sparse synthetic ledgers exercise the actual metadata producer and
+            # consumer, without sending traffic or pretending to meet live load.
+            offers=[]; events=[]
+            for sequence,offset,positive in fixture.schedule():
+                if offset % (60*fixture.NS): continue
+                pid,frame,expected=fixture.packet('metadata',sequence,positive)
+                offers.append(dict(packet_id=pid,offered_ns=offset,offered_bytes=len(frame),
+                                   submitted=True,expected_alerts=expected))
+                events.extend([dict(kind='arrival',packet_id=pid,at_ns=offset+1000),
+                               dict(kind='processed',packet_id=pid,at_ns=offset+3000)])
+                events.extend(dict(kind='durable',event_id=e['event_id'],at_ns=offset+2000)
+                              for e in expected)
+            for name,rows in [('offered.jsonl',offers),('engine/events.jsonl',events)]:
+                (run/name).write_bytes(b''.join(fixture.encode(row) for row in rows))
+            sources=('manifest.json','offered.jsonl','engine/events.jsonl')
+            result['files']={name:dict(sha256=fixture.digest(run/name)) for name in sources}
+            fixture.save(run/'result.json',result)
+            before={name:(run/name).read_bytes() for name in (*sources,'result.json')}
+            with mock.patch.object(fixture.socket,'socket',side_effect=AssertionError('network opened')), \
+                 mock.patch.object(fixture.subprocess,'Popen',side_effect=AssertionError('process started')), \
+                 mock.patch.object(fixture.resource,'setrlimit'):
+                summary=fixture.derive(root,'metadata')
+            doc,_=slo_report.read_observations(run/'adapter/observations.json')
+            self.assertEqual((doc['schema_version'],doc['contract_id'],doc['run_id']),
+                             (2,'local-v1','metadata'))
+            self.assertEqual(doc['measurement']['clock_method'],'host-realtime-monotonic-brackets-v1')
+            self.assertEqual(doc['measurement']['clock_uncertainty_ns'],2001)
+            self.assertTrue(doc['measurement']['clock_checked'])
+            self.assertEqual(summary['clock_uncertainty_ns'],2001)
+            self.assertFalse(summary['slo_compliance_asserted'])
+            self.assertEqual(summary['status'],'inconclusive')
+            self.assertEqual(len(doc['expected_alerts']),10)
+            self.assertEqual(before,{name:(run/name).read_bytes() for name in before})
+
+    def test_descriptive_clock_method_still_rejected_without_rewriting_sources(self):
+        from .test_slo_local import sources
+        from .slo_report import EvidenceError
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); sources(root/'rejected',run_id='rejected'); run=root/'rejected'
+            (run/'engine').mkdir(); (run/'events.jsonl').rename(run/'engine/events.jsonl')
+            manifest=json.loads((run/'manifest.json').read_text())
+            manifest['measurement']['clock_method']='shared host realtime interval; sampled monotonic brackets + resolution + pcap 1us; NTP absolute error retained separately'
+            (run/'manifest.json').write_bytes(fixture.encode(manifest))
+            names=('manifest.json','offered.jsonl','engine/events.jsonl')
+            fixture.save(run/'result.json',dict(execution_complete=True,mode='L1-fixture',
+                files={name:dict(sha256=fixture.digest(run/name)) for name in names}))
+            before={name:(run/name).read_bytes() for name in (*names,'result.json')}
+            with mock.patch.object(fixture.resource,'setrlimit'):
+                with self.assertRaisesRegex(EvidenceError,'clock_method: expected bounded ASCII identifier'):
+                    fixture.derive(root,'rejected')
+            self.assertFalse((run/'adapter').exists())
+            self.assertEqual(before,{name:(run/name).read_bytes() for name in before})
 
     def test_budgeted_adapter_replays_supplied_raw_and_rejects_drift(self):
         from .test_slo_local import sources
